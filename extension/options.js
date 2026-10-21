@@ -1575,7 +1575,7 @@ function appendDetails(root,obj,key,url,type){
   link.setAttribute("aria-label",`Open original file: ${key}`);
   root.append(link);
 }
-async function showWorkspacePreview(obj,row,urlOverride=""){
+async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
   const requestId=++workspacePreviewRequestId;
   const root=$("workspace-preview");
   const hadPreview=Boolean(root.querySelector?.(".preview-head"));
@@ -1591,7 +1591,7 @@ async function showWorkspacePreview(obj,row,urlOverride=""){
   workspacePreviewAbort=new AbortController();
   let url=urlOverride;
   try{
-    if(!url)url=await RedownCloudflareApi.preview(explorerSource(),key,objectContentType(obj,key),workspacePreviewAbort.signal);
+    if(!url)url=await RedownCloudflareApi.preview(sourceOverride||explorerSource(),key,objectContentType(obj,key),workspacePreviewAbort.signal);
     if(requestId!==workspacePreviewRequestId){if(!urlOverride)URL.revokeObjectURL(url);return;}
     if(objectContentType(obj,key).startsWith("image/")&&typeof Image!=="undefined"&&Image.prototype.decode){
       const ready=new Image();ready.src=url;await ready.decode();
@@ -1844,7 +1844,7 @@ function setWorkspacePreviewLightbox(enabled){
       return;
     }
     if(event.target.closest("input,select,textarea,video,audio,model-viewer")||event.altKey||event.ctrlKey||event.metaKey)return;
-    if(event.key==="ArrowLeft"||event.key==="ArrowRight"){event.preventDefault();event.stopPropagation();navigatePreview(event.key==="ArrowRight"?1:-1);}
+    if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)){event.preventDefault();event.stopPropagation();navigatePreview(["ArrowRight","ArrowDown"].includes(event.key)?1:-1);}
   });
 
   const caption=document.createElement("div");caption.className="preview-lightbox-caption";caption.textContent="←  Browse  →   ·   Right-click to zoom · Double-click to fit";
@@ -2785,7 +2785,7 @@ function createFileRow(item, index) {
   type.textContent = item.type;
   row.append(name, size, modified, type);
   row.onclick = (e) => {
-    if (item.searchResult) return goToSearchResult(item);
+    if(item.searchResult)return selectSingleExplorerItem(item,{focus:true});
     if (item.kind === "bucket") {
       setExplorerBusy(true,"Opening bucket…");
       return goLocation(item.accountId,item.bucketName);
@@ -2793,7 +2793,7 @@ function createFileRow(item, index) {
     selectExplorerItem(item, index, e);
   };
   row.ondblclick = () => {
-    if (item.searchResult) return goToSearchResult(item);
+    if (item.searchResult) return item.folder?goToSearchResult(item):selectSingleExplorerItem(item,{focus:true});
     if (item.kind === "bucket") {
       setExplorerBusy(true,"Opening bucket…");
       return goLocation(item.accountId,item.bucketName);
@@ -2801,10 +2801,6 @@ function createFileRow(item, index) {
     openExplorerItem(item);
   };
   row.oncontextmenu = (e) => {
-    if(item.searchResult){
-      e.preventDefault();
-      return goToSearchResult(item);
-    }
     e.preventDefault();
     if (!explorerSelected.has(item.id)) {
       explorerSelected = new Set([item.id]);
@@ -2813,7 +2809,7 @@ function createFileRow(item, index) {
     showExplorerMenu(e.clientX, e.clientY, item);
   };
   row.ondragstart = (e) => {
-    if (item.kind === "bucket") {
+    if (item.kind === "bucket" || item.searchResult) {
       e.preventDefault();
       return;
     }
@@ -2873,10 +2869,11 @@ async function previewExplorerItem(item) {
     return;
   }
   if (item.archiveEntry) return previewArchiveEntry(item);
-  return showWorkspacePreview(item.object || { key:item.key, size:item.size }, rootRow(item.id));
+  return showWorkspacePreview({...item.object,key:item.key,size:item.size},rootRow(item.id),"",item.searchResult?{accountId:item.accountId,bucketName:item.bucketName,accountName:item.accountName}:null);
 }
 async function selectSingleExplorerItem(item, { focus = false, scroll = true } = {}) {
   if (!item || item.kind === "bucket") return;
+  const keepFocus=focus||Boolean(document.activeElement?.closest?.("#workspace-objects .file-row"));
   explorerSelected = new Set([item.id]);
   const items = sortedVisibleItems();
   explorerAnchor = Math.max(0, items.findIndex((entry) => entry.id === item.id));
@@ -2884,7 +2881,7 @@ async function selectSingleExplorerItem(item, { focus = false, scroll = true } =
   renderFileItems();
   const row = rootRow(item.id);
   if (scroll) row?.scrollIntoView({ block:"nearest" });
-  if (focus) row?.focus({ preventScroll:true });
+  if (keepFocus) row?.focus({ preventScroll:true });
   await previewExplorerItem(item);
 }
 async function navigateExplorerSelection(delta) {
@@ -2932,6 +2929,7 @@ function rootRow(id) {
 }
 async function openExplorerItem(item) {
   if(!item)return;
+  if(item.searchResult)return item.folder?goToSearchResult(item):previewExplorerItem(item);
   setExplorerBusy(true,item.folder?"Opening folder…":"Opening preview…");
   try{
     if (item.archiveEntry && item.folder) {
@@ -3023,6 +3021,7 @@ async function setExplorerClipboard(
   items = selectedExplorerItems(),
 ) {
   if (!items.length) return;
+  if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to copy or move search results.",true);
   explorerClipboard = {
     operation,
     accountId: workspaceTarget.accountId,
@@ -3037,6 +3036,7 @@ async function setExplorerClipboard(
 async function pasteExplorer(
   destination = { ...explorerSource(), prefix: workspacePrefix },
 ) {
+  if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true);
   if (!explorerClipboard?.entries?.length) return;
   if (explorerClipboard.archiveKey) {
     const files=explorerClipboard.entries.filter((entry)=>!entry.folder);
@@ -3114,6 +3114,7 @@ async function pasteExplorer(
   await browseWorkspace();
 }
 async function moveSelectionTo(destination) {
+  if(selectedExplorerItems().some(item=>item.searchResult))return finishOperation("Open the containing folder to move search results.",true);
   await setExplorerClipboard(
     destination.accountId === workspaceTarget.accountId &&
       destination.bucketName === workspaceTarget.bucketName
@@ -3127,6 +3128,7 @@ async function moveSelectionTo(destination) {
 }
 async function deleteSelection() {
   const items = selectedExplorerItems();
+  if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to delete search results.",true);
   if (!items.length) return;
   const label =
     items.length === 1
@@ -3156,6 +3158,7 @@ async function deleteSelection() {
   await browseWorkspace();
 }
 function beginExplorerRename(item) {
+  if(item.searchResult)return finishOperation("Open the containing folder to rename this result.",true);
   hideExplorerMenu();
   const row = rootRow(item.id);
   if (!row) return;
@@ -3381,6 +3384,12 @@ function showExplorerMenu(x, y, item) {
     menu.append(label);
   };
 
+  if(item?.searchResult){
+    menu.append(menuButton(item.folder?"Open containing folder":"Preview",()=>item.folder?goToSearchResult(item):selectSingleExplorerItem(item,{focus:true})),menuButton("Open containing folder",()=>goToSearchResult(item)));
+    menu.hidden=false;
+    requestAnimationFrame(()=>{menu.style.left=`${Math.max(8,Math.min(x,innerWidth-menu.offsetWidth-8))}px`;menu.style.top=`${Math.max(8,Math.min(y,innerHeight-menu.offsetHeight-8))}px`;menu.querySelector("button")?.focus();});
+    return;
+  }
   if (item?.kind === "bucket") {
     const destination = {
       accountId: item.accountId,
@@ -3653,6 +3662,9 @@ function wireWorkspace() {
     if (e.target.matches("input,select,textarea")) return;
     const selected = selectedExplorerItems();
     const command = e.ctrlKey || e.metaKey;
+    if(explorerSearchActive&&selected.some(item=>item.searchResult)&&(["Delete","F2"].includes(e.key)||(command&&["x","v"].includes(e.key.toLowerCase())))){
+      e.preventDefault();finishOperation("Open the containing folder to rename, move, or delete search results.",true);return;
+    }
     if (command && e.key.toLowerCase() === "a") {
       e.preventDefault();
       explorerSelected = new Set(sortedVisibleItems().map((x) => x.id));
@@ -3731,8 +3743,13 @@ function transferKey(profile, location){
 function transferDisplayParts(item){
   let filename="";
   let parent="";
-  const profile=profiles.find(p=>p.id===item?.profileId);
-  const key=profile?.type==="cloudflare-r2"?transferKey(profile,item?.location):"";
+  const original=profiles.find(p=>p.id===item?.profileId);
+  let profile=item?.destination?{...original,type:"cloudflare-r2",accountId:item.destination.accountId,bucketName:item.destination.bucketName,accountName:item.destination.accountName}:original;
+  let key=item?.destination?.key || (profile?.type==="cloudflare-r2"?transferKey(profile,item?.location):"");
+  if(!key&&!item?.destination){
+    const matches=profiles.filter(p=>p.type==="cloudflare-r2").map(profile=>({profile,key:transferKey(profile,item?.location)})).filter(entry=>entry.key);
+    if(matches.length===1){profile=matches[0].profile;key=matches[0].key;}
+  }
   if(key){
     const parts=key.split("/").filter(Boolean);
     filename=parts.pop()||"file";
@@ -3786,7 +3803,7 @@ async function openTransferLocation(item,parts){
   try {
     // Explorer owns its target state. Do not overwrite it with an upload preset.
     await goLocation(parts.profile.accountId,parts.profile.bucketName,folder);
-    $("explorer")?.scrollIntoView({behavior:"smooth",block:"start"});
+
     // Page through remote results until the exact downloaded object is found.
     let target=explorerItems.find(entry=>!entry.folder&&entry.key===parts.key);
     let pages=0;
@@ -3802,7 +3819,8 @@ async function openTransferLocation(item,parts){
     }
     const index=sortedVisibleItems().findIndex(entry=>entry.id===target.id);
     if(index>=0) explorerPage=Math.floor(index/explorerPageSize);
-    await selectSingleExplorerItem(target,{focus:true});
+    await selectSingleExplorerItem(target,{focus:false,scroll:false});
+    setWorkspacePreviewExpanded(false);
   } catch(error){
     finishOperation(error?.message||"Could not open this download in Explorer.",true);
   }
@@ -3878,7 +3896,7 @@ async function renderHistory({markSeen=true}={}){
 
     const row=document.createElement("div");row.className="history-row";
     const date=document.createElement("div");date.className="download-date";date.textContent=formatTransferDate(item.at);
-    const location=document.createElement("div");location.className="download-location";location.textContent=parts.parent||"—";
+    const location=document.createElement("button");location.type="button";location.className="download-location";location.style.cssText="background:transparent;border:0;padding:0;text-align:left;font:inherit;color:inherit";location.textContent=parts.parent||"—";
     location.title=parts.parent||"";
     if(parts.profile?.type==="cloudflare-r2"&&parts.key){
       location.addEventListener("click",()=>openTransferLocation(item,parts));
@@ -3899,6 +3917,10 @@ async function renderHistory({markSeen=true}={}){
       name.classList.add("expanded");
       name.textContent=parts.filename;
       row.style.minHeight="auto";
+    });
+    row.addEventListener("click",event=>{
+      if(event.target.closest("button,input,a,.download-location,.download-name"))return;
+      if(parts.profile?.type==="cloudflare-r2"&&parts.key)openTransferLocation(item,parts);
     });
     nameCell.append(name);
     if(isNew){

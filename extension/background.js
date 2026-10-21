@@ -1443,8 +1443,8 @@ function objectKeyFromLocation(profile, location) {
     return "";
   }
 }
-async function renameCloudflareTransfer(profile, location, newFilename) {
-  const oldKey = objectKeyFromLocation(profile, location);
+async function renameCloudflareTransfer(profile, location, newFilename, exactKey = "") {
+  const oldKey = exactKey || objectKeyFromLocation(profile, location);
   if (!oldKey) throw new Error("Could not determine the R2 object path for this download");
   const response = await RedownCloudflareApi.boundedFetch(profile.workerUrl, {
     method: "POST",
@@ -1471,9 +1471,10 @@ async function renameTransferHistoryItem(id, newFilename) {
   const item = history[index];
   if (!item?.ok) throw new Error("Only completed downloads can be renamed");
   const profiles = await getProfiles();
-  const profile = profiles.find(p => p.id === item.profileId);
+  const profile = item.destination?await preparedProfile(item.destination.accountId,item.destination.bucketName,item.destination.accountName):profiles.find(p => p.id === item.profileId);
   if (!profile || profile.type !== "cloudflare-r2") throw new Error("Inline rename is currently available for Cloudflare R2 downloads");
-  const renamed = await renameCloudflareTransfer(profile, item.location, newFilename);
+  const renamed = await renameCloudflareTransfer(profile, item.location, newFilename, item.destination?.key);
+  if(item.destination)item.destination={...item.destination,key:renamed.key,prefix:renamed.key.split("/").slice(0,-1).join("/")};
   history[index] = { ...item, location: renamed.publicUrl || publicAssetUrl(profile, renamed.key), renamedAt: new Date().toISOString() };
   await chrome.storage.local.set({ transferHistory: history });
   return history[index];
@@ -1506,7 +1507,7 @@ async function ensureGitHubWorkflow(profile) {
   });
   if (!create.ok) throw new Error(`Could not install GitHub ingest workflow (${create.status})`);
 }
-async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename) {
+async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, receipt = null) {
   const prepared = await preparedProfile(
     profile.accountId,
     profile.bucketName,
@@ -1531,7 +1532,11 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename) {
   try { body = JSON.parse(text); } catch { body = { ok:false, error:text }; }
   if (!response.ok || !body.ok)
     throw new Error(body.error || `Cloudflare ingest failed (${response.status})`);
-  return body.publicUrl || publicAssetUrl(prepared, body.key);
+  const key=String(body.key||"");
+  const actualFolder=key.split("/").slice(0,-1).join("/");
+  if(!key||actualFolder!==folder)throw new Error("Destination verification failed: Worker returned a different folder. The file may have been written; check storage before retrying.");
+  if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
+  return body.publicUrl || publicAssetUrl(prepared, key);
 }
 async function ingestCloudflare(profile, sourceUrl, category, filename) {
   const folder = profile.folders?.[category] || category;
@@ -1859,7 +1864,9 @@ async function handleHitomiCaptureMessage(message,sender) {
     const body=await response.json().catch(()=>({}));
     if(!response.ok||!body.ok)throw new Error(body.error||`R2 upload failed (${response.status})`);
     const location=body.publicUrl||publicAssetUrl(prepared,body.key);
-    await recordTransfer({ok:true,sourceUrl:sender.url,profileId:intent.profile.id,profileName:intent.profile.name,category:"files",location});
+    const key=String(body.key||"");
+    if(!key||key.split("/").slice(0,-1).join("/")!==folder)throw new Error("Destination verification failed. Check storage before retrying.");
+    await recordTransfer({ok:true,sourceUrl:sender.url,profileId:intent.profile.id,profileName:intent.profile.name,category:"files",location,destination:{accountId:intent.profile.accountId,accountName:intent.profile.accountName||"",bucketName:intent.profile.bucketName,prefix:folder,key}});
     await markHitomiQueue(intent.jobId,{status:"complete",location});
     await notify("REDOWN gallery complete",location);
     return {ok:true,location};
@@ -1969,8 +1976,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if(!profile || !destination)return notify("REDOWN","That nested location is no longer available. Refresh it in settings.");
     const target={...profile,bucketName:destination.bucketName};
     try{
-      const location=await ingestCloudflareAtPrefix(target,sourceUrl,destination.prefix,basenameFromUrl(sourceUrl));
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location});
+      const receipt={};
+      const location=await ingestCloudflareAtPrefix(target,sourceUrl,destination.prefix,basenameFromUrl(sourceUrl),receipt);
+      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message || String(error);
