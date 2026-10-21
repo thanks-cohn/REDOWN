@@ -1,5 +1,7 @@
 # Bucket surfaces: one primary action with inset repair
 
+**Mode correction:** the inset repair circle belongs in **normal mode**. Debug Mode retains the previous separate name-selection, setup and repair controls. The initial commit `17644fe` placed the circle in the wrong mode; corrected behavior and new evidence are recorded below. Earlier screenshots remain historical.
+
 The user requested a single coherent bucket surface with a quieter macOS-inspired material treatment, then specified that repair should be a small circular control inside that surface. This replaces the previous bucket-name button plus separate green Use this bucket button.
 
 Each card now has one full-size primary button. Clicking it uses the bucket through the existing addBucketPreset path; existing configured destinations retain the no-redeployment fast path. A smaller independent circular repair button is visually inset at the bottom right in Debug Mode. Its click invokes the explicit forceRepair path, never the primary setup action. These are valid sibling HTML buttons inside a visual card, not invalid nested button elements. Native keyboard semantics, explicit accessible labels and separate focus indicators are preserved. Repair remains hidden in normal mode, as before.
@@ -19,3 +21,10 @@ The surface uses 18px corners, layered low-contrast gradients, an inset highligh
 Verified through GitHub metadata that the canonical repository is **thanks-cohn/REDOWN**, visibility **public**, default branch **main**. Updated origin to https://github.com/thanks-cohn/REDOWN.git and current README/onboarding links. Historical documents keep their prior names/URLs as historical evidence. The filesystem directory name is unchanged. No license, manifest key, OAuth identity, store branch or npm-publishing setting was changed by the rename/design work.
 
 Remaining runtime/release limitations are unchanged; see [readiness](runtime/READINESS.md). Reload the updated unpacked extension to review the design in the actual user's environment. Repairs/provisioning were not executed against Cloudflare in this session.
+
+
+## Corrected normal/debug placement
+
+Normal mode now shows the satin bucket action plus inset circular repair, as requested. Its circle explicitly calls forceRepair without activating the large primary button. Debug Mode hides those surfaces and restores the separate bucket-name selector (selection only), Use this bucket button, configuration details and Prepare / Verify / repair control. Switching modes uses CSS and does not issue setup/repair requests. Busy state locks all bucket action targets, including the separate debug controls.
+
+Updated existing interaction tests verify normal repair visibility and exclusive repair invocation, normal primary setup without forced repair, debug selection without provisioning, independent debug repair, and visibility when switching back. Full suite: **189 tests, 183 pass, same six historical failures**; syntax and diff checks pass. See verification/bucket-mode-correction-tests.txt and bucket-mode-correction-syntax.txt. Local HTML renders at 1366px and 390px fit without horizontal overflow; [normal inset repair](runtime/verification/bucket-normal-inset-repair.png) and [restored Debug Mode controls](runtime/verification/bucket-debug-separate-controls.png) show fictional fixture data. These remain local HTML rendering/mock evidence, not installed-extension or live Cloudflare verification. No remote repair/deployment was executed during development.

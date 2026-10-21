@@ -4074,30 +4074,31 @@ async function refreshBuckets(){
   let settingUp=false;
   const markSelected=(el,button,bucket)=>{
     root.querySelectorAll(".bucket").forEach(item=>{
-      item.classList.remove("selected");item.querySelector(".bucket-select").setAttribute("aria-pressed","false");
+      item.classList.remove("selected");item.querySelectorAll("[aria-pressed]").forEach(control=>control.setAttribute("aria-pressed","false"));
     });
-    el.classList.add("selected");button.setAttribute("aria-pressed","true");
+    el.classList.add("selected");button.setAttribute("aria-pressed","true");el.querySelector(".bucket-debug-select")?.setAttribute("aria-pressed","true");
   };
   const useBucket=async(bucket,el,button,caption,forceRepair=false)=>{
     if(settingUp||accountId!==currentAccountId)return;
     settingUp=true;markSelected(el,button,bucket);
-    root.querySelectorAll(".bucket-select, .bucket-repair").forEach(item=>item.disabled=true);
+    root.querySelectorAll(".bucket button").forEach(item=>item.disabled=true);
     button.setAttribute("aria-busy","true");caption.textContent=forceRepair?"Verifying…":"Setting up…";
+    const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
       if(accountId!==currentAccountId||!el.isConnected)return;
-      el.classList.toggle("is-ready",Boolean(done));caption.textContent=done?"Ready":"Retry setup";
+      el.classList.toggle("is-ready",Boolean(done));caption.textContent=done?"Ready":"Retry setup";if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
     }catch(error){
-      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";}
+      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
       settingUp=false;button.removeAttribute("aria-busy");
-      if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket-select, .bucket-repair").forEach(item=>item.disabled=false);}
+      if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
     }
   };
   (result.buckets||[]).forEach(bucket=>{
     const ready=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket.name);
     const el=document.createElement("div");el.className="bucket";el.classList.toggle("is-ready",ready);
-    const button=document.createElement("button");button.type="button";button.className="bucket-select bucket-use";
+    const button=document.createElement("button");button.type="button";button.className="bucket-select bucket-use normal-only";
     button.title=bucket.name;button.setAttribute("aria-label",`Use bucket ${bucket.name}`);button.setAttribute("aria-pressed","false");
     const icon=document.createElement("span");icon.className="bucket-icon";icon.setAttribute("aria-hidden","true");
     icon.innerHTML='<svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="10" ry="4" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.3"/><path d="M6 8v8c0 2.2 4.5 4 10 4s10-1.8 10-4V8M6 16v8c0 2.2 4.5 4 10 4s10-1.8 10-4v-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
@@ -4107,11 +4108,17 @@ async function refreshBuckets(){
     const check=document.createElement("span");check.className="bucket-check";check.setAttribute("aria-hidden","true");check.textContent="✓";
     button.append(icon,copy,check);el.append(button);root.append(el);
     button.addEventListener("click",()=>useBucket(bucket.name,el,button,caption));
-    const repair=document.createElement("button");repair.type="button";repair.className="bucket-repair debug-only";
+    const repair=document.createElement("button");repair.type="button";repair.className="bucket-repair normal-only";
     repair.title=`Verify / repair ${bucket.name}`;repair.setAttribute("aria-label",repair.title);
     repair.innerHTML='<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12.7 6a5 5 0 1 0 .1 3.7M12.7 2.7V6H9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     repair.addEventListener("click",event=>{event.stopPropagation();void useBucket(bucket.name,el,button,caption,true);});
     el.append(repair);
+    const debugName=document.createElement("button");debugName.type="button";debugName.className="bucket-debug-select debug-only";debugName.textContent=bucket.name;debugName.setAttribute("aria-pressed","false");
+    debugName.addEventListener("click",()=>{markSelected(el,button,bucket.name);setStatus("cf-status",bucket.name+" selected.","ok");});
+    const details=document.createElement("div");details.className="bucket-debug-details debug-only";details.textContent=ready?"Configured for REDOWN":([bucket.location,bucket.jurisdiction].filter(Boolean).join(" · ")||"R2 bucket")+" · Worker not configured";
+    const debugUse=document.createElement("button");debugUse.type="button";debugUse.className="bucket-debug-use secondary setup-go debug-only";debugUse.textContent="Use this bucket";debugUse.onclick=()=>useBucket(bucket.name,el,button,caption);
+    const debugRepair=document.createElement("button");debugRepair.type="button";debugRepair.className="bucket-debug-repair secondary debug-only";debugRepair.textContent=ready?"Verify / repair Worker":"Prepare Worker for right-click";debugRepair.onclick=()=>useBucket(bucket.name,el,button,caption,true);
+    el.append(debugName,details,debugUse,debugRepair);
   });
   setStatus("cf-status",(result.buckets||[]).length?"Choose a bucket.":"No buckets yet. Create one above.");
 }

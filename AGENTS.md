@@ -99,4 +99,4 @@ Here immediately and cache bounded short-lived folder pages. Latest full suite:
 188 tests, 182 pass, same six historical evidence failures. User's deployed/browser
 copy stall remains unverified until retest; no live closure or customer deployment claimed.
 
-Bucket surface follow-up: [design/interaction report](docs/BUCKET_SURFACE_REPORT.md). Each bucket is one primary setup surface; the inset circular repair target remains Debug Mode only and never triggers the primary action. Latest full suite: 189 tests, 183 pass, same six historical evidence failures. Visual QA is a local HTML fixture, not installed-extension/cloud verification.
+Bucket surface follow-up: [design/interaction report](docs/BUCKET_SURFACE_REPORT.md). Normal mode uses one primary bucket surface with an inset circular repair target that never triggers the primary action. Debug Mode retains separate name-selection, setup, and repair controls. Latest full suite: 189 tests, 183 pass, same six historical evidence failures. Visual QA is a local HTML fixture, not installed-extension/cloud verification.

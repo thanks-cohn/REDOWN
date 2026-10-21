@@ -29,28 +29,35 @@ test('debug-only sections start hidden and toggle exists only inside header disc
   assert.equal(h.dom.window.getComputedStyle(panel).display,'none','hidden attribute wins over author layout styles');
   h.dom.window.close();
 });
-test('each bucket is one action and debug repair remains separate from normal setup',async()=>{
+test('normal mode has inset repair and Debug Mode restores separate controls',async()=>{
   const h=harness(),d=h.dom.window.document;
   await vm.runInContext('refreshBuckets()',h.context);
   const tile=d.querySelector('.bucket-select'),repair=d.querySelector('.bucket-repair');
   assert.equal(d.querySelectorAll('.bucket-select').length,1);
   assert.equal(tile?.querySelector('button'),null,'repair is a sibling target, never invalid nested button markup');
   assert.equal(tile.querySelector('.bucket-name').textContent,'test-bucket');
-  assert.equal(h.dom.window.getComputedStyle(repair).display,'none');
-  tile.click();await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(tile.getAttribute('aria-pressed'),'true');
-  assert.equal(h.calls[1][0],'test-bucket');assert.equal(h.calls[1].length,1,'single tile invokes normal setup without force repair');
-  const toggle=d.getElementById('debug-mode-enabled');toggle.checked=true;
-  toggle.dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
   assert.notEqual(h.dom.window.getComputedStyle(repair).display,'none');
   repair.click();await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(h.calls[2][0],'test-bucket');assert.equal(h.calls[2][1].forceRepair,true);
+  assert.equal(h.calls[1][1].forceRepair,true,'normal inset repair explicitly repairs');
+  tile.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tile.getAttribute('aria-pressed'),'true');
+  assert.equal(h.calls[2][0],'test-bucket');assert.equal(h.calls[2].length,1,'single tile invokes normal setup without force repair');
+  const toggle=d.getElementById('debug-mode-enabled');toggle.checked=true;
+  toggle.dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
+  assert.equal(h.dom.window.getComputedStyle(repair).display,'none');
+  assert.equal(h.dom.window.getComputedStyle(tile).display,'none');
+  const debugName=d.querySelector('.bucket-debug-select'),debugRepair=d.querySelector('.bucket-debug-repair');
+  assert.notEqual(h.dom.window.getComputedStyle(debugName).display,'none');
+  debugName.click();assert.equal(h.calls.length,3,'debug name selection does not provision');
+  debugRepair.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.calls[3][0],'test-bucket');assert.equal(h.calls[3][1].forceRepair,true);
   assert.equal(h.saved[0].debugModeEnabled,true);
   toggle.checked=false;toggle.dispatchEvent(new h.dom.window.Event('change'));
-  assert.equal(h.dom.window.getComputedStyle(repair).display,'none');h.dom.window.close();
+  assert.notEqual(h.dom.window.getComputedStyle(repair).display,'none');
+  assert.equal(h.dom.window.getComputedStyle(debugRepair).display,'none');h.dom.window.close();
 });
 
-test('normal mode offers one setup action without exposing repair',async()=>{
+test('normal primary setup does not invoke the independent inset repair',async()=>{
   const h=harness(),d=h.dom.window.document;
   await vm.runInContext('refreshBuckets()',h.context);
   const use=d.querySelector('.bucket-use');
