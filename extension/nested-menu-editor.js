@@ -40,7 +40,6 @@
       const headings=nodeElement('div','nested-columns');['Existing location','Create a new location here','Actions'].forEach(text=>headings.append(nodeElement('span','',text)));card.append(headings);
       const roots=nodeElement('div','nested-roots');card.append(roots);
       const current=()=>version===renderVersion && card.isConnected;
-      const rerender=()=>render(context.profiles());
       function rootRow(root) {
         const group=nodeElement('div','nested-group');const row=nodeElement('div','nested-location-row');
         const select=nodeElement('select','nested-existing');select.setAttribute('aria-label','Existing buckets');selectedOption(select,'','Loading buckets…');select.disabled=true;
@@ -139,9 +138,7 @@
         return walk(root.children) || [];
       }
       model.roots.forEach(rootRow);
-      const footer=nodeElement('div','nested-footer');
-      footer.append(button('Refresh locations',()=>rerender()));
-      card.append(footer);container.append(card);
+      container.append(card);
     }
   }
   function refresh(){if(!context||!container)return;if(pending.size){refreshQueued=true;return;}lastStatus={text:"",bad:false};render(context.profiles());}
