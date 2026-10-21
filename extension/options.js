@@ -4106,7 +4106,9 @@ async function refreshBuckets(){
     const name=document.createElement("span");name.className="bucket-name";name.textContent=bucket.name;
     const caption=document.createElement("span");caption.className="bucket-status";caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
     const check=document.createElement("span");check.className="bucket-check";check.setAttribute("aria-hidden","true");check.textContent="✓";
-    button.append(icon,copy,check);el.append(button);root.append(el);
+    const surface=document.createElement("span");surface.className="bucket-surface";surface.append(icon,copy,check);
+    for(const side of ["top","right","bottom","left"]){const face=document.createElement("span");face.className=`bucket-side bucket-side-${side}`;face.setAttribute("aria-hidden","true");button.append(face);}
+    button.append(surface);el.append(button);root.append(el);
     button.addEventListener("click",()=>useBucket(bucket.name,el,button,caption));
     const repair=document.createElement("button");repair.type="button";repair.className="bucket-repair normal-only";
     repair.title=`Verify / repair ${bucket.name}`;repair.setAttribute("aria-label",repair.title);
