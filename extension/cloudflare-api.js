@@ -116,11 +116,36 @@
     } finally { await reader.cancel(); }
     return URL.createObjectURL(new Blob(chunks,{type}));
   }
-  async function download(source,key,filename) {
+  async function download(source,key,filename,onState) {
     const current = await auth();
-    return chrome.downloads.download({url:API+objectPath(source,key),
+    const id=await chrome.downloads.download({url:API+objectPath(source,key),
       headers:[{name:"Authorization",value:`Bearer ${current.accessToken}`}],
       filename:String(filename || key.split("/").pop()).replace(/[\\/:*?"<>|\x00-\x1f]/g,"_"),saveAs:true});
+    if(!Number.isInteger(id))throw new Error("Chrome did not start the download. Check Chrome Downloads and try again.");
+    // Starting a download is not completion. Report delayed browser failures,
+    // which do not reject the downloads.download() promise.
+    if(typeof onState==="function"&&chrome.downloads.onChanged){
+      let timer,closed=false;
+      const cleanup=()=>{if(closed)return;closed=true;chrome.downloads.onChanged.removeListener(listener);clearTimeout(timer);};
+      const listener=delta=>{
+        if(delta.id!==id)return;
+        if(delta.state?.current==="interrupted"||delta.error?.current){cleanup();try{onState({state:"interrupted",error:delta.error?.current||"interrupted"});}catch{}}
+        else if(delta.state?.current==="complete")cleanup();
+      };
+      chrome.downloads.onChanged.addListener(listener);
+      timer=setTimeout(cleanup,30*60*1000);
+      // An immediate failure may precede registration of onChanged.
+      try{
+        const [item]=await chrome.downloads.search({id});
+        if(item?.state==="interrupted"){
+          cleanup();
+          throw new Error(`Chrome could not start this download (${item.error||"interrupted"}). Open Chrome Downloads for details.`);
+        }
+        if(item?.state==="complete")cleanup();
+      }catch(error){cleanup();throw error;}
+    }
+    return id;
   }
+
   globalThis.RedownCloudflareApi={request,preview,download,boundedFetch};
 })();

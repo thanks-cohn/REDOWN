@@ -71,3 +71,19 @@ test('preview failure replaces spinner and download rejection ends progress',asy
   assert.equal(context.finished.failed,true);
   assert.equal(context.finished.text,'Download denied.');
 });
+test('download reports delayed Chrome interruption and removes its listener',async()=>{
+ const h=harness();let listener,removed=0;const outcomes=[];
+ h.context.setTimeout=()=>1;h.context.clearTimeout=()=>{};
+ h.context.chrome.downloads.onChanged={addListener:fn=>{listener=fn;},removeListener:fn=>{assert.equal(fn,listener);removed++;}};
+ h.context.chrome.downloads.search=async()=>[{id:123,state:'in_progress'}];
+ await h.api.download(bucket,'folder/a.webp','a.webp',s=>outcomes.push(s));
+ listener({id:999,state:{current:'interrupted'},error:{current:'SERVER_UNAUTHORIZED'}});assert.equal(outcomes.length,0);
+ listener({id:123,state:{current:'interrupted'},error:{current:'SERVER_UNAUTHORIZED'}});
+ assert.equal(outcomes[0].state,'interrupted');assert.equal(outcomes[0].error,'SERVER_UNAUTHORIZED');assert.equal(removed,1);
+});
+test('download exposes interruption occurring before onChanged registration',async()=>{
+ const h=harness();let removed=0;h.context.setTimeout=()=>1;h.context.clearTimeout=()=>{};
+ h.context.chrome.downloads.onChanged={addListener(){},removeListener(){removed++;}};
+ h.context.chrome.downloads.search=async()=>[{id:123,state:'interrupted',error:'SERVER_FORBIDDEN'}];
+ await assert.rejects(h.api.download(bucket,'a.webp','a.webp',()=>{}),/SERVER_FORBIDDEN/);assert.equal(removed,1);
+});

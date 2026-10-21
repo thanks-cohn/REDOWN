@@ -3053,19 +3053,21 @@ function clipboardEntries(items = selectedExplorerItems()) {
 async function setExplorerClipboard(
   operation,
   items = selectedExplorerItems(),
+  source = null,
 ) {
   if (!items.length) return;
   if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to copy or move search results.",true);
   explorerClipboard = {
     operation,
-    accountId: workspaceTarget.accountId,
-    bucketName: workspaceTarget.bucketName,
-    accountName: accountName(workspaceTarget.accountId),
+    accountId: source?.accountId || workspaceTarget.accountId,
+    bucketName: source?.bucketName || workspaceTarget.bucketName,
+    accountName: source?.accountName || accountName(source?.accountId || workspaceTarget.accountId),
     entries: clipboardEntries(items),
     archiveKey: items.some((item) => item.archiveEntry) ? explorerArchive?.key : null,
   };
   await chrome.storage.session.set({ explorerClipboard });
   renderFileItems();
+  finishOperation(`${items.length} item${items.length===1?"":"s"} ${operation==="move"?"cut":"copied"} in REDOWN. Open a destination folder and choose Paste.${operation==="move"?" Originals stay in place until the move succeeds.":""}`);
 }
 async function pasteExplorer(
   destination = { ...explorerSource(), prefix: workspacePrefix },
@@ -3287,7 +3289,10 @@ async function explorerDownload(item) {
   if (item.folder) return;
   setOperation("download", `Preparing “${item.name}” for download…`);
   try {
-    await RedownCloudflareApi.download(explorerSource(),item.key,item.name);
+    const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:explorerSource();
+    await RedownCloudflareApi.download(source,item.key,item.name,(state)=>{
+      if(state.state==="interrupted")finishOperation(`Chrome could not download “${item.name}” (${state.error||"interrupted"}). Open Chrome Downloads for details.`,true);
+    });
     finishOperation(`Downloading “${item.name}”…`);
   } catch(error) {
     finishOperation(error?.message || "Could not download this file. Retry.",true);
@@ -3387,21 +3392,37 @@ async function dropOnBucket(event, accountId, bucketName) {
   if (explorerSelected.size)
     moveSelectionTo({ accountId, bucketName, prefix: "" });
 }
-function menuButton(label, action, enabled = true) {
+function menuButton(label, action, enabled = true, description = label) {
   const b = document.createElement("button");
   b.className = "menu-item";
   b.type = "button";
   b.role = "menuitem";
   b.textContent = label;
-  b.title = label;
+  b.title = description;
   b.disabled = !enabled;
-  b.onclick = () => {
+  b.onclick = async () => {
     hideExplorerMenu();
-    action?.();
+    try {await action?.();}
+    catch(error){finishOperation(error?.message || "That action could not finish. Please retry.",true);}
   };
   return b;
 }
+let explorerDestinationMenus;
+function destinationMenus(){
+  return explorerDestinationMenus ||= RedownDestinationMenus.create({
+    document,
+    loadPage:async destination=>{
+      const response=await send({type:"cfDestinationFolders",...destination});
+      if(!response?.ok)throw new Error("Could not load folders. Retry.");
+      return response;
+    },
+    onChoose:async(operation,destination,items,source)=>{await setExplorerClipboard(operation,items,source);await pasteExplorer(destination);},
+    onError:error=>finishOperation(error?.message||"Could not transfer these files.",true),
+    onDismiss:()=>rootRow([...explorerSelected][0])?.focus({preventScroll:true})
+  });
+}
 function showExplorerMenu(x, y, item) {
+  explorerDestinationMenus?.close();
   const menu = $("explorer-menu");
   menu.replaceChildren();
 
@@ -3465,15 +3486,16 @@ function showExplorerMenu(x, y, item) {
 
     if (!item.folder)
       menu.append(
-        menuButton("Download", () =>
-          selected.filter((entry) => !entry.folder).forEach(explorerDownload),
-        ),
+        menuButton("Download", async () => {
+          const files=(selected.length?selected:[item]).filter(entry=>!entry.folder);
+          for(const file of files)await explorerDownload(file);
+        }),
       );
 
     sep();
     menu.append(
       menuButton("Cut", () => setExplorerClipboard("move"), hasSelection),
-      menuButton("Copy", () => setExplorerClipboard("copy"), hasSelection),
+      menuButton("Copy", () => setExplorerClipboard("copy"), hasSelection,"Copy for pasting into another REDOWN folder"),
       menuButton(
         "Paste",
         () => pasteExplorer(item.folder ? { ...explorerSource(), prefix: item.key } : undefined),
@@ -3482,59 +3504,8 @@ function showExplorerMenu(x, y, item) {
     );
 
     sep();
-    section("Move to");
-    for (const account of explorerAccounts) {
-      if(explorerAccounts.length>1)section(account.name||account.id);
-      for (const bucket of explorerBuckets.get(account.id) || []) {
-        if (
-          workspaceTarget &&
-          account.id === workspaceTarget.accountId &&
-          bucket.name === workspaceTarget.bucketName
-        ) continue;
-        menu.append(
-          menuButton(
-            bucket.name,
-            async () => {
-              await setExplorerClipboard("move");
-              await pasteExplorer({
-                accountId: account.id,
-                bucketName: bucket.name,
-                accountName: account.name,
-                prefix: "",
-              });
-            },
-            hasSelection,
-          ),
-        );
-      }
-    }
-
-    sep();
-    section("Send to");
-    for (const account of explorerAccounts) {
-      if(explorerAccounts.length>1)section(account.name||account.id);
-      for (const bucket of explorerBuckets.get(account.id) || []) {
-        if (
-          workspaceTarget &&
-          account.id === workspaceTarget.accountId &&
-          bucket.name === workspaceTarget.bucketName
-        ) continue;
-        menu.append(
-          menuButton(
-            bucket.name,
-            async () => {
-              await setExplorerClipboard("copy");
-              await pasteExplorer({
-                accountId: account.id,
-                bucketName: bucket.name,
-                accountName: account.name,
-                prefix: "",
-              });
-            },
-            hasSelection,
-          ),
-        );
-      }
+    for(const operation of ["move","copy"]){
+      destinationMenus().attach(menu,{operation,accounts:explorerAccounts,buckets:explorerBuckets,source:{...explorerSource(),prefix:workspacePrefix},items:selected});
     }
 
     sep();
@@ -3593,6 +3564,7 @@ function showExplorerMenu(x, y, item) {
   });
 }
 function hideExplorerMenu() {
+  explorerDestinationMenus?.close();
   $("explorer-menu").hidden = true;
 }
 function wireWorkspace() {
@@ -3690,7 +3662,7 @@ function wireWorkspace() {
       }),
   );
   document.addEventListener("click", (e) => {
-    if (!e.target.closest("#explorer-menu")) hideExplorerMenu();
+    if (!e.target.closest("#explorer-menu, .explorer-submenu")) hideExplorerMenu();
   });
   $("explorer").onkeydown = (e) => {
     if (e.target.matches("input,select,textarea")) return;

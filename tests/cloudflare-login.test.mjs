@@ -314,3 +314,10 @@ test('runtime adapter gates actual background messages by settings sender and De
  const result=await send('snapshot');assert.equal(result.ok,true);assert.equal(result.result.data.components.authorization,'disconnected');assert.equal(result.result.data.components.worker,'unknown');
  const exported=await send('exportSupport');assert.equal(exported.result.data.scope,'passive-runtime');assert.equal(h.calls.filter(c=>c[0]==='fetch').length,0);
 });
+test('destination folder pages preserve parent prefix, immediate children and continuation',async()=>{
+ const h=harness();h.local.cloudflareAuth={accessToken:'fixture',expiresAt:Date.now()+3600000};
+ h.fetch(async()=>Response.json({success:true,result:{objects:[{key:'parent/plain.txt'},{key:'parent/sub/file.txt'}],delimited:['parent/another/'],cursor:'next'}}));
+ const listener=h.chrome.runtime.onMessage.listeners[0];
+ const result=await new Promise(resolve=>listener({type:'cfDestinationFolders',accountId:'a',bucketName:'b',prefix:'parent/'},{},resolve));
+ assert.equal(result.ok,true);assert.equal(result.cursor,'next');assert.deepEqual(Array.from(result.folders,f=>f.prefix),['parent/another/','parent/sub/']);
+});

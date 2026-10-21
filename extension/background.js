@@ -2140,6 +2140,19 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         ok:true,
         children:await listFolderChildren(message.accountId,message.bucketName,message.parentPrefix || "",message.limit || 250)
       });
+      if(message?.type==="cfDestinationFolders"){
+        if(!message.accountId||!message.bucketName)throw new Error("Choose a bucket first.");
+        const parent=cleanExplorerPrefix(message.prefix||"");
+        const page=await listObjectsPage(message.accountId,message.bucketName,parent,message.cursor||"","/");
+        if(page.cursor&&page.cursor===message.cursor||page.truncated&&!page.cursor)throw new Error("Cloudflare did not return a usable folder page. Retry.");
+        const names=new Set();
+        for(const path of [...page.delimited,...page.objects.map(object=>object.key||object.name||"")]){
+          const key=String(path);if(!key.startsWith(parent))continue;
+          const relative=key.slice(parent.length),slash=relative.indexOf("/");
+          if(slash>0)names.add(relative.slice(0,slash));
+        }
+        return sendResponse({ok:true,folders:[...names].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).map(name=>({name,prefix:parent+name+"/"})),cursor:page.cursor||""});
+      }
       if (message?.type === "cfSearchObjects") return sendResponse({ ok:true, results:await searchExplorerObjects(message.targets || [], message.query, message.limit || 200) });
       if (message?.type === "cfPrepareBucket") return sendResponse({ ok:true, profile:await preparedProfile(message.accountId,message.bucketName,message.accountName) });
       if (message?.type === "cfTransferObjects") return sendResponse({ ok:true, ...(await transferExplorerObjects(message)) });
