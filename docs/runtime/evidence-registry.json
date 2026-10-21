@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-21T10:58:01.838158+00:00",
+  "records": [
+    {
+      "id": "baseline",
+      "scope": "mock/DOM fixture",
+      "state": "failed",
+      "sourceCommit": "5dd6abf8109ee03ca96b884178753e02ab0b1f0f",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Current-source baseline 162/135/27",
+      "path": "verification/baseline-tests.txt",
+      "sha256": "5aabbba3fcd81879d7ab755177f1d925068304b88f5130db789b2e7a281980ef",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "reproductions",
+      "scope": "mock/DOM fixture",
+      "state": "failed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Expected pre-fix auth failures; not release evidence",
+      "path": "verification/reproductions.txt",
+      "sha256": "7b5a925070b66fe2c49ce4cca2e3f58c7385d05395e3fabbcafb46f09cc91673",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "final-suite",
+      "scope": "mock/DOM fixture",
+      "state": "failed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "172 tests, 166 pass, six historical failures",
+      "path": "verification/final-tests.txt",
+      "sha256": "319f42c956002bff9f2f988f2eeb035c88ed3391f9bf4a799c5d32436bb5370b",
+      "workerRevision": null,
+      "incidentLinks": [
+        "REL-001",
+        "REL-002",
+        "REL-003",
+        "REL-004",
+        "REL-005"
+      ]
+    },
+    {
+      "id": "runtime-regressions",
+      "scope": "mock/DOM fixture",
+      "state": "passed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Nine isolated auth/search/listing/upload/collector scenarios",
+      "path": "verification/runtime-tests.txt",
+      "sha256": "ef50af73c0a03b093de66e60dd9c2b8479ff4b33beb6051785328cad4e78c30d",
+      "workerRevision": null,
+      "incidentLinks": [
+        "REL-001",
+        "REL-002",
+        "REL-003",
+        "REL-004",
+        "REL-005"
+      ]
+    },
+    {
+      "id": "syntax",
+      "scope": "local integration",
+      "state": "passed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Production and new runtime scripts parse",
+      "path": "verification/syntax-check.txt",
+      "sha256": "6c4cfbf0a84e5ffe3e7826f9a027cc9b09a552e55ab9ca5500f0a3439a9cdfa6",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "schemas",
+      "scope": "local integration",
+      "state": "passed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Two schemas, five response fixtures, bundle bounds",
+      "path": "verification/schema-results.txt",
+      "sha256": "a42c4e2875e55c6b44a58f2b3582abe61fd6eee21e6a440dbec0dbd47cef9251",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "overhead",
+      "scope": "local integration",
+      "state": "passed",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": null,
+      "adapterVersion": "1.0.0",
+      "scenario": "Collector microbenchmark only, not product performance",
+      "path": "verification/benchmark.json",
+      "sha256": "d38667c54d345842db3fdaa59e6f7d76a472dba1cf2dfa39c47e203f99398783",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "chrome-attempt",
+      "scope": "installed Chrome",
+      "state": "blocked",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": "a26a6ef92ed40c74f67e5bbcefa8a14554f061d3155017cfb6dc84fbc87cf277",
+      "adapterVersion": "1.0.0",
+      "scenario": "Actual Chromium executable; extension loading forbidden; zero assertions",
+      "path": "verification/installed-chrome-package.json",
+      "sha256": "8412a16d2b5a27ab5643fbafc4dc92a5e65d2515dc8501e6a15132b4ede1aa03",
+      "workerRevision": null,
+      "incidentLinks": []
+    },
+    {
+      "id": "audit-package",
+      "scope": "packaged candidate",
+      "state": "blocked",
+      "sourceCommit": "36b6acb028f992748fd9da21166315ad4bd95e51",
+      "extensionVersion": "0.5.13",
+      "packageSha256": "a26a6ef92ed40c74f67e5bbcefa8a14554f061d3155017cfb6dc84fbc87cf277",
+      "adapterVersion": "1.0.0",
+      "scenario": "Allowlisted audit artifact; license and install gates blocked",
+      "path": "verification/package-manifest.json",
+      "sha256": "269a2c6b4910e6844f29a1d769777a2f1f0216dadac34811216be5d968e4f3cf",
+      "workerRevision": null,
+      "incidentLinks": []
+    }
+  ],
+  "liveCloudflare": {
+    "state": "not run",
+    "reason": "No scoped credentials/disposable-resource authorization"
+  },
+  "storeDistributed": {
+    "state": "not run"
+  }
+}

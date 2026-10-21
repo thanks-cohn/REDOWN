@@ -1,0 +1,14 @@
+{
+  "chrome-service-worker-lifecycle": {
+    "url": "https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle",
+    "retrievedDate": "2026-10-21",
+    "htmlSha256": "331ebf2d3de01e6063e8dd20c3d4fb014b25cce4e7399c1bf2539b57d48b1318",
+    "scope": "lifecycle or packaging guidance only; not store approval"
+  },
+  "chrome-store-prepare": {
+    "url": "https://developer.chrome.com/docs/webstore/prepare",
+    "retrievedDate": "2026-10-21",
+    "htmlSha256": "2a238c6f352f8fe88f68b6b3c1c08270e31cf6bd3dd255093040ee8dce94a2b4",
+    "scope": "lifecycle or packaging guidance only; not store approval"
+  }
+}

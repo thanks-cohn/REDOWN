@@ -1,0 +1,9 @@
+{
+  "scope": "local-integration",
+  "scenario": "10000 small event calls; microbenchmark, not Windows product responsiveness",
+  "iterations": 10000,
+  "disabledMs": 0.6700449999999982,
+  "enabledMs": 530.8997390000001,
+  "retained": 256,
+  "exportBytes": 69657
+}

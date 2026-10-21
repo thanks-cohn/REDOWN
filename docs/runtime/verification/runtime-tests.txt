@@ -1,0 +1,17 @@
+✔ read retry never crosses a newly authorized session (35.172311ms)
+✔ safe reads honor bounded Retry-After; writes are never replayed on 503 (9.262761ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (32.533494ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (1.588504ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (0.705106ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (3.37499ms)
+✔ malformed successful listings cannot masquerade as empty buckets (5.245457ms)
+✔ progressive UI retains selection, emits early results and rejects late query responses (5.352695ms)
+✔ local upload does not replay an ambiguous write or write after an unknown preflight (3.551929ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.991628

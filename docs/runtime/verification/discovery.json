@@ -1,0 +1,31 @@
+{
+  "runtimeApiVersion": "1.0.0",
+  "requestId": "3d5f3d1f-a7c2-44ed-84bf-160ea1ff3071",
+  "runId": "c4056029-0c3d-4cfd-9069-54782d32fe64",
+  "state": "available",
+  "data": {
+    "operations": [
+      "describe",
+      "snapshot",
+      "listTraces",
+      "exportSupport",
+      "clear"
+    ],
+    "adapter": "offline",
+    "permissions": [
+      "storage"
+    ],
+    "sideEffects": "local diagnostics only; no remote requests",
+    "limits": {
+      "events": 256,
+      "retentionMs": 86400000,
+      "exportBytes": 196608
+    },
+    "unsupported": [
+      "cloud probes",
+      "transfer verification",
+      "preview state",
+      "durable task recovery"
+    ]
+  }
+}

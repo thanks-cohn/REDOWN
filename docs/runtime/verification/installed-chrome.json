@@ -1,0 +1,19 @@
+{
+  "scope": "installed-chrome",
+  "installation": "unpacked directory",
+  "state": "blocked",
+  "scenario": "fresh isolated profile, real service worker and options, passive diagnostics, local persistence",
+  "startedAt": "2026-10-21T10:51:36.233Z",
+  "assertions": [],
+  "limitations": [
+    "No Cloudflare login or remote data",
+    "Not a CRX or store-distributed installation",
+    "Not the complete workflow matrix"
+  ],
+  "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+  "extensionVersion": "0.5.13",
+  "browser": "Chrome/154.0.8037.57",
+  "os": "linux x64",
+  "code": "CDP_-32600: Loading of unpacked extensions is disabled by the administrator.",
+  "finishedAt": "2026-10-21T10:51:36.729Z"
+}

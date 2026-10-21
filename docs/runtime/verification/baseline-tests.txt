@@ -1,0 +1,1154 @@
+
+> remote-asset-ingest@0.1.0 test
+> node --test tests/*.test.mjs
+
+✔ one shared add control targets Simple or Nested and asks which destination when needed (122.223742ms)
+✖ offline discovery advertises only implemented operations and distinct versions (14.328642ms)
+✔ operation descriptions retain exact destination, side effect and coverage limits (29.173883ms)
+✔ errors are deterministic, exact-id and version aware without echoing arbitrary input (128.368965ms)
+✔ unknown Forever mappings never become accepted records or a conformance claim (14.440737ms)
+✔ reference inspection detects content drift, missing anchors/files and unsafe paths (1.058176ms)
+✔ CLI works outside checkout, emits one JSON envelope and uses exit 2 for errors (256.816405ms)
+✖ catalog IDs, evidence labels, source hashes and references are internally consistent (13.886111ms)
+✔ portable request fixtures and JSON envelope contract (91.251164ms)
+✔ M0 inventory covers every literal message branch without inventing handlers (0.862298ms)
+✔ private WEBP preview reads nested keys without a Worker or background messaging (30.822988ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (0.887385ms)
+✔ concurrent expired requests refresh rotating credentials once (1.621053ms)
+✔ 401 refresh retries a private read and denied reads report failure (1.776922ms)
+✔ oversized preview stops without allocating an object URL (1.348592ms)
+✔ preview failure replaces spinner and download rejection ends progress (2.541686ms)
+✖ click creates a visible window before network navigation; repeated clicks focus it (19.099475ms)
+✖ successful callback exchanges PKCE and verifies access before saving token (0.872232ms)
+✖ callback resumes after service worker restart from session state (0.852934ms)
+✖ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (0.750743ms)
+✖ state mismatch fails without token exchange and allows a fresh retry (0.806395ms)
+✖ denied consent and missing authorization code fail cleanly (1.38098ms)
+✖ closed popup releases attempt and stale window is replaced on next click (0.879694ms)
+✖ expired attempt clears secrets, closes popup, and permits retry (0.770553ms)
+✖ failed API verification never stores an access token (0.809169ms)
+✖ duplicate navigation events exchange a code only once (0.854626ms)
+✖ verification network stall aborts and releases the attempt (0.766877ms)
+✖ popup creation errors are returned instead of leaving an in-flight lock (0.919762ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (15.759265ms)
+✖ settings and worker observing the same callback exchange the code once across contexts (1.067529ms)
+✔ two settings contexts share one visible sign-in window (2.840305ms)
+✖ Worker deployments cannot overlap and a failed deployment releases the lock (0.913303ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (2.103562ms)
+✔ verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests (102.657661ms)
+✔ Cloudflare 403 authentication error refreshes once and retries the read (24.729621ms)
+✔ permission-denied 403 does not renew credentials or repeat the request (1.165363ms)
+✔ expired credentials shared by settings and worker rotate once under the shared lock (1.603567ms)
+✔ invalid refresh grant preserves connection and requests reconnect without disconnect (4.621834ms)
+✔ transient renewal failure retains credentials and can recover on the next refresh (1.467167ms)
+✔ login token storage shares the refresh lock and clears reconnect state (0.762871ms)
+✖ real discovery, case, history, filters and validation are deterministic and honest (12.946951ms)
+✖ original case and proposal Markdown bytes are retained from pinned upstream (0.436842ms)
+✔ archived 0.1 semantic golden, unknown fields and inferred provenance survive JSON round trips (1.198251ms)
+✔ portable structural fixtures and frozen schema assertions match the lightweight evaluator (0.990236ms)
+✔ new unknown optional fields are retained without reinterpreting lifecycle or evidence (1.093557ms)
+✔ missing case, bad requests, unsupported operations/versions have stable sanitized errors (5.391907ms)
+✔ malformed JSON, non-UTF8, blank lines and truncated JSONL never yield partial query success (9.338918ms)
+✔ required fields, types, enum values, bounds and array uniqueness are actually checked (3.930527ms)
+✔ every record format version is rejected explicitly; missing versions are structural failures (1.821718ms)
+✔ duplicate case/event IDs and paths, mismatched case IDs and missing event links are not hidden (4.00662ms)
+✔ recorded chronology and exact physical sequence are validated; dates are never invented or sorted (2.685066ms)
+✔ deterministic list ordering and filter semantics do not depend on manifest order (1.612861ms)
+✔ source hash drift, missing anchors and absence are freshness warnings, not falsified historical claims (3.289105ms)
+✔ path traversal, absolute/Windows paths, NUL and escaping symlinks are rejected for records and evidence (4.389693ms)
+✔ internal symlinks work; directories, unavailable roots/files and oversized records fail deterministically (4.53111ms)
+✔ operation references resolve exactly; Forever mappings remain unknown rather than invented (1.846985ms)
+✔ source confirmation is scoped and requires proof; test pointers never imply test success (3.310326ms)
+✔ hypothesis revisions and counterevidence preserve earlier beliefs and latest projection (2.133055ms)
+✔ closure requires recorded automation and browser outcomes; reopening retains closure evidence (4.038286ms)
+✔ invalid hypothesis, outcome and lifecycle payloads cannot masquerade as verified results (2.213784ms)
+✔ immutable API snapshots avoid rescans and refresh only when a new reader is created (1.351447ms)
+✔ CLI adapter emits one JSON envelope, legible summaries and exact error/validation exits (18.632348ms)
+✔ actual CLI entry point works outside the checkout and exits 2 for invalid corpus validation (125.332135ms)
+✔ queries never modify the canonical corpus or cited historical evidence (8.05494ms)
+✔ explicit nested folder is sent intact and receipt uses actual target bucket and key (2.124934ms)
+✔ history uses explicit bucket/key rather than mistaking public assets route for storage folder (1.543929ms)
+✔ search previews retain result set and use each result account/bucket and exact key (1.25152ms)
+✔ history location opens exact folder and preview without scroll or focus jump (1.333981ms)
+✔ download collision preserves originals and returns numbered key and URL (24.326659ms)
+✔ concurrent collision never overwrites or reports a successful download (2.064274ms)
+✔ remote download uses numbered key within requested folder (1.397334ms)
+✔ first collision starts at one and a different folder keeps the original name (5.022373ms)
+✔ same-bucket transfers stream objects and preserve metadata (33.915054ms)
+✔ cross-bucket transfers stay Worker-to-Worker and keep-both resolves conflicts (3.913512ms)
+✔ folder markers, properties, and batched deletes are real R2 operations (2.825453ms)
+✔ private Explorer reads require auth while explicitly enabled public assets still work (2.946962ms)
+✔ short-lived private preview URLs support ranges for text, PDF, and GLB (5.461688ms)
+✔ ZIP and CBZ archives are listed as virtual folders and selected entries extract safely (5.555286ms)
+✔ archive traversal and malformed archives are rejected (1.616285ms)
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (77.72391ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (21.466515ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (16.929615ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (14.823319ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (14.564449ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (22.159794ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (17.592209ms)
+✔ keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries (68.924265ms)
+✔ failed persistence restores original array and DOM order (11.390924ms)
+✔ pointer drop reorders at visible insertion marker and cancellation leaves order unchanged (13.281944ms)
+✔ native Simple context menu follows saved section and additional destination order (2.460367ms)
+✔ drag continues outside grip and gaps are valid insertion targets (9.30005ms)
+✔ Escape cancels lifted drag without saving or leaving compact cards behind (8.855517ms)
+✔ saved moves retain focus so repeated arrow keys move the same branch (7.405305ms)
+✔ selection never fills the new-name field, and preserves an independently typed draft (95.857695ms)
+✔ Add child and Create use the exact parent path; actual dropdown children stay scoped (27.578709ms)
+✔ hiding a nested menu preserves its hierarchy and failed creation preserves the draft (19.091513ms)
+✔ native nested menu targets every verified depth and offers Send here for parents (1.599932ms)
+✔ legacy paths migrate without modifying old configuration or writing remote folders (11.688091ms)
+✔ nested saving retains provisioned worker credentials and new Explorer profiles through autosave (2.389152ms)
+✖ one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN (1.61886ms)
+✖ settings mode checkbox saves only the active mode and keeps both destination configurations (9.760367ms)
+✖ native menu mode checkbox changes the same saved setting without downloading anything (1.158924ms)
+✔ DBG-001: selecting a new deep child enables its next child without bucket reselection (17.070463ms)
+✔ DBG-001: create-new folder enables repeated + Child through five levels (31.132753ms)
+✔ DBG-001: selecting existing child enables + Child after the async save lock releases (17.210649ms)
+✔ reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths (19.986719ms)
+✔ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (14.222987ms)
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (226.875644ms)
+✔ bucket name button selects without provisioning; debug reveals separate repair action (112.821591ms)
+✔ normal mode offers one setup action without exposing repair (58.018975ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (28.7496ms)
+✔ successful provisioning refreshes destination editors and inventory before reporting ready (2.265981ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (52.427705ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (37.209005ms)
+✔ settings disclosure dismisses outside and Escape restores focus (21.536157ms)
+✔ central discovery is deterministic and versions and authority remain separate (2.222647ms)
+✖ real vertical contract resolves intent, three upload invariants, handlers, current source and regression (38.98126ms)
+✔ pagination is sorted, exhaustive and rejects invalid limits or depths (61.992989ms)
+✔ independent DFS agrees with reader bidirectional traversal on cyclic portable golden (3.486989ms)
+✔ reverse direction and supporting/counterevidence remain explicit (55.563001ms)
+✔ exact debug events, unknown optional fields and original provenance survive semantic evidence queries (29.656351ms)
+✔ duplicate IDs, endpoints, aliases, ownership, coverage and forged proof fail closed (8.43958ms)
+✔ traversal attempts, secret-like content and symlinks cannot expose private files (9.380912ms)
+✔ changed bytes and moved anchors yield stale warnings; cached snapshots stay pinned (1.788111ms)
+✔ real change impact is possible and unknown changes never get invented proof (49.556522ms)
+✖ full finite public coverage inventory resolves strata and all canonical case links (24.594924ms)
+✔ lesson is a portable proposal validated by actual upstream reference API, without acceptance (45.776667ms)
+✔ missing normative references fail independent upstream validation and future fields survive (23.213348ms)
+✔ archived graph/golden remains readable; normalization preserves bytes, optional fields and stable identity across rewrite (1.618669ms)
+✔ aliases resolve deterministically, deprecation metadata stays visible and no guessed split (0.969953ms)
+✔ oversized models and graph depths are bounded and errors do not echo unsafe input (32.063408ms)
+✔ workflow is dry-run by default and arbitrary commands cannot be supplied (90.154742ms)
+✔ DOM observer requires independent consent and reads structure only, not values/storage (0.354047ms)
+✔ CLI works from outside checkout, emits one JSON result and rejects malformed flags (196.72844ms)
+✔ innocent internal symlink aliases cannot read excluded credential paths (1.311642ms)
+✔ aggregate frozen-debug corpus has a semantic-reader memory budget before delegation (20.232952ms)
+✔ archived hostile fixtures produce stable errors on the released decoder (4.512976ms)
+✔ replacement relational reader preserves directed depth semantics across rewrite fixtures (7.945695ms)
+✔ replacement evaluation remains partial when browser evidence is absent; failure dominates (0.755525ms)
+✔ large reachable graph stops at visited budget and pagination never hides truncation (40.315343ms)
+✔ frozen APIs/fixtures stay byte-identical and all original incident journal prefixes survive (1.352302ms)
+✔ vendored actual upstream sources and schemas retain pinned hashes (0.488457ms)
+✔ mascot idles, returns on nested scrolling, and hides when page is hidden (48.905663ms)
+✔ tab favicon and toolbar icons point to correctly sized packaged PNGs (5.779922ms)
+✔ Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders (89.514835ms)
+✔ Simple: selecting existing folder does not populate creation draft (13.583866ms)
+✔ Simple: new directory is created under the exact parent only after Create (13.435405ms)
+✔ reconnect refresh retries Simple lookups without clearing drafts or saved selections (21.144577ms)
+✔ Simple: valid names including zero and f create at bucket root (74.208001ms)
+✔ Simple: invalid path segments never send creation requests (48.286689ms)
+✔ Simple: stalled creation releases button and explains uncertain outcome (7.970763ms)
+✔ Simple: refreshing during creation cannot leave a permanent Creating status (8.19784ms)
+✖ Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (2.280163ms)
+✖ Simple blank labels honor bucket fallback without adding a submenu or changing explicit names (1.388195ms)
+✖ Menu Label is default for existing profiles without a saved preference (0.875844ms)
+✖ Lowest directory preference selects location name rather than a manually entered label (0.918658ms)
+✔ BUG-014: selecting an existing child does not fill the new-folder input or create a directory (77.468816ms)
+✔ BUG-013: right-side root lists only immediate folders from the selected left bucket (14.686164ms)
+✔ BUG-013: stale earlier bucket results cannot overwrite newly selected bucket (9.483844ms)
+✔ DBG-003 child requests released after bucket switch cannot contaminate current shared cache (80.295686ms)
+✔ DBG-003 late profile completion cannot alter the new bucket view (17.208323ms)
+✔ DBG-003 late creation completion cannot alter the new bucket view (12.774875ms)
+ℹ tests 162
+ℹ suites 0
+ℹ pass 135
+ℹ fail 27
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7152.485939
+
+✖ failing tests:
+
+test at tests/agent-api.test.mjs:13:1
+✖ offline discovery advertises only implemented operations and distinct versions (14.328642ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'stale' !== 'current'
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/agent-api.test.mjs:15:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'stale',
+    expected: 'current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/agent-api.test.mjs:91:1
+✖ catalog IDs, evidence labels, source hashes and references are internally consistent (13.886111ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     code: 'stale-source',
+  +     path: 'README.md'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'bugs/README.md'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/background.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/cloudflare-api.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/cloudflare-auth.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/manifest.json'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/nested-menu-editor.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/options.html'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/options.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/popup.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'package-lock.json'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'package.json'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/manifest.json',
+  +     symbol: '"service_worker"'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'const WORKER_SOURCE'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function createBucket'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'function simpleBucketCreator'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: '$("create-bucket").addEventListener'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function rootRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function createExplorerFolder'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function callBucketWorker'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'body.action === "ensurePrefixes"'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'function beginNewFolder'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function folderRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listFolderChildren'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listObjectsPage'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function fetchUploadBuilderChildren'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function folderRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/nested-locations.test.mjs',
+  +     symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'chrome.contextMenus.onClicked.addListener'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function ingestCloudflareAtPrefix'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function checkedFetch'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'const WORKER_SOURCE'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/nested-locations.test.mjs',
+  +     symbol: 'native nested menu targets every verified depth and offers Send here for parents'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function goLocation'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function browseWorkspace'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listObjectsPage'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/cloudflare-api.js',
+  +     symbol: 'async function preview'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/cloudflare-files.test.mjs',
+  +     symbol: 'private WEBP preview reads nested keys without a Worker or background messaging'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function uploadLocalFiles'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function ensureUploadProfile'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function loadUploadLocations'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'request.headers.get("x-redown-action") === "upload-local"'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/agent-api.test.mjs:93:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'stale-source', path: 'README.md' }, { code: 'stale-source', path: 'bugs/README.md' }, { code: 'stale-source', path: 'extension/background.js' }, { code: 'stale-source', path: 'extension/cloudflare-api.js' }, { code: 'stale-source', path: 'extension/cloudflare-auth.js' }, { code: 'stale-source', path: 'extension/manifest.json' }, { code: 'stale-source', path: 'extension/nested-menu-editor.js' }, { code: 'stale-source', path: 'extension/options.html' }, { code: 'stale-source', path: 'extension/options.js' }, { code: 'stale-source', path: 'extension/popup.js' }, { code: 'stale-source', path: 'package-lock.json' }, { code: 'stale-source', path: 'package.json' }, { code: 'stale-reference', path: 'extension/manifest.json', symbol: '"service_worker"' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'const WORKER_SOURCE' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function createBucket' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'function simpleBucketCreator' }, { code: 'stale-reference', path: 'extension/options.js', symbol: '$("create-bucket").addEventListener' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function rootRow' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function createExplorerFolder' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function callBucketWorker' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'body.action === "ensurePrefixes"' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'function beginNewFolder' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function folderRow' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listFolderChildren' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listObjectsPage' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function fetchUploadBuilderChildren' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function folderRow' }, { code: 'stale-reference', path: 'tests/nested-locations.test.mjs', symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'chrome.contextMenus.onClicked.addListener' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function ingestCloudflareAtPrefix' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function checkedFetch' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'const WORKER_SOURCE' }, { code: 'stale-reference', path: 'tests/nested-locations.test.mjs', symbol: 'native nested menu targets every verified depth and offers Send here for parents' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function goLocation' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function browseWorkspace' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listObjectsPage' }, { code: 'stale-reference', path: 'extension/cloudflare-api.js', symbol: 'async function preview' }, { code: 'stale-reference', path: 'tests/cloudflare-files.test.mjs', symbol: 'private WEBP preview reads nested keys without a Worker or background messaging' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function uploadLocalFiles' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function ensureUploadProfile' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function loadUploadLocations' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'request.headers.get("x-redown-action") === "upload-local"' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:102:1
+✖ click creates a visible window before network navigation; repeated clicks focus it (19.099475ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:103:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:123:1
+✖ successful callback exchanges PKCE and verifies access before saving token (0.872232ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:124:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:145:1
+✖ callback resumes after service worker restart from session state (0.852934ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:146:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:154:1
+✖ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (0.750743ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:155:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:165:1
+✖ state mismatch fails without token exchange and allows a fresh retry (0.806395ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:166:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:174:1
+✖ denied consent and missing authorization code fail cleanly (1.38098ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:176:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:185:1
+✖ closed popup releases attempt and stale window is replaced on next click (0.879694ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:186:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:197:1
+✖ expired attempt clears secrets, closes popup, and permits retry (0.770553ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:198:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:208:1
+✖ failed API verification never stores an access token (0.809169ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:209:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:217:1
+✖ duplicate navigation events exchange a code only once (0.854626ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:218:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:224:1
+✖ verification network stall aborts and releases the attempt (0.766877ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:225:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:236:1
+✖ popup creation errors are returned instead of leaving an in-flight lock (0.919762ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:237:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:263:1
+✖ settings and worker observing the same callback exchange the code once across contexts (1.067529ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:264:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:281:1
+✖ Worker deployments cannot overlap and a failed deployment releases the lock (0.913303ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'rfis-index.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:73:19)
+      at evalmachine.<anonymous>:758:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:76:11)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/cloudflare-login.test.mjs:282:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'rfis-index.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/debug-api.test.mjs:44:1
+✖ real discovery, case, history, filters and validation are deterministic and honest (12.946951ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   caseCount: 3,
+  -   caseCount: 1,
+      errors: [],
+  +   eventCount: 20,
+  -   eventCount: 9,
+      valid: true,
+  +   warnings: [
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**Agent API M0/M1 audit, subsequently merged:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**Current conclusion:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**DOM-preservation patches:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**User symptom:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '03efcc07358f64970d6158831884c2d1431ebd66'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: 'Additional code risks; separate investigation required'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: 'Minimal reproduction and tests to add'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/background.js',
+  +       symbol: 'async function listFolderChildren'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/background.js',
+  +       symbol: 'function addNestedLocations'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'M.setLocation(node,select.value)'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'add.disabled=!parentReady || !node.ready'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'async function run'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'el.disabled=previous[index]'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'function folderRow'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'node.ready=Boolean(node.name) && known.includes(node.name)'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/options.js',
+  +       symbol: 'Guard the shared cache'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'tests/nested-locations.test.mjs',
+  +       symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped'
+  +     }
+  +   ]
+  -   warnings: []
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/debug-api.test.mjs:52:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      valid: true,
+      errors: [],
+      warnings: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      caseCount: 3,
+      eventCount: 20
+    },
+    expected: { valid: true, errors: [], warnings: [], caseCount: 1, eventCount: 9 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/debug-api.test.mjs:79:1
+✖ original case and proposal Markdown bytes are retained from pinned upstream (0.436842ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'a4e3b488a669bc7d13956f315e9ca5fef074d935'
+  - 'ff3a22e9107292da01985e390ebe0b19eaf0eed3'
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/debug-api.test.mjs:80:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'a4e3b488a669bc7d13956f315e9ca5fef074d935',
+    expected: 'ff3a22e9107292da01985e390ebe0b19eaf0eed3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/nested-locations.test.mjs:114:1
+✖ one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN (1.61886ms)
+  evalmachine.<anonymous>:139
+  chrome.alarms.onAlarm.addListener(alarm=>{
+                ^
+  
+  TypeError: Cannot read properties of undefined (reading 'onAlarm')
+      at evalmachine.<anonymous>:139:15
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/nested-locations.test.mjs:118:6)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/nested-locations.test.mjs:134:1
+✖ settings mode checkbox saves only the active mode and keeps both destination configurations (9.760367ms)
+  TypeError: Cannot read properties of null (reading 'addEventListener')
+      at eval (eval at <anonymous> (file:///workspace/remote-download-2-cloudfare/tests/nested-locations.test.mjs:141:14), <anonymous>:28:21)
+      at eval (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/nested-locations.test.mjs:141:14)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/nested-locations.test.mjs:150:1
+✖ native menu mode checkbox changes the same saved setting without downloading anything (1.158924ms)
+  evalmachine.<anonymous>:1
+  });
+  ^
+  
+  SyntaxError: Unexpected token '}'
+      at new Script (node:vm:117:7)
+      at createScript (node:vm:269:10)
+      at Object.runInContext (node:vm:300:10)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/nested-locations.test.mjs:155:6)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/semantic-api.test.mjs:21:1
+✖ real vertical contract resolves intent, three upload invariants, handlers, current source and regression (38.98126ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'stale' !== 'current'
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/semantic-api.test.mjs:22:130)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'stale',
+    expected: 'current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/semantic-api.test.mjs:71:1
+✖ full finite public coverage inventory resolves strata and all canonical case links (24.594924ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  120 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/semantic-api.test.mjs:72:111)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 120,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/simple-menu-flat.test.mjs:26:1
+✖ Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (2.280163ms)
+  evalmachine.<anonymous>:117
+  chrome.alarms.onAlarm.addListener(alarm=>{
+                ^
+  
+  TypeError: Cannot read properties of undefined (reading 'onAlarm')
+      at evalmachine.<anonymous>:117:15
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:22:6)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:27:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests/simple-menu-flat.test.mjs:47:1
+✖ Simple blank labels honor bucket fallback without adding a submenu or changing explicit names (1.388195ms)
+  evalmachine.<anonymous>:117
+  chrome.alarms.onAlarm.addListener(alarm=>{
+                ^
+  
+  TypeError: Cannot read properties of undefined (reading 'onAlarm')
+      at evalmachine.<anonymous>:117:15
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:22:6)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:48:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+
+test at tests/simple-menu-flat.test.mjs:65:1
+✖ Menu Label is default for existing profiles without a saved preference (0.875844ms)
+  evalmachine.<anonymous>:117
+  chrome.alarms.onAlarm.addListener(alarm=>{
+                ^
+  
+  TypeError: Cannot read properties of undefined (reading 'onAlarm')
+      at evalmachine.<anonymous>:117:15
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:22:6)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:66:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+
+test at tests/simple-menu-flat.test.mjs:73:1
+✖ Lowest directory preference selects location name rather than a manually entered label (0.918658ms)
+  evalmachine.<anonymous>:117
+  chrome.alarms.onAlarm.addListener(alarm=>{
+                ^
+  
+  TypeError: Cannot read properties of undefined (reading 'onAlarm')
+      at evalmachine.<anonymous>:117:15
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:22:6)
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/simple-menu-flat.test.mjs:74:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

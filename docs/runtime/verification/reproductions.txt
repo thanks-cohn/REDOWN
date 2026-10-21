@@ -1,0 +1,47 @@
+✖ read retry never crosses a newly authorized session (23.562955ms)
+✖ safe reads honor bounded Retry-After; writes are never replayed on 503 (1.252904ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (29.662374ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (1.842051ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (0.766568ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (3.223214ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121.072191
+
+✖ failing tests:
+
+test at tests/runtime-reliability.test.mjs:13:1
+✖ read retry never crosses a newly authorized session (23.562955ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/runtime-reliability.test.mjs:15:2)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /connection changed/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/runtime-reliability.test.mjs:17:1
+✖ safe reads honor bounded Retry-After; writes are never replayed on 503 (1.252904ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  429 !== 200
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/runtime-reliability.test.mjs:19:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 429,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

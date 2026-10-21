@@ -1,0 +1,21 @@
+{
+  "runtimeApiVersion": "1.0.0",
+  "requestId": "cfde264a-56a3-4fa4-8f12-ef118f419dd5",
+  "runId": "c5f6b02e-c231-45c0-be7a-2736049048f9",
+  "state": "unavailable",
+  "data": {
+    "build": "unknown",
+    "context": "offline",
+    "collection": "disabled",
+    "eventCount": 0,
+    "components": {
+      "authorization": "unknown",
+      "api": "unknown",
+      "worker": "unknown",
+      "bucket": "unknown",
+      "explorer": "unknown",
+      "preview": "unknown"
+    },
+    "freshness": "observations only; no health probe"
+  }
+}

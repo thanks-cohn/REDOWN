@@ -1,0 +1,204 @@
+{
+  "baseline": {
+    "tests": 162,
+    "passed": 135,
+    "failed": 27
+  },
+  "final": {
+    "tests": 172,
+    "passed": 166,
+    "failed": 6
+  },
+  "introducedFailingTests": [],
+  "failures": [
+    {
+      "test": "offline discovery advertises only implemented operations and distinct versions",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "frozen project catalog source hashes/anchors stale; retained, no hash refresh",
+      "introduced": false
+    },
+    {
+      "test": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "frozen project catalog source hashes/anchors stale; retained, no hash refresh",
+      "introduced": false
+    },
+    {
+      "test": "click creates a visible window before network navigation; repeated clicks focus it",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "successful callback exchanges PKCE and verifies access before saving token",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "callback resumes after service worker restart from session state",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "state mismatch fails without token exchange and allows a fresh retry",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "denied consent and missing authorization code fail cleanly",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "closed popup releases attempt and stale window is replaced on next click",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "expired attempt clears secrets, closes popup, and permits retry",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "failed API verification never stores an access token",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "duplicate navigation events exchange a code only once",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "verification network stall aborts and releases the attempt",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "popup creation errors are returned instead of leaving an in-flight lock",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "settings and worker observing the same callback exchange the code once across contexts",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "Worker deployments cannot overlap and a failed deployment releases the lock",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "real discovery, case, history, filters and validation are deterministic and honest",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "historical debug corpus expectation (one incident / nine events) differs from current three incidents / twenty events and stale references; retained",
+      "introduced": false
+    },
+    {
+      "test": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "pinned historical Markdown digest mismatch; retained, no historical bytes rewritten",
+      "introduced": false
+    },
+    {
+      "test": "one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "settings mode checkbox saves only the active mode and keeps both destination configurations",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "native menu mode checkbox changes the same saved setting without downloading anything",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "semantic source freshness / finite coverage drift; retained, no evidence regeneration",
+      "introduced": false
+    },
+    {
+      "test": "full finite public coverage inventory resolves strata and all canonical case links",
+      "baseline": "failed",
+      "final": "failed",
+      "classification": "semantic source freshness / finite coverage drift; retained, no evidence regeneration",
+      "introduced": false
+    },
+    {
+      "test": "Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "Simple blank labels honor bucket fallback without adding a submenu or changing explicit names",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "Menu Label is default for existing profiles without a saved preference",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    },
+    {
+      "test": "Lowest directory preference selects location name rather than a manually entered label",
+      "baseline": "failed",
+      "final": "passed",
+      "classification": "stale harness import / source slicing / shipped mode controls; repaired without removing behavioral assertions",
+      "introduced": false
+    }
+  ]
+}
