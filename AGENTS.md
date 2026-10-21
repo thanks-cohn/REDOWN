@@ -83,3 +83,9 @@ Baseline at 5dd6abf: 162 tests, 135 pass, 27 fail. Current implementation: 172 t
 166 pass, six historical catalog/debug/semantic evidence failures retained. See per-test
 classification; don't refresh frozen hashes or call the full suite green. No store branch update,
 customer deployment, cloud mutation or source deletion is authorized by diagnostic inspection.
+
+Latest Explorer menu follow-up: [context menu report](docs/EXPLORER_CONTEXT_MENU_REPORT.md).
+Move to / Copy to now expand buckets and lazily paged folders, including current-bucket siblings.
+Nested editor Refresh locations is section-header only. Latest full suite: 182 tests,
+176 pass, the same six historical evidence failures. User-specific silent Download failure
+is not live-reproduced; new Chrome interruption/error feedback needs browser retesting.
