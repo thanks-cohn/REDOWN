@@ -1,0 +1,17 @@
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (256.339949ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (154.017623ms)
+✔ normal primary setup does not invoke the independent inset repair (60.094144ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (40.970051ms)
+✔ successful provisioning refreshes destination editors and inventory before reporting ready (2.792738ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (60.677261ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (49.56892ms)
+✔ settings disclosure dismisses outside and Escape restores focus (25.750622ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (36.114748ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1033.038135
