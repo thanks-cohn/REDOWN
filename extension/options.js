@@ -4035,10 +4035,12 @@ async function refreshCloudflareState(){
   cfAccounts.forEach(a=>{const o=document.createElement("option");o.value=a.id;o.textContent=a.name||a.id;select.append(o);});
   if(cfAccounts.some(a=>a.id===previousAccountId))select.value=previousAccountId;
   currentAccountId=select.value||"";
-  if(currentAccountId)await refreshBuckets();
-  await refreshLocationEditors();
-  setStatus("menu-location-status","Locations refreshed. Any folder lookup errors appear beside the affected location.","ok");
-  await loadExplorerInventory().catch((error)=>{
+  // Independent Cloudflare surfaces must not block each other or page startup.
+  if(currentAccountId)void refreshBuckets().catch(error=>setStatus("cf-status",safeUiMessage(error?.message||String(error)),"bad"));
+  void refreshLocationEditors().then(()=>{
+    setStatus("menu-location-status","Locations refreshed. Any folder lookup errors appear beside the affected location.","ok");
+  }).catch(error=>setStatus("menu-location-status",safeUiMessage(error?.message||String(error)),"bad"));
+  void loadExplorerInventory().catch(error=>{
     $("explorer-status").textContent=safeUiMessage(friendlyError(error,"load Cloudflare storage"));
   });
   return true;
@@ -4372,11 +4374,9 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
   renderProfiles();
   wireWorkspace();
   renderWorkspaceProfiles();
-  await refreshCloudflare();
-  const auth=(await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
-  $("local-tools").hidden=!auth?.accessToken;
+  // Render independent sections without waiting for remote Cloudflare requests.
   explorerClipboard=(await chrome.storage.session.get("explorerClipboard")).explorerClipboard||null;
-  if(auth?.accessToken)await loadExplorerInventory().catch(error=>{$("explorer-status").textContent=friendlyError(error,"load Cloudflare storage");});
+  void refreshCloudflare().catch(error=>setStatus("hero-status",safeUiMessage(error?.message||String(error)),"bad"));
   await renderHistory();
 })();
 
