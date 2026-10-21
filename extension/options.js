@@ -4071,47 +4071,47 @@ async function refreshBuckets(){
   onboardingBucketState=(result.buckets||[]).length?"choose":"empty";applyOnboarding();
   setStatus("hero-status","✓ Cloudflare connected.","ok");
   const root=$("bucket-grid");root.replaceChildren();
+  let settingUp=false;
+  const markSelected=(el,button,bucket)=>{
+    root.querySelectorAll(".bucket").forEach(item=>{
+      item.classList.remove("selected");item.querySelector(".bucket-select").setAttribute("aria-pressed","false");
+    });
+    el.classList.add("selected");button.setAttribute("aria-pressed","true");
+  };
+  const useBucket=async(bucket,el,button,caption,forceRepair=false)=>{
+    if(settingUp||accountId!==currentAccountId)return;
+    settingUp=true;markSelected(el,button,bucket);
+    root.querySelectorAll(".bucket-select, .bucket-repair").forEach(item=>item.disabled=true);
+    button.setAttribute("aria-busy","true");caption.textContent=forceRepair?"Verifying…":"Setting up…";
+    try{
+      const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
+      if(accountId!==currentAccountId||!el.isConnected)return;
+      el.classList.toggle("is-ready",Boolean(done));caption.textContent=done?"Ready":"Retry setup";
+    }catch(error){
+      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";}
+    }finally{
+      settingUp=false;button.removeAttribute("aria-busy");
+      if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket-select, .bucket-repair").forEach(item=>item.disabled=false);}
+    }
+  };
   (result.buckets||[]).forEach(bucket=>{
-    const el=document.createElement("div");el.className="bucket";
-    const strong=document.createElement("button");strong.type="button";strong.className="bucket-select";strong.textContent=bucket.name;strong.setAttribute("aria-pressed","false");
-    const ready=profiles.some(p=>isSetupDestination(p)&&p.accountId===currentAccountId&&p.bucketName===bucket.name);
-    const span=document.createElement("span");span.className="bucket-details debug-only";
-    span.textContent=ready
-      ? "Configured for REDOWN"
-      : ([bucket.location,bucket.jurisdiction].filter(Boolean).join(" · ")||"R2 bucket")+" · Worker not configured";
-    el.append(strong,span);
-    const selectBucket=()=>{
-      root.querySelectorAll(".bucket").forEach(item=>{
-        item.classList.remove("selected");
-        item.querySelector(".bucket-select").setAttribute("aria-pressed","false");
-      });
-      el.classList.add("selected");
-      strong.setAttribute("aria-pressed","true");
-      setStatus("cf-status",bucket.name+" selected.","ok");
-    };
-    strong.addEventListener("click",selectBucket);
-    const prepare=document.createElement("button");
-    prepare.type="button";prepare.className="secondary bucket-prepare debug-only";
-    prepare.textContent=ready?"Verify / repair Worker":"Prepare Worker for right-click";
-    prepare.addEventListener("click",event=>{
-      event.stopPropagation();
-      selectBucket();
-      addBucketPreset(bucket.name,{forceRepair:true});
-    });
-    const use=document.createElement("button");
-    use.type="button";use.className="secondary bucket-use setup-go";
-    use.textContent="Use this bucket";
-    use.addEventListener("click",async()=>{
-      if(use.disabled)return;
-      selectBucket();use.disabled=true;use.textContent="Setting up…";
-      try{
-        const done=await addBucketPreset(bucket.name);
-        use.textContent=done?"✓ Ready to use":"Retry setup";
-      }catch(error){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");use.textContent="Retry setup";}
-      finally{use.disabled=false;}
-    });
-    el.append(use,prepare);
-    root.append(el);
+    const ready=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket.name);
+    const el=document.createElement("div");el.className="bucket";el.classList.toggle("is-ready",ready);
+    const button=document.createElement("button");button.type="button";button.className="bucket-select bucket-use";
+    button.title=bucket.name;button.setAttribute("aria-label",`Use bucket ${bucket.name}`);button.setAttribute("aria-pressed","false");
+    const icon=document.createElement("span");icon.className="bucket-icon";icon.setAttribute("aria-hidden","true");
+    icon.innerHTML='<svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="10" ry="4" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.3"/><path d="M6 8v8c0 2.2 4.5 4 10 4s10-1.8 10-4V8M6 16v8c0 2.2 4.5 4 10 4s10-1.8 10-4v-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+    const copy=document.createElement("span");copy.className="bucket-copy";
+    const name=document.createElement("span");name.className="bucket-name";name.textContent=bucket.name;
+    const caption=document.createElement("span");caption.className="bucket-status";caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
+    const check=document.createElement("span");check.className="bucket-check";check.setAttribute("aria-hidden","true");check.textContent="✓";
+    button.append(icon,copy,check);el.append(button);root.append(el);
+    button.addEventListener("click",()=>useBucket(bucket.name,el,button,caption));
+    const repair=document.createElement("button");repair.type="button";repair.className="bucket-repair debug-only";
+    repair.title=`Verify / repair ${bucket.name}`;repair.setAttribute("aria-label",repair.title);
+    repair.innerHTML='<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12.7 6a5 5 0 1 0 .1 3.7M12.7 2.7V6H9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    repair.addEventListener("click",event=>{event.stopPropagation();void useBucket(bucket.name,el,button,caption,true);});
+    el.append(repair);
   });
   setStatus("cf-status",(result.buckets||[]).length?"Choose a bucket.":"No buckets yet. Create one above.");
 }
@@ -4120,12 +4120,12 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
   if(!account)return;
   // Selecting an existing destination must never trigger a Worker deployment.
   if(!forceRepair&&profiles.some(p=>isSetupDestination(p)&&p.accountId===account.id&&p.bucketName===bucketName)){
-    setStatus("cf-status",bucketName+" is already configured. No Worker redeployment was attempted.","ok");
+    setStatus("cf-status",bucketName+" is ready to use.","ok");
     await refreshLocationEditors();
     return true;
   }
   const setupAccountId=account.id;
-  setStatus("cf-status",`Preparing ${bucketName}… REDOWN is verifying the remote transfer Worker before saving this preset.`);
+  setStatus("cf-status",`Setting up ${bucketName}…`);
   try {
   let result;
   for(let attempt=1;attempt<=4;attempt++){
@@ -4158,7 +4158,7 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
   await refreshLocationEditors();
   await loadExplorerInventory();
   if(currentAccountId!==setupAccountId)return true;
-  setStatus("cf-status",`${bucketName} is ready. REDOWN verified a real R2 write and prepared its default locations. Right-click a link, image, video, audio item, or GLB link → REDOWN → ${bucketName}.`,"ok");
+  setStatus("cf-status",`${bucketName} is ready. It’s available in your right-click destinations.`,"ok");
   return true;
   } catch(error) {
     const message=error?.message||String(error);

@@ -29,23 +29,25 @@ test('debug-only sections start hidden and toggle exists only inside header disc
   assert.equal(h.dom.window.getComputedStyle(panel).display,'none','hidden attribute wins over author layout styles');
   h.dom.window.close();
 });
-test('bucket name button selects without provisioning; debug reveals separate repair action',async()=>{
+test('each bucket is one action and debug repair remains separate from normal setup',async()=>{
   const h=harness(),d=h.dom.window.document;
   await vm.runInContext('refreshBuckets()',h.context);
-  const name=d.querySelector('.bucket-select'),repair=d.querySelector('.bucket-prepare');
-  assert.equal(name.textContent,'test-bucket');
+  const tile=d.querySelector('.bucket-select'),repair=d.querySelector('.bucket-repair');
+  assert.equal(d.querySelectorAll('.bucket-select').length,1);
+  assert.equal(tile?.querySelector('button'),null,'repair is a sibling target, never invalid nested button markup');
+  assert.equal(tile.querySelector('.bucket-name').textContent,'test-bucket');
   assert.equal(h.dom.window.getComputedStyle(repair).display,'none');
-  name.click();assert.equal(name.getAttribute('aria-pressed'),'true');
-  assert.equal(h.calls.length,1,'selection only uses the original bucket listing');
+  tile.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tile.getAttribute('aria-pressed'),'true');
+  assert.equal(h.calls[1][0],'test-bucket');assert.equal(h.calls[1].length,1,'single tile invokes normal setup without force repair');
   const toggle=d.getElementById('debug-mode-enabled');toggle.checked=true;
   toggle.dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
-  assert.ok(d.documentElement.classList.contains('debug-mode'));
   assert.notEqual(h.dom.window.getComputedStyle(repair).display,'none');
-  repair.click();assert.equal(h.calls[1][0],'test-bucket');assert.equal(h.calls[1][1].forceRepair,true);
+  repair.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.calls[2][0],'test-bucket');assert.equal(h.calls[2][1].forceRepair,true);
   assert.equal(h.saved[0].debugModeEnabled,true);
   toggle.checked=false;toggle.dispatchEvent(new h.dom.window.Event('change'));
-  assert.equal(h.dom.window.getComputedStyle(repair).display,'none');
-  h.dom.window.close();
+  assert.equal(h.dom.window.getComputedStyle(repair).display,'none');h.dom.window.close();
 });
 
 test('normal mode offers one setup action without exposing repair',async()=>{
@@ -147,7 +149,8 @@ test('activation stays in connection header; Storage appears only after R2 is av
   assert.equal(d.getElementById('r2-setup').hidden,true);
   assert.ok(!d.documentElement.classList.contains('storage-pending'));
   assert.ok(!d.getElementById('create-bucket').classList.contains('setup-go'));
-  assert.ok(d.querySelector('.bucket-use').classList.contains('setup-go'));
+  assert.equal(d.querySelectorAll('.bucket-select').length,1);
+  assert.ok(!d.querySelector('.bucket-use').classList.contains('setup-go'),'bucket surfaces retain their own material rather than green CTA styling');
   assert.ok(d.documentElement.classList.contains('onboarding-pending'));
   h.dom.window.close();
 });
@@ -165,4 +168,14 @@ test('settings disclosure dismisses outside and Escape restores focus',()=>{
   assert.equal(disclosure.open,false);
   assert.equal(d.activeElement,disclosure.querySelector('summary'));
   h.dom.window.close();
+});
+
+test('bucket action keeps its name during setup and blocks duplicate clicks',async()=>{
+ const h=harness(),d=h.dom.window.document;let finish,calls=0;
+ h.context.addBucketPreset=()=>{calls++;return new Promise(resolve=>finish=resolve);};
+ await vm.runInContext('refreshBuckets()',h.context);
+ const tile=d.querySelector('.bucket-select');tile.click();tile.click();
+ assert.equal(calls,1);assert.equal(tile.getAttribute('aria-busy'),'true');assert.equal(tile.querySelector('.bucket-name').textContent,'test-bucket');
+ assert.equal(tile.querySelector('.bucket-status').textContent,'Setting up…');finish(true);await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(tile.disabled,false);assert.equal(tile.querySelector('.bucket-status').textContent,'Ready');assert.equal(tile.hasAttribute('aria-busy'),false);h.dom.window.close();
 });

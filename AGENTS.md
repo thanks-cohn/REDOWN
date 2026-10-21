@@ -1,5 +1,7 @@
 # ReDown agent onboarding
 
+Canonical repository: **[thanks-cohn/REDOWN](https://github.com/thanks-cohn/REDOWN)** (public, verified 21 October 2026). The local checkout directory retains its previous name. Use the new remote URL; preserve historical repository references and frozen evidence. Public repository visibility does not change the project license or authorize npm/store publishing.
+
 Read [the engineering handoff](docs/CODEX_REDOWN_DEEP_AGENTIC_PROJECT_API_REQUEST.md), [architecture](docs/agent/ARCHITECTURE_MAP.md), [operation traces](docs/agent/OPERATION_CATALOG.md), [message inventory](docs/agent/MESSAGE_INVENTORY.md), and [actual verification](docs/agent/CHANGE_REPORT.md) first. Proposals and bug reports are intent/reports, not proof of implemented or passing behavior.
 
 Use the existing isolated checkout; do not create a Git worktree unless explicitly requested.
@@ -96,3 +98,5 @@ are validated, and status is visible near the file list. Destination menus expos
 Here immediately and cache bounded short-lived folder pages. Latest full suite:
 188 tests, 182 pass, same six historical evidence failures. User's deployed/browser
 copy stall remains unverified until retest; no live closure or customer deployment claimed.
+
+Bucket surface follow-up: [design/interaction report](docs/BUCKET_SURFACE_REPORT.md). Each bucket is one primary setup surface; the inset circular repair target remains Debug Mode only and never triggers the primary action. Latest full suite: 189 tests, 183 pass, same six historical evidence failures. Visual QA is a local HTML fixture, not installed-extension/cloud verification.

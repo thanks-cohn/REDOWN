@@ -6,6 +6,8 @@
 
 **Remote downloads, without the download.**
 
+Source repository: [thanks-cohn/REDOWN](https://github.com/thanks-cohn/REDOWN).
+
 REDOWN is a browser extension for organizing and transferring files to Cloudflare R2. Send supported remote files to your storage without first saving them to your computer, or upload files directly from your device.
 
 ## What you can do
@@ -17,7 +19,7 @@ REDOWN is a browser extension for organizing and transferring files to Cloudflar
 
 ## Get started
 
-1. Download the repository ZIP and extract it.
+1. [Download the repository ZIP](https://github.com/thanks-cohn/REDOWN/archive/refs/heads/main.zip) and extract it.
 2. Open `chrome://extensions` in Chrome (or your browser's extensions page).
 3. Enable **Developer mode** and choose **Load unpacked**.
 4. Select the `extension/` folder.
