@@ -115,7 +115,7 @@ test('one global mode prevents Simple/Nested collisions and puts nested buckets 
   const p=profile(),before=structuredClone(p),created=[];let mode;
   const context=vm.createContext({crypto:webcrypto,chrome:{storage:{local:{get:async()=>({rightClickMode:mode}),set:async patch=>{mode=patch.rightClickMode;}}},contextMenus:{removeAll:async()=>{created.length=0;},create:item=>created.push(item)}},ROOT_MENU_ID:'REDOWN',getProfiles:async()=>[p]});
   vm.runInContext(modelSource,context);
-  vm.runInContext(background.slice(background.indexOf('function addNestedLocations('),background.indexOf('chrome.runtime.onInstalled.addListener')),context);
+  vm.runInContext(background.slice(background.indexOf('function addNestedLocations('),background.indexOf('/* Explicit, opt-in gallery capture')),context);
   await vm.runInContext('rebuildMenus()',context);
   assert.ok(!created.some(item=>item.id==='quick:profile'));
   assert.ok(created.some(item=>item.id==='nested:profile:root:grand'));
@@ -133,24 +133,24 @@ test('one global mode prevents Simple/Nested collisions and puts nested buckets 
 
 test('settings mode checkbox saves only the active mode and keeps both destination configurations',async()=>{
   const options=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
-  const dom=new JSDOM('<input id="use-nested-menu" type="checkbox"><div id="right-click-mode-status"></div>',{runScripts:'outside-only'});
+  const dom=new JSDOM('<input id="use-simple-menu" type="radio"><input id="use-nested-menu" type="radio"><div id="simple-menu-editor"></div><div id="nested-menu-editor-panel"></div><div id="right-click-mode-status"></div>',{runScripts:'outside-only'});
   const p=profile(),before=structuredClone(p),patches=[];
   dom.window.$=id=>dom.window.document.getElementById(id);
   dom.window.chrome={storage:{local:{set:async patch=>patches.push(structuredClone(patch))}}};
   dom.window.profiles=[p];dom.window.eval('var rightClickMode="simple";');
-  dom.window.eval(options.slice(options.indexOf('function renderRightClickMode()'),options.indexOf('function renderProfiles(){')));
+  dom.window.eval(options.slice(options.indexOf('function renderRightClickMode()'),options.indexOf('// Simple destinations share one path editor:')));
   dom.window.renderRightClickMode();
   const checkbox=dom.window.$('use-nested-menu');assert.equal(checkbox.checked,false);
   checkbox.checked=true;checkbox.dispatchEvent(new dom.window.Event('change'));await settled();
-  assert.deepEqual(patches,[{rightClickMode:'nested'}]);assert.match(dom.window.$('right-click-mode-status').textContent,/Nested is active/);
-  checkbox.checked=false;checkbox.dispatchEvent(new dom.window.Event('change'));await settled();
+  assert.deepEqual(patches,[{rightClickMode:'nested'}]);assert.match(dom.window.$('right-click-mode-status').textContent,/Nested menu active/);
+  checkbox.checked=false;dom.window.$('use-simple-menu').checked=true;dom.window.$('use-simple-menu').dispatchEvent(new dom.window.Event('change'));await settled();
   assert.deepEqual(patches.at(-1),{rightClickMode:'simple'});assert.deepEqual(p,before);dom.window.close();
 });
 
 test('native menu mode checkbox changes the same saved setting without downloading anything',async()=>{
   const patches=[];let listener;
   const context=vm.createContext({chrome:{contextMenus:{onClicked:{addListener:fn=>{listener=fn;}}},storage:{local:{set:async patch=>patches.push(structuredClone(patch))}}}});
-  const start=background.indexOf('chrome.contextMenus.onClicked.addListener(async info => {');
+  const start=background.indexOf('chrome.contextMenus.onClicked.addListener(async (info, tab) => {');
   const end=background.indexOf('  const profiles = await getProfiles();',start);
   vm.runInContext(background.slice(start,end)+'});',context);
   await listener({menuItemId:'redown-nested-mode',checked:false});

@@ -564,6 +564,14 @@
 
 </div>
 <img class="settings-mascot" src="settings-mascot.png" alt="" aria-hidden="true" draggable="false" width="96">
+<section data-debug-detail hidden aria-label="Runtime diagnostics">
+  <h2>Runtime diagnostics</h2>
+  <p>Debug Mode collects a bounded, local trace. It excludes credentials, file names and URLs. Traces reset when the background restarts.</p>
+  <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
+  <button id="runtime-diagnostics-export" class="ghost">Export support bundle</button>
+  <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
+  <pre id="runtime-diagnostics-output" role="status" aria-live="polite"></pre>
+</section>
 <script src="settings-mascot.js"></script>
 <script type="module" src="model-viewer.min.js"></script>
 <script src="cloudflare-auth.js"></script>

@@ -36,7 +36,7 @@ function setStatus(id,msg,kind=""){
 async function send(message){
   let timeout;
   try { return await Promise.race([chrome.runtime.sendMessage(message),new Promise((_,reject)=>{
-    timeout=setTimeout(()=>reject(new Error("REDOWN did not finish this request. Please retry.")),120000);
+    timeout=setTimeout(()=>reject(new Error("REDOWN did not confirm this request. For uploads or changes, refresh the destination before retrying.")),120000);
   })]); } finally { clearTimeout(timeout); }
 }
 async function saveProfiles(){await chrome.storage.local.set({profiles});}
@@ -1441,6 +1441,7 @@ async function uploadLocalFiles(fileList){
       continue;
     }
     let retryable=true;
+    let writeAttempted=false;
     status.className="status";
     status.textContent=`Checking R2 for ${file.name} (attempt ${item.failures+1}, ${completed}/${files.length} uploaded)…`;
     const key=prefix?`${prefix}/${file.name}`:file.name;
@@ -1456,6 +1457,7 @@ async function uploadLocalFiles(fileList){
     }
     status.textContent=`Uploading ${file.name} (attempt ${item.failures+1}) · already exists: ${existed}…`;
     try{
+      if(existed!=="no")throw new Error("Could not confirm this destination is empty. Retry the file check before uploading.");
       if(file.size>300*1000*1000){retryable=false;throw new Error("Cloudflare's direct upload API has a 300 MB per-file limit.");}
       // The Cloudflare management API uses OAuth and does not require our Worker.
       // Slashes in object keys must remain literal; encode each path component.
@@ -1465,6 +1467,7 @@ async function uploadLocalFiles(fileList){
         let response;
         const started=Date.now();
         try{
+          writeAttempted=true;
           response=await RedownCloudflareApi.request(path,{
             method:"PUT",
             headers:{"content-type":file.type||"application/octet-stream"},
@@ -1508,6 +1511,9 @@ async function uploadLocalFiles(fileList){
       const possibleWrite=after==="yes"&&afterSize===file.size;
       const detail=`${error?.message||String(error)}; before=${existed}; after=${after}; afterSize=${afterSize??"unavailable"}; localSize=${file.size}; ${possibleWrite?"matching object size, completion unconfirmed":""}${firstLookupError?"; initial lookup "+firstLookupError:""}`;
       item.failures++;
+      // A write might have committed despite an error. Size equality is not
+      // byte verification and must not turn uncertainty into success or replay.
+      if(writeAttempted||item.failures>=4)retryable=false;
       if(retryable){
         const delay=Math.min(60000,1000*Math.pow(2,Math.min(item.failures-1,6)))+Math.floor(Math.random()*500);
         item.nextAt=Date.now()+delay;
@@ -1517,7 +1523,7 @@ async function uploadLocalFiles(fileList){
       }
       if(!retryable)await send({type:"recordLocalTransfer",ok:false,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),error:detail}).catch(()=>{});
       status.className=retryable?"status":"status bad";
-      status.textContent=`${retryable?"Retry queued":"Permanent failure"}: ${file.name} (already exists: ${existed}): ${detail}. ${queue.length} pending; keep this page open.`;
+      status.textContent=`${retryable?"Retry queued":writeAttempted?"Completion unconfirmed; inspect the destination before retrying":"Stopped after file checks failed"}: ${file.name} (already exists: ${existed}): ${detail}. ${queue.length} pending; keep this page open.`;
     }
   }
   await renderHistory();
@@ -1879,6 +1885,9 @@ let explorerBucketAccountId = "";
 let explorerSearchActive = false;
 let explorerSearchRequestId = 0;
 let explorerSearchTimer = null;
+let explorerSearchSessionId = "";
+let explorerSearchState = "idle";
+const explorerInventoryErrors = new Map();
 let explorerPreparing = new Map();
 const EXPLORER_PAGE_SIZES = [25,50,100];
 let explorerPageSize = 50;
@@ -2076,6 +2085,8 @@ function explorerSearchTargets() {
 async function runExplorerSearch(query) {
   const q=String(query||"").trim();
   const requestId=++explorerSearchRequestId;
+  if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
+  explorerSearchSessionId="";
   if(!q){
     explorerSearchActive=false;
     $("explorer-status").textContent="";
@@ -2084,6 +2095,7 @@ async function runExplorerSearch(query) {
   }
 
   explorerSearchActive=true;
+  explorerSearchState="scanning";
   explorerPage=0;
   explorerSelected.clear();
   explorerAnchor=-1;
@@ -2092,19 +2104,24 @@ async function runExplorerSearch(query) {
   const root=$("workspace-objects");
   root.innerHTML='<div class="file-empty"><span class="operation-spinner"></span><strong>Searching remote paths…</strong>Matching files and folders across this location.</div>';
 
-  const result=await send({
-    type:"cfSearchObjects",
-    targets:explorerSearchTargets(),
-    query:q,
-    limit:200
-  });
-  if(requestId!==explorerSearchRequestId)return;
-  if(!result?.ok){
-    explorerItems=[];
-    $("explorer-status").textContent=friendlyError(new Error(result?.error||""),"search remote files");
-    return renderFileItems();
+  const started=await send({type:"cfSearchStart",targets:explorerSearchTargets(),query:q});
+  if(requestId!==explorerSearchRequestId){
+    if(started?.search?.sessionId)void send({type:"cfSearchCancel",sessionId:started.search.sessionId});
+    return;
   }
-
+  if(!started?.ok){$("explorer-status").textContent=friendlyError(new Error(started?.error||""),"search remote files");return;}
+  explorerSearchSessionId=started.search.sessionId;
+  explorerItems=[];
+  let search=started.search;
+  while(requestId===explorerSearchRequestId){
+    if(search.state==="scanning"){
+      const page=await send({type:"cfSearchStep",sessionId:search.sessionId});
+      if(requestId!==explorerSearchRequestId){void send({type:"cfSearchCancel",sessionId:search.sessionId});return;}
+      if(!page?.ok){$("explorer-status").textContent="Search interrupted. Search again to resume scanning. Earlier matches are retained.";return;}
+      search=page.search;
+    }
+    explorerSearchState=search.state;
+    const result={results:search.results};
   explorerItems=(result.results||[]).map((entry)=>{
     const key=String(entry.key||"");
     const object=entry.object||{};
@@ -2126,13 +2143,20 @@ async function runExplorerSearch(query) {
       bucketName:entry.bucketName
     };
   });
-  $("explorer-status").textContent=explorerItems.length
-    ? `Found ${explorerItems.length} remote match${explorerItems.length===1?"":"es"} for “${q}”.`
-    : `No remote files or folders matched “${q}”.`;
-  renderFileItems();
+    const scope=workspaceTarget?"Current bucket (all folders)":explorerBucketAccountId&&explorerBucketAccountId!=="__all__"?"Selected account":"All loaded authorized accounts";
+    $("explorer-status").textContent=`${scope} · Path/name search · ${search.state} · ${search.examined} files examined · ${search.completed}/${search.total} buckets · ${search.matches} matches${search.errors.length?` · ${search.errors.length} bucket errors; search again to retry`:""}${explorerInventoryErrors.size?` · ${explorerInventoryErrors.size} account inventories unavailable; Refresh accounts to retry`:""}${search.state==="limited"?" · Limit reached; narrow your search":""}`;
+    const focusedId=document.activeElement?.closest?.(".file-row")?.dataset.id;
+    renderFileItems();
+    if(focusedId)rootRow(focusedId)?.focus({preventScroll:true});
+    if(search.state!=="scanning")break;
+    await new Promise(resolve=>setTimeout(resolve,0));
+  }
 }
+
 function scheduleExplorerSearch() {
   clearTimeout(explorerSearchTimer);
+  explorerSearchRequestId++;
+  if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
   explorerSearchTimer=setTimeout(()=>runExplorerSearch($("workspace-search")?.value||""),220);
 }
 async function goToSearchResult(item) {
@@ -2289,6 +2313,8 @@ function rememberLocation() {
 async function goLocation(accountId, bucketName, prefix = "", remember = true) {
   explorerSearchActive = false;
   explorerSearchRequestId++;
+  if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
+  explorerSearchSessionId="";
   explorerBucketAccountId = "";
   const bucket = (explorerBuckets.get(accountId) || []).find(
     (b) => b.name === bucketName,
@@ -2483,6 +2509,8 @@ function renderSources() {
 function showBucketRows(accountId = "") {
   explorerSearchActive = false;
   explorerSearchRequestId++;
+  if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
+  explorerSearchSessionId="";
   explorerBucketAccountId = accountId || "__all__";
   workspaceTarget = null;
   workspacePrefix = "";
@@ -2525,10 +2553,13 @@ async function loadExplorerInventory() {
     throw new Error(accountsResult?.error || "Could not load accounts");
   explorerAccounts = accountsResult.accounts || [];
   explorerBuckets.clear();
+  explorerInventoryErrors.clear();
   await Promise.all(
     explorerAccounts.map(async (account) => {
       const result = await send({ type: "cfBuckets", accountId: account.id });
       explorerBuckets.set(account.id, result?.ok ? result.buckets || [] : []);
+      if(result?.ok)explorerInventoryErrors.delete(account.id);
+      else explorerInventoryErrors.set(account.id,"INVENTORY_FAILED");
     }),
   );
   renderSources();
@@ -2650,8 +2681,11 @@ function renderFileItems() {
   const start=explorerPage*explorerPageSize;
   const items = all.slice(start,start+explorerPageSize);
   const query = $("workspace-search")?.value.trim() || "";
-  if (explorerSearchActive && !items.length)
-    root.innerHTML = `<div class="file-empty"><strong>No remote matches for “${query}”</strong>Try a filename, folder name, or path fragment.</div>`;
+  if (explorerSearchActive && !items.length){
+    const empty=document.createElement("div");empty.className="file-empty";
+    empty.textContent=explorerSearchState==="scanning"?"Searching remote paths… Matches appear as pages arrive.":`No matches received for “${query}”. Check search progress and any partial errors above.`;
+    root.append(empty);
+  }
   else if (!workspaceTarget && !items.length)
     root.innerHTML =
       '<div class="file-empty"><strong>No R2 buckets found</strong>Create a bucket to begin.</div>';
@@ -4348,3 +4382,16 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
   if(auth?.accessToken)await loadExplorerInventory().catch(error=>{$("explorer-status").textContent=friendlyError(error,"load Cloudflare storage");});
   await renderHistory();
 })();
+
+// Explicit Debug Mode controls; no remote probe or repair is triggered here.
+for(const [id,operation] of [["runtime-diagnostics-status","snapshot"],["runtime-diagnostics-export","exportSupport"],["runtime-diagnostics-clear","clear"]]){
+  $(id)?.addEventListener("click",async()=>{
+    const result=await send({type:"runtimeDiagnosticsV1",operation});
+    if(!result?.ok){$("runtime-diagnostics-output").textContent=result?.error||"Diagnostics unavailable.";return;}
+    $("runtime-diagnostics-output").textContent=JSON.stringify(result.result,null,2);
+    if(operation==="exportSupport"){
+      const url=URL.createObjectURL(new Blob([JSON.stringify(result.result.data,null,2)],{type:"application/json"}));
+      const link=document.createElement("a");link.href=url;link.download="redown-support.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+  });
+}

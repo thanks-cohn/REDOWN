@@ -5,7 +5,7 @@ import test from 'node:test';
 
 const source=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const begin=source.indexOf('async function buildMenus() {');
-const end=source.indexOf('chrome.runtime.onInstalled.addListener(rebuildMenus);',begin);
+const end=source.indexOf('/* Explicit, opt-in gallery capture',begin);
 assert.ok(begin>=0&&end>begin);
 
 function harness(profiles,labelFallback){

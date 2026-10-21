@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.invalid/schemas/runtime/1.0.0/support-bundle",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "scope",
+    "events"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "scope": {
+      "const": "passive-runtime"
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "sequence",
+          "at",
+          "runId",
+          "requestId",
+          "operation",
+          "outcome",
+          "code",
+          "durationMs"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "operation": {
+            "enum": [
+              "message",
+              "api.read",
+              "api.write",
+              "auth.refresh",
+              "search.page",
+              "preview"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "success",
+              "failed",
+              "cancelled",
+              "unknown"
+            ]
+          },
+          "code": {
+            "type": "string"
+          },
+          "durationMs": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600000
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

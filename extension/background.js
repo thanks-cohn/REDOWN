@@ -756,6 +756,17 @@ importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("rfis-index.js");
+importScripts("runtime-diagnostics.js");
+importScripts("search-session.js");
+const runtimeDiagnostics = RedownRuntimeDiagnostics.create({build:chrome.runtime.getManifest().version});
+globalThis.redownRuntimeObserver=runtimeDiagnostics;
+chrome.storage.local.get("debugModeEnabled").then(value=>runtimeDiagnostics.setEnabled(value.debugModeEnabled)).catch(()=>{});
+chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area==="local"&&changes.debugModeEnabled)runtimeDiagnostics.setEnabled(changes.debugModeEnabled.newValue);
+  if(area==="local"&&changes.cloudflareAuth&&changes.cloudflareAuth.oldValue?.sessionId!==changes.cloudflareAuth.newValue?.sessionId)searchSessions.cancelAll();
+});
+const searchSessions = RedownSearchSessions.create({listPage:listObjectsPage,score:explorerSearchScore});
+
 async function connectCloudflare() { return RedownCloudflareAuth.connect(); }
 async function disconnectCloudflare() {
   return navigator.locks.request("redown-cloudflare-token",async()=>{
@@ -778,7 +789,8 @@ async function listCloudflareAccounts() {
     const res = await cfFetch(`/accounts?per_page=50&page=${page}`);
     const body = await res.json().catch(() => ({}));
     if (!res.ok || body.success === false) throw new Error(cloudflareErrorMessage(body, `Could not load Cloudflare accounts (${res.status})`));
-    const batch = Array.isArray(body.result) ? body.result : [];
+    if(!Array.isArray(body.result))throw new Error("Cloudflare returned an unreadable account list. Retry Refresh.");
+    const batch = body.result;
     accounts.push(...batch.map(x => ({ id:x.id, name:x.name })));
     const totalPages = Number(body?.result_info?.total_pages || 0);
     if (!batch.length || batch.length < 50 || (totalPages && page >= totalPages)) break;
@@ -795,6 +807,7 @@ async function listBuckets(accountId) {
     const body = await res.json().catch(() => ({}));
     if (!res.ok || body.success === false) throw new Error(cloudflareErrorMessage(body, `Could not load R2 buckets (${res.status})`));
     const result = body.result || {};
+    if(!Array.isArray(result)&&!Array.isArray(result.buckets))throw new Error("Cloudflare returned an unreadable bucket list. Retry Refresh.");
     const batch = Array.isArray(result?.buckets) ? result.buckets : (Array.isArray(result) ? result : []);
     buckets.push(...batch.map(x => ({ name:x.name, location:x.location, jurisdiction:x.jurisdiction })));
     const next = result?.cursor || body?.result_info?.cursor || "";
@@ -1120,7 +1133,10 @@ async function listObjectsPage(accountId, bucketName, prefix = "", cursor = "", 
   if (cursor) params.set("cursor", cursor);
   if (delimiter) params.set("delimiter", delimiter);
   const res = await cfFetch(`/accounts/${accountId}/r2/buckets/${encodeURIComponent(bucketName)}/objects?${params}`);
-  const body = await res.json().catch(() => ({}));
+  const body = await res.json().catch(() => null);
+  if (!body || typeof body!=="object" || (!Array.isArray(body.result) && !Array.isArray(body.result?.objects) && !Array.isArray(body.objects))) {
+    throw new Error("Cloudflare returned an unreadable listing. Retry Refresh; your files have not been changed.");
+  }
   if (!res.ok || body.success === false) throw new Error(cloudflareErrorMessage(body, `Could not list bucket objects (${res.status})`));
   const result = body.result ?? body;
   const objects = Array.isArray(result?.objects) ? result.objects : (Array.isArray(result) ? result : []);
@@ -2059,8 +2075,32 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  const traceId=crypto.randomUUID();
+  const traceStart=performance.now();
+  const respond=sendResponse;
+  sendResponse=value=>{
+    try {if(message?.type!=="runtimeDiagnosticsV1")runtimeDiagnostics.record({operation:"message",requestId:traceId,durationMs:performance.now()-traceStart,outcome:value?.ok===false?"failed":"success",code:value?.ok===false?"UNKNOWN":"OK"});} catch {}
+    respond({...value,correlationId:traceId});
+  };
   (async () => {
     try {
+      if(message?.type==="runtimeDiagnosticsV1"){
+        const allowed=_sender?.url===chrome.runtime.getURL("options.html");
+        const {debugModeEnabled}=await chrome.storage.local.get("debugModeEnabled");
+        if(!allowed||!debugModeEnabled)return sendResponse({ok:false,error:"Enable Debug Mode in Settings.",code:"DIAGNOSTICS_DISABLED"});
+        const result=runtimeDiagnostics.query(message.operation,message.input);
+        if(message.operation==="snapshot"){
+          const {cloudflareAuth:auth}=await chrome.storage.local.get("cloudflareAuth");
+          result.data.components.authorization=!auth?.accessToken?"disconnected":auth.reconnectRequired?"reconnect-required":auth.expiresAt&&Date.now()>=auth.expiresAt-60000?auth.refreshToken?"renewal-due":"reconnect-required":"credential-present";
+          result.data.components.renewal=auth?.refreshToken?"credential-present":"unavailable";
+          result.data.build={extensionVersion:chrome.runtime.getManifest().version,runtimeApiVersion:"1.0.0",workerCompatibility:"unknown"};
+        }
+        return sendResponse({ok:true,result});
+      }
+      if(message?.type==="cfSearchStart")return sendResponse({ok:true,search:searchSessions.start(message.targets,message.query)});
+      if(message?.type==="cfSearchStep")return sendResponse({ok:true,search:await searchSessions.step(message.sessionId)});
+      if(message?.type==="cfSearchCancel")return sendResponse({ok:true,search:searchSessions.cancel(message.sessionId)});
+      if(message?.type==="cfSearchRetry")return sendResponse({ok:true,search:searchSessions.retry(message.sessionId)});
       if (/^hitomiCapture(Start|Chunk|Finish|Error)$/.test(message?.type||"")) return sendResponse(await handleHitomiCaptureMessage(message,_sender));
       if (message?.type === "ingest") {
         const profiles = await getProfiles();

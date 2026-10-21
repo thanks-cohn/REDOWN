@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.invalid/schemas/runtime/1.0.0/response",
+  "type": "object",
+  "required": [
+    "runtimeApiVersion",
+    "requestId",
+    "runId",
+    "state",
+    "data"
+  ],
+  "properties": {
+    "runtimeApiVersion": {
+      "const": "1.0.0"
+    },
+    "requestId": {
+      "type": "string"
+    },
+    "runId": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable",
+        "failed",
+        "unsupported"
+      ]
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

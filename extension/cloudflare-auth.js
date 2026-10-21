@@ -27,6 +27,7 @@ async function storeCloudflareToken(token, previous = {}) {
   if (!accessToken) throw new Error("Cloudflare did not return an access token");
   const auth = {
     ...previous,
+    sessionId: globalThis.crypto?.randomUUID?.() || String(Date.now()),
     accessToken,
     refreshToken: token.refresh_token || previous.refreshToken || null,
     expiresAt: token.expires_in ? Date.now() + Number(token.expires_in) * 1000 : null

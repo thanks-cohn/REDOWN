@@ -8,6 +8,7 @@ const source = await readFile(new URL('../extension/background.js', import.meta.
 const authSource = await readFile(new URL('../extension/cloudflare-auth.js', import.meta.url), 'utf8');
 const apiSource = await readFile(new URL('../extension/cloudflare-api.js', import.meta.url), 'utf8');
 const nestedSource = await readFile(new URL('../extension/nested-locations.js', import.meta.url), 'utf8');
+const extraSources=Object.fromEntries(await Promise.all(['rfis-index.js','runtime-diagnostics.js','search-session.js'].map(async name=>[name,await readFile(new URL('../extension/'+name,import.meta.url),'utf8')])));
 const optionsSource = await readFile(new URL('../extension/options.js', import.meta.url), 'utf8');
 function event() {
   const listeners = [];
@@ -31,7 +32,7 @@ function harness(shared = {}) {
   });
   const chrome = {
     identity: { getRedirectURL(path = '') { return `https://testid.chromiumapp.org/${path}`; } },
-    runtime: { onInstalled:event(), onStartup:event(), onMessage:event(), sendMessage() { throw new Error("background unavailable"); } },
+    runtime: { getManifest:()=>({version:"test"}), getURL:path=>`chrome-extension://testid/${path}`, onInstalled:event(), onStartup:event(), onMessage:event(), sendMessage() { throw new Error("background unavailable"); } },
     storage: { session:storage(session), local:storage(local), onChanged:event() },
     contextMenus: { onClicked:event() },
     windows: {
@@ -62,7 +63,7 @@ function harness(shared = {}) {
   const timers = [];
   const context = vm.createContext({
     chrome, navigator:{locks}, crypto:webcrypto, TextEncoder, Uint8Array, URL, URLSearchParams, Headers,
-    AbortController, AbortSignal, FormData, btoa, console,
+    AbortController, AbortSignal, FormData, btoa, console, performance, structuredClone,
     setTimeout(fn, ms) { const timer = {fn, ms}; timers.push(timer); return timer; },
     clearTimeout(timer) { const i = timers.indexOf(timer); if (i >= 0) timers.splice(i, 1); },
     fetch(...args) { return fetchImpl(...args); }
@@ -70,6 +71,7 @@ function harness(shared = {}) {
   context.importScripts = path => {
     if (path === 'cloudflare-auth.js') vm.runInContext(authSource, context);
     else if(path === 'nested-locations.js')vm.runInContext(nestedSource,context);
+    else if(Object.hasOwn(extraSources,path))vm.runInContext(extraSources[path],context);
     else { assert.equal(path, 'cloudflare-api.js'); vm.runInContext(apiSource, context); }
   };
   if (shared.withoutBackground) vm.runInContext(authSource, context);
@@ -300,4 +302,15 @@ test('authorization URL requests only the registered resource scopes, preserving
   assert.deepEqual(url.searchParams.get('scope').split(' '),['workers-r2.read','workers-r2.write','workers-scripts.read','workers-scripts.write']);
   assert.equal(url.searchParams.get('code_challenge_method'),'S256');
   assert.equal(url.searchParams.get('redirect_uri'),h.session.cloudflareLogin.redirectUri);
+});
+
+test('runtime adapter gates actual background messages by settings sender and Debug Mode without network',async()=>{
+ const h=harness();const listener=h.chrome.runtime.onMessage.listeners[0];
+ const send=(operation,url='chrome-extension://testid/options.html')=>new Promise(resolve=>listener({type:'runtimeDiagnosticsV1',operation},{url},resolve));
+ assert.equal((await send('snapshot')).code,'DIAGNOSTICS_DISABLED');
+ h.local.debugModeEnabled=true;
+ assert.equal((await send('snapshot','https://untrusted.invalid/')).code,'DIAGNOSTICS_DISABLED');
+ h.run('runtimeDiagnostics.setEnabled(true)');
+ const result=await send('snapshot');assert.equal(result.ok,true);assert.equal(result.result.data.components.authorization,'disconnected');assert.equal(result.result.data.components.worker,'unknown');
+ const exported=await send('exportSupport');assert.equal(exported.result.data.scope,'passive-runtime');assert.equal(h.calls.filter(c=>c[0]==='fetch').length,0);
 });
