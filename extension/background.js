@@ -72,7 +72,7 @@ function cleanPrefix(value) {
   if (parts.some(x => x === "." || x === "..")) throw new Error("Invalid object path");
   return parts.map(x => x.replace(/[^a-zA-Z0-9._ -]/g, "-")).join("/");
 }
-async function uniqueKey(storage, requested) {
+async function uniqueKey(storage, requested, firstIndex = 2, compact = false) {
   if (!(await storage.head(requested))) return requested;
   const slash = requested.lastIndexOf("/");
   const parent = slash >= 0 ? requested.slice(0, slash + 1) : "";
@@ -80,11 +80,16 @@ async function uniqueKey(storage, requested) {
   const dot = name.lastIndexOf(".");
   const stem = dot > 0 ? name.slice(0, dot) : name;
   const extension = dot > 0 ? name.slice(dot) : "";
-  for (let index = 2; index < 10000; index++) {
-    const candidate = parent + stem + " (" + index + ")" + extension;
+  for (let index = firstIndex; index < 10000; index++) {
+    const candidate = parent + stem + (compact ? "-" + index : " (" + index + ")") + extension;
     if (!(await storage.head(candidate))) return candidate;
   }
   throw new Error("Could not choose an available filename");
+}
+async function putNewDownload(storage, key, value, metadata) {
+  const result = await storage.put(key, value, { ...metadata, onlyIf: new Headers({ "If-None-Match": "*" }) });
+  if (result === null) throw new Error("Another download claimed this filename. Please retry; the existing file was preserved.");
+  return result;
 }
 function extensionForContentType(contentType) {
   const type = String(contentType || "").split(";")[0].trim().toLowerCase();
@@ -362,8 +367,9 @@ export default {
 
         const prefix = cleanPrefix(request.headers.get("x-redown-folder") || "");
         const contentType = request.headers.get("content-type") || "application/octet-stream";
-        const filename = filenameWithInferredExtension(requestedFilename, contentType);
-        const key = prefix ? \`\${prefix}/\${filename}\` : filename;
+        const requested = filenameWithInferredExtension(requestedFilename, contentType);
+        const key = await uniqueKey(env.STORAGE, prefix ? prefix + "/" + requested : requested, 1, true);
+        const filename = key.split("/").pop();
         const encodedKey = key.split("/").map(encodeURIComponent).join("/");
         const publicPath = \`/assets/\${encodedKey}\`;
         const publicBaseUrl = safePublicBase(request.headers.get("x-redown-public-base"), requestUrl);
@@ -400,13 +406,13 @@ export default {
             }
           });
           const pipePromise = request.body.pipeThrough(limiter).pipeTo(fixed.writable);
-          const putPromise = env.STORAGE.put(key, fixed.readable, metadata);
+          const putPromise = putNewDownload(env.STORAGE, key, fixed.readable, metadata);
           await Promise.all([pipePromise, putPromise]);
           bytesWritten = count || length;
         } else {
           const bytes = new Uint8Array(await request.arrayBuffer());
           if (bytes.byteLength > max) throw new Error("Local file exceeded size limit");
-          await env.STORAGE.put(key, bytes, metadata);
+          await putNewDownload(env.STORAGE, key, bytes, metadata);
           bytesWritten = bytes.byteLength;
         }
 
@@ -577,8 +583,9 @@ export default {
       }
 
       const contentType = remote.headers.get("content-type") || "application/octet-stream";
-      const filename = filenameWithInferredExtension(requestedFilename, contentType);
-      const key = prefix ? \`\${prefix}/\${filename}\` : filename;
+      const requested = filenameWithInferredExtension(requestedFilename, contentType);
+      const key = await uniqueKey(env.STORAGE, prefix ? prefix + "/" + requested : requested, 1, true);
+      const filename = key.split("/").pop();
       const encodedKey = key.split("/").map(encodeURIComponent).join("/");
       const publicPath = \`/assets/\${encodedKey}\`;
       const publicBaseUrl = safePublicBase(body.publicBaseUrl, requestUrl);
@@ -609,7 +616,7 @@ export default {
         });
 
         const pipePromise = remote.body.pipeThrough(limiter).pipeTo(fixed.writable);
-        const putPromise = env.STORAGE.put(key, fixed.readable, metadata);
+        const putPromise = putNewDownload(env.STORAGE, key, fixed.readable, metadata);
         await Promise.all([pipePromise, putPromise]);
         bytesWritten = count || length;
       } else {
@@ -633,7 +640,7 @@ export default {
           offset += chunk.byteLength;
         }
 
-        await env.STORAGE.put(key, combined, metadata);
+        await putNewDownload(env.STORAGE, key, combined, metadata);
         bytesWritten = count;
       }
 
@@ -974,7 +981,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     defaultPrefix: existing?.defaultPrefix ?? existing?.folders?.files ?? folders?.files ?? "files",
     defaultCategory: existing?.defaultCategory || "files",
     menuTree: Array.isArray(existing?.menuTree) ? existing.menuTree : [],
-    workerVersion: 3,
+    workerVersion: 4,
     explorerManaged: Boolean(explorerOnly),
     publicAssetsEnabled: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
     capabilities: {
@@ -1302,7 +1309,7 @@ async function workerAcceptsProfile(profile) {
 async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false) {
   let profiles = await getProfiles();
   let profile = profiles.find(p => p.type === "cloudflare-r2" && p.accountId === accountId && p.bucketName === bucketName);
-  if (!forceRepair && profile?.workerVersion >= 3 && await workerAcceptsProfile(profile)) return profile;
+  if (!forceRepair && profile?.workerVersion >= 4 && await workerAcceptsProfile(profile)) return profile;
 
   return provisionCloudflareProfile({
     accountId,
