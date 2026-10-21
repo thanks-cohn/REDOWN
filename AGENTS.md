@@ -89,3 +89,10 @@ Move to / Copy to now expand buckets and lazily paged folders, including current
 Nested editor Refresh locations is section-header only. Latest full suite: 182 tests,
 176 pass, the same six historical evidence failures. User-specific silent Download failure
 is not live-reproduced; new Chrome interruption/error feedback needs browser retesting.
+
+Copy here follow-up (same context-menu report): Worker calls now have a 30-second
+request deadline, ambiguous writes are not replayed, copy receipts/conflict retries
+are validated, and status is visible near the file list. Destination menus expose
+Here immediately and cache bounded short-lived folder pages. Latest full suite:
+188 tests, 182 pass, same six historical evidence failures. User's deployed/browser
+copy stall remains unverified until retest; no live closure or customer deployment claimed.

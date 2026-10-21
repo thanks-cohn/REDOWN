@@ -1,7 +1,20 @@
 /* Local UI only. Each submenu requests one directory page when opened. */
 (() => {
   function create({document,loadPage,onChoose,onError,onDismiss=()=>{},viewport=()=>({width:innerWidth,height:innerHeight})}) {
-    const panels=[];let hoverTimer;
+    const panels=[],pageCache=new Map();let hoverTimer;
+    function cachedPage(target){
+      const key=JSON.stringify([target.accountId,target.bucketName,target.prefix,target.cursor]);
+      const old=pageCache.get(key);
+      if(old&&(old.pending||old.expiresAt>Date.now()))return old.promise;
+      if(pageCache.size>=64)pageCache.delete(pageCache.keys().next().value);
+      let timer;
+      const entry={pending:true};
+      entry.promise=Promise.race([
+        Promise.resolve().then(()=>loadPage(target)),
+        new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Folder listing timed out. Retry.')),12000);})
+      ]).then(page=>{entry.pending=false;entry.expiresAt=Date.now()+10000;return page;},error=>{if(pageCache.get(key)===entry)pageCache.delete(key);throw error;}).finally(()=>clearTimeout(timer));
+      pageCache.set(key,entry);return entry.promise;
+    }
     const closeFrom=depth=>{
       clearTimeout(hoverTimer);
       for(const panel of panels.splice(depth)){panel.owner.setAttribute('aria-expanded','false');panel.element.remove();}
@@ -42,14 +55,15 @@
         const panel={owner:button,element,seen:new Set()};panels.push(panel);button.setAttribute('aria-expanded','true');document.body.append(element);
         element.addEventListener('keydown',event=>keyboard(element,depth+1,event));
         element.addEventListener('scroll',()=>closeFrom(depth+1));
-        const status=document.createElement('div');status.className='menu-label';status.role='status';status.textContent='Loading…';element.append(status);position(element,button);
+        if(load.initialEntries)render(element,load.initialEntries,depth+1,panel);
+        const status=document.createElement('div');status.className='menu-label';status.role='status';status.textContent='Loading folders…';element.append(status);position(element,button);
         try{
           const entries=await load();if(panels[depth]!==panel)return;
-          element.replaceChildren();render(element,entries,depth+1,panel);position(element,button);
+          status.remove();render(element,entries,depth+1,panel);position(element,button);
           if(focus)element.querySelector('button:not(:disabled)')?.focus();
         }catch(error){
           if(panels[depth]!==panel)return;
-          status.textContent='Could not load locations.';element.replaceChildren(status);
+          status.textContent='Could not load child folders. Retry to browse deeper.';
           const retry=document.createElement('button');retry.className='menu-item';retry.textContent='Retry';retry.onclick=()=>{closeFrom(depth);return open(true);};element.append(retry);if(focus)retry.focus();
         }
       }
@@ -88,14 +102,16 @@
         return safeSubtree(destination);
       };
       function children(destination,cursor=''){
-        return async()=>{
-          const page=await loadPage({...destination,cursor});
-          const entries=cursor?[]:[{label:`${verb} here`,enabled:allowed(destination),choose:()=>onChoose(operation,destination,items,source)}];
+        const initialEntries=cursor?[]:[{label:`${verb} here`,enabled:allowed(destination),choose:()=>{pageCache.clear();return onChoose(operation,destination,items,source);}}];
+        const load=async()=>{
+          const page=await cachedPage({...destination,cursor});
+          const entries=[];
           for(const folder of page.folders){const target={...destination,prefix:folder.prefix};entries.push({key:folder.prefix,label:folder.name,children:children(target),enabled:safeSubtree(target)});}
           if(page.cursor)entries.push({label:'More folders…',more:children(destination,page.cursor)});
           if(!page.folders.length&&!page.cursor)entries.push({label:cursor?'No more folders':'No subfolders',enabled:false});
           return entries;
         };
+        load.initialEntries=initialEntries;return load;
       }
       branch(root,`${verb} to`,async()=>{const entries=accounts.flatMap(account=>(buckets.get(account.id)||[]).map(bucket=>{
         const destination={accountId:account.id,accountName:account.name||'',bucketName:bucket.name,prefix:''};
@@ -103,7 +119,7 @@
       }));return entries.length?entries:[{label:'No buckets loaded — refresh Explorer',enabled:false}];},0,items.length>0);
       if(!root.dataset.destinationKeyboard){root.dataset.destinationKeyboard='true';root.addEventListener('keydown',event=>keyboard(root,0,event));root.addEventListener('scroll',()=>closeFrom(0));root.addEventListener('mouseover',event=>{const button=event.target.closest('button');if(button&&!button.hasAttribute('aria-haspopup'))closeFrom(0);});}
     }
-    return {attach,close:()=>closeFrom(0)};
+    return {attach,clearCache:()=>pageCache.clear(),close:()=>closeFrom(0)};
   }
   globalThis.RedownDestinationMenus={create};
 })();

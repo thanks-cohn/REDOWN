@@ -1,0 +1,48 @@
+✔ Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes (90.745939ms)
+✔ current bucket remains available for sibling destinations and same-folder choice is disabled (19.339018ms)
+✔ folder pages append via More folders and closed menus ignore late replies (22.567182ms)
+✔ keyboard arrows navigate menus and Escape returns to parent without changing Explorer (11.727752ms)
+✔ failed lazy folder reads offer retry and never execute a transfer (14.233374ms)
+✖ Copy here is available immediately while child-folder listing is still pending (11.095571ms)
+✖ reopening the same destination reuses a bounded short-lived folder page cache (16.983894ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 632.72412
+
+✖ failing tests:
+
+test at tests/explorer-destination-menu.test.mjs:38:1
+✖ Copy here is available immediately while child-folder listing is still pending (11.095571ms)
+  AssertionError [ERR_ASSERTION]: choosing this destination must not wait for listing its child folders
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/explorer-destination-menu.test.mjs:42:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/explorer-destination-menu.test.mjs:45:1
+✖ reopening the same destination reuses a bounded short-lived folder page cache (16.983894ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/explorer-destination-menu.test.mjs:48:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

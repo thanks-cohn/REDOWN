@@ -27,11 +27,23 @@ test('current bucket remains available for sibling destinations and same-folder 
 });
 test('folder pages append via More folders and closed menus ignore late replies',async()=>{
  let release;const h=harness(async t=>t.cursor?{folders:[{name:'second',prefix:'second/'}],cursor:''}:{folders:[{name:'first',prefix:'first/'}],cursor:'next'});h.attach('copy');await h.root.querySelector('button').onclick({stopPropagation(){}});await h.buttons()[1].onclick({stopPropagation(){}});await [...h.buttons()].find(b=>b.textContent==='More folders…').onclick({stopPropagation(){}});assert.ok([...h.buttons()].some(b=>b.textContent==='first ›'));assert.ok([...h.buttons()].some(b=>b.textContent==='second ›'));h.menus.close();h.dom.window.close();
- const stale=harness(()=>new Promise(r=>release=r));stale.attach('copy');await stale.root.querySelector('button').onclick({stopPropagation(){}});const loading=stale.buttons()[1].onclick({stopPropagation(){}});stale.menus.close();release({folders:[],cursor:''});await loading;assert.equal(stale.dom.window.document.querySelectorAll('.explorer-submenu').length,0);stale.dom.window.close();
+ const stale=harness(()=>new Promise(r=>release=r));stale.attach('copy');await stale.root.querySelector('button').onclick({stopPropagation(){}});const loading=stale.buttons()[1].onclick({stopPropagation(){}});await Promise.resolve();stale.menus.close();release({folders:[],cursor:''});await loading;assert.equal(stale.dom.window.document.querySelectorAll('.explorer-submenu').length,0);stale.dom.window.close();
 });
 test('keyboard arrows navigate menus and Escape returns to parent without changing Explorer',async()=>{
  const h=harness();h.attach('move');const owner=h.root.querySelector('button');await owner.onclick({stopPropagation(){}});const first=h.buttons()[0];first.focus();first.dispatchEvent(new h.dom.window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));assert.equal(h.dom.window.document.activeElement,h.buttons()[1]);h.buttons()[1].dispatchEvent(new h.dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(h.dom.window.document.activeElement,owner);assert.equal(owner.getAttribute('aria-expanded'),'false');h.dom.window.close();
 });
 test('failed lazy folder reads offer retry and never execute a transfer',async()=>{
- let fail=true;const h=harness(async()=>{if(fail)throw Error('network');return {folders:[],cursor:''};});h.attach('move');await h.root.querySelector('button').onclick({stopPropagation(){}});await h.buttons()[0].onclick({stopPropagation(){}});assert.equal(h.buttons()[0].textContent,'Retry');assert.equal(h.choices.length,0);fail=false;await h.buttons()[0].onclick();assert.equal(h.buttons()[0].textContent,'Move here');h.dom.window.close();
+ let fail=true;const h=harness(async()=>{if(fail)throw Error('network');return {folders:[],cursor:''};});h.attach('move');await h.root.querySelector('button').onclick({stopPropagation(){}});await h.buttons()[0].onclick({stopPropagation(){}});assert.ok([...h.buttons()].some(b=>b.textContent==='Retry'));assert.equal(h.choices.length,0);fail=false;await [...h.buttons()].find(b=>b.textContent==='Retry').onclick();assert.equal(h.buttons()[0].textContent,'Move here');h.dom.window.close();
+});
+test('Copy here is available immediately while child-folder listing is still pending',async()=>{
+ let release;const h=harness(()=>new Promise(r=>release=r));h.attach('copy');await h.root.querySelector('button').onclick({stopPropagation(){}});
+ const opening=h.buttons()[1].onclick({stopPropagation(){}});await Promise.resolve();
+ const copy=[...h.buttons()].find(b=>b.textContent==='Copy here');
+ assert.ok(copy,'choosing this destination must not wait for listing its child folders');
+ await copy.onclick({stopPropagation(){}});assert.equal(h.choices.length,1);release({folders:[],cursor:''});await opening;h.dom.window.close();
+});
+test('reopening the same destination reuses a bounded short-lived folder page cache',async()=>{
+ let reads=0;const h=harness(async()=>{reads++;return {folders:[],cursor:''};});h.attach('copy');
+ for(let i=0;i<2;i++){await h.root.querySelector('button').onclick({stopPropagation(){}});await h.buttons()[1].onclick({stopPropagation(){}});h.menus.close();}
+ assert.equal(reads,1);h.menus.clearCache();await h.root.querySelector('button').onclick({stopPropagation(){}});await h.buttons()[1].onclick({stopPropagation(){}});assert.equal(reads,2);h.dom.window.close();
 });

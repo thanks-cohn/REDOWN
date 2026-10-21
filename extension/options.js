@@ -2603,6 +2603,7 @@ async function browseWorkspace({ append = false } = {}) {
   }
 
   if (!append) {
+    if(typeof explorerDestinationMenus!=="undefined")explorerDestinationMenus?.clearCache();
     root.innerHTML =
       '<div class="file-empty"><span class="operation-spinner"></span><strong>Preparing bucket…</strong>Verifying Cloudflare access</div>';
     $("explorer-status").textContent = "";
@@ -3102,12 +3103,11 @@ async function pasteExplorer(
     entries: explorerClipboard.entries,
     conflict: "skip",
   };
+  $("explorer-status").textContent=`${request.operation==="move"?"Moving":"Copying"} ${explorerClipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`;
   let result = await send(request);
   if (!result?.ok) {
-    finishOperation(
-      friendlyError(new Error(result?.error || ""), request.operation),
-      true,
-    );
+    const message=friendlyError(new Error(result?.error || ""),request.operation);
+    finishOperation(message,true);$("explorer-status").textContent=message;
     return;
   }
   if (result.conflicts?.length) {
@@ -3118,7 +3118,7 @@ async function pasteExplorer(
       ?.trim()
       .toLowerCase();
     if (!choice || choice === "cancel") {
-      finishOperation("Paste cancelled");
+      finishOperation("Paste cancelled");$("explorer-status").textContent="Paste cancelled";
       return;
     }
     const conflict = choice.startsWith("r")
@@ -3127,6 +3127,7 @@ async function pasteExplorer(
         ? "keep"
         : "skip";
     if (conflict !== "skip") {
+      const previousCompleted=Number(result.completed)||0;
       result = await send({
         ...request,
         entries: result.conflicts.map((x) => ({
@@ -3137,6 +3138,12 @@ async function pasteExplorer(
         })),
         conflict,
       });
+      if(!result?.ok){
+        finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true);
+        $("explorer-status").textContent=result?.error||"The transfer was not confirmed. Refresh the destination before retrying.";
+        return;
+      }
+      result.completed=previousCompleted+(Number(result.completed)||0);
     }
   }
   if (request.operation === "move" && !result.errors?.length) {
@@ -3150,7 +3157,9 @@ async function pasteExplorer(
       : `${result.completed || 0} files ${request.operation === "move" ? "moved" : "copied"}`,
     Boolean(failed),
   );
+  const summary=failed?`${result.completed||0} files completed · ${failed} failed`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
   await browseWorkspace();
+  $("explorer-status").textContent=summary;
 }
 async function moveSelectionTo(destination) {
   if(selectedExplorerItems().some(item=>item.searchResult))return finishOperation("Open the containing folder to move search results.",true);
@@ -3420,7 +3429,10 @@ function destinationMenus(){
       return response;
     },
     onChoose:async(operation,destination,items,source)=>{await setExplorerClipboard(operation,items,source);await pasteExplorer(destination);},
-    onError:error=>finishOperation(error?.message||"Could not transfer these files.",true),
+    onError:error=>{
+      const message=error?.name==="TimeoutError"?"The transfer was not confirmed in time. Refresh the destination before retrying; a copy may already exist.":error?.message||"Could not transfer these files.";
+      finishOperation(message,true);$("explorer-status").textContent=message;
+    },
     onDismiss:()=>rootRow([...explorerSelected][0])?.focus({preventScroll:true})
   });
 }
@@ -4276,6 +4288,7 @@ $("refresh-history").addEventListener("click",()=>renderHistory({markSeen:true})
 let downloadsDirty=false;
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=="local")return;
+  if(changes.cloudflareAuth)explorerDestinationMenus?.clearCache();
   if(changes.cloudflareAuth && (changes.cloudflareAuth.newValue?.accessToken!==changes.cloudflareAuth.oldValue?.accessToken||changes.cloudflareAuth.newValue?.reconnectRequired!==changes.cloudflareAuth.oldValue?.reconnectRequired)){
     refreshCloudflare().catch(error=>setStatus("hero-status",safeUiMessage(error?.message||String(error)),"bad"));
   }

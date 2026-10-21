@@ -1337,41 +1337,34 @@ async function preparedProfile(accountId, bucketName, accountName = "", forceRep
   });
 }
 async function callBucketWorker(profile, body, allowRepair = true) {
-  let active = profile;
-  let response = await fetch(active.workerUrl, {
-    method:"POST",
-    headers:{
-      authorization:`Bearer ${active.token || ""}`,
-      "content-type":"application/json"
-    },
-    body:JSON.stringify(body)
-  });
-
-  if (allowRepair && (response.status === 401 || response.status === 403)) {
-    active = await preparedProfile(
-      active.accountId,
-      active.bucketName,
-      active.accountName,
-      true
-    );
-    response = await fetch(active.workerUrl, {
-      method:"POST",
-      headers:{
-        authorization:`Bearer ${active.token || ""}`,
-        "content-type":"application/json"
-      },
-      body:JSON.stringify(body)
-    });
+  async function run(active){
+    let response,result;
+    try{
+      response=await RedownCloudflareApi.boundedFetch(active.workerUrl,{
+        timeoutMs:30000,method:"POST",
+        headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json"},
+        body:JSON.stringify(body)
+      });
+      result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
+    }catch(error){
+      if(error?.name==="TimeoutError")throw new Error("The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist.");
+      throw new Error("The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
+    }
+    return {response,result};
   }
-
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || !result?.ok) {
-    const error = new Error(result?.error || `Bucket operation failed (${response.status})`);
-    error.status = response.status;
-    throw error;
+  let active=profile;
+  let {response,result}=await run(active);
+  if(allowRepair&&(response.status===401||response.status===403)){
+    active=await preparedProfile(active.accountId,active.bucketName,active.accountName,true);
+    ({response,result}=await run(active));
+  }
+  if(!response.ok||!result?.ok){
+    const error=new Error(result?.error||`Bucket operation failed (${response.status})`);
+    error.status=response.status;throw error;
   }
   return result;
 }
+
 async function expandExplorerEntries(accountId, bucketName, entries) {
   const expanded = [];
   for (const entry of entries || []) {
@@ -1415,8 +1408,14 @@ async function transferExplorerObjects(message) {
   });
   const results = [];
   for (let index = 0; index < mapped.length; index += 25) {
-    const response = await callBucketWorker(destinationProfile, { action:"transferBatch", entries:mapped.slice(index,index+25), sourceWorkerUrl:sourceProfile.workerUrl, sourceToken:sourceProfile.token, conflict:message.conflict || "skip" });
-    results.push(...(response.results || []));
+    const batch=mapped.slice(index,index+25);
+    const response = await callBucketWorker(destinationProfile, { action:"transferBatch", entries:batch, sourceWorkerUrl:sourceProfile.workerUrl, sourceToken:sourceProfile.token, conflict:message.conflict || "skip" });
+    const expected=new Set(batch.map(entry=>entry.sourceKey)),seen=new Set();
+    if(!Array.isArray(response.results)||response.results.length!==batch.length||response.results.some(result=>{
+      if(!expected.has(result.sourceKey)||seen.has(result.sourceKey)||!["copied","conflict","failed"].includes(result.status))return true;
+      seen.add(result.sourceKey);return result.status==="copied"&&!(typeof result.destinationKey==="string"&&result.destinationKey);
+    }))throw new Error("The bucket did not confirm all selected files. Refresh the destination before retrying; some copies may already exist.");
+    results.push(...response.results);
   }
   const copied = results.filter(result => result.status === "copied");
   const deleteErrors = [];

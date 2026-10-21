@@ -1,0 +1,28 @@
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (24.354395ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (1.212803ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (0.868517ms)
+✖ missing per-file copy receipts cannot become a successful zero-file copy (1.474819ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 87.956929
+
+✖ failing tests:
+
+test at tests/explorer-copy.test.mjs:27:1
+✖ missing per-file copy receipts cannot become a successful zero-file copy (1.474819ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///workspace/remote-download-2-cloudfare/tests/explorer-copy.test.mjs:30:2)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /did not confirm/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
