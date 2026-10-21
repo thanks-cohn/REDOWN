@@ -428,66 +428,6 @@
     body.preview-lightbox-open .settings-mascot{visibility:hidden}
     @media(max-width:600px){.settings-mascot{width:64px;left:8px;bottom:8px}}
     @media(prefers-reduced-motion:reduce){.settings-mascot{transition:none;transform:none}}
-
-    /* Storage Array: isolated instrument panel; shared application styles stay intact. */
-    #cloudflare-panel{--storage-ivory:#f2eddf;--storage-gold:#d9c593;--storage-sage:#b6c6b0;font-family:-apple-system,BlinkMacSystemFont,"DM Sans","Helvetica Neue",Arial,sans-serif;background:radial-gradient(ellipse at 10% 0,rgba(204,190,147,.09),transparent 60%),linear-gradient(145deg,#1c242d,#121c28 75%);border:1px solid #52574f;border-radius:24px;padding:24px;box-shadow:inset 0 1px 0 #d7c99b26,0 20px 50px #0003;color:var(--storage-ivory)}
-    #cloudflare-panel .storage-heading{margin-bottom:20px;padding-bottom:18px;border-color:#b8b49b26}
-    #cloudflare-panel .section-kicker{color:var(--storage-gold);font-size:10px;letter-spacing:.19em;margin-bottom:10px}
-    #cloudflare-panel h2{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:30px;font-weight:600;letter-spacing:-.04em;line-height:1.2;margin-bottom:7px}
-    #cloudflare-panel .storage-provider{color:#c1c8c8;border-left:1px solid #8d958952;padding-left:16px;font-size:12px;font-weight:500;letter-spacing:0}
-    #cloudflare-panel .section-note{color:#b5bdbb;font-size:13px}
-    #cloudflare-panel .storage-emblem{width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;border:1px solid #d9c59340;border-radius:15px;background:linear-gradient(135deg,#d9c59314,transparent);box-shadow:inset 0 1px 0 #fff1;color:var(--storage-gold)}
-    #cloudflare-panel .storage-emblem svg{width:36px;height:36px}
-    #cloudflare-panel .storage-console{padding:0;margin:0;border:0;background:transparent}
-    #cloudflare-panel .storage-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;padding:20px 22px;border:1px solid #85918440;border-radius:16px;background:linear-gradient(135deg,#35403e80,#1e2b3080);box-shadow:inset 0 1px 0 #f3eddf0d}
-    #cloudflare-panel .storage-controls>div{min-width:0}
-    #cloudflare-panel .storage-create{border-left:1px solid #a0ad9c26;padding-left:28px}
-    #cloudflare-panel label{font-size:12px;color:#d5d9cf;text-transform:none;letter-spacing:0;font-weight:550;margin-bottom:10px}
-    #cloudflare-panel .storage-step{font-size:10px;letter-spacing:.06em;color:#aebda7;border:1px solid #b9c7ad38;border-radius:5px;padding:2px 5px;margin-right:7px;font-variant-numeric:tabular-nums}
-    #cloudflare-panel :is(input,select){height:44px;border:1px solid #a2ad9947;border-radius:10px;background-color:#121e23;color:#f2eddf;font:inherit;font-size:13px;box-shadow:inset 0 2px 4px #0003;padding:10px 12px}
-    #cloudflare-panel input::placeholder{color:#a3afa8}
-    #cloudflare-panel #create-bucket{min-width:86px;height:44px;border:1px solid #efe5cb80;border-radius:10px;background:linear-gradient(160deg,#f1e9d7,#c9c4ac);color:#26372e;font-family:inherit;font-size:13px;font-weight:650;box-shadow:inset 0 1px 0 #fff9,0 2px 4px #0003;transition:filter .16s,transform .16s}
-    #cloudflare-panel #create-bucket:hover:not(:disabled){filter:brightness(1.08)}
-    #cloudflare-panel #create-bucket:active:not(:disabled){transform:translateY(1px)}
-    #cloudflare-panel #create-bucket span{margin-left:8px;font-size:17px;font-weight:400}
-    #cloudflare-panel .storage-array-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:23px 3px 16px}
-    #cloudflare-panel .storage-array-head h3{margin:0 0 4px;font-size:15px;font-weight:600;letter-spacing:-.015em}
-    #cloudflare-panel .storage-array-head p{margin:0;color:#b3beb9;font-size:12px;line-height:1.5}
-    #cloudflare-panel .storage-array-label{color:#a7b5ac;font-size:10px;letter-spacing:.09em;white-space:nowrap}
-    #cloudflare-panel .bucket-grid-viewport{border:1px solid #8b978440;border-radius:17px;padding:12px;background:linear-gradient(135deg,#0b141c,#17232a);box-shadow:inset 0 3px 12px #0005,inset 0 -1px 0 #c7d0b912}
-    #cloudflare-panel .bucket-grid{margin-top:0}
-    html:not(.debug-mode) #cloudflare-panel .bucket-grid{--bucket-gap:18px;max-height:calc(2*var(--bucket-size) + var(--bucket-gap) + 18px);scrollbar-color:#83927b #152128}
-    html:not(.debug-mode) #cloudflare-panel .bucket{transition:transform .18s}
-    #cloudflare-panel .bucket-select{box-shadow:0 2px 2px #0009,0 9px 14px -5px #0008,0 18px 22px -16px #000c}
-    #cloudflare-panel .bucket-surface{font-family:inherit;background:radial-gradient(ellipse at 25% 18%,#fffbedcc,transparent 58%),radial-gradient(ellipse at 78% 72%,#a5b29a,transparent 67%),linear-gradient(140deg,#e3e5d0,#c3cdb5 45%,#e6e2cd)}
-    #cloudflare-panel .bucket-name{font-size:13px;font-weight:600;letter-spacing:-.02em;color:#293e33;text-shadow:0 1px 0 #fff8}
-    #cloudflare-panel .bucket-status{color:#4b6250;font-size:11px;font-weight:500}
-    #cloudflare-panel .bucket-icon{color:#4b6656}
-    #cloudflare-panel .bucket.selected .bucket-surface{border-color:#fff1bc;box-shadow:inset 0 0 0 1px #99764380,inset 0 2px 3px #fffbedbf,inset 0 -3px 5px #54604340,0 0 9px #e7cc7a38}
-    #cloudflare-panel .bucket.is-error .bucket-surface{border:2px solid #ad4856}
-    #cloudflare-panel .bucket.is-error .bucket-status{color:#872e40;font-weight:650}
-    #cloudflare-panel .bucket.is-error .bucket-status:before{content:"!";display:grid;place-items:center;width:12px;height:12px;border:1px solid currentColor;border-radius:50%;background:transparent;font-size:9px;line-height:1}
-    #cloudflare-panel .bucket-select[aria-busy=true]{opacity:1}
-    #cloudflare-panel .bucket-select[aria-busy=true] .bucket-status{color:#314c3d}
-    #cloudflare-panel #cf-status{min-height:20px;margin:16px 4px 0;padding:0;font-size:12px;color:#bac5bd;line-height:1.6}
-    #cloudflare-panel #cf-status.ok{color:var(--green)}
-    #cloudflare-panel #cf-status.bad{color:var(--red)}
-    #cloudflare-panel :is(button,input,select,.bucket-grid):focus-visible{outline:2px solid #b4e7f8;outline-offset:3px}
-    @media(max-width:650px){#cloudflare-panel{padding:20px 16px;border-radius:20px}#cloudflare-panel .storage-controls{grid-template-columns:1fr;gap:18px;padding:16px}#cloudflare-panel .storage-create{border-left:0;border-top:1px solid #a0ad9c26;padding:16px 0 0}#cloudflare-panel h2{font-size:26px;gap:8px}#cloudflare-panel .storage-provider{border:0;padding:0}#cloudflare-panel .storage-emblem{display:none}#cloudflare-panel .storage-array-label{display:none}#cloudflare-panel .bucket-grid-viewport{padding:8px}html:not(.debug-mode) #cloudflare-panel .bucket-grid{--bucket-gap:16px}#cloudflare-panel .bucket-name{font-size:12px}#cloudflare-panel .bucket-status{font-size:10px}}
-    @media(prefers-reduced-motion:reduce){#cloudflare-panel .bucket,#cloudflare-panel #create-bucket{transition:none}}
-    @media(min-width:1000px){
-      #cloudflare-panel .storage-console{display:grid;grid-template-columns:238px minmax(0,1fr);column-gap:24px;align-items:start}
-      #cloudflare-panel .storage-controls{grid-column:1;grid-row:1 / 3;grid-template-columns:minmax(0,1fr);gap:22px;padding:20px 16px;align-content:start}
-      #cloudflare-panel .storage-create{padding:20px 0 0;border-left:0;border-top:1px solid #a0ad9c26}
-      #cloudflare-panel .create-bucket-row{grid-template-columns:minmax(0,1fr)}
-      #cloudflare-panel #create-bucket{width:100%}
-      #cloudflare-panel .storage-array-head{grid-column:2;grid-row:1;padding:0 3px 15px}
-      #cloudflare-panel .bucket-grid-viewport{grid-column:2;grid-row:2;min-width:0}
-      #cloudflare-panel #cf-status{grid-column:1 / -1}
-    }
-
-    @media(max-width:520px){#cloudflare-panel .bucket-surface{gap:4px;padding:6px 6px 32px}#cloudflare-panel .bucket-copy{gap:3px}#cloudflare-panel .bucket-icon{flex-basis:22px;height:22px;width:24px}#cloudflare-panel .bucket-icon svg{width:22px;height:22px}#cloudflare-panel .bucket-name{font-size:11px;line-height:1.25}#cloudflare-panel .bucket-repair{right:12px;bottom:12px}}
-    @media(max-width:360px){html:not(.debug-mode) #cloudflare-panel .bucket-grid{--bucket-columns:1}}
 </style>
 </head>
 <body>
@@ -527,24 +467,22 @@
   <nav class="page-nav" aria-label="Settings sections"><a href="#connections">Connection</a><a class="connected-link" href="#cloudflare-panel">Buckets</a><a class="requires-storage" href="#right-click-presets">Destinations</a><a class="connected-link requires-storage" href="#upload-zone">Upload</a><a class="connected-link requires-storage" href="#explore-zone">Explore</a><a class="requires-storage" href="#downloads-zone">Downloads</a></nav>
 
   <section id="cloudflare-panel" class="section" hidden>
-    <div class="section-head storage-heading">
-      <div><span class="section-kicker">01 / Storage</span><h2>Storage array <span class="storage-provider">Cloudflare R2</span></h2><div class="section-note">A place for everything you bring aboard.</div></div>
-      <div class="storage-emblem" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M9 12l11-6 11 6v16l-11 6-11-6V12Z M9 12l11 6 11-6M20 18v16" stroke="currentColor" stroke-width="1.2"/><path d="M14 9l12 6M14 31V15" stroke="currentColor" stroke-width=".6" opacity=".5"/></svg></div>
+    <div class="section-head">
+      <div><span class="section-kicker">01 / Storage</span><h2>Cloudflare R2</h2><div class="section-note">Choose an account, then pick or create a bucket.</div></div>
     </div>
-    <div class="card storage-console">
-      <div class="storage-controls">
-        <div class="storage-account"><label for="cf-account"><span class="storage-step" aria-hidden="true">01</span> Cloudflare account</label><select id="cf-account"></select></div>
-        <div id="bucket-create-fields" class="storage-create">
-          <label for="new-bucket"><span class="storage-step" aria-hidden="true">02</span> Create a bucket</label>
+    <div class="card">
+      <div class="grid two">
+        <div><label for="cf-account">Cloudflare account</label><select id="cf-account"></select></div>
+        <div id="bucket-create-fields">
+          <label>Create a bucket</label>
           <div class="create-bucket-row">
-            <input id="new-bucket" placeholder="my-assets" autocomplete="off" spellcheck="false">
-            <button id="create-bucket" class="secondary">Create<span aria-hidden="true"> +</span></button>
+            <input id="new-bucket" placeholder="my-assets">
+            <button id="create-bucket" class="secondary" style="white-space:nowrap">Create</button>
           </div>
         </div>
       </div>
-      <div class="storage-array-head"><div><h3>Your buckets</h3><p>Select a bucket to use in your destinations.</p></div><span class="storage-array-label" aria-hidden="true">R2 / Object storage</span></div>
       <div class="bucket-grid-viewport"><div id="bucket-grid" class="bucket-grid" aria-label="Storage buckets" tabindex="0"></div></div>
-      <div id="cf-status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="cf-status" class="status"></div>
     </div>
   </section>
 

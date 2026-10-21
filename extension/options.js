@@ -4080,16 +4080,16 @@ async function refreshBuckets(){
   };
   const useBucket=async(bucket,el,button,caption,forceRepair=false)=>{
     if(settingUp||accountId!==currentAccountId)return;
-    settingUp=true;el.classList.remove("is-error");markSelected(el,button,bucket);
+    settingUp=true;markSelected(el,button,bucket);
     root.querySelectorAll(".bucket button").forEach(item=>item.disabled=true);
     button.setAttribute("aria-busy","true");caption.textContent=forceRepair?"Verifying…":"Setting up…";
     const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
       if(accountId!==currentAccountId||!el.isConnected)return;
-      el.classList.toggle("is-ready",Boolean(done));el.classList.toggle("is-error",!done);caption.textContent=done?"Ready":"Retry setup";if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
+      el.classList.toggle("is-ready",Boolean(done));caption.textContent=done?"Ready":"Retry setup";if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
     }catch(error){
-      if(accountId===currentAccountId){el.classList.add("is-error");setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";if(debugUse)debugUse.textContent="Retry setup";}
+      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
       settingUp=false;button.removeAttribute("aria-busy");
       if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
@@ -4104,7 +4104,7 @@ async function refreshBuckets(){
     icon.innerHTML='<svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="10" ry="4" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.3"/><path d="M6 8v8c0 2.2 4.5 4 10 4s10-1.8 10-4V8M6 16v8c0 2.2 4.5 4 10 4s10-1.8 10-4v-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
     const copy=document.createElement("span");copy.className="bucket-copy";
     const name=document.createElement("span");name.className="bucket-name";name.textContent=bucket.name;
-    const caption=document.createElement("span");caption.className="bucket-status";caption.setAttribute("aria-live","polite");caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
+    const caption=document.createElement("span");caption.className="bucket-status";caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
     const check=document.createElement("span");check.className="bucket-check";check.setAttribute("aria-hidden","true");check.textContent="✓";
     const surface=document.createElement("span");surface.className="bucket-surface";surface.append(icon,copy,check);
     for(const side of ["top","right","bottom","left"]){const face=document.createElement("span");face.className=`bucket-side bucket-side-${side}`;face.setAttribute("aria-hidden","true");button.append(face);}
