@@ -37,3 +37,9 @@ In the Nested right-click preset editor, per-profile Refresh locations footers a
 - Audit-only allowlist package contains 28 files, including explorer-destination-menu.js; SHA-256 `d16671ec76ec81b33ecaeeb3743ccd281c36a57d3b77d64867b529dcdcaf2e07`. Manifest in runtime/verification/explorer-menu-package.json binds committed runtime bytes. License drift still blocks release; this archive is not a store candidate and has no installation pass.
 
 Next verification: pull main and reload the extension in the user's authorized browser. Test Copy to / Move to with a disposable benign file and exact destination, keyboard/hover navigation, top-right refresh, then Download. Use the surfaced error to diagnose remaining browser behavior; do not treat this mock suite as installed/cloud evidence.
+
+## Empty Simple destinations panel follow-up
+
+User screenshots showed a large empty card below Include in Simple mode / Remove preset. `simpleExtraOptions` always appended its card and even an empty section-head divider when no additional options existed. The panel now uses the existing `[hidden]` styling when its option list is empty, becomes visible through + Add new location, and hides again after the last option is removed. Empty heading/divider nodes are no longer appended for profiles without an intro. Saved destinations and the shared Add location entrypoint are preserved.
+
+Verification: `node --check extension/options.js` passed; existing `tests/simple-location-rows.test.mjs` and `tests/add-menu-location.test.mjs`: **9/9 passed** (local DOM/mock scope). `git diff --check` passed. No installed-browser layout or live Cloudflare verification claimed; full suite not rerun for this small presentation change.

@@ -644,6 +644,7 @@ function simpleExtraOptions(profile,showIntro=true){
   if(showIntro)intro.append(title,note);
   if(showIntro)heading.append(intro);
   const rows=document.createElement("div");const options=profile.simpleOptions||=[];
+  wrap.hidden=options.length===0;
   wrap.dataset.simpleLocationProfile=profile.id;
   profile.simpleOptions=options;
   function addRow(item){
@@ -652,7 +653,7 @@ function simpleExtraOptions(profile,showIntro=true){
     const first=document.createElement("div");first.className="grid simple-option-controls";
     first.append(field("Menu label (shown on right-click)",item.label||"",v=>{item.label=v;},"text","My Artwork"));
     const remove=document.createElement("button");remove.type="button";remove.className="ghost";remove.textContent="Remove option";
-    remove.addEventListener("click",()=>{const i=options.indexOf(item);if(i>=0)options.splice(i,1);row.remove();saveProfiles();});
+    remove.addEventListener("click",()=>{const i=options.indexOf(item);if(i>=0)options.splice(i,1);row.remove();wrap.hidden=options.length===0;saveProfiles();});
     const handle=globalThis.RedownReorder?.attach(row,{items:()=>options,item,save:saveProfiles,label:item.label||"Simple destination",changed:error=>setStatus("menu-location-status",error?"Could not save menu order. Please retry.":"Menu order saved.",error?"bad":"ok")});
     if(handle)first.prepend(handle);
     first.append(remove);row.append(first);
@@ -685,9 +686,11 @@ function simpleExtraOptions(profile,showIntro=true){
   for(const item of options)addRow(item);
   wrap.addLocation=()=>{
     const item={id:uid(),label:"New destination",bucketName:profile.bucketName,prefix:""};
+    wrap.hidden=false;
     options.push(item);addRow(item);saveProfiles();rows.lastElementChild?.scrollIntoView?.({block:"nearest"});rows.lastElementChild?.querySelector("input")?.focus();
   };
-  wrap.append(heading,rows);return wrap;
+  if(showIntro)wrap.append(heading);
+  wrap.append(rows);return wrap;
 }
 function simpleBucketCreator(){
   const bar=document.createElement("div");bar.className="card";
