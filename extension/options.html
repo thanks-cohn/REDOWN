@@ -53,12 +53,24 @@
     .bucket-check{position:absolute;right:9px;top:9px;z-index:1;display:grid;place-items:center;width:16px;height:16px;color:#795e2f;opacity:0}
     .bucket.selected .bucket-check{opacity:1}
     .bucket-surface{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
-    .bucket-repair{position:absolute;right:18px;bottom:18px;display:grid;place-items:center;width:27px;height:27px;min-height:27px;padding:0;border:1px solid rgba(46,58,35,.85);border-radius:50%;background:radial-gradient(ellipse at 55% 85%,#39432c,#172015 75%);color:#eaff00;box-shadow:inset 0 3px 5px rgba(0,0,0,.9),inset 0 0 3px rgba(0,0,0,.65),0 1px 0 rgba(255,255,231,.8),0 -1px 1px rgba(73,85,55,.4);line-height:1;transform:translateZ(14px);z-index:2}
-    .bucket-repair svg{width:13px;height:13px;filter:drop-shadow(0 0 2px rgba(234,255,0,.65));pointer-events:none}
-    .bucket-repair:hover:not(:disabled){background:radial-gradient(ellipse at 55% 85%,#455032,#1d2617 75%);border-color:#344126;color:#f3ff54}
+    .bucket-repair{position:absolute;right:18px;bottom:18px;display:grid;place-items:center;width:27px;height:27px;min-height:27px;padding:0;border:1px solid rgba(46,58,35,.85);border-radius:50%;background:radial-gradient(ellipse at 55% 85%,#39432c,#172015 75%);color:#d9f7ff;box-shadow:inset 0 3px 5px rgba(0,0,0,.9),inset 0 0 3px rgba(0,0,0,.65),0 1px 0 rgba(255,255,231,.8),0 -1px 1px rgba(73,85,55,.4);line-height:1;transform:translateZ(14px);z-index:2}
+    .bucket-repair svg{width:13px;height:13px;filter:drop-shadow(0 0 2px rgba(110,215,255,.85));pointer-events:none}
+    .bucket-repair:hover:not(:disabled){background:radial-gradient(ellipse at 55% 85%,#455032,#1d2617 75%);border-color:#344126;color:#f4fdff}
     .bucket-repair:active:not(:disabled){box-shadow:inset 0 4px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,231,.8)}
     .bucket-repair:focus-visible{outline:2px solid #c4b4ff;outline-offset:3px}
     @media(max-width:520px){html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.bucket-surface{gap:5px;padding:8px 6px 24px}.bucket-name{font-size:11px}.bucket-icon{flex-basis:27px;height:27px}.bucket-icon svg{width:26px;height:26px}.bucket-status{font-size:10px}}
+    .bucket-grid-viewport{container-type:inline-size}
+    html:not(.debug-mode) .bucket-grid{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);max-height:calc(2*var(--bucket-size) + var(--bucket-gap) + 14px);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;padding:6px 6px 12px;align-content:start;scrollbar-color:#718097 #111b2c}
+    .bucket-grid::-webkit-scrollbar{width:8px}
+    .bucket-grid::-webkit-scrollbar-thumb{background:#718097;border-radius:8px;border:2px solid #111b2c}
+    .bucket-grid::-webkit-scrollbar-button{display:none}
+    .bucket-grid::-webkit-scrollbar-track{background:#111b2c;border-radius:8px}
+    .bucket-grid:focus-visible{outline:2px solid #c4b4ff;outline-offset:3px}
+    @container(min-width:540px){html:not(.debug-mode) .bucket-grid{--bucket-columns:3}}
+    @container(min-width:720px){html:not(.debug-mode) .bucket-grid{--bucket-columns:4}}
+    @container(min-width:900px){html:not(.debug-mode) .bucket-grid{--bucket-columns:5}}
+    @container(min-width:1080px){html:not(.debug-mode) .bucket-grid{--bucket-columns:6}}
+    @media(max-width:520px){html:not(.debug-mode) .bucket-grid{--bucket-gap:16px}}
     .bucket-debug-select{width:100%;min-height:56px;padding:16px 18px;text-align:left;overflow-wrap:anywhere;background:linear-gradient(145deg,#26344e,#1a263d);color:var(--text);border:1px solid var(--line)}
     .bucket.selected .bucket-debug-select{border-color:var(--purple2)}
     .bucket-debug-details{margin:9px 0;color:var(--muted);font-size:11px}
@@ -469,7 +481,7 @@
           </div>
         </div>
       </div>
-      <div id="bucket-grid" class="bucket-grid" aria-label="Storage buckets"></div>
+      <div class="bucket-grid-viewport"><div id="bucket-grid" class="bucket-grid" aria-label="Storage buckets" tabindex="0"></div></div>
       <div id="cf-status" class="status"></div>
     </div>
   </section>

@@ -1,0 +1,27 @@
+{
+  "scope": "local HTML fixture in installed Chromium; not installed extension",
+  "metrics": [
+    {
+      "width": 1366,
+      "scrollWidth": 1351,
+      "grid": {
+        "height": 402,
+        "contentHeight": 403,
+        "scrollTop": 1
+      },
+      "tiles": 8,
+      "title": "01 / STORAGE\nCloudflare R2\nChoose a"
+    },
+    {
+      "width": 390,
+      "scrollWidth": 375,
+      "grid": {
+        "height": 257,
+        "contentHeight": 506,
+        "scrollTop": 100
+      },
+      "tiles": 8,
+      "title": "01 / STORAGE\nCloudflare R2\nChoose a"
+    }
+  ]
+}
