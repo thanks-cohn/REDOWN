@@ -186,3 +186,45 @@ test('bucket action keeps its name during setup and blocks duplicate clicks',asy
  assert.equal(tile.querySelector('.bucket-status').textContent,'Setting up…');finish(true);await new Promise(resolve=>setImmediate(resolve));
  assert.equal(tile.disabled,false);assert.equal(tile.querySelector('.bucket-status').textContent,'Ready');assert.equal(tile.hasAttribute('aria-busy'),false);h.dom.window.close();
 });
+
+test('storage tiles distinguish failed verification and a successful retry',async()=>{
+  const h=harness(),d=h.dom.window.document;
+  let finish;
+  h.context.addBucketPreset=()=>new Promise(resolve=>{finish=resolve;});
+  await h.context.refreshBuckets();
+  const tile=d.querySelector('.bucket'),button=tile.querySelector('.bucket-select');
+  tile.querySelector('.bucket-repair').click();
+  assert.equal(button.getAttribute('aria-busy'),'true');
+  assert.equal(tile.querySelector('.bucket-status').textContent,'Verifying…');
+  assert.equal(tile.querySelector('.bucket-repair').disabled,true);
+  finish(false);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tile.classList.contains('is-error'),true);
+  assert.equal(tile.querySelector('.bucket-status').textContent,'Retry setup');
+  assert.equal(button.hasAttribute('aria-busy'),false);
+  button.click();assert.equal(tile.classList.contains('is-error'),false);
+  finish(true);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tile.classList.contains('is-ready'),true);
+  assert.equal(tile.querySelector('.bucket-status').textContent,'Ready');
+  assert.equal(button.getAttribute('aria-pressed'),'true');
+  assert.equal(tile.querySelector('.bucket-repair').disabled,false);
+  h.dom.window.close();
+});
+
+test('storage account switching and creation retain their message contracts',async()=>{
+  const h=harness(),d=h.dom.window.document;
+  vm.runInContext(source.slice(source.indexOf('$("cf-account").addEventListener("change"'),source.indexOf('$("add-github").addEventListener')),h.context);
+  d.getElementById('cf-account').innerHTML='<option value="second-account">Second workspace</option>';
+  d.getElementById('cf-account').dispatchEvent(new h.dom.window.Event('change'));
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.calls[0].type,'cfBuckets');assert.equal(h.calls[0].accountId,'second-account');
+  d.getElementById('new-bucket').value='  new-assets  ';
+  d.getElementById('create-bucket').click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.calls[1].type,'cfCreateBucket');assert.equal(h.calls[1].accountId,'second-account');assert.equal(h.calls[1].name,'new-assets');
+  assert.equal(h.calls[2].type,'cfBuckets');assert.equal(d.getElementById('new-bucket').value,'');
+  h.context.send=async()=>({ok:false,error:'Bucket name unavailable'});
+  d.getElementById('new-bucket').value='existing-assets';d.getElementById('create-bucket').click();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(d.getElementById('cf-status').textContent,'Bucket name unavailable');
+  assert.equal(d.getElementById('new-bucket').value,'existing-assets');
+  h.dom.window.close();
+});

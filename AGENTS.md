@@ -100,3 +100,8 @@ Here immediately and cache bounded short-lived folder pages. Latest full suite:
 copy stall remains unverified until retest; no live closure or customer deployment claimed.
 
 Bucket surface follow-up: [design/interaction report](docs/BUCKET_SURFACE_REPORT.md). Normal mode uses one primary bucket surface with an inset circular repair target that never triggers the primary action. Debug Mode retains separate name-selection, setup, and repair controls. Latest full suite: 189 tests, 183 pass, same six historical evidence failures. Visual QA is a local HTML fixture, not installed-extension/cloud verification.
+
+Storage Array Phase 1: [redesign and evidence](docs/STORAGE_ARRAY_REDESIGN_REPORT.md).
+Only Cloudflare R2 storage was redesigned; latest full suite is 191 tests, 185 pass,
+same six historical evidence failures. Local Chromium fixtures and mocked workflows
+remain distinct from blocked installed-extension and untested live Cloudflare behavior.
