@@ -55,3 +55,11 @@ test('Normal Mode attachment feedback stays visible and does not overwrite backg
  const ui=dom.window.assetCorsControl(profile);d.body.append(ui);const button=ui.querySelector('button');button.click();assert.equal(button.textContent,'Attaching…');assert.equal(ui.querySelector('[role=status]').hidden,false);
  resolve({ok:true,hostname:'cdn.example',state:'attached',message:'Attached — public connection not verified.',profile:{customAssetDomain:'cdn.example'}});await new Promise(r=>setTimeout(r,0));assert.match(ui.textContent,/Attached — public connection not verified/);assert.equal(button.disabled,false);assert.equal(profile.customAssetDomain,'cdn.example');dom.window.close();
 });
+test('domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone',async()=>{
+ const {dom,api,d}=harness();let domain='https://old.example/';const calls=[];
+ const make=(bucket,key)=>api.disclosure({document:d,source:{accountId:'a',bucketName:bucket},key,load:async()=>{calls.push(bucket);return {accountId:'a',bucketName:bucket,addresses:[{label:'Custom domain',base:domain,state:'configured'}]};}});
+ const settings=make('b'),preview=make('b','nested/雪 #?.png'),other=make('other','private.txt'),detached=make('b','gone.txt');
+ const media=d.createElement('img');media.src='blob:existing-preview';d.body.append(media,settings.host,preview.host,other.host);await Promise.all([settings.refresh(),preview.refresh(),other.refresh(),detached.refresh()]);
+ preview.host.querySelector('details').open=true;domain='https://new.example/assets/';calls.length=0;
+ await api.refreshVisible(d,{accountId:'a',bucketName:'b'});assert.deepEqual(calls,['b','b']);assert.match(preview.host.textContent,/new.example\/assets\/nested\/%E9%9B%AA%20%23%3F.png/);assert.equal(preview.host.querySelector('details').open,true);assert.match(settings.host.textContent,/new.example\/assets\//);assert.match(other.host.textContent,/old.example/);assert.match(detached.host.textContent,/old.example/);assert.equal(media.src,'blob:existing-preview');dom.window.close();
+});

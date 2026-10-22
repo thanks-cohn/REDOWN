@@ -88,6 +88,7 @@
       }
       await unchanged();
       try {globalThis.redownRuntimeObserver?.record({requestId:traceId,operation:read?"api.read":"api.write",outcome:response.ok?"success":"failed",code:response.ok?"OK":response.status>=500?"HTTP_5XX":`HTTP_${response.status}`,status:response.status,durationMs:(globalThis.performance?.now?.()||0)-started});} catch {}
+      try{globalThis.redownExplorerBridge?.event(options.explorerTrace?.operationId,"api.response",response.ok?"confirmed":"failed",{status:response.status,mechanism:"api"});}catch{}
       return response;
     } catch(error){
       try {globalThis.redownRuntimeObserver?.record({requestId:traceId,operation:read?"api.read":"api.write",outcome:"failed",code:error?.name==="TimeoutError"?"TIMEOUT":error?.name==="AbortError"?"CANCELLED":"NETWORK",durationMs:(globalThis.performance?.now?.()||0)-started});} catch {}
@@ -100,8 +101,8 @@
     return `/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/objects/${String(key).split("/").map(encodeURIComponent).join("/")}`;
   }
   async function preview(source,key,type,signal) {
-    const response = await request(objectPath(source,key),{signal});
-    if (!response.ok) throw new Error(`Cloudflare could not read this file (${response.status}).`);
+    const response = await request(objectPath(source,key),{signal,explorerTrace:source.explorerTrace});
+    if (!response.ok){const error=new Error(`Cloudflare could not read this file (${response.status}).`);error.status=response.status;throw error;}
     const limit = 64*1024*1024;
     if (Number(response.headers.get("content-length")) > limit) { await response.body?.cancel(); throw new Error("This file is too large for an inline preview. Use Download."); }
     const reader = response.body.getReader();

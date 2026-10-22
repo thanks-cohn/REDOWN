@@ -10,7 +10,7 @@ export function createExplorerAPI({bundle}={}){
  return {query(operation,input={}){
   if(!input||typeof input!=='object'||Array.isArray(input))return envelope('failed',null,'INVALID_INPUT');
   if(!methods.includes(operation))return envelope('failed',null,'UNSUPPORTED_OPERATION');
-  const trace=collector.getOperationTrace(input.id),all=collector.exportBundle().operations;
+  const trace=collector.getOperationTree(input.id),all=collector.exportBundle().operations;
   if(operation==='describeExplorer')return envelope('available',{operations:methods,version:core.VERSION,limits:core.LIMITS,architecture:model,access:'offline/read-only; no execution, credentials or cloud access',unsupported:['live probing','remote execution','Forever authority','unredacted identity export']});
   if(operation==='listExplorerOperations')return envelope('available',model.operations);
   if(operation==='explainOperation'){const result=model.operations.find(op=>op.name===input.name);return result?envelope('available',result):envelope('failed',null,'UNKNOWN_OPERATION');}
@@ -20,8 +20,8 @@ export function createExplorerAPI({bundle}={}){
   }
   if(operation==='getRecentFailures')return envelope(bundle?'available':'unavailable',all.filter(op=>['failed','unknown'].includes(op.state)).slice(-20));
   if(operation==='exportDiagnosticBundle')return envelope(bundle?'available':'unavailable',collector.exportBundle());
-  if(operation==='getExplorerState')return envelope('partial',{observations:all.length,active:all.filter(op=>op.state==='running').map(op=>op.id),actualSelection:'unknown',account:'redacted',source:'imported observations only',restart:'incomplete traces are not successful completion'});
-  if(operation==='getWorkerCompatibility')return envelope('partial',{requiredSafeTransferVersion:5,requiredDiagnosticProtocol:1,expectedInstrumentedWorkerVersion:6,observations:all.flatMap(op=>op.events.filter(e=>e.workerVersion!==undefined).map(e=>({operationId:op.id,...e}))),repository:'model source refs',installedExtension:all.map(op=>op.extensionVersion),packageHash:'unknown',deployedBinding:'unknown unless independently observed'});
+  if(operation==='getExplorerState')return envelope('partial',{observations:all.length,active:all.filter(op=>op.state==='running').map(op=>op.id),lastObservedState:all.flatMap(op=>op.events.filter(event=>event.stage==='state')).at(-1)||null,account:'redacted',source:'imported observations only',restart:'incomplete traces are not successful completion'});
+  if(operation==='getWorkerCompatibility')return envelope('partial',{requiredSafeTransferVersion:5,requiredDiagnosticProtocol:1,expectedInstrumentedWorkerVersion:6,observations:all.flatMap(op=>op.events.filter(e=>e.workerVersion!==undefined).map(e=>({operationId:op.id,...e}))),repository:'model source refs',extensionObservations:all.map(op=>({version:op.extensionVersion,context:op.context,origin:op.origin})),installedExtension:'not independently authenticated by bundle import',packageHash:'unknown',deployedBinding:'unknown unless independently observed'});
   if(operation==='getFailureDependencies')return envelope(core.taxonomy[input.code]?'available':'unavailable',{code:core.taxonomy[input.code]?input.code:'UNKNOWN_CODE',description:core.taxonomy[input.code]?.[0],sourceRefs:model.operations.filter(op=>['copy','move','preview','download','worker.readiness'].includes(op.name)).flatMap(op=>op.sourceRefs)});
   if(operation==='findRelatedIncidents')return envelope('partial',{incidents:[{id:'EXPLORER-COPY-404-2026-10',path:'docs/explorer/COPY_404_CASE.json',relationship:input.code==='EXPLORER_HTTP_NOT_FOUND'?'matching-observation':'potential; inspect evidence',state:'open',evidence:'user-report; installed/deployed versions unknown'}],historicalDebug:'docs/debug/README.md; independent frozen namespace',foreverLinks:{status:'unknown',links:[]}});
   if(!trace)return envelope('unavailable',null,'TRACE_UNAVAILABLE');

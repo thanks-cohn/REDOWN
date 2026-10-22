@@ -38,9 +38,12 @@ function setStatus(id,msg,kind=""){
 }
 async function send(message){
   let timeout;
-  try { return await Promise.race([chrome.runtime.sendMessage(message),new Promise((_,reject)=>{
+  const bridge=globalThis.redownExplorerBridge;
+  let diagnostic;try{diagnostic=await bridge?.beginMessage(message);}catch{}
+  if(diagnostic)message={...message,explorerTrace:diagnostic.wire};
+  try { const response=await Promise.race([chrome.runtime.sendMessage(message),new Promise((_,reject)=>{
     timeout=setTimeout(()=>reject(new Error("REDOWN did not confirm this request. For uploads or changes, refresh the destination before retrying.")),120000);
-  })]); } finally { clearTimeout(timeout); }
+  })]); try{await bridge?.reply(diagnostic,response);}catch{} return response; } finally { clearTimeout(timeout); }
 }
 async function saveProfiles(){await chrome.storage.local.set({profiles});}
 let nestedSaveQueue=Promise.resolve();
@@ -406,11 +409,11 @@ function assetCorsControl(profile){
       input.value=result.hostname;
       status.className="status"+(result.state==="failed"?" bad":result.state==="verified"?" ok":"");
       status.textContent=result.message;
-      await urls.refresh();
+      await RedownPublicAddresses.refreshVisible(document,profile);
     }catch(error){
       status.className="status bad";
       status.textContent="Outcome unknown or failed: "+(error?.message||String(error))+". Refresh URLs and check Cloudflare before retrying.";
-      await urls.refresh();
+      await RedownPublicAddresses.refreshVisible(document,profile);
     }finally{
       apply.disabled=false;
       apply.textContent=previous;
@@ -2222,7 +2225,7 @@ function isTransientBucketAccessError(error) {
 }
 function friendlyError(error, action = "complete that action") {
   const raw=String(error?.message||error||"");
-  if(/not found|404/i.test(raw))return "The item is no longer available (404). Refresh this folder.";
+  if(/404/i.test(raw))return `Could not ${action}: ${raw}. HTTP 404 alone does not identify a missing object; inspect the Worker route and selected bucket.`;
   return raw?`Could not ${action}: ${safeUiMessage(raw)}`:`Could not ${action}. Refresh and retry.`;
 }
 async function refreshProfiles() {
@@ -4304,6 +4307,14 @@ $("refresh-history").addEventListener("click",()=>renderHistory({markSeen:true})
 let downloadsDirty=false;
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=="local")return;
+  if(changes.profiles){
+    const old=changes.profiles.oldValue||[],current=changes.profiles.newValue||[];
+    const shape=profile=>JSON.stringify([profile?.customAssetDomain,profile?.publicBaseUrl,profile?.publicAssetsEnabled,profile?.assetDomainState]);
+    for(const profile of [...old,...current].filter(profile=>profile.type==="cloudflare-r2")){
+      const same=items=>items.find(item=>item.id===profile.id&&item.accountId===profile.accountId&&item.bucketName===profile.bucketName);
+      if(shape(same(old))!==shape(same(current)))void RedownPublicAddresses.refreshVisible(document,profile);
+    }
+  }
   if(changes.cloudflareAuth)explorerDestinationMenus?.clearCache();
   if(changes.cloudflareAuth && (changes.cloudflareAuth.newValue?.accessToken!==changes.cloudflareAuth.oldValue?.accessToken||changes.cloudflareAuth.newValue?.reconnectRequired!==changes.cloudflareAuth.oldValue?.reconnectRequired)){
     invalidateCloudflareView();
@@ -4379,6 +4390,34 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
   await chrome.storage.local.set({debugModeEnabled});
 });
 
+
+// Optional domain-specific observer: failures must never block product initialization.
+try{
+ if(globalThis.RedownExplorerBridge){
+  globalThis.redownExplorerBridge=RedownExplorerBridge.install({context:"options",chrome,document});
+  const observer=globalThis.redownExplorerBridge;
+  observer.setStateProvider(()=>({source:workspaceTarget?{...workspaceTarget}:null,prefix:workspacePrefix,selectedCount:explorerSelected.size,loadedCount:explorerItems.length,previewGeneration:workspacePreviewRequestId,hasClipboard:Boolean(explorerClipboard),betaMode:betaModeEnabled,debugMode:debugModeEnabled}));
+  goLocation=observer.wrap("navigation",goLocation);
+  browseWorkspace=observer.wrap("listing",browseWorkspace);
+  runExplorerSearch=observer.wrap("search",runExplorerSearch);
+  selectExplorerItem=observer.wrap("selection",selectExplorerItem);
+  showWorkspacePreview=observer.wrap("preview",showWorkspacePreview);
+  setWorkspacePreviewLightbox=observer.wrap("lightbox",setWorkspacePreviewLightbox);
+  explorerDownload=observer.wrap("download",explorerDownload);
+  explorerUploadFiles=observer.wrap("upload",explorerUploadFiles);
+  pasteExplorer=observer.wrap("copy",pasteExplorer);
+  beginExplorerRename=observer.wrap("rename",beginExplorerRename);
+  deleteSelection=observer.wrap("delete",deleteSelection);
+  beginNewFolder=observer.wrap("folder.create",beginNewFolder);
+  showProperties=observer.wrap("properties",showProperties);
+  copyItemUrl=observer.wrap("public.urls",copyItemUrl);
+  setExplorerClipboard=observer.wrap("clipboard",setExplorerClipboard);
+  loadExplorerInventory=observer.wrap("account.switch",loadExplorerInventory);
+  openArchive=observer.wrap("archive",openArchive);
+  RedownCloudflareApi.preview=observer.direct("preview",RedownCloudflareApi.preview);
+  RedownCloudflareApi.download=observer.direct("download",RedownCloudflareApi.download);
+ }
+}catch{}
 (async()=>{
   const stored=await chrome.storage.local.get(["profiles","cloudflareAuth","rightClickMode","debugModeEnabled","betaModeEnabled"]);
   profiles=stored.profiles||[];

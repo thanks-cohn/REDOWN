@@ -72,6 +72,23 @@ function cleanPrefix(value) {
   if (parts.some(x => x === "." || x === "..")) throw new Error("Invalid object path");
   return parts.map(x => x.replace(/[^a-zA-Z0-9._ -]/g, "-")).join("/");
 }
+async function explorerWire(request,env,authorized) {
+  if(!authorized)return null;
+  let context;try{context=JSON.parse(request.headers.get("x-redown-diagnostic")||"null");}catch{return null;}
+  if(context?.protocol!==1||!/^[a-f0-9-]{36}$/.test(context.operationId||"")||!/^[a-f0-9]{64}$/.test(context.seed||""))return null;
+  const events=[];let truncated=false;
+  const event=(stage,outcome,details={})=>{if(events.length<32)events.push({stage,component:"worker",outcome,...details});else truncated=true;};
+  async function fingerprint(kind,value){
+    const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(context.seed),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
+    const digest=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(kind+"\\0"+String(value)));
+    return Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,"0")).join("");
+  }
+  event("worker.check","confirmed",{workerVersion:6,protocol:1,safeTransfers:true,bindingDeclared:Boolean(env.REDOWN_DIAGNOSTIC_BINDING)});
+  if(env.REDOWN_DIAGNOSTIC_BINDING)event("worker.check","confirmed",{binding:await fingerprint("bucket",env.REDOWN_DIAGNOSTIC_BINDING),expectedBinding:context.expectedBinding,bindingDeclared:true});
+  function payload(){return {protocol:1,operationId:context.operationId,events,truncated};}
+  return {context,event,fingerprint,payload,header:JSON.stringify(context),headers(){return {"x-redown-diagnostic":JSON.stringify(payload())};},json(body,options={}){return Response.json({...body,explorerDiagnostic:payload()},options);},merge(response){try{const data=JSON.parse(response.headers.get("x-redown-diagnostic")||"null");if(data?.operationId===context.operationId&&data.protocol===1)for(const item of (data.events||[]).slice(0,16))event(item.stage,item.outcome,item);}catch{}},async identity(key,role="source",encoding="literal"){try{event(role==="source"?"source.identity":"destination.identity","confirmed",{key:await fingerprint("key",key),encodedKey:await fingerprint("key",encoding==="query"?encodeURIComponent(key):key),encoding,role,scope:context.scope});}catch{}}};
+}
+function explorerWorkerError(message,code,status,stage){const error=new Error(message);error.code=code;error.status=status;error.stage=stage;error.component="worker";return error;}
 function exactObjectKey(value) {
   if (typeof value !== "string" || !value || value.includes("\\0") || new TextEncoder().encode(value).byteLength > 1024) throw new Error("Invalid object key");
   return value;
@@ -89,14 +106,15 @@ function checksumHex(object) {
 }
 async function verifiedObjectPut(storage,key,body,options,expectedSize,expectedMd5="") {
   const receipt=await storage.put(key,body,{...options,...(expectedMd5?{md5:expectedMd5}:{})});
-  if(!receipt){const error=new Error("Destination changed during this operation. Existing data was preserved.");error.conflict=true;throw error;}
+  if(!receipt){const error=explorerWorkerError("Destination changed during this operation. Existing data was preserved.","EXPLORER_DESTINATION_CONFLICT",409,"destination.write");error.conflict=true;throw error;}
   const head=await storage.head(key);
-  if(!head||head.size!==expectedSize||!receipt.etag||head.etag!==receipt.etag||receipt.version&&head.version!==receipt.version)throw new Error("Destination verification failed. The source was preserved; inspect the destination before retrying.");
+  if(!head||head.size!==expectedSize||!receipt.etag||head.etag!==receipt.etag||receipt.version&&head.version!==receipt.version)throw explorerWorkerError("Destination verification failed. The source was preserved; inspect the destination before retrying.","EXPLORER_COPY_VERIFICATION_FAILED",409,"destination.verify");
   return head;
 }
-async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conflict) {
+async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conflict,diagnostic) {
   const sourceKey=exactObjectKey(entry.sourceKey);let destinationKey=exactObjectKey(entry.destinationKey);
   if(entry.sameBucket&&sourceKey===destinationKey)throw new Error("Source and destination are the same");
+  await diagnostic?.identity(sourceKey);await diagnostic?.identity(destinationKey,"destination");
   let existing=await storage.head(destinationKey);
   if(existing&&conflict==="skip")return {sourceKey,destinationKey,status:"conflict"};
   if(existing&&conflict==="keep"){destinationKey=await uniqueKey(storage,destinationKey);existing=null;}
@@ -104,21 +122,25 @@ async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conf
   // is only allowed after explicit UI choice and only for the version inspected.
   const onlyIf=existing?{etagMatches:existing.etag}:new Headers({"If-None-Match":"*"});
   let stream,size,etag,md5,httpMetadata,customMetadata,sourceVersion;
+  diagnostic?.event("source.read","started",{mechanism:entry.sameBucket?"local":"worker"});
   if(entry.sameBucket){
     const object=await storage.get(sourceKey);
-    if(!object?.body)throw new Error("Source object was not found");
+    if(!object?.body)throw explorerWorkerError("Source object was not found","EXPLORER_SOURCE_NOT_FOUND",404,"source.read");
     stream=object.body;size=object.size;etag=object.etag;sourceVersion=object.version;md5=checksumHex(object);httpMetadata=object.httpMetadata;customMetadata=object.customMetadata;
   }else{
     if(!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl)||!sourceToken)throw new Error("Source bucket is not ready");
-    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken},signal:AbortSignal.timeout(25000)});
-    if(!response.ok||!response.body)throw new Error("Source object was not available (HTTP "+response.status+")");
+    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding})}:{})},signal:AbortSignal.timeout(25000)});
+    diagnostic?.merge(response);diagnostic?.event("source.read",response.ok?"confirmed":"failed",{status:response.status,mechanism:"worker"});
+    if(!response.ok||!response.body)throw explorerWorkerError("Source object was not available (HTTP "+response.status+")",response.status===404?"EXPLORER_HTTP_NOT_FOUND":response.status===401?"EXPLORER_AUTH_EXPIRED":response.status===403?"EXPLORER_PERMISSION_DENIED":"EXPLORER_RESULT_UNCONFIRMED",response.status,"source.read");
     stream=response.body;size=Number(response.headers.get("content-length"));etag=response.headers.get("x-redown-etag");sourceVersion=response.headers.get("x-redown-version");md5=response.headers.get("x-redown-md5")||"";
     if(!response.headers.has("content-length")||!Number.isSafeInteger(size)||size<0||!etag){await stream.cancel();throw new Error("Source Worker cannot confirm content. Repair its bucket and retry.");}
     httpMetadata=JSON.parse(decodeURIComponent(response.headers.get("x-redown-http-metadata")||"%7B%7D"));
     if(httpMetadata.cacheExpiry)httpMetadata.cacheExpiry=new Date(httpMetadata.cacheExpiry);
     customMetadata=JSON.parse(decodeURIComponent(response.headers.get("x-redown-metadata")||"%7B%7D"));
   }
+  diagnostic?.event("source.read","confirmed",{size});diagnostic?.event("destination.write","started");
   const head=await verifiedObjectPut(storage,destinationKey,stream,{onlyIf,httpMetadata,customMetadata:{...(customMetadata||{}),copiedAt:new Date().toISOString()}},size,md5);
+  diagnostic?.event("destination.write","confirmed",{size:head.size});diagnostic?.event("destination.verify","confirmed",{size:head.size});
   return {sourceKey,destinationKey,status:"copied",verified:true,sourceEtag:etag,sourceVersion,destinationEtag:head.etag,destinationVersion:head.version,size:head.size};
 }
 async function uniqueKey(storage, requested, firstIndex = 2, compact = false) {
@@ -370,6 +392,7 @@ export default {
 
     const auth = request.headers.get("authorization") || "";
     const authorized = Boolean(REDOWN_SHARED_SECRET) && auth === \`Bearer \${REDOWN_SHARED_SECRET}\`;
+    let diagnostic=null;try{diagnostic=await explorerWire(request,env,authorized);}catch{}
     if (request.method === "GET" && requestUrl.pathname === "/private/archive-entry") {
       let key, entry;
       try { key = exactObjectKey(requestUrl.searchParams.get("key") || ""); entry = safeArchiveName(requestUrl.searchParams.get("entry") || ""); }
@@ -383,14 +406,17 @@ export default {
       try { key = exactObjectKey(requestUrl.searchParams.get("key") || ""); } catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
       const signed = requestUrl.pathname === "/private/object" && await validSignedRead(requestUrl, key);
       if (!authorized && !signed) return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+      await diagnostic?.identity(key,"source","query");
       const head = key && await env.STORAGE.head(key);
-      if (!head) return Response.json({ ok:false, error:"Object not found" }, { status:404 });
+      if (!head){diagnostic?.event("source.read","failed",{status:404,code:"EXPLORER_SOURCE_NOT_FOUND"});return diagnostic?diagnostic.json({ok:false,error:"Object not found",code:"EXPLORER_SOURCE_NOT_FOUND",stage:"source.read"},{status:404,headers:diagnostic.headers()}):Response.json({ok:false,error:"Object not found"},{status:404});}
+      diagnostic?.event("source.read","confirmed",{size:head.size});
       const headers = new Headers();
       head.writeHttpMetadata(headers);
       headers.set("accept-ranges", "bytes");
       headers.set("cache-control", "private, no-store");
       headers.set("x-redown-metadata", encodeURIComponent(JSON.stringify(head.customMetadata || {})));
       headers.set("x-redown-http-metadata", encodeURIComponent(JSON.stringify(head.httpMetadata || {})));
+      if(diagnostic)for(const [name,value] of Object.entries(diagnostic.headers()))headers.set(name,value);
       headers.set("x-redown-etag", head.etag);
       headers.set("x-redown-version",head.version);
       if(checksumHex(head))headers.set("x-redown-md5",checksumHex(head));
@@ -409,7 +435,7 @@ export default {
       headers.set("content-length", String(length));
       return new Response(object.body, { status, headers });
     }
-    if (request.method === "GET") return Response.json({ ok:true, service:"REDOWN", secretConfigured:Boolean(REDOWN_SHARED_SECRET), storageBound:Boolean(env.STORAGE), workerVersion:5, safeTransfers:true });
+    if (request.method === "GET") return Response.json({ ok:true, service:"REDOWN", secretConfigured:Boolean(REDOWN_SHARED_SECRET), storageBound:Boolean(env.STORAGE), workerVersion:6, diagnosticProtocol:1, safeTransfers:true });
     if (request.method !== "POST") return Response.json({ ok:false, error:"Method not allowed" }, { status:405 });
     if (!authorized) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
     try {
@@ -554,21 +580,23 @@ export default {
             if(!destination||destination.etag!==expected.destinationEtag||destination.size!==expected.size||expected.destinationVersion&&destination.version!==expected.destinationVersion)throw new Error("Destination changed since copy. Original preserved; refresh before retrying.");
           }
         }
+        diagnostic?.event("source.cleanup","started");
         await env.STORAGE.delete(keys);
         for(const key of keys)if(await env.STORAGE.head(key))throw new Error("Deletion could not be confirmed. Refresh before retrying.");
-        return Response.json({ ok:true, deleted:keys });
+        diagnostic?.event("source.cleanup","confirmed");
+        return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:5,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "transferBatch") {
         if(!Array.isArray(body.entries)||!body.entries.length||body.entries.length>25)throw new Error("Choose between 1 and 25 transfer entries");
         const sourceWorkerUrl=String(body.sourceWorkerUrl||"").replace(/\\/+$/,"");
         const conflict=["replace","keep","skip"].includes(body.conflict)?body.conflict:"skip";
         const results=[];
         for(const entry of body.entries){
-          try{results.push(await copyVerifiedObject(env.STORAGE,entry,sourceWorkerUrl,String(body.sourceToken||""),conflict));}
-          catch(error){results.push({sourceKey:entry.sourceKey,destinationKey:entry.destinationKey,status:error.conflict?"conflict":"failed",error:error.message||String(error)});}
+          try{results.push(await copyVerifiedObject(env.STORAGE,entry,sourceWorkerUrl,String(body.sourceToken||""),conflict,diagnostic));}
+          catch(error){diagnostic?.event(error.stage||"destination.write","failed",{status:error.status,code:error.code});results.push({sourceKey:entry.sourceKey,destinationKey:entry.destinationKey,status:error.conflict?"conflict":"failed",error:error.message||String(error),code:error.code,httpStatus:error.status,stage:error.stage,component:"worker"});}
         }
-        return Response.json({ok:true,results});
+        return diagnostic?diagnostic.json({ok:true,results}):Response.json({ok:true,results});
       }
 
       if (body.action === "renameObject") {
@@ -684,7 +712,9 @@ export default {
 
       return Response.json({ ok: true, key, filename, publicPath, publicUrl, bytes: bytesWritten, contentType });
     } catch (error) {
-      return Response.json({ ok: false, error: error?.message || "Ingest failed" }, { status: 400 });
+      diagnostic?.event(error.stage||"worker.response","failed",{code:error.code,status:error.status});
+      const payload={ok:false,error:error?.message||"Ingest failed",code:error.code,stage:error.stage};
+      return diagnostic?diagnostic.json(payload,{status:error.status||400}):Response.json(payload,{status:error.status||400});
     }
   }
 };
@@ -795,6 +825,9 @@ importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
+importScripts("explorer-diagnostics.js");
+importScripts("explorer-diagnostics-bridge.js");
+try{globalThis.redownExplorerBridge=RedownExplorerBridge.install({context:"background",chrome});}catch{}
 importScripts("search-session.js");
 const runtimeDiagnostics = RedownRuntimeDiagnostics.create({build:chrome.runtime.getManifest().version});
 globalThis.redownRuntimeObserver=runtimeDiagnostics;
@@ -914,6 +947,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     compatibility_date: "2026-09-26",
     bindings: [
       { type: "r2_bucket", name: "STORAGE", bucket_name: bucketName },
+      {type:"plain_text",name:"REDOWN_DIAGNOSTIC_BINDING",text:JSON.stringify([accountId,bucketName])},
       { type: "plain_text", name: "MAX_BYTES", text: "314572800" },
       { type: "plain_text", name: "PUBLIC_ASSETS_ENABLED", text: String(Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged)))) }
     ]
@@ -959,7 +993,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
       });
       if (response.ok) {
         health = await response.json().catch(() => null);
-        if (isVerifiedWorkerHealth(health)&&health.workerVersion>=5&&health.safeTransfers===true) break;
+        if (isVerifiedWorkerHealth(health)&&health.workerVersion>=6&&health.diagnosticProtocol===1&&health.safeTransfers===true) break;
         health = null;
       }
       healthError = response.ok?"Unexpected Worker health response":`HTTP ${response.status}`;
@@ -1037,7 +1071,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     defaultPrefix: existing?.defaultPrefix ?? existing?.folders?.files ?? folders?.files ?? "files",
     defaultCategory: existing?.defaultCategory || "files",
     menuTree: Array.isArray(existing?.menuTree) ? existing.menuTree : [],
-    workerVersion: 5,
+    workerVersion: 6,
     explorerManaged: Boolean(explorerOnly),
     publicAssetsEnabled: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
     capabilities: {
@@ -1372,7 +1406,7 @@ function cleanExplorerName(value) {
   if(new TextEncoder().encode(name).byteLength>1024)throw new Error("That name is too long");
   return name;
 }
-async function workerAcceptsProfile(profile) {
+async function workerAcceptsProfile(profile,explorerTrace) {
   if (!profile?.workerUrl || !profile?.token) return false;
   try {
     const response = await RedownCloudflareApi.boundedFetch(profile.workerUrl, {
@@ -1388,15 +1422,17 @@ async function workerAcceptsProfile(profile) {
     if(response.status===401)return false;
     if(!response.ok)throw new Error("Bucket connection check failed (HTTP "+response.status+"). Reconnect or retry Refresh; no repair was attempted.");
     const result = await response.json().catch(() => ({}));
+    globalThis.redownExplorerBridge?.event(explorerTrace?.operationId,"worker.check",result?.safeTransfers?"confirmed":"unknown",{workerVersion:result.workerVersion,protocol:result.diagnosticProtocol||0,safeTransfers:result.safeTransfers});
     return response.ok && result?.ok===true && result.workerVersion>=5 && result.safeTransfers===true && result.storageBound===true;
   } catch(error) {
     throw new Error(error?.message||"Bucket connection check failed. Retry Refresh; no repair was attempted.");
   }
 }
-async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false) {
+async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false, explorerTrace = null) {
+  globalThis.redownExplorerBridge?.event(explorerTrace?.operationId,"worker.check","started");
   let profiles = await getProfiles();
   let profile = profiles.find(p => p.type === "cloudflare-r2" && p.accountId === accountId && p.bucketName === bucketName);
-  if (!forceRepair && profile?.workerVersion >= 5 && await workerAcceptsProfile(profile)) return profile;
+  if (!forceRepair && profile?.workerVersion >= 5 && await workerAcceptsProfile(profile,explorerTrace)) return profile;
 
   return provisionCloudflareProfile({
     accountId,
@@ -1413,11 +1449,14 @@ async function callBucketWorker(profile, body, allowRepair = true) {
     const read=["headObject","capabilities","createReadUrl","listArchive","createArchiveEntryReadUrl"].includes(body.action);
     const observe=(outcome,code,status)=>{try{globalThis.redownRuntimeObserver?.record({operation:read?"api.read":"api.write",outcome,code,status,durationMs:(globalThis.performance?.now?.()||0)-started});}catch{}};
     let response,result;
+    const trace=body.explorerTrace;
+    globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.request","started");
     try{
       response=await RedownCloudflareApi.boundedFetch(active.workerUrl,{
         timeoutMs:30000,method:"POST",
         headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json"},
-        body:JSON.stringify(body)
+        body:JSON.stringify({...body,explorerTrace:await globalThis.redownExplorerBridge?.wire(trace,active)}),
+        ...(trace?{headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json","x-redown-diagnostic":JSON.stringify(await globalThis.redownExplorerBridge?.wire(trace,active))}}:{})
       });
       result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
     }catch(error){
@@ -1425,6 +1464,8 @@ async function callBucketWorker(profile, body, allowRepair = true) {
       if(error?.name==="TimeoutError")throw new Error("The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist.");
       throw new Error("The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
     }
+    globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.response",response.ok?"confirmed":"failed",{status:response.status,code:response.status===404?"EXPLORER_HTTP_NOT_FOUND":undefined});
+    globalThis.redownExplorerBridge?.workerEvents(trace,result.explorerDiagnostic);
     const confirmed=response.ok&&result?.ok===true&&!(result.results||[]).some(item=>item.status==="failed");
     observe(confirmed?"success":"failed",confirmed?"OK":response.ok?"UNEXPECTED_RESPONSE":response.status>=500?"HTTP_5XX":`HTTP_${response.status}`,response.status);
     return {response,result};
@@ -1437,7 +1478,7 @@ async function callBucketWorker(profile, body, allowRepair = true) {
   }
   if(!response.ok||result?.ok!==true){
     const error=new Error((result?.error||"Bucket operation failed")+` (HTTP ${response.status}). Refresh or reconnect if access was rejected.`);
-    error.status=response.status;throw error;
+    error.status=response.status;error.code=result?.code;error.stage=result?.stage;throw error;
   }
   return result;
 }
@@ -1467,9 +1508,9 @@ async function transferExplorerObjects(message) {
   if (!source.accountId || !source.bucketName || !destination.accountId || !destination.bucketName) throw new Error("Choose source and destination buckets");
   const expanded = await expandExplorerEntries(source.accountId, source.bucketName, message.entries || []);
   if (!expanded.length) throw new Error("The selected items no longer contain any files");
-  const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName);
+  const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName,false,message.explorerTrace);
   const destinationProfile = source.accountId === destination.accountId && source.bucketName === destination.bucketName
-    ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName);
+    ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName,false,message.explorerTrace);
   const roots = new Map((message.entries || []).filter(entry=>entry.folder).map(entry => [cleanExplorerPrefix(entry.key), entry]));
   const mapped = expanded.map(entry => {
     const folderRoot = Array.from(roots.keys()).find(root => root.endsWith("/") && entry.key.startsWith(root));
@@ -1486,7 +1527,7 @@ async function transferExplorerObjects(message) {
   const results = [];
   for (let index = 0; index < mapped.length; index += 25) {
     const batch=mapped.slice(index,index+25);
-    const response = await callBucketWorker(destinationProfile, { action:"transferBatch", entries:batch, sourceWorkerUrl:sourceProfile.workerUrl, sourceToken:sourceProfile.token, conflict:message.conflict || "skip" });
+    const response = await callBucketWorker(destinationProfile, { action:"transferBatch", entries:batch, sourceWorkerUrl:sourceProfile.workerUrl, sourceToken:sourceProfile.token, conflict:message.conflict || "skip",explorerTrace:message.explorerTrace });
     const expected=new Set(batch.map(entry=>entry.sourceKey)),seen=new Set();
     if(!Array.isArray(response.results)||response.results.length!==batch.length||response.results.some(result=>{
       if(!expected.has(result.sourceKey)||seen.has(result.sourceKey)||!["copied","conflict","failed"].includes(result.status))return true;
@@ -1512,7 +1553,7 @@ async function transferExplorerObjects(message) {
     for (let index = 0; index < copied.length; index += 100) {
       try {
         const batch=copied.slice(index,index+100),keys=batch.map(result=>result.sourceKey);
-        const result=await callBucketWorker(sourceProfile,{action:"deleteKeys",keys,expected:batch.map(result=>({key:result.sourceKey,etag:result.sourceEtag,version:result.sourceVersion,size:result.size,destinationKey:result.destinationKey,destinationEtag:result.destinationEtag,destinationVersion:result.destinationVersion})),destinationWorkerUrl:destinationProfile.workerUrl,destinationToken:destinationProfile.token,sameBucket:source.accountId===destination.accountId&&source.bucketName===destination.bucketName});
+        const result=await callBucketWorker(sourceProfile,{action:"deleteKeys",keys,expected:batch.map(result=>({key:result.sourceKey,etag:result.sourceEtag,version:result.sourceVersion,size:result.size,destinationKey:result.destinationKey,destinationEtag:result.destinationEtag,destinationVersion:result.destinationVersion})),destinationWorkerUrl:destinationProfile.workerUrl,destinationToken:destinationProfile.token,explorerTrace:message.explorerTrace,sameBucket:source.accountId===destination.accountId&&source.bucketName===destination.bucketName});
         if(!Array.isArray(result.deleted)||result.deleted.length!==keys.length||keys.some(key=>!result.deleted.includes(key)))throw new Error("Source deletion was not confirmed. Refresh both locations before retrying.");
         deletedCount+=keys.length;
       }
@@ -1527,7 +1568,7 @@ async function deleteExplorerObjects(message) {
   const profile = await preparedProfile(source.accountId, source.bucketName, source.accountName);
   let completed = 0; const errors = [];
   for (let index = 0; index < expanded.length; index += 100) {
-    try { const keys=expanded.slice(index,index+100).map(x => x.key); const receipt=await callBucketWorker(profile,{action:"deleteKeys",keys});if(!Array.isArray(receipt.deleted)||receipt.deleted.length!==keys.length||keys.some(key=>!receipt.deleted.includes(key)))throw new Error("Deletion was not confirmed. Refresh before retrying.");completed+=keys.length; }
+    try { const keys=expanded.slice(index,index+100).map(x => x.key); const receipt=await callBucketWorker(profile,{action:"deleteKeys",keys,explorerTrace:message.explorerTrace});if(!Array.isArray(receipt.deleted)||receipt.deleted.length!==keys.length||keys.some(key=>!receipt.deleted.includes(key)))throw new Error("Deletion was not confirmed. Refresh before retrying.");completed+=keys.length; }
     catch (error) { errors.push(error.message || String(error)); }
   }
   return { total:expanded.length, completed, errors };
@@ -1539,12 +1580,12 @@ async function renameExplorerEntry(message) {
   const oldName = entry.displayName || key.replace(/\/$/, "").split("/").pop();
   if (name === oldName) return { total:0, completed:0, errors:[] };
   const parent = key.replace(/\/$/, "").split("/").slice(0,-1).join("/");
-  return transferExplorerObjects({ operation:"move", source:message.source, destination:{...message.source,prefix:parent}, entries:[entry], conflict:"skip", renameTo:name });
+  return transferExplorerObjects({ operation:"move", source:message.source, destination:{...message.source,prefix:parent}, entries:[entry], conflict:"skip", renameTo:name,explorerTrace:message.explorerTrace });
 }
 async function createExplorerFolder(message) {
   const prefix = cleanExplorerPrefix(message.prefix) + cleanExplorerName(message.name);
   const profile = await preparedProfile(message.accountId, message.bucketName, message.accountName);
-  await callBucketWorker(profile, { action:"ensurePrefixes", prefixes:[prefix] });
+  await callBucketWorker(profile, { action:"ensurePrefixes", prefixes:[prefix],explorerTrace:message.explorerTrace });
   return { key:`${prefix}/` };
 }
 function objectKeyFromLocation(profile, location) {
@@ -2173,7 +2214,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   const respond=sendResponse;
   sendResponse=value=>{
     try {if(message?.type!=="runtimeDiagnosticsV1")runtimeDiagnostics.record({operation:"message",requestId:traceId,durationMs:performance.now()-traceStart,outcome:value?.ok===false||value?.errors?.length||value?.partialMove?"failed":"success",code:value?.ok===false||value?.errors?.length||value?.partialMove?"UNKNOWN":"OK"});} catch {}
-    respond({...value,correlationId:traceId});
+    const explorerDiagnostic=globalThis.redownExplorerBridge?.complete(message,value);
+    respond({...value,correlationId:traceId,...(explorerDiagnostic?{explorerDiagnostic}:{})});
   };
   (async () => {
     try {
@@ -2190,6 +2232,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         }
         return sendResponse({ok:true,result});
       }
+      if (message?.type === "explorerDiagnosticsV1") {
+        const stored=await chrome.storage.local.get("debugModeEnabled");
+        if(_sender?.url!==chrome.runtime.getURL("options.html")||stored.debugModeEnabled!==true)return sendResponse({ok:false,code:"DIAGNOSTICS_DISABLED"});
+        await globalThis.redownExplorerBridge.ready;
+        if(message.operation==="sessionContext")return sendResponse({ok:true,context:await globalThis.redownExplorerBridge.sessionContext()});
+        return sendResponse({ok:true,result:globalThis.redownExplorerBridge.query(message.operation,message.input)});
+      }
+      const explorerTrace=await globalThis.redownExplorerBridge?.accept(message,_sender);
+      if(explorerTrace)message.explorerTrace=explorerTrace;else delete message.explorerTrace;
       if(message?.type==="cfSearchStart")return sendResponse({ok:true,search:searchSessions.start(message.targets,message.query)});
       if(message?.type==="cfSearchStep")return sendResponse({ok:true,search:await searchSessions.step(message.sessionId)});
       if(message?.type==="cfSearchCancel")return sendResponse({ok:true,search:searchSessions.cancel(message.sessionId)});
@@ -2323,7 +2374,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       throw new Error("Unknown request");
     } catch (error) {
-      sendResponse({ ok:false, error:error?.message || String(error) });
+      sendResponse({ ok:false, error:error?.message || String(error),diagnosticError:{code:error?.code,status:error?.status,stage:error?.stage,component:"background"} });
     }
   })();
   return true;

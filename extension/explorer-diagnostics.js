@@ -27,7 +27,8 @@ const taxonomy={
 const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value);
 const hex=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const cleanId=value=>uuid(value)?value:null;
-function classify({status,code,name}={}){
+function classify({status,httpStatus,code,name}={}){
+ if(!Number.isInteger(status))status=httpStatus;
  if(taxonomy[code])return code;
  if(name==='TimeoutError')return 'EXPLORER_REQUEST_TIMEOUT';
  if(name==='AbortError')return 'EXPLORER_RESULT_UNCONFIRMED';
@@ -45,17 +46,20 @@ function safeEvent(event,sequence,now){
  if(Number.isInteger(event.workerVersion)&&event.workerVersion>=0&&event.workerVersion<1000)out.workerVersion=event.workerVersion;
  if(Number.isInteger(event.protocol)&&event.protocol>=0&&event.protocol<100)out.protocol=event.protocol;
  if(typeof event.safeTransfers==='boolean')out.safeTransfers=event.safeTransfers;
+ for(const field of ['selectedCount','loadedCount','previewGeneration'])if(Number.isSafeInteger(event[field])&&event[field]>=0)out[field]=event[field];
+ for(const field of ['hasClipboard','betaMode','debugMode'])if(typeof event[field]==='boolean')out[field]=event[field];
  if(typeof event.bindingDeclared==='boolean')out.bindingDeclared=event.bindingDeclared;
  if(Number.isSafeInteger(event.size)&&event.size>=0)out.size=event.size;
- for(const key of ['account','bucket','key','encodedKey','etag','binding'])if(hex(event[key]))out[key]=event[key];
+ for(const key of ['account','bucket','key','encodedKey','etag','binding','expectedBinding'])if(hex(event[key]))out[key]=event[key];
  if(uuid(event.scope))out.scope=event.scope;
  if(uuid(event.requestId))out.requestId=event.requestId;
  if(['api','worker','browser','local'].includes(event.mechanism))out.mechanism=event.mechanism;
+ if(['literal','path','query'].includes(event.encoding))out.encoding=event.encoding;
  if(['source','destination'].includes(event.role))out.role=event.role;
  return out;
 }
 function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.crypto,context='background',extensionVersion='unknown'}={}){
- let enabled=false,records=[],sequence=0,seed=null;const runId=id();
+ let enabled=false,records=[],sequence=0,seed=null;const runId=id();let identityScope=runId,keyPromise=null,keyMaterial=null;
  function prune(){const cutoff=now()-LIMITS.retentionMs;records=records.filter(op=>op.startedAt>=cutoff).slice(-LIMITS.operations);while(records.length&&JSON.stringify(records).length>LIMITS.bytes-4096)records.shift();}
  function begin(operation,{operationId,parentId,origin='runtime'}={}){
   if(!enabled||!operations.includes(operation))return null;
@@ -64,8 +68,8 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
   records.push(op);prune();return op.id;
  }
  function record(operationId,event){
-  try{if(!enabled)return false;prune();const op=records.find(op=>op.id===operationId);if(!op)return false;const safe=safeEvent(event,++sequence,now);if(!safe)return false;
-   if(op.events.length>=LIMITS.events){op.truncated=true;return false;}op.events.push(safe);prune();return true;
+  try{if(!enabled)return false;const op=records.find(op=>op.id===operationId);if(!op)return false;const safe=safeEvent(event,++sequence,now);if(!safe)return false;
+   if(op.events.length>=LIMITS.events){op.truncated=true;return false;}op.events.push(safe);if(sequence%16===0)prune();return true;
   }catch{return false;}
  }
  function finish(operationId,state='unknown',error){
@@ -77,20 +81,23 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
  async function keySeed(){if(!seed)seed=Array.from(cryptoApi.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');return seed;}
  async function fingerprint(kind,value,secret){
   const raw=String(value??'');const material=secret||await keySeed();
-  const key=await cryptoApi.subtle.importKey('raw',new TextEncoder().encode(material),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  if(keyMaterial!==material){keyMaterial=material;keyPromise=cryptoApi.subtle.importKey('raw',new TextEncoder().encode(material),{name:'HMAC',hash:'SHA-256'},false,['sign']);}
+  const key=await keyPromise;
   const hash=await cryptoApi.subtle.sign('HMAC',key,new TextEncoder().encode(kind+'\0'+raw));return Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
  }
- async function identity(operationId,source,key,{role='source',stage='source.identity'}={}){
+ async function identity(operationId,source,key,{role='source',stage='source.identity',encoding='path'}={}){
   try{if(!enabled||!uuid(operationId))return;
-   const values=await Promise.all([fingerprint('account',source?.accountId),fingerprint('bucket',JSON.stringify([source?.accountId,source?.bucketName])),fingerprint('key',key),fingerprint('key',String(key??'').split('/').map(encodeURIComponent).join('/'))]);
-   record(operationId,{stage,component:context,role,scope:runId,account:values[0],bucket:values[1],key:values[2],encodedKey:values[3],outcome:'confirmed'});
+   const values=await Promise.all([fingerprint('account',source?.accountId),fingerprint('bucket',JSON.stringify([source?.accountId,source?.bucketName])),fingerprint('key',key),fingerprint('key',encoding==='literal'?String(key??''):encoding==='query'?encodeURIComponent(String(key??'')):String(key??'').split('/').map(encodeURIComponent).join('/'))]);
+   record(operationId,{stage,component:context,role,encoding,scope:identityScope,account:values[0],bucket:values[1],key:values[2],encodedKey:values[3],outcome:'confirmed'});
   }catch{}
  }
  function exportBundle(){prune();return {explorerDiagnosticVersion:VERSION,scope:'redacted-explorer',runId,exportedAt:now(),limits:LIMITS,operations:JSON.parse(JSON.stringify(records)),limitations:['Fingerprints comparable only within their recorded scope','No credentials, private names, URLs or contents','Binding declaration is not platform binding introspection','Collection is bounded and may be truncated','Observed completion is not automatically byte verification']};}
  function ingest(bundle,{restart=false}={}){
   if(!bundle||bundle.explorerDiagnosticVersion!==VERSION||!Array.isArray(bundle.operations)||bundle.operations.length>LIMITS.operations||JSON.stringify(bundle).length>LIMITS.bytes)throw Error('INVALID_EXPLORER_BUNDLE');
-  const staged=[];
+  const staged=[],ids=new Set();
   for(const raw of bundle.operations){
+   if(!raw||typeof raw!=="object"||Array.isArray(raw))throw Error("INVALID_EXPLORER_OPERATION");
+   if(ids.has(raw.id))throw Error("DUPLICATE_EXPLORER_OPERATION");ids.add(raw.id);
    if(!uuid(raw.id)||!operations.includes(raw.operation)||!Array.isArray(raw.events)||raw.events.length>LIMITS.events||!Number.isFinite(raw.startedAt))throw Error('INVALID_EXPLORER_OPERATION');
    const clean={id:raw.id,parentId:cleanId(raw.parentId),operation:raw.operation,origin:['runtime','fixture','user-report'].includes(raw.origin)?raw.origin:'runtime',context:components.includes(raw.context)?raw.context:'adapter',runId:cleanId(raw.runId)||runId,extensionVersion:/^[a-zA-Z0-9.+_-]{1,64}$/.test(raw.extensionVersion)?raw.extensionVersion:'unknown',startedAt:raw.startedAt,state:['running','confirmed','failed','unknown','cancelled'].includes(raw.state)?raw.state:'unknown',events:raw.events.map((event,i)=>safeEvent(event,i+1,now)),truncated:raw.truncated===true};
    if(clean.events.some(event=>!event))throw Error('INVALID_EXPLORER_EVENT');
@@ -101,12 +108,20 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
   for(const clean of staged){const old=records.findIndex(op=>op.id===clean.id);if(old>=0)records[old]=clean;else records.push(clean);}
   prune();
  }
+ function tree(operationId){
+  const trace=records.find(op=>op.id===operationId);if(!trace)return null;
+  const ids=new Set([operationId]);for(let round=0;round<LIMITS.operations;round++){const before=ids.size;for(const op of records)if(ids.has(op.parentId))ids.add(op.id);if(ids.size===before)break;}
+  return {...JSON.parse(JSON.stringify(trace)),descendants:records.filter(op=>op.id!==operationId&&ids.has(op.id)).map(op=>JSON.parse(JSON.stringify(op))),parentAvailable:trace.parentId?records.some(op=>op.id===trace.parentId):true};
+ }
  function diagnose(operationId){
   const op=records.find(op=>op.id===operationId);if(!op)return {status:'unavailable',findings:[],missing:['operation trace']};
-  const findings=[],events=op.events;
-  const add=(confidence,code,evidence,missing)=>findings.push({confidence,code,description:taxonomy[code]?.[0]||code,evidence,missing});
+  const group=tree(operationId);const findings=[],events=[op,...group.descendants].flatMap(item=>item.events.map(event=>({...event,operationId:item.id})));
+  const add=(confidence,code,evidence,missing)=>findings.push({confidence,kind:confidence==='possible'||confidence==='unknown'?'hypothesis':'observation',code,description:taxonomy[code]?.[0]||code,evidence,missing});
   for(const event of events.filter(event=>event.status===404))add('confirmed','EXPLORER_HTTP_NOT_FOUND',[event.sequence],['Root cause requires route, binding and exact-key evidence']);
   for(const event of events.filter(event=>event.code==='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[event.sequence],['A missing key in the addressed binding does not prove the intended bucket lacks it']);
+  for(const event of events.filter(e=>e.binding&&e.expectedBinding&&e.binding!==e.expectedBinding))add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[event.sequence],['This compares declared binding context; provider binding introspection is still required']);
+  for(const event of events.filter(e=>e.code&&taxonomy[e.code]&&e.code!=='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[{operationId:event.operationId,sequence:event.sequence}],['Recorded error signature is an observation; its underlying cause may remain unknown']);
+  for(const event of events.filter(e=>Number.isInteger(e.workerVersion)&&e.workerVersion<5))add('confirmed','EXPLORER_WORKER_CAPABILITY_MISMATCH',[{operationId:event.operationId,sequence:event.sequence}],['Inspect required endpoint and deployed configuration before repair']);
   const identities=events.filter(e=>e.key&&e.role==='source');
   for(const a of identities)for(const b of identities)if(a.sequence<b.sequence&&a.scope===b.scope){
    if(a.key!==b.key)add('confirmed','EXPLORER_SOURCE_KEY_MISMATCH',[a.sequence,b.sequence],[]);
@@ -115,9 +130,10 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
   const match=identities[0];const peers=match?records.filter(other=>other.id!==op.id&&['preview','download'].includes(other.operation)&&other.state==='confirmed'&&other.events.some(e=>e.key===match.key&&e.bucket===match.bucket&&e.scope===match.scope)):[];
   if(peers.length&&events.some(e=>e.status===404))add('strongly-supported','API_WORKER_PATH_DIVERGENCE',events.filter(e=>e.status===404).map(e=>e.sequence),['Inspect Worker route and binding; API success does not prove Worker identity']);
   if(!findings.length)add('unknown','EXPLORER_RESULT_UNCONFIRMED',[],['No deterministic failure signature is established']);
+  findings.sort((a,b)=>['confirmed','strongly-supported','possible','unknown'].indexOf(a.confidence)-['confirmed','strongly-supported','possible','unknown'].indexOf(b.confidence));
   return {status:'partial',operationId,findings,relatedSuccesses:peers.map(p=>p.id),rootCause:'unknown',missing:['Installed extension build identity','Observed provider binding settings','Live destination read/hash unless separately recorded'],verificationPlan:['Use explicitly authorized disposable objects','Compare same-scope source identity fingerprints across API and Worker','Inspect observed Worker version and binding declaration versus provider settings','Copy once, independently read/hash destination and confirm source remains','Do not replay an ambiguous write; inspect destination first']};
  }
- return {begin,record,finish,identity,fingerprint,keySeed,runId,exportBundle,ingest,diagnose,setEnabled(value){enabled=value===true;if(!enabled){records=[];seed=null;}},get enabled(){return enabled;},getOperationTrace(operationId){prune();const op=records.find(op=>op.id===operationId);return op?JSON.parse(JSON.stringify(op)):null;}};
+ return {getOperationTree:tree,markTruncated(operationId){const op=records.find(op=>op.id===operationId);if(op)op.truncated=true;},begin,record,finish,identity,fingerprint,keySeed,runId,get identityScope(){return identityScope;},useIdentityContext(value){if(enabled&&uuid(value?.scope)&&hex(value?.seed)){identityScope=value.scope;seed=value.seed;return true;}return false;},exportBundle,ingest,diagnose,setEnabled(value){enabled=value===true;if(!enabled){records=[];seed=null;identityScope=id();}},get enabled(){return enabled;},getOperationTrace(operationId){prune();const op=records.find(op=>op.id===operationId);return op?JSON.parse(JSON.stringify(op)):null;}};
 }
 root.RedownExplorerDiagnostics={VERSION,LIMITS,operations,stages,components,taxonomy,classify,create};
 })(globalThis);

@@ -708,6 +708,20 @@
   <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
   <button id="runtime-diagnostics-export" class="ghost">Export support bundle</button>
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
+  <details id="explorer-diagnostics-panel" style="margin-top:18px">
+    <summary>File Explorer diagnostics</summary>
+    <p class="meta">Redacted, bounded observations. Review the generated bundle before sharing. No cloud probes or repairs run here.</p>
+    <div class="row-actions" style="flex-wrap:wrap">
+      <button id="explorer-diagnostics-inspect" class="ghost" type="button">Inspect operations</button>
+      <button id="explorer-diagnostics-failures" class="ghost" type="button">Show failures</button>
+      <button id="explorer-diagnostics-export" class="ghost" type="button">Generate support bundle</button>
+      <button id="explorer-diagnostics-clear" class="ghost" type="button">Clear records</button>
+    </div>
+    <label for="explorer-diagnostic-id">Operation</label><select id="explorer-diagnostic-id"></select>
+    <div class="row-actions"><button id="explorer-diagnostics-trace" class="ghost" type="button">Inspect trace</button><button id="explorer-diagnostics-copy" class="ghost" type="button">Copy diagnostic ID</button><button id="explorer-diagnostics-download" class="ghost" type="button" hidden>Download reviewed bundle</button></div>
+    <div id="explorer-diagnostics-status" class="status" role="status"></div>
+    <pre id="explorer-diagnostics-output" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow:auto" role="status"></pre>
+  </details>
   <pre id="runtime-diagnostics-output" role="status" aria-live="polite"></pre>
 </section>
 <script src="settings-mascot.js"></script>
@@ -720,6 +734,9 @@
 <script src="explorer-destination-menu.js"></script>
 <script src="storage-signals.js"></script>
 <script src="public-addresses.js"></script>
+<script src="explorer-diagnostics.js"></script>
+<script src="explorer-diagnostics-bridge.js"></script>
 <script src="options.js"></script>
+<script src="explorer-diagnostics-ui.js"></script>
 </body>
 </html>

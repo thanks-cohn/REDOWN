@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
+import {createCollector} from "../agent/explorer/api.mjs";
 import {createHash,randomUUID} from "node:crypto";
 
 async function workerModule() {
@@ -202,7 +203,7 @@ test('large streamed fixture and metadata survive local copy; capabilities rejec
  const worker=(await workerModule()).default,bucket=new MemoryBucket(),bytes=new Uint8Array(16*1024*1024);for(let i=0;i<bytes.length;i+=4096)bytes[i]=(i/4096)%251;
  await bucket.put('large.bin',bytes,{httpMetadata:{contentType:'application/octet-stream'},customMetadata:{test:'large-local-only'}});
  const result=await(await worker.fetch(manageRequest({action:'transferBatch',entries:[{sourceKey:'large.bin',destinationKey:'large-copy.bin',sameBucket:true}]}),{STORAGE:bucket})).json();assert.equal(result.results[0].verified,true);assert.deepEqual((await bucket.get('large-copy.bin')).bytes,bytes);
- const capabilities=await(await worker.fetch(manageRequest({action:'capabilities'}),{STORAGE:bucket})).json();assert.equal(capabilities.workerVersion,5);assert.equal(capabilities.safeTransfers,true);
+ const capabilities=await(await worker.fetch(manageRequest({action:'capabilities'}),{STORAGE:bucket})).json();assert.equal(capabilities.workerVersion,6);assert.equal(capabilities.diagnosticProtocol,1);assert.equal(capabilities.safeTransfers,true);
 });
 test('archive extraction conflicts preserve existing destination content',async()=>{
  const worker=(await workerModule()).default,bucket=new MemoryBucket();await bucket.put('book.zip',storedZip([['notes.txt','from archive']]));await bucket.put('out/notes.txt',text('keep existing'));
@@ -244,5 +245,32 @@ test('background folder copy/rename uses exact descendants; explicit conflicts p
   let result=await h.context.transferExplorerObjects({...h.request,entries:[{key:'folder/',folder:true}],operation:'move'});assert.equal(result.completed,2);assert.ok(await h.stores.source.head('folder-other/keep.txt'));assert.ok(await h.stores.destination.head('nested/folder/deep/.redown'));
   await h.stores.source.put('雪 #?.txt',text('original'));await h.stores.destination.put('nested/雪 #?.txt',text('existing'));
   result=await h.context.transferExplorerObjects({...h.request,operation:'move'});assert.equal(result.completed,0);assert.equal(result.conflicts.length,1);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/雪 #?.txt')).bytes),'existing');
+ }finally{h.restore();}
+});
+
+test('instrumented cross-Worker copy records exact read/write/verify timeline with no raw keys or seed',async()=>{
+ const h=await pipeline(),worker=(await workerModule()).default,collector=createCollector({context:'background'});collector.setEnabled(true);
+ try{
+  const key='雪 #?.txt';await h.stores.source.put(key,text('original'));
+  const id=collector.begin('copy');await collector.identity(id,h.request.source,key);
+  const context={protocol:1,operationId:id,scope:collector.identityScope,seed:await collector.keySeed(),sourceBinding:await collector.fingerprint('bucket',JSON.stringify(['a','source'])),expectedBinding:await collector.fingerprint('bucket',JSON.stringify(['a','destination']))};
+  const realFetch=globalThis.fetch;globalThis.fetch=(url,options)=>new URL(url).hostname==='source.workers.dev'?worker.fetch(new Request(url,options),{STORAGE:h.stores.source,REDOWN_DIAGNOSTIC_BINDING:JSON.stringify(['a','source'])}):realFetch(url,options);
+  const request=manageRequest({action:'transferBatch',sourceWorkerUrl:'https://source.workers.dev',sourceToken:'test-secret',entries:[{sourceKey:key,destinationKey:'nested/'+key,sameBucket:false}]});const headers=new Headers(request.headers);headers.set('x-redown-diagnostic',JSON.stringify(context));
+  const result=await(await worker.fetch(new Request(request,{headers}),{STORAGE:h.stores.destination,REDOWN_DIAGNOSTIC_BINDING:JSON.stringify(['a','destination'])})).json();
+  assert.equal(result.results[0].verified,true);for(const event of result.explorerDiagnostic.events)collector.record(id,{...event,scope:context.scope});collector.finish(id,'confirmed');
+  const stages=collector.getOperationTrace(id).events.map(e=>e.stage);assert.ok(stages.includes('source.read'));assert.ok(stages.includes('destination.write'));assert.ok(stages.includes('destination.verify'));const serialized=JSON.stringify(collector.exportBundle());assert.doesNotMatch(serialized,/雪|test-secret|workers.dev/);assert.ok(!serialized.includes(context.seed));assert.ok(await h.stores.source.head(key));
+ }finally{h.restore();}
+});
+test('wrong source binding fixture produces structured 404 evidence and mismatch without claiming a production cause',async()=>{
+ const h=await pipeline(),worker=(await workerModule()).default,collector=createCollector({context:'background'});collector.setEnabled(true);
+ try{
+  const key='雪 #?.txt';await h.stores.source.put(key,text('original'));
+  const id=collector.begin('copy'),preview=collector.begin('preview');await collector.identity(id,h.request.source,key);await collector.identity(preview,h.request.source,key);collector.record(preview,{stage:'api.response',component:'cloudflare',outcome:'confirmed',mechanism:'api',status:200});collector.finish(preview,'confirmed');
+  const context={protocol:1,operationId:id,scope:collector.identityScope,seed:await collector.keySeed(),sourceBinding:await collector.fingerprint('bucket',JSON.stringify(['a','source']))};
+  globalThis.fetch=(url,options)=>worker.fetch(new Request(url,options),{STORAGE:new MemoryBucket(),REDOWN_DIAGNOSTIC_BINDING:JSON.stringify(['a','wrong-bucket'])});
+  const request=manageRequest({action:'transferBatch',sourceWorkerUrl:'https://source.workers.dev',sourceToken:'test-secret',entries:[{sourceKey:key,destinationKey:'copy.txt',sameBucket:false}]});const headers=new Headers(request.headers);headers.set('x-redown-diagnostic',JSON.stringify(context));
+  const result=await(await worker.fetch(new Request(request,{headers}),{STORAGE:h.stores.destination})).json();assert.equal(result.results[0].status,'failed');assert.equal(result.results[0].httpStatus,404);
+  for(const event of result.explorerDiagnostic.events)collector.record(id,{...event,scope:context.scope});collector.finish(id,'failed',{status:404,stage:'source.read',component:'worker'});
+  const diagnosis=collector.diagnose(id);assert.equal(diagnosis.rootCause,'unknown');assert.ok(diagnosis.findings.some(f=>f.code==='EXPLORER_SOURCE_NOT_FOUND'));assert.ok(diagnosis.findings.some(f=>f.code==='EXPLORER_BUCKET_CONTEXT_MISMATCH'));assert.ok(diagnosis.findings.some(f=>f.code==='API_WORKER_PATH_DIVERGENCE'));assert.ok(await h.stores.source.head(key));assert.equal(await h.stores.destination.head('copy.txt'),null);
  }finally{h.restore();}
 });

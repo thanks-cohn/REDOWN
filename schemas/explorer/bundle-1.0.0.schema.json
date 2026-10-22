@@ -281,6 +281,38 @@
                 "binding": {
                   "type": "string",
                   "pattern": "^[a-f0-9]{64}$"
+                },
+                "expectedBinding": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "selectedCount": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "loadedCount": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "previewGeneration": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "hasClipboard": {
+                  "type": "boolean"
+                },
+                "betaMode": {
+                  "type": "boolean"
+                },
+                "debugMode": {
+                  "type": "boolean"
+                },
+                "encoding": {
+                  "enum": [
+                    "literal",
+                    "path",
+                    "query"
+                  ]
                 }
               },
               "additionalProperties": false

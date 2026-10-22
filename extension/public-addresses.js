@@ -1,6 +1,15 @@
 /* Read-only public-address presentation. Configuration is never proof of object access. */
 (function(root){
   'use strict';
+  const refreshers=new WeakMap();
+  async function refreshVisible(document,source){
+    const pending=[];
+    for(const host of document.querySelectorAll('.public-address-host')){
+      const entry=refreshers.get(host);
+      if(entry&&entry.source.accountId===source.accountId&&entry.source.bucketName===source.bucketName)pending.push(entry.refresh());
+    }
+    await Promise.allSettled(pending);
+  }
   function addresses(snapshot,source,key){
     if(!snapshot||snapshot.accountId!==source.accountId||snapshot.bucketName!==source.bucketName)return [];
     return (snapshot.addresses||[]).flatMap(item=>{
@@ -17,6 +26,7 @@
     const host=document.createElement('div');host.className='public-address-host';
     let generation=0,expanded=false;
     async function refresh(){
+      expanded=host.querySelector('details')?.open??expanded;
       const token=++generation;
       host.setAttribute('aria-busy','true');
       let snapshot;
@@ -43,7 +53,8 @@
       }
       host.append(details);
     }
-    return {host,refresh,cancel(){generation++;}};
+    refreshers.set(host,{source:{accountId:source.accountId,bucketName:source.bucketName},refresh});
+    return {host,refresh,cancel(){generation++;refreshers.delete(host);}};
   }
-  root.RedownPublicAddresses={addresses,disclosure};
+  root.RedownPublicAddresses={addresses,disclosure,refreshVisible};
 })(globalThis);
