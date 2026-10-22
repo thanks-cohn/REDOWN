@@ -19,3 +19,10 @@ Permissions retained: contextMenus (native destinations), notifications (complet
 Next smallest step: run the exact extracted audit ZIP harness in an administrator-approved testing environment. Resolve license drift with its owner before building a release candidate. Then authorize a disposable Cloudflare prefix under the runnable live plan; never test ordinary user objects. Keep each gate blocked until its evidence actually exists.
 
 Scoped official documentation review on 21 October 2026: [service-worker lifecycle](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle) confirms global state is lost on shutdown and warns against indefinite keepalive; the pull protocol therefore reports interruption rather than claiming durable recovery. [Prepare an extension](https://developer.chrome.com/docs/webstore/prepare) requires testing, manifest review, a ZIP with manifest at root and a higher version for a subsequent store upload. The audit package retains 0.5.13 and is not an upload candidate. Retrieved-document hashes are recorded in verification/official-references.json. This review does not cover the complete current policy/privacy/licensing checklist or represent Google approval.
+
+22 October three-stage follow-up: [actual report](../THREE_STAGE_REPAIR_REPORT.md) and
+[live acceptance checklist](THREE_STAGE_LIVE_CHECKLIST.md). Normal-flow bucket containment,
+read-only contextual URL discovery and Worker v5 transfer safeguards have local evidence.
+Final suite:226 tests,219 pass,seven existing failures. Ordinary Chromium UI fixtures use
+mocked extension/Cloudflare/Downloads; real background+Worker integration uses in-memory R2.
+Installed/live gates remain open. Source version checks do not make R2 deletion atomic.

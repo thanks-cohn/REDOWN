@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import vm from "node:vm";
+import {createHash,randomUUID} from "node:crypto";
 
 async function workerModule() {
   const background = await readFile(new URL("../extension/background.js", import.meta.url), "utf8");
@@ -15,7 +17,9 @@ class MemoryObject {
     this.key = key;
     this.bytes = bytes;
     this.size = bytes.byteLength;
-    this.etag = `etag-${key}`;
+    this.etag = createHash("md5").update(bytes).digest("hex");
+    this.version=options.version||randomUUID();
+    this.checksums={md5:Uint8Array.from(createHash("md5").update(bytes).digest()).buffer};
     this.httpEtag = `"${this.etag}"`;
     this.uploaded = new Date("2026-10-02T12:00:00Z");
     this.httpMetadata = options.httpMetadata || {};
@@ -34,13 +38,18 @@ class MemoryBucket {
   async get(key, options = {}) {
     const object = this.objects.get(key);
     if (!object) return null;
+    if(options.onlyIf?.etagMatches&&object.etag!==options.onlyIf.etagMatches)return {etag:object.etag};
     const range = options.range;
     const bytes = range ? object.bytes.slice(range.offset, range.offset + range.length) : object.bytes;
     return new MemoryObject(key, bytes, object);
   }
   async put(key, value, options = {}) {
+    const existing=this.objects.get(key);
+    if(options.onlyIf instanceof Headers&&options.onlyIf.get('if-none-match')==='*'&&existing)return null;
+    if(options.onlyIf?.etagMatches&&existing?.etag!==options.onlyIf.etagMatches)return null;
     const bytes = new Uint8Array(await new Response(value).arrayBuffer());
-    this.objects.set(key, new MemoryObject(key, bytes, options));
+    if(options.md5&&createHash("md5").update(bytes).digest("hex")!==options.md5)throw Error("Content checksum mismatch");
+    const object=new MemoryObject(key,bytes,options);this.objects.set(key,object);return object;
   }
   async delete(keys) {
     for (const key of Array.isArray(keys) ? keys : [keys]) this.objects.delete(key);
@@ -163,4 +172,77 @@ test("archive traversal and malformed archives are rejected", async () => {
   await bucket.put("broken.zip", text("not a zip"));
   response = await worker.fetch(manageRequest({ action:"listArchive", key:"broken.zip" }), { STORAGE:bucket });
   assert.equal(response.status, 400); assert.match((await response.json()).error, /Malformed/);
+});
+
+test('management keeps exact Unicode, punctuation and repeated-slash keys; rename preserves bytes',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket(),key='nested//雪 #?%.txt';
+ await bucket.put(key,text('literal payload'),{httpMetadata:{contentType:'text/plain',cacheControl:'max-age=12'},customMetadata:{owner:'fixture'}});
+ let result=await(await worker.fetch(manageRequest({action:'headObject',key}),{STORAGE:bucket})).json();assert.equal(result.object.key,key);
+ result=await(await worker.fetch(manageRequest({action:'transferBatch',entries:[{sourceKey:key,destinationKey:'other/雪 #?%.txt',sameBucket:true}]}),{STORAGE:bucket})).json();assert.equal(result.results[0].verified,true);assert.equal(result.results[0].size,15);
+ assert.equal(new TextDecoder().decode((await bucket.get(key)).bytes),'literal payload');
+ result=await(await worker.fetch(manageRequest({action:'renameObject',oldKey:key,newFilename:'new 雪 #?.txt'}),{STORAGE:bucket})).json();assert.equal(result.ok,true);assert.equal(result.key,'nested//new 雪 #?.txt');assert.equal(await bucket.head(key),null);assert.equal((await bucket.head(result.key)).httpMetadata.cacheControl,'max-age=12');
+});
+test('conditional copies preserve racing destinations and failed verification never reports copied',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket();await bucket.put('source',text('source'));
+ const originalPut=bucket.put.bind(bucket);let race=true;
+ bucket.put=async(key,body,opts)=>{if(race&&key==='target'){race=false;await originalPut(key,text('other writer'));}return originalPut(key,body,opts);};
+ let result=await(await worker.fetch(manageRequest({action:'transferBatch',entries:[{sourceKey:'source',destinationKey:'target',sameBucket:true}]}),{STORAGE:bucket})).json();assert.equal(result.results[0].status,'conflict');assert.equal(new TextDecoder().decode((await bucket.get('target')).bytes),'other writer');assert.ok(await bucket.head('source'));
+ bucket.put=async(key,body,opts)=>{const receipt=await originalPut(key,body,opts);if(key==='corrupt')bucket.objects.delete(key);return receipt;};
+ result=await(await worker.fetch(manageRequest({action:'transferBatch',entries:[{sourceKey:'source',destinationKey:'corrupt',sameBucket:true}]}),{STORAGE:bucket})).json();assert.equal(result.results[0].status,'failed');assert.match(result.results[0].error,/verification failed/);assert.ok(await bucket.head('source'));
+});
+test('move deletion rejects changed sources and changed destinations, then confirms exact deletion',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket();await bucket.put('source',text('source'));await bucket.put('target',text('source'));
+ const expected=[{key:'source',etag:'wrong-version',size:6,destinationKey:'target',destinationEtag:(await bucket.head('target')).etag}];
+ let result=await(await worker.fetch(manageRequest({action:'deleteKeys',keys:['source'],expected,sameBucket:true}),{STORAGE:bucket})).json();assert.equal(result.ok,false);assert.ok(await bucket.head('source'));
+ expected[0].etag=(await bucket.head('source')).etag;expected[0].destinationEtag='wrong-version';
+ result=await(await worker.fetch(manageRequest({action:'deleteKeys',keys:['source'],expected,sameBucket:true}),{STORAGE:bucket})).json();assert.equal(result.ok,false);assert.ok(await bucket.head('source'));
+ expected[0].destinationEtag=(await bucket.head('target')).etag;result=await(await worker.fetch(manageRequest({action:'deleteKeys',keys:['source'],expected,sameBucket:true}),{STORAGE:bucket})).json();assert.deepEqual(result.deleted,['source']);assert.equal(await bucket.head('source'),null);assert.ok(await bucket.head('target'));
+});
+test('large streamed fixture and metadata survive local copy; capabilities reject legacy readiness',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket(),bytes=new Uint8Array(16*1024*1024);for(let i=0;i<bytes.length;i+=4096)bytes[i]=(i/4096)%251;
+ await bucket.put('large.bin',bytes,{httpMetadata:{contentType:'application/octet-stream'},customMetadata:{test:'large-local-only'}});
+ const result=await(await worker.fetch(manageRequest({action:'transferBatch',entries:[{sourceKey:'large.bin',destinationKey:'large-copy.bin',sameBucket:true}]}),{STORAGE:bucket})).json();assert.equal(result.results[0].verified,true);assert.deepEqual((await bucket.get('large-copy.bin')).bytes,bytes);
+ const capabilities=await(await worker.fetch(manageRequest({action:'capabilities'}),{STORAGE:bucket})).json();assert.equal(capabilities.workerVersion,5);assert.equal(capabilities.safeTransfers,true);
+});
+test('archive extraction conflicts preserve existing destination content',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket();await bucket.put('book.zip',storedZip([['notes.txt','from archive']]));await bucket.put('out/notes.txt',text('keep existing'));
+ const result=await(await worker.fetch(manageRequest({action:'extractArchiveEntries',key:'book.zip',entries:['notes.txt'],destinationPrefix:'out'}),{STORAGE:bucket})).json();assert.equal(result.results[0].status,'failed');assert.equal(new TextDecoder().decode((await bucket.get('out/notes.txt')).bytes),'keep existing');
+});
+
+async function pipeline(){
+ const background=await readFile('extension/background.js','utf8'),worker=(await workerModule()).default;
+ const stores={source:new MemoryBucket(),destination:new MemoryBucket()},calls=[];
+ const context={URL,TextEncoder,Headers,Date,console,performance,Set,Map,RedownCloudflareApi:{boundedFetch:async(url,options)=>{
+  const bucket=new URL(url).hostname.split('.')[0];calls.push({bucket,body:JSON.parse(options.body)});return worker.fetch(new Request(url,options),{STORAGE:stores[bucket]});
+ }},listAllObjects:async(a,b,prefix)=>[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix))};
+ vm.createContext(context);vm.runInContext(background.slice(background.indexOf('function cleanExplorerPrefix('),background.indexOf('function objectKeyFromLocation(')),context);
+ context.preparedProfile=async(accountId,bucketName)=>({id:bucketName,accountId,bucketName,workerUrl:`https://${bucketName}.workers.dev`,token:'test-secret'});
+ const originalFetch=globalThis.fetch;globalThis.fetch=(url,options)=>{
+  const bucket=new URL(url).hostname.split('.')[0];if(stores[bucket])return worker.fetch(new Request(url,options),{STORAGE:stores[bucket]});return originalFetch(url,options);
+ };
+ return {context,stores,calls,restore(){globalThis.fetch=originalFetch;},request:{source:{accountId:'a',bucketName:'source'},destination:{accountId:'a',bucketName:'destination',prefix:'nested/'},entries:[{key:'雪 #?.txt',folder:false}]}};
+}
+test('background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('雪 #?.txt',text('original'),{customMetadata:{owner:'test'},httpMetadata:{contentType:'text/plain',cacheControl:'max-age=23'}});
+  let result=await h.context.transferExplorerObjects({...h.request,operation:'copy'});assert.equal(result.completed,1);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/雪 #?.txt')).bytes),'original');
+  result=await h.context.transferExplorerObjects({...h.request,operation:'move',destination:{...h.request.destination,prefix:'moved/'}});assert.equal(result.completed,1);assert.equal(await h.stores.source.head('雪 #?.txt'),null);assert.equal((await h.stores.destination.head('moved/雪 #?.txt')).customMetadata.owner,'test');
+  result=await h.context.renameExplorerEntry({source:{accountId:'a',bucketName:'destination'},entry:{key:'moved/雪 #?.txt',displayName:'雪 #?.txt'},newName:'renamed #雪.txt'});assert.equal(result.completed,1);assert.equal(await h.stores.destination.head('moved/雪 #?.txt'),null);assert.ok(await h.stores.destination.head('moved/renamed #雪.txt'));
+  result=await h.context.deleteExplorerObjects({source:{accountId:'a',bucketName:'destination'},entries:[{key:'moved/renamed #雪.txt'}]});assert.equal(result.completed,1);assert.ok(await h.stores.destination.head('nested/雪 #?.txt'),'unselected object remains');
+ }finally{h.restore();}
+});
+test('background rejects incomplete/incorrect destination receipts and never deletes original',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('雪 #?.txt',text('original'));const actual=h.context.RedownCloudflareApi.boundedFetch;
+  h.context.RedownCloudflareApi.boundedFetch=async(url,options)=>{const response=await actual(url,options),body=JSON.parse(options.body);if(body.action==='transferBatch'){const result=await response.json();result.results[0].verified=false;return Response.json(result);}return response;};
+  await assert.rejects(h.context.transferExplorerObjects({...h.request,operation:'move'}),/did not confirm/);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.ok(!h.calls.some(c=>c.body.action==='deleteKeys'));
+ }finally{h.restore();}
+});
+test('background folder copy/rename uses exact descendants; explicit conflicts preserve both sides',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('folder/雪.txt',text('one'));await h.stores.source.put('folder/deep/.redown',text(''));await h.stores.source.put('folder-other/keep.txt',text('keep'));
+  let result=await h.context.transferExplorerObjects({...h.request,entries:[{key:'folder/',folder:true}],operation:'move'});assert.equal(result.completed,2);assert.ok(await h.stores.source.head('folder-other/keep.txt'));assert.ok(await h.stores.destination.head('nested/folder/deep/.redown'));
+  await h.stores.source.put('雪 #?.txt',text('original'));await h.stores.destination.put('nested/雪 #?.txt',text('existing'));
+  result=await h.context.transferExplorerObjects({...h.request,operation:'move'});assert.equal(result.completed,0);assert.equal(result.conflicts.length,1);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/雪 #?.txt')).bytes),'existing');
+ }finally{h.restore();}
 });

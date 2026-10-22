@@ -119,3 +119,14 @@ with a 100ms transform/opacity entrance, viewport fitting and Escape dismissal.
 Latest merged full suite: 205 tests, 198 pass: six historical failures plus the
 upstream Nested drag-handle expectation failure after 6c83427 removed those handles.
 Use npm run storage:benchmark for local mock traces; never call these installed/live evidence.
+
+Three-stage follow-up: [layout/domain/Explorer repair report](docs/THREE_STAGE_REPAIR_REPORT.md).
+Bucket expansion is contained in normal document flow. URL disclosure uses read-only
+`cfPublicAddresses`; Worker custom domains keep `/assets/`, R2 domains use bucket roots.
+Configured is never object-access verification. Properties no longer prepares a Worker.
+Explorer mutations require Worker v5 safe-transfer capabilities: exact keys, conditional
+copy, destination read-back and pre-delete source/destination checks. Do not restore
+legacy v4 acknowledgement-only move deletion. Ordinary Chromium mock interactions and
+in-memory R2 integration are separate from installed-extension/live evidence.
+Latest full suite: 226 tests,219 pass,seven prior failures (six historical evidence and
+one removed Nested drag-handle expectation). See operation matrix and live blockers.

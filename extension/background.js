@@ -72,6 +72,55 @@ function cleanPrefix(value) {
   if (parts.some(x => x === "." || x === "..")) throw new Error("Invalid object path");
   return parts.map(x => x.replace(/[^a-zA-Z0-9._ -]/g, "-")).join("/");
 }
+function exactObjectKey(value) {
+  if (typeof value !== "string" || !value || value.includes("\\0") || new TextEncoder().encode(value).byteLength > 1024) throw new Error("Invalid object key");
+  return value;
+}
+function exactFolder(value) {
+  const prefix=String(value||"");
+  if (!prefix) return "";
+  exactObjectKey(prefix);
+  if(prefix.split("/").some(part=>part==="."||part===".."))throw new Error("Invalid folder path");
+  return prefix.replace(/\\/+$/,"");
+}
+function checksumHex(object) {
+  const md5=object.checksums?.md5;
+  return md5?Array.from(new Uint8Array(md5),byte=>byte.toString(16).padStart(2,"0")).join(""):"";
+}
+async function verifiedObjectPut(storage,key,body,options,expectedSize,expectedMd5="") {
+  const receipt=await storage.put(key,body,{...options,...(expectedMd5?{md5:expectedMd5}:{})});
+  if(!receipt){const error=new Error("Destination changed during this operation. Existing data was preserved.");error.conflict=true;throw error;}
+  const head=await storage.head(key);
+  if(!head||head.size!==expectedSize||!receipt.etag||head.etag!==receipt.etag||receipt.version&&head.version!==receipt.version)throw new Error("Destination verification failed. The source was preserved; inspect the destination before retrying.");
+  return head;
+}
+async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conflict) {
+  const sourceKey=exactObjectKey(entry.sourceKey);let destinationKey=exactObjectKey(entry.destinationKey);
+  if(entry.sameBucket&&sourceKey===destinationKey)throw new Error("Source and destination are the same");
+  let existing=await storage.head(destinationKey);
+  if(existing&&conflict==="skip")return {sourceKey,destinationKey,status:"conflict"};
+  if(existing&&conflict==="keep"){destinationKey=await uniqueKey(storage,destinationKey);existing=null;}
+  // Conditional create also protects keep-both against a filename race. Replace
+  // is only allowed after explicit UI choice and only for the version inspected.
+  const onlyIf=existing?{etagMatches:existing.etag}:new Headers({"If-None-Match":"*"});
+  let stream,size,etag,md5,httpMetadata,customMetadata,sourceVersion;
+  if(entry.sameBucket){
+    const object=await storage.get(sourceKey);
+    if(!object?.body)throw new Error("Source object was not found");
+    stream=object.body;size=object.size;etag=object.etag;sourceVersion=object.version;md5=checksumHex(object);httpMetadata=object.httpMetadata;customMetadata=object.customMetadata;
+  }else{
+    if(!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl)||!sourceToken)throw new Error("Source bucket is not ready");
+    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken},signal:AbortSignal.timeout(25000)});
+    if(!response.ok||!response.body)throw new Error("Source object was not available (HTTP "+response.status+")");
+    stream=response.body;size=Number(response.headers.get("content-length"));etag=response.headers.get("x-redown-etag");sourceVersion=response.headers.get("x-redown-version");md5=response.headers.get("x-redown-md5")||"";
+    if(!response.headers.has("content-length")||!Number.isSafeInteger(size)||size<0||!etag){await stream.cancel();throw new Error("Source Worker cannot confirm content. Repair its bucket and retry.");}
+    httpMetadata=JSON.parse(decodeURIComponent(response.headers.get("x-redown-http-metadata")||"%7B%7D"));
+    if(httpMetadata.cacheExpiry)httpMetadata.cacheExpiry=new Date(httpMetadata.cacheExpiry);
+    customMetadata=JSON.parse(decodeURIComponent(response.headers.get("x-redown-metadata")||"%7B%7D"));
+  }
+  const head=await verifiedObjectPut(storage,destinationKey,stream,{onlyIf,httpMetadata,customMetadata:{...(customMetadata||{}),copiedAt:new Date().toISOString()}},size,md5);
+  return {sourceKey,destinationKey,status:"copied",verified:true,sourceEtag:etag,sourceVersion,destinationEtag:head.etag,destinationVersion:head.version,size:head.size};
+}
 async function uniqueKey(storage, requested, firstIndex = 2, compact = false) {
   if (!(await storage.head(requested))) return requested;
   const slash = requested.lastIndexOf("/");
@@ -245,7 +294,7 @@ export default {
       } catch {
         return new Response("Invalid asset path", { status: 400 });
       }
-      if (!key || key.includes("..")) return new Response("Invalid asset path", { status: 400 });
+      if (!key || key.split("/").some(part=>part==="."||part==="..")) return new Response("Invalid asset path", { status: 400 });
 
       const head = await env.STORAGE.head(key);
       if (!head) {
@@ -323,7 +372,7 @@ export default {
     const authorized = Boolean(REDOWN_SHARED_SECRET) && auth === \`Bearer \${REDOWN_SHARED_SECRET}\`;
     if (request.method === "GET" && requestUrl.pathname === "/private/archive-entry") {
       let key, entry;
-      try { key = cleanPrefix(requestUrl.searchParams.get("key") || ""); entry = safeArchiveName(requestUrl.searchParams.get("entry") || ""); }
+      try { key = exactObjectKey(requestUrl.searchParams.get("key") || ""); entry = safeArchiveName(requestUrl.searchParams.get("entry") || ""); }
       catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
       if (!authorized && !(await validSignedRead(requestUrl, key + "\\narchive:" + entry))) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
       const bytes = await archiveEntryBytes(env.STORAGE, key, entry);
@@ -331,7 +380,7 @@ export default {
     }
     if ((request.method === "GET" || request.method === "HEAD") && (requestUrl.pathname === "/object" || requestUrl.pathname === "/private/object")) {
       let key;
-      try { key = cleanPrefix(requestUrl.searchParams.get("key") || ""); } catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
+      try { key = exactObjectKey(requestUrl.searchParams.get("key") || ""); } catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
       const signed = requestUrl.pathname === "/private/object" && await validSignedRead(requestUrl, key);
       if (!authorized && !signed) return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
       const head = key && await env.STORAGE.head(key);
@@ -341,6 +390,10 @@ export default {
       headers.set("accept-ranges", "bytes");
       headers.set("cache-control", "private, no-store");
       headers.set("x-redown-metadata", encodeURIComponent(JSON.stringify(head.customMetadata || {})));
+      headers.set("x-redown-http-metadata", encodeURIComponent(JSON.stringify(head.httpMetadata || {})));
+      headers.set("x-redown-etag", head.etag);
+      headers.set("x-redown-version",head.version);
+      if(checksumHex(head))headers.set("x-redown-md5",checksumHex(head));
       if (request.method === "HEAD") { headers.set("content-length", String(head.size)); return new Response(null, { status:200, headers }); }
       const match = request.headers.get("range")?.match(/^bytes=(\\d*)-(\\d*)$/);
       let offset = 0, length = head.size, status = 200;
@@ -351,11 +404,12 @@ export default {
         offset = requestedStart; length = Math.min(head.size - 1, requestedEnd) - offset + 1; status = 206;
         headers.set("content-range", \`bytes \${offset}-\${offset + length - 1}/\${head.size}\`);
       }
-      const object = await env.STORAGE.get(key, { range:{ offset, length } });
+      const object = await env.STORAGE.get(key, {onlyIf:{etagMatches:head.etag},...(match&&head.size?{range:{offset,length}}:{})});
+      if(!object?.body||head.version&&object.version!==head.version)return Response.json({ok:false,error:"Object changed while reading. Refresh and retry."},{status:409});
       headers.set("content-length", String(length));
       return new Response(object.body, { status, headers });
     }
-    if (request.method === "GET") return Response.json({ ok:true, service:"REDOWN", secretConfigured:Boolean(REDOWN_SHARED_SECRET), storageBound:Boolean(env.STORAGE) });
+    if (request.method === "GET") return Response.json({ ok:true, service:"REDOWN", secretConfigured:Boolean(REDOWN_SHARED_SECRET), storageBound:Boolean(env.STORAGE), workerVersion:5, safeTransfers:true });
     if (request.method !== "POST") return Response.json({ ok:false, error:"Method not allowed" }, { status:405 });
     if (!authorized) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
     try {
@@ -430,139 +484,123 @@ export default {
       const body = await request.json();
 
       if (body.action === "headObject") {
-        const key = cleanPrefix(body.key);
+        const key = exactObjectKey(body.key);
         const head = key && await env.STORAGE.head(key);
         if (!head) return Response.json({ ok:false, error:"Object not found" }, { status:404 });
         return Response.json({ ok:true, object:{ key, size:head.size, etag:head.etag, httpEtag:head.httpEtag, uploaded:head.uploaded, httpMetadata:head.httpMetadata, customMetadata:head.customMetadata } });
       }
       if (body.action === "createReadUrl") {
-        const key = cleanPrefix(body.key);
+        const key = exactObjectKey(body.key);
         if (!key || !(await env.STORAGE.head(key))) return Response.json({ ok:false, error:"Object not found" }, { status:404 });
         return Response.json({ ok:true, url:await signedReadUrl(requestUrl, key, body.ttl), expiresIn:Math.max(30, Math.min(3600, Number(body.ttl) || 900)) });
       }
       if (body.action === "listArchive") {
-        const key = cleanPrefix(body.key);
+        const key = exactObjectKey(body.key);
         return Response.json({ ok:true, archive:{ key, type:/\\.cbz$/i.test(key)?"cbz":"zip", entries:await archiveEntries(env.STORAGE, key) } });
       }
       if (body.action === "createArchiveEntryReadUrl") {
-        const key = cleanPrefix(body.key), entry = safeArchiveName(body.entry);
+        const key = exactObjectKey(body.key), entry = safeArchiveName(body.entry);
         const canonical = key + "\\narchive:" + entry, expires = Math.floor(Date.now() / 1000) + 900;
         const signature = await readSignature(canonical, expires);
         const url = requestUrl.origin + "/private/archive-entry?key=" + encodeURIComponent(key) + "&entry=" + encodeURIComponent(entry) + "&type=" + encodeURIComponent(body.contentType || "application/octet-stream") + "&expires=" + expires + "&signature=" + signature;
         return Response.json({ ok:true, url, expiresIn:900 });
       }
       if (body.action === "extractArchiveEntries") {
-        const key = cleanPrefix(body.key), prefix = cleanPrefix(body.destinationPrefix || "");
+        const key = exactObjectKey(body.key), prefix = exactFolder(body.destinationPrefix || "");
         const requested = Array.from(new Set(body.entries || [])).slice(0, 1000);
         const results = [];
         for (const rawName of requested) {
           try {
             const name = safeArchiveName(rawName), bytes = await archiveEntryBytes(env.STORAGE, key, name);
-            const destinationKey = cleanPrefix((prefix ? prefix + "/" : "") + name);
-            await env.STORAGE.put(destinationKey, bytes, { customMetadata:{ extractedFrom:key, extractedAt:new Date().toISOString() } });
+            const destinationKey = exactObjectKey((prefix ? prefix + "/" : "") + name);
+            await verifiedObjectPut(env.STORAGE,destinationKey,bytes,{onlyIf:new Headers({"If-None-Match":"*"}),customMetadata:{extractedFrom:key,extractedAt:new Date().toISOString()}},bytes.byteLength);
             results.push({ name, destinationKey, status:"extracted" });
           } catch (error) { results.push({ name:String(rawName), status:"failed", error:error.message || String(error) }); }
         }
         return Response.json({ ok:true, results });
       }
       if (body.action === "receiveArchiveEntries") {
-        const sourceWorkerUrl=String(body.sourceWorkerUrl || "").replace(/\\/+$/, ""), sourceToken=String(body.sourceToken || ""), sourceKey=cleanPrefix(body.sourceKey), prefix=cleanPrefix(body.destinationPrefix || "");
+        const sourceWorkerUrl=String(body.sourceWorkerUrl || "").replace(/\\/+$/, ""), sourceToken=String(body.sourceToken || ""), sourceKey=exactObjectKey(body.sourceKey), prefix=exactFolder(body.destinationPrefix || "");
         if (!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl) || !sourceToken) throw new Error("Source bucket is not ready");
         const results=[];
         for (const rawName of Array.from(new Set(body.entries || [])).slice(0, 1000)) {
           try {
-            const name=safeArchiveName(rawName), destinationKey=cleanPrefix((prefix ? prefix + "/" : "") + name);
+            const name=safeArchiveName(rawName), destinationKey=exactObjectKey((prefix ? prefix + "/" : "") + name);
             const response=await fetch(sourceWorkerUrl + "/private/archive-entry?key=" + encodeURIComponent(sourceKey) + "&entry=" + encodeURIComponent(name), { headers:{ authorization:"Bearer " + sourceToken } });
             if (!response.ok || !response.body) throw new Error("Archive entry was not available");
-            await env.STORAGE.put(destinationKey, response.body, { httpMetadata:{ contentType:response.headers.get("content-type") || "application/octet-stream" }, customMetadata:{ extractedFrom:sourceKey, extractedAt:new Date().toISOString() } });
+            if(!response.headers.has("content-length"))throw new Error("Archive entry length unavailable; nothing written");
+            await verifiedObjectPut(env.STORAGE,destinationKey,response.body,{onlyIf:new Headers({"If-None-Match":"*"}),httpMetadata:{contentType:response.headers.get("content-type")||"application/octet-stream"},customMetadata:{extractedFrom:sourceKey,extractedAt:new Date().toISOString()}},Number(response.headers.get("content-length")));
             results.push({ name,destinationKey,status:"extracted" });
           } catch (error) { results.push({ name:String(rawName),status:"failed",error:error.message || String(error) }); }
         }
         return Response.json({ ok:true,results });
       }
       if (body.action === "deleteKeys") {
-        const keys = Array.from(new Set((body.keys || []).map(cleanPrefix).filter(Boolean))).slice(0, 100);
-        if (!keys.length) throw new Error("No objects selected");
+        const keys = Array.from(new Set((body.keys || []).map(exactObjectKey)));
+        if (!keys.length||keys.length>100) throw new Error("Choose between 1 and 100 objects");
+        for(const key of keys){
+          const expected=body.expected?.find(item=>item.key===key);
+          const head=await env.STORAGE.head(key);
+          if(expected&&(!head||head.etag!==expected.etag||head.size!==expected.size||expected.version&&head.version!==expected.version))throw new Error("Source changed since copy. Original preserved; refresh before retrying.");
+          if(expected){
+            let destination;
+            if(body.sameBucket)destination=await env.STORAGE.head(exactObjectKey(expected.destinationKey));
+            else{
+              const base=String(body.destinationWorkerUrl||"").replace(/\\/+$/,"");
+              if(!/^https:\\/\\/[^/]+$/.test(base)||!body.destinationToken)throw new Error("Destination verification unavailable; source preserved.");
+              const response=await fetch(base+"/object?key="+encodeURIComponent(expected.destinationKey),{method:"HEAD",headers:{authorization:"Bearer "+body.destinationToken},signal:AbortSignal.timeout(25000)});
+              if(response.ok)destination={etag:response.headers.get("x-redown-etag"),size:Number(response.headers.get("content-length")),version:response.headers.get("x-redown-version")};
+            }
+            if(!destination||destination.etag!==expected.destinationEtag||destination.size!==expected.size||expected.destinationVersion&&destination.version!==expected.destinationVersion)throw new Error("Destination changed since copy. Original preserved; refresh before retrying.");
+          }
+        }
         await env.STORAGE.delete(keys);
+        for(const key of keys)if(await env.STORAGE.head(key))throw new Error("Deletion could not be confirmed. Refresh before retrying.");
         return Response.json({ ok:true, deleted:keys });
       }
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:5,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "transferBatch") {
-        const entries = Array.isArray(body.entries) ? body.entries.slice(0, 25) : [];
-        const sourceWorkerUrl = String(body.sourceWorkerUrl || "").replace(/\\/+$/, "");
-        const sourceToken = String(body.sourceToken || "");
-        const conflict = ["replace","keep","skip"].includes(body.conflict) ? body.conflict : "skip";
-        const results = [];
-        for (const entry of entries) {
-          const sourceKey = cleanPrefix(entry.sourceKey);
-          let destinationKey = cleanPrefix(entry.destinationKey);
-          try {
-            const existing = await env.STORAGE.head(destinationKey);
-            if (existing && conflict === "skip") { results.push({ sourceKey, destinationKey, status:"conflict" }); continue; }
-            if (existing && conflict === "keep") destinationKey = await uniqueKey(env.STORAGE, destinationKey);
-            if (entry.sameBucket) {
-              const object = await env.STORAGE.get(sourceKey);
-              if (!object) throw new Error("Source object was not found");
-              await env.STORAGE.put(destinationKey, object.body, { httpMetadata:object.httpMetadata, customMetadata:{ ...(object.customMetadata || {}), copiedAt:new Date().toISOString() } });
-            } else {
-              if (!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl) || !sourceToken) throw new Error("Source bucket is not ready");
-              const response = await fetch(sourceWorkerUrl + "/object?key=" + encodeURIComponent(sourceKey), { headers:{ authorization:"Bearer " + sourceToken } });
-              if (!response.ok || !response.body) throw new Error("Source object was not available");
-              let customMetadata = {};
-              try { customMetadata = JSON.parse(decodeURIComponent(response.headers.get("x-redown-metadata") || "%7B%7D")); } catch {}
-              await env.STORAGE.put(destinationKey, response.body, { httpMetadata:{ contentType:response.headers.get("content-type") || "application/octet-stream" }, customMetadata:{ ...customMetadata, copiedAt:new Date().toISOString() } });
-            }
-            results.push({ sourceKey, destinationKey, status:"copied" });
-          } catch (error) { results.push({ sourceKey, destinationKey, status:"failed", error:error.message || String(error) }); }
+        if(!Array.isArray(body.entries)||!body.entries.length||body.entries.length>25)throw new Error("Choose between 1 and 25 transfer entries");
+        const sourceWorkerUrl=String(body.sourceWorkerUrl||"").replace(/\\/+$/,"");
+        const conflict=["replace","keep","skip"].includes(body.conflict)?body.conflict:"skip";
+        const results=[];
+        for(const entry of body.entries){
+          try{results.push(await copyVerifiedObject(env.STORAGE,entry,sourceWorkerUrl,String(body.sourceToken||""),conflict));}
+          catch(error){results.push({sourceKey:entry.sourceKey,destinationKey:entry.destinationKey,status:error.conflict?"conflict":"failed",error:error.message||String(error)});}
         }
-        return Response.json({ ok:true, results });
+        return Response.json({ok:true,results});
       }
 
       if (body.action === "renameObject") {
-        const oldKey = cleanPrefix(body.oldKey);
-        if (!oldKey) throw new Error("Missing object key");
-        const oldParts = oldKey.split("/");
-        const oldFilename = oldParts.pop();
-        const parent = oldParts.join("/");
-        const newFilename = cleanName(body.newFilename || "");
-        const newKey = parent ? \`\${parent}/\${newFilename}\` : newFilename;
-        if (newKey === oldKey) {
-          return Response.json({ ok: true, key: oldKey, filename: oldFilename });
-        }
-        if (await env.STORAGE.head(newKey)) {
-          return Response.json({ ok: false, error: "A file with that name already exists in this location" }, { status: 409 });
-        }
-        const object = await env.STORAGE.get(oldKey);
-        if (!object) {
-          return Response.json({ ok: false, error: "Original file was not found" }, { status: 404 });
-        }
-        const encodedKey = newKey.split("/").map(encodeURIComponent).join("/");
-        const publicPath = \`/assets/\${encodedKey}\`;
-        const publicBaseUrl = safePublicBase(body.publicBaseUrl, requestUrl);
-        const publicUrl = \`\${publicBaseUrl}/\${encodedKey}\`;
-        await env.STORAGE.put(newKey, object.body, {
-          httpMetadata: object.httpMetadata,
-          customMetadata: {
-            ...(object.customMetadata || {}),
-            publicPath,
-            publicUrl,
-            renamedAt: new Date().toISOString()
-          }
-        });
+        const oldKey=exactObjectKey(body.oldKey);
+        const newFilename=String(body.newFilename||"");
+        if(!newFilename||/[\\/\\0]/.test(newFilename)||newFilename==="."||newFilename==="..")throw new Error("Enter a valid filename without slashes");
+        const newKey=oldKey.slice(0,oldKey.lastIndexOf("/")+1)+newFilename;
+        if(oldKey===newKey)return Response.json({ok:true,key:oldKey,filename:newFilename});
+        const result=await copyVerifiedObject(env.STORAGE,{sourceKey:oldKey,destinationKey:newKey,sameBucket:true},"","","skip");
+        if(result.status!=="copied")return Response.json({ok:false,error:"A file with that name already exists"},{status:409});
+        const source=await env.STORAGE.head(oldKey);
+        if(!source||source.etag!==result.sourceEtag||source.size!==result.size||result.sourceVersion&&source.version!==result.sourceVersion)throw new Error("Source changed during rename. Both objects retained; refresh before retrying.");
         await env.STORAGE.delete(oldKey);
-        return Response.json({ ok: true, key: newKey, filename: newFilename, publicPath, publicUrl });
+        if(await env.STORAGE.head(oldKey))throw new Error("Renamed copy verified, but source deletion is unconfirmed. Refresh before retrying.");
+        const encodedKey=newKey.split("/").map(encodeURIComponent).join("/");
+        const publicPath="/assets/"+encodedKey,publicUrl=safePublicBase(body.publicBaseUrl,requestUrl)+"/"+encodedKey;
+        return Response.json({ok:true,key:newKey,filename:newFilename,publicPath,publicUrl});
       }
 
       if (body.action === "ensurePrefixes") {
         const requested = Array.isArray(body.prefixes) ? body.prefixes : [];
         const created = [];
         for (const value of requested) {
-          const prefix = cleanPrefix(value);
+          const prefix = exactFolder(value);
           if (!prefix) continue;
           const key = \`\${prefix}/.redown\`;
-          await env.STORAGE.put(key, "", {
+          const marker=await env.STORAGE.put(key, "", {
+            onlyIf:new Headers({"If-None-Match":"*"}),
             httpMetadata: { contentType: "text/plain; charset=utf-8", cacheControl: "no-store" },
             customMetadata: { redownMarker: "true", createdAt: new Date().toISOString() }
           });
+          if(!marker&&!(await env.STORAGE.head(key)))throw new Error("Folder creation could not be confirmed");
           created.push(key);
         }
         return Response.json({ ok: true, created });
@@ -921,7 +959,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
       });
       if (response.ok) {
         health = await response.json().catch(() => null);
-        if (isVerifiedWorkerHealth(health)) break;
+        if (isVerifiedWorkerHealth(health)&&health.workerVersion>=5&&health.safeTransfers===true) break;
         health = null;
       }
       healthError = response.ok?"Unexpected Worker health response":`HTTP ${response.status}`;
@@ -999,7 +1037,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     defaultPrefix: existing?.defaultPrefix ?? existing?.folders?.files ?? folders?.files ?? "files",
     defaultCategory: existing?.defaultCategory || "files",
     menuTree: Array.isArray(existing?.menuTree) ? existing.menuTree : [],
-    workerVersion: 4,
+    workerVersion: 5,
     explorerManaged: Boolean(explorerOnly),
     publicAssetsEnabled: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
     capabilities: {
@@ -1188,15 +1226,15 @@ async function listObjects(accountId, bucketName, prefix = "", cursor = "") {
   return listObjectsPage(accountId, bucketName, prefix, cursor);
 }
 async function listAllObjects(accountId, bucketName, prefix = "") {
-  const objects = [];
-  let cursor = "";
-  for (let page = 0; page < 1000; page++) {
-    const result = await listObjectsPage(accountId, bucketName, prefix, cursor);
+  const objects=[],seen=new Set();let cursor="";
+  for(let page=0;page<1000;page++){
+    const result=await listObjectsPage(accountId,bucketName,prefix,cursor);
     objects.push(...result.objects);
-    if (!result.cursor || result.cursor === cursor) break;
-    cursor = result.cursor;
+    if(!result.cursor){if(result.truncated)throw new Error("Folder listing is incomplete. Refresh before changing files.");return objects;}
+    if(seen.has(result.cursor))throw new Error("Cloudflare repeated a folder page. No file changes were started; refresh and retry.");
+    seen.add(result.cursor);cursor=result.cursor;
   }
-  return objects;
+  throw new Error("Folder listing exceeded its safe page limit. Open a smaller folder before changing files.");
 }
 function explorerSearchScore(query, key) {
   const q=String(query||"").trim().toLocaleLowerCase().replace(/\\/g,"/");
@@ -1319,39 +1357,46 @@ async function listFolderChildren(accountId, bucketName, parentPrefix = "", limi
   return Array.from(children).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
 }
 function cleanExplorerPrefix(value) {
-  const parts = String(value || "").split("/").filter(Boolean);
-  if (parts.some(part => part === "." || part === ".." || /[\\\0]/.test(part))) throw new Error("That location is not valid");
-  return parts.join("/") + (parts.length ? "/" : "");
+  const prefix=String(value||"");
+  if(!prefix)return "";
+  if(prefix.split("/").some(part=>part==="."||part==="..")||prefix.includes("\0"))throw new Error("That location is not valid");
+  return prefix.endsWith("/")?prefix:prefix+"/";
+}
+function cleanExplorerKey(value){
+  if(typeof value!=="string"||!value||value.includes("\0")||new TextEncoder().encode(value).byteLength>1024)throw new Error("Invalid object key");
+  return value;
 }
 function cleanExplorerName(value) {
   const name = String(value || "").trim();
   if (!name || name === "." || name === ".." || /[\\/\0]/.test(name)) throw new Error("Enter a valid name without slashes");
-  return name.slice(0, 180);
+  if(new TextEncoder().encode(name).byteLength>1024)throw new Error("That name is too long");
+  return name;
 }
 async function workerAcceptsProfile(profile) {
   if (!profile?.workerUrl || !profile?.token) return false;
   try {
     const response = await RedownCloudflareApi.boundedFetch(profile.workerUrl, {
-      method:"POST",
+      timeoutMs:8000,method:"POST",
       cache:"no-store",
       headers:{
         authorization:`Bearer ${profile.token}`,
         "content-type":"application/json",
         "cache-control":"no-cache"
       },
-      body:JSON.stringify({ action:"ensurePrefixes", prefixes:[] })
+      body:JSON.stringify({ action:"capabilities" })
     });
-    if (response.status === 401 || response.status === 403) return false;
+    if(response.status===401)return false;
+    if(!response.ok)throw new Error("Bucket connection check failed (HTTP "+response.status+"). Reconnect or retry Refresh; no repair was attempted.");
     const result = await response.json().catch(() => ({}));
-    return response.ok && result?.ok;
-  } catch {
-    return false;
+    return response.ok && result?.ok===true && result.workerVersion>=5 && result.safeTransfers===true && result.storageBound===true;
+  } catch(error) {
+    throw new Error(error?.message||"Bucket connection check failed. Retry Refresh; no repair was attempted.");
   }
 }
 async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false) {
   let profiles = await getProfiles();
   let profile = profiles.find(p => p.type === "cloudflare-r2" && p.accountId === accountId && p.bucketName === bucketName);
-  if (!forceRepair && profile?.workerVersion >= 4 && await workerAcceptsProfile(profile)) return profile;
+  if (!forceRepair && profile?.workerVersion >= 5 && await workerAcceptsProfile(profile)) return profile;
 
   return provisionCloudflareProfile({
     accountId,
@@ -1364,6 +1409,9 @@ async function preparedProfile(accountId, bucketName, accountName = "", forceRep
 }
 async function callBucketWorker(profile, body, allowRepair = true) {
   async function run(active){
+    const started=globalThis.performance?.now?.()||0;
+    const read=["headObject","capabilities","createReadUrl","listArchive","createArchiveEntryReadUrl"].includes(body.action);
+    const observe=(outcome,code,status)=>{try{globalThis.redownRuntimeObserver?.record({operation:read?"api.read":"api.write",outcome,code,status,durationMs:(globalThis.performance?.now?.()||0)-started});}catch{}};
     let response,result;
     try{
       response=await RedownCloudflareApi.boundedFetch(active.workerUrl,{
@@ -1373,19 +1421,22 @@ async function callBucketWorker(profile, body, allowRepair = true) {
       });
       result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
     }catch(error){
+      observe("unknown",error?.name==="TimeoutError"?"TIMEOUT":"NETWORK");
       if(error?.name==="TimeoutError")throw new Error("The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist.");
       throw new Error("The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
     }
+    const confirmed=response.ok&&result?.ok===true&&!(result.results||[]).some(item=>item.status==="failed");
+    observe(confirmed?"success":"failed",confirmed?"OK":response.ok?"UNEXPECTED_RESPONSE":response.status>=500?"HTTP_5XX":`HTTP_${response.status}`,response.status);
     return {response,result};
   }
   let active=profile;
   let {response,result}=await run(active);
-  if(allowRepair&&(response.status===401||response.status===403)){
+  if(allowRepair&&response.status===401){
     active=await preparedProfile(active.accountId,active.bucketName,active.accountName,true);
     ({response,result}=await run(active));
   }
-  if(!response.ok||!result?.ok){
-    const error=new Error(result?.error||`Bucket operation failed (${response.status})`);
+  if(!response.ok||result?.ok!==true){
+    const error=new Error((result?.error||"Bucket operation failed")+` (HTTP ${response.status}). Refresh or reconnect if access was rejected.`);
     error.status=response.status;throw error;
   }
   return result;
@@ -1402,7 +1453,7 @@ async function expandExplorerEntries(accountId, bucketName, entries) {
         if (key) expanded.push({ key, root:prefix, displayName:entry.displayName || prefix.split("/").filter(Boolean).pop() });
       }
     } else {
-      const key = cleanExplorerPrefix(entry.key).replace(/\/$/, "");
+      const key = cleanExplorerKey(entry.key);
       if (key) expanded.push({ key, root:key, displayName:entry.displayName || key.split("/").pop() });
     }
   }
@@ -1419,18 +1470,18 @@ async function transferExplorerObjects(message) {
   const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName);
   const destinationProfile = source.accountId === destination.accountId && source.bucketName === destination.bucketName
     ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName);
-  const roots = new Map((message.entries || []).map(entry => [cleanExplorerPrefix(entry.key), entry]));
+  const roots = new Map((message.entries || []).filter(entry=>entry.folder).map(entry => [cleanExplorerPrefix(entry.key), entry]));
   const mapped = expanded.map(entry => {
     const folderRoot = Array.from(roots.keys()).find(root => root.endsWith("/") && entry.key.startsWith(root));
     const explicitDestination = (message.entries || []).find(candidate => candidate.key === entry.key)?.destinationKey;
     const destinationKey = explicitDestination
-      ? cleanExplorerPrefix(explicitDestination).replace(/\/$/, "")
+      ? cleanExplorerKey(explicitDestination)
       : folderRoot
         ? destinationPrefix + (message.renameTo || folderRoot.split("/").filter(Boolean).pop()) + "/" + entry.key.slice(folderRoot.length)
         : destinationPrefix + (message.renameTo || entry.key.split("/").pop());
-    if (sourceProfile.id === destinationProfile.id && destinationKey === entry.key) throw new Error("Source and destination are the same");
-    if (sourceProfile.id === destinationProfile.id && folderRoot && destinationKey.startsWith(folderRoot)) throw new Error("A folder cannot be moved into itself");
-    return { sourceKey:entry.key, destinationKey, sameBucket:sourceProfile.id === destinationProfile.id };
+    if (source.accountId === destination.accountId && source.bucketName === destination.bucketName && destinationKey === entry.key) throw new Error("Source and destination are the same");
+    if (source.accountId === destination.accountId && source.bucketName === destination.bucketName && folderRoot && destinationKey.startsWith(folderRoot)) throw new Error("A folder cannot be moved into itself");
+    return { sourceKey:entry.key, destinationKey, sameBucket:source.accountId === destination.accountId && source.bucketName === destination.bucketName };
   });
   const results = [];
   for (let index = 0; index < mapped.length; index += 25) {
@@ -1439,19 +1490,36 @@ async function transferExplorerObjects(message) {
     const expected=new Set(batch.map(entry=>entry.sourceKey)),seen=new Set();
     if(!Array.isArray(response.results)||response.results.length!==batch.length||response.results.some(result=>{
       if(!expected.has(result.sourceKey)||seen.has(result.sourceKey)||!["copied","conflict","failed"].includes(result.status))return true;
-      seen.add(result.sourceKey);return result.status==="copied"&&!(typeof result.destinationKey==="string"&&result.destinationKey);
+      seen.add(result.sourceKey);
+      if(result.status!=="copied")return false;
+      const requested=batch.find(entry=>entry.sourceKey===result.sourceKey).destinationKey;
+      const parent=key=>key.slice(0,key.lastIndexOf("/")+1);
+      let expectedDestination=result.destinationKey===requested;
+      if(!expectedDestination&&message.conflict==="keep"&&typeof result.destinationKey==="string"){
+        const name=requested.slice(parent(requested).length),dot=name.lastIndexOf(".");
+        const stem=dot>0?name.slice(0,dot):name,extension=dot>0?name.slice(dot):"";
+        const start=parent(requested)+stem+" (",end=")"+extension;
+        const index=result.destinationKey.slice(start.length,-end.length);
+        expectedDestination=result.destinationKey.startsWith(start)&&result.destinationKey.endsWith(end)&&/^\d+$/.test(index)&&Number(index)>=2;
+      }
+      return !(result.verified===true&&typeof result.destinationKey==="string"&&result.destinationKey&&typeof result.sourceEtag==="string"&&result.sourceEtag&&typeof result.destinationEtag==="string"&&result.destinationEtag&&Number.isSafeInteger(result.size)&&result.size>=0&&expectedDestination&&!(batch.find(entry=>entry.sourceKey===result.sourceKey).sameBucket&&result.destinationKey===result.sourceKey));
     }))throw new Error("The bucket did not confirm all selected files. Refresh the destination before retrying; some copies may already exist.");
     results.push(...response.results);
   }
   const copied = results.filter(result => result.status === "copied");
-  const deleteErrors = [];
+  const deleteErrors = [];let deletedCount=0;
   if (operation === "move" && copied.length) {
     for (let index = 0; index < copied.length; index += 100) {
-      try { await callBucketWorker(sourceProfile, { action:"deleteKeys", keys:copied.slice(index,index+100).map(result => result.sourceKey) }); }
+      try {
+        const batch=copied.slice(index,index+100),keys=batch.map(result=>result.sourceKey);
+        const result=await callBucketWorker(sourceProfile,{action:"deleteKeys",keys,expected:batch.map(result=>({key:result.sourceKey,etag:result.sourceEtag,version:result.sourceVersion,size:result.size,destinationKey:result.destinationKey,destinationEtag:result.destinationEtag,destinationVersion:result.destinationVersion})),destinationWorkerUrl:destinationProfile.workerUrl,destinationToken:destinationProfile.token,sameBucket:source.accountId===destination.accountId&&source.bucketName===destination.bucketName});
+        if(!Array.isArray(result.deleted)||result.deleted.length!==keys.length||keys.some(key=>!result.deleted.includes(key)))throw new Error("Source deletion was not confirmed. Refresh both locations before retrying.");
+        deletedCount+=keys.length;
+      }
       catch (error) { deleteErrors.push(error.message || String(error)); }
     }
   }
-  return { total:mapped.length, completed:copied.length, conflicts:results.filter(x => x.status === "conflict"), errors:[...results.filter(x => x.status === "failed"), ...deleteErrors.map(error => ({ error }))], partialMove:Boolean(deleteErrors.length), results };
+  return { total:mapped.length, completed:operation==="move"?deletedCount:copied.length, copied:copied.length, conflicts:results.filter(x => x.status === "conflict"), errors:[...results.filter(x => x.status === "failed"), ...deleteErrors.map(error => ({ error }))], partialMove:Boolean(deleteErrors.length), results };
 }
 async function deleteExplorerObjects(message) {
   const source = message.source || {};
@@ -1459,7 +1527,7 @@ async function deleteExplorerObjects(message) {
   const profile = await preparedProfile(source.accountId, source.bucketName, source.accountName);
   let completed = 0; const errors = [];
   for (let index = 0; index < expanded.length; index += 100) {
-    try { const keys=expanded.slice(index,index+100).map(x => x.key); await callBucketWorker(profile,{action:"deleteKeys",keys});completed+=keys.length; }
+    try { const keys=expanded.slice(index,index+100).map(x => x.key); const receipt=await callBucketWorker(profile,{action:"deleteKeys",keys});if(!Array.isArray(receipt.deleted)||receipt.deleted.length!==keys.length||keys.some(key=>!receipt.deleted.includes(key)))throw new Error("Deletion was not confirmed. Refresh before retrying.");completed+=keys.length; }
     catch (error) { errors.push(error.message || String(error)); }
   }
   return { total:expanded.length, completed, errors };
@@ -2104,7 +2172,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   const traceStart=performance.now();
   const respond=sendResponse;
   sendResponse=value=>{
-    try {if(message?.type!=="runtimeDiagnosticsV1")runtimeDiagnostics.record({operation:"message",requestId:traceId,durationMs:performance.now()-traceStart,outcome:value?.ok===false?"failed":"success",code:value?.ok===false?"UNKNOWN":"OK"});} catch {}
+    try {if(message?.type!=="runtimeDiagnosticsV1")runtimeDiagnostics.record({operation:"message",requestId:traceId,durationMs:performance.now()-traceStart,outcome:value?.ok===false||value?.errors?.length||value?.partialMove?"failed":"success",code:value?.ok===false||value?.errors?.length||value?.partialMove?"UNKNOWN":"OK"});} catch {}
     respond({...value,correlationId:traceId});
   };
   (async () => {
@@ -2196,12 +2264,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         });
       }
       if (message?.type === "cfObjectProperties") {
-        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
-        return sendResponse({ ok:true, profile:{workerUrl:profile.workerUrl,publicBaseUrl:profile.publicBaseUrl}, ...(await callBucketWorker(profile,{action:"headObject",key:message.key})) });
+        const key=cleanExplorerKey(message.key);
+        const page=await listObjectsPage(message.accountId,message.bucketName,key);
+        const object=page.objects.find(item=>(item.key||item.name)===key);
+        if(!object)throw new Error(page.cursor?"Object metadata could not be confirmed. Refresh and retry.":"Object not found. Refresh this folder.");
+        return sendResponse({ok:true,object:{...object,key,httpMetadata:object.httpMetadata||object.http_metadata||{},customMetadata:object.customMetadata||object.custom_metadata||{},uploaded:object.uploaded||object.last_modified}});
       }
       if (message?.type === "cfPrivateObjectUrl") {
         const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
-        const key=cleanExplorerPrefix(message.key).replace(/\/$/, "");
+        const key=cleanExplorerKey(message.key);
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"createReadUrl",key,ttl:message.ttl || 900})) });
       }
       if (message?.type === "cfArchiveEntries") {
@@ -2224,7 +2295,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       if (message?.type === "cfDownloadObject") {
         const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
-        const key=cleanExplorerPrefix(message.key).replace(/\/$/, "");
+        const key=cleanExplorerKey(message.key);
         if (!key) throw new Error("Choose a file to download");
         const signed=await callBucketWorker(profile,{action:"createReadUrl",key,ttl:3600});
         const downloadId=await chrome.downloads.download({ url:signed.url, filename:cleanExplorerName(message.filename || key.split("/").pop()), saveAs:message.saveAs !== false });

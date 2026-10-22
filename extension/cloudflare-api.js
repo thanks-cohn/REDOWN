@@ -125,12 +125,12 @@
     // Starting a download is not completion. Report delayed browser failures,
     // which do not reject the downloads.download() promise.
     if(typeof onState==="function"&&chrome.downloads.onChanged){
-      let timer,closed=false;
+      let timer,closed=false,interruption="";
       const cleanup=()=>{if(closed)return;closed=true;chrome.downloads.onChanged.removeListener(listener);clearTimeout(timer);};
       const listener=delta=>{
         if(delta.id!==id)return;
-        if(delta.state?.current==="interrupted"||delta.error?.current){cleanup();try{onState({state:"interrupted",error:delta.error?.current||"interrupted"});}catch{}}
-        else if(delta.state?.current==="complete")cleanup();
+        if(delta.state?.current==="interrupted"||delta.error?.current){interruption=delta.error?.current||"interrupted";cleanup();try{onState({state:"interrupted",error:interruption});}catch{}}
+        else if(delta.state?.current==="complete"){cleanup();try{onState({state:"complete"});}catch{}}
       };
       chrome.downloads.onChanged.addListener(listener);
       timer=setTimeout(cleanup,30*60*1000);
@@ -141,7 +141,8 @@
           cleanup();
           throw new Error(`Chrome could not start this download (${item.error||"interrupted"}). Open Chrome Downloads for details.`);
         }
-        if(item?.state==="complete")cleanup();
+        if(item?.state==="complete"){cleanup();onState({state:"complete"});}
+        if(interruption)throw new Error(`Chrome interrupted this download (${interruption}). Check Chrome Downloads before retrying.`);
       }catch(error){cleanup();throw error;}
     }
     return id;

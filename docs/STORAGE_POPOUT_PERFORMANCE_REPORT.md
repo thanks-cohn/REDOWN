@@ -1,3 +1,5 @@
+> Layout follow-up (22 October): the floating overlay described here was superseded by [three-stage Stage 1](THREE_STAGE_REPAIR_REPORT.md). Expansion now reserves normal-flow space. Projected bevels, content visibility, fixed tile geometry and the 100ms transform/opacity entrance remain; the historical measurements below are not measurements of the new in-flow layout.
+
 # Storage pop-out: measured causes and fixes
 
 ## Findings

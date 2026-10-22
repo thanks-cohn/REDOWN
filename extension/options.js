@@ -26,8 +26,8 @@ let uploadLocationTargetKey="";
 function uid(){return crypto.randomUUID();}
 function safeUiMessage(message){
   const raw=String(message||"");
-  if(/unauthorized|\b401\b|\b403\b/i.test(raw))
-    return "Cloudflare access could not be verified. Retry, or reconnect Cloudflare.";
+  if(/\b403\b/i.test(raw))return "Cloudflare denied access (403). Check this account’s bucket and Worker permissions; reconnect if authorization expired.";
+  if(/unauthorized|\b401\b/i.test(raw))return "Cloudflare authorization was rejected (401). Reconnect Cloudflare, or repair this bucket if its Worker secret is out of date.";
   return raw;
 }
 function setStatus(id,msg,kind=""){
@@ -1004,7 +1004,8 @@ function selectField(labelText,items,value,onInput){
 
 function formatBytes(value){
   const n=Number(value||0);
-  if(!Number.isFinite(n)||n<=0)return "—";
+  if(!Number.isFinite(n)||n<0)return "—";
+  if(n===0)return "0 B";
   const units=["B","KB","MB","GB","TB"];
   let x=n,i=0;
   while(x>=1024&&i<units.length-1){x/=1024;i++;}
@@ -2191,7 +2192,12 @@ function renderOperation() {
     ? ` · ${explorerOperation.completed} of ${explorerOperation.total}`
     : "";
   const message=safeUiMessage(explorerOperation.message);
-  el.innerHTML = `${explorerOperation.state === "running" ? '<span class="connect-progress" aria-label="Connecting"><i></i><i></i><i></i><i></i><i></i></span>' : ""}${message}${progress}`;
+  el.replaceChildren();
+  if(explorerOperation.state==="running"){
+    const indicator=document.createElement("span");indicator.className="connect-progress";indicator.setAttribute("aria-label","Working");
+    for(let i=0;i<5;i++)indicator.append(document.createElement("i"));el.append(indicator);
+  }
+  el.append(document.createTextNode(message+progress));
 }
 function finishOperation(message, error = false) {
   if (!explorerOperation)
@@ -2202,8 +2208,9 @@ function finishOperation(message, error = false) {
       state: error ? "failed" : "done",
     });
   renderOperation();
+  const finished=explorerOperation;
   setTimeout(() => {
-    if (explorerOperation?.state !== "running") {
+    if (explorerOperation===finished&&explorerOperation?.state !== "running") {
       explorerOperation = null;
       renderOperation();
     }
@@ -2214,11 +2221,9 @@ function isTransientBucketAccessError(error) {
   return /unauthorized|\b401\b|\b403\b|worker.*(not ready|unreachable)|propagat|reachability|dns/i.test(raw);
 }
 function friendlyError(error, action = "complete that action") {
-  const raw = error?.message || String(error);
-  if (isTransientBucketAccessError(error))
-    return "Cloudflare access could not be verified. Retry, or reconnect Cloudflare.";
-  if (/not found|404/i.test(raw)) return "The item is no longer available.";
-  return `Could not ${action}.`;
+  const raw=String(error?.message||error||"");
+  if(/not found|404/i.test(raw))return "The item is no longer available (404). Refresh this folder.";
+  return raw?`Could not ${action}: ${safeUiMessage(raw)}`:`Could not ${action}. Refresh and retry.`;
 }
 async function refreshProfiles() {
   profiles = (await chrome.storage.local.get("profiles")).profiles || [];
@@ -3040,6 +3045,7 @@ async function setExplorerClipboard(
 ) {
   if (!items.length) return;
   if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to copy or move search results.",true);
+  if(operation==="move"&&items.some(item=>item.archiveEntry))return finishOperation("Archive entries cannot be moved. Copy or extract them instead.",true);
   explorerClipboard = {
     operation,
     accountId: source?.accountId || workspaceTarget.accountId,
@@ -3056,33 +3062,34 @@ async function pasteExplorer(
   destination = { ...explorerSource(), prefix: workspacePrefix },
 ) {
   if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true);
-  if (!explorerClipboard?.entries?.length) return;
-  if (explorerClipboard.archiveKey) {
-    const files=explorerClipboard.entries.filter((entry)=>!entry.folder);
+  const clipboard=explorerClipboard;
+  if (!clipboard?.entries?.length) return;
+  if (clipboard.archiveKey) {
+    const files=clipboard.entries.filter((entry)=>!entry.folder);
     setOperation("extract",`Extracting ${files.length} file${files.length===1?"":"s"} to destination…`,files.length);
-    const result=await send({type:"cfTransferArchive",source:{accountId:explorerClipboard.accountId,bucketName:explorerClipboard.bucketName,accountName:explorerClipboard.accountName},destination,key:explorerClipboard.archiveKey,entries:files.map((entry)=>entry.key)});
+    const result=await send({type:"cfTransferArchive",source:{accountId:clipboard.accountId,bucketName:clipboard.bucketName,accountName:clipboard.accountName},destination,key:clipboard.archiveKey,entries:files.map((entry)=>entry.key)});
     if(!result?.ok)return finishOperation(friendlyError(new Error(result?.error||""),"send archive entries"),true);
     const completed=(result.results||[]).filter((entry)=>entry.status==="extracted").length,failed=(result.results||[]).length-completed;
     finishOperation(failed?`${completed} files extracted · ${failed} files could not be extracted`:`${completed} files extracted`,Boolean(failed));
     return;
   }
   setOperation(
-    explorerClipboard.operation,
-    `${explorerClipboard.operation === "move" ? "Moving" : "Copying"} ${explorerClipboard.entries.length} selected item${explorerClipboard.entries.length === 1 ? "" : "s"}…`,
+    clipboard.operation,
+    `${clipboard.operation === "move" ? "Moving" : "Copying"} ${clipboard.entries.length} selected item${clipboard.entries.length === 1 ? "" : "s"}…`,
   );
   const request = {
     type: "cfTransferObjects",
-    operation: explorerClipboard.operation,
+    operation: clipboard.operation,
     source: {
-      accountId: explorerClipboard.accountId,
-      bucketName: explorerClipboard.bucketName,
-      accountName: explorerClipboard.accountName,
+      accountId: clipboard.accountId,
+      bucketName: clipboard.bucketName,
+      accountName: clipboard.accountName,
     },
     destination,
-    entries: explorerClipboard.entries,
+    entries: clipboard.entries,
     conflict: "skip",
   };
-  $("explorer-status").textContent=`${request.operation==="move"?"Moving":"Copying"} ${explorerClipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`;
+  $("explorer-status").textContent=`${request.operation==="move"?"Moving":"Copying"} ${clipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`;
   let result = await send(request);
   if (!result?.ok) {
     const message=friendlyError(new Error(result?.error || ""),request.operation);
@@ -3106,7 +3113,7 @@ async function pasteExplorer(
         ? "keep"
         : "skip";
     if (conflict !== "skip") {
-      const previousCompleted=Number(result.completed)||0;
+      const previousCompleted=Number(result.completed)||0,previousErrors=result.errors||[];
       result = await send({
         ...request,
         entries: result.conflicts.map((x) => ({
@@ -3123,9 +3130,10 @@ async function pasteExplorer(
         return;
       }
       result.completed=previousCompleted+(Number(result.completed)||0);
+      result.errors=[...previousErrors,...(result.errors||[])];
     }
   }
-  if (request.operation === "move" && !result.errors?.length) {
+  if (request.operation === "move" && !result.errors?.length&&!result.conflicts?.length&&explorerClipboard===clipboard) {
     explorerClipboard = null;
     await chrome.storage.session.remove("explorerClipboard");
   }
@@ -3136,7 +3144,7 @@ async function pasteExplorer(
       : `${result.completed || 0} files ${request.operation === "move" ? "moved" : "copied"}`,
     Boolean(failed),
   );
-  const summary=failed?`${result.completed||0} files completed · ${failed} failed`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
+  const summary=failed?`${result.completed||0} files completed · ${failed} failed. ${result.errors?.[0]?.error||"Refresh both locations before retrying."}`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
   await browseWorkspace();
   $("explorer-status").textContent=summary;
 }
@@ -3155,6 +3163,7 @@ async function moveSelectionTo(destination) {
 }
 async function deleteSelection() {
   const items = selectedExplorerItems();
+  if(items.some(item=>item.archiveEntry))return finishOperation("Archive contents cannot be deleted individually. Extract them to manage files.",true);
   if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to delete search results.",true);
   if (!items.length) return;
   const label =
@@ -3185,6 +3194,8 @@ async function deleteSelection() {
   await browseWorkspace();
 }
 function beginExplorerRename(item) {
+  if(item.archiveEntry)return finishOperation("Extract this archive entry before renaming it.",true);
+  const source={...explorerSource()};
   if(item.searchResult)return finishOperation("Open the containing folder to rename this result.",true);
   hideExplorerMenu();
   const row = rootRow(item.id);
@@ -3207,7 +3218,7 @@ function beginExplorerRename(item) {
     setOperation("rename", `Renaming “${item.name}”…`);
     const result = await send({
       type: "cfRenameEntry",
-      source: explorerSource(),
+      source,
       entry: { key: item.key, folder: item.folder, displayName: item.name },
       newName: input.value.trim(),
     });
@@ -3240,6 +3251,8 @@ function beginExplorerRename(item) {
 }
 function beginNewFolder() {
   if (!workspaceTarget) return;
+  if(explorerArchive)return finishOperation("Folders cannot be added inside an archive. Open a storage folder first.",true);
+  const source={...explorerSource()},prefix=workspacePrefix;
   const root = $("workspace-objects");
   const row = document.createElement("div");
   row.className = "file-row folder selected";
@@ -3256,8 +3269,8 @@ function beginNewFolder() {
     setOperation("folder", `Creating “${input.value.trim()}”…`);
     const result = await send({
       type: "cfCreateFolder",
-      ...explorerSource(),
-      prefix: workspacePrefix,
+      ...source,
+      prefix,
       name: input.value.trim(),
     });
     if (!result?.ok) {
@@ -3279,64 +3292,49 @@ function beginNewFolder() {
 async function explorerDownload(item) {
   if (item.folder) return;
   setOperation("download", `Preparing “${item.name}” for download…`);
+  let terminal=false;
   try {
     const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:explorerSource();
+    if(item.archiveEntry){
+      const result=await send({type:"cfArchiveEntryUrl",...source,key:explorerArchive.key,entry:item.key,contentType:objectContentType(item.object,item.key)});
+      if(!result?.ok)throw new Error(result?.error||"Archive entry download unavailable.");
+      const id=await chrome.downloads.download({url:result.url,filename:item.name.replace(/[\\/:*?"<>|\x00-\x1f]/g,"_"),saveAs:true});
+      if(!Number.isInteger(id))throw new Error("Chrome did not start this download. Check Chrome Downloads.");
+      finishOperation(`Download started for “${item.name}”. Check Chrome Downloads for completion.`);return;
+    }
     await RedownCloudflareApi.download(source,item.key,item.name,(state)=>{
-      if(state.state==="interrupted")finishOperation(`Chrome could not download “${item.name}” (${state.error||"interrupted"}). Open Chrome Downloads for details.`,true);
+      if(state.state==="complete"){terminal=true;finishOperation(`Downloaded “${item.name}”`);}
+      if(state.state==="interrupted"){terminal=true;finishOperation(`Chrome could not download “${item.name}” (${state.error||"interrupted"}). Open Chrome Downloads for details.`,true);}
     });
-    finishOperation(`Downloading “${item.name}”…`);
+    if(!terminal)finishOperation(`Downloading “${item.name}”…`);
   } catch(error) {
     finishOperation(error?.message || "Could not download this file. Retry.",true);
   }
 }
+let explorerPropertiesVersion=0;
 async function showProperties(item) {
-  if (item.folder) {
-    $("properties-title").textContent = item.name;
-    renderProperties([
-      ["Name", item.name],
-      ["Type", "Folder"],
-      ["Bucket", workspaceTarget.bucketName],
-      ["Path", item.key],
-    ]);
-    return;
+  const version=++explorerPropertiesVersion;
+  const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
+  if(item.folder||item.archiveEntry){
+    $("properties-title").textContent=item.name;
+    renderProperties([["Name",item.name],["Type",item.archiveEntry?"Archive entry":"Folder"],["Bucket",source.bucketName],["Path",item.key],["Size",item.folder?"—":formatBytes(item.size)]]);return;
   }
-  setOperation("properties", "Loading properties…");
-  const result = await send({
-    type: "cfObjectProperties",
-    ...explorerSource(),
-    key: item.key,
-  });
-  if (!result?.ok)
-    return finishOperation(
-      friendlyError(new Error(result?.error || ""), "load properties"),
-      true,
-    );
-  await refreshProfiles();
-  explorerOperation = null;
-  renderOperation();
-  const object = result.object || {};
-  const profile = r2Profiles().find(
-    (p) =>
-      p.accountId === workspaceTarget.accountId &&
-      p.bucketName === workspaceTarget.bucketName,
-  );
-  $("properties-title").textContent = item.name;
+  setOperation("properties","Loading properties…");
+  const result=await send({type:"cfObjectProperties",...source,key:item.key});
+  if(version!==explorerPropertiesVersion||!item.searchResult&&(source.accountId!==workspaceTarget?.accountId||source.bucketName!==workspaceTarget?.bucketName))return;
+  if(!result?.ok)return finishOperation(result?.error||"Could not load properties. Refresh and retry.",true);
+  finishOperation("Properties loaded");
+  const object=result.object||{};
+  $("properties-title").textContent=item.name;
   renderProperties([
-    ["Name", item.name],
-    ["Type", item.type],
-    ["Size", formatBytes(object.size || item.size)],
-    ["Modified", object.uploaded || item.modified?.toLocaleString() || "—"],
-    ["Bucket", workspaceTarget.bucketName],
-    ["Path", workspacePrefix || "/"],
-    ["Full object key", item.key],
-    ["Public URL", profile ? publicObjectUrl(profile, item.key) : "—"],
-    [
-      "Content-Type",
-      object.httpMetadata?.contentType || "application/octet-stream",
-    ],
-    ["ETag", object.etag || object.httpEtag || "—"],
-    ["Custom metadata", JSON.stringify(object.customMetadata || {}, null, 2)],
+    ["Name",item.name],["Type",item.type],["Size",formatBytes(object.size??item.size)],
+    ["Modified",object.uploaded||object.last_modified||item.modified?.toLocaleString()||"—"],
+    ["Bucket",source.bucketName],["Path",item.key.slice(0,item.key.lastIndexOf("/")+1)||"/"],
+    ["Full object key",item.key],["Content-Type",object.httpMetadata?.contentType||"application/octet-stream"],
+    ["ETag",object.etag||object.httpEtag||"—"],["Custom metadata",JSON.stringify(object.customMetadata||{},null,2)]
   ]);
+  const urls=RedownPublicAddresses.disclosure({document,source,key:item.key,load:()=>send({type:"cfPublicAddresses",...source})});
+  $("properties-content").append(urls.host);void urls.refresh();
 }
 function renderProperties(entries) {
   const content = $("properties-content");
@@ -3357,9 +3355,12 @@ function renderProperties(entries) {
   $("explorer-properties").showModal();
 }
 async function copyItemUrl(item) {
-  const profile = await ensurePrepared(workspaceTarget);
-  await navigator.clipboard.writeText(publicObjectUrl(profile, item.key));
-  finishOperation("URL copied");
+  const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
+  const snapshot=await send({type:"cfPublicAddresses",...source});
+  const available=RedownPublicAddresses.addresses(snapshot,source,item.key).find(item=>item.state==="configured");
+  if(!available)throw new Error("No confirmed public address configuration for this bucket. Add a website or enable public access in Cloudflare; private previews still work.");
+  await navigator.clipboard.writeText(available.url);
+  finishOperation("Configured URL copied. Public file access has not been verified.");
 }
 async function explorerUploadFiles(files, prefix = workspacePrefix) {
   if (!files?.length) return;
@@ -3488,7 +3489,7 @@ function showExplorerMenu(x, y, item) {
 
     sep();
     menu.append(
-      menuButton("Cut", () => setExplorerClipboard("move"), hasSelection),
+      menuButton(item.archiveEntry?"Move unavailable inside archives":"Cut", () => setExplorerClipboard("move"), hasSelection&&!item.archiveEntry),
       menuButton("Copy", () => setExplorerClipboard("copy"), hasSelection,"Copy for pasting into another REDOWN folder"),
       menuButton(
         "Paste",
@@ -3498,17 +3499,17 @@ function showExplorerMenu(x, y, item) {
     );
 
     sep();
-    for(const operation of ["move","copy"]){
+    for(const operation of (item.archiveEntry?["copy"]:["move","copy"])){
       destinationMenus().attach(menu,{operation,accounts:explorerAccounts,buckets:explorerBuckets,source:{...explorerSource(),prefix:workspacePrefix},items:selected});
     }
 
     sep();
     menu.append(
-      menuButton("Rename", () => beginExplorerRename(item), selected.length === 1),
-      menuButton("Delete", deleteSelection, hasSelection),
+      menuButton(item.archiveEntry?"Rename unavailable inside archives":"Rename", () => beginExplorerRename(item), selected.length === 1&&!item.archiveEntry),
+      menuButton(item.archiveEntry?"Delete unavailable inside archives":"Delete", deleteSelection, hasSelection&&!item.archiveEntry),
     );
 
-    if (item.folder)
+    if (item.folder&&!item.archiveEntry)
       menu.append(
         menuButton("New folder", async () => {
           await goLocation(
@@ -3521,17 +3522,16 @@ function showExplorerMenu(x, y, item) {
       );
 
     sep();
-    if (
-      !item.folder &&
-      workspaceTarget &&
-      r2Profiles().some(
-        (profile) =>
-          profile.accountId === workspaceTarget.accountId &&
-          profile.bucketName === workspaceTarget.bucketName &&
-          profile.publicAssetsEnabled,
-      )
-    )
-      menu.append(menuButton("Copy public URL", () => copyItemUrl(item)));
+    if(!item.folder&&!item.archiveEntry){
+      const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
+      const button=menuButton("Checking public URLs…",()=>copyItemUrl(item),false);
+      menu.append(button);
+      void send({type:"cfPublicAddresses",...source}).then(snapshot=>{
+        const available=RedownPublicAddresses.addresses(snapshot,source,item.key).some(address=>address.state==="configured");
+        button.textContent=available?"Copy public URL":"Public URL unavailable";button.disabled=!available;
+        button.title=available?"Copy a configured URL; public file access is not verified":"No enabled public address configuration. Private previews remain available.";
+      }).catch(()=>{button.textContent="Public URL unavailable";button.title="Could not refresh public address configuration.";});
+    }
 
     menu.append(
       menuButton("Properties", () => showProperties(item), selected.length === 1),
@@ -3540,8 +3540,8 @@ function showExplorerMenu(x, y, item) {
   } else if (workspaceTarget) {
     menu.append(
       menuButton("Paste", pasteExplorer, Boolean(explorerClipboard)),
-      menuButton("New folder", beginNewFolder),
-      menuButton("Upload files", () => $("local-files").click()),
+      menuButton(explorerArchive?"New folder unavailable inside archives":"New folder", beginNewFolder,!explorerArchive),
+      menuButton(explorerArchive?"Upload unavailable inside archives":"Upload files", () => $("local-files").click(),!explorerArchive),
       menuButton("Refresh", () => browseWorkspace()),
     );
   } else {

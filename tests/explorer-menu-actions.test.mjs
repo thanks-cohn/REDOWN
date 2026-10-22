@@ -16,3 +16,13 @@ test('Copy confirms internal clipboard contents without copying file bytes or mo
  vm.runInContext(source.slice(source.indexOf('async function setExplorerClipboard('),source.indexOf('\nasync function pasteExplorer(',source.indexOf('async function setExplorerClipboard('))),c);
  await c.setExplorerClipboard('copy',[{key:'folder/benign.txt'}]);assert.equal(patches[0].explorerClipboard.operation,'copy');assert.equal(patches[0].explorerClipboard.entries[0].key,'folder/benign.txt');assert.match(messages[0][0],/REDOWN/);assert.match(messages[0][0],/Paste/);
 });
+test('Properties message reads exact control-plane metadata without preparing a Worker',async()=>{
+ const bg=await readFile('extension/background.js','utf8'),calls=[];let result;
+ const c=vm.createContext({message:{type:'cfObjectProperties',accountId:'a',bucketName:'b',key:'nested/雪 #?.png'},cleanExplorerKey:key=>key,listObjectsPage:async(a,b,key)=>{calls.push({a,b,key});return {objects:[{key,size:0,http_metadata:{contentType:'image/png'},custom_metadata:{owner:'fixture'},last_modified:'today'}]};},sendResponse:value=>result=value});
+ const snippet=bg.slice(bg.indexOf('if (message?.type === "cfObjectProperties")'),bg.indexOf('if (message?.type === "cfPrivateObjectUrl")'));
+ await vm.runInContext('(async()=>{'+snippet+'})()',c);assert.equal(result.object.key,'nested/雪 #?.png');assert.equal(result.object.size,0);assert.equal(result.object.httpMetadata.contentType,'image/png');assert.equal(calls.length,1);
+});
+test('operation feedback renders untrusted filenames/error text literally',()=>{
+ const dom=new JSDOM('<div id="explorer-operation"></div>');const c=vm.createContext({document:dom.window.document,$:id=>dom.window.document.getElementById(id),uid:()=> 'fixture',safeUiMessage:s=>s,explorerOperation:null});
+ vm.runInContext(source.slice(source.indexOf('function setOperation('),source.indexOf('function finishOperation(')),c);c.setOperation('copy','<img src=x> literal filename');assert.equal(dom.window.document.querySelector('img'),null);assert.match(dom.window.document.body.textContent,/<img src=x>/);dom.window.close();
+});

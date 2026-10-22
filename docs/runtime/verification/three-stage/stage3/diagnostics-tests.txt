@@ -1,0 +1,44 @@
+✔ click creates a visible window before network navigation; repeated clicks focus it (25.257971ms)
+✔ successful callback exchanges PKCE and verifies access before saving token (5.364166ms)
+✔ callback resumes after service worker restart from session state (2.58495ms)
+✔ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (1.449831ms)
+✔ state mismatch fails without token exchange and allows a fresh retry (2.123822ms)
+✔ denied consent and missing authorization code fail cleanly (2.72807ms)
+✔ closed popup releases attempt and stale window is replaced on next click (1.906031ms)
+✔ expired attempt clears secrets, closes popup, and permits retry (1.603678ms)
+✔ failed API verification never stores an access token (1.851282ms)
+✔ duplicate navigation events exchange a code only once (2.906312ms)
+✔ verification network stall aborts and releases the attempt (1.582506ms)
+✔ popup creation errors are returned instead of leaving an in-flight lock (1.23099ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (2.302675ms)
+✔ settings and worker observing the same callback exchange the code once across contexts (2.065426ms)
+✔ two settings contexts share one visible sign-in window (1.410314ms)
+✔ Worker deployments cannot overlap and a failed deployment releases the lock (0.885822ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (0.985238ms)
+✔ runtime adapter gates actual background messages by settings sender and Debug Mode without network (1.987361ms)
+✔ destination folder pages preserve parent prefix, immediate children and continuation (9.445806ms)
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (1.500566ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (1.244129ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (0.800377ms)
+✔ missing per-file copy receipts cannot become a successful zero-file copy (1.546724ms)
+✔ forbidden Worker operations report HTTP status without automatic reprovision or replay (1.072237ms)
+✔ v5 preparation refuses unavailable connections instead of redeploying on network failure (1.193144ms)
+✔ conflict retry retains earlier failures rather than presenting partial move as success (1.515048ms)
+✔ incomplete or cyclic folder listings fail before mutation; exact repeated separators are preserved (0.956847ms)
+✔ read retry never crosses a newly authorized session (1.175748ms)
+✔ safe reads honor bounded Retry-After; writes are never replayed on 503 (3.162779ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (25.220996ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (0.923007ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (0.341833ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (4.226604ms)
+✔ malformed successful listings cannot masquerade as empty buckets (14.840837ms)
+✔ progressive UI retains selection, emits early results and rejects late query responses (4.208607ms)
+✔ local upload does not replay an ambiguous write or write after an unknown preflight (2.584178ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.413221

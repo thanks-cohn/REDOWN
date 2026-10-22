@@ -7,7 +7,7 @@
 - Every handler runs in an async closure; listener returns `true` for deferred `sendResponse`. Success uses `{ok:true,...}`; caught exceptions become `{ok:false,error:string}`. Unknown types throw “Unknown request.” These strings are not stable typed diagnostic codes. No request/correlation ID exists in this message layer.
 - The listener does not add sender-specific authorization checks (`_sender` unused); manifest does not expose externally_connectable. These messages are extension-internal, not a safe remote agent API.
 - `cfFetch/cfJson` use `RedownCloudflareApi.request`: OAuth from local auth, serialized refresh and 30-second bounded request. Provider authorization is required; an OAuth session refresh may write local auth even for GET.
-- Worker operations use a persisted Bearer secret. `preparedProfile` can deploy/repair; `callBucketWorker` repairs and retries once on 401/403. Prefix/name validation is operation-specific. Worker `checkedFetch` checks HTTPS/obvious private hosts and redirects, not complete DNS-rebinding protection.
+- Worker operations use a persisted Bearer secret. `preparedProfile` can deploy/repair; `callBucketWorker` repairs and retries once only on a definitive 401 rejection; 403 and ambiguous writes are not replayed. Prefix/name validation is operation-specific. Worker `checkedFetch` checks HTTPS/obvious private hosts and redirects, not complete DNS-rebinding protection.
 - Local profile/history responses and RFIS export are sensitive. New agent inspection never calls any handler or serializes browser state.
 - Remote writes, UI save, history/index updates and response delivery cross separate async boundaries; no shared transaction or durable job/journal is demonstrated. Cancellation/worker suspension outcomes remain unknown.
 
@@ -33,9 +33,9 @@ The current inventory adds `cfPublicAddresses` (34 literal branches), a read-onl
 | `cfFolderPrefixes` | `listFolderPrefixes` | Settings defaultLocationField | OAuth listings; capped all-prefix collection; optional RFIS |
 | `cfLoginCancel` | `RedownCloudflareAuth.cancel` | Legacy cancel message; Settings direct shared controller | Cancels attempt/closes window; session mutation |
 | `cfLoginStatus` | `RedownCloudflareAuth.status` | Legacy status message; Settings shared login controller direct path | Reads session login state; may expire/cancel attempt |
-| `cfObjectProperties` | `preparedProfile → callBucketWorker headObject` | Explorer showProperties | Worker metadata read; preparation/repair may mutate remote configuration; returns Worker/public base |
+| `cfObjectProperties` | `listObjectsPage` exact-key lookup | Explorer showProperties | Read-only OAuth R2 metadata (snake/camel fields normalized); no Worker preparation or publication |
 | `cfObjects` | `listObjects → listObjectsPage` | Explorer browseWorkspace | OAuth GET objects/cursor; optional RFIS observations; auth refresh; no Worker unless UI retry prepares |
-| `cfPrepareBucket` | `preparedProfile` | Explorer ensurePrepared; Upload missing profile | Checks Worker with ensurePrefixes empty; can provision/repair and persist profiles |
+| `cfPrepareBucket` | `preparedProfile` | Explorer ensurePrepared; Upload missing profile | Checks explicit Worker v5 capabilities; can provision/repair and persist profiles. Network/403 failures do not silently initiate repair |
 | `cfPrivateObjectUrl` | `preparedProfile → callBucketWorker createReadUrl` | No literal current UI caller found | Signed private URL generation; sanitizes key; preparation/repair possible |
 | `cfProvision` | `provisionCloudflareProfile → deployCloudflareProfile` | Settings addBucketPreset; Simple creator | OAuth Worker/script/subdomain changes and markers; save profile/session secret; Web Lock |
 | `cfRenameEntry` | `renameExplorerEntry` | Explorer beginExplorerRename | Sanitize name; move through transferExplorerObjects; remote copy/delete; no-op when name unchanged |

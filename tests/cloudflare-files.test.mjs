@@ -87,3 +87,9 @@ test('download exposes interruption occurring before onChanged registration',asy
  h.context.chrome.downloads.search=async()=>[{id:123,state:'interrupted',error:'SERVER_FORBIDDEN'}];
  await assert.rejects(h.api.download(bucket,'a.webp','a.webp',()=>{}),/SERVER_FORBIDDEN/);assert.equal(removed,1);
 });
+test('download completion is reported and an interruption racing the initial lookup cannot become success',async()=>{
+ const h=harness();h.context.setTimeout=()=>1;h.context.clearTimeout=()=>{};let listener;const states=[];
+ h.context.chrome.downloads.onChanged={addListener(fn){listener=fn;},removeListener(){}};
+ h.context.chrome.downloads.search=async()=>[{id:123,state:'complete'}];await h.api.download(bucket,'a.webp','a.webp',state=>states.push(state));assert.equal(states[0].state,'complete');
+ h.context.chrome.downloads.search=async()=>{listener({id:123,state:{current:'interrupted'},error:{current:'NETWORK_FAILED'}});return [{id:123,state:'in_progress'}];};await assert.rejects(h.api.download(bucket,'a.webp','a.webp',()=>{}),/NETWORK_FAILED/);
+});
