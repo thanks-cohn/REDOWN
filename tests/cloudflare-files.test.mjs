@@ -93,3 +93,23 @@ test('download completion is reported and an interruption racing the initial loo
  h.context.chrome.downloads.search=async()=>[{id:123,state:'complete'}];await h.api.download(bucket,'a.webp','a.webp',state=>states.push(state));assert.equal(states[0].state,'complete');
  h.context.chrome.downloads.search=async()=>{listener({id:123,state:{current:'interrupted'},error:{current:'NETWORK_FAILED'}});return [{id:123,state:'in_progress'}];};await assert.rejects(h.api.download(bucket,'a.webp','a.webp',()=>{}),/NETWORK_FAILED/);
 });
+
+test('403 management read falls back to explicitly enabled public R2 domain for unusual keys',async()=>{
+  const h=harness(async(url)=>{
+    if(url.includes('/domains/managed'))return Response.json({success:true,result:{enabled:true,domain:'pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev'}});
+    if(url.startsWith('https://pub-')){assert.equal(url,'https://pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev/works/...2/chapter_1/001.webp');return new Response('valid-webp');}
+    return new Response('Forbidden',{status:403});
+  });
+  const url=await h.api.preview(bucket,'works/...2/chapter_1/001.webp','image/webp');
+  assert.equal(await (await fetch(url)).text(),'valid-webp');URL.revokeObjectURL(url);
+});
+test('403 does not fall back for private R2 buckets',async()=>{
+  const h=harness(async url=>url.includes('/domains/managed')?Response.json({success:true,result:{enabled:false,domain:'pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev'}}):new Response('Forbidden',{status:403}));
+  await assert.rejects(h.api.preview(bucket,'works/...2/chapter_1/001.webp','image/webp'),/403/);
+});
+test('unusual-key download uses enabled public URL only following a denied authenticated probe',async()=>{
+  const h=harness(async url=>url.includes('/domains/managed')?Response.json({success:true,result:{enabled:true,domain:'pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev'}}):new Response('Forbidden',{status:403}));
+  await h.api.download(bucket,'works/...2/chapter_1/001.webp','001.webp');
+  assert.equal(h.calls[0].url,'https://pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev/works/...2/chapter_1/001.webp');
+  assert.equal(h.calls[0].headers.length,0);
+});
