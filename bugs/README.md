@@ -1,5 +1,26 @@
 # REDOWN bugs
 
+## BUG — R2 triple-dot directory object retrieval (2026-10-22)
+
+**Status:** Source mitigation committed to `main`; Chrome end-to-end verification pending.
+
+**Reproduction:** Cloudflare R2 bucket `extended`, key `works/...2/chapter_1/001.webp` (also `003.webp`). Cloudflare API object listing returns these real objects, but authenticated Cloudflare management API GET on that exact key returns HTTP 403 with an HTML `Attention Required!` page. The ordinary `works/-/chapter_1/001.webp` key returns HTTP 200. The user reports both configured public object URLs work, while REDOWN preview returns 403 and Chrome download reports the file unavailable.
+
+**Before-change main commit:** `11a1da2c16c4b67fa34a4103b3dac08f2e517426`.
+
+**Implementation commits:** `841fd090e41c6b14a3c790fe265f2eb5efa56f88` (source), `ad244f8a6623d960828b86427687a53abcd052f3` (manifest host permission), `ade9b2efd09cdffa066121a82a285095cf1c0654` (regression tests).
+
+**After-change source/test commit:** `ade9b2efd09cdffa066121a82a285095cf1c0654`. The documentation commit that introduces this entry follows that commit; its hash is available in the GitHub history.
+
+**Mitigation:** If an authenticated preview read returns 403, REDOWN asks Cloudflare for the bucket's managed public-domain configuration. Only if public delivery is explicitly enabled and the hostname matches Cloudflare's expected `pub-*.r2.dev` shape does it retry preview anonymously there. For keys containing triple-dot segments, download probes the authenticated route and uses the same public endpoint on 403. Otherwise the existing authenticated download route is preserved. No API tokens are sent to the public URL. Private buckets have no fallback.
+
+**Caveats:** This is a guarded compatibility mitigation, not an explanation of the Cloudflare security rule. It cannot repair a private bucket's 403 or an inaccessible public hostname. Actual Chrome extension testing, download completion, and public-host permissions remain to be verified. Test source is committed but tests could not be executed here because the checkout was unavailable from the execution environment.
+
+**Acceptance checks:** In installed unpacked extension, open and download `works/...2/chapter_1/001.webp` and `003.webp`; verify image bytes, no credential leakage to public endpoint, private-bucket denial remains denied, normal downloads are unchanged, and the expected observer/debug event records a management-route 403 with successful fallback.
+
+---
+
+
 Open reports recorded on October 3, 2026 (America/Chicago), against the v0.5.12 interface. These are reports and acceptance criteria, not completed fixes.
 
 ## Fixed — DBG-001: Nested editor cannot continue adding deep children (human testing pending)
