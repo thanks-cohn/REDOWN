@@ -18,7 +18,8 @@
     "https://api.cloudflare.com/*",
     "https://dash.cloudflare.com/*",
     "https://*.workers.dev/*",
-    "https://hitomi.la/*"
+    "https://hitomi.la/*",
+    "https://*.r2.dev/*"
   ],
   "background": {
     "service_worker": "background.js"
