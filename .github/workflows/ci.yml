@@ -43,7 +43,7 @@ jobs:
       - run: node scripts/runtime-conformance.mjs
       - run: python tests/runtime-schema-conformance.py
   windows-contracts:
-    name: Windows syntax and issue-inventory contracts
+    name: Windows diagnostic and UI contracts
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,5 +53,5 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: node scripts/check-syntax.mjs
-      - run: node --test tests/syntax-portability.test.mjs tests/issue-inventory.test.mjs
+      - run: node --test tests/syntax-portability.test.mjs tests/issue-inventory.test.mjs tests/semantic-io-portability.test.mjs tests/lightbox.test.mjs tests/options-debug-display.test.mjs
       - run: node agent/diagnostics/cli.mjs validateIssues

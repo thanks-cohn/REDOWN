@@ -598,3 +598,12 @@ Unified offline diagnostics and repeatable CI regression reporting are implement
 ### Unified agent inspection — remaining boundaries (22 October 2026)
 
 The offline gateway now routes all five existing inspection APIs and detects registration/ownership drift. Browser/live-provider evidence, complete runtime span correlation, durable recovery and release1 acceptance remain separate work. The project/semantic catalogs retain visible historical/proposed freshness limitations and the seven known regression failures; accepted Forever Works authority is not implemented. See docs/reliability/UNIFIED_AGENT_API.md for ownership and collision audit.
+## Windows reliability run: paths, CRLF fixtures and symlink permissions — 2026-10-22
+
+User evidence after f487af7: diagnostic API 1.2.0 discovery/registry/inventory worked; full Windows run reported 234 passing tests, 59 unexpected failures, four matched baseline failures and incomplete execution. This is not release acceptance. Focused stacks showed lightbox fixtures running beyond their intended source boundary, options fixtures evaluating startup code without browser mocks, semantic queries missing data, and file-symlink creation denied with EPERM.
+
+Source corrections: normalize CRLF only in the two affected UI fixture readers (never in frozen byte evidence); normalize native path separators after realpath containment in the semantic reader; exercise external-directory and excluded-credential aliases using Windows junctions, without elevation or skipped security assertions. Added a scoped-reader regression and expanded Windows CI with the affected UI contracts.
+
+Remaining: the user's existing checkout may contain CRLF bytes from before .gitattributes. Architecture/hash and historical byte assertions remain exact and must not be made green by rewriting their expected evidence. Compare against a separate fresh clone with npm ci before altering an existing working directory. Complete Windows regression and installed-extension testing remain separate acceptance requirements; this patch does not certify all 59 failures as resolved. npm install-script warnings for esbuild/sharp/workerd are not, by themselves, proof of these JavaScript test failures.
+
+Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.

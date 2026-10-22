@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
 const addresses=await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8');
-const source=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
+// Fixture boundaries are logical lines, independent of checkout line endings.
+const source=(await readFile(new URL('../extension/options.js',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 function harness(){
  const dom=new JSDOM('<button id="opener">Open</button><div id="explorer" tabindex="0"><div class="explorer-body"><div id="workspace-preview"></div></div></div>',{runScripts:'outside-only'});
  const w=dom.window;w.eval(addresses);w.send=async()=>({ok:true,addresses:[]});w.eval(`var $=id=>document.getElementById(id);var workspacePreviewLightbox=false,workspacePreviewExpanded=false,workspacePreviewRequestId=0,workspacePreviewAbort=null,workspacePreviewUrl='';`);

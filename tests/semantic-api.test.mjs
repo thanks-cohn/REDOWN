@@ -54,7 +54,7 @@ test('traversal attempts, secret-like content and symlinks cannot expose private
   const m=fixture();m.entities[0].sourceRefs=[{path,symbol:'x',sha256:'a'.repeat(64),role:'source'}];assert.equal(make(m).query('validateSemanticGraph').data.valid,false);
  }
  const m=fixture();m.entities[0].future='Bearer abcdefghijklmnopqrstuvwxyz';assert.equal(make(m).query('listEntities').error.code,'private-record');
- const root=mkdtempSync(join(tmpdir(),'redown-semantic-'));try{symlinkSync('/etc/passwd',join(root,'outside.txt'));const f=fixture();f.artifacts=[{path:'outside.txt',owner:'fixture.intent',coverage:'partial'}];f.entities[0].sourceRefs=[{path:'outside.txt',symbol:'root',sha256:'a'.repeat(64),role:'source'}];assert.ok(createSemanticApi({root,model:f}).query('validateSemanticGraph').data.errors.some(e=>e.code==='unsafe-path'));}finally{rmSync(root,{recursive:true,force:true});}
+ const root=mkdtempSync(join(tmpdir(),'redown-semantic-'));try{const outside=mkdtempSync(join(tmpdir(),'redown-outside-'));try{writeFileSync(join(outside,'fixture.txt'),'outside fixture');symlinkSync(outside,join(root,'alias'),process.platform==='win32'?'junction':'dir');const f=fixture();f.artifacts=[{path:'alias/fixture.txt',owner:'fixture.intent',coverage:'partial'}];f.entities[0].sourceRefs=[{path:'alias/fixture.txt',symbol:'root',sha256:'a'.repeat(64),role:'source'}];assert.ok(createSemanticApi({root,model:f}).query('validateSemanticGraph').data.errors.some(e=>e.code==='unsafe-path'));}finally{rmSync(outside,{recursive:true,force:true});}}finally{rmSync(root,{recursive:true,force:true});}
 });
 test('changed bytes and moved anchors yield stale warnings; cached snapshots stay pinned',()=>{
  const root=mkdtempSync(join(tmpdir(),'redown-semantic-'));try{
@@ -110,8 +110,8 @@ test('CLI works from outside checkout, emits one JSON result and rejects malform
 
 test('innocent internal symlink aliases cannot read excluded credential paths',()=>{
  const root=mkdtempSync(join(tmpdir(),'redown-semantic-'));
- try{mkdirSync(join(root,'.aws'));writeFileSync(join(root,'.aws','fixture.json'),'sanitized credential fixture');symlinkSync(join(root,'.aws','fixture.json'),join(root,'public.json'));
- const m=fixture();m.artifacts=[{path:'public.json',owner:'fixture.intent',coverage:'partial'}];m.entities[0].sourceRefs=[{path:'public.json',symbol:'fixture',sha256:'a'.repeat(64),role:'source'}];assert.ok(createSemanticApi({root,model:m}).query('validateSemanticGraph').data.errors.some(e=>e.code==='unsafe-path'));
+ try{mkdirSync(join(root,'.aws'));writeFileSync(join(root,'.aws','fixture.json'),'sanitized credential fixture');symlinkSync(join(root,'.aws'),join(root,'public'),process.platform==='win32'?'junction':'dir');
+ const m=fixture();m.artifacts=[{path:'public/fixture.json',owner:'fixture.intent',coverage:'partial'}];m.entities[0].sourceRefs=[{path:'public/fixture.json',symbol:'fixture',sha256:'a'.repeat(64),role:'source'}];assert.ok(createSemanticApi({root,model:m}).query('validateSemanticGraph').data.errors.some(e=>e.code==='unsafe-path'));
  }finally{rmSync(root,{recursive:true,force:true});}
 });
 

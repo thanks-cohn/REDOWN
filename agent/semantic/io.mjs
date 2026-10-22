@@ -1,5 +1,5 @@
 import {readFileSync,realpathSync,statSync} from 'node:fs';
-import {resolve,relative,isAbsolute} from 'node:path';
+import {resolve,relative,isAbsolute,sep} from 'node:path';
 import {createHash} from 'node:crypto';
 export const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 export const compare=(a,b)=>a<b?-1:a>b?1:0;
@@ -15,7 +15,7 @@ export const safePath=p=>typeof p==='string'&&/^[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.
   &&!/(?:secret|credential|private-key)/i.test(p);
 export function readScoped(root,path,max=8*1024*1024){
   if(!safePath(path))throw Error('unsafe-path');
-  const base=realpathSync(root),target=realpathSync(resolve(base,path)),rel=relative(base,target);
+  const base=realpathSync(root),target=realpathSync(resolve(base,path)),rel=relative(base,target).split(sep).join('/');
   if(rel==='..'||rel.startsWith('../')||isAbsolute(rel)||!safePath(rel))throw Error('unsafe-path');
   const stat=statSync(target);
   if(!stat.isFile())throw Error('invalid-file');

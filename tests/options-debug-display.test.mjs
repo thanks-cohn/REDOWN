@@ -6,7 +6,8 @@ import {JSDOM} from 'jsdom';
 const html=await readFile(new URL('../extension/options.html',import.meta.url),'utf8');
 const signalSource=await readFile(new URL('../extension/storage-signals.js',import.meta.url),'utf8');
 const signalScope={};vm.runInNewContext(signalSource,signalScope);
-const source=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
+// Fixture boundaries are logical lines, independent of checkout line endings.
+const source=(await readFile(new URL('../extension/options.js',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 function harness(){
   const dom=new JSDOM(html,{runScripts:'outside-only'});
   const calls=[],saved=[];
