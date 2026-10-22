@@ -1,5 +1,28 @@
 # REDOWN bugs
 
+## BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)
+
+**Status:** Open; user-reported, source inspected, not reproduced against installed Chrome settings. **Priority: P1 menu reliability.** No application code changed in this investigation.
+
+**Observed:** User enabled **Menu Label** naming, but the right-click destination menu showed two entries both named `Files`. Three destinations were configured/saved, yet only two were visible. User also described confusion between Simple and Nested menu behavior. The precise saved profile state and active mode were not available for inspection.
+
+**Source findings / hypotheses (not proven causes):**
+- `extension/background.js` `buildMenus()` computes Simple names with `displayName(label,prefix,bucket)`. When `simpleLabelFallback === "menu"`, an explicit nonempty label is used; otherwise it falls back to the deepest prefix segment or bucket. Two distinct entries pointing to a `Files` directory can therefore have indistinguishable titles if explicit labels are missing or not persisted as expected. Duplicate displayed labels are not detected.
+- Additional Simple entries are silently skipped by `if (!item?.id || typeof item.prefix !== "string") continue;`. An invalid or incompletely saved entry may not render, without any user-facing diagnostic.
+- `buildMenus()` also filters profiles using `showInContextMenu`, `explorerManaged`, and active mode. Nested destinations use `RedownNestedLocations.destinations(profile.nestedMenu)` and `item.name`, not Simple's `menuLabel` display rules; the **Menu Label** selector does not govern Nested mode.
+- `extension/options.js` `simplePrimaryLocationField()`, `simpleExtraOptions()`, and `saveProfiles()` are relevant to whether the chosen labels, prefixes, IDs, and bucket selections persist. The additional row editor binds each `item.label`; the primary editor uses `p.menuLabel`.
+
+**Investigation plan:** Compare sanitized `chrome.storage.local` values for `profiles`, `rightClickMode`, and `simpleLabelFallback` with all visible configured rows and actual Chrome menu IDs/titles. Never collect Cloudflare tokens or secrets. For every saved destination, log whether it is eligible, displayed, filtered, skipped, or failed creation, with explicit reason and stable ID. Check for duplicate IDs, missing or non-string prefixes, blank labels, stale settings, competing extensions, and menu rebuild races. Correlate rendered item ID to exact account/bucket/prefix and test actual transfer routing. Determine whether the report concerns Simple, Nested, or a mode-switch transition.
+
+**Expected:** In Simple mode, all valid configured destinations are present as one-level menu siblings. With **Menu Label** selected, their explicit labels are respected; blank labels use the documented fallback. Never silently omit a saved destination; provide actionable validation or diagnostic evidence. Distinct destinations with identical displayed names must remain distinguishable, without changing user-defined labels behind their back. Nested naming remains explicit and consistent with its own configuration, and mode switches never corrupt or discard either configuration.
+
+**Acceptance / regression tests:** Three saved options produce three correctly targeted menu items; verify primary + multiple additional options, labels, blank labels, same-named directories, distinct and duplicate IDs, malformed prefixes, visibility toggles, mode switches and reopening Chrome. Confirm exact destination bindings on click, and add menu-count reconciliation plus omission reasons to the agent debug surface. Report Chrome verification separately from unit tests.
+
+**Source inspected:** `extension/background.js` `buildMenus()` and `addNestedLocations()`; `extension/options.js` `simpleExtraOptions()` and `simplePrimaryLocationField()`; `docs/SIMPLE_RIGHT_CLICK_MENU_CONTRACT.md`. This entry records an investigation, not a completed fix.
+
+---
+
+
 ## Watch item — Asset domain hostname versus generated URL (2026-10-22)
 
 **Status:** Not reproduced conclusively; preserve for investigation if reported again. No configuration or code changes made for this report.
