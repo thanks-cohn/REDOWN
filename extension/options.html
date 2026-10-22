@@ -237,6 +237,11 @@
     .preview-media video{width:100%}
     .preview-media audio{width:100%}
     .preview-media iframe{width:100%;height:500px;border:0;background:white}
+
+    /* Upload bucket and location selectors share a common top baseline. */
+    .upload-destination-grid>.upload-location-picker{display:block}
+    .upload-destination-grid .upload-location-picker>label{margin-bottom:6px}
+    .upload-destination-grid .upload-location-builder{padding-top:0}
     .upload-location-picker{display:grid;grid-template-columns:1fr;gap:7px;min-width:0}
     .upload-location-builder{position:relative;display:grid;gap:8px;padding:2px 0}
     .upload-path-row{position:relative;display:grid;grid-template-columns:14px minmax(190px,.9fr) minmax(220px,1.1fr) 38px 38px;gap:8px;align-items:center;padding-left:calc(var(--depth) * 18px)}
