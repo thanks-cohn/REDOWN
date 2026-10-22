@@ -4426,6 +4426,7 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
 
 // The educational simulation has no access to send(), profiles or Chrome storage.
 storageTraining=RedownStorageSignals.mountTraining({document});
+RedownStorageSignals.wireBucketExpansion({document,window});
 $("refresh-storage").addEventListener("click",async()=>{
   const button=$("refresh-storage");if(button.disabled)return;button.disabled=true;button.textContent="Refreshing…";button.setAttribute("aria-busy","true");
   try{await refreshBuckets();}finally{button.disabled=false;button.textContent="Refresh buckets";button.removeAttribute("aria-busy");}

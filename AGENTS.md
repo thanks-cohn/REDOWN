@@ -102,7 +102,7 @@ copy stall remains unverified until retest; no live closure or customer deployme
 Bucket surface follow-up: [design/interaction report](docs/BUCKET_SURFACE_REPORT.md). Normal mode uses one primary bucket surface with an inset circular repair target that never triggers the primary action. Debug Mode retains separate name-selection, setup, and repair controls. Latest full suite: 189 tests, 183 pass, same six historical evidence failures. Visual QA is a local HTML fixture, not installed-extension/cloud verification.
 
 Interactive Storage / Beta follow-up: [state model, mode gates and verification](docs/STORAGE_SIGNALS_BETA_REPORT.md).
-Preserve the one-row resting grid and smooth clipping-viewport hover/focus expansion; keep the tile grid geometry fixed. The practice
+Preserve the one-row resting grid and fast floating hover/focus expansion; keep the tile grid geometry fixed and avoid animated page height. The practice
 module has no Chrome/cloud dependencies; do not route it through real repair handlers.
 Beta gates experimental GitHub setup/popup choices; Debug remains independent.
 Latest full suite: 201 tests, 195 pass, six unchanged historical evidence failures.
@@ -112,3 +112,10 @@ Simulation placement follow-up: Run Diagnostic Test and its practice panel now l
 in Debug Mode. Refresh buckets remains in Storage. Disabling Debug cancels practice
 without focusing hidden controls. Latest full suite: 203 tests, 197 pass, same six
 historical failures. See the follow-up in docs/STORAGE_SIGNALS_BETA_REPORT.md.
+
+Storage pop-out performance: [measured causes and fix](docs/STORAGE_POPOUT_PERFORMANCE_REPORT.md).
+Top-down bevels now use projected faces, not nested 3D planes. Expansion is an overlay
+with a 100ms transform/opacity entrance, viewport fitting and Escape dismissal.
+Latest merged full suite: 205 tests, 198 pass: six historical failures plus the
+upstream Nested drag-handle expectation failure after 6c83427 removed those handles.
+Use npm run storage:benchmark for local mock traces; never call these installed/live evidence.

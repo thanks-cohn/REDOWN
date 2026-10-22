@@ -18,4 +18,5 @@ jobs:
       - run: node --check extension/popup.js
       - run: node --check extension/options.js
       - run: node --check extension/storage-signals.js
+      - run: node --check scripts/storage-expansion-benchmark.mjs
       - run: node -e "JSON.parse(require('fs').readFileSync('extension/manifest.json','utf8'))"

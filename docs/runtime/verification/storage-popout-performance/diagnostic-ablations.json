@@ -1,0 +1,618 @@
+{
+  "scope": "Local isolated mock fixture in headless Chromium with --disable-gpu. Three focus-open samples per case; not installed-extension, live-cloud, user-hardware, INP or Core Web Vitals evidence.",
+  "browser": "Chrome/154.0.8037.57",
+  "results": [
+    {
+      "count": 12,
+      "variant": "original",
+      "run": 0,
+      "frames": 21,
+      "p50FrameMs": 16.700000000000045,
+      "p95FrameMs": 50,
+      "maxFrameMs": 100.10000000000014,
+      "framesOver25ms": 4,
+      "layerCount": 173,
+      "layoutCount": 6,
+      "layoutMs": 1.0539999999999994,
+      "styleCount": 7,
+      "styleMs": 3.4200000000000013,
+      "taskMs": 56.97599999999997,
+      "trace": {
+        "Layout": {
+          "count": 14,
+          "totalMs": 1.245
+        },
+        "UpdateLayoutTree": {
+          "count": 7,
+          "totalMs": 3.161
+        },
+        "Paint": {
+          "count": 116,
+          "totalMs": 26.958
+        },
+        "RasterTask": {
+          "count": 360,
+          "totalMs": 146.099
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "original",
+      "run": 1,
+      "frames": 17,
+      "p50FrameMs": 16.700000000000273,
+      "p95FrameMs": 83.30000000000018,
+      "maxFrameMs": 83.30000000000018,
+      "framesOver25ms": 6,
+      "layerCount": 173,
+      "layoutCount": 5,
+      "layoutMs": 1.0609999999999924,
+      "styleCount": 6,
+      "styleMs": 3.4749999999999988,
+      "taskMs": 38.742,
+      "trace": {
+        "Layout": {
+          "count": 13,
+          "totalMs": 1.277
+        },
+        "UpdateLayoutTree": {
+          "count": 6,
+          "totalMs": 3.422
+        },
+        "Paint": {
+          "count": 115,
+          "totalMs": 29.373
+        },
+        "RasterTask": {
+          "count": 250,
+          "totalMs": 109.826
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "original",
+      "run": 2,
+      "frames": 20,
+      "p50FrameMs": 16.700000000000273,
+      "p95FrameMs": 83.40000000000009,
+      "maxFrameMs": 83.40000000000009,
+      "framesOver25ms": 5,
+      "layerCount": 173,
+      "layoutCount": 6,
+      "layoutMs": 1.3819999999999943,
+      "styleCount": 7,
+      "styleMs": 4.201999999999997,
+      "taskMs": 59.872000000000035,
+      "trace": {
+        "Layout": {
+          "count": 14,
+          "totalMs": 1.552
+        },
+        "UpdateLayoutTree": {
+          "count": 7,
+          "totalMs": 3.517
+        },
+        "Paint": {
+          "count": 116,
+          "totalMs": 48.385
+        },
+        "RasterTask": {
+          "count": 280,
+          "totalMs": 135.85
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "instant-height",
+      "run": 0,
+      "frames": 21,
+      "p50FrameMs": 16.699999999999818,
+      "p95FrameMs": 83.25799999999981,
+      "maxFrameMs": 83.39999999999964,
+      "framesOver25ms": 2,
+      "layerCount": 173,
+      "layoutCount": 1,
+      "layoutMs": 0.19099999999999673,
+      "styleCount": 2,
+      "styleMs": 2.589000000000001,
+      "taskMs": 22.996000000000016,
+      "trace": {
+        "Layout": {
+          "count": 9,
+          "totalMs": 2.656
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.267
+        },
+        "Paint": {
+          "count": 109,
+          "totalMs": 17.375
+        },
+        "RasterTask": {
+          "count": 527,
+          "totalMs": 76.708
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "instant-height",
+      "run": 1,
+      "frames": 24,
+      "p50FrameMs": 16.699999999999818,
+      "p95FrameMs": 50,
+      "maxFrameMs": 83.40000000000055,
+      "framesOver25ms": 2,
+      "layerCount": 173,
+      "layoutCount": 1,
+      "layoutMs": 0.22600000000000398,
+      "styleCount": 2,
+      "styleMs": 1.7079999999999942,
+      "taskMs": 20.343,
+      "trace": {
+        "Layout": {
+          "count": 9,
+          "totalMs": 1.833
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.218
+        },
+        "Paint": {
+          "count": 109,
+          "totalMs": 15.477
+        },
+        "RasterTask": {
+          "count": 487,
+          "totalMs": 53.435
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "instant-height",
+      "run": 2,
+      "frames": 21,
+      "p50FrameMs": 16.699999999999818,
+      "p95FrameMs": 83.3779999999997,
+      "maxFrameMs": 100,
+      "framesOver25ms": 2,
+      "layerCount": 173,
+      "layoutCount": 1,
+      "layoutMs": 0.1759999999999956,
+      "styleCount": 2,
+      "styleMs": 1.6749999999999958,
+      "taskMs": 18.214000000000063,
+      "trace": {
+        "Layout": {
+          "count": 9,
+          "totalMs": 1.796
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.27
+        },
+        "Paint": {
+          "count": 109,
+          "totalMs": 14.585
+        },
+        "RasterTask": {
+          "count": 487,
+          "totalMs": 59.61
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "flat-diagnostic",
+      "run": 0,
+      "frames": 20,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 50,
+      "maxFrameMs": 50,
+      "framesOver25ms": 8,
+      "layerCount": 5,
+      "layoutCount": 7,
+      "layoutMs": 1.3819999999999943,
+      "styleCount": 8,
+      "styleMs": 5.814,
+      "taskMs": 42.10999999999998,
+      "trace": {
+        "Layout": {
+          "count": 15,
+          "totalMs": 1.531
+        },
+        "UpdateLayoutTree": {
+          "count": 8,
+          "totalMs": 5.59
+        },
+        "Paint": {
+          "count": 9,
+          "totalMs": 15.622
+        },
+        "RasterTask": {
+          "count": 201,
+          "totalMs": 310.629
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "flat-diagnostic",
+      "run": 1,
+      "frames": 21,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 33.399999999999636,
+      "maxFrameMs": 33.400000000000546,
+      "framesOver25ms": 9,
+      "layerCount": 5,
+      "layoutCount": 8,
+      "layoutMs": 1.2759999999999994,
+      "styleCount": 9,
+      "styleMs": 2.9700000000000006,
+      "taskMs": 28.656000000000013,
+      "trace": {
+        "Layout": {
+          "count": 16,
+          "totalMs": 1.536
+        },
+        "UpdateLayoutTree": {
+          "count": 9,
+          "totalMs": 2.965
+        },
+        "Paint": {
+          "count": 10,
+          "totalMs": 12.264
+        },
+        "RasterTask": {
+          "count": 229,
+          "totalMs": 310.528
+        }
+      }
+    },
+    {
+      "count": 12,
+      "variant": "flat-diagnostic",
+      "run": 2,
+      "frames": 20,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 50,
+      "maxFrameMs": 50,
+      "framesOver25ms": 6,
+      "layerCount": 5,
+      "layoutCount": 6,
+      "layoutMs": 1.0560000000000014,
+      "styleCount": 7,
+      "styleMs": 2.584000000000003,
+      "taskMs": 29.123999999999928,
+      "trace": {
+        "Layout": {
+          "count": 14,
+          "totalMs": 1.195
+        },
+        "UpdateLayoutTree": {
+          "count": 7,
+          "totalMs": 2.583
+        },
+        "Paint": {
+          "count": 8,
+          "totalMs": 11.885
+        },
+        "RasterTask": {
+          "count": 184,
+          "totalMs": 252.707
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "original",
+      "run": 0,
+      "frames": 13,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 83.39999999999964,
+      "maxFrameMs": 83.39999999999964,
+      "framesOver25ms": 5,
+      "layerCount": 1687,
+      "layoutCount": 4,
+      "layoutMs": 1.4359999999999928,
+      "styleCount": 5,
+      "styleMs": 18.241000000000007,
+      "taskMs": 195.02200000000002,
+      "trace": {
+        "Layout": {
+          "count": 84,
+          "totalMs": 2.785
+        },
+        "UpdateLayoutTree": {
+          "count": 5,
+          "totalMs": 18.238
+        },
+        "Paint": {
+          "count": 1086,
+          "totalMs": 202.468
+        },
+        "RasterTask": {
+          "count": 444,
+          "totalMs": 147.578
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "original",
+      "run": 1,
+      "frames": 11,
+      "p50FrameMs": 33.29999999999927,
+      "p95FrameMs": 166.70000000000073,
+      "maxFrameMs": 166.70000000000073,
+      "framesOver25ms": 6,
+      "layerCount": 1687,
+      "layoutCount": 4,
+      "layoutMs": 1.3960000000000083,
+      "styleCount": 5,
+      "styleMs": 15.878000000000004,
+      "taskMs": 203.42799999999994,
+      "trace": {
+        "Layout": {
+          "count": 84,
+          "totalMs": 3.097
+        },
+        "UpdateLayoutTree": {
+          "count": 5,
+          "totalMs": 15.876
+        },
+        "Paint": {
+          "count": 1086,
+          "totalMs": 200.167
+        },
+        "RasterTask": {
+          "count": 291,
+          "totalMs": 173.1
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "original",
+      "run": 2,
+      "frames": 10,
+      "p50FrameMs": 33.400000000001455,
+      "p95FrameMs": 166.60000000000036,
+      "maxFrameMs": 166.60000000000036,
+      "framesOver25ms": 6,
+      "layerCount": 1687,
+      "layoutCount": 4,
+      "layoutMs": 1.229999999999981,
+      "styleCount": 5,
+      "styleMs": 16.54,
+      "taskMs": 216.78200000000004,
+      "trace": {
+        "Layout": {
+          "count": 84,
+          "totalMs": 2.726
+        },
+        "UpdateLayoutTree": {
+          "count": 5,
+          "totalMs": 16.545
+        },
+        "Paint": {
+          "count": 1086,
+          "totalMs": 219.663
+        },
+        "RasterTask": {
+          "count": 295,
+          "totalMs": 186.394
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "instant-height",
+      "run": 0,
+      "frames": 9,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 183.29999999999927,
+      "maxFrameMs": 183.29999999999927,
+      "framesOver25ms": 3,
+      "layerCount": 1687,
+      "layoutCount": 1,
+      "layoutMs": 0.32999999999999696,
+      "styleCount": 2,
+      "styleMs": 15.78999999999997,
+      "taskMs": 108.33300000000001,
+      "trace": {
+        "Layout": {
+          "count": 81,
+          "totalMs": 17.008
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.508
+        },
+        "Paint": {
+          "count": 1081,
+          "totalMs": 151.973
+        },
+        "RasterTask": {
+          "count": 742,
+          "totalMs": 149.164
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "instant-height",
+      "run": 1,
+      "frames": 8,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 150.09999999999854,
+      "maxFrameMs": 150.09999999999854,
+      "framesOver25ms": 3,
+      "layerCount": 1687,
+      "layoutCount": 1,
+      "layoutMs": 0.4300000000000137,
+      "styleCount": 2,
+      "styleMs": 15.332000000000011,
+      "taskMs": 119.37299999999995,
+      "trace": {
+        "Layout": {
+          "count": 81,
+          "totalMs": 16.588
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.665
+        },
+        "Paint": {
+          "count": 1081,
+          "totalMs": 183.367
+        },
+        "RasterTask": {
+          "count": 691,
+          "totalMs": 114.749
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "instant-height",
+      "run": 2,
+      "frames": 8,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 183.29999999999927,
+      "maxFrameMs": 183.29999999999927,
+      "framesOver25ms": 3,
+      "layerCount": 1687,
+      "layoutCount": 1,
+      "layoutMs": 0.3170000000000117,
+      "styleCount": 2,
+      "styleMs": 15.832999999999986,
+      "taskMs": 107.85299999999998,
+      "trace": {
+        "Layout": {
+          "count": 81,
+          "totalMs": 17.415
+        },
+        "UpdateLayoutTree": {
+          "count": 1,
+          "totalMs": 0.36
+        },
+        "Paint": {
+          "count": 1081,
+          "totalMs": 155.894
+        },
+        "RasterTask": {
+          "count": 691,
+          "totalMs": 128.725
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "flat-diagnostic",
+      "run": 0,
+      "frames": 22,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 50,
+      "maxFrameMs": 83.29999999999927,
+      "framesOver25ms": 4,
+      "layerCount": 147,
+      "layoutCount": 7,
+      "layoutMs": 2.6459999999999817,
+      "styleCount": 8,
+      "styleMs": 14.59100000000002,
+      "taskMs": 159.52300000000008,
+      "trace": {
+        "Layout": {
+          "count": 87,
+          "totalMs": 3.876
+        },
+        "UpdateLayoutTree": {
+          "count": 8,
+          "totalMs": 14.621
+        },
+        "Paint": {
+          "count": 9,
+          "totalMs": 92.387
+        },
+        "RasterTask": {
+          "count": 274,
+          "totalMs": 209.466
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "flat-diagnostic",
+      "run": 1,
+      "frames": 23,
+      "p50FrameMs": 16.69999999999709,
+      "p95FrameMs": 66.67199999999866,
+      "maxFrameMs": 66.70000000000073,
+      "framesOver25ms": 3,
+      "layerCount": 147,
+      "layoutCount": 7,
+      "layoutMs": 2.8670000000000084,
+      "styleCount": 8,
+      "styleMs": 15.887999999999957,
+      "taskMs": 167.567,
+      "trace": {
+        "Layout": {
+          "count": 87,
+          "totalMs": 3.534
+        },
+        "UpdateLayoutTree": {
+          "count": 8,
+          "totalMs": 15.876
+        },
+        "Paint": {
+          "count": 9,
+          "totalMs": 108.089
+        },
+        "RasterTask": {
+          "count": 297,
+          "totalMs": 210.054
+        }
+      }
+    },
+    {
+      "count": 120,
+      "variant": "flat-diagnostic",
+      "run": 2,
+      "frames": 23,
+      "p50FrameMs": 16.700000000000728,
+      "p95FrameMs": 33.39999999999782,
+      "maxFrameMs": 66.70000000000073,
+      "framesOver25ms": 4,
+      "layerCount": 147,
+      "layoutCount": 8,
+      "layoutMs": 2.8590000000000004,
+      "styleCount": 9,
+      "styleMs": 12.830000000000009,
+      "taskMs": 177.09299999999973,
+      "trace": {
+        "Layout": {
+          "count": 88,
+          "totalMs": 4.372
+        },
+        "UpdateLayoutTree": {
+          "count": 9,
+          "totalMs": 12.831
+        },
+        "Paint": {
+          "count": 10,
+          "totalMs": 106.176
+        },
+        "RasterTask": {
+          "count": 296,
+          "totalMs": 204.05
+        }
+      }
+    }
+  ]
+}

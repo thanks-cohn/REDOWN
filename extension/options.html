@@ -21,19 +21,20 @@
     .setup-go{background:var(--green)!important;color:#09281c!important;border-color:var(--green)!important;font-weight:700}
     .setup-go:hover:not(:disabled){background:#95edc6!important}
     a.setup-go{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border:1px solid;border-radius:10px;text-decoration:none}
-    html:not(.debug-mode) .bucket{aspect-ratio:1;transform-style:preserve-3d;transform:perspective(700px);transition:transform .18s}
-    html:not(.debug-mode) .bucket:hover{transform:perspective(700px) translateY(-2px)}
-    html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:perspective(700px) translateY(1px)}
-    .bucket-select{position:relative;display:block;width:100%;height:100%;aspect-ratio:1;min-height:0;padding:0;border:0;border-radius:22px;color:#283b31;background:transparent;transform-style:preserve-3d;box-shadow:0 3px 2px rgba(0,0,0,.65),0 12px 18px -6px rgba(0,0,0,.6),0 24px 30px -18px rgba(0,0,0,.8)}
+    html:not(.debug-mode) .bucket{aspect-ratio:1;transform:none;transition:transform .12s ease-out;content-visibility:auto;contain-intrinsic-size:auto var(--bucket-size);border-radius:0;overflow-clip-margin:12px}
+    html:not(.debug-mode) .bucket:hover{transform:translateY(-1px)}
+    html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:translateY(1px)}
+    .bucket-select{position:relative;display:block;width:100%;height:100%;aspect-ratio:1;min-height:0;padding:0;border:0;border-radius:22px;color:#283b31;background:transparent;box-shadow:0 3px 2px rgba(0,0,0,.65),0 12px 18px -6px rgba(0,0,0,.6),0 24px 30px -18px rgba(0,0,0,.8)}
     .bucket-select:before{content:"";position:absolute;inset:0;border-radius:22px;background:linear-gradient(135deg,#c1b58a,#6f795f 40%,#4b5949 78%,#9b9272);box-shadow:inset 0 1px 0 #f1e5bc,inset 0 -2px 2px #303c30;pointer-events:none}
-    .bucket-side{position:absolute;pointer-events:none;backface-visibility:hidden}
-    .bucket-side-right,.bucket-side-left{top:0;width:14.422px;height:100%;clip-path:polygon(0 8px,100% 0,100% 100%,0 calc(100% - 8px));transform-origin:0 50%}
-    .bucket-side-right{left:calc(100% - 8px);transform:translateZ(12px) rotateY(56.31deg);background:linear-gradient(90deg,#e0dec3,#8a9376 55%,#465342)}
-    .bucket-side-left{left:8px;transform:translateZ(12px) rotateY(-56.31deg) scaleX(-1);background:linear-gradient(90deg,#e7e1bf,#acac86 55%,#65705a)}
-    .bucket-side-top,.bucket-side-bottom{left:0;width:100%;height:14.422px;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 100%,0 100%);transform-origin:50% 0}
-    .bucket-side-top{top:8px;transform:translateZ(12px) rotateX(56.31deg) scaleY(-1);background:linear-gradient(180deg,#f5ecd0,#b9b494 65%,#77836b)}
-    .bucket-side-bottom{top:calc(100% - 8px);transform:translateZ(12px) rotateX(-56.31deg);background:linear-gradient(180deg,#ddd5b2,#7c876d 55%,#3e4d3d)}
-    .bucket-surface{--marble-veins:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22140%22%20viewBox%3D%220%200%20300%20140%22%20fill%3D%22none%22%3E%3Cg%20stroke%3D%22%23866a35%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M-25%20112C20%2099%2024%2069%2063%2076S111%2052%20134%2054%20166%2022%20204%2028%20250-8%20322-13%22%20stroke-opacity%3D%22.035%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M-25%20112C20%2099%2024%2069%2063%2076S111%2052%20134%2054%20166%2022%20204%2028%20250-8%20322-13%22%20stroke-opacity%3D%22.2%22%20stroke-width%3D%22.65%22%2F%3E%3Cpath%20d%3D%22M47%2077C70%2060%2063%2041%2093%2030S117%204%20139-8M135%2054C155%2067%20160%2047%20187%2054S225%2030%20239%2033M24%2090C18%2070%2036%2065%2028%2038M199%2029C210%2053%20238%2043%20260%2062S291%2071%20313%2059%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%22.45%22%2F%3E%3Cpath%20d%3D%22M-15%20139C45%20128%2081%20146%20113%20113S151%20107%20177%2086%20228%2099%20265%2081%20288%2091%20317%2085%22%20stroke-opacity%3D%22.09%22%20stroke-width%3D%22.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");position:absolute;inset:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:16px 11px 32px;border:1px solid rgba(255,250,222,.78);border-radius:18px;transform:translateZ(12px);background:radial-gradient(ellipse at 25% 18%,rgba(255,253,234,.82),transparent 58%),radial-gradient(ellipse at 78% 72%,#a5b29a,transparent 67%),linear-gradient(140deg,#dce0c8,#bdc9ad 45%,#e1dfc6);box-shadow:inset 0 2px 3px rgba(255,255,241,.72),inset 0 -3px 5px rgba(84,96,67,.24),inset 2px 0 3px rgba(255,255,232,.35),inset -2px 0 3px rgba(88,104,77,.22);pointer-events:none}
+    /* Project the bevels directly: the requested view is top-down, without camera tilt. */
+    .bucket-side{position:absolute;pointer-events:none}
+    .bucket-side-left,.bucket-side-right{top:0;width:8px;height:100%}
+    .bucket-side-right{right:0;clip-path:polygon(0 8px,100% 0,100% 100%,0 calc(100% - 8px));background:linear-gradient(90deg,#e0dec3,#8a9376 55%,#465342)}
+    .bucket-side-left{left:0;clip-path:polygon(0 0,100% 8px,100% calc(100% - 8px),0 100%);background:linear-gradient(90deg,#e7e1bf,#acac86 55%,#65705a)}
+    .bucket-side-top,.bucket-side-bottom{left:0;width:100%;height:8px}
+    .bucket-side-top{top:0;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,8px 100%);background:linear-gradient(180deg,#f5ecd0,#b9b494 65%,#77836b)}
+    .bucket-side-bottom{bottom:0;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 100%,0 100%);background:linear-gradient(180deg,#ddd5b2,#7c876d 55%,#3e4d3d)}
+    .bucket-surface{--marble-veins:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22140%22%20viewBox%3D%220%200%20300%20140%22%20fill%3D%22none%22%3E%3Cg%20stroke%3D%22%23866a35%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M-25%20112C20%2099%2024%2069%2063%2076S111%2052%20134%2054%20166%2022%20204%2028%20250-8%20322-13%22%20stroke-opacity%3D%22.035%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M-25%20112C20%2099%2024%2069%2063%2076S111%2052%20134%2054%20166%2022%20204%2028%20250-8%20322-13%22%20stroke-opacity%3D%22.2%22%20stroke-width%3D%22.65%22%2F%3E%3Cpath%20d%3D%22M47%2077C70%2060%2063%2041%2093%2030S117%204%20139-8M135%2054C155%2067%20160%2047%20187%2054S225%2030%20239%2033M24%2090C18%2070%2036%2065%2028%2038M199%2029C210%2053%20238%2043%20260%2062S291%2071%20313%2059%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%22.45%22%2F%3E%3Cpath%20d%3D%22M-15%20139C45%20128%2081%20146%20113%20113S151%20107%20177%2086%20228%2099%20265%2081%20288%2091%20317%2085%22%20stroke-opacity%3D%22.09%22%20stroke-width%3D%22.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");position:absolute;inset:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:16px 11px 32px;border:1px solid rgba(255,250,222,.78);border-radius:18px;background:radial-gradient(ellipse at 25% 18%,rgba(255,253,234,.82),transparent 58%),radial-gradient(ellipse at 78% 72%,#a5b29a,transparent 67%),linear-gradient(140deg,#dce0c8,#bdc9ad 45%,#e1dfc6);box-shadow:inset 0 2px 3px rgba(255,255,241,.72),inset 0 -3px 5px rgba(84,96,67,.24),inset 2px 0 3px rgba(255,255,232,.35),inset -2px 0 3px rgba(88,104,77,.22);pointer-events:none}
     .bucket-surface:before,.bucket-surface:after{content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none}
     .bucket-surface:before{background-image:var(--marble-veins);background-size:150% 160%;background-position:50% 50%;opacity:1}
     .bucket:nth-child(2n) .bucket-surface:before{transform:rotate(180deg);background-position:20% 60%}
@@ -43,7 +44,7 @@
     .bucket.selected .bucket-surface{border-color:#f8e5ab;box-shadow:inset 0 0 0 1px rgba(147,110,48,.45),inset 0 2px 3px rgba(255,255,241,.75),inset 0 -3px 5px rgba(84,96,67,.25)}
     .bucket-select:disabled{opacity:1;cursor:progress}
     .bucket-icon,.bucket-copy{position:relative;z-index:1}
-    .bucket-icon{display:grid;place-items:center;flex:0 0 36px;width:38px;height:38px;color:#40564a;filter:drop-shadow(0 1px 0 rgba(255,255,236,.6))}
+    .bucket-icon{display:grid;place-items:center;flex:0 0 36px;width:38px;height:38px;color:#40564a;}
     .bucket-icon svg{width:34px;height:34px}
     .bucket-copy{display:flex;min-width:0;width:100%;flex-direction:column;align-items:center;gap:6px;text-align:center}
     .bucket-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;max-width:100%;font-size:13px;font-weight:650;line-height:1.3;letter-spacing:-.015em;text-shadow:0 1px 0 rgba(255,255,236,.6)}
@@ -53,7 +54,7 @@
     .bucket-check{position:absolute;right:9px;top:9px;z-index:1;display:grid;place-items:center;width:16px;height:16px;color:#795e2f;opacity:0}
     .bucket.selected .bucket-check{opacity:1}
     .bucket-surface{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
-    .bucket-repair{position:absolute;right:18px;bottom:18px;display:grid;place-items:center;width:27px;height:27px;min-height:27px;padding:0;border:1px solid rgba(46,58,35,.85);border-radius:50%;background:radial-gradient(ellipse at 55% 85%,#39432c,#172015 75%);color:#d9f7ff;box-shadow:inset 0 3px 5px rgba(0,0,0,.9),inset 0 0 3px rgba(0,0,0,.65),0 1px 0 rgba(255,255,231,.8),0 -1px 1px rgba(73,85,55,.4);line-height:1;transform:translateZ(14px);z-index:2}
+    .bucket-repair{position:absolute;right:18px;bottom:18px;display:grid;place-items:center;width:27px;height:27px;min-height:27px;padding:0;border:1px solid rgba(46,58,35,.85);border-radius:50%;background:radial-gradient(ellipse at 55% 85%,#39432c,#172015 75%);color:#d9f7ff;box-shadow:inset 0 3px 5px rgba(0,0,0,.9),inset 0 0 3px rgba(0,0,0,.65),0 1px 0 rgba(255,255,231,.8),0 -1px 1px rgba(73,85,55,.4);line-height:1;z-index:2}
     .bucket-repair:hover:not(:disabled){background:radial-gradient(ellipse at 55% 85%,#455032,#1d2617 75%);border-color:#344126;color:#f4fdff}
     .bucket-repair:active:not(:disabled){box-shadow:inset 0 4px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,231,.8)}
     .bucket-repair:focus-visible{outline:2px solid #c4b4ff;outline-offset:3px}
@@ -62,11 +63,13 @@
     @media(max-width:520px){html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.bucket-surface{gap:5px;padding:8px 6px 24px}.bucket-name{font-size:11px}.bucket-icon{flex-basis:27px;height:27px}.bucket-icon svg{width:26px;height:26px}.bucket-status{font-size:10px}}
     #cloudflare-panel>.card{container-type:inline-size}
     .bucket-grid-viewport{container-type:inline-size}
-    /* Animate only the clipping viewport. The 3D tile grid keeps fixed geometry. */
-    html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));height:calc(var(--bucket-size) + 18px);margin-top:28px;overflow:hidden;contain:layout paint;transition:height 220ms cubic-bezier(.2,.7,.2,1)}
-    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within){height:min(75vh,900px)}
-    html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:min(75vh,900px);max-height:none;margin-top:0;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:transparent transparent}
-    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within) .bucket-grid{scrollbar-color:#718097 #111b2c}
+    /* Fixed one-row anchor; the scrollport opens over nearby content without page reflow. */
+    html:not(.debug-mode) #cloudflare-panel{position:relative;z-index:2}
+    html:not(.debug-mode) #cloudflare-panel>.card{position:relative;z-index:1}
+    html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));height:calc(var(--bucket-size) + 18px);margin-top:28px;position:relative;overflow:visible;contain:layout}
+    html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:var(--bucket-popup-height,min(75vh,900px));max-height:none;margin-top:0;position:absolute;inset:0 0 auto;background:#10192a;clip-path:inset(0 0 calc(100% - var(--bucket-size) - 18px) 0 round 10px);will-change:transform;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:transparent transparent}
+    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within):not([data-dismissed="true"]) .bucket-grid{clip-path:inset(0 round 10px);animation:storage-fast-open 100ms ease-out both;scrollbar-color:#718097 #111b2c}
+    @keyframes storage-fast-open{from{transform:translateY(-4px);opacity:.84}to{transform:translateY(0);opacity:1}}
     html:not(.debug-mode) .bucket-grid::-webkit-scrollbar{width:8px}
     html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-thumb{background:transparent;border-radius:8px;border:2px solid transparent}
     html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within) .bucket-grid::-webkit-scrollbar-thumb{background:#718097;border-color:#111b2c}
@@ -83,7 +86,7 @@
     .bucket-debug-details{margin:9px 0;color:var(--muted);font-size:11px}
     .bucket-debug-repair{width:100%;margin-top:8px}
 
-    @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid-viewport,html:not(.debug-mode) .bucket-grid{transition:none}html:not(.debug-mode) .bucket{transition:none}html:not(.debug-mode) .bucket:hover,html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:perspective(700px)}.bucket-select[aria-busy=true] .bucket-status:before{animation:none}}
+    @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid-viewport,html:not(.debug-mode) .bucket-grid{transition:none}html:not(.debug-mode) .bucket{transition:none}html:not(.debug-mode) .bucket:hover,html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:none}.bucket-select[aria-busy=true] .bucket-status:before{animation:none}}
     html.debug-mode .bucket .normal-only{display:none!important}
     .header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
     .settings-disclosure{position:relative}
@@ -448,11 +451,11 @@
     :is(.bucket,.signal-demo-tile)[data-signal="repair"]{--signal-color:#df766d}
     :is(.bucket,.signal-demo-tile)[data-signal="working"]{--signal-color:#82bdec}
     :is(.bucket,.signal-demo-tile)[data-signal="ready"]{--signal-color:#71bf8c}
-    .bucket .bucket-select:after{content:"";position:absolute;inset:1px;border:2px solid var(--signal-color);border-radius:22px;transform:translateZ(13px);box-shadow:inset 0 0 4px color-mix(in srgb,var(--signal-color) 40%,transparent),0 0 6px color-mix(in srgb,var(--signal-color) 25%,transparent);pointer-events:none;opacity:0}
+    .bucket .bucket-select:after{content:"";position:absolute;inset:1px;border:2px solid var(--signal-color);border-radius:22px;box-shadow:inset 0 0 4px color-mix(in srgb,var(--signal-color) 40%,transparent),0 0 6px color-mix(in srgb,var(--signal-color) 25%,transparent);pointer-events:none;opacity:0}
     .bucket[data-signal]:not([data-signal="idle"]) .bucket-select:after{opacity:1}
     .bucket[data-signal] .bucket-repair{color:var(--signal-color);border-color:var(--signal-color);box-shadow:inset 0 3px 5px #000c,0 1px 0 #fff9,0 0 4px color-mix(in srgb,var(--signal-color) 30%,transparent)}
     .bucket[data-signal="ready"] .bucket-select:after{animation:storage-success 2.4s ease-out both}
-    .bucket[data-signal="attention"] :is(.bucket-select:after,.bucket-repair){animation:storage-pulse 1.2s ease-in-out 2}
+    .bucket[data-signal="attention"][data-signal-fresh="true"] :is(.bucket-select:after,.bucket-repair){animation:storage-pulse 1.2s ease-in-out 2}
     .bucket[data-signal="repair"] :is(.bucket-select:after,.bucket-repair){animation:storage-pulse .95s ease-in-out 3}
     .bucket[data-signal="working"] .signal-glyph{animation:spin 1.6s linear infinite}
     .bucket[data-signal="working"] .bucket-select{opacity:1}
@@ -485,7 +488,7 @@
     @keyframes storage-success{0%,65%{opacity:1}100%{opacity:0}}
     @keyframes storage-settle{0%{filter:brightness(1)}45%{filter:brightness(1.22)}100%{filter:brightness(1)}}
     @media(max-width:520px){.training-heading{align-items:start;flex-wrap:wrap}.storage-training{padding:14px}.signal-demo-grid{gap:8px}.signal-demo-tile{padding:14px 6px;min-height:150px;gap:9px}.signal-demo-tile strong,.signal-demo-status{font-size:11px}.bucket-status{font-size:10px}.settings-popover{max-width:calc(100vw - 32px)}}
-    @media(prefers-reduced-motion:reduce){.bucket[data-signal] :is(.bucket-select:after,.bucket-repair,.signal-glyph),.signal-demo-tile,.signal-demo-tile .signal-glyph,.storage-training[data-stage="complete"] .signal-demo-tile{animation:none!important}.bucket[data-signal="ready"] .bucket-select:after{opacity:0}}
+    @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid{animation:none!important}.bucket[data-signal] :is(.bucket-select:after,.bucket-repair,.signal-glyph),.signal-demo-tile,.signal-demo-tile .signal-glyph,.storage-training[data-stage="complete"] .signal-demo-tile{animation:none!important}.bucket[data-signal="ready"] .bucket-select:after{opacity:0}}
 
     @media(max-width:520px){
       #cloudflare-panel .bucket-surface{gap:3px;padding:4px 6px 32px}

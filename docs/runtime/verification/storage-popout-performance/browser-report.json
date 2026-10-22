@@ -1,0 +1,84 @@
+{
+  "scope": "Ordinary Chromium, local mocked HTML and real UI handlers. Not an installed extension or live Cloudflare test.",
+  "layouts": [
+    {
+      "width": 1366,
+      "scrollWidth": 1351,
+      "restHeight": 178,
+      "followingTop": 617.265625,
+      "restClip": "inset(0px 0px calc(100% - 178px) round 10px)",
+      "tileHeight": 159.65625,
+      "fontLoaded": true,
+      "anchorHeight": 178,
+      "expandedHeight": 358,
+      "bottom": 728.265625,
+      "openClip": "inset(0px round 10px)",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 0,
+      "anchorHeightDelta": 0
+    },
+    {
+      "width": 390,
+      "scrollWidth": 375,
+      "restHeight": 132,
+      "followingTop": 652.390625,
+      "restClip": "inset(0px 0px calc(100% - 131.5px) round 10px)",
+      "tileHeight": 112.5,
+      "fontLoaded": true,
+      "anchorHeight": 132,
+      "expandedHeight": 436.109375,
+      "bottom": 888,
+      "openClip": "inset(0px round 10px)",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 0,
+      "anchorHeightDelta": 0
+    }
+  ],
+  "initialAttentionAnimations": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none"
+  ],
+  "successPerimeterOpacity": "0",
+  "trainingNarrowWidth": 375,
+  "trainingMadeNoStorageCalls": true,
+  "modes": [
+    {
+      "beta": true,
+      "debug": false,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": true,
+      "githubVisible": false
+    },
+    {
+      "beta": true,
+      "debug": true,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": false,
+      "githubVisible": false
+    }
+  ],
+  "lastBucketVisible": true,
+  "hiddenRowsDoNotIntercept": true,
+  "reducedMotion": {
+    "glyphAnimation": "none",
+    "gridTransition": "0s"
+  }
+}

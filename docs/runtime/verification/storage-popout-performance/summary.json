@@ -1,0 +1,53 @@
+{
+  "method": "Median of three opens per case; fresh page per version and count, shared browser process. Local rendering data, not field INP or guaranteed FPS.",
+  "results": [
+    {
+      "buckets": 12,
+      "variant": "before",
+      "layerCount": 173,
+      "layoutCount": 7,
+      "layoutMs": 1.267,
+      "styleMs": 3.055,
+      "taskMs": 41.878,
+      "firstCallbackDelayMs": 3.9,
+      "p95FrameMs": 50,
+      "maxFrameMs": 50.1
+    },
+    {
+      "buckets": 12,
+      "variant": "after",
+      "layerCount": 5,
+      "layoutCount": 0,
+      "layoutMs": 0,
+      "styleMs": 5.873,
+      "taskMs": 26.841,
+      "firstCallbackDelayMs": 6.3,
+      "p95FrameMs": 16.8,
+      "maxFrameMs": 33.4
+    },
+    {
+      "buckets": 120,
+      "variant": "before",
+      "layerCount": 1687,
+      "layoutCount": 4,
+      "layoutMs": 1.372,
+      "styleMs": 14.117,
+      "taskMs": 191.139,
+      "firstCallbackDelayMs": 14.3,
+      "p95FrameMs": 150,
+      "maxFrameMs": 150
+    },
+    {
+      "buckets": 120,
+      "variant": "after",
+      "layerCount": 40,
+      "layoutCount": 2,
+      "layoutMs": 1.123,
+      "styleMs": 15.092,
+      "taskMs": 95.845,
+      "firstCallbackDelayMs": 11.4,
+      "p95FrameMs": 33.31,
+      "maxFrameMs": 66.7
+    }
+  ]
+}

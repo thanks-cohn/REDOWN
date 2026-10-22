@@ -54,3 +54,27 @@ test('simulation lives only in diagnostics and cannot start while Debug is hidde
  assert.equal(d.getElementById('cloudflare-panel').contains(d.getElementById('storage-training')),false);
  diagnostics.hidden=true;h.training.start();h.advance(5000);assert.equal(h.training.stage,'closed');h.dom.window.close();
 });
+
+test('pop-out fits the visible window and Escape returns focus without cloud work',()=>{
+ const h=setup(),d=h.document,scope={};vm.runInNewContext(code,scope);
+ const viewport=d.querySelector('.bucket-grid-viewport'),grid=d.getElementById('bucket-grid');
+ Object.defineProperty(viewport,'clientHeight',{value:120});viewport.getBoundingClientRect=()=>({top:300});
+ const child=d.createElement('button');grid.append(child);Object.defineProperty(child,'offsetHeight',{value:1000});
+ Object.defineProperty(h.dom.window,'innerHeight',{value:900,writable:true});
+ const expansion=scope.RedownStorageSignals.wireBucketExpansion({document:d,window:h.dom.window});
+ grid.focus();assert.equal(viewport.style.getPropertyValue('--bucket-popup-height'),'588px');
+ grid.dispatchEvent(new h.dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+ assert.equal(viewport.dataset.dismissed,'true');assert.equal(d.activeElement.id,'refresh-storage');
+ grid.focus();assert.equal(viewport.hasAttribute('data-dismissed'),false);
+ h.dom.window.innerHeight=500;expansion.fit();assert.equal(viewport.style.getPropertyValue('--bucket-popup-height'),'188px');
+ d.documentElement.classList.add('debug-mode');h.dom.window.innerHeight=1000;expansion.fit();assert.equal(viewport.style.getPropertyValue('--bucket-popup-height'),'188px');
+ h.dom.window.close();
+});
+
+test('initial cached attention stays steady; attention after a user operation is marked fresh',()=>{
+ const h=setup(),scope={};vm.runInNewContext(code,scope);
+ const el=h.document.querySelector('.signal-demo-tile');
+ scope.RedownStorageSignals.paint(el,'attention','Check connection');assert.equal(el.dataset.signalFresh,'false');
+ scope.RedownStorageSignals.paint(el,'working','Checking…');scope.RedownStorageSignals.paint(el,'attention','Check connection');
+ assert.equal(el.dataset.signalFresh,'true');h.dom.window.close();
+});

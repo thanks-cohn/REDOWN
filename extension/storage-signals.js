@@ -10,6 +10,7 @@
   });
   function paint(el,state,message){
     if(!states[state])throw new Error('Unknown storage signal');
+    el.dataset.signalFresh=String(el.dataset.signal!==undefined&&el.dataset.signal!==state);
     el.dataset.signal=state;
     const text=message||states[state].label;
     const caption=el.querySelector('.bucket-status, .signal-demo-status');
@@ -24,6 +25,37 @@
         lamp.setAttribute('aria-label',lamp.title);
       }
     }
+  }
+  // One geometry read on entry/resize, never an animation-frame layout loop.
+  function wireBucketExpansion({document,window}){
+    const viewport=document.querySelector('.bucket-grid-viewport');
+    if(!viewport)return null;
+    const grid=document.getElementById('bucket-grid');
+    const normal=()=>!document.documentElement.classList.contains('debug-mode');
+    function fit(){
+      if(!normal())return;
+      const top=viewport.getBoundingClientRect().top;
+      const last=grid.lastElementChild;
+      const contentHeight=last?last.offsetTop+last.offsetHeight+12:viewport.clientHeight;
+      const height=Math.max(viewport.clientHeight,Math.min(900,contentHeight,window.innerHeight*.75,window.innerHeight-top-12));
+      const value=height+'px';
+      if(viewport.style.getPropertyValue('--bucket-popup-height')!==value)viewport.style.setProperty('--bucket-popup-height',value);
+    }
+    function enter(){delete viewport.dataset.dismissed;fit();}
+    function dismiss(){
+      if(!normal())return;
+      viewport.dataset.dismissed='true';
+      if(viewport.contains(document.activeElement))document.getElementById('refresh-storage')?.focus();
+    }
+    viewport.addEventListener('pointerenter',enter);
+    viewport.addEventListener('pointerleave',()=>{delete viewport.dataset.dismissed;});
+    viewport.addEventListener('focusin',event=>{if(!viewport.contains(event.relatedTarget))enter();});
+    grid.addEventListener('keydown',event=>{if(event.key==='Escape'&&normal()){event.preventDefault();dismiss();}});
+    document.addEventListener('pointerdown',event=>{
+      if(normal()&&!viewport.contains(event.target)&&viewport.contains(document.activeElement))document.activeElement.blur();
+    });
+    window.addEventListener('resize',()=>{if(viewport.matches(':hover,:focus-within'))fit();});
+    return {fit,dismiss};
   }
   function mountTraining({document,schedule=setTimeout,cancel=clearTimeout}){
     const byId=id=>document.getElementById(id),panel=byId('storage-training');
@@ -71,5 +103,5 @@
     panel.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();exit();}});
     return {start,reset:start,exit,get stage(){return stage;},destroy(){stop();panel.hidden=true;}};
   }
-  root.RedownStorageSignals=Object.freeze({states,paint,mountTraining});
+  root.RedownStorageSignals=Object.freeze({states,paint,wireBucketExpansion,mountTraining});
 })(globalThis);
