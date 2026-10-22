@@ -4097,10 +4097,11 @@ async function refreshBuckets(){
     root.querySelectorAll(".bucket button").forEach(item=>item.disabled=true);
     button.setAttribute("aria-busy","true");signalBucket(el,"working",caption,forceRepair?"REPAIRING!":"SETTING UP!");
     const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
+    const previouslyConfigured=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket);
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
       if(accountId!==currentAccountId||!el.isConnected)return;
-      el.classList.toggle("is-ready",Boolean(done));signalBucket(el,done?"ready":"repair",caption,done?"READY!":"REPAIR! CLICK!");if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
+      el.classList.toggle("is-ready",Boolean(done));const confirmed=Boolean(done)&&(forceRepair||!previouslyConfigured);signalBucket(el,confirmed?"ready":done?"attention":"repair",caption,confirmed?"READY!":done?"CHECK CONNECTION!":"REPAIR! CLICK!");if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
     }catch(error){
       if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"REPAIR! CLICK!");if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
