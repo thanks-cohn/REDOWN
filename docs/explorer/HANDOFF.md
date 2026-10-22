@@ -74,3 +74,8 @@ After deliberate source edits, `node scripts/explorer-architecture.mjs --write` 
 See [PROBES_AND_SMOKE.md](PROBES_AND_SMOKE.md) for the0.5.15 continuation, actual provider settings read-back, named Debug-only read probes, corrected batch identity diagnoses and fixed local smoke presets. All13 connected REDOWN Workers now have the explicit public-fetch routing flag, with bindings/date preserved. This is settings verification, not closure of the original Copy/Move/Paste404. The incident remains open; current new suite269/262/7 retains the prior seven failures. New proxy code/extension installation remain separate deployment boundaries.
 
 Get URL/status follow-up: [GET_URL_AND_STATUS.md](GET_URL_AND_STATUS.md) documents the0.5.16 implementation, exact baseline, URL/clipboard diagnostic codes, source/async guards and native-Chrome verification gap. Use `npm run explorer:smoke -- --preset urls-and-status`. Current full suite288/281/7; smoke163/163. Get URL only reads configured public addresses; never enable public access, modify provider settings or claim verified public object accessibility from this UI.
+
+
+## Project diagnostic/reliability entrance
+
+See [reliability foundation](../reliability/README.md). `agent/diagnostics/cli.mjs` now provides one offline entrance to current subsystem navigation, existing Explorer traces/test plans and recorded release blockers. `scripts/reliability-check.mjs` runs syntax/architecture/full regressions and distinguishes known debt from new failures. This does not close Copy404 or establish installed/cloud acceptance.

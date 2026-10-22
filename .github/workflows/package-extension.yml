@@ -1,26 +1,27 @@
-name: Package REDOWN
-
+name: Package REDOWN audit artifact
 on:
   push:
     branches: [main]
     paths:
       - "extension/**"
+      - "scripts/package_chrome_store.py"
       - ".github/workflows/package-extension.yml"
   workflow_dispatch:
-
+permissions:
+  contents: read
 jobs:
-  package:
+  package-audit:
+    name: Allowlisted audit package (release blocked)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate manifest
-        run: node -e "JSON.parse(require('fs').readFileSync('extension/manifest.json','utf8'))"
-      - name: Package
-        run: |
-          cd extension
-          zip -r ../REDOWN-extension.zip .
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and verify explicit runtime allowlist
+        run: python scripts/package_chrome_store.py --audit-only
       - uses: actions/upload-artifact@v4
         with:
-          name: REDOWN-extension
-          path: REDOWN-extension.zip
+          name: REDOWN-audit-only-not-release-certified
+          path: work/package/
           if-no-files-found: error

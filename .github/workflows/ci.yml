@@ -1,22 +1,41 @@
-name: CI
-
+name: Reliability regression gate
 on:
   push:
   pull_request:
-
+permissions:
+  contents: read
 jobs:
-  syntax:
+  local-regression:
+    name: Local regression ratchet (not release certification)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run reliability:check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: local-reliability-node-${{ matrix.node }}
+          path: work/reliability/latest.json
+          if-no-files-found: error
+  diagnostic-schemas:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - run: node --check local/bridge.mjs
-      - run: node --check worker/src/index.js
-      - run: node --check extension/background.js
-      - run: node --check extension/popup.js
-      - run: node --check extension/options.js
-      - run: node --check extension/storage-signals.js
-      - run: node --check scripts/storage-expansion-benchmark.mjs
-      - run: node -e "JSON.parse(require('fs').readFileSync('extension/manifest.json','utf8'))"
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install jsonschema==4.26.0
+      - run: python tests/explorer-diagnostic-schema.py
+      - run: python tests/runtime-schema-conformance.py

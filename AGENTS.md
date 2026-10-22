@@ -2,6 +2,8 @@
 
 Canonical repository: **[thanks-cohn/REDOWN](https://github.com/thanks-cohn/REDOWN)** (public, verified 21 October 2026). The local checkout directory retains its previous name. Use the new remote URL; preserve historical repository references and frozen evidence. Public repository visibility does not change the project license or authorize npm/store publishing.
 
+Start new reliability work at [the diagnostic foundation](docs/reliability/README.md). One entry point: `npm run diagnostics -- describe`; verification: `npm run reliability:check`. A partial report with seven baseline failures is not a green full suite or release certificate. Preserve the existing namespace contracts and their historical evidence; read-only diagnostics never authorizes cloud mutation.
+
 Read [the engineering handoff](docs/CODEX_REDOWN_DEEP_AGENTIC_PROJECT_API_REQUEST.md), [architecture](docs/agent/ARCHITECTURE_MAP.md), [operation traces](docs/agent/OPERATION_CATALOG.md), [message inventory](docs/agent/MESSAGE_INVENTORY.md), and [actual verification](docs/agent/CHANGE_REPORT.md) first. Proposals and bug reports are intent/reports, not proof of implemented or passing behavior.
 
 Use the existing isolated checkout; do not create a Git worktree unless explicitly requested.

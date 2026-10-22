@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "sourceCommit": "e91b268107fa4b86aa96bd115aebb4cf0e16f8d9",
+  "policy": "Explicit historical debt, never release success. Match exact test file/name and assertion type; new failures block CI. Never update frozen evidence to satisfy these tests.",
+  "failures": [
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "error": {
+        "code": "UNKNOWN",
+        "operator": null,
+        "name": "TypeError"
+      },
+      "reason": "Removed drag handles; unresolved historical expectation"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links",
+      "error": {
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual",
+        "name": "AssertionError"
+      },
+      "reason": "Frozen historical evidence differs from current source"
+    }
+  ]
+}

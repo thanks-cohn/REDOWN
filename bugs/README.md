@@ -588,3 +588,8 @@ User reported Get URL produced no visible result. Confirmed source defect: gener
 ### Enable public URL — browser retest pending (22 October 2026)
 
 Get URL now offers inline bucket-wide confirmation and explicit managed r2.dev enablement for disabled buckets, then verifies the setting and refreshes choices. Local DOM and mocked provider regressions cover success/cancel/permission failure/read-back failure/stale selection. Installed Chrome/OAuth, public propagation and native clipboard have not been verified here. No live bucket visibility was changed during implementation. If interrupted, reopen URL choices to inspect the setting before retrying.
+
+
+### Reliability foundation — external acceptance remains blocked (22 October 2026)
+
+Unified offline diagnostics and repeatable CI regression reporting are implemented; see docs/reliability/README.md. The seven historical failures remain visible and release checks remain blocked by installed Chrome/live provider/package readiness. Current CI and audit packaging workflows require their first remote execution. Copy/Move404, real-session soak, durable recovery and root/bundled license drift are not resolved by this milestone. No production data or cloud configuration was mutated.
