@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Redacted Explorer diagnostic bundle 1.0.0",
+  "type": "object",
+  "required": [
+    "explorerDiagnosticVersion",
+    "scope",
+    "runId",
+    "exportedAt",
+    "limits",
+    "operations",
+    "limitations"
+  ],
+  "properties": {
+    "explorerDiagnosticVersion": {
+      "const": "1.0.0"
+    },
+    "scope": {
+      "const": "redacted-explorer"
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "exportedAt": {
+      "type": "number"
+    },
+    "limits": {
+      "type": "object"
+    },
+    "operations": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "parentId",
+          "operation",
+          "origin",
+          "context",
+          "runId",
+          "extensionVersion",
+          "startedAt",
+          "state",
+          "events",
+          "truncated"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+          },
+          "parentId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "operation": {
+            "enum": [
+              "navigation",
+              "listing",
+              "pagination",
+              "search",
+              "refresh",
+              "selection",
+              "preview",
+              "lightbox",
+              "download",
+              "upload",
+              "copy",
+              "move",
+              "rename",
+              "delete",
+              "folder.create",
+              "properties",
+              "public.urls",
+              "clipboard",
+              "bucket.switch",
+              "account.switch",
+              "auth",
+              "worker.readiness",
+              "archive"
+            ]
+          },
+          "origin": {
+            "enum": [
+              "runtime",
+              "fixture",
+              "user-report"
+            ]
+          },
+          "context": {
+            "enum": [
+              "options",
+              "background",
+              "worker",
+              "cloudflare",
+              "chrome",
+              "adapter",
+              "fixture"
+            ]
+          },
+          "runId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+          },
+          "extensionVersion": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "startedAt": {
+            "type": "number"
+          },
+          "state": {
+            "enum": [
+              "running",
+              "confirmed",
+              "failed",
+              "unknown",
+              "cancelled"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "sequence",
+                "at",
+                "stage",
+                "component",
+                "outcome"
+              ],
+              "properties": {
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "at": {
+                  "type": "number"
+                },
+                "stage": {
+                  "enum": [
+                    "intent",
+                    "ui.request",
+                    "ui.result",
+                    "message.accept",
+                    "message.result",
+                    "source.identity",
+                    "destination.identity",
+                    "worker.check",
+                    "worker.request",
+                    "worker.response",
+                    "source.read",
+                    "destination.write",
+                    "destination.verify",
+                    "source.cleanup",
+                    "api.request",
+                    "api.response",
+                    "browser.request",
+                    "browser.result",
+                    "state",
+                    "interrupted"
+                  ]
+                },
+                "component": {
+                  "enum": [
+                    "options",
+                    "background",
+                    "worker",
+                    "cloudflare",
+                    "chrome",
+                    "adapter",
+                    "fixture"
+                  ]
+                },
+                "outcome": {
+                  "enum": [
+                    "started",
+                    "confirmed",
+                    "failed",
+                    "unknown",
+                    "cancelled",
+                    "discarded"
+                  ]
+                },
+                "status": {
+                  "type": "integer",
+                  "minimum": 100,
+                  "maximum": 599
+                },
+                "code": {
+                  "enum": [
+                    "EXPLORER_HTTP_NOT_FOUND",
+                    "EXPLORER_SOURCE_NOT_FOUND",
+                    "EXPLORER_SOURCE_KEY_MISMATCH",
+                    "EXPLORER_BUCKET_CONTEXT_MISMATCH",
+                    "EXPLORER_WORKER_NOT_READY",
+                    "EXPLORER_WORKER_CAPABILITY_MISMATCH",
+                    "EXPLORER_AUTH_EXPIRED",
+                    "EXPLORER_PERMISSION_DENIED",
+                    "EXPLORER_REQUEST_TIMEOUT",
+                    "EXPLORER_DESTINATION_CONFLICT",
+                    "EXPLORER_COPY_VERIFICATION_FAILED",
+                    "EXPLORER_UI_STATE_STALE",
+                    "EXPLORER_MESSAGE_HANDLER_MISSING",
+                    "EXPLORER_RESULT_UNCONFIRMED",
+                    "EXPLORER_NETWORK_ERROR",
+                    "EXPLORER_SOURCE_CHANGED",
+                    "EXPLORER_RESTART_INTERRUPTED"
+                  ]
+                },
+                "workerVersion": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "protocol": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "safeTransfers": {
+                  "type": "boolean"
+                },
+                "bindingDeclared": {
+                  "type": "boolean"
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "scope": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+                },
+                "requestId": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+                },
+                "mechanism": {
+                  "enum": [
+                    "api",
+                    "worker",
+                    "browser",
+                    "local"
+                  ]
+                },
+                "role": {
+                  "enum": [
+                    "source",
+                    "destination"
+                  ]
+                },
+                "account": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "bucket": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "key": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "encodedKey": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "etag": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "binding": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "description",
+              "stage",
+              "component",
+              "httpStatus",
+              "retryability",
+              "recovery",
+              "confidence",
+              "rootCause"
+            ],
+            "properties": {
+              "code": {
+                "enum": [
+                  "EXPLORER_HTTP_NOT_FOUND",
+                  "EXPLORER_SOURCE_NOT_FOUND",
+                  "EXPLORER_SOURCE_KEY_MISMATCH",
+                  "EXPLORER_BUCKET_CONTEXT_MISMATCH",
+                  "EXPLORER_WORKER_NOT_READY",
+                  "EXPLORER_WORKER_CAPABILITY_MISMATCH",
+                  "EXPLORER_AUTH_EXPIRED",
+                  "EXPLORER_PERMISSION_DENIED",
+                  "EXPLORER_REQUEST_TIMEOUT",
+                  "EXPLORER_DESTINATION_CONFLICT",
+                  "EXPLORER_COPY_VERIFICATION_FAILED",
+                  "EXPLORER_UI_STATE_STALE",
+                  "EXPLORER_MESSAGE_HANDLER_MISSING",
+                  "EXPLORER_RESULT_UNCONFIRMED",
+                  "EXPLORER_NETWORK_ERROR",
+                  "EXPLORER_SOURCE_CHANGED",
+                  "EXPLORER_RESTART_INTERRUPTED"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "stage": {
+                "enum": [
+                  "intent",
+                  "ui.request",
+                  "ui.result",
+                  "message.accept",
+                  "message.result",
+                  "source.identity",
+                  "destination.identity",
+                  "worker.check",
+                  "worker.request",
+                  "worker.response",
+                  "source.read",
+                  "destination.write",
+                  "destination.verify",
+                  "source.cleanup",
+                  "api.request",
+                  "api.response",
+                  "browser.request",
+                  "browser.result",
+                  "state",
+                  "interrupted"
+                ]
+              },
+              "component": {
+                "enum": [
+                  "options",
+                  "background",
+                  "worker",
+                  "cloudflare",
+                  "chrome",
+                  "adapter",
+                  "fixture"
+                ]
+              },
+              "httpStatus": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 100,
+                "maximum": 599
+              },
+              "retryability": {
+                "enum": [
+                  "requires-action",
+                  "inspect-before-retry"
+                ]
+              },
+              "recovery": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 4
+              },
+              "confidence": {
+                "const": "confirmed-observation"
+              },
+              "rootCause": {
+                "const": "unknown"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

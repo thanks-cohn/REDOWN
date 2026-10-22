@@ -1,0 +1,123 @@
+/* Explorer diagnostics 1.0.0. Bounded, redacted, dependency-free; never performs cloud operations. */
+(function(root){
+'use strict';
+const VERSION='1.0.0',LIMITS=Object.freeze({operations:64,events:64,identities:16,bytes:262144,retentionMs:86400000});
+const operations=['navigation','listing','pagination','search','refresh','selection','preview','lightbox','download','upload','copy','move','rename','delete','folder.create','properties','public.urls','clipboard','bucket.switch','account.switch','auth','worker.readiness','archive'];
+const stages=['intent','ui.request','ui.result','message.accept','message.result','source.identity','destination.identity','worker.check','worker.request','worker.response','source.read','destination.write','destination.verify','source.cleanup','api.request','api.response','browser.request','browser.result','state','interrupted'];
+const components=['options','background','worker','cloudflare','chrome','adapter','fixture'];
+const taxonomy={
+ EXPLORER_HTTP_NOT_FOUND:['An endpoint returned HTTP 404; the root cause is unknown.','inspect-route'],
+ EXPLORER_SOURCE_NOT_FOUND:['The addressed storage binding did not contain the exact requested key.','compare-identities'],
+ EXPLORER_SOURCE_KEY_MISMATCH:['Comparable source-key fingerprints disagree.','inspect-key-construction'],
+ EXPLORER_BUCKET_CONTEXT_MISMATCH:['Comparable bucket-context fingerprints disagree.','inspect-binding'],
+ EXPLORER_WORKER_NOT_READY:['Worker execution/readiness could not be established.','check-worker'],
+ EXPLORER_WORKER_CAPABILITY_MISMATCH:['Observed Worker capabilities do not satisfy the request.','review-worker-version'],
+ EXPLORER_AUTH_EXPIRED:['Authorization was rejected; token expiry is not independently established.','reconnect'],
+ EXPLORER_PERMISSION_DENIED:['Access was forbidden; permission or policy needs inspection.','inspect-permissions'],
+ EXPLORER_REQUEST_TIMEOUT:['Request deadline elapsed; a write may have committed.','inspect-destination-before-retry'],
+ EXPLORER_DESTINATION_CONFLICT:['Destination exists or changed during the operation.','choose-conflict-action'],
+ EXPLORER_COPY_VERIFICATION_FAILED:['Destination verification did not establish the expected object.','preserve-source'],
+ EXPLORER_UI_STATE_STALE:['An older UI response was discarded.','refresh-view'],
+ EXPLORER_MESSAGE_HANDLER_MISSING:['No compatible message handler was observed.','check-extension-version'],
+ EXPLORER_RESULT_UNCONFIRMED:['Available evidence does not establish completion.','collect-evidence'],
+ EXPLORER_NETWORK_ERROR:['Transport failed without an authoritative object result.','inspect-connection'],
+ EXPLORER_SOURCE_CHANGED:['Source version changed before cleanup.','preserve-source'],
+ EXPLORER_RESTART_INTERRUPTED:['Collection restarted while the operation was incomplete.','inspect-outcome-before-retry']
+};
+const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value);
+const hex=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+const cleanId=value=>uuid(value)?value:null;
+function classify({status,code,name}={}){
+ if(taxonomy[code])return code;
+ if(name==='TimeoutError')return 'EXPLORER_REQUEST_TIMEOUT';
+ if(name==='AbortError')return 'EXPLORER_RESULT_UNCONFIRMED';
+ return ({401:'EXPLORER_AUTH_EXPIRED',403:'EXPLORER_PERMISSION_DENIED',404:'EXPLORER_HTTP_NOT_FOUND',409:'EXPLORER_DESTINATION_CONFLICT',412:'EXPLORER_DESTINATION_CONFLICT'})[status]||'EXPLORER_RESULT_UNCONFIRMED';
+}
+function failure(code,stage,component,status){
+ code=taxonomy[code]?code:'EXPLORER_RESULT_UNCONFIRMED';
+ return {code,description:taxonomy[code][0],stage,component,httpStatus:Number.isInteger(status)&&status>=100&&status<=599?status:null,retryability:['EXPLORER_DESTINATION_CONFLICT','EXPLORER_PERMISSION_DENIED'].includes(code)?'requires-action':'inspect-before-retry',recovery:[taxonomy[code][1]],confidence:'confirmed-observation',rootCause:'unknown'};
+}
+function safeEvent(event,sequence,now){
+ if(!event||!stages.includes(event.stage)||!components.includes(event.component))return null;
+ const out={sequence,at:Number.isFinite(event.at)?event.at:now(),stage:event.stage,component:event.component,outcome:['started','confirmed','failed','unknown','cancelled','discarded'].includes(event.outcome)?event.outcome:'unknown'};
+ if(Number.isInteger(event.status)&&event.status>=100&&event.status<=599)out.status=event.status;
+ if(taxonomy[event.code])out.code=event.code;
+ if(Number.isInteger(event.workerVersion)&&event.workerVersion>=0&&event.workerVersion<1000)out.workerVersion=event.workerVersion;
+ if(Number.isInteger(event.protocol)&&event.protocol>=0&&event.protocol<100)out.protocol=event.protocol;
+ if(typeof event.safeTransfers==='boolean')out.safeTransfers=event.safeTransfers;
+ if(typeof event.bindingDeclared==='boolean')out.bindingDeclared=event.bindingDeclared;
+ if(Number.isSafeInteger(event.size)&&event.size>=0)out.size=event.size;
+ for(const key of ['account','bucket','key','encodedKey','etag','binding'])if(hex(event[key]))out[key]=event[key];
+ if(uuid(event.scope))out.scope=event.scope;
+ if(uuid(event.requestId))out.requestId=event.requestId;
+ if(['api','worker','browser','local'].includes(event.mechanism))out.mechanism=event.mechanism;
+ if(['source','destination'].includes(event.role))out.role=event.role;
+ return out;
+}
+function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.crypto,context='background',extensionVersion='unknown'}={}){
+ let enabled=false,records=[],sequence=0,seed=null;const runId=id();
+ function prune(){const cutoff=now()-LIMITS.retentionMs;records=records.filter(op=>op.startedAt>=cutoff).slice(-LIMITS.operations);while(records.length&&JSON.stringify(records).length>LIMITS.bytes-4096)records.shift();}
+ function begin(operation,{operationId,parentId,origin='runtime'}={}){
+  if(!enabled||!operations.includes(operation))return null;
+  const existing=records.find(op=>op.id===operationId);if(existing)return existing.id;
+  const op={id:cleanId(operationId)||id(),parentId:cleanId(parentId),operation,origin:['runtime','fixture','user-report'].includes(origin)?origin:'runtime',context,runId,extensionVersion:/^[a-zA-Z0-9.+_-]{1,64}$/.test(extensionVersion)?extensionVersion:'unknown',startedAt:now(),state:'running',events:[],truncated:false};
+  records.push(op);prune();return op.id;
+ }
+ function record(operationId,event){
+  try{if(!enabled)return false;prune();const op=records.find(op=>op.id===operationId);if(!op)return false;const safe=safeEvent(event,++sequence,now);if(!safe)return false;
+   if(op.events.length>=LIMITS.events){op.truncated=true;return false;}op.events.push(safe);prune();return true;
+  }catch{return false;}
+ }
+ function finish(operationId,state='unknown',error){
+  try{const op=records.find(op=>op.id===operationId);if(!enabled||!op)return;
+   op.state=['confirmed','failed','unknown','cancelled'].includes(state)?state:'unknown';
+   if(error)op.error=failure(classify(error),stages.includes(error.stage)?error.stage:'message.result',components.includes(error.component)?error.component:'background',error.status);prune();
+  }catch{}
+ }
+ async function keySeed(){if(!seed)seed=Array.from(cryptoApi.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');return seed;}
+ async function fingerprint(kind,value,secret){
+  const raw=String(value??'');const material=secret||await keySeed();
+  const key=await cryptoApi.subtle.importKey('raw',new TextEncoder().encode(material),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  const hash=await cryptoApi.subtle.sign('HMAC',key,new TextEncoder().encode(kind+'\0'+raw));return Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
+ }
+ async function identity(operationId,source,key,{role='source',stage='source.identity'}={}){
+  try{if(!enabled||!uuid(operationId))return;
+   const values=await Promise.all([fingerprint('account',source?.accountId),fingerprint('bucket',JSON.stringify([source?.accountId,source?.bucketName])),fingerprint('key',key),fingerprint('key',String(key??'').split('/').map(encodeURIComponent).join('/'))]);
+   record(operationId,{stage,component:context,role,scope:runId,account:values[0],bucket:values[1],key:values[2],encodedKey:values[3],outcome:'confirmed'});
+  }catch{}
+ }
+ function exportBundle(){prune();return {explorerDiagnosticVersion:VERSION,scope:'redacted-explorer',runId,exportedAt:now(),limits:LIMITS,operations:JSON.parse(JSON.stringify(records)),limitations:['Fingerprints comparable only within their recorded scope','No credentials, private names, URLs or contents','Binding declaration is not platform binding introspection','Collection is bounded and may be truncated','Observed completion is not automatically byte verification']};}
+ function ingest(bundle,{restart=false}={}){
+  if(!bundle||bundle.explorerDiagnosticVersion!==VERSION||!Array.isArray(bundle.operations)||bundle.operations.length>LIMITS.operations||JSON.stringify(bundle).length>LIMITS.bytes)throw Error('INVALID_EXPLORER_BUNDLE');
+  const staged=[];
+  for(const raw of bundle.operations){
+   if(!uuid(raw.id)||!operations.includes(raw.operation)||!Array.isArray(raw.events)||raw.events.length>LIMITS.events||!Number.isFinite(raw.startedAt))throw Error('INVALID_EXPLORER_OPERATION');
+   const clean={id:raw.id,parentId:cleanId(raw.parentId),operation:raw.operation,origin:['runtime','fixture','user-report'].includes(raw.origin)?raw.origin:'runtime',context:components.includes(raw.context)?raw.context:'adapter',runId:cleanId(raw.runId)||runId,extensionVersion:/^[a-zA-Z0-9.+_-]{1,64}$/.test(raw.extensionVersion)?raw.extensionVersion:'unknown',startedAt:raw.startedAt,state:['running','confirmed','failed','unknown','cancelled'].includes(raw.state)?raw.state:'unknown',events:raw.events.map((event,i)=>safeEvent(event,i+1,now)),truncated:raw.truncated===true};
+   if(clean.events.some(event=>!event))throw Error('INVALID_EXPLORER_EVENT');
+   if(raw.error)clean.error=failure(classify(raw.error),stages.includes(raw.error.stage)?raw.error.stage:'message.result',components.includes(raw.error.component)?raw.error.component:'adapter',raw.error.httpStatus);
+   if(restart&&clean.state==='running'){clean.state='unknown';clean.error=failure('EXPLORER_RESTART_INTERRUPTED','interrupted','adapter');clean.events.push({sequence:clean.events.length+1,at:now(),stage:'interrupted',component:'adapter',outcome:'unknown'});clean.events=clean.events.slice(-LIMITS.events);}
+   staged.push(clean);
+  }
+  for(const clean of staged){const old=records.findIndex(op=>op.id===clean.id);if(old>=0)records[old]=clean;else records.push(clean);}
+  prune();
+ }
+ function diagnose(operationId){
+  const op=records.find(op=>op.id===operationId);if(!op)return {status:'unavailable',findings:[],missing:['operation trace']};
+  const findings=[],events=op.events;
+  const add=(confidence,code,evidence,missing)=>findings.push({confidence,code,description:taxonomy[code]?.[0]||code,evidence,missing});
+  for(const event of events.filter(event=>event.status===404))add('confirmed','EXPLORER_HTTP_NOT_FOUND',[event.sequence],['Root cause requires route, binding and exact-key evidence']);
+  for(const event of events.filter(event=>event.code==='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[event.sequence],['A missing key in the addressed binding does not prove the intended bucket lacks it']);
+  const identities=events.filter(e=>e.key&&e.role==='source');
+  for(const a of identities)for(const b of identities)if(a.sequence<b.sequence&&a.scope===b.scope){
+   if(a.key!==b.key)add('confirmed','EXPLORER_SOURCE_KEY_MISMATCH',[a.sequence,b.sequence],[]);
+   if(a.bucket&&b.bucket&&a.bucket!==b.bucket)add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[a.sequence,b.sequence],[]);
+  }
+  const match=identities[0];const peers=match?records.filter(other=>other.id!==op.id&&['preview','download'].includes(other.operation)&&other.state==='confirmed'&&other.events.some(e=>e.key===match.key&&e.bucket===match.bucket&&e.scope===match.scope)):[];
+  if(peers.length&&events.some(e=>e.status===404))add('strongly-supported','API_WORKER_PATH_DIVERGENCE',events.filter(e=>e.status===404).map(e=>e.sequence),['Inspect Worker route and binding; API success does not prove Worker identity']);
+  if(!findings.length)add('unknown','EXPLORER_RESULT_UNCONFIRMED',[],['No deterministic failure signature is established']);
+  return {status:'partial',operationId,findings,relatedSuccesses:peers.map(p=>p.id),rootCause:'unknown',missing:['Installed extension build identity','Observed provider binding settings','Live destination read/hash unless separately recorded'],verificationPlan:['Use explicitly authorized disposable objects','Compare same-scope source identity fingerprints across API and Worker','Inspect observed Worker version and binding declaration versus provider settings','Copy once, independently read/hash destination and confirm source remains','Do not replay an ambiguous write; inspect destination first']};
+ }
+ return {begin,record,finish,identity,fingerprint,keySeed,runId,exportBundle,ingest,diagnose,setEnabled(value){enabled=value===true;if(!enabled){records=[];seed=null;}},get enabled(){return enabled;},getOperationTrace(operationId){prune();const op=records.find(op=>op.id===operationId);return op?JSON.parse(JSON.stringify(op)):null;}};
+}
+root.RedownExplorerDiagnostics={VERSION,LIMITS,operations,stages,components,taxonomy,classify,create};
+})(globalThis);
