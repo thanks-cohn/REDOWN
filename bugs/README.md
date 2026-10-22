@@ -593,3 +593,8 @@ Get URL now offers inline bucket-wide confirmation and explicit managed r2.dev e
 ### Reliability foundation — external acceptance remains blocked (22 October 2026)
 
 Unified offline diagnostics and repeatable CI regression reporting are implemented; see docs/reliability/README.md. The seven historical failures remain visible and release checks remain blocked by installed Chrome/live provider/package readiness. Current CI and audit packaging workflows require their first remote execution. Copy/Move404, real-session soak, durable recovery and root/bundled license drift are not resolved by this milestone. No production data or cloud configuration was mutated.
+
+
+### Unified agent inspection — remaining boundaries (22 October 2026)
+
+The offline gateway now routes all five existing inspection APIs and detects registration/ownership drift. Browser/live-provider evidence, complete runtime span correlation, durable recovery and release1 acceptance remain separate work. The project/semantic catalogs retain visible historical/proposed freshness limitations and the seven known regression failures; accepted Forever Works authority is not implemented. See docs/reliability/UNIFIED_AGENT_API.md for ownership and collision audit.

@@ -1,0 +1,3 @@
+Gateway: 2 schemas valid;56 routed/error fixtures pass; extra fields, unsupported versions/states and expanded limits rejected.
+Explorer: 2 schemas valid;17 simulated bundles pass; unredacted fields and unknown probes rejected.
+Runtime: 2 schemas valid;5 responses and1 bundle pass; oversized bundle rejected.

@@ -1,6 +1,6 @@
 # REDOWN reliability foundation
 
-Start here before adding another feature. Baseline main: `e91b268107fa4b86aa96bd115aebb4cf0e16f8d9`.
+Start here before adding another feature. The current unified inspection contract and cold-start workflow are in [UNIFIED_AGENT_API.md](UNIFIED_AGENT_API.md). Baseline main: `e91b268107fa4b86aa96bd115aebb4cf0e16f8d9`.
 This milestone improves repeatability and investigation; it does not certify worldwide scale, installed Chrome or live transfers.
 
 ## One diagnostic entrance
@@ -16,9 +16,9 @@ npm run diagnostics -- getVerificationStatus
 npm run diagnostics -- getReleaseReadiness
 ```
 
-`agent/diagnostics` is an offline facade over existing Explorer APIs and a curated subsystem/namespace registry. It does not replace frozen project/debug/semantic contracts, execute tests, inspect browser data or contact providers. Project knowledge and imported runtime evidence stay distinct. The subsystem map includes core Explorer, auth, ingest, destinations, bridge, Worker and packaging entry points with explicit coverage gaps; it is not an exhaustive call graph. Legacy namespaces retain their own discovery/version contracts.
+`agent/diagnostics` is an offline facade routing all five existing inspection APIs through the single namespace/ownership registry. It does not replace frozen project/debug/semantic contracts, execute tests, inspect browser data or contact providers. Project knowledge and imported runtime evidence stay distinct. The subsystem map includes core Explorer, auth, ingest, destinations, bridge, Worker and packaging entry points with explicit coverage gaps; it is not an exhaustive call graph. Legacy namespaces retain their own discovery/version contracts.
 
-Queries return diagnosticApiVersion1.0.0, state, scope and data/error. Unknown operations/arguments fail closed. CLI input is bounded; bundles are bounded at256KiB and re-sanitized by the existing Explorer collector. Returned values are copied. Error paths do not echo supplied tokens or malformed bundles. Trace IDs and failure codes route to existing Explorer queries, with an explicit missing-runtime-evidence boundary when no bundle was supplied. Unknown failure codes are unavailable, not a guessed diagnosis.
+Queries return diagnosticApiVersion1.1.0, state, scope and data/error. Unknown operations/arguments fail closed. CLI input is bounded; bundles are bounded at256KiB and re-sanitized by the existing Explorer collector. Returned values are copied. Error paths do not echo supplied tokens or malformed bundles. Trace IDs and failure codes route to existing Explorer queries, with an explicit missing-runtime-evidence boundary when no bundle was supplied. Unknown failure codes are unavailable, not a guessed diagnosis.
 
 Verification-report inspection reads only the fixed local `work/reliability/latest.json`, bounds its size, validates repository paths and rejects traversal/outside-root realpaths. It compares hashes for recorded source files. Its `partial` result never certifies a release: local reports are unauthenticated, omitted/untracked sources and live behavior are not established. Rerun after source changes. Results from the older recorded release-gates file are labelled historical requirements, not freshly executed passes.
 
@@ -30,7 +30,7 @@ npm run reliability:check
 npm run reliability:release
 ```
 
-The explicit runner executes syntax checks, current Explorer architecture validation and every tests/*.test.mjs file. It never launches a browser, uses credentials, runs a user-supplied command or mutates cloud resources. Its source inventory records per-file SHA-256, a combined digest, local HEAD and tracked-dirty state for tracked extension/agent/scripts/tests/schemas/local/worker/CI/package sources. This is a scoped source fingerprint, not a full repository tree or a signed attestation. New files must be tracked to appear in that inventory.
+The explicit runner executes syntax checks, current Explorer architecture validation, gateway registry validation and every tests/*.test.mjs file. It never launches a browser, uses credentials, runs a user-supplied command or mutates cloud resources. Its source inventory records per-file SHA-256, a combined digest, local HEAD and tracked-dirty state for tracked extension/agent/scripts/tests/schemas/local/worker/CI/package sources. This is a scoped source fingerprint, not a full repository tree or a signed attestation. New files must be tracked to appear in that inventory.
 
 The Node event reporter emits test file/name, outcome and exception type/code/operator, rather than arbitrary error bodies. `regression-baseline.json` records the seven known historical failures with reasons. CI accepts only those exact file/name/failure-type combinations as visible debt. Unexpected/changed failures, missing baseline tests, skipped/todo tests, duplicate failure identities, inconsistent exits, execution errors and timeouts fail the gate. Resolved baseline assertions are reported; they are not required to keep failing. Never refresh frozen historical source hashes to satisfy a test.
 

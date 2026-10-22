@@ -37,5 +37,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install jsonschema==4.26.0
+      - run: python tests/agent-gateway-schema.py
       - run: python tests/explorer-diagnostic-schema.py
       - run: python tests/runtime-schema-conformance.py

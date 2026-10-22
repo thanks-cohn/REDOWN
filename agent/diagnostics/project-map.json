@@ -1,20 +1,75 @@
 {
-  "version":"1.0.0",
-  "coverage":"Curated subsystem entry points, not a complete call graph or proof of runtime health.",
-  "subsystems":[
-    {"id":"explorer","purpose":"Browse, preview, organize and share stored files","entry":"extension/options.js","adapter":"agent/explorer/cli.mjs","discovery":"describeExplorer","tests":["navigation","transfers","urls-and-status"],"boundary":"Installed Chrome and deployed provider behavior require separate evidence"},
-    {"id":"authorization","purpose":"Cloudflare login, renewal and reconnect","entry":"extension/cloudflare-auth.js","adapter":"agent/runtime/cli.mjs","discovery":"describe","tests":["connections"],"boundary":"Mock expiry is not a real-session soak test"},
-    {"id":"ingest","purpose":"Save browser and remote content to configured destinations","entry":"extension/background.js","adapter":"agent/semantic/cli.mjs","discovery":"describe","tests":[],"boundary":"Remote write idempotency and durable recovery remain release gates"},
-    {"id":"destinations","purpose":"Simple and nested right-click destination selection","entry":"extension/nested-locations.js","adapter":"agent/semantic/cli.mjs","discovery":"describe","tests":[],"boundary":"Native browser context menu needs installed-extension testing"},
-    {"id":"local-bridge","purpose":"Optional local ingest bridge","entry":"local/bridge.mjs","adapter":null,"tests":[],"boundary":"No general local filesystem diagnostic connector is implemented"},
-    {"id":"worker","purpose":"Provider-side storage and verified transfer execution","entry":"extension/background.js","adapter":"agent/explorer/cli.mjs","discovery":"getWorkerCompatibility","tests":["transfers"],"boundary":"worker/src/index.js is a different ASSETS Worker; extension uses embedded STORAGE Worker"},
-    {"id":"packaging","purpose":"Explicit runtime allowlist and distributable audit","entry":"scripts/package_chrome_store.py","adapter":null,"tests":[],"boundary":"License drift, installed package and store review remain independent gates"}
-  ],
-  "namespaces":[
-    {"id":"project","version":"0.1","cli":"agent/cli.mjs","discovery":"describe","scope":"Frozen historical project catalog; inspect freshness"},
-    {"id":"debug","version":"0.1","cli":"agent/debug/cli.mjs","discovery":"describe","scope":"Historical incident records; separate from live observations"},
-    {"id":"semantic","version":"0.1","cli":"agent/semantic/cli.mjs","discovery":"describe","scope":"Proposed current-source relationships; no accepted Forever authority"},
-    {"id":"runtime","version":"1.0.0","cli":"agent/runtime/cli.mjs","discovery":"describe","scope":"Runtime bundle inspection; no live execution"},
-    {"id":"explorer","version":"1.0.0","cli":"agent/explorer/cli.mjs","discovery":"describeExplorer","scope":"Current Explorer architecture and redacted trace inspection"}
+  "version": "1.0.0",
+  "coverage": "Curated subsystem entry points, not a complete call graph or proof of runtime health.",
+  "subsystems": [
+    {
+      "id": "explorer",
+      "purpose": "Browse, preview, organize and share stored files",
+      "entry": "extension/options.js",
+      "adapter": "agent/explorer/cli.mjs",
+      "discovery": "describeExplorer",
+      "tests": [
+        "navigation",
+        "transfers",
+        "urls-and-status"
+      ],
+      "boundary": "Installed Chrome and deployed provider behavior require separate evidence"
+    },
+    {
+      "id": "authorization",
+      "purpose": "Cloudflare login, renewal and reconnect",
+      "entry": "extension/cloudflare-auth.js",
+      "adapter": "agent/runtime/cli.mjs",
+      "discovery": "describe",
+      "tests": [
+        "connections"
+      ],
+      "boundary": "Mock expiry is not a real-session soak test"
+    },
+    {
+      "id": "ingest",
+      "purpose": "Save browser and remote content to configured destinations",
+      "entry": "extension/background.js",
+      "adapter": "agent/semantic/cli.mjs",
+      "discovery": "describe",
+      "tests": [],
+      "boundary": "Remote write idempotency and durable recovery remain release gates"
+    },
+    {
+      "id": "destinations",
+      "purpose": "Simple and nested right-click destination selection",
+      "entry": "extension/nested-locations.js",
+      "adapter": "agent/semantic/cli.mjs",
+      "discovery": "describe",
+      "tests": [],
+      "boundary": "Native browser context menu needs installed-extension testing"
+    },
+    {
+      "id": "local-bridge",
+      "purpose": "Optional local ingest bridge",
+      "entry": "local/bridge.mjs",
+      "adapter": null,
+      "tests": [],
+      "boundary": "No general local filesystem diagnostic connector is implemented"
+    },
+    {
+      "id": "worker",
+      "purpose": "Provider-side storage and verified transfer execution",
+      "entry": "extension/background.js",
+      "adapter": "agent/explorer/cli.mjs",
+      "discovery": "getWorkerCompatibility",
+      "tests": [
+        "transfers"
+      ],
+      "boundary": "worker/src/index.js is a different ASSETS Worker; extension uses embedded STORAGE Worker"
+    },
+    {
+      "id": "packaging",
+      "purpose": "Explicit runtime allowlist and distributable audit",
+      "entry": "scripts/package_chrome_store.py",
+      "adapter": null,
+      "tests": [],
+      "boundary": "License drift, installed package and store review remain independent gates"
+    }
   ]
 }

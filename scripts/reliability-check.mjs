@@ -17,9 +17,9 @@ else{
   const files=git.stdout.split('\0').filter(Boolean).sort();if(!files.length)throw Error('EMPTY_SOURCE_INVENTORY');
   report.source={commit:run('git',['rev-parse','HEAD'],10000).stdout.trim(),trackedDirty:Boolean(run('git',['status','--porcelain','--untracked-files=no'],10000).stdout.trim()),files:files.map(path=>({path,sha256:createHash('sha256').update(readFileSync(join(root,path))).digest('hex')}))};
   report.source.sha256=createHash('sha256').update(JSON.stringify(report.source.files)).digest('hex');
-  for(const [id,command,argv] of [['syntax',process.platform==='win32'?'npm.cmd':'npm',['run','check']],['architecture',process.execPath,['agent/explorer/cli.mjs','validateArchitecture']]]){
+  for(const [id,command,argv] of [['syntax',process.platform==='win32'?'npm.cmd':'npm',['run','check']],['architecture',process.execPath,['agent/explorer/cli.mjs','validateArchitecture']],['api-registry',process.execPath,['agent/diagnostics/cli.mjs','validateRegistry']]]){
    const result=run(command,argv,60000);let passed=!result.error&&result.exitCode===0;
-   if(id==='architecture')try{passed=passed&&JSON.parse(result.stdout).state==='available';}catch{passed=false;}
+   if(id==='architecture'||id==='api-registry')try{passed=passed&&JSON.parse(result.stdout).state==='available';}catch{passed=false;}
    report.stages.push({id,state:passed?'passed':'failed',...result});
   }
   const tests=readdirSync(join(root,'tests')).filter(p=>p.endsWith('.test.mjs')).sort().map(p=>'tests/'+p);

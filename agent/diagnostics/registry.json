@@ -1,0 +1,697 @@
+{
+  "registryVersion": "1.0.0",
+  "gatewayVersion": "1.1.0",
+  "limits": {
+    "inputBytes": 8192,
+    "responseBytes": 524288,
+    "explorerBundleBytes": 262144,
+    "runtimeBundleBytes": 196608
+  },
+  "gateway": {
+    "id": "diagnostics",
+    "operations": [
+      {
+        "name": "describe",
+        "arguments": {}
+      },
+      {
+        "name": "getProjectMap",
+        "arguments": {}
+      },
+      {
+        "name": "getReleaseReadiness",
+        "arguments": {}
+      },
+      {
+        "name": "getVerificationStatus",
+        "arguments": {}
+      },
+      {
+        "name": "validateRegistry",
+        "arguments": {}
+      },
+      {
+        "name": "getStartGuide",
+        "arguments": {}
+      },
+      {
+        "name": "getTestPlan",
+        "arguments": {
+          "preset": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      {
+        "name": "listOperations",
+        "arguments": {
+          "namespace": {
+            "type": "string",
+            "required": false
+          },
+          "offset": {
+            "type": "integer",
+            "required": false
+          },
+          "limit": {
+            "type": "integer",
+            "required": false
+          }
+        }
+      },
+      {
+        "name": "resolveOperation",
+        "arguments": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      {
+        "name": "getOwnership",
+        "arguments": {
+          "subject": {
+            "type": "string",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "namespaces": [
+    {
+      "id": "project",
+      "version": "0.1",
+      "cli": "agent/cli.mjs",
+      "discovery": "describe",
+      "scope": "Frozen historical project catalog; inspect freshness",
+      "versionField": "apiVersion",
+      "authority": "historical-source-catalog",
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "listOperations",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "projectOverview",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "explainOperation",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getForeverLinks",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      ],
+      "excluded": []
+    },
+    {
+      "id": "debug",
+      "version": "0.1",
+      "cli": "agent/debug/cli.mjs",
+      "discovery": "describe",
+      "scope": "Historical incident records; separate from live observations",
+      "versionField": "debugApiVersion",
+      "authority": "historical-incident-records",
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "debugApiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "validateDebugRecords",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "debugApiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "getIncident",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "debugApiVersion": {
+              "type": "string"
+            },
+            "caseId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getHistory",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "debugApiVersion": {
+              "type": "string"
+            },
+            "caseId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "listIncidents",
+          "arguments": {
+            "requestId": {
+              "type": "string"
+            },
+            "debugApiVersion": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string",
+              "required": false
+            },
+            "severity": {
+              "type": "string",
+              "required": false
+            }
+          }
+        }
+      ],
+      "excluded": []
+    },
+    {
+      "id": "semantic",
+      "version": "0.1",
+      "cli": "agent/semantic/cli.mjs",
+      "discovery": "describe",
+      "scope": "Proposed current-source relationships; no accepted Forever authority",
+      "versionField": "semanticApiVersion",
+      "authority": "proposed-source-relationships",
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "projectOverview",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "validateSemanticGraph",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "listEntities",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "describeEntity",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            },
+            "depth": {
+              "type": "integer",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "traceDependencies",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            },
+            "direction": {
+              "type": "string",
+              "required": false
+            },
+            "depth": {
+              "type": "integer",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "traceEvidence",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            },
+            "depth": {
+              "type": "integer",
+              "required": false
+            },
+            "polarity": {
+              "type": "string",
+              "required": false
+            },
+            "role": {
+              "type": "string",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "explainChangeImpact",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "changed": {
+              "type": "array",
+              "required": true
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "getCoverage",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "exportLesson",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "planVerification",
+          "arguments": {
+            "semanticApiVersion": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      ],
+      "excluded": []
+    },
+    {
+      "id": "runtime",
+      "version": "1.0.0",
+      "cli": "agent/runtime/cli.mjs",
+      "discovery": "describe",
+      "scope": "Runtime bundle inspection; no live execution",
+      "versionField": "runtimeApiVersion",
+      "authority": "passive-events; imported observations only",
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {}
+        },
+        {
+          "name": "snapshot",
+          "arguments": {}
+        },
+        {
+          "name": "exportSupport",
+          "arguments": {}
+        },
+        {
+          "name": "listTraces",
+          "arguments": {
+            "after": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        }
+      ],
+      "excluded": [
+        "clear"
+      ]
+    },
+    {
+      "id": "explorer",
+      "version": "1.0.0",
+      "cli": "agent/explorer/cli.mjs",
+      "discovery": "describeExplorer",
+      "scope": "Current Explorer architecture and redacted trace inspection",
+      "versionField": "explorerDiagnosticVersion",
+      "authority": "current Explorer source and redacted imported traces",
+      "operations": [
+        {
+          "name": "listSmokePresets",
+          "arguments": {}
+        },
+        {
+          "name": "getConnectorCapabilities",
+          "arguments": {}
+        },
+        {
+          "name": "describeExplorer",
+          "arguments": {}
+        },
+        {
+          "name": "listExplorerOperations",
+          "arguments": {}
+        },
+        {
+          "name": "getRecentFailures",
+          "arguments": {}
+        },
+        {
+          "name": "getWorkerCompatibility",
+          "arguments": {}
+        },
+        {
+          "name": "getExplorerState",
+          "arguments": {}
+        },
+        {
+          "name": "exportDiagnosticBundle",
+          "arguments": {}
+        },
+        {
+          "name": "validateArchitecture",
+          "arguments": {}
+        },
+        {
+          "name": "getOperationTrace",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "diagnoseOperation",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getObjectIdentityTrace",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getVerificationPlan",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getSmokePlan",
+          "arguments": {
+            "preset": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "explainOperation",
+          "arguments": {
+            "name": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getFailureDependencies",
+          "arguments": {
+            "code": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "findRelatedIncidents",
+          "arguments": {
+            "code": {
+              "type": "string",
+              "required": false
+            }
+          }
+        }
+      ],
+      "excluded": []
+    }
+  ],
+  "aliases": {
+    "describe": "diagnostics.describe",
+    "getProjectMap": "diagnostics.getProjectMap",
+    "getReleaseReadiness": "diagnostics.getReleaseReadiness",
+    "getVerificationStatus": "diagnostics.getVerificationStatus",
+    "getTestPlan": "diagnostics.getTestPlan",
+    "validateRegistry": "diagnostics.validateRegistry",
+    "getStartGuide": "diagnostics.getStartGuide",
+    "listOperations": "diagnostics.listOperations",
+    "resolveOperation": "diagnostics.resolveOperation",
+    "getOwnership": "diagnostics.getOwnership",
+    "explainOperation": "explorer.explainOperation",
+    "inspectFailure": "explorer.getFailureDependencies",
+    "getOperationTrace": "explorer.getOperationTrace",
+    "diagnoseOperation": "explorer.diagnoseOperation",
+    "getRecentFailures": "explorer.getRecentFailures",
+    "validateArchitecture": "explorer.validateArchitecture"
+  },
+  "ownership": [
+    {
+      "subject": "project.current-relationships",
+      "owner": "semantic.projectOverview",
+      "related": [
+        "project.projectOverview"
+      ],
+      "boundary": "Proposed current relationships and historical source catalog are different evidence"
+    },
+    {
+      "subject": "incident.history",
+      "owner": "debug.listIncidents",
+      "related": [
+        "explorer.findRelatedIncidents"
+      ],
+      "boundary": "Historical DBG cases and Explorer operational incidents have distinct identifiers"
+    },
+    {
+      "subject": "explorer.operation-contract",
+      "owner": "explorer.explainOperation",
+      "related": [
+        "project.explainOperation"
+      ],
+      "boundary": "Explorer uses name; historical project operation uses catalog id"
+    },
+    {
+      "subject": "explorer.trace",
+      "owner": "explorer.getOperationTrace",
+      "related": [
+        "runtime.listTraces"
+      ],
+      "boundary": "Trace/event IDs are namespace-scoped; never join by matching text alone"
+    },
+    {
+      "subject": "runtime.events",
+      "owner": "runtime.listTraces",
+      "related": [
+        "explorer.getRecentFailures"
+      ],
+      "boundary": "Passive runtime codes and Explorer codes keep separate meanings"
+    },
+    {
+      "subject": "verification.latest-local",
+      "owner": "diagnostics.getVerificationStatus",
+      "related": [],
+      "boundary": "Local report freshness is scoped and unauthenticated"
+    },
+    {
+      "subject": "release.requirements",
+      "owner": "diagnostics.getReleaseReadiness",
+      "related": [],
+      "boundary": "Recorded gates do not establish current live readiness"
+    },
+    {
+      "subject": "test.presets",
+      "owner": "explorer.listSmokePresets",
+      "related": [
+        "diagnostics.getTestPlan"
+      ],
+      "boundary": "The gateway constructs plans from the existing Explorer smoke catalog"
+    },
+    {
+      "subject": "architecture.explorer",
+      "owner": "explorer.validateArchitecture",
+      "related": [
+        "semantic.traceDependencies"
+      ],
+      "boundary": "Source anchors are not proof of runtime execution"
+    }
+  ],
+  "unimplemented": [
+    "accepted Forever Works purpose model",
+    "general execution API",
+    "complete live cross-context tracing",
+    "complete project call graph",
+    "additional cloud/filesystem connectors"
+  ]
+}

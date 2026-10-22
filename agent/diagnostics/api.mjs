@@ -5,21 +5,58 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import map from './project-map.json' with {type:'json'};
 import smoke from '../explorer/smoke-presets.json' with {type:'json'};
-import {createExplorerAPI} from '../explorer/api.mjs';
-const methods=['describe','getProjectMap','getReleaseReadiness','getVerificationStatus','getTestPlan','explainOperation','inspectFailure','getOperationTrace','diagnoseOperation','getRecentFailures','validateArchitecture'];
-const fields={describe:[],getProjectMap:[],getReleaseReadiness:[],getVerificationStatus:[],getTestPlan:['preset'],explainOperation:['name'],inspectFailure:['code'],getOperationTrace:['id'],diagnoseOperation:['id'],getRecentFailures:[],validateArchitecture:[]};
+import {createAdapters} from './adapters.mjs';
+import {registry,operations,resolveOperation,validateStructure,validInput} from './registry.mjs';
 const read=path=>readFileSync(new URL('../../'+path,import.meta.url));
-export function createDiagnosticAPI({bundle}={}){
+export function createDiagnosticAPI({bundle,runtimeBundle}={}){
  if(bundle&&Buffer.byteLength(JSON.stringify(bundle))>262144)throw Error('BUNDLE_TOO_LARGE');
- const explorer=createExplorerAPI({bundle});
- const envelope=(state,data,error)=>structuredClone({diagnosticApiVersion:'1.0.0',state,scope:'offline/read-only; repository knowledge and imported observations',...(data===undefined?{}:{data}),...(error?{error:{code:error}}:{})});
+ const catalog=registry();
+ if(runtimeBundle&&Buffer.byteLength(JSON.stringify(runtimeBundle))>catalog.limits.runtimeBundleBytes)throw Error('BUNDLE_TOO_LARGE');
+ const adapters=createAdapters({bundle,runtimeBundle});
+ const envelope=(state,data,error)=>{
+  const result={diagnosticApiVersion:catalog.gatewayVersion,state,scope:'offline/read-only; repository knowledge and imported observations',...(data===undefined?{}:{data}),...(error?{error:{code:error}}:{})};
+  return Buffer.byteLength(JSON.stringify(result))>catalog.limits.responseBytes?{diagnosticApiVersion:catalog.gatewayVersion,state:'failed',scope:result.scope,error:{code:'RESPONSE_TOO_LARGE'}}:structuredClone(result);
+ };
  return {query(operation='describe',input={}){
-  if(!methods.includes(operation))return envelope('failed',undefined,'UNSUPPORTED_OPERATION');
-  if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!fields[operation].includes(k))||fields[operation].some(k=>typeof input[k]!=='string'||!input[k]||input[k].length>160))return envelope('failed',undefined,'INVALID_INPUT');
-  if(operation==='describe')return envelope('available',{operations:methods,execution:false,liveAccess:false,namespaces:map.namespaces,limits:{bundleBytes:262144},unsupported:['automatic repair','arbitrary commands','live browser inspection','complete project call graph','release certification']});
+  const resolved=resolveOperation(operation);
+  if(resolved.error)return envelope('failed',resolved.candidates?{candidates:resolved.candidates}:undefined,resolved.error);
+  if(!validInput(input,resolved.operation))return envelope('failed',undefined,'INVALID_INPUT');
+  const owner=resolved.operation.namespace;
+  if(owner!=='diagnostics'){
+   try{
+    const result=adapters.get(owner).query(resolved.operation.name,input);
+    const state=result.data?.valid===false?'failed':['available','partial','unavailable','failed'].includes(result.state)?result.state:result.error||result.state==='unsupported'?'failed':result.freshness?.status==='current'?'available':'partial';
+    const response=envelope(state,{namespace:owner,operation:resolved.operation.id,nativeVersion:catalog.namespaces.find(n=>n.id===owner).version,authority:resolved.operation.authority,result,evidenceBoundary:owner==='explorer'?(bundle?'Imported redacted observations; not authenticated live truth':'No runtime bundle supplied; project knowledge alone cannot diagnose a live failure'):owner==='runtime'?(runtimeBundle?'Imported passive events, re-sanitized; not a live session':'No runtime bundle supplied; passive runtime observations are unavailable'):'Repository records and source relationships; native provenance/freshness is preserved'});
+    if(Buffer.byteLength(JSON.stringify(response))>catalog.limits.responseBytes)return envelope('failed',undefined,'RESPONSE_TOO_LARGE');
+    return response;
+   }catch{return envelope('failed',undefined,'NAMESPACE_QUERY_FAILED');}
+  }
+  operation=resolved.operation.name;
+  if(operation==='describe')return envelope('available',{operations:operations().map(op=>op.id),aliases:catalog.aliases,execution:false,liveAccess:false,namespaces:catalog.namespaces.map(({operations,...ns})=>({...ns,operationCount:operations.length})),limits:catalog.limits,unsupported:catalog.unimplemented});
+  if(operation==='listOperations'){
+   const all=operations().filter(op=>!input.namespace||op.namespace===input.namespace),offset=input.offset||0,limit=input.limit??50;
+   if(![catalog.gateway.id,...catalog.namespaces.map(n=>n.id)].includes(input.namespace||catalog.gateway.id)||limit<1||limit>100||offset>10000)return envelope('failed',undefined,'INVALID_INPUT');
+   return envelope('available',{operations:all.slice(offset,offset+limit),total:all.length,nextOffset:offset+limit<all.length?offset+limit:null});
+  }
+  if(operation==='resolveOperation'){const found=resolveOperation(input.name);return found.error?envelope('failed',found.candidates?{candidates:found.candidates}:undefined,found.error):envelope('available',found);}
+  if(operation==='getOwnership'){
+   const owners=catalog.ownership.filter(item=>!input.subject||item.subject===input.subject);
+   return owners.length?envelope('available',{owners,unimplemented:catalog.unimplemented}):envelope('unavailable',undefined,'UNKNOWN_SUBJECT');
+  }
+  if(operation==='getStartGuide')return envelope('available',{steps:[['Discover APIs','diagnostics.describe',{}],['Check routing/ownership','diagnostics.validateRegistry',{}],['Locate subsystem','diagnostics.getProjectMap',{}],['Check local evidence','diagnostics.getVerificationStatus',{}],['Inspect release blockers','diagnostics.getReleaseReadiness',{}],['Choose a smoke test','diagnostics.getTestPlan',{preset:'all'}]].map(([purpose,operation,input])=>({purpose,operation,input})),runtimeEvidence:'Import the matching reviewed bundle explicitly; discovery does not connect to a live extension',forever:'No accepted purpose model or certification is claimed'});
+  if(operation==='validateRegistry'){
+   const audit=validateStructure();
+   for(const ns of catalog.namespaces){
+    try{const native=adapters.get(ns.id).query(ns.discovery==='getWorkerCompatibility'?'describeExplorer':ns.discovery,{}),advertised=native.data?.operations;
+     if(native.error||native[ns.versionField]!==ns.version||!Array.isArray(advertised))audit.findings.push({code:'ADAPTER_CONTRACT_MISMATCH',namespace:ns.id});
+     else{const expected=ns.operations.map(op=>op.name).concat(ns.excluded).sort();if(JSON.stringify([...advertised].sort())!==JSON.stringify(expected))audit.findings.push({code:'OPERATION_DRIFT',namespace:ns.id});}
+    }catch{audit.findings.push({code:'ADAPTER_UNAVAILABLE',namespace:ns.id});}
+   }
+   return envelope(audit.findings.length?'failed':'available',{...audit,scope:'Registry coverage/version/ownership against native discovery; not runtime or semantic completeness'});
+  }
   if(operation==='getProjectMap'){
    const subsystems=map.subsystems.map(s=>{try{const source=read(s.entry);return {...s,source:{state:'present',sha256:createHash('sha256').update(source).digest('hex')},testCoverage:s.tests.length?'listed local presets; results unknown':'no dedicated preset catalogued'};}catch{return {...s,source:{state:'unavailable'}};}});
-   return envelope('partial',{...map,subsystems,authority:'current file existence/digests and curated navigation; not behavior verification'});
+   return envelope('partial',{...map,namespaces:catalog.namespaces.map(({operations,...ns})=>ns),subsystems,authority:'current file existence/digests and curated navigation; not behavior verification'});
   }
   if(operation==='getVerificationStatus'){
    try{
@@ -42,8 +79,6 @@ export function createDiagnosticAPI({bundle}={}){
    if(!smoke.presets.some(p=>p.id===input.preset)&&input.preset!=='all')return envelope('failed',undefined,'UNKNOWN_PRESET');
    return envelope('available',{command:['node','scripts/explorer-smoke.mjs','--preset',input.preset],execution:false,evidence:'local simulated providers; never live certification'});
   }
-  const target=operation==='inspectFailure'?'getFailureDependencies':operation;
-  const result=explorer.query(target,input);
-  return envelope(result.state,{namespace:'explorer',result,evidenceBoundary:bundle?'Imported redacted observations; not authenticated live truth':'No runtime bundle supplied; project knowledge alone cannot diagnose a live failure'});
+  return envelope('failed',undefined,'UNSUPPORTED_OPERATION');
  }};
 }

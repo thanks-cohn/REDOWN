@@ -79,3 +79,8 @@ Get URL/status follow-up: [GET_URL_AND_STATUS.md](GET_URL_AND_STATUS.md) documen
 ## Project diagnostic/reliability entrance
 
 See [reliability foundation](../reliability/README.md). `agent/diagnostics/cli.mjs` now provides one offline entrance to current subsystem navigation, existing Explorer traces/test plans and recorded release blockers. `scripts/reliability-check.mjs` runs syntax/architecture/full regressions and distinguishes known debt from new failures. This does not close Copy404 or establish installed/cloud acceptance.
+
+
+## Unified inspection milestone
+
+All five offline namespaces now route through `agent/diagnostics/cli.mjs` with qualified IDs, explicit ownership, isolated bundle imports and native provenance preservation. Start at [the unified contract](../reliability/UNIFIED_AGENT_API.md). Registry/version drift is a required reliability stage; no new live execution authority or incident closure is implied.
