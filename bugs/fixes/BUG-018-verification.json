@@ -1,0 +1,74 @@
+{
+  "bug": "BUG-018",
+  "remediationRound": 5,
+  "recordedAt": "2026-10-22T23:57:17.823841+00:00",
+  "beforeRemoteCommit": "6ed876ebeec59db4a1bc14b37dbff03abaa02591",
+  "scope": "local automated source/DOM/VM/in-memory provider evidence; no installed Chrome or live provider transfer",
+  "beforeComparison": {
+    "tests": 19,
+    "passed": 13,
+    "failed": 6,
+    "source": "pre-change options.js from local HEAD; new UI boundary checks"
+  },
+  "explorerSmoke": {
+    "tests": 182,
+    "passed": 182,
+    "failed": 0,
+    "command": "npm run explorer:smoke -- --preset all"
+  },
+  "reliability": {
+    "state": "partial",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "passed": 329,
+    "knownFailures": [
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions"
+      },
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+      },
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links"
+      }
+    ],
+    "newFailures": [],
+    "incomplete": false
+  },
+  "liveIncident": "EXPLORER-COPY-404-2026-10 remains open; runtime cause unknown"
+}

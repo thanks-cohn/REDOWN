@@ -42,8 +42,11 @@ async function send(message){
   let diagnostic;try{diagnostic=await bridge?.beginMessage(message);}catch{}
   if(diagnostic)message={...message,explorerTrace:diagnostic.wire};
   try { const response=await Promise.race([chrome.runtime.sendMessage(message),new Promise((_,reject)=>{
-    timeout=setTimeout(()=>reject(new Error("REDOWN did not confirm this request. For uploads or changes, refresh the destination before retrying.")),120000);
-  })]); try{await bridge?.reply(diagnostic,response);}catch{} return response; } finally { clearTimeout(timeout); }
+    timeout=setTimeout(()=>reject(Object.assign(new Error("REDOWN did not confirm this request. For uploads or changes, refresh the destination before retrying."),{name:"TimeoutError",code:"EXPLORER_REQUEST_TIMEOUT"})),120000);
+  })]); try{await bridge?.reply(diagnostic,response);}catch{} return response; } catch(error) {
+    try{bridge?.fail(diagnostic,error);}catch{}
+    throw error;
+  } finally { clearTimeout(timeout); }
 }
 async function saveProfiles(){await chrome.storage.local.set({profiles});}
 let nestedSaveQueue=Promise.resolve();
@@ -3065,11 +3068,11 @@ async function setExplorerClipboard(
   items = selectedExplorerItems(),
   source = null,
 ) {
-  if (!items.length) return;
+  if (!items.length) throw Object.assign(new Error("Select a file or folder before copying."),{code:"EXPLORER_SELECTION_EMPTY"});
   if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to copy or move search results.",true);
   if(operation==="move"&&items.some(item=>item.archiveEntry))return finishOperation("Archive entries cannot be moved. Copy or extract them instead.",true);
   const operationTicket=setOperation("clipboard",operation==="move"?"Preparing cut selection…":"Copying selection to REDOWN clipboard…");
-  explorerClipboard = {
+  const clipboard = {
     operation,
     accountId: source?.accountId || workspaceTarget.accountId,
     bucketName: source?.bucketName || workspaceTarget.bucketName,
@@ -3077,112 +3080,125 @@ async function setExplorerClipboard(
     entries: clipboardEntries(items),
     archiveKey: items.some((item) => item.archiveEntry) ? explorerArchive?.key : null,
   };
-  await chrome.storage.session.set({ explorerClipboard });
+  try { await chrome.storage.session.set({ explorerClipboard:clipboard }); }
+  catch { throw Object.assign(new Error("Could not save the REDOWN clipboard. Copy the selection again before pasting."),{code:"EXPLORER_CLIPBOARD_FAILED"}); }
+  // Publish only after persistence succeeds; callers receive this exact selection.
+  explorerClipboard = clipboard;
   renderFileItems();
   finishOperation(`${items.length} item${items.length===1?"":"s"} ${operation==="move"?"cut":"copied"} in REDOWN. Open a destination folder and choose Paste.${operation==="move"?" Originals stay in place until the move succeeds.":""}`,false,operationTicket);
+  return clipboard;
 }
 async function pasteExplorer(
-  destination = { ...explorerSource(), prefix: workspacePrefix },
+  destination = null,
+  clipboard = explorerClipboard,
 ) {
   let operationTicket;
-  if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true,operationTicket);
-  const clipboard=explorerClipboard;
-  if (!clipboard?.entries?.length) return;
-  if (clipboard.archiveKey) {
-    const files=clipboard.entries.filter((entry)=>!entry.folder);
-    operationTicket=setOperation("extract",`Extracting ${files.length} file${files.length===1?"":"s"} to destination…`,"running",0,files.length);
-    const result=await send({type:"cfTransferArchive",source:{accountId:clipboard.accountId,bucketName:clipboard.bucketName,accountName:clipboard.accountName},destination,key:clipboard.archiveKey,entries:files.map((entry)=>entry.key)});
-    if(!result?.ok)return finishOperation(friendlyError(new Error(result?.error||""),"send archive entries"),true,operationTicket);
-    const completed=(result.results||[]).filter((entry)=>entry.status==="extracted").length,failed=(result.results||[]).length-completed;
-    finishOperation(failed?`${completed} files extracted · ${failed} files could not be extracted`:`${completed} files extracted`,Boolean(failed),operationTicket,failed?completed>0?"partial":"failed":result.conflicts?.length?"partial":"done");
-    return;
-  }
-  operationTicket=setOperation(
-    clipboard.operation,
-    `${clipboard.operation === "move" ? "Moving" : "Copying"} ${clipboard.entries.length} selected item${clipboard.entries.length === 1 ? "" : "s"}…`,
-  );
-  const request = {
-    type: "cfTransferObjects",
-    operation: clipboard.operation,
-    source: {
-      accountId: clipboard.accountId,
-      bucketName: clipboard.bucketName,
-      accountName: clipboard.accountName,
-    },
-    destination,
-    entries: clipboard.entries,
-    conflict: "skip",
-  };
-  setExplorerStatus(`${request.operation==="move"?"Moving":"Copying"} ${clipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`,"running",operationTicket);
-  let result = await send(request);
-  if (!result?.ok) {
-    const message=friendlyError(new Error(result?.error || ""),request.operation);
-    finishOperation(message,true,operationTicket);setExplorerStatus(message,"failed",operationTicket);
-    return;
-  }
-  if (result.conflicts?.length) {
-    const choice = prompt(
-      `${result.conflicts.length} item${result.conflicts.length === 1 ? "" : "s"} already exist. Type Replace, Keep both, Skip, or Cancel.`,
-      "Keep both",
-    )
-      ?.trim()
-      .toLowerCase();
-    if (!choice || choice === "cancel") {
-      finishOperation("Paste cancelled",false,operationTicket,"cancelled");setExplorerStatus("Paste cancelled","cancelled",operationTicket);
+  try {
+    destination ||= workspaceTarget?{...explorerSource(),prefix:workspacePrefix}:{};
+    if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true,operationTicket);
+    if (!clipboard?.entries?.length) throw Object.assign(new Error("The REDOWN clipboard is empty. Copy a file or folder first."),{code:"EXPLORER_CLIPBOARD_EMPTY"});
+    if (!destination?.accountId || !destination?.bucketName) throw Object.assign(new Error("Open a destination bucket before pasting."),{code:"EXPLORER_DESTINATION_REQUIRED"});
+    if (clipboard.archiveKey) {
+      const files=clipboard.entries.filter((entry)=>!entry.folder);
+      operationTicket=setOperation("extract",`Extracting ${files.length} file${files.length===1?"":"s"} to destination…`,"running",0,files.length);
+      const result=await send({type:"cfTransferArchive",source:{accountId:clipboard.accountId,bucketName:clipboard.bucketName,accountName:clipboard.accountName},destination,key:clipboard.archiveKey,entries:files.map((entry)=>entry.key)});
+      if(!result?.ok)return finishOperation(friendlyError(new Error(result?.error||""),"send archive entries"),true,operationTicket);
+      const completed=(result.results||[]).filter((entry)=>entry.status==="extracted").length,failed=(result.results||[]).length-completed;
+      finishOperation(failed?`${completed} files extracted · ${failed} files could not be extracted`:`${completed} files extracted`,Boolean(failed),operationTicket,failed?completed>0?"partial":"failed":result.conflicts?.length?"partial":"done");
       return;
     }
-    const conflict = choice.startsWith("r")
-      ? "replace"
-      : choice.startsWith("k")
-        ? "keep"
-        : "skip";
-    if (conflict !== "skip") {
-      const previousCompleted=Number(result.completed)||0,previousErrors=result.errors||[];
-      result = await send({
-        ...request,
-        entries: result.conflicts.map((x) => ({
-          key: x.sourceKey,
-          destinationKey: x.destinationKey,
-          folder: false,
-          displayName: x.sourceKey.split("/").pop(),
-        })),
-        conflict,
-      });
-      if(!result?.ok){
-        finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true,operationTicket);
-        setExplorerStatus(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.","failed",operationTicket);
+    operationTicket=setOperation(
+      clipboard.operation,
+      `${clipboard.operation === "move" ? "Moving" : "Copying"} ${clipboard.entries.length} selected item${clipboard.entries.length === 1 ? "" : "s"}…`,
+    );
+    const request = {
+      type: "cfTransferObjects",
+      operation: clipboard.operation,
+      source: {
+        accountId: clipboard.accountId,
+        bucketName: clipboard.bucketName,
+        accountName: clipboard.accountName,
+      },
+      destination,
+      entries: clipboard.entries,
+      conflict: "skip",
+    };
+    setExplorerStatus(`${request.operation==="move"?"Moving":"Copying"} ${clipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`,"running",operationTicket);
+    let result = await send(request);
+    if (!result?.ok) {
+      const message=friendlyError(new Error(result?.error || ""),request.operation);
+      finishOperation(message,true,operationTicket);setExplorerStatus(message,"failed",operationTicket);
+      return;
+    }
+    if (result.conflicts?.length) {
+      const choice = prompt(
+        `${result.conflicts.length} item${result.conflicts.length === 1 ? "" : "s"} already exist. Type Replace, Keep both, Skip, or Cancel.`,
+        "Keep both",
+      )
+        ?.trim()
+        .toLowerCase();
+      if (!choice || choice === "cancel") {
+        finishOperation("Paste cancelled",false,operationTicket,"cancelled");setExplorerStatus("Paste cancelled","cancelled",operationTicket);
         return;
       }
-      result.completed=previousCompleted+(Number(result.completed)||0);
-      result.errors=[...previousErrors,...(result.errors||[])];
+      const conflict = choice.startsWith("r")
+        ? "replace"
+        : choice.startsWith("k")
+          ? "keep"
+          : "skip";
+      if (conflict !== "skip") {
+        const previousCompleted=Number(result.completed)||0,previousErrors=result.errors||[];
+        result = await send({
+          ...request,
+          entries: result.conflicts.map((x) => ({
+            key: x.sourceKey,
+            destinationKey: x.destinationKey,
+            folder: false,
+            displayName: x.sourceKey.split("/").pop(),
+          })),
+          conflict,
+        });
+        if(!result?.ok){
+          finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true,operationTicket);
+          setExplorerStatus(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.","failed",operationTicket);
+          return;
+        }
+        result.completed=previousCompleted+(Number(result.completed)||0);
+        result.errors=[...previousErrors,...(result.errors||[])];
+      }
     }
+    if (request.operation === "move" && !result.errors?.length&&!result.conflicts?.length&&explorerClipboard===clipboard) {
+      explorerClipboard = null;
+      await chrome.storage.session.remove("explorerClipboard");
+    }
+    const failed = (result.errors || []).length;
+    finishOperation(
+      failed
+        ? `${result.completed || 0} files completed · ${failed} could not be ${request.operation === "move" ? "moved" : "copied"}`
+        : `${result.completed || 0} files ${request.operation === "move" ? "moved" : "copied"}`,
+      Boolean(failed),operationTicket,failed?(Number(result.completed)||0)>0?"partial":"failed":result.conflicts?.length?"partial":"done");
+    const summary=failed?`${result.completed||0} files completed · ${failed} failed. ${result.errors?.[0]?.error||"Refresh both locations before retrying."}`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
+    await browseWorkspace({statusTicket:operationTicket});
+    setExplorerStatus(summary,failed?(result.completed>0?"partial":"failed"):result.conflicts?.length?"partial":"done",operationTicket);
+  } catch(error) {
+    const message=error?.code==="EXPLORER_CLIPBOARD_EMPTY"||error?.code==="EXPLORER_DESTINATION_REQUIRED"?error.message:"The transfer was not confirmed. Refresh the destination before retrying; files may already exist.";
+    finishOperation(message,true,operationTicket);
+    setExplorerStatus(message,"failed",operationTicket);
+    throw error;
   }
-  if (request.operation === "move" && !result.errors?.length&&!result.conflicts?.length&&explorerClipboard===clipboard) {
-    explorerClipboard = null;
-    await chrome.storage.session.remove("explorerClipboard");
-  }
-  const failed = (result.errors || []).length;
-  finishOperation(
-    failed
-      ? `${result.completed || 0} files completed · ${failed} could not be ${request.operation === "move" ? "moved" : "copied"}`
-      : `${result.completed || 0} files ${request.operation === "move" ? "moved" : "copied"}`,
-    Boolean(failed),operationTicket,failed?(Number(result.completed)||0)>0?"partial":"failed":result.conflicts?.length?"partial":"done");
-  const summary=failed?`${result.completed||0} files completed · ${failed} failed. ${result.errors?.[0]?.error||"Refresh both locations before retrying."}`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
-  await browseWorkspace({statusTicket:operationTicket});
-  setExplorerStatus(summary,failed?(result.completed>0?"partial":"failed"):result.conflicts?.length?"partial":"done",operationTicket);
 }
 async function moveSelectionTo(destination) {
   if(selectedExplorerItems().some(item=>item.searchResult))return finishOperation("Open the containing folder to move search results.",true);
-  await setExplorerClipboard(
+  const clipboard=await setExplorerClipboard(
     destination.accountId === workspaceTarget.accountId &&
       destination.bucketName === workspaceTarget.bucketName
       ? "move"
       : "copy",
   );
-  await pasteExplorer({
+  if(clipboard)await pasteExplorer({
     ...destination,
     accountName: accountName(destination.accountId),
-  });
+  },clipboard);
 }
 async function deleteSelection() {
   let operationTicket;
@@ -3459,7 +3475,7 @@ function destinationMenus(){
       if(!response?.ok)throw new Error("Could not load folders. Retry.");
       return response;
     },
-    onChoose:async(operation,destination,items,source)=>{await setExplorerClipboard(operation,items,source);await pasteExplorer(destination);},
+    onChoose:async(operation,destination,items,source)=>{const clipboard=await setExplorerClipboard(operation,items,source);if(clipboard)await pasteExplorer(destination,clipboard);},
     onError:error=>{
       const message=error?.name==="TimeoutError"?"The transfer was not confirmed in time. Refresh the destination before retrying; a copy may already exist.":error?.message||"Could not transfer these files.";
       finishOperation(message,true);setExplorerStatus(message,"failed");
@@ -3471,6 +3487,7 @@ function showExplorerMenu(x, y, item) {
   explorerUrlPopover?.close();
   explorerDestinationMenus?.close();
   const menu = $("explorer-menu");
+  const menuClipboard=explorerClipboard;
   menu.replaceChildren();
 
   const sep = () => {
@@ -3502,7 +3519,7 @@ function showExplorerMenu(x, y, item) {
     };
     menu.append(
       menuButton("Open", () => goLocation(item.accountId, item.bucketName)),
-      menuButton("Paste into bucket", () => pasteExplorer(destination), Boolean(explorerClipboard)),
+      menuButton("Paste into bucket", () => pasteExplorer(destination,menuClipboard), Boolean(explorerClipboard)),
     );
     sep();
     menu.append(
@@ -3523,6 +3540,8 @@ function showExplorerMenu(x, y, item) {
 
   const selected = selectedExplorerItems();
   const hasSelection = selected.length > 0;
+  // A context menu acts on the file/bucket present when it was opened.
+  const menuSource=workspaceTarget?{...explorerSource(),prefix:workspacePrefix}:null;
 
   if (item) {
     if (item.archiveEntry)
@@ -3542,11 +3561,11 @@ function showExplorerMenu(x, y, item) {
 
     sep();
     menu.append(
-      menuButton(item.archiveEntry?"Move unavailable inside archives":"Cut", () => setExplorerClipboard("move"), hasSelection&&!item.archiveEntry),
-      menuButton("Copy", () => setExplorerClipboard("copy"), hasSelection,"Copy for pasting into another REDOWN folder"),
+      menuButton(item.archiveEntry?"Move unavailable inside archives":"Cut", () => setExplorerClipboard("move",selected,menuSource), hasSelection&&!item.archiveEntry),
+      menuButton("Copy", () => setExplorerClipboard("copy",selected,menuSource), hasSelection,"Copy for pasting into another REDOWN folder"),
       menuButton(
         "Paste",
-        () => pasteExplorer(item.folder ? { ...explorerSource(), prefix: item.key } : undefined),
+        () => pasteExplorer({...menuSource,prefix:item.folder?item.key:menuSource.prefix},menuClipboard),
         Boolean(explorerClipboard),
       ),
     );
@@ -3586,7 +3605,7 @@ function showExplorerMenu(x, y, item) {
     );
   } else if (workspaceTarget) {
     menu.append(
-      menuButton("Paste", pasteExplorer, Boolean(explorerClipboard)),
+      menuButton("Paste", () => pasteExplorer(menuSource,menuClipboard), Boolean(menuClipboard)),
       menuButton(explorerArchive?"New folder unavailable inside archives":"New folder", beginNewFolder,!explorerArchive),
       menuButton(explorerArchive?"Upload unavailable inside archives":"Upload files", () => $("local-files").click(),!explorerArchive),
       menuButton("Refresh", () => browseWorkspace()),
@@ -3717,12 +3736,12 @@ function wireWorkspace() {
       explorerSelected = new Set(sortedVisibleItems().map((x) => x.id));
       renderFileItems();
     } else if (command && e.key.toLowerCase() === "c")
-      setExplorerClipboard("copy");
+      {e.preventDefault();void setExplorerClipboard("copy").catch(error=>finishOperation(error.message,true));}
     else if (command && e.key.toLowerCase() === "x")
-      setExplorerClipboard("move");
+      {e.preventDefault();void setExplorerClipboard("move").catch(error=>finishOperation(error.message,true));}
     else if (command && e.key.toLowerCase() === "v") {
       e.preventDefault();
-      pasteExplorer();
+      void pasteExplorer().catch(()=>{});
     } else if (command && e.key.toLowerCase() === "f") {
       e.preventDefault();
       $("workspace-search").focus();
@@ -4469,6 +4488,7 @@ try{
     throw new Error("Select one ordinary file, or copy one file in REDOWN and open its destination bucket first.");
   });
   observer.setStateProvider(()=>({source:workspaceTarget?{...workspaceTarget}:null,prefix:workspacePrefix,selectedCount:explorerSelected.size,loadedCount:explorerItems.length,previewGeneration:workspacePreviewRequestId,hasClipboard:Boolean(explorerClipboard),betaMode:betaModeEnabled,debugMode:debugModeEnabled}));
+  showExplorerMenu=observer.wrap("context.menu",showExplorerMenu);
   goLocation=observer.wrap("navigation",goLocation);
   browseWorkspace=observer.wrap("listing",browseWorkspace);
   runExplorerSearch=observer.wrap("search",runExplorerSearch);

@@ -39,11 +39,13 @@
     },
     {
       "id": "transfers",
-      "purpose": "Real embedded Worker and background: copy, move, rename, exact keys, collision, source preservation and verification",
+      "purpose": "Explorer menu through clipboard and transfer boundaries: copy, move, exact keys, collision, source preservation and verification",
       "files": [
         "tests/explorer-worker.test.mjs",
         "tests/explorer-copy.test.mjs",
-        "tests/download-collisions.test.mjs"
+        "tests/download-collisions.test.mjs",
+        "tests/explorer-menu-actions.test.mjs",
+        "tests/explorer-destination-menu.test.mjs"
       ]
     },
     {

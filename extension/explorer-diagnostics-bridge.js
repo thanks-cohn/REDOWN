@@ -51,11 +51,17 @@ function install({context,chrome,document}){
    lastId=handle.id;
   }catch{}
  }
+ function fail(handle,error){
+  if(!handle)return;
+  const code=core.classify(error);
+  event(handle.id,'ui.result','failed',{code});
+  collector.finish(handle.id,'failed',{code,stage:'ui.result',component:context});lastId=handle.id;persist();
+ }
  function wrap(operation,original){return function(...args){
   if(!collector.enabled)return original.apply(this,args);
   const id=begin(operation,{parentId:parent}),previous=parent;parent=id;event(id,'intent','started');let result;
   try{result=original.apply(this,args);}catch(error){event(id,'ui.result','failed',{code:core.classify(error)});collector.finish(id,'failed',{code:core.classify(error),stage:'ui.result',component:context});throw error;}finally{parent=previous;}
-  const finish=()=>{event(id,'ui.result','unknown');collector.finish(id,'unknown');lastId=id;};
+  const finish=()=>{const state=operation==='context.menu'?'confirmed':'unknown';event(id,'ui.result',state);collector.finish(id,state);lastId=id;};
   if(result&&typeof result.then==='function')return result.then(value=>{finish();return value;},error=>{event(id,'ui.result','failed',{code:core.classify(error)});collector.finish(id,'failed',{code:core.classify(error)});throw error;});finish();return result;
  };}
  function direct(operation,original){return function(source,key,...rest){
@@ -85,7 +91,7 @@ function install({context,chrome,document}){
   try{await ready;await identityReady;if(!collector.enabled||!stateProvider)return;const state=stateProvider(),id=begin('selection');
    const source=state.source||{};event(id,'state','confirmed',{scope:collector.identityScope,account:await collector.fingerprint('account',source.accountId),bucket:await collector.fingerprint('bucket',JSON.stringify([source.accountId,source.bucketName])),key:await collector.fingerprint('key',state.prefix||''),selectedCount:state.selectedCount,loadedCount:state.loadedCount,previewGeneration:state.previewGeneration,hasClipboard:state.hasClipboard,betaMode:state.betaMode,debugMode:state.debugMode});collector.finish(id,'confirmed');
   }catch{}
- },async refreshIdentity(){if(context!=="options")return;const result=await chrome.runtime.sendMessage({type:"explorerDiagnosticsV1",operation:"sessionContext"});if(result.ok)collector.useIdentityContext(result.context);},async sessionContext(){return {scope:collector.identityScope,seed:await collector.keySeed()};},beginMessage,accept,complete,reply,wrap,direct,wire,event,workerEvents,query,get lastId(){return lastId;}};
+ },async refreshIdentity(){if(context!=="options")return;const result=await chrome.runtime.sendMessage({type:"explorerDiagnosticsV1",operation:"sessionContext"});if(result.ok)collector.useIdentityContext(result.context);},async sessionContext(){return {scope:collector.identityScope,seed:await collector.keySeed()};},beginMessage,accept,complete,reply,fail,wrap,direct,wire,event,workerEvents,query,get lastId(){return lastId;}};
 }
 root.RedownExplorerBridge={install,mapping};
 })(globalThis);

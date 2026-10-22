@@ -38,3 +38,15 @@ test('read-only probe button is Debug-only, sends captured file context once and
  const button=w.document.getElementById('explorer-diagnostics-probe');button.click();await tick();assert.equal(calls,0);
  w.document.documentElement.classList.add('debug-mode');button.click();await tick();button.click();assert.equal(calls,1);assert.equal(button.disabled,true);release();await tick();assert.equal(button.disabled,false);assert.match(w.document.getElementById('explorer-diagnostics-output').textContent,/readOnly/);assert.doesNotMatch(w.document.getElementById('explorer-diagnostics-output').textContent,/雪/);dom.window.close();
 });
+
+test('message transport failures finish their trace without recording private error text',async()=>{
+ const chrome={runtime:{getManifest:()=>({version:'fixture'}),sendMessage:async()=>({ok:false})},storage:{local:{get:async()=>({debugModeEnabled:true}),set:async()=>{},remove:async()=>{}},onChanged:{addListener(){}}}};
+ const bridge=globalThis.RedownExplorerBridge.install({context:'options',chrome});await bridge.ready;
+ const handle=await bridge.beginMessage({type:'cfTransferObjects'});
+ bridge.fail(handle,{name:'TimeoutError',message:'SECRET_PRIVATE_URL_TOKEN'});
+ const trace=bridge.collector.getOperationTrace(handle.id);assert.equal(trace.state,'failed');assert.equal(trace.error.code,'EXPLORER_REQUEST_TIMEOUT');assert.doesNotMatch(JSON.stringify(trace),/SECRET_PRIVATE/);
+ const menu=bridge.wrap('context.menu',()=>{throw Object.assign(Error('PRIVATE_FILENAME'),{code:'EXPLORER_SELECTION_EMPTY'});});
+ assert.throws(menu);const failure=bridge.collector.exportBundle().operations.at(-1);assert.equal(failure.operation,'context.menu');assert.equal(failure.error.code,'EXPLORER_SELECTION_EMPTY');assert.doesNotMatch(JSON.stringify(failure),/PRIVATE_FILENAME/);
+ bridge.wrap('context.menu',()=>{})();assert.equal(bridge.collector.exportBundle().operations.at(-1).state,'confirmed');
+ bridge.collector.setEnabled(false);
+});

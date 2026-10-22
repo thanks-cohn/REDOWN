@@ -49,3 +49,22 @@ test('incomplete or cyclic folder listings fail before mutation; exact repeated 
  await assert.rejects(c.listAllObjects('a','b','folder/'),/repeated a folder page/);c.listObjectsPage=async()=>({objects:[],cursor:'',truncated:true});await assert.rejects(c.listAllObjects('a','b'),/incomplete/);
  vm.runInContext(bg.slice(bg.indexOf('function cleanExplorerPrefix('),bg.indexOf('function cleanExplorerKey(')),c);assert.equal(c.cleanExplorerPrefix('folder//nested/'),'folder//nested/');
 });
+
+test('Paste uses an explicit operation clipboard even when the global clipboard changes',async()=>{
+ const h=pasteHarness({ok:true});let request;
+ h.c.send=async message=>{request=message;return {ok:true,completed:1};};
+ await h.c.pasteExplorer({accountId:'a',bucketName:'target'}, {operation:'move',accountId:'original',bucketName:'original',entries:[{key:'original.txt'}]});
+ assert.equal(request.operation,'move');assert.equal(request.source.bucketName,'original');assert.equal(request.entries[0].key,'original.txt');
+});
+test('empty clipboard and missing destination produce actionable feedback and no transfer',async()=>{
+ const h=pasteHarness({ok:true});let calls=0;h.c.send=async()=>calls++;
+ await assert.rejects(h.c.pasteExplorer({accountId:'a',bucketName:'b'},null),{code:'EXPLORER_CLIPBOARD_EMPTY'});
+ assert.match(h.status.textContent,/clipboard is empty/);
+ await assert.rejects(h.c.pasteExplorer({}),{code:'EXPLORER_DESTINATION_REQUIRED'});assert.equal(calls,0);
+});
+test('rejected transfer transport clears working status, preserves clipboard and never replays',async()=>{
+ const h=pasteHarness({});const clipboard=h.c.explorerClipboard;let calls=0;
+ h.c.send=async()=>{calls++;throw Object.assign(Error('private URL must not become feedback'),{name:'TimeoutError'});};
+ await assert.rejects(h.c.pasteExplorer({accountId:'a',bucketName:'target'}),{name:'TimeoutError'});
+ assert.equal(calls,1);assert.equal(h.c.explorerClipboard,clipboard);assert.match(h.status.textContent,/not confirmed.*Refresh/);assert.doesNotMatch(h.status.textContent,/private URL/);assert.equal(h.messages.at(-1).failed,true);
+});

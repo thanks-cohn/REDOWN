@@ -607,3 +607,10 @@ Source corrections: normalize CRLF only in the two affected UI fixture readers (
 Remaining: the user's existing checkout may contain CRLF bytes from before .gitattributes. Architecture/hash and historical byte assertions remain exact and must not be made green by rewriting their expected evidence. Compare against a separate fresh clone with npm ci before altering an existing working directory. Complete Windows regression and installed-extension testing remain separate acceptance requirements; this patch does not certify all 59 failures as resolved. npm install-script warnings for esbuild/sharp/workerd are not, by themselves, proof of these JavaScript test failures.
 
 Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
+
+
+## BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05
+
+**Status:** source/DOM-confirmed clipboard, stale menu and transport-observability defects corrected; installed transfer outcome remains open.
+
+**Recorded:** 2026-10-22T23:56:43+00:00. See [timestamped attempt ledger, causes, solution and acceptance boundary](fixes/BUG-018-explorer-transfer-recurrence-attempt-05.md). Related live incident EXPLORER-COPY-404-2026-10 is not closed by local tests.

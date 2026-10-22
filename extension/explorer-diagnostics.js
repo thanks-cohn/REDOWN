@@ -2,12 +2,15 @@
 (function(root){
 'use strict';
 const VERSION='1.0.0',LIMITS=Object.freeze({operations:64,events:64,identities:16,bytes:262144,retentionMs:86400000});
-const operations=['navigation','listing','pagination','search','refresh','selection','preview','lightbox','download','upload','copy','move','rename','delete','folder.create','properties','public.urls','clipboard','bucket.switch','account.switch','auth','worker.readiness','archive'];
+const operations=['context.menu','navigation','listing','pagination','search','refresh','selection','preview','lightbox','download','upload','copy','move','rename','delete','folder.create','properties','public.urls','clipboard','bucket.switch','account.switch','auth','worker.readiness','archive'];
 const stages=['intent','ui.request','ui.result','message.accept','message.result','source.identity','destination.identity','worker.check','worker.request','worker.response','source.read','destination.write','destination.verify','source.cleanup','api.request','api.response','browser.request','browser.result','state','interrupted'];
 const components=['options','background','worker','cloudflare','chrome','adapter','fixture'];
 const taxonomy={
  EXPLORER_URL_DISCOVERY_FAILED:['File URL configuration discovery failed.','refresh-configuration'],
  EXPLORER_URL_UNAVAILABLE:['No eligible configured shareable address was observed.','review-public-configuration'],
+ EXPLORER_SELECTION_EMPTY:['No files were selected for the action.','select-file'],
+ EXPLORER_CLIPBOARD_EMPTY:['The REDOWN file clipboard is empty.','copy-selection'],
+ EXPLORER_DESTINATION_REQUIRED:['No destination bucket was selected.','choose-destination'],
  EXPLORER_CLIPBOARD_FAILED:['The browser did not confirm clipboard writing.','retry-clipboard'],
  EXPLORER_HTTP_NOT_FOUND:['An endpoint returned HTTP 404; the root cause is unknown.','inspect-route'],
  EXPLORER_SOURCE_NOT_FOUND:['The addressed storage binding did not contain the exact requested key.','compare-identities'],
