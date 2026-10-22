@@ -70,23 +70,27 @@
     function close({restoreFocus=false}={}){
       generation++;if(!active)return;
       const old=active;active=null;old.controller.abort();clearTimeout(old.timer);old.panel.remove();
+      old.anchor?.setAttribute("aria-expanded","false");
       if(restoreFocus&&old.returnFocus?.isConnected)old.returnFocus.focus({preventScroll:true});
     }
     function place(){
       if(!active)return;
-      const {panel,point}=active,rect=panel.getBoundingClientRect();
-      panel.style.left=Math.max(8,Math.min(point.x,view.innerWidth-rect.width-8))+'px';
-      panel.style.top=Math.max(8,Math.min(point.y,view.innerHeight-rect.height-8))+'px';
+      const {panel,point,anchor}=active,rect=panel.getBoundingClientRect();
+      const edge=anchor?.getBoundingClientRect();
+      const x=edge?(edge.right+rect.width+4<=view.innerWidth-8?edge.right+4:edge.left-rect.width-4):point.x;
+      const y=edge?edge.top:point.y;
+      panel.style.left=Math.max(8,Math.min(x,view.innerWidth-rect.width-8))+'px';
+      panel.style.top=Math.max(8,Math.min(y,view.innerHeight-rect.height-8))+'px';
     }
-    async function show({source,key,name,point={x:24,y:24},returnFocus,isCurrent=()=>true}){
+    async function show({source,key,name,point={x:24,y:24},returnFocus,anchor,isCurrent=()=>true}){
       close();const token=++generation,context={source:{accountId:source.accountId,bucketName:source.bucketName},key};
-      const controller=new view.AbortController(),panel=document.createElement('section');panel.className='url-popover';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Get URL — '+String(name||'file'));panel.setAttribute('aria-busy','true');
+      const controller=new view.AbortController(),panel=document.createElement('section');panel.className='url-popover';panel.setAttribute('role',anchor?'menu':'dialog');panel.setAttribute('aria-label','Get URL — '+String(name||'file'));panel.setAttribute('aria-busy','true');
       const head=document.createElement('div');head.className='url-popover-head';
       const title=document.createElement('strong');title.textContent='Get URL — '+String(name||'file');
       const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='url-popover-close';dismiss.textContent='×';dismiss.setAttribute('aria-label','Close Get URL');dismiss.addEventListener('click',()=>close({restoreFocus:true}));head.append(title,dismiss);
       const list=document.createElement('div');list.className='url-popover-list';
       const feedback=document.createElement('div');feedback.className='url-popover-feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.textContent='Loading configured addresses…';panel.append(head,list,feedback);
-      active={panel,controller,point,returnFocus,timer:null};document.body.append(panel);place();dismiss.focus({preventScroll:true});
+      active={panel,controller,point,returnFocus,anchor,timer:null};anchor?.setAttribute("aria-expanded","true");document.body.append(panel);place();dismiss.focus({preventScroll:true});
       const current=()=>token===generation&&active?.panel===panel&&isCurrent();
       const state=(message,state)=>{if(current()){try{onState(message,state);}catch{}place();}};
       state('Loading configured file URLs…','running');emit(context,'intent','started');
@@ -94,7 +98,7 @@
       document.addEventListener('pointerdown',event=>{if(!panel.contains(event.target))close();},options);
       document.addEventListener('keydown',event=>{
         if(!current())return;
-        if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close({restoreFocus:true});return;}
+        if(event.key==='Escape'||anchor&&event.key==='ArrowLeft'){event.preventDefault();event.stopPropagation();close({restoreFocus:true});return;}
         if(!panel.contains(event.target))return;
         // Stop Explorer shortcuts without blocking normal button activation.
         event.stopPropagation();
@@ -118,7 +122,7 @@
       for(const item of items){
         const enabled=item.state==='configured';if(enabled)eligible++;
         const endpoint=classify(item);emit(context,'ui.result',enabled?'confirmed':'unknown',{endpoint,loadedCount:1});
-        const row=document.createElement('button');row.type='button';row.className='url-popover-row';row.disabled=!enabled;
+        const row=document.createElement('button');row.type='button';row.className='url-popover-row';row.disabled=!enabled;if(anchor)row.setAttribute("role","menuitem");
         const label=document.createElement('strong');label.textContent=String(item.label||'Public address').slice(0,100);
         const address=document.createElement('code');address.textContent=item.url;address.title=item.url;
         const description=document.createElement('span');description.className='url-popover-state';description.textContent=enabled?'Configured public URL · accessibility not verified':item.state==='restricted'?'Unavailable · public access disabled':item.state==='needs-setup'?'Unavailable · DNS, ownership or SSL pending':'Unavailable · configuration not verified';
@@ -139,6 +143,7 @@
       state(eligible?(incomplete?'File URLs loaded; some addresses are unavailable.':'File URLs loaded. Accessibility has not been verified.'):feedback.textContent,eligible&&!incomplete?'success':'partial');
       emit(context,'ui.result',eligible&&!incomplete?'confirmed':'unknown',{loadedCount:items.length,code:!eligible?'EXPLORER_URL_UNAVAILABLE':undefined});
       place();
+      if(anchor&&document.activeElement===dismiss)list.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
     }
     return {show,close,get element(){return active?.panel||null;}};
   }

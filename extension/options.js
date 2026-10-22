@@ -3399,9 +3399,9 @@ function urlPopover(){
     }
   });
 }
-async function copyItemUrl(item,{source,point,returnFocus}={}){
+async function copyItemUrl(item,{source,point,returnFocus,anchor}={}){
   const captured={...(source||(item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:explorerSource()))};
-  return urlPopover().show({source:captured,key:item.key,name:item.name,point,returnFocus:returnFocus||rootRow(item.id),isCurrent:()=>item.searchResult||captured.accountId===workspaceTarget?.accountId&&captured.bucketName===workspaceTarget?.bucketName});
+  return urlPopover().show({source:captured,key:item.key,name:item.name,point,anchor,returnFocus:returnFocus||rootRow(item.id),isCurrent:()=>item.searchResult||captured.accountId===workspaceTarget?.accountId&&captured.bucketName===workspaceTarget?.bucketName});
 }
 async function explorerUploadFiles(files, prefix = workspacePrefix) {
   if (!files?.length) return;
@@ -3439,6 +3439,15 @@ function menuButton(label, action, enabled = true, description = label) {
     catch(error){finishOperation(error?.message || "That action could not finish. Please retry.",true);}
   };
   return b;
+}
+function urlMenuButton(item,source,point){
+  const button=menuButton("Get URL",null,true,"Choose a configured file URL to copy");
+  button.classList.add("url-menu-trigger");
+  button.setAttribute("aria-haspopup","menu");button.setAttribute("aria-expanded","false");
+  const open=()=>copyItemUrl(item,{source,point,anchor:button,returnFocus:button});
+  button.onclick=event=>{event.stopPropagation();void open();};
+  button.onkeydown=event=>{if(event.key==="ArrowRight"){event.preventDefault();event.stopPropagation();void open();}};
+  return button;
 }
 let explorerDestinationMenus;
 function destinationMenus(){
@@ -3478,7 +3487,7 @@ function showExplorerMenu(x, y, item) {
 
   if(item?.searchResult){
     menu.append(menuButton(item.folder?"Open containing folder":"Preview",()=>item.folder?goToSearchResult(item):selectSingleExplorerItem(item,{focus:true})),menuButton("Open containing folder",()=>goToSearchResult(item)));
-    if(!item.folder)menu.append(menuButton("Get URL",()=>copyItemUrl(item,{source:{accountId:item.accountId,bucketName:item.bucketName},point:{x,y},returnFocus:rootRow(item.id)})));
+    if(!item.folder)menu.append(urlMenuButton(item,{accountId:item.accountId,bucketName:item.bucketName},{x,y}));
     menu.hidden=false;
     requestAnimationFrame(()=>{menu.style.left=`${Math.max(8,Math.min(x,innerWidth-menu.offsetWidth-8))}px`;menu.style.top=`${Math.max(8,Math.min(y,innerHeight-menu.offsetHeight-8))}px`;menu.querySelector("button")?.focus();});
     return;
@@ -3567,7 +3576,7 @@ function showExplorerMenu(x, y, item) {
     sep();
     if(!item.folder&&!item.archiveEntry){
       const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
-      menu.append(menuButton("Get URL",()=>copyItemUrl(item,{source,point:{x,y},returnFocus:rootRow(item.id)}),true,"Choose a configured file URL to copy"));
+      menu.append(urlMenuButton(item,source,{x,y}));
     }
 
     menu.append(

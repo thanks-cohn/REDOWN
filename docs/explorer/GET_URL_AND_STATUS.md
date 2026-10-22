@@ -59,3 +59,14 @@ node agent/explorer/cli.mjs explainOperation --input '{"name":"public.urls"}'
 Published source commit after implementation: `278f0405b1e3defbfba024240f3f3d1a9d15857e`.
 
 Published source tree: `22932235e356a0f7ddef1013ca0180893cafc807`, identical to the locally tested implementation tree. This follow-up record changes documentation only.
+
+
+## Nested URL menu correction — 22 October 2026
+
+Baseline main: `34bf4f2bf1affd7cc67f494a15c565564ef3433d`. The user reported clicking Get URL appeared to do nothing. Source inspection confirmed the generated URL panel had no stylesheet rules: it was an ordinary body child rather than a positioned overlay. Earlier mocked geometry tests did not exercise the production stylesheet.
+
+Get URL now displays a submenu arrow, retains its parent context menu and opens the existing URL component beside its own row. It flips left at the viewport edge and clamps vertically. Enter/click and ArrowRight open it; ArrowLeft/Escape dismiss it and return focus to Get URL. All eligible addresses remain separate clickable rows and copy feedback stays visible. Availability, exact-key encoding, privacy, operation tickets and diagnostic events are retained. No provider configuration changes are involved.
+
+The production CSS now defines the fixed overlay, stacking above the context menu, compact rows, ellipsis, focus/hover, feedback and bounded scrolling. Regression tests cover the actual parent-to-child click/copy flow, production computed CSS, submenu ARIA state, left-edge fallback and return focus. Native installed-extension rendering/clipboard remains unverified in this environment; reload the updated unpacked extension and reopen its options page for a browser retest.
+
+Correction verification: syntax check passed; full suite **291 tests / 284 pass / 7 unchanged historical failures**; fixed smoke presets **166/166 pass**. The 12 Get URL tests pass, including three new production-CSS/anchored-menu/integration regressions. See `verification/get-url-submenu/` for exact output.
