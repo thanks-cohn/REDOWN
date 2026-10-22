@@ -583,3 +583,8 @@ Adjacent correction: the prior managed public-host fallback had overescaped rege
 ### Get URL invisible panel / nested submenu (22 October 2026)
 
 User reported Get URL produced no visible result. Confirmed source defect: generated `.url-popover` had no production CSS, leaving it in normal body flow. Corrected with a fixed styled overlay anchored as a child menu beside Get URL; parent action remains visible. DOM regression includes production computed styles and actual parent click → child row → Copied flow. Installed Chrome visual/native clipboard retest remains pending; this source fix is not live acceptance.
+
+
+### Enable public URL — browser retest pending (22 October 2026)
+
+Get URL now offers inline bucket-wide confirmation and explicit managed r2.dev enablement for disabled buckets, then verifies the setting and refreshes choices. Local DOM and mocked provider regressions cover success/cancel/permission failure/read-back failure/stale selection. Installed Chrome/OAuth, public propagation and native clipboard have not been verified here. No live bucket visibility was changed during implementation. If interrupted, reopen URL choices to inspect the setting before retrying.

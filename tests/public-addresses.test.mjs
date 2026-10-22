@@ -63,3 +63,16 @@ test('domain refresh updates every connected disclosure for that bucket, preserv
  preview.host.querySelector('details').open=true;domain='https://new.example/assets/';calls.length=0;
  await api.refreshVisible(d,{accountId:'a',bucketName:'b'});assert.deepEqual(calls,['b']);assert.match(preview.host.textContent,/new.example\/assets\/nested\/%E9%9B%AA%20%23%3F.png/);assert.equal(preview.host.querySelector('details').open,true);assert.match(settings.host.textContent,/new.example\/assets\//);assert.match(other.host.textContent,/old.example/);assert.match(detached.host.textContent,/old.example/);assert.equal(media.src,'blob:existing-preview');dom.window.close();
 });
+
+function enableHarness({enabled=false,verified=true,status=200}={}){
+ const calls=[];let reads=0;const context={encodeURIComponent,chrome:{runtime:{getURL:path=>'chrome-extension://fixture/'+path}},cfFetch:async(path,options)=>{calls.push({path,options});if(!options)reads++;return {ok:status===200,status,json:async()=>status===200?{success:true,result:{domain:'pub-abcdef.r2.dev',enabled:options?true:reads===1?enabled:verified}}:{success:false,errors:[{message:'PRIVATE_TOKEN'}]}};}};
+ vm.createContext(context);vm.runInContext(background.slice(background.indexOf('async function enableBucketPublicAccess('),background.indexOf('function publicAssetUrl(')),context);return {context,calls,sender:{url:'chrome-extension://fixture/options.html'},message:{accountId:'actual-account',bucketName:'actual bucket',confirmed:true}};
+}
+test('explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only',async()=>{
+ for(const enabled of [false,true]){const h=enableHarness({enabled});const r=await h.context.enableBucketPublicAccess(h.message,h.sender);assert.equal(r.ok,true);assert.equal(h.calls.length,enabled?2:3);assert.ok(h.calls.every(c=>c.path==='/accounts/actual-account/r2/buckets/actual%20bucket/domains/managed'));const writes=h.calls.filter(c=>c.options);assert.equal(writes.length,enabled?0:1);if(writes.length){assert.equal(writes[0].options.method,'PUT');assert.deepEqual(JSON.parse(writes[0].options.body),{enabled:true});}}
+});
+test('public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes',async()=>{
+ const h=enableHarness();for(const [message,sender] of [[{...h.message,confirmed:false},h.sender],[h.message,{url:'https://example.com/options.html'}]]){assert.equal((await h.context.enableBucketPublicAccess(message,sender)).ok,false);}assert.equal(h.calls.length,0);
+ for(const [settings,code] of [[{status:403},'EXPLORER_PERMISSION_DENIED'],[{status:401},'EXPLORER_AUTH_EXPIRED'],[{verified:false},'EXPLORER_RESULT_UNCONFIRMED']]){const f=enableHarness(settings);const result=await f.context.enableBucketPublicAccess(f.message,f.sender);assert.equal(result.code,code);assert.doesNotMatch(JSON.stringify(result),/PRIVATE_TOKEN/);}
+ assert.match(background,/message\?\.type === "cfEnablePublicAccess"\) return sendResponse\(await enableBucketPublicAccess\(message,_sender\)\)/);
+});

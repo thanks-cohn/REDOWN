@@ -70,3 +70,20 @@ Get URL now displays a submenu arrow, retains its parent context menu and opens 
 The production CSS now defines the fixed overlay, stacking above the context menu, compact rows, ellipsis, focus/hover, feedback and bounded scrolling. Regression tests cover the actual parent-to-child click/copy flow, production computed CSS, submenu ARIA state, left-edge fallback and return focus. Native installed-extension rendering/clipboard remains unverified in this environment; reload the updated unpacked extension and reopen its options page for a browser retest.
 
 Correction verification: syntax check passed; full suite **291 tests / 284 pass / 7 unchanged historical failures**; fixed smoke presets **166/166 pass**. The 12 Get URL tests pass, including three new production-CSS/anchored-menu/integration regressions. See `verification/get-url-submenu/` for exact output.
+
+
+## Enable public URL from the URL menu — 22 October 2026
+
+Before implementation: main `ff6a1dc351bf85bd967ae831d4be4370b224db6e` (tree `503b7aa8c0108d449d0b35aab14a531e8c765fcc`).
+
+The URL choices now offer **Enable public URL…** when a matching account/bucket discovery snapshot explicitly reports managed public access disabled. First click expands the explanation in the same row: **Every file in this bucket will be publicly accessible to anyone with its URL.** The user can cancel or choose **Enable for entire bucket**. Opening Get URL, copying a URL, canceling, and reading unknown configuration never enable access. Enabled buckets do not offer a redundant enable action. Existing Worker/custom addresses remain independently classified.
+
+The new `cfEnablePublicAccess` handler accepts only the exact options.html sender with confirmed:true and an explicit account/bucket. It reuses existing OAuth transport. It reads the managed setting, sends only PUT `{enabled:true}` when needed, then independently reads it back and validates the returned enabled managed hostname. It never guesses an address from a bucket name. A verified result triggers fresh discovery for that same file in the existing URL menu. PUT acceptance alone cannot produce a success result. Reopening URL choices resolves ambiguous responses before another attempt. No DNS, CORS, SSL, Worker configuration or stored credentials are changed by this action.
+
+Configuration enablement is not proof that a particular file can be fetched. Rows retain their accessibility-not-verified explanation. Cloudflare documents this managed r2.dev address as rate limited and intended for development: https://developers.cloudflare.com/api/resources/r2/subresources/buckets/subresources/domains/subresources/managed/methods/update/
+
+Duplicate clicks are suppressed while a mutation is pending. Dismissal/file switching cannot undo a dispatched provider change, but invalidates old UI results and prevents reopening the prior file. Permission/auth/unconfirmed failures display generic explanations and existing structured diagnostic codes; provider error bodies and URLs are not logged. `cfEnablePublicAccess` is mapped into public.urls traces and the current Explorer architecture/message inventory. No new permissions or login flow were added.
+
+Verification: 25 focused URL/provider tests pass. New cases cover inline confirmation/cancel, enable/read-back/refresh/full-key clipboard, already-enabled idempotence, exact endpoint and sender gating, permission/auth rejection, unverified read-back, duplicate clicks and stale file selection. Checks are local DOM/provider mocks, not an installed Chrome or live Cloudflare pass. No live bucket was made public during development. Browser retest remains in bugs/README.md.
+
+Final verification: syntax check passed; full suite **297 total / 290 pass / 7 retained historical failures**; smoke **172/172 pass**. Two Explorer schemas and 17 simulated diagnostic bundles pass; current architecture anchors resolve. The message-inventory regression now expects the documented 36 handlers, including this explicit mutation. Exact outputs are under `verification/enable-public-url/`.

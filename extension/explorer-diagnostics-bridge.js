@@ -1,7 +1,7 @@
 /* Safe adapters around existing product boundaries. Diagnostics never invokes preparation/cloud operations. */
 (function(root){
 'use strict';
-const mapping={cfObjects:'listing',cfBuckets:'account.switch',cfDestinationFolders:'navigation',cfSearchStart:'search',cfSearchStep:'search',cfSearchRetry:'search',cfSearchCancel:'search',cfTransferObjects:'copy',cfRenameEntry:'rename',cfDeleteObjects:'delete',cfCreateFolder:'folder.create',cfObjectProperties:'properties',cfPublicAddresses:'public.urls',cfPrepareBucket:'worker.readiness',cfArchiveEntries:'archive',cfArchiveEntryUrl:'archive',cfExtractArchive:'archive',cfTransferArchive:'archive',cfDownloadObject:'download',cfPrivateObjectUrl:'preview',cfConnect:'auth',cfDisconnect:'auth'};
+const mapping={cfObjects:'listing',cfBuckets:'account.switch',cfDestinationFolders:'navigation',cfSearchStart:'search',cfSearchStep:'search',cfSearchRetry:'search',cfSearchCancel:'search',cfTransferObjects:'copy',cfRenameEntry:'rename',cfDeleteObjects:'delete',cfCreateFolder:'folder.create',cfObjectProperties:'properties',cfPublicAddresses:'public.urls',cfEnablePublicAccess:'public.urls',cfPrepareBucket:'worker.readiness',cfArchiveEntries:'archive',cfArchiveEntryUrl:'archive',cfExtractArchive:'archive',cfTransferArchive:'archive',cfDownloadObject:'download',cfPrivateObjectUrl:'preview',cfConnect:'auth',cfDisconnect:'auth'};
 function install({context,chrome,document}){
  const core=root.RedownExplorerDiagnostics,collector=core.create({context,extensionVersion:chrome.runtime.getManifest().version});
  let parent=null,pendingSave=null,lastId=null,lastClearAt=0,epoch=0,stateProvider=null,probeProvider=null,identityReady=Promise.resolve();

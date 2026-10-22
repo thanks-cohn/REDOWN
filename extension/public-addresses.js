@@ -1,4 +1,4 @@
-/* Read-only public-address presentation. Configuration is never proof of object access. */
+/* Public-address presentation with explicit confirmed enable action. Configuration is never proof of object access. */
 (function(root){
   'use strict';
   const refreshers=new WeakMap();
@@ -64,8 +64,8 @@
     if(new URL(item.url).hostname.endsWith('.r2.dev'))return 'r2.managed';
     return item.kind==='custom'||/custom/i.test(item.label||'')?'r2.custom':'provider.public';
   }
-  function popover({document,load,copy=text=>navigator.clipboard.writeText(text),onState=()=>{},onEvent=()=>{}}){
-    const view=document.defaultView;let generation=0,active=null;
+  function popover({document,load,enable,copy=text=>navigator.clipboard.writeText(text),onState=()=>{},onEvent=()=>{}}){
+    const view=document.defaultView;let generation=0,active=null,enabling=false;
     const emit=(context,stage,outcome,details={})=>{try{onEvent(context,stage,outcome,details);}catch{}};
     function close({restoreFocus=false}={}){
       generation++;if(!active)return;
@@ -103,7 +103,7 @@
         // Stop Explorer shortcuts without blocking normal button activation.
         event.stopPropagation();
         if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
-          event.preventDefault();const rows=[...list.querySelectorAll('button:not(:disabled)')];if(!rows.length)return;
+          event.preventDefault();const rows=[...list.querySelectorAll('button:not(:disabled):not([hidden])')];if(!rows.length)return;
           const at=rows.indexOf(document.activeElement),index=event.key==='Home'?0:event.key==='End'?rows.length-1:at<0?(event.key==='ArrowUp'?rows.length-1:0):(at+(event.key==='ArrowUp'?-1:1)+rows.length)%rows.length;rows[index].focus();
         }
       },{...options,capture:true});
@@ -137,13 +137,38 @@
           }catch{if(!current()||click!==copySequence)return;feedback.textContent='Clipboard access was denied. Try again.';state(feedback.textContent,'failed');emit(context,'browser.result','failed',{endpoint:'local.clipboard',code:'EXPLORER_CLIPBOARD_FAILED'});}
         });
       }
+      if(enable&&snapshot.accountId===context.source.accountId&&snapshot.bucketName===context.source.bucketName&&snapshot.managedPublicAccess==="disabled"){
+        const action=document.createElement('button');action.type='button';action.className='url-popover-row';if(anchor)action.setAttribute('role','menuitem');
+        const label=document.createElement('strong');label.textContent='Enable public URL…';
+        const explanation=document.createElement('span');explanation.className='url-popover-state';explanation.textContent='Enable this bucket’s Cloudflare r2.dev address';action.append(label,explanation);list.append(action);
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='url-popover-row';cancel.textContent='Cancel';cancel.hidden=true;if(anchor)cancel.setAttribute('role','menuitem');list.append(cancel);
+        let confirmed=false;action.disabled=enabling;
+        if(enabling)explanation.textContent='A public-access change is still being verified. Reopen URL choices when it finishes.';
+        cancel.onclick=()=>{confirmed=false;cancel.hidden=true;label.textContent='Enable public URL…';explanation.textContent='Enable this bucket’s Cloudflare r2.dev address';action.focus();};
+        action.onclick=async()=>{
+          if(!current()||enabling)return;
+          if(!confirmed){confirmed=true;label.textContent='Enable for entire bucket';explanation.textContent='Every file in this bucket will be publicly accessible to anyone with its URL. Enable public access?';cancel.hidden=false;place();return;}
+          enabling=true;action.disabled=true;cancel.hidden=true;label.textContent='Enabling and verifying…';state('Enabling and verifying bucket public access…','running');emit(context,'api.request','started',{endpoint:'api.domains'});
+          try{
+            const result=await enable(context.source);
+            if(!current())return;
+            if(!result?.ok){const code=['EXPLORER_PERMISSION_DENIED','EXPLORER_AUTH_EXPIRED','EXPLORER_RESULT_UNCONFIRMED'].includes(result?.code)?result.code:'EXPLORER_RESULT_UNCONFIRMED';
+              feedback.textContent=code==='EXPLORER_PERMISSION_DENIED'?'Cloudflare denied this change. Check this login’s R2 bucket permissions.':code==='EXPLORER_AUTH_EXPIRED'?'Cloudflare rejected the login. Reconnect and try again.':'Public access was not verified. Reopen URL choices before retrying; the setting may have changed.';
+              state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code});return;}
+            emit(context,'api.response','confirmed',{endpoint:'api.domains'});
+            enabling=false;
+            await show({source:context.source,key,name,point,returnFocus,anchor,isCurrent});
+          }catch{if(current()){feedback.textContent='Public access was not verified. Reopen URL choices before retrying; the setting may have changed.';state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code:'EXPLORER_RESULT_UNCONFIRMED'});}}
+          finally{enabling=false;}
+        };
+      }
       let copySequence=0;
       feedback.textContent=eligible?'Choose a URL to copy.':items.length?'No usable public URL. Configured addresses are disabled or need setup.':'No public addresses are configured for this file’s bucket.';
       const incomplete=Boolean(snapshot?.errors?.length)||items.some(item=>item.state!=='configured');
       state(eligible?(incomplete?'File URLs loaded; some addresses are unavailable.':'File URLs loaded. Accessibility has not been verified.'):feedback.textContent,eligible&&!incomplete?'success':'partial');
       emit(context,'ui.result',eligible&&!incomplete?'confirmed':'unknown',{loadedCount:items.length,code:!eligible?'EXPLORER_URL_UNAVAILABLE':undefined});
       place();
-      if(anchor&&document.activeElement===dismiss)list.querySelector('button:not(:disabled)')?.focus({preventScroll:true});
+      if(anchor&&document.activeElement===dismiss)list.querySelector('button:not(:disabled):not([hidden])')?.focus({preventScroll:true});
     }
     return {show,close,get element(){return active?.panel||null;}};
   }

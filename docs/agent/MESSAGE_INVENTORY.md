@@ -11,7 +11,7 @@
 - Local profile/history responses and RFIS export are sensitive. New agent inspection never calls any handler or serializes browser state.
 - Remote writes, UI save, history/index updates and response delivery cross separate async boundaries; no shared transaction or durable job/journal is demonstrated. Cancellation/worker suspension outcomes remain unknown.
 
-The current inventory adds `cfPublicAddresses` (35 literal branches including the new Debug-only Explorer adapter), a read-only UI capability. Historical catalog hashes remain pinned; this addition does not make stale catalog evidence fresh.
+The current inventory adds `cfPublicAddresses` (36 literal branches including the new Debug-only Explorer adapter), a read-only UI capability. The separately confirmed `cfEnablePublicAccess` mutation is now included. Historical catalog hashes remain pinned; this addition does not make stale catalog evidence fresh.
 
 ## Complete handler inventory
 
@@ -42,6 +42,7 @@ The current inventory adds `cfPublicAddresses` (35 literal branches including th
 | `cfSearchObjects` | `searchExplorerObjects` | Explorer runExplorerSearch | OAuth listing across targets; local scoring/limit; optional RFIS; errors may be per-target |
 | `cfSetAssetCors` | `configureAssetDomain` | No literal caller found; alias retained | Same behavior as cfSetAssetDomain including CORS/domain remote writes |
 | `explorerDiagnosticsV1` | `RedownExplorerBridge` | Debug Settings inspector | Sender-checked + Debug-gated redacted observation queries/ingest/clear; internal fingerprint context exchange never exported; no cloud actions |
+| `cfEnablePublicAccess` | `enableBucketPublicAccess` | Get URL choices after bucket-wide confirmation | Exact options.html sender and confirmed:true; OAuth managed r2.dev PUT enabled:true only, followed by independent read-back; redacted failures; no DNS/CORS/Worker changes |
 | `cfPublicAddresses` | `bucketPublicAddresses` | Settings website field and Explorer preview | Read-only OAuth R2 managed/custom domains and exact Worker-domain association; no provisioning/publication; configured is not object verification |
 | `cfSetAssetDomain` | `configureAssetDomain → configureBucketAssetCors → provisionCloudflareProfile` | Settings assetCorsControl/website configuration | OAuth Worker domain/R2 CORS writes; origin validation; local profile update then Worker redeploy for public delivery |
 | `cfTransferArchive` | `preparedProfile twice → callBucketWorker` | Explorer pasteExplorer archive clipboard branch | Same profile extracts; cross-profile receiveArchiveEntries Worker-to-Worker; passes source secret to destination Worker, writes objects |

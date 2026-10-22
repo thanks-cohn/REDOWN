@@ -10,9 +10,9 @@ const managed={kind:'managed',label:'Cloudflare R2',base:'https://pub-fixture.r2
 const custom={kind:'custom',label:'Custom CDN',base:'https://cdn.example.com/',state:'configured'};
 const worker={kind:'worker',label:'REDOWN Worker',base:'https://files.example.com/assets/',state:'configured'};
 const tick=()=>new Promise(r=>setTimeout(r,0));
-function harness({items=[managed],load,copy=async()=>{},width=1366,height=768}={}){
+function harness({items=[managed],load,enable,copy=async()=>{},width=1366,height=768}={}){
  const dom=new JSDOM('<button id="file">file</button><main></main>',{runScripts:'outside-only'}),w=dom.window,d=w.document;w.innerWidth=width;w.innerHeight=height;w.eval(code);
- const copied=[],states=[],events=[];const ui=w.RedownPublicAddresses.popover({document:d,load:load||(async()=>snapshot(items)),copy:async text=>{copied.push(text);return copy(text);},onState:(message,state)=>states.push({message,state}),onEvent:(context,stage,outcome,details)=>events.push({stage,outcome,details})});
+ const copied=[],states=[],events=[];const ui=w.RedownPublicAddresses.popover({document:d,enable,load:load||(async()=>snapshot(items)),copy:async text=>{copied.push(text);return copy(text);},onState:(message,state)=>states.push({message,state}),onEvent:(context,stage,outcome,details)=>events.push({stage,outcome,details})});
  return {dom,w,d,ui,copied,states,events,show:(key='works/...2/chapter_1/001.webp',extra={})=>ui.show({source,key,name:'001.webp',point:{x:100,y:120},returnFocus:d.getElementById('file'),...extra})};
 }
 test('one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied',async()=>{
@@ -73,4 +73,19 @@ test('actual Get URL parent click keeps context menu visible and opens a copyabl
  h.w.eval(options.slice(options.indexOf('function menuButton('),options.indexOf('let explorerDestinationMenus;')));
  const button=h.w.urlMenuButton({key:'exact/...2/file.webp'},source,{x:100,y:100});h.d.getElementById('explorer-menu').append(button);button.click();await tick();
  assert.equal(h.d.getElementById('explorer-menu').hidden,false);assert.equal(h.ui.element.getAttribute('role'),'menu');assert.equal(button.getAttribute('aria-expanded'),'true');h.d.querySelector('.url-popover-row').click();await tick();assert.match(h.copied[0],/exact\/\.\.\.2\/file.webp$/);assert.match(h.ui.element.textContent,/Copied!/);h.ui.close();h.dom.window.close();
+});
+
+test('disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL',async()=>{
+ let enabled=false,calls=0,reads=0;const h=harness({load:async()=>{reads++;return {...snapshot([{...managed,state:enabled?'configured':'restricted'}]),managedPublicAccess:enabled?'enabled':'disabled'};},enable:async captured=>{assert.equal(captured.bucketName,source.bucketName);calls++;enabled=true;return {ok:true};}});
+ await h.show();assert.equal(calls,0);let action=[...h.d.querySelectorAll('button')].find(b=>b.textContent.includes('Enable public URL'));action.click();assert.equal(calls,0);assert.match(action.textContent,/Every file in this bucket/);action.click();action.click();await tick();await tick();assert.equal(calls,1);assert.equal(reads,2);assert.equal(h.d.querySelector('.url-popover-row').disabled,false);h.d.querySelector('.url-popover-row').click();await tick();assert.match(h.copied[0],/works\/\.\.\.2\/chapter_1\/001.webp$/);assert.match(h.ui.element.textContent,/Copied!/);h.ui.close();h.dom.window.close();
+});
+test('public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation',async()=>{
+ let calls=0;const h=harness({load:async()=>({...snapshot([]),managedPublicAccess:'disabled'}),enable:async()=>{calls++;}});await h.show();const action=[...h.d.querySelectorAll('button')].find(b=>b.textContent.includes('Enable public URL'));action.click();[...h.d.querySelectorAll('button')].find(b=>b.textContent==='Cancel').click();assert.equal(calls,0);assert.match(action.textContent,/Enable public URL/);h.ui.close();h.dom.window.close();
+ for(const value of [{...snapshot([]),managedPublicAccess:'unknown'},{...snapshot([managed]),managedPublicAccess:'enabled'},{...snapshot([]),bucketName:'other',managedPublicAccess:'disabled'}]){const f=harness({load:async()=>value,enable:async()=>{throw Error('must not enable');}});await f.show();assert.doesNotMatch(f.ui.element.textContent,/Enable public URL/);f.ui.close();f.dom.window.close();}
+});
+test('permission failures remain explained with no false success or leaked provider errors',async()=>{
+ const h=harness({load:async()=>({...snapshot([]),managedPublicAccess:'disabled'}),enable:async()=>({ok:false,code:'EXPLORER_PERMISSION_DENIED',error:'SECRET_TOKEN'})});await h.show();const action=[...h.d.querySelectorAll('button')].find(b=>b.textContent.includes('Enable public URL'));action.click();action.click();await tick();assert.match(h.ui.element.textContent,/Cloudflare denied/);assert.doesNotMatch(h.ui.element.textContent,/SECRET_TOKEN|Copied!/);assert.equal(h.states.at(-1).state,'failed');assert.ok(h.events.some(e=>e.details.code==='EXPLORER_PERMISSION_DENIED'));h.ui.close();h.dom.window.close();
+});
+test('switching files while enabling cannot reopen the old file or overwrite current choices',async()=>{
+ let finish;const h=harness({load:async()=>({...snapshot([]),managedPublicAccess:'disabled'}),enable:()=>new Promise(r=>finish=r)});await h.show('old.txt');const action=[...h.d.querySelectorAll('button')].find(b=>b.textContent.includes('Enable public URL'));action.click();action.click();await h.show('new.txt',{name:'new.txt'});finish({ok:true});await tick();assert.ok(h.ui.element);assert.equal(h.ui.element.getAttribute('aria-label'),'Get URL — new.txt');assert.equal(h.d.querySelector('.url-popover-row').disabled,true);assert.doesNotMatch(h.ui.element.textContent,/Copied!/);h.ui.close();h.dom.window.close();
 });

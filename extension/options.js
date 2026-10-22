@@ -3384,6 +3384,7 @@ function urlPopover(){
   let ticket;const traces=new WeakMap();
   return explorerUrlPopover ||= RedownPublicAddresses.popover({document,
     load:source=>send({type:"cfPublicAddresses",...source}),
+    enable:source=>send({type:"cfEnablePublicAccess",...source,confirmed:true}),
     onState:(message,state)=>{
       if(state==="running")ticket=setOperation("public.urls",message);
       finishOperation(message,state==="failed",ticket,state);

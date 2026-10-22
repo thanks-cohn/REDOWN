@@ -1236,9 +1236,10 @@ async function bucketPublicAddresses(accountId,bucketName){
   const path=`/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/domains`;
   const profiles=await getProfiles();
   const profile=profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName===bucketName);
-  const result={accountId,bucketName,addresses:[],errors:[]};
+  const result={accountId,bucketName,addresses:[],errors:[],managedPublicAccess:"unknown"};
   const reads=await Promise.allSettled([cfJson(path+"/managed"),cfJson(path+"/custom"),profile?.customAssetDomain?cfJson(`/accounts/${encodeURIComponent(accountId)}/workers/domains?service=${encodeURIComponent(profile.scriptName)}&hostname=${encodeURIComponent(profile.customAssetDomain)}`):Promise.resolve([])]);
   const [managed,custom,worker]=reads;
+  if(managed.status==="fulfilled")result.managedPublicAccess=managed.value?.enabled===true?"enabled":managed.value?.enabled===false?"disabled":"unknown";
   if(managed.status==="fulfilled"&&managed.value?.domain)result.addresses.push({kind:"managed",label:"Cloudflare R2",base:`https://${managed.value.domain}/`,state:managed.value.enabled?"configured":"restricted"});
   if(custom.status==="fulfilled")for(const domain of custom.value?.domains||[])result.addresses.push({kind:"custom",label:"Custom domain",base:`https://${domain.domain}/`,state:!domain.enabled?"restricted":domain.status?.ssl==="active"&&domain.status?.ownership==="active"?"configured":"needs-setup"});
   if(profile?.customAssetDomain){
@@ -1249,6 +1250,32 @@ async function bucketPublicAddresses(accountId,bucketName){
   if(profile?.publicAssetsEnabled&&profile.workerUrl)result.addresses.push({kind:"worker",label:"REDOWN Worker URL",base:profile.workerUrl.replace(/\/+$/,"")+"/assets/",state:"configured"});
   for(const read of reads)if(read.status==="rejected")result.errors.push("Some public address configuration could not be refreshed.");
   return result;
+}
+
+// Explicit bucket-wide mutation; never called by public-address discovery.
+async function enableBucketPublicAccess(message,sender){
+  if(sender?.url!==chrome.runtime.getURL("options.html")||message.confirmed!==true)
+    return {ok:false,code:"EXPLORER_PERMISSION_DENIED",error:"Confirm enabling public access from Get URL first."};
+  const {accountId,bucketName}=message;
+  if(typeof accountId!=="string"||!accountId||typeof bucketName!=="string"||!bucketName)
+    return {ok:false,code:"EXPLORER_BUCKET_CONTEXT_MISMATCH",error:"Choose a bucket first."};
+  const path=`/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/domains/managed`;
+  try{
+    const request=async options=>{
+      const response=await cfFetch(path,options),body=await response.json().catch(()=>null);
+      if(!response.ok||body?.success===false||!body?.result){const error=new Error("Public access request failed");error.status=response.status;throw error;}
+      return body.result;
+    };
+    const before=await request();
+    if(before.enabled!==true)await request({method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({enabled:true})});
+    const verified=await request();
+    if(verified.enabled!==true||typeof verified.domain!=="string"||!/^pub-[a-f0-9]+\.r2\.dev$/i.test(verified.domain))
+      return {ok:false,code:"EXPLORER_RESULT_UNCONFIRMED",error:"Public access could not be verified. Refresh URL choices before retrying; the setting may have changed."};
+    return {ok:true,accountId,bucketName};
+  }catch(error){
+    const denied=error?.status===403,expired=error?.status===401;
+    return {ok:false,code:denied?"EXPLORER_PERMISSION_DENIED":expired?"EXPLORER_AUTH_EXPIRED":"EXPLORER_RESULT_UNCONFIRMED",error:denied?"Cloudflare denied this change. Check this login’s R2 bucket permissions.":expired?"Cloudflare rejected the login. Reconnect and try again.":"Could not verify public access. Refresh URL choices before retrying; the setting may have changed."};
+  }
 }
 
 function publicAssetUrl(profile, key) {
@@ -2365,6 +2392,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
       }
+      if (message?.type === "cfEnablePublicAccess") return sendResponse(await enableBucketPublicAccess(message,_sender));
       if (message?.type === "cfPublicAddresses") return sendResponse({ok:true,...(await bucketPublicAddresses(message.accountId,message.bucketName))});
       if (message?.type === "cfObjects") return sendResponse({ ok:true, ...(await listObjects(message.accountId,message.bucketName,message.prefix,message.cursor)) });
       if (message?.type === "rfisExport") {
