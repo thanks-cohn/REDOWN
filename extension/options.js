@@ -4080,18 +4080,29 @@ async function refreshBuckets(){
     });
     el.classList.add("selected");button.setAttribute("aria-pressed","true");el.querySelector(".bucket-debug-select")?.setAttribute("aria-pressed","true");
   };
+  const signalBucket=(el,state,caption,message)=>{
+    el.dataset.signal=state;
+    const lamp=el.querySelector(".bucket-repair");
+    if(lamp){
+      const glyph={ready:"✓",attention:"↻",repair:"!",working:"…"}[state]||"↻";
+      lamp.textContent=glyph;
+      lamp.title=message||"Verify / repair Worker";
+      lamp.setAttribute("aria-label",(message||"Verify / repair Worker")+" — click to verify or repair");
+    }
+    if(caption)caption.textContent=message||caption.textContent;
+  };
   const useBucket=async(bucket,el,button,caption,forceRepair=false)=>{
     if(settingUp||accountId!==currentAccountId)return;
     settingUp=true;markSelected(el,button,bucket);
     root.querySelectorAll(".bucket button").forEach(item=>item.disabled=true);
-    button.setAttribute("aria-busy","true");caption.textContent=forceRepair?"Verifying…":"Setting up…";
+    button.setAttribute("aria-busy","true");signalBucket(el,"working",caption,forceRepair?"REPAIRING!":"SETTING UP!");
     const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
       if(accountId!==currentAccountId||!el.isConnected)return;
-      el.classList.toggle("is-ready",Boolean(done));caption.textContent=done?"Ready":"Retry setup";if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
+      el.classList.toggle("is-ready",Boolean(done));signalBucket(el,done?"ready":"repair",caption,done?"READY!":"REPAIR! CLICK!");if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
     }catch(error){
-      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");caption.textContent="Retry setup";if(debugUse)debugUse.textContent="Retry setup";}
+      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"REPAIR! CLICK!");if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
       settingUp=false;button.removeAttribute("aria-busy");
       if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
@@ -4117,6 +4128,8 @@ async function refreshBuckets(){
     repair.innerHTML='<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12.7 6a5 5 0 1 0 .1 3.7M12.7 2.7V6H9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     repair.addEventListener("click",event=>{event.stopPropagation();void useBucket(bucket.name,el,button,caption,true);});
     el.append(repair);
+    // A stored configuration is not proof of a live healthy Worker.
+    signalBucket(el,"attention",caption,ready?"CHECK CONNECTION!":"SET UP! CLICK THE STONE!");
     const debugName=document.createElement("button");debugName.type="button";debugName.className="bucket-debug-select debug-only";debugName.textContent=bucket.name;debugName.setAttribute("aria-pressed","false");
     debugName.addEventListener("click",()=>{markSelected(el,button,bucket.name);setStatus("cf-status",bucket.name+" selected.","ok");});
     const details=document.createElement("div");details.className="bucket-debug-details debug-only";details.textContent=ready?"Configured for REDOWN":([bucket.location,bucket.jurisdiction].filter(Boolean).join(" · ")||"R2 bucket")+" · Worker not configured";
@@ -4379,6 +4392,34 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
   void refreshCloudflare().catch(error=>setStatus("hero-status",safeUiMessage(error?.message||String(error)),"bad"));
   await renderHistory();
 })();
+
+// Diagnostic console: deliberately synthetic signals, never mutate live bucket state.
+const signalSamples=[
+  {glyph:"↻",label:"STORAGE NEEDS REFRESH!",color:"#efc56e"},
+  {glyph:"!",label:"REPAIR! CLICK!",color:"#f59a8e"},
+  {glyph:"…",label:"REPAIRING!",color:"#9ecff8"},
+  {glyph:"✓",label:"REPAIRED! READY!",color:"#9be7ae"}
+];
+let signalDiagnosticStep=-1;
+function renderSignalDiagnostic(step){
+  const root=$("signal-diagnostics-lamps");
+  if(!root)return;
+  root.replaceChildren();
+  signalSamples.forEach((sample,index)=>{
+    const lamp=document.createElement("div");
+    lamp.style.cssText="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid "+(index===step?sample.color:"#48546b")+";border-radius:12px;background:#101b2e;color:"+(index===step?sample.color:"#8291a5")+";font-size:12px;font-weight:650";
+    const symbol=document.createElement("span");symbol.textContent=sample.glyph;symbol.style.cssText="display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#253342;border:1px solid currentColor;font-size:17px";
+    const text=document.createElement("span");text.textContent=sample.label;
+    lamp.append(symbol,text);root.append(lamp);
+  });
+  $("signal-diagnostics-message").textContent=step<0?"Signals idle. Choose Run Signal Diagnostics.":signalSamples[step].label+" — SIMULATION ONLY. No Cloudflare operation performed.";
+}
+renderSignalDiagnostic(-1);
+$("run-signal-diagnostics")?.addEventListener("click",()=>{
+  signalDiagnosticStep=(signalDiagnosticStep+1)%signalSamples.length;
+  renderSignalDiagnostic(signalDiagnosticStep);
+});
+$("reset-signal-diagnostics")?.addEventListener("click",()=>{signalDiagnosticStep=-1;renderSignalDiagnostic(-1);});
 
 // Explicit Debug Mode controls; no remote probe or repair is triggered here.
 for(const [id,operation] of [["runtime-diagnostics-status","snapshot"],["runtime-diagnostics-export","exportSupport"],["runtime-diagnostics-clear","clear"]]){
