@@ -7,7 +7,8 @@ function setStatus(message, kind=""){
   status.className="status"+(kind ? " "+kind : "");
 }
 async function loadProfiles(){
-  const {profiles=[]}=await chrome.storage.local.get("profiles");
+  const stored=await chrome.storage.local.get(["profiles","betaModeEnabled"]);
+  const profiles=(stored.profiles||[]).filter(profile=>profile.type!=="github"||stored.betaModeEnabled===true);
   const previous=profileSelect.value;
   profileSelect.replaceChildren();
   for(const profile of profiles){
@@ -26,7 +27,7 @@ async function loadProfiles(){
     option.textContent="No destination yet";
     profileSelect.append(option);
     profileSelect.disabled=true;
-    setStatus("Connect Cloudflare or GitHub once, then REDOWN is ready.");
+    setStatus(stored.betaModeEnabled===true?"Add a Cloudflare or GitHub destination in Settings.":"Connect Cloudflare in Settings, or enable Beta Mode for experimental GitHub destinations.");
   }else{
     profileSelect.disabled=false;
     setStatus("");
@@ -57,6 +58,6 @@ send.addEventListener("click",async()=>{
   }
 });
 chrome.storage.onChanged.addListener((changes,area)=>{
-  if(area==="local"&&changes.profiles)loadProfiles();
+  if(area==="local"&&(changes.profiles||changes.betaModeEnabled))loadProfiles();
 });
 loadProfiles();

@@ -4,15 +4,17 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 const html=await readFile(new URL('../extension/options.html',import.meta.url),'utf8');
+const signalSource=await readFile(new URL('../extension/storage-signals.js',import.meta.url),'utf8');
+const signalScope={};vm.runInNewContext(signalSource,signalScope);
 const source=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
 function harness(){
   const dom=new JSDOM(html,{runScripts:'outside-only'});
   const calls=[],saved=[];
-  const context=vm.createContext({document:dom.window.document,window:dom.window,debugModeEnabled:false,profiles:[],currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',
+  const context=vm.createContext({document:dom.window.document,window:dom.window,debugModeEnabled:false,betaModeEnabled:false,bucketLoadVersion:0,RedownStorageSignals:signalScope.RedownStorageSignals,profiles:[],currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',
     $:id=>dom.window.document.getElementById(id),
     setStatus:(id,text)=>{dom.window.document.getElementById(id).textContent=text;},
     send:async msg=>{calls.push(msg);return {ok:true,buckets:[{name:'test-bucket'}]};},
-    addBucketPreset:(...args)=>calls.push(args),chrome:{storage:{local:{set:async value=>saved.push(value)}}}});
+    addBucketPreset:(...args)=>{calls.push(args);return {ok:true,verified:true};},chrome:{storage:{local:{set:async value=>saved.push(value)}}}});
   vm.runInContext(source.slice(source.indexOf('function isSetupDestination('),source.indexOf('function applyDebugMode(){')),context);
   vm.runInContext(source.slice(source.indexOf('async function refreshBuckets(){'),source.indexOf('async function addBucketPreset(')),context);
   vm.runInContext(source.slice(source.indexOf('function applyDebugMode(){'),source.indexOf('(async()=>{\n  const stored=await chrome.storage.local.get(["profiles"')),context);
@@ -84,21 +86,27 @@ test('R2 activation is an actionable neutral step, permission failures remain er
 });
 test('successful provisioning refreshes destination editors and inventory before reporting ready',async()=>{
   const events=[];
-  const context=vm.createContext({currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',cfAccounts:[{id:'account',name:'Account'}],profiles:[],
+  const context=vm.createContext({bucketLoadVersion:0,currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',cfAccounts:[{id:'account',name:'Account'}],profiles:[],
     setStatus:(id,message)=>events.push(message),
-    send:async message=>{events.push(message.type);return {ok:true};},
+    send:async message=>{events.push(message.type);return {ok:true,verification:{workerReachable:true}};},
     chrome:{storage:{local:{get:async()=>({profiles:[{type:'cloudflare-r2',accountId:'account',bucketName:'assets',workerUrl:'https://example.workers.dev',token:'fixture'}],rightClickMode:'simple'})}}},
     RedownNestedLocations:{menuMode:()=> 'simple'},
     renderProfiles:()=>events.push('profiles'),refreshLocationEditors:async()=>events.push('locations'),
     loadExplorerInventory:async()=>events.push('inventory')});
   vm.runInContext(source.slice(source.indexOf('function isSetupDestination('),source.indexOf('function applyOnboarding(')),context);
   vm.runInContext(source.slice(source.indexOf('async function addBucketPreset('),source.indexOf('async function loginRequest(')),context);
-  assert.equal(await vm.runInContext('addBucketPreset("assets")',context),true);
+  assert.equal((await vm.runInContext('addBucketPreset("assets")',context)).ok,true);
   assert.deepEqual(events.slice(1,5),['cfProvision','profiles','locations','inventory']);
-  assert.match(events.at(-1),/is ready/);
+  assert.match(events.at(-1),/verified/);
   events.length=0;
-  assert.equal(await vm.runInContext('addBucketPreset("assets")',context),true);
+  assert.equal((await vm.runInContext('addBucketPreset("assets")',context)).ok,true);
   assert.ok(!events.includes('cfProvision'),'already configured bucket avoids deployment');
+  context.send=async()=>({ok:true});events.length=0;
+  const unverified=await vm.runInContext('addBucketPreset("assets",{forceRepair:true})',context);
+  assert.equal(unverified.verified,false,'a bare acknowledgement is never live-health proof');
+  assert.match(events.at(-1),/configuration saved/);
+  assert.doesNotMatch(events.at(-1),/is ready|verified\./);
+
 });
 
 test('normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating',async()=>{
@@ -183,6 +191,73 @@ test('bucket action keeps its name during setup and blocks duplicate clicks',asy
  await vm.runInContext('refreshBuckets()',h.context);
  const tile=d.querySelector('.bucket-select');tile.click();tile.click();
  assert.equal(calls,1);assert.equal(tile.getAttribute('aria-busy'),'true');assert.equal(tile.querySelector('.bucket-name').textContent,'test-bucket');
- assert.equal(tile.querySelector('.bucket-status').textContent,'Setting up…');finish(true);await new Promise(resolve=>setImmediate(resolve));
- assert.equal(tile.disabled,false);assert.equal(tile.querySelector('.bucket-status').textContent,'Ready');assert.equal(tile.hasAttribute('aria-busy'),false);h.dom.window.close();
+ assert.equal(tile.querySelector('.bucket-status').textContent,'Setting up…');finish({ok:true,verified:true});await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(tile.disabled,false);assert.equal(tile.querySelector('.bucket-status').textContent,'Verified — ready');assert.equal(tile.hasAttribute('aria-busy'),false);h.dom.window.close();
+});
+
+test('Beta and Debug are independent, persist separate keys, and do not mutate profiles',async()=>{
+ const h=harness(),d=h.dom.window.document;
+ h.context.profiles=[{id:'kept',type:'github',token:'fixture'}];
+ const before=JSON.stringify(h.context.profiles);
+ vm.runInContext('applyDebugMode()',h.context);
+ const beta=d.getElementById('beta-mode-enabled'),debug=d.getElementById('debug-mode-enabled');
+ for(const [b,g] of [[true,false],[false,true],[true,true],[false,false]]){
+  beta.checked=b;beta.dispatchEvent(new h.dom.window.Event('change'));
+  debug.checked=g;debug.dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
+  assert.equal(d.documentElement.classList.contains('beta-mode'),b);
+  assert.equal(d.documentElement.classList.contains('debug-mode'),g);
+  assert.equal(h.dom.window.getComputedStyle(d.getElementById('add-github')).display==='none',!b);
+  assert.equal(d.querySelector('[data-debug-detail]').hidden,!g);
+ }
+ assert.equal(JSON.stringify(h.context.profiles),before);
+ assert.equal(h.saved.length,8);
+ for(let i=0;i<8;i+=2){assert.deepEqual(Object.keys(h.saved[i]),['betaModeEnabled']);assert.deepEqual(Object.keys(h.saved[i+1]),['debugModeEnabled']);}
+ h.dom.window.close();
+});
+
+test('cached configuration stays amber until explicit verification, and failures allow retry',async()=>{
+ const h=harness(),d=h.dom.window.document;
+ h.context.profiles=[{type:'cloudflare-r2',accountId:'account',bucketName:'test-bucket',workerUrl:'https://fixture.workers.dev',token:'fixture'}];
+ await h.context.refreshBuckets();
+ const tile=d.querySelector('.bucket'),square=tile.querySelector('.bucket-select'),circle=tile.querySelector('.bucket-repair');
+ assert.equal(tile.dataset.signal,'attention');assert.equal(circle.textContent,'↻');
+ h.context.addBucketPreset=async()=>({ok:true,verified:false});square.click();await new Promise(r=>setImmediate(r));
+ assert.equal(tile.dataset.signal,'attention');assert.doesNotMatch(tile.querySelector('.bucket-status').textContent,/ready/i);
+ h.context.addBucketPreset=async()=>{throw Error('Connection timed out. Retry repair.');};circle.click();await new Promise(r=>setImmediate(r));
+ assert.equal(tile.dataset.signal,'repair');assert.equal(circle.textContent,'!');assert.equal(circle.disabled,false);
+ assert.match(d.getElementById('cf-status').textContent,/timed out/);
+ h.context.addBucketPreset=async()=>({ok:true,verified:true});circle.click();await new Promise(r=>setImmediate(r));
+ assert.equal(tile.dataset.signal,'ready');assert.equal(circle.textContent,'✓');assert.equal(square.getAttribute('aria-pressed'),'true');
+ h.dom.window.close();
+});
+
+test('newer bucket loads win even across A-B-A account switches',async()=>{
+ const h=harness(),d=h.dom.window.document,finish=[];
+ h.context.send=()=>new Promise(resolve=>finish.push(resolve));
+ const a=h.context.refreshBuckets();h.context.currentAccountId='second';const b=h.context.refreshBuckets();h.context.currentAccountId='account';const c=h.context.refreshBuckets();
+ finish[2]({ok:true,buckets:[{name:'latest'}]});await c;
+ finish[0]({ok:false,error:'Old failure'});finish[1]({ok:true,buckets:[{name:'obsolete'}]});await Promise.all([a,b]);
+ assert.equal(d.querySelector('.bucket-name').textContent,'latest');assert.doesNotMatch(d.getElementById('cf-status').textContent,/Old failure/);
+ assert.equal(d.getElementById('bucket-grid').hasAttribute('aria-busy'),false);
+ h.dom.window.close();
+});
+
+test('persisted mode combinations restore independently, with Beta off when absent',()=>{
+ const init=source.slice(source.lastIndexOf('  profiles=stored.profiles||[];'),source.lastIndexOf('  rightClickMode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);'));
+ for(const stored of [{},{betaModeEnabled:true},{debugModeEnabled:true},{betaModeEnabled:true,debugModeEnabled:true}]){
+  const h=harness();h.context.stored=stored;vm.runInContext(init,h.context);
+  assert.equal(h.dom.window.document.getElementById('beta-mode-enabled').checked,stored.betaModeEnabled===true);
+  assert.equal(h.dom.window.document.getElementById('debug-mode-enabled').checked,stored.debugModeEnabled===true);
+  h.dom.window.close();
+ }
+});
+
+test('a late repair cannot overwrite a newer bucket list or unlock its active operation',async()=>{
+ const h=harness(),d=h.dom.window.document;let finish;
+ await h.context.refreshBuckets();const old=d.querySelector('.bucket');
+ h.context.addBucketPreset=()=>new Promise(resolve=>finish=resolve);old.querySelector('.bucket-repair').click();
+ await h.context.refreshBuckets();const current=d.querySelector('.bucket');
+ finish({ok:true,verified:true});await new Promise(r=>setImmediate(r));
+ assert.equal(current.dataset.signal,'attention');assert.equal(old.isConnected,false);
+ assert.equal(current.querySelector('.bucket-repair').disabled,false);h.dom.window.close();
 });

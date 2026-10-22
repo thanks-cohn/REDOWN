@@ -38,7 +38,7 @@ test('verified reconnect refreshes both editors and Explorer, coalescing concurr
   const refresh=dom.window.document.getElementById('refresh-menu-locations');refresh.click();
   for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
   assert.equal(refresh.disabled,false);
-  assert.match(dom.window.document.getElementById('menu-location-status').textContent,/refresh finished/);
+  assert.match(dom.window.document.getElementById('menu-location-status').textContent,/Locations refreshed/);
   assert.doesNotMatch(dom.window.document.getElementById('menu-location-status').textContent,/session expired|Connect Cloudflare/);
   ctx.rightClickMode='simple';
   dom.window.document.getElementById('right-click-mode-status').className='status bad';
@@ -47,4 +47,38 @@ test('verified reconnect refreshes both editors and Explorer, coalescing concurr
   assert.equal(dom.window.document.getElementById('right-click-mode-status').className,'meta');
   assert.match(dom.window.document.getElementById('right-click-mode-status').textContent,/Simple menu active/);
   dom.window.close();
+});
+
+test('slow bucket loading does not block locations, Explorer, or connection refresh',async()=>{
+ const dom=new JSDOM(html,{runScripts:'outside-only'}),calls=[];let finish;
+ const ctx=vm.createContext({document:dom.window.document,window:dom.window,
+  $:id=>dom.window.document.getElementById(id),
+  chrome:{storage:{local:{get:async()=>({cloudflareAuth:{accessToken:'fixture'}})}}},
+  profiles:[],cfAccounts:[],currentAccountId:'account',onboardingConnected:false,onboardingBucketState:'loading',
+  send:async()=>({ok:true,accounts:[{id:'account'}]}),applyOnboarding(){},
+  refreshBuckets:()=>{calls.push('buckets');return new Promise(resolve=>finish=resolve);},
+  refreshLocationEditors:async()=>calls.push('locations'),loadExplorerInventory:async()=>calls.push('explorer'),
+  setStatus(){},safeUiMessage:x=>x,friendlyError:x=>String(x)
+ });
+ vm.runInContext(source.slice(source.indexOf('let cloudflareRefreshTask=null;'),source.indexOf('$("r2-check").addEventListener')),ctx);
+ assert.equal(await ctx.refreshCloudflare(),true);
+ assert.deepEqual(calls,['buckets','locations','explorer']);
+ finish();await Promise.resolve();dom.window.close();
+});
+
+test('an invalidated connection reply cannot replace a newer account view',async()=>{
+ const dom=new JSDOM(html,{runScripts:'outside-only'});let finishOld,calls=0;
+ const ctx=vm.createContext({document:dom.window.document,window:dom.window,
+  $:id=>dom.window.document.getElementById(id),bucketLoadVersion:0,
+  chrome:{storage:{local:{get:async()=>({cloudflareAuth:{accessToken:'fixture'}})}}},
+  profiles:[],cfAccounts:[],currentAccountId:'',onboardingConnected:false,onboardingBucketState:'loading',
+  send:()=>++calls===1?new Promise(resolve=>finishOld=resolve):Promise.resolve({ok:true,accounts:[{id:'new-account'}]}),
+  applyOnboarding(){},refreshBuckets:async()=>{},refreshLocationEditors:async()=>{},loadExplorerInventory:async()=>{},
+  setStatus(){},safeUiMessage:x=>x,friendlyError:x=>String(x)
+ });
+ vm.runInContext(source.slice(source.indexOf('let cloudflareRefreshTask=null;'),source.indexOf('$("r2-check").addEventListener')),ctx);
+ const old=ctx.refreshCloudflare();await new Promise(resolve=>setImmediate(resolve));assert.equal(typeof finishOld,"function");ctx.invalidateCloudflareView();
+ assert.equal(await ctx.refreshCloudflare(),true);assert.equal(ctx.currentAccountId,'new-account');
+ finishOld({ok:true,accounts:[{id:'old-account'}]});assert.equal(await old,false);
+ assert.equal(ctx.currentAccountId,'new-account');dom.window.close();
 });

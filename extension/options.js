@@ -2,6 +2,8 @@ const $=id=>document.getElementById(id);
 let profiles=[];
 let rightClickMode="simple";
 let debugModeEnabled=false;
+let betaModeEnabled=false;
+let bucketLoadVersion=0;
 let cfAccounts=[];
 let currentAccountId="";
 let onboardingConnected=false;
@@ -766,12 +768,12 @@ function renderProfiles(){
   if(rightClickMode==="simple")root.append(simpleBucketCreator());
   profiles.sort((a,b)=>(a.menuOrder??999)-(b.menuOrder??999));
   const visibleProfiles=profiles.filter(profile=>!profile.explorerManaged);
-  $("profiles-empty").hidden=visibleProfiles.some(p=>debugModeEnabled||p.type!=="github");
+  $("profiles-empty").hidden=visibleProfiles.some(p=>betaModeEnabled||p.type!=="github");
 
   let simpleIntroShown=false;
   visibleProfiles.forEach((p,index)=>{
     const card=document.createElement("article");
-    card.className=p.type==="github"?"card debug-only":"card";card.dataset.menuProfileId=p.id;
+    card.className=p.type==="github"?"card beta-only":"card";card.dataset.menuProfileId=p.id;
 
     const top=document.createElement("div");
     top.className="card-top";
@@ -3995,19 +3997,26 @@ $("refresh-menu-locations").addEventListener("click",async()=>{
   button.disabled=true;button.textContent="Refreshing…";
   setStatus("menu-location-status","Checking Cloudflare and refreshing locations…");
   try{
-    const refreshed=await refreshCloudflare();
-    if(refreshed)setStatus("menu-location-status","Location refresh finished. Any folder lookup errors appear beside the affected location.","ok");
+    await refreshCloudflare(); // Each independent surface reports its own actual completion.
   }catch(error){setStatus("menu-location-status",error?.message||"Could not refresh locations. Retry.","bad");}
   finally{button.disabled=false;button.textContent="Refresh locations";}
 });
 let cloudflareRefreshTask=null;
+let cloudflareRefreshVersion=0;
+function invalidateCloudflareView(){
+  cloudflareRefreshVersion++;bucketLoadVersion++;cloudflareRefreshTask=null;
+  $("bucket-grid").replaceChildren();$("bucket-grid").removeAttribute("aria-busy");
+}
 function refreshCloudflare(){
   if(cloudflareRefreshTask)return cloudflareRefreshTask;
-  cloudflareRefreshTask=refreshCloudflareState().finally(()=>{cloudflareRefreshTask=null;});
-  return cloudflareRefreshTask;
+  const task=refreshCloudflareState().finally(()=>{if(cloudflareRefreshTask===task)cloudflareRefreshTask=null;});
+  cloudflareRefreshTask=task;
+  return task;
 }
 async function refreshCloudflareState(){
+  const refreshVersion=++cloudflareRefreshVersion;
   const stored=await chrome.storage.local.get("cloudflareAuth");
+  if(refreshVersion!==cloudflareRefreshVersion)return false;
   const connected=Boolean(stored.cloudflareAuth?.accessToken);
   onboardingConnected=connected&&!stored.cloudflareAuth?.reconnectRequired;
   applyOnboarding();
@@ -4018,10 +4027,11 @@ async function refreshCloudflareState(){
   $("cloudflare-panel").hidden=!connected;
   if(!connected)$("r2-setup").hidden=true;
   $("local-tools").hidden=!connected;
-  if(!connected){setStatus("menu-location-status","Connect Cloudflare to refresh locations.","bad");return false;}
+  if(!connected){bucketLoadVersion++;$("bucket-grid").replaceChildren();setStatus("menu-location-status","Connect Cloudflare to refresh locations.","bad");return false;}
 
   setStatus("hero-status","Checking Cloudflare access…");
   const result=await send({type:"cfAccounts"});
+  if(refreshVersion!==cloudflareRefreshVersion)return false;
   if(!result?.ok){
     onboardingBucketState="error";applyOnboarding();
     const message=result?.error||"Could not verify Cloudflare access. Retry.";
@@ -4038,9 +4048,11 @@ async function refreshCloudflareState(){
   // Independent Cloudflare surfaces must not block each other or page startup.
   if(currentAccountId)void refreshBuckets().catch(error=>setStatus("cf-status",safeUiMessage(error?.message||String(error)),"bad"));
   void refreshLocationEditors().then(()=>{
+    if(refreshVersion!==cloudflareRefreshVersion)return;
     setStatus("menu-location-status","Locations refreshed. Any folder lookup errors appear beside the affected location.","ok");
-  }).catch(error=>setStatus("menu-location-status",safeUiMessage(error?.message||String(error)),"bad"));
+  }).catch(error=>{if(refreshVersion===cloudflareRefreshVersion)setStatus("menu-location-status",safeUiMessage(error?.message||String(error)),"bad");});
   void loadExplorerInventory().catch(error=>{
+    if(refreshVersion!==cloudflareRefreshVersion)return;
     $("explorer-status").textContent=safeUiMessage(friendlyError(error,"load Cloudflare storage"));
   });
   return true;
@@ -4054,13 +4066,16 @@ $("r2-check").addEventListener("click",async()=>{
 async function refreshBuckets(){
   if(!currentAccountId)return;
   const accountId=currentAccountId;
+  const requestId=++bucketLoadVersion;
   onboardingBucketState="loading";applyOnboarding();
   $("r2-setup").hidden=true;
   $("bucket-grid").replaceChildren();
+  $("bucket-grid").setAttribute("aria-busy","true");
   $("r2-dashboard").href=`https://dash.cloudflare.com/${encodeURIComponent(accountId)}/r2/overview`;
   setStatus("cf-status","Loading buckets…");
   const result=await send({type:"cfBuckets",accountId}).catch(error=>({ok:false,error:error?.message||"Could not load buckets"}));
-  if(accountId!==currentAccountId)return;
+  if(accountId!==currentAccountId||requestId!==bucketLoadVersion)return;
+  $("bucket-grid").removeAttribute("aria-busy");
   if(!result?.ok){
     const message=result?.error||"Could not load buckets";
     const needsActivation=/(?:please\s+)?(?:sign\s*up|subscribe|activate|enable).{0,60}\bR2\b|\bR2\b.{0,60}(?:subscription required|not enabled|not activated|not subscribed)/i.test(message);
@@ -4080,45 +4095,39 @@ async function refreshBuckets(){
     });
     el.classList.add("selected");button.setAttribute("aria-pressed","true");el.querySelector(".bucket-debug-select")?.setAttribute("aria-pressed","true");
   };
-  const signalBucket=(el,state,caption,message)=>{
-    el.dataset.signal=state;
-    const lamp=el.querySelector(".bucket-repair");
-    if(lamp){
-      const glyph={ready:"✓",attention:"↻",repair:"!",working:"…"}[state]||"↻";
-      lamp.textContent=glyph;
-      lamp.title=message||"Verify / repair Worker";
-      lamp.setAttribute("aria-label",(message||"Verify / repair Worker")+" — click to verify or repair");
-    }
-    if(caption)caption.textContent=message||caption.textContent;
-  };
+  const signalBucket=(el,state,caption,message)=>RedownStorageSignals.paint(el,state,message);
   const useBucket=async(bucket,el,button,caption,forceRepair=false)=>{
-    if(settingUp||accountId!==currentAccountId)return;
-    settingUp=true;markSelected(el,button,bucket);
+    if(settingUp||accountId!==currentAccountId||requestId!==bucketLoadVersion)return;
+    settingUp=true;el.classList.remove("is-ready");markSelected(el,button,bucket);
     root.querySelectorAll(".bucket button").forEach(item=>item.disabled=true);
-    button.setAttribute("aria-busy","true");signalBucket(el,"working",caption,forceRepair?"REPAIRING!":"SETTING UP!");
+    const cached=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket);
+    button.setAttribute("aria-busy","true");signalBucket(el,"working",caption,forceRepair?"Repairing…":cached?"Selecting…":"Setting up…");
     const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
-    const previouslyConfigured=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket);
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
-      if(accountId!==currentAccountId||!el.isConnected)return;
-      el.classList.toggle("is-ready",Boolean(done));const confirmed=Boolean(done)&&(forceRepair||!previouslyConfigured);signalBucket(el,confirmed?"ready":done?"attention":"repair",caption,confirmed?"READY!":done?"CHECK CONNECTION!":"REPAIR! CLICK!");if(debugUse)debugUse.textContent=done?"✓ Ready to use":"Retry setup";
+      if(accountId!==currentAccountId||requestId!==bucketLoadVersion||!el.isConnected)return;
+      const configured=done?.ok===true;
+      const confirmed=configured&&done.verified===true;
+      el.classList.toggle("is-ready",confirmed);
+      signalBucket(el,confirmed?"ready":configured?"attention":"repair",caption,confirmed?"Verified — ready":configured?"Saved · check connection":"Repair needed");
+      if(debugUse)debugUse.textContent=configured?"Use this bucket":"Retry setup";
     }catch(error){
-      if(accountId===currentAccountId){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"REPAIR! CLICK!");if(debugUse)debugUse.textContent="Retry setup";}
+      if(accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"Repair needed");if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
       settingUp=false;button.removeAttribute("aria-busy");
-      if(accountId===currentAccountId&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
+      if(accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
     }
   };
   (result.buckets||[]).forEach(bucket=>{
     const ready=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket.name);
-    const el=document.createElement("div");el.className="bucket";el.classList.toggle("is-ready",ready);
+    const el=document.createElement("div");el.className="bucket";el.dataset.configured=String(ready);
     const button=document.createElement("button");button.type="button";button.className="bucket-select bucket-use normal-only";
     button.title=bucket.name;button.setAttribute("aria-label",`Use bucket ${bucket.name}`);button.setAttribute("aria-pressed","false");
     const icon=document.createElement("span");icon.className="bucket-icon";icon.setAttribute("aria-hidden","true");
     icon.innerHTML='<svg viewBox="0 0 32 32" fill="none"><ellipse cx="16" cy="8" rx="10" ry="4" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.3"/><path d="M6 8v8c0 2.2 4.5 4 10 4s10-1.8 10-4V8M6 16v8c0 2.2 4.5 4 10 4s10-1.8 10-4v-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
     const copy=document.createElement("span");copy.className="bucket-copy";
     const name=document.createElement("span");name.className="bucket-name";name.textContent=bucket.name;
-    const caption=document.createElement("span");caption.className="bucket-status";caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
+    const caption=document.createElement("span");caption.className="bucket-status";caption.setAttribute("aria-live","polite");caption.textContent=ready?"Ready":"Use bucket";copy.append(name,caption);
     const check=document.createElement("span");check.className="bucket-check";check.setAttribute("aria-hidden","true");check.textContent="✓";
     const surface=document.createElement("span");surface.className="bucket-surface";surface.append(icon,copy,check);
     for(const side of ["top","right","bottom","left"]){const face=document.createElement("span");face.className=`bucket-side bucket-side-${side}`;face.setAttribute("aria-hidden","true");button.append(face);}
@@ -4126,11 +4135,10 @@ async function refreshBuckets(){
     button.addEventListener("click",()=>useBucket(bucket.name,el,button,caption));
     const repair=document.createElement("button");repair.type="button";repair.className="bucket-repair normal-only";
     repair.title=`Verify / repair ${bucket.name}`;repair.setAttribute("aria-label",repair.title);
-    repair.innerHTML='<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12.7 6a5 5 0 1 0 .1 3.7M12.7 2.7V6H9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     repair.addEventListener("click",event=>{event.stopPropagation();void useBucket(bucket.name,el,button,caption,true);});
     el.append(repair);
     // A stored configuration is not proof of a live healthy Worker.
-    signalBucket(el,"attention",caption,ready?"CHECK CONNECTION!":"SET UP! CLICK THE STONE!");
+    signalBucket(el,"attention",caption,ready?"Check connection":"Set up bucket");
     const debugName=document.createElement("button");debugName.type="button";debugName.className="bucket-debug-select debug-only";debugName.textContent=bucket.name;debugName.setAttribute("aria-pressed","false");
     debugName.addEventListener("click",()=>{markSelected(el,button,bucket.name);setStatus("cf-status",bucket.name+" selected.","ok");});
     const details=document.createElement("div");details.className="bucket-debug-details debug-only";details.textContent=ready?"Configured for REDOWN":([bucket.location,bucket.jurisdiction].filter(Boolean).join(" · ")||"R2 bucket")+" · Worker not configured";
@@ -4143,17 +4151,19 @@ async function refreshBuckets(){
 async function addBucketPreset(bucketName,{forceRepair=false}={}){
   const account=cfAccounts.find(a=>a.id===currentAccountId);
   if(!account)return;
+  const operationVersion=bucketLoadVersion;
   // Selecting an existing destination must never trigger a Worker deployment.
   if(!forceRepair&&profiles.some(p=>isSetupDestination(p)&&p.accountId===account.id&&p.bucketName===bucketName)){
-    setStatus("cf-status",bucketName+" is ready to use.","ok");
+    setStatus("cf-status",bucketName+" selected. Configuration saved; use the circle to verify the connection.");
     await refreshLocationEditors();
-    return true;
+    return {ok:true,verified:false};
   }
   const setupAccountId=account.id;
   setStatus("cf-status",`Setting up ${bucketName}…`);
   try {
   let result;
   for(let attempt=1;attempt<=4;attempt++){
+    if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
     try{
       result=await send({
         type:"cfProvision",
@@ -4167,6 +4177,7 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
       result={ok:false,error:error?.message||String(error)};
     }
     if(result?.ok)break;
+    if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
     const message=result?.error||"Unknown Cloudflare preparation error";
     if(!/failed to fetch|network.changed|network changed|networkerror|connection.reset|connection reset|timeout|timed out|reachability|dns/i.test(message)||attempt===4){
       setStatus("cf-status",bucketName+" could not be prepared: "+message,"bad");
@@ -4175,17 +4186,19 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
     setStatus("cf-status",bucketName+" is in R2, but Worker setup was interrupted ("+message+"). Retrying "+(attempt+1)+"/4 without losing the bucket…");
     await new Promise(resolve=>setTimeout(resolve,Math.min(10000,1200*Math.pow(2,attempt-1))));
   }
+  if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
+  const verified=result?.verification?.workerReachable===true;
   const stored=await chrome.storage.local.get("profiles");
+  if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
   profiles=stored.profiles||[];
-  rightClickMode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
-  if(stored.rightClickMode!=="simple" && stored.rightClickMode!=="nested")await chrome.storage.local.set({rightClickMode});
   renderProfiles();
   await refreshLocationEditors();
   await loadExplorerInventory();
-  if(currentAccountId!==setupAccountId)return true;
-  setStatus("cf-status",`${bucketName} is ready. It’s available in your right-click destinations.`,"ok");
-  return true;
+  if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
+  setStatus("cf-status",verified?`${bucketName} verified. Available in your right-click destinations.`:`${bucketName} configuration saved. Use the circle to verify the connection.`,verified?"ok":"");
+  return {ok:true,verified};
   } catch(error) {
+    if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
     const message=error?.message||String(error);
     setStatus("cf-status",/failed to fetch|network/i.test(message)
       ? bucketName+" exists in Cloudflare, but preparing its right-click Worker was interrupted by the network. The bucket was not deleted; try Prepare again when connected."
@@ -4261,6 +4274,7 @@ $("create-bucket").addEventListener("click",async()=>{
   await refreshBuckets();
 });
 $("add-github").addEventListener("click",()=>{
+  if(!betaModeEnabled)return;
   profiles.push({
     id:uid(),name:"GitHub Assets",type:"github",repository:"",branch:"main",
     workflowFile:"redown-ingest.yml",token:"",
@@ -4315,6 +4329,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=="local")return;
   if(changes.cloudflareAuth)explorerDestinationMenus?.clearCache();
   if(changes.cloudflareAuth && (changes.cloudflareAuth.newValue?.accessToken!==changes.cloudflareAuth.oldValue?.accessToken||changes.cloudflareAuth.newValue?.reconnectRequired!==changes.cloudflareAuth.oldValue?.reconnectRequired)){
+    invalidateCloudflareView();
     refreshCloudflare().catch(error=>setStatus("hero-status",safeUiMessage(error?.message||String(error)),"bad"));
   }
   if(changes.rightClickMode){rightClickMode=RedownNestedLocations.menuMode(changes.rightClickMode.newValue,profiles);renderRightClickMode();}
@@ -4340,7 +4355,7 @@ function applyOnboarding(){
   const ready=onboardingConnected&&profiles.some(isSetupDestination);
   document.documentElement.classList.toggle("onboarding-pending",!ready);
   const activation=onboardingConnected&&onboardingBucketState==="activate";
-  const storageAvailable=ready||(onboardingConnected&&["empty","choose","error"].includes(onboardingBucketState));
+  const storageAvailable=ready||(onboardingConnected&&["loading","empty","choose","error"].includes(onboardingBucketState));
   document.documentElement.classList.toggle("storage-pending",!storageAvailable);
   $("r2-setup").hidden=!activation;
   $("create-bucket").classList.toggle("setup-go",onboardingBucketState==="empty");
@@ -4369,8 +4384,17 @@ function applyDebugMode(){
   document.documentElement.classList.toggle("debug-mode",debugModeEnabled);
   $("debug-mode-enabled").checked=debugModeEnabled;
   document.querySelectorAll("[data-debug-detail]").forEach(el=>{el.hidden=!debugModeEnabled;});
-  $("profiles-empty").hidden=profiles.some(p=>!p.explorerManaged&&(debugModeEnabled||p.type!=="github"));
+  applyBetaMode();
 }
+function applyBetaMode(){
+  document.documentElement.classList.toggle("beta-mode",betaModeEnabled);
+  $("beta-mode-enabled").checked=betaModeEnabled;
+  $("profiles-empty").hidden=profiles.some(p=>!p.explorerManaged&&(betaModeEnabled||p.type!=="github"));
+}
+$("beta-mode-enabled").addEventListener("change",async(event)=>{
+  betaModeEnabled=event.target.checked;applyBetaMode();
+  await chrome.storage.local.set({betaModeEnabled});
+});
 $("debug-mode-enabled").addEventListener("change",async(event)=>{
   debugModeEnabled=event.target.checked;
   applyDebugMode();
@@ -4378,9 +4402,10 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
 });
 
 (async()=>{
-  const stored=await chrome.storage.local.get(["profiles","cloudflareAuth","rightClickMode","debugModeEnabled"]);
+  const stored=await chrome.storage.local.get(["profiles","cloudflareAuth","rightClickMode","debugModeEnabled","betaModeEnabled"]);
   profiles=stored.profiles||[];
   onboardingConnected=Boolean(stored.cloudflareAuth?.accessToken)&&!stored.cloudflareAuth?.reconnectRequired;
+  betaModeEnabled=stored.betaModeEnabled===true;
   debugModeEnabled=stored.debugModeEnabled===true;
   applyDebugMode();
   rightClickMode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
@@ -4394,33 +4419,12 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
   await renderHistory();
 })();
 
-// Diagnostic console: deliberately synthetic signals, never mutate live bucket state.
-const signalSamples=[
-  {glyph:"↻",label:"STORAGE NEEDS REFRESH!",color:"#efc56e"},
-  {glyph:"!",label:"REPAIR! CLICK!",color:"#f59a8e"},
-  {glyph:"…",label:"REPAIRING!",color:"#9ecff8"},
-  {glyph:"✓",label:"REPAIRED! READY!",color:"#9be7ae"}
-];
-let signalDiagnosticStep=-1;
-function renderSignalDiagnostic(step){
-  const root=$("signal-diagnostics-lamps");
-  if(!root)return;
-  root.replaceChildren();
-  signalSamples.forEach((sample,index)=>{
-    const lamp=document.createElement("div");
-    lamp.style.cssText="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid "+(index===step?sample.color:"#48546b")+";border-radius:12px;background:#101b2e;color:"+(index===step?sample.color:"#8291a5")+";font-size:12px;font-weight:650";
-    const symbol=document.createElement("span");symbol.textContent=sample.glyph;symbol.style.cssText="display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#253342;border:1px solid currentColor;font-size:17px";
-    const text=document.createElement("span");text.textContent=sample.label;
-    lamp.append(symbol,text);root.append(lamp);
-  });
-  $("signal-diagnostics-message").textContent=step<0?"Signals idle. Choose Run Signal Diagnostics.":signalSamples[step].label+" — SIMULATION ONLY. No Cloudflare operation performed.";
-}
-renderSignalDiagnostic(-1);
-$("run-signal-diagnostics")?.addEventListener("click",()=>{
-  signalDiagnosticStep=(signalDiagnosticStep+1)%signalSamples.length;
-  renderSignalDiagnostic(signalDiagnosticStep);
+// The educational simulation has no access to send(), profiles or Chrome storage.
+RedownStorageSignals.mountTraining({document});
+$("refresh-storage").addEventListener("click",async()=>{
+  const button=$("refresh-storage");if(button.disabled)return;button.disabled=true;button.textContent="Refreshing…";button.setAttribute("aria-busy","true");
+  try{await refreshBuckets();}finally{button.disabled=false;button.textContent="Refresh buckets";button.removeAttribute("aria-busy");}
 });
-$("reset-signal-diagnostics")?.addEventListener("click",()=>{signalDiagnosticStep=-1;renderSignalDiagnostic(-1);});
 
 // Explicit Debug Mode controls; no remote probe or repair is triggered here.
 for(const [id,operation] of [["runtime-diagnostics-status","snapshot"],["runtime-diagnostics-export","exportSupport"],["runtime-diagnostics-clear","clear"]]){

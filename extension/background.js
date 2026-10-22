@@ -846,6 +846,10 @@ async function ensureWorkersSubdomain(accountId) {
   }
   throw new Error("Could not create a workers.dev subdomain for this Cloudflare account");
 }
+function isVerifiedWorkerHealth(body){
+  return body?.ok===true && body.service==="REDOWN" && body.secretConfigured===true && body.storageBound===true;
+}
+
 async function provisionCloudflareProfile(options) {
   return navigator.locks.request("redown-provision-profile", () => deployCloudflareProfile(options));
 }
@@ -916,10 +920,11 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
         headers: { "cache-control": "no-cache" }
       });
       if (response.ok) {
-        health = await response.json().catch(() => ({ ok: true }));
-        if (health?.ok) break;
+        health = await response.json().catch(() => null);
+        if (isVerifiedWorkerHealth(health)) break;
+        health = null;
       }
-      healthError = `HTTP ${response.status}`;
+      healthError = response.ok?"Unexpected Worker health response":`HTTP ${response.status}`;
     } catch (error) {
       // A freshly-created workers.dev route can be temporarily unreachable
       // from a browser profile/resolver even though the deployment API succeeded.
@@ -932,9 +937,9 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
 
   if (!health?.ok) {
     throw new Error(
-      `REDOWN deployed the Worker, but this browser could not reach ${workerUrl} within 60 seconds` +
+      `REDOWN deployed the Worker, but could not verify its connection within 60 seconds` +
       `${healthError ? ` (last error: ${healthError})` : ""}. ` +
-      "This is a workers.dev reachability/DNS issue, not an R2 authorization failure."
+      "Check your connection and retry repair. Your bucket was not deleted."
     );
   }
   const desiredFolders = {
@@ -2124,7 +2129,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfAccounts") return sendResponse({ ok:true, accounts:await listCloudflareAccounts() });
       if (message?.type === "cfBuckets") return sendResponse({ ok:true, buckets:await listBuckets(message.accountId) });
       if (message?.type === "cfCreateBucket") return sendResponse({ ok:true, bucket:await createBucket(message.accountId,message.name,message.locationHint) });
-      if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message) });
+      if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message), verification:{workerReachable:true} });
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
       }

@@ -1,0 +1,48 @@
+{
+  "scope": "Ordinary Chromium, local mocked HTML and real UI handlers. Not an installed extension or live Cloudflare test.",
+  "layouts": [
+    {
+      "width": 1366,
+      "scrollWidth": 1366,
+      "restHeight": 178,
+      "fontLoaded": true,
+      "expandedHeight": 675
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "restHeight": 139,
+      "fontLoaded": true,
+      "expandedHeight": 675
+    }
+  ],
+  "successPerimeterOpacity": "0",
+  "trainingNarrowWidth": 375,
+  "trainingMadeNoStorageCalls": true,
+  "modes": [
+    {
+      "beta": true,
+      "debug": false,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": true,
+      "githubVisible": false
+    },
+    {
+      "beta": true,
+      "debug": true,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": false,
+      "githubVisible": false
+    }
+  ],
+  "reducedMotion": {
+    "glyphAnimation": "none",
+    "gridTransition": "0s"
+  }
+}
