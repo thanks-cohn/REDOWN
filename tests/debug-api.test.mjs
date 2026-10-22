@@ -4,11 +4,12 @@ import {readFileSync, writeFileSync, mkdtempSync, rmSync, symlinkSync, mkdirSync
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {createDebugApi, validateStructure} from '../agent/debug/api.mjs';
 import {runCli} from '../agent/debug/cli.mjs';
 
-const ROOT = resolve(new URL('..', import.meta.url).pathname);
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const archivePath = 'tests/fixtures/debug/v0.1/';
 const readJson = path => JSON.parse(readFileSync(join(ROOT,path),'utf8'));
 const frozen = readJson(archivePath + 'expected.json');
@@ -245,17 +246,17 @@ test('path traversal, absolute/Windows paths, NUL and escaping symlinks are reje
     f.manifest.cases[0].incidentPath=path;f.save();assert.ok(f.codes().includes('unsafe-path'));
   });
   fixture(f=>{
-    const outside=join(tmpdir(),'redown-debug-outside-' + f.root.split('/').at(-1));
-    writeFileSync(outside,'PRIVATE_SENTINEL');
+    const outside=mkdtempSync(join(tmpdir(),'redown-debug-outside-'));
+    writeFileSync(join(outside,'fixture.txt'),'PRIVATE_SENTINEL');
     try {
-      symlinkSync(outside,join(f.root,'escape'));
-      f.manifest.cases[0].incidentPath='escape';f.save();
+      symlinkSync(outside,join(f.root,'escape'),process.platform==='win32'?'junction':'dir');
+      f.manifest.cases[0].incidentPath='escape/fixture.txt';f.save();
       assert.ok(f.codes().includes('unsafe-path'));
       assert.equal(JSON.stringify(f.validation()).includes('PRIVATE_SENTINEL'),false);
       f.manifest.cases[0].incidentPath='incident.json';
-      f.events[0].sourceRefs=[{path:'escape',symbol:'x',sha256:'0'.repeat(64),role:'source'}];f.save();
+      f.events[0].sourceRefs=[{path:'escape/fixture.txt',symbol:'x',sha256:'0'.repeat(64),role:'source'}];f.save();
       assert.ok(f.codes().includes('unsafe-path'));
-    } finally {rmSync(outside,{force:true});}
+    } finally {rmSync(outside,{recursive:true,force:true});}
   });
   fixture(f=>{
     f.events[0].sourceRefs=[{path:'../outside',symbol:'x',sha256:'0'.repeat(64),role:'source'}];f.save();
@@ -265,8 +266,9 @@ test('path traversal, absolute/Windows paths, NUL and escaping symlinks are reje
 
 test('internal symlinks work; directories, unavailable roots/files and oversized records fail deterministically', () => {
   fixture(f=>{
-    symlinkSync(join(f.root,'incident.json'),join(f.root,'inside'));
-    f.manifest.cases[0].incidentPath='inside';f.save();
+    mkdirSync(join(f.root,'records'));cpSync(join(f.root,'incident.json'),join(f.root,'records','incident.json'));
+    symlinkSync(join(f.root,'records'),join(f.root,'inside'),process.platform==='win32'?'junction':'dir');
+    f.manifest.cases[0].incidentPath='inside/incident.json';f.save();
     assert.equal(f.validation().data.valid,true);
   });
   fixture(f=>{mkdirSync(join(f.root,'directory'));f.manifest.cases[0].incidentPath='directory';f.save();assert.ok(f.codes().includes('invalid-record-file'));});

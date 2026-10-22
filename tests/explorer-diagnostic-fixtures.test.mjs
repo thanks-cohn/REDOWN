@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {fileURLToPath} from 'node:url';
+import {tmpdir} from 'node:os';
 import {spawnSync} from 'node:child_process';
 import {readFile} from 'node:fs/promises';
 import {createExplorerAPI,createCollector} from '../agent/explorer/api.mjs';
@@ -14,8 +16,8 @@ test('operation tree retains concurrent descendants and malformed/duplicate IDs 
 });
 test('current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input',()=>{
  const api=createExplorerAPI();assert.deepEqual(api.query('validateArchitecture').data.findings,[]);
- const script=new URL('../agent/explorer/cli.mjs',import.meta.url).pathname;const run=spawnSync(process.execPath,[script,'explainOperation','--input','{"name":"copy"}'],{cwd:'/tmp',encoding:'utf8'});assert.equal(run.status,0);assert.equal(JSON.parse(run.stdout).data.name,'copy');
- const invalid=spawnSync(process.execPath,[script,'getOperationTrace','--input','not-json'],{cwd:'/tmp',encoding:'utf8'});assert.equal(invalid.status,2);assert.equal(JSON.parse(invalid.stdout).error.code,'INVALID_INPUT_OR_BUNDLE');
+ const script=fileURLToPath(new URL('../agent/explorer/cli.mjs',import.meta.url));const run=spawnSync(process.execPath,[script,'explainOperation','--input','{"name":"copy"}'],{cwd:tmpdir(),encoding:'utf8'});assert.equal(run.status,0);assert.equal(JSON.parse(run.stdout).data.name,'copy');
+ const invalid=spawnSync(process.execPath,[script,'getOperationTrace','--input','not-json'],{cwd:tmpdir(),encoding:'utf8'});assert.equal(invalid.status,2);assert.equal(JSON.parse(invalid.stdout).error.code,'INVALID_INPUT_OR_BUNDLE');
 });
 test('actual reported404 case remains open and separates reports, repository and deployed evidence',async()=>{
  const record=JSON.parse(await readFile('docs/explorer/COPY_404_CASE.json','utf8'));assert.equal(record.state,'open');assert.equal(record.versionLayers.installedExtension,'unknown');assert.equal(record.versionLayers.deployedWorker,'unknown');assert.equal(record.resolution,'not established');assert.equal(record.foreverLinks.status,'unknown');

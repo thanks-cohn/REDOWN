@@ -7,7 +7,7 @@ import {createHash,randomUUID} from "node:crypto";
 
 async function workerModule() {
   const background = await readFile(new URL("../extension/background.js", import.meta.url), "utf8");
-  const match = background.match(/const WORKER_SOURCE = `([\s\S]*?)`;\n\nfunction/);
+  const match = background.match(/const WORKER_SOURCE = `([\s\S]*?)`;\r?\n\r?\nfunction/);
   assert.ok(match, "embedded Explorer worker source is present");
   const source = Function(`return \`${match[1]}\``)().replace("__REDOWN_SHARED_SECRET__", "test-secret");
   return import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`);

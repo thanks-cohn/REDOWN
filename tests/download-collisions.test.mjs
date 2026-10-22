@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import test from 'node:test';
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
-const match=background.match(/const WORKER_SOURCE = `([\s\S]*?)`;\n\nfunction/);
+const match=background.match(/const WORKER_SOURCE = `([\s\S]*?)`;\r?\n\r?\nfunction/);
 const source=Function(`return \`${match[1]}\``)().replace('__REDOWN_SHARED_SECRET__','secret');
 const worker=(await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)).default;
 function bucket(race=false){

@@ -4,11 +4,12 @@ import { readFileSync, mkdtempSync, writeFileSync, rmSync, symlinkSync } from 'n
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import { createHash } from 'node:crypto';
 import { createAgentApi, inspectReferences } from '../agent/api.mjs';
 const catalog = JSON.parse(readFileSync(new URL('../agent/catalog.json', import.meta.url)));
 const api = createAgentApi();
-const cli = fileURL => spawnSync(process.execPath, [new URL('../agent/cli.mjs', import.meta.url).pathname, ...fileURL], { encoding:'utf8', cwd:tmpdir() });
+const cli = fileURL => spawnSync(process.execPath, [fileURLToPath(new URL('../agent/cli.mjs', import.meta.url)), ...fileURL], { encoding:'utf8', cwd:tmpdir() });
 
 test('offline discovery advertises only implemented operations and distinct versions', () => {
   const r = api.query('describe');
@@ -72,9 +73,13 @@ test('reference inspection detects content drift, missing anchors/files and unsa
     assert.equal(createAgentApi({catalog:fixture,root}).query('describe').evidenceStatus,'unknown');
     fixture.sourceRevisions=[{...ref,path:'../outside.js'}];
     assert.equal(inspectReferences(fixture,root).findings[0].code,'missing-or-unsafe-source');
-    symlinkSync('/etc/hosts',join(root,'escape'));
-    fixture.sourceRevisions=[{...ref,path:'escape'}];
-    assert.equal(inspectReferences(fixture,root).findings[0].code,'missing-or-unsafe-source');
+    const outside=mkdtempSync(join(tmpdir(),'redown-agent-outside-'));
+    try {
+      writeFileSync(join(outside,'fixture.txt'),'outside fixture');
+      symlinkSync(outside,join(root,'escape'),process.platform==='win32'?'junction':'dir');
+      fixture.sourceRevisions=[{...ref,path:'escape/fixture.txt'}];
+      assert.equal(inspectReferences(fixture,root).findings[0].code,'missing-or-unsafe-source');
+    } finally {rmSync(outside,{recursive:true,force:true});}
   } finally { rmSync(root,{recursive:true,force:true}); }
 });
 
