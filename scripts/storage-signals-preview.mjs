@@ -121,6 +121,13 @@ try{
   assert.match(await evaluate(`$('domain-fixture').textContent`),/nested\/%E9%9B%AA/);
   await shot('domain-and-object-urls-'+width);
  }
+ await evaluate(`(()=>{
+  send=async message=>message.type==='cfSetAssetDomain'?{ok:true,hostname:'new.example',state:'attached',message:'Attached — mock Cloudflare read-back; public connection not verified.',profile:{customAssetDomain:'new.example'}}:{ok:true,accountId:message.accountId,bucketName:message.bucketName,addresses:[{label:'Custom domain',base:'https://new.example/assets/',state:'configured'}]};
+  $('domain-fixture').querySelector('input').value='new.example';$('domain-fixture').querySelector('button').click();
+ })()`);await pause(120);
+ assert.match(await evaluate(`$('domain-fixture').textContent`),/new.example\/assets\/nested\/%E9%9B%AA/);
+ assert.equal(await evaluate(`$('domain-fixture').querySelectorAll('details')[1].open`),true);
+ await shot('updated-open-preview-urls');report.openPreviewUrlsRefreshedAfterAttach=true;
  report.domainAndObjectDisclosures='Rendered with mocked control-plane responses; attachment confirmation, encoded nested object URLs and narrow width passed.';
  await writeFile(output+'/report.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{

@@ -1,0 +1,98 @@
+{
+  "diagnosticCaseVersion": "1.0.0",
+  "id": "EXPLORER-COPY-404-2026-10",
+  "state": "open",
+  "provenance": {
+    "sourceType": "explicit-user-report",
+    "reviewStatus": "unreviewed",
+    "requestFile": "docs/requests/EXPLORER_DIAGNOSTIC_ARCHITECTURE_REQUEST.md",
+    "sha256": "379cdc16ce1bba987320096b69f3cce44002d73e372ec7128c883a97c99a62c6"
+  },
+  "reportedFailure": {
+    "operation": [
+      "copy",
+      "copy-to",
+      "move-to",
+      "paste"
+    ],
+    "message": "0 files completed \u00b7 1 failed. Source object was not available (HTTP 404)",
+    "reportedWorking": [
+      "preview",
+      "download",
+      "rename",
+      "upload"
+    ],
+    "keys": "not supplied",
+    "accountAndBucket": "not supplied"
+  },
+  "versionLayers": {
+    "repositoryBaseline": "d7953fd",
+    "currentDiagnosticSource": "Explorer diagnostic1.0 / Worker6",
+    "installedExtension": "unknown",
+    "deployedWorker": "unknown",
+    "liveCloudflare": "not observed"
+  },
+  "knownSourceDivergence": {
+    "evidence": "current source inspection only",
+    "previewAndDownload": "OAuth API /objects/{encoded-key}",
+    "crossBucketCopy": "destination Worker POST transferBatch \u2192 source Worker GET /object?key={encoded-whole-key}",
+    "rename": "same-bucket verified move; does not prove cross-Worker routing"
+  },
+  "findings": [
+    {
+      "confidence": "confirmed",
+      "claim": "User reported HTTP404 on Copy while Preview/Download work",
+      "evidence": "explicit report; not reproduced live"
+    },
+    {
+      "confidence": "possible",
+      "claim": "Source Worker route, binding or exact-key identity differs from API path",
+      "evidence": "retrieval mechanisms differ in source",
+      "missing": [
+        "installed trace",
+        "deployed version",
+        "same-scope identity fingerprints",
+        "provider binding settings"
+      ]
+    },
+    {
+      "confidence": "unknown",
+      "claim": "Underlying deployed root cause",
+      "evidence": "No current operation trace from the affected installation"
+    },
+    {
+      "confidence": "confirmed",
+      "claim": "The exact reported message originates in the cross-Worker source-read branch in inspected source",
+      "evidence": "Source inspection only; deployed source and routing remain unknown"
+    },
+    {
+      "confidence": "possible",
+      "claim": "Worker-to-Worker routing restrictions, stale endpoint/profile, or incorrect binding could explain the divergent source read",
+      "evidence": "Hypotheses only; public documentation search did not establish a routing restriction as the cause"
+    }
+  ],
+  "repairProposal": {
+    "status": "collect-evidence-first",
+    "safeChangesImplemented": [
+      "preserve HTTP404 context rather than mislabeling all404s as missing objects",
+      "versioned redacted tracing of Worker source read, declared binding and destination verification"
+    ],
+    "conditionalCorrection": [
+      "Correct binding/profile only if intended bucket and provider binding mismatch are demonstrated",
+      "Repair/upgrade Worker only after observed version/endpoint mismatch",
+      "Correct key construction only when same-scope fingerprints demonstrate identity drift"
+    ],
+    "verification": [
+      "Authorized disposable source",
+      "Copy once",
+      "Independently read/hash destination",
+      "Confirm source retained",
+      "Do not replay ambiguous writes"
+    ]
+  },
+  "resolution": "not established",
+  "foreverLinks": {
+    "status": "unknown",
+    "links": []
+  }
+}

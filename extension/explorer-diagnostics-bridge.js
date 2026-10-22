@@ -15,7 +15,12 @@ function install({context,chrome,document}){
  function begin(operation,options){try{return collector.begin(operation,options);}catch{return null;}}
  function event(id,stage,outcome,details={}){try{collector.record(id,{stage,component:context,outcome,...details});persist();}catch{}}
  function summary(id,value){
-  if(!id)return;const error=value?.diagnosticError||value?.results?.find(result=>result.status==='failed')||value?.errors?.[0];
+  if(!id)return;let error=value?.diagnosticError||value?.results?.find(result=>result.status==='failed')||value?.errors?.[0];
+  const legacy=/^Source object was not available \(HTTP (\d{3})\)$/.exec(error?.error||'');
+  if(legacy&&!Number.isInteger(error.httpStatus)&&!Number.isInteger(error.status)){
+   error={...error,httpStatus:Number(legacy[1]),stage:'source.read',component:'worker'};
+   event(id,'source.read','failed',{status:error.httpStatus,code:core.classify(error),mechanism:'worker',endpoint:'worker.object',method:'GET',evidence:'legacy-worker-message'});
+  }
   const state=value?.ok===true&&!error&&!value?.partialMove?'confirmed':value?.ok===false||error?'failed':'unknown';
   event(id,'message.result',state,{status:error?.httpStatus||error?.status,code:core.classify(error)});collector.finish(id,state,state==='confirmed'?undefined:{...error,status:error?.httpStatus||error?.status,code:core.classify(error),stage:error?.stage||'message.result',component:error?.component||context});lastId=id;persist();
  }
@@ -62,12 +67,12 @@ function install({context,chrome,document}){
     callback?.(state);
    };
   }
-  event(id,operation==='download'?'browser.request':'api.request','started',{mechanism:operation==='download'?'browser':'api'});
+  event(id,operation==='download'?'browser.request':'api.request','started',{mechanism:operation==='download'?'browser':'api',method:'GET',endpoint:operation==='download'?'chrome.download':'api.object'});
   void ready.then(()=>identityReady).then(()=>collector.identity(id,source,key));
   let result;try{result=original.call(this,target,key,...rest);}catch(error){collector.finish(id,'failed',{code:core.classify(error),stage:'api.response',component:'options'});throw error;}
-  return Promise.resolve(result).then(value=>{event(id,operation==='download'?'browser.result':'api.response',operation==='download'?'unknown':'confirmed',{mechanism:operation==='download'?'browser':'api'});if(operation!=='download'||collector.getOperationTrace(id)?.state==='running')collector.finish(id,operation==='download'?'unknown':'confirmed');lastId=id;return value;},error=>{event(id,'api.response','failed',{code:core.classify(error),status:error.status});collector.finish(id,'failed',{code:core.classify(error),status:error.status,stage:'api.response',component:'options'});lastId=id;throw error;});
+  return Promise.resolve(result).then(value=>{event(id,operation==='download'?'browser.result':'api.response',operation==='download'?'unknown':'confirmed',{mechanism:operation==='download'?'browser':'api',method:'GET',endpoint:operation==='download'?'chrome.download':'api.object'});if(operation!=='download'||collector.getOperationTrace(id)?.state==='running')collector.finish(id,operation==='download'?'unknown':'confirmed');lastId=id;return value;},error=>{event(id,'api.response','failed',{code:core.classify(error),status:error.status});collector.finish(id,'failed',{code:core.classify(error),status:error.status,stage:'api.response',component:'options'});lastId=id;throw error;});
  };}
- async function wire(trace,profile){try{if(!collector.enabled||!trace?.operationId)return null;return {...trace,protocol:1,scope:collector.identityScope,seed:await collector.keySeed(),expectedBinding:profile?await collector.fingerprint("bucket",JSON.stringify([profile.accountId,profile.bucketName])):trace.sourceBinding};}catch{return null;}}
+ async function wire(trace,profile){try{if(!collector.enabled||!trace?.operationId)return null;return {...trace,protocol:1,scope:collector.identityScope,seed:await collector.keySeed(),expectedOrigin:profile?.workerUrl?await collector.fingerprint("origin",new URL(profile.workerUrl).origin):undefined,expectedBinding:profile?await collector.fingerprint("bucket",JSON.stringify([profile.accountId,profile.bucketName])):trace.sourceBinding};}catch{return null;}}
  function query(operation,input={}){
   if(!collector.enabled)return {explorerDiagnosticVersion:core.VERSION,state:'unavailable',error:{code:'DIAGNOSTICS_DISABLED'}};
   if(operation==='clear'){epoch++;lastClearAt=Date.now();collector.setEnabled(false);collector.setEnabled(true);void chrome.storage.local.remove(key).catch(()=>{});return {explorerDiagnosticVersion:core.VERSION,state:'available',data:{cleared:true}};}

@@ -25,3 +25,8 @@ test('bridge shares local fingerprint context and keeps concurrent message IDs a
  const second=await front.beginMessage({type:'cfDeleteObjects'});assert.notEqual(second.id,child.id);assert.equal(await bridge.accept({type:'cfDeleteObjects'},{url:'https://untrusted.invalid'}),null);
  const secret=(await bridge.sessionContext()).seed;assert.ok(!JSON.stringify(bridge.collector.exportBundle()).includes(secret));listeners.forEach(fn=>fn({debugModeEnabled:{newValue:false}},'local'));assert.equal(front.collector.exportBundle().operations.length,0);assert.equal(bridge.collector.exportBundle().operations.length,0);
 });
+test('legacy Worker404 is marked as reported evidence rather than invented structured source telemetry',async()=>{
+ const chrome={runtime:{getManifest:()=>({version:'0.5.14'}),getURL:path=>'chrome-extension://fixture/'+path},storage:{local:{get:async()=>({debugModeEnabled:true}),set:async()=>{},remove:async()=>{}},onChanged:{addListener(){}}}};
+ const bridge=globalThis.RedownExplorerBridge.install({context:'background',chrome});await bridge.ready;const trace=await bridge.accept({type:'cfTransferObjects',source:{accountId:'a',bucketName:'b'},entries:[{key:'fixture'}]},{url:chrome.runtime.getURL('options.html')});
+ const result=bridge.complete({explorerTrace:trace},{ok:true,results:[{status:'failed',error:'Source object was not available (HTTP 404)'}]});assert.equal(result.error.code,'EXPLORER_HTTP_NOT_FOUND');assert.ok(result.events.some(e=>e.status===404&&e.evidence==='legacy-worker-message'));assert.ok(!result.events.some(e=>e.binding));assert.equal(result.error.rootCause,'unknown');bridge.collector.setEnabled(false);
+});

@@ -4310,10 +4310,12 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   if(changes.profiles){
     const old=changes.profiles.oldValue||[],current=changes.profiles.newValue||[];
     const shape=profile=>JSON.stringify([profile?.customAssetDomain,profile?.publicBaseUrl,profile?.publicAssetsEnabled,profile?.assetDomainState]);
+    const changed=new Map();
     for(const profile of [...old,...current].filter(profile=>profile.type==="cloudflare-r2")){
       const same=items=>items.find(item=>item.id===profile.id&&item.accountId===profile.accountId&&item.bucketName===profile.bucketName);
-      if(shape(same(old))!==shape(same(current)))void RedownPublicAddresses.refreshVisible(document,profile);
+      if(shape(same(old))!==shape(same(current)))changed.set(JSON.stringify([profile.accountId,profile.bucketName]),profile);
     }
+    for(const profile of changed.values())void RedownPublicAddresses.refreshVisible(document,profile);
   }
   if(changes.cloudflareAuth)explorerDestinationMenus?.clearCache();
   if(changes.cloudflareAuth && (changes.cloudflareAuth.newValue?.accessToken!==changes.cloudflareAuth.oldValue?.accessToken||changes.cloudflareAuth.newValue?.reconnectRequired!==changes.cloudflareAuth.oldValue?.reconnectRequired)){

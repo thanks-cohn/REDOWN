@@ -83,7 +83,7 @@ async function explorerWire(request,env,authorized) {
     const digest=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(kind+"\\0"+String(value)));
     return Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,"0")).join("");
   }
-  event("worker.check","confirmed",{workerVersion:6,protocol:1,safeTransfers:true,bindingDeclared:Boolean(env.REDOWN_DIAGNOSTIC_BINDING)});
+  event("worker.check","confirmed",{workerVersion:6,protocol:1,safeTransfers:true,bindingDeclared:Boolean(env.REDOWN_DIAGNOSTIC_BINDING),origin:await fingerprint("origin",new URL(request.url).origin),expectedOrigin:context.expectedOrigin});
   if(env.REDOWN_DIAGNOSTIC_BINDING)event("worker.check","confirmed",{binding:await fingerprint("bucket",env.REDOWN_DIAGNOSTIC_BINDING),expectedBinding:context.expectedBinding,bindingDeclared:true});
   function payload(){return {protocol:1,operationId:context.operationId,events,truncated};}
   return {context,event,fingerprint,payload,header:JSON.stringify(context),headers(){return {"x-redown-diagnostic":JSON.stringify(payload())};},json(body,options={}){return Response.json({...body,explorerDiagnostic:payload()},options);},merge(response){try{const data=JSON.parse(response.headers.get("x-redown-diagnostic")||"null");if(data?.operationId===context.operationId&&data.protocol===1)for(const item of (data.events||[]).slice(0,16))event(item.stage,item.outcome,item);}catch{}},async identity(key,role="source",encoding="literal"){try{event(role==="source"?"source.identity":"destination.identity","confirmed",{key:await fingerprint("key",key),encodedKey:await fingerprint("key",encoding==="query"?encodeURIComponent(key):key),encoding,role,scope:context.scope});}catch{}}};
@@ -129,8 +129,8 @@ async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conf
     stream=object.body;size=object.size;etag=object.etag;sourceVersion=object.version;md5=checksumHex(object);httpMetadata=object.httpMetadata;customMetadata=object.customMetadata;
   }else{
     if(!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl)||!sourceToken)throw new Error("Source bucket is not ready");
-    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding})}:{})},signal:AbortSignal.timeout(25000)});
-    diagnostic?.merge(response);diagnostic?.event("source.read",response.ok?"confirmed":"failed",{status:response.status,mechanism:"worker"});
+    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",new URL(sourceWorkerUrl).origin)})}:{})},signal:AbortSignal.timeout(25000)});
+    diagnostic?.merge(response);diagnostic?.event("source.read",response.ok?"confirmed":"failed",{status:response.status,mechanism:"worker",method:"GET",endpoint:"worker.object"});
     if(!response.ok||!response.body)throw explorerWorkerError("Source object was not available (HTTP "+response.status+")",response.status===404?"EXPLORER_HTTP_NOT_FOUND":response.status===401?"EXPLORER_AUTH_EXPIRED":response.status===403?"EXPLORER_PERMISSION_DENIED":"EXPLORER_RESULT_UNCONFIRMED",response.status,"source.read");
     stream=response.body;size=Number(response.headers.get("content-length"));etag=response.headers.get("x-redown-etag");sourceVersion=response.headers.get("x-redown-version");md5=response.headers.get("x-redown-md5")||"";
     if(!response.headers.has("content-length")||!Number.isSafeInteger(size)||size<0||!etag){await stream.cancel();throw new Error("Source Worker cannot confirm content. Repair its bucket and retry.");}
@@ -1450,13 +1450,14 @@ async function callBucketWorker(profile, body, allowRepair = true) {
     const observe=(outcome,code,status)=>{try{globalThis.redownRuntimeObserver?.record({operation:read?"api.read":"api.write",outcome,code,status,durationMs:(globalThis.performance?.now?.()||0)-started});}catch{}};
     let response,result;
     const trace=body.explorerTrace;
-    globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.request","started");
     try{
+      const wire=await globalThis.redownExplorerBridge?.wire(trace,active);
+      globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.request","started",{method:"POST",endpoint:"worker.manage",origin:wire?.expectedOrigin});
       response=await RedownCloudflareApi.boundedFetch(active.workerUrl,{
         timeoutMs:30000,method:"POST",
         headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json"},
-        body:JSON.stringify({...body,explorerTrace:await globalThis.redownExplorerBridge?.wire(trace,active)}),
-        ...(trace?{headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json","x-redown-diagnostic":JSON.stringify(await globalThis.redownExplorerBridge?.wire(trace,active))}}:{})
+        body:JSON.stringify({...body,explorerTrace:wire}),
+        ...(wire?{headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json","x-redown-diagnostic":JSON.stringify(wire)}}:{})
       });
       result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
     }catch(error){

@@ -313,6 +313,42 @@
                     "path",
                     "query"
                   ]
+                },
+                "origin": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "expectedOrigin": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "method": {
+                  "enum": [
+                    "GET",
+                    "HEAD",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                  ]
+                },
+                "endpoint": {
+                  "enum": [
+                    "worker.manage",
+                    "worker.object",
+                    "api.object",
+                    "api.list",
+                    "api.domains",
+                    "chrome.download",
+                    "local.clipboard"
+                  ]
+                },
+                "evidence": {
+                  "enum": [
+                    "structured-worker",
+                    "legacy-worker-message",
+                    "transport",
+                    "ui"
+                  ]
                 }
               },
               "additionalProperties": false

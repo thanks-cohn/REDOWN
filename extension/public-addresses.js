@@ -3,12 +3,15 @@
   'use strict';
   const refreshers=new WeakMap();
   async function refreshVisible(document,source){
-    const pending=[];
+    const entries=[];
     for(const host of document.querySelectorAll('.public-address-host')){
       const entry=refreshers.get(host);
-      if(entry&&entry.source.accountId===source.accountId&&entry.source.bucketName===source.bucketName)pending.push(entry.refresh());
+      if(entry&&entry.source.accountId===source.accountId&&entry.source.bucketName===source.bucketName)entries.push(entry);
     }
-    await Promise.allSettled(pending);
+    if(!entries.length)return;
+    // All disclosures need the same bucket configuration, not independent API reads.
+    const snapshot=Promise.resolve().then(()=>entries[0].load());
+    await Promise.allSettled(entries.map(entry=>entry.refresh(snapshot)));
   }
   function addresses(snapshot,source,key){
     if(!snapshot||snapshot.accountId!==source.accountId||snapshot.bucketName!==source.bucketName)return [];
@@ -25,12 +28,12 @@
   function disclosure({document,source,key,load,copy=text=>navigator.clipboard.writeText(text),open=url=>window.open(url,'_blank','noopener')}){
     const host=document.createElement('div');host.className='public-address-host';
     let generation=0,expanded=false;
-    async function refresh(){
+    async function refresh(sharedSnapshot){
       expanded=host.querySelector('details')?.open??expanded;
       const token=++generation;
       host.setAttribute('aria-busy','true');
       let snapshot;
-      try{snapshot=await load();}catch{snapshot=null;}
+      try{snapshot=await (sharedSnapshot||load());}catch{snapshot=null;}
       if(token!==generation)return;
       host.removeAttribute('aria-busy');
       const items=addresses(snapshot,source,key);host.replaceChildren();
@@ -53,7 +56,7 @@
       }
       host.append(details);
     }
-    refreshers.set(host,{source:{accountId:source.accountId,bucketName:source.bucketName},refresh});
+    refreshers.set(host,{source:{accountId:source.accountId,bucketName:source.bucketName},refresh,load});
     return {host,refresh,cancel(){generation++;refreshers.delete(host);}};
   }
   root.RedownPublicAddresses={addresses,disclosure,refreshVisible};

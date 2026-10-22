@@ -50,11 +50,14 @@ function safeEvent(event,sequence,now){
  for(const field of ['hasClipboard','betaMode','debugMode'])if(typeof event[field]==='boolean')out[field]=event[field];
  if(typeof event.bindingDeclared==='boolean')out.bindingDeclared=event.bindingDeclared;
  if(Number.isSafeInteger(event.size)&&event.size>=0)out.size=event.size;
- for(const key of ['account','bucket','key','encodedKey','etag','binding','expectedBinding'])if(hex(event[key]))out[key]=event[key];
+ for(const key of ['account','bucket','key','encodedKey','etag','binding','expectedBinding','origin','expectedOrigin'])if(hex(event[key]))out[key]=event[key];
  if(uuid(event.scope))out.scope=event.scope;
  if(uuid(event.requestId))out.requestId=event.requestId;
  if(['api','worker','browser','local'].includes(event.mechanism))out.mechanism=event.mechanism;
  if(['literal','path','query'].includes(event.encoding))out.encoding=event.encoding;
+ if(['GET','HEAD','POST','PUT','DELETE'].includes(event.method))out.method=event.method;
+ if(['structured-worker','legacy-worker-message','transport','ui'].includes(event.evidence))out.evidence=event.evidence;
+ if(['worker.manage','worker.object','api.object','api.list','api.domains','chrome.download','local.clipboard'].includes(event.endpoint))out.endpoint=event.endpoint;
  if(['source','destination'].includes(event.role))out.role=event.role;
  return out;
 }

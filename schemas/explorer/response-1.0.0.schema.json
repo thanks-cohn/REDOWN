@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "explorerDiagnosticVersion",
+    "state"
+  ],
+  "properties": {
+    "explorerDiagnosticVersion": {
+      "const": "1.0.0"
+    },
+    "state": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable",
+        "failed"
+      ]
+    },
+    "data": {},
+    "error": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z_]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
