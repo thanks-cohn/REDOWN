@@ -1,0 +1,142 @@
+{
+  "scope": "Ordinary Chromium, local mocked HTML and real UI handlers. Not an installed extension or live Cloudflare test.",
+  "layouts": [
+    {
+      "width": 1366,
+      "scrollWidth": 1351,
+      "restHeight": 178,
+      "followingTop": 702.578125,
+      "restClip": "none",
+      "tileHeight": 159.65625,
+      "fontLoaded": true,
+      "anchorHeight": 178,
+      "expandedHeight": 178,
+      "bottom": 548.265625,
+      "sectionBottom": 685.15625,
+      "openClip": "none",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 0,
+      "anchorHeightDelta": 0
+    },
+    {
+      "width": 1366,
+      "scrollWidth": 1351,
+      "restHeight": 178,
+      "followingTop": 882.578125,
+      "restClip": "none",
+      "tileHeight": 159.65621948242188,
+      "fontLoaded": true,
+      "anchorHeight": 358,
+      "expandedHeight": 357.9999694824219,
+      "bottom": 728.089111328125,
+      "sectionBottom": 865.15625,
+      "openClip": "none",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 180,
+      "anchorHeightDelta": 180
+    },
+    {
+      "width": 390,
+      "scrollWidth": 375,
+      "restHeight": 132,
+      "followingTop": 980.3125,
+      "restClip": "none",
+      "tileHeight": 112.5,
+      "fontLoaded": true,
+      "anchorHeight": 380,
+      "expandedHeight": 380.109375,
+      "bottom": 832,
+      "sectionBottom": 962.890625,
+      "openClip": "none",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 248.609375,
+      "anchorHeightDelta": 248
+    },
+    {
+      "width": 1366,
+      "scrollWidth": 1351,
+      "restHeight": 178,
+      "followingTop": 910.3125,
+      "restClip": "none",
+      "tileHeight": 159.65621948242188,
+      "fontLoaded": true,
+      "anchorHeight": 386,
+      "expandedHeight": 385.7343444824219,
+      "bottom": 755.375,
+      "sectionBottom": 892.890625,
+      "openClip": "none",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 207.734375,
+      "anchorHeightDelta": 208
+    },
+    {
+      "width": 390,
+      "scrollWidth": 375,
+      "restHeight": 132,
+      "followingTop": 980.3125,
+      "restClip": "none",
+      "tileHeight": 112.5,
+      "fontLoaded": true,
+      "anchorHeight": 380,
+      "expandedHeight": 380.109375,
+      "bottom": 832,
+      "sectionBottom": 962.890625,
+      "openClip": "none",
+      "animation": "storage-fast-open",
+      "duration": "0.1s",
+      "followingContentDelta": 248.609375,
+      "anchorHeightDelta": 248
+    }
+  ],
+  "initialAttentionAnimations": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none"
+  ],
+  "successPerimeterOpacity": "0",
+  "trainingNarrowWidth": 375,
+  "trainingMadeNoStorageCalls": true,
+  "modes": [
+    {
+      "beta": true,
+      "debug": false,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": true,
+      "githubVisible": false
+    },
+    {
+      "beta": true,
+      "debug": true,
+      "githubVisible": true
+    },
+    {
+      "beta": false,
+      "debug": false,
+      "githubVisible": false
+    }
+  ],
+  "lastBucketVisible": true,
+  "hiddenRowsDoNotIntercept": true,
+  "reducedMotion": {
+    "glyphAnimation": "none",
+    "gridTransition": "0s"
+  },
+  "openPreviewUrlsRefreshedAfterAttach": true,
+  "domainAndObjectDisclosures": "Rendered with mocked control-plane responses; attachment confirmation, encoded nested object URLs and narrow width passed."
+}

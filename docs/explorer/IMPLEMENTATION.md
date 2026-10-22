@@ -23,3 +23,7 @@ Cross-boundary tests run real background/embedded Worker with in-memory R2, incl
 User follow-up: preview URLs previously refreshed only when reopening the file. `refreshVisible` now refreshes connected disclosures for the exact changed account/bucket after Attach and profile storage changes. A WeakMap avoids retaining detached preview nodes. Tests prove expansion is preserved, other buckets and detached previews are unchanged, and the media blob is not replaced. The UI still labels configured URLs as unverified for public file accessibility.
 
 Ordinary Chromium154 rendered the actual Debug inspector at1366 and390 widths with simulated bundles/messaging/clipboard/download, including trace selection and review-before-download. This is browser UI fixture evidence, not installed-extension, OAuth or live R2 evidence. Detailed coverage, schema/fault/CLI checks and current404 case follow in StageC.
+
+## Stage C — fixtures, source freshness and open-incident handoff
+
+See [the complete handoff](HANDOFF.md) for final results, coverage/blind spots, API commands, hypotheses and the next safe investigation. Seventeen explicitly simulated fault fixtures and independent bundle/response schemas accompany the portable API. Preview URL refresh now coalesces matching live hosts onto one bucket snapshot. The Copy/Move/Paste404 incident is retained as open; source-path analysis is not deployed root-cause proof.

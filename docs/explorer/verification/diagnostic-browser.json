@@ -1,0 +1,19 @@
+{
+  "scope": "Ordinary Chromium rendering and real Debug inspector controls; diagnostic input, extension messages and clipboard/download are mocked.",
+  "browser": "Chrome/154.0.8037.57",
+  "checks": [
+    {
+      "width": 1366,
+      "traceVisible": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 390,
+      "traceVisible": true,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "reviewBeforeDownload": true,
+  "normalModeDoesNotQuery": true,
+  "copyId": true
+}

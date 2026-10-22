@@ -130,3 +130,11 @@ legacy v4 acknowledgement-only move deletion. Ordinary Chromium mock interaction
 in-memory R2 integration are separate from installed-extension/live evidence.
 Latest full suite: 226 tests,219 pass,seven prior failures (six historical evidence and
 one removed Nested drag-handle expectation). See operation matrix and live blockers.
+
+Explorer diagnostic1.0 follow-up: read [the current handoff](docs/explorer/HANDOFF.md)
+and [implementation stages](docs/explorer/IMPLEMENTATION.md). New `agent/explorer/`
+queries are offline; Debug inspection does not authorize deployments. Worker6 adds
+optional protocol1 evidence while safe Worker5 remains accepted. Copy/Move/Paste404
+is still open, not live-reproduced or fixed by diagnostics. Latest suite258/251/7
+retains baseline failures. Refresh only the new Explorer source map with
+`scripts/explorer-architecture.mjs --write`; never refresh frozen historical hashes.

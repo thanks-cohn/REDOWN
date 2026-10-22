@@ -1,0 +1,19 @@
+{
+  "scope": "Local Node collector microbenchmark; capped trace, no Chrome/cloud",
+  "node": "v24.19.0",
+  "disabled": {
+    "calls": 10000,
+    "meanMs": 0.00021095059999996196,
+    "p95Ms": 0.00014999999999787406,
+    "maxMs": 0.6602399999999946
+  },
+  "enabled": {
+    "calls": 1000,
+    "meanMs": 0.002198309000000009,
+    "p95Ms": 0.002934000000003323,
+    "maxMs": 0.19614800000000088
+  },
+  "retainedEvents": 64,
+  "truncated": true,
+  "exportBytes": 8288
+}
