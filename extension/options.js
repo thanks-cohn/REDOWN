@@ -2963,6 +2963,9 @@ function selectExplorerItem(item, index, event = {}) {
     explorerAnchor = index;
   }
   renderFileItems();
+  // Rendering replaces the clicked row. Restore focus so subsequent arrow keys
+  // stay in the file list instead of scrolling the page or another pane.
+  rootRow(item.id)?.focus({preventScroll:true});
   if (explorerSelected.size === 1)
     previewExplorerItem(item);
 }
@@ -3708,7 +3711,7 @@ function wireWorkspace() {
     if (!e.target.closest("#explorer-menu, .explorer-submenu")) hideExplorerMenu();
   });
   $("explorer").onkeydown = (e) => {
-    if (e.target.matches("input,select,textarea")) return;
+    if (e.defaultPrevented || e.target.closest("input,select,textarea,[contenteditable]:not([contenteditable=false]),[role=menu],dialog,.url-popover,.preview-lightbox-layer")) return;
     const selected = selectedExplorerItems();
     const command = e.ctrlKey || e.metaKey;
     if(explorerSearchActive&&selected.some(item=>item.searchResult)&&(["Delete","F2"].includes(e.key)||(command&&["x","v"].includes(e.key.toLowerCase())))){
