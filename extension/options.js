@@ -667,8 +667,9 @@ function simpleExtraOptions(profile,showIntro=true){
   wrap.append(rows);return wrap;
 }
 function simpleBucketCreator(){
-  const bar=document.createElement("div");bar.className="card";
-  const heading=document.createElement("strong");heading.textContent="Make New Bucket";
+  const bar=document.createElement("div");bar.className="card bucket-creator";
+  const disclosure=document.createElement("details");disclosure.className="bucket-create-disclosure";
+  const heading=document.createElement("summary");heading.textContent="Create a new bucket";
   const note=document.createElement("div");note.className="meta";note.textContent="Create an R2 bucket and automatically configure a Simple destination. The menu label can be changed afterwards.";
   const form=document.createElement("form");form.className="grid two";
   const account=document.createElement("select");account.setAttribute("aria-label","Cloudflare account");
@@ -715,7 +716,8 @@ function simpleBucketCreator(){
   chrome.storage.local.get("simpleLabelFallback").then(settings=>{
     if(fallbackSelect.isConnected)fallbackSelect.value=settings.simpleLabelFallback==="bucket"?"bucket":"deepest";
   }).catch(()=>{});
-  bar.append(heading,note,fallback,form,status);return bar;
+  disclosure.append(heading,note,form,status);
+  bar.append(fallback,disclosure);return bar;
 }
 async function saveProfileOrder(){
   const previous=profiles.map(profile=>[profile,profile.menuOrder]);

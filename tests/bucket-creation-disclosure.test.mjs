@@ -1,0 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {JSDOM} from 'jsdom';
+const source=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
+test('bucket creation disclosure preserves label preferences and requires explicit form submission',async()=>{
+ const dom=new JSDOM('<main></main>',{runScripts:'outside-only'}),w=dom.window,calls=[],saved=[];
+ w.profiles=[{type:'cloudflare-r2',accountId:'fixture',accountName:'Studio'}];
+ w.chrome={storage:{local:{get:async()=>({simpleLabelFallback:'deepest'}),set:async v=>saved.push(v)}}};
+ w.send=async m=>{calls.push(m);return {ok:true}};w.confirm=()=>false;
+ w.refreshProfiles=async()=>{};w.renderProfiles=()=>{};
+ w.eval(source.slice(source.indexOf('function simpleBucketCreator(){'),source.indexOf('async function saveProfileOrder(){')));
+ const card=w.simpleBucketCreator();w.document.querySelector('main').append(card);
+ await new Promise(resolve=>setImmediate(resolve));
+ const disclosure=card.querySelector('details');assert.equal(disclosure.open,false);
+ assert.ok(card.querySelector('[aria-label="Simple automatic menu label"]'));
+ const summary=disclosure.querySelector('summary');summary.click();assert.equal(disclosure.open,true);assert.equal(calls.length,0);
+ const form=disclosure.querySelector('form');form.querySelector('input').value='demo-bucket';
+ form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(calls.length,0,'canceling the existing confirmation must perform no mutation');
+ summary.click();assert.equal(disclosure.open,false);
+ const fallback=card.querySelector('[aria-label="Simple automatic menu label"]');fallback.value='bucket';fallback.dispatchEvent(new w.Event('change'));
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(saved[0].simpleLabelFallback,'bucket');
+ dom.window.close();
+});

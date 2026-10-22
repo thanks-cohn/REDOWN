@@ -607,3 +607,7 @@ Source corrections: normalize CRLF only in the two affected UI fixture readers (
 Remaining: the user's existing checkout may contain CRLF bytes from before .gitattributes. Architecture/hash and historical byte assertions remain exact and must not be made green by rewriting their expected evidence. Compare against a separate fresh clone with npm ci before altering an existing working directory. Complete Windows regression and installed-extension testing remain separate acceptance requirements; this patch does not certify all 59 failures as resolved. npm install-script warnings for esbuild/sharp/workerd are not, by themselves, proof of these JavaScript test failures.
 
 Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
+
+## Premium presentation: rendered and installed-browser acceptance pending — 2026-10-22
+
+The requested graphite/lavender presentation and native bucket-creation disclosure are source-implemented. Actual browser render inspection remains blocked in this execution environment: downloaded Chrome could not create its process-singleton socket. DOM regressions do not prove final visual quality. Review wide/tablet/narrow layouts, long names, keyboard focus, all destination modes, Get URL, popup and lightbox in an approved environment before closing visual acceptance. See docs/design/PREMIUM_PRESENTATION.md. No cloud changes were performed.
