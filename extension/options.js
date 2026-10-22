@@ -667,9 +667,8 @@ function simpleExtraOptions(profile,showIntro=true){
   wrap.append(rows);return wrap;
 }
 function simpleBucketCreator(){
-  const bar=document.createElement("div");bar.className="card bucket-creator";
-  const disclosure=document.createElement("details");disclosure.className="bucket-create-disclosure";
-  const heading=document.createElement("summary");heading.textContent="Create a new bucket";
+  const bar=document.createElement("div");bar.className="card";
+  const heading=document.createElement("strong");heading.textContent="Make New Bucket";
   const note=document.createElement("div");note.className="meta";note.textContent="Create an R2 bucket and automatically configure a Simple destination. The menu label can be changed afterwards.";
   const form=document.createElement("form");form.className="grid two";
   const account=document.createElement("select");account.setAttribute("aria-label","Cloudflare account");
@@ -716,8 +715,7 @@ function simpleBucketCreator(){
   chrome.storage.local.get("simpleLabelFallback").then(settings=>{
     if(fallbackSelect.isConnected)fallbackSelect.value=settings.simpleLabelFallback==="bucket"?"bucket":"deepest";
   }).catch(()=>{});
-  disclosure.append(heading,note,form,status);
-  bar.append(fallback,disclosure);return bar;
+  bar.append(heading,note,fallback,form,status);return bar;
 }
 async function saveProfileOrder(){
   const previous=profiles.map(profile=>[profile,profile.menuOrder]);
@@ -2963,9 +2961,6 @@ function selectExplorerItem(item, index, event = {}) {
     explorerAnchor = index;
   }
   renderFileItems();
-  // Rendering replaces the clicked row. Restore focus so subsequent arrow keys
-  // stay in the file list instead of scrolling the page or another pane.
-  rootRow(item.id)?.focus({preventScroll:true});
   if (explorerSelected.size === 1)
     previewExplorerItem(item);
 }
@@ -3711,7 +3706,7 @@ function wireWorkspace() {
     if (!e.target.closest("#explorer-menu, .explorer-submenu")) hideExplorerMenu();
   });
   $("explorer").onkeydown = (e) => {
-    if (e.defaultPrevented || e.target.closest("input,select,textarea,[contenteditable]:not([contenteditable=false]),[role=menu],dialog,.url-popover,.preview-lightbox-layer")) return;
+    if (e.target.matches("input,select,textarea")) return;
     const selected = selectedExplorerItems();
     const command = e.ctrlKey || e.metaKey;
     if(explorerSearchActive&&selected.some(item=>item.searchResult)&&(["Delete","F2"].includes(e.key)||(command&&["x","v"].includes(e.key.toLowerCase())))){

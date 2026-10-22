@@ -12,9 +12,9 @@
         {
           "path": "extension/options.js",
           "symbol": "goLocation",
-          "line": 2172,
+          "line": 2170,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -53,9 +53,9 @@
         {
           "path": "extension/options.js",
           "symbol": "browseWorkspace",
-          "line": 1526,
+          "line": 1524,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -94,9 +94,9 @@
         {
           "path": "extension/options.js",
           "symbol": "const goPage=async",
-          "line": 2718,
+          "line": 2716,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -135,9 +135,9 @@
         {
           "path": "extension/options.js",
           "symbol": "runExplorerSearch",
-          "line": 2084,
+          "line": 2082,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -176,9 +176,9 @@
         {
           "path": "extension/options.js",
           "symbol": "browseWorkspace",
-          "line": 1526,
+          "line": 1524,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -217,9 +217,9 @@
         {
           "path": "extension/options.js",
           "symbol": "selectExplorerItem",
-          "line": 2835,
+          "line": 2833,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         }
       ],
       "tests": [
@@ -244,9 +244,9 @@
         {
           "path": "extension/options.js",
           "symbol": "showWorkspacePreview",
-          "line": 1574,
+          "line": 1572,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -278,9 +278,9 @@
         {
           "path": "extension/options.js",
           "symbol": "setWorkspacePreviewLightbox",
-          "line": 1618,
+          "line": 1616,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         }
       ],
       "tests": [
@@ -305,9 +305,9 @@
         {
           "path": "extension/options.js",
           "symbol": "explorerDownload",
-          "line": 3319,
+          "line": 3314,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -339,9 +339,9 @@
         {
           "path": "extension/options.js",
           "symbol": "explorerUploadFiles",
-          "line": 3412,
+          "line": 3407,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -373,9 +373,9 @@
         {
           "path": "extension/options.js",
           "symbol": "pasteExplorer",
-          "line": 3089,
+          "line": 3084,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -414,9 +414,9 @@
         {
           "path": "extension/options.js",
           "symbol": "pasteExplorer",
-          "line": 3089,
+          "line": 3084,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -455,9 +455,9 @@
         {
           "path": "extension/options.js",
           "symbol": "beginExplorerRename",
-          "line": 3223,
+          "line": 3218,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -496,9 +496,9 @@
         {
           "path": "extension/options.js",
           "symbol": "deleteSelection",
-          "line": 3192,
+          "line": 3187,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -537,9 +537,9 @@
         {
           "path": "extension/options.js",
           "symbol": "beginNewFolder",
-          "line": 3279,
+          "line": 3274,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -578,9 +578,9 @@
         {
           "path": "extension/options.js",
           "symbol": "showProperties",
-          "line": 3344,
+          "line": 3339,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -621,7 +621,7 @@
           "symbol": "assetCorsControl",
           "line": 361,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -647,8 +647,8 @@
         {
           "path": "extension/options.js",
           "symbol": "function urlPopover(",
-          "line": 3388,
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+          "line": 3383,
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
           "evidence": "source-anchor"
         },
         {
@@ -688,15 +688,15 @@
         {
           "path": "extension/options.js",
           "symbol": "setExplorerClipboard",
-          "line": 3068,
+          "line": 3063,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/options.js",
           "symbol": "function urlPopover(",
-          "line": 3388,
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+          "line": 3383,
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
           "evidence": "source-anchor"
         }
       ],
@@ -722,9 +722,9 @@
         {
           "path": "extension/options.js",
           "symbol": "goLocation",
-          "line": 2172,
+          "line": 2170,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -763,9 +763,9 @@
         {
           "path": "extension/options.js",
           "symbol": "loadExplorerInventory",
-          "line": 2548,
+          "line": 2546,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -804,9 +804,9 @@
         {
           "path": "extension/options.js",
           "symbol": "async function loginRequest(",
-          "line": 4238,
+          "line": 4233,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-auth.js",
@@ -838,9 +838,9 @@
         {
           "path": "extension/options.js",
           "symbol": "ensurePrepared",
-          "line": 1047,
+          "line": 1045,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -879,9 +879,9 @@
         {
           "path": "extension/options.js",
           "symbol": "openArchive",
-          "line": 2996,
+          "line": 2991,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -922,7 +922,7 @@
         "symbol": "workspaceTarget",
         "line": 12,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -932,9 +932,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "workspacePrefix",
-        "line": 1525,
+        "line": 1523,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -944,9 +944,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "explorerSelected",
-        "line": 1875,
+        "line": 1873,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -956,9 +956,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "explorerClipboard",
-        "line": 1879,
+        "line": 1877,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -968,9 +968,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "explorerNextCursor",
-        "line": 1874,
+        "line": 1872,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -982,7 +982,7 @@
         "symbol": "workspacePreviewRequestId",
         "line": 16,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -994,7 +994,7 @@
         "symbol": "presetLocationCache",
         "line": 20,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -1004,9 +1004,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "explorerDestinationMenus",
-        "line": 2607,
+        "line": 2605,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     },
     {
@@ -1016,9 +1016,9 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "explorerOperation",
-        "line": 1881,
+        "line": 1879,
         "evidence": "source-anchor",
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
       }
     }
   ],
@@ -1028,9 +1028,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer\"",
-        "line": 755,
+        "line": 643,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1038,9 +1038,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"workspace-objects\"",
-        "line": 774,
+        "line": 662,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1048,9 +1048,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"workspace-preview\"",
-        "line": 778,
+        "line": 666,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1058,9 +1058,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-menu\"",
-        "line": 784,
+        "line": 672,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1068,9 +1068,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-properties\"",
-        "line": 785,
+        "line": 673,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1078,9 +1078,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-operation\"",
-        "line": 782,
+        "line": 670,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     },
     {
@@ -1088,9 +1088,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-status\"",
-        "line": 775,
+        "line": 663,
         "evidence": "source-anchor",
-        "sha256": "854658b144bcdbfa7e0468efcf8fda083beb93e4b129ec3375efd9f8e744678e"
+        "sha256": "80f1461bacec018556f8ece6cf6a216199192e4f797256e15a5744afd375bcfc"
       }
     }
   ],
@@ -1291,8 +1291,8 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "async function goLocation(",
-        "line": 2309,
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+        "line": 2307,
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
         "evidence": "source-anchor"
       }
     },
@@ -1302,8 +1302,8 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "function selectExplorerItem(",
-        "line": 2949,
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+        "line": 2947,
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
         "evidence": "source-anchor"
       }
     },
@@ -1313,8 +1313,8 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "async function showWorkspacePreview(",
-        "line": 1574,
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+        "line": 1572,
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
         "evidence": "source-anchor"
       }
     },
@@ -1324,8 +1324,8 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "async function setExplorerClipboard(",
-        "line": 3068,
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+        "line": 3063,
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
         "evidence": "source-anchor"
       }
     },
@@ -1347,8 +1347,8 @@
       "ref": {
         "path": "extension/options.js",
         "symbol": "function showExplorerMenu(",
-        "line": 3475,
-        "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+        "line": 3470,
+        "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1539,9 +1539,9 @@
         {
           "path": "extension/options.js",
           "symbol": "goLocation",
-          "line": 2172,
+          "line": 2170,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1567,9 +1567,9 @@
         {
           "path": "extension/options.js",
           "symbol": "browseWorkspace",
-          "line": 1526,
+          "line": 1524,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1595,9 +1595,9 @@
         {
           "path": "extension/options.js",
           "symbol": "const goPage=async",
-          "line": 2718,
+          "line": 2716,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1623,9 +1623,9 @@
         {
           "path": "extension/options.js",
           "symbol": "runExplorerSearch",
-          "line": 2084,
+          "line": 2082,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1651,9 +1651,9 @@
         {
           "path": "extension/options.js",
           "symbol": "browseWorkspace",
-          "line": 1526,
+          "line": 1524,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1679,9 +1679,9 @@
         {
           "path": "extension/options.js",
           "symbol": "selectExplorerItem",
-          "line": 2835,
+          "line": 2833,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         }
       ]
     },
@@ -1693,9 +1693,9 @@
         {
           "path": "extension/options.js",
           "symbol": "showWorkspacePreview",
-          "line": 1574,
+          "line": 1572,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1714,9 +1714,9 @@
         {
           "path": "extension/options.js",
           "symbol": "setWorkspacePreviewLightbox",
-          "line": 1618,
+          "line": 1616,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         }
       ]
     },
@@ -1728,9 +1728,9 @@
         {
           "path": "extension/options.js",
           "symbol": "explorerDownload",
-          "line": 3319,
+          "line": 3314,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1749,9 +1749,9 @@
         {
           "path": "extension/options.js",
           "symbol": "explorerUploadFiles",
-          "line": 3412,
+          "line": 3407,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1770,9 +1770,9 @@
         {
           "path": "extension/options.js",
           "symbol": "pasteExplorer",
-          "line": 3089,
+          "line": 3084,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1833,9 +1833,9 @@
         {
           "path": "extension/options.js",
           "symbol": "pasteExplorer",
-          "line": 3089,
+          "line": 3084,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1896,9 +1896,9 @@
         {
           "path": "extension/options.js",
           "symbol": "beginExplorerRename",
-          "line": 3223,
+          "line": 3218,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1959,9 +1959,9 @@
         {
           "path": "extension/options.js",
           "symbol": "deleteSelection",
-          "line": 3192,
+          "line": 3187,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -1987,9 +1987,9 @@
         {
           "path": "extension/options.js",
           "symbol": "beginNewFolder",
-          "line": 3279,
+          "line": 3274,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2015,9 +2015,9 @@
         {
           "path": "extension/options.js",
           "symbol": "showProperties",
-          "line": 3344,
+          "line": 3339,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2045,7 +2045,7 @@
           "symbol": "assetCorsControl",
           "line": 361,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2071,8 +2071,8 @@
         {
           "path": "extension/options.js",
           "symbol": "function urlPopover(",
-          "line": 3388,
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+          "line": 3383,
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
           "evidence": "source-anchor"
         },
         {
@@ -2099,15 +2099,15 @@
         {
           "path": "extension/options.js",
           "symbol": "setExplorerClipboard",
-          "line": 3068,
+          "line": 3063,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/options.js",
           "symbol": "function urlPopover(",
-          "line": 3388,
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e",
+          "line": 3383,
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
           "evidence": "source-anchor"
         }
       ]
@@ -2120,9 +2120,9 @@
         {
           "path": "extension/options.js",
           "symbol": "goLocation",
-          "line": 2172,
+          "line": 2170,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2148,9 +2148,9 @@
         {
           "path": "extension/options.js",
           "symbol": "loadExplorerInventory",
-          "line": 2548,
+          "line": 2546,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2176,9 +2176,9 @@
         {
           "path": "extension/options.js",
           "symbol": "async function loginRequest(",
-          "line": 4238,
+          "line": 4233,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/cloudflare-auth.js",
@@ -2197,9 +2197,9 @@
         {
           "path": "extension/options.js",
           "symbol": "ensurePrepared",
-          "line": 1047,
+          "line": 1045,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
@@ -2225,9 +2225,9 @@
         {
           "path": "extension/options.js",
           "symbol": "openArchive",
-          "line": 2996,
+          "line": 2991,
           "evidence": "source-anchor",
-          "sha256": "7f3c7ba69088f6977af3f58c458a1f7080f8b7ecc95a4bd50be582652bf0112e"
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
         },
         {
           "path": "extension/background.js",
