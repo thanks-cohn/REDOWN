@@ -109,7 +109,7 @@
     if(!response.ok)return null;
     const config=await response.json().catch(()=>({}));
     const result=config.result||{};
-    if(!result.enabled||!/^pub-[a-f0-9]+\\.r2\\.dev$/i.test(result.domain||''))return null;
+    if(!result.enabled||!/^pub-[a-f0-9]+\.r2\.dev$/i.test(result.domain||''))return null;
     const suffix=String(key).split('/').map(encodeURIComponent).join('/');
     return `https://${result.domain}/${suffix}`;
   }
@@ -182,3 +182,4 @@
 
   globalThis.RedownCloudflareApi={request,preview,download,boundedFetch};
 })();
+

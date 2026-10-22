@@ -46,7 +46,7 @@ test('concurrent expired requests refresh rotating credentials once',async()=>{
 });
 test('401 refresh retries a private read and denied reads report failure',async()=>{
   let requests=0;
-  const h=harness(async url=>url.endsWith('/oauth2/token')?Response.json({access_token:'new',expires_in:3600}):new Response('',{status:++requests===1?401:403}));
+  const h=harness(async url=>url.endsWith('/oauth2/token')?Response.json({access_token:'new',expires_in:3600}):url.endsWith('/domains/managed')?Response.json({success:true,result:{enabled:false}}):new Response('',{status:++requests===1?401:403}));
   await assert.rejects(h.api.preview(bucket,'a.webp','image/webp'),/403/);
   assert.equal(requests,2);
 });
@@ -113,3 +113,4 @@ test('unusual-key download uses enabled public URL only following a denied authe
   assert.equal(h.calls[0].url,'https://pub-7751cce8ad5b46c6a9533d1c70fc06f9.r2.dev/works/...2/chapter_1/001.webp');
   assert.equal(h.calls[0].headers.length,0);
 });
+

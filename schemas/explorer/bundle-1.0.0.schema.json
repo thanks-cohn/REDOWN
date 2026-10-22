@@ -216,7 +216,10 @@
                     "EXPLORER_NETWORK_ERROR",
                     "EXPLORER_SOURCE_CHANGED",
                     "EXPLORER_RESTART_INTERRUPTED",
-                    "EXPLORER_WORKER_ROUTING_CONFIG"
+                    "EXPLORER_WORKER_ROUTING_CONFIG",
+                    "EXPLORER_URL_DISCOVERY_FAILED",
+                    "EXPLORER_URL_UNAVAILABLE",
+                    "EXPLORER_CLIPBOARD_FAILED"
                   ]
                 },
                 "workerVersion": {
@@ -340,7 +343,11 @@
                     "api.list",
                     "api.domains",
                     "chrome.download",
-                    "local.clipboard"
+                    "local.clipboard",
+                    "r2.managed",
+                    "r2.custom",
+                    "worker.assets",
+                    "provider.public"
                   ]
                 },
                 "evidence": {
@@ -414,7 +421,10 @@
                   "EXPLORER_NETWORK_ERROR",
                   "EXPLORER_SOURCE_CHANGED",
                   "EXPLORER_RESTART_INTERRUPTED",
-                  "EXPLORER_WORKER_ROUTING_CONFIG"
+                  "EXPLORER_WORKER_ROUTING_CONFIG",
+                  "EXPLORER_URL_DISCOVERY_FAILED",
+                  "EXPLORER_URL_UNAVAILABLE",
+                  "EXPLORER_CLIPBOARD_FAILED"
                 ]
               },
               "description": {

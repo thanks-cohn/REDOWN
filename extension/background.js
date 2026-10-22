@@ -1239,14 +1239,14 @@ async function bucketPublicAddresses(accountId,bucketName){
   const result={accountId,bucketName,addresses:[],errors:[]};
   const reads=await Promise.allSettled([cfJson(path+"/managed"),cfJson(path+"/custom"),profile?.customAssetDomain?cfJson(`/accounts/${encodeURIComponent(accountId)}/workers/domains?service=${encodeURIComponent(profile.scriptName)}&hostname=${encodeURIComponent(profile.customAssetDomain)}`):Promise.resolve([])]);
   const [managed,custom,worker]=reads;
-  if(managed.status==="fulfilled"&&managed.value?.domain)result.addresses.push({label:"Development URL",base:`https://${managed.value.domain}/`,state:managed.value.enabled?"configured":"restricted"});
-  if(custom.status==="fulfilled")for(const domain of custom.value?.domains||[])result.addresses.push({label:"Custom domain",base:`https://${domain.domain}/`,state:!domain.enabled?"restricted":domain.status?.ssl==="active"&&domain.status?.ownership==="active"?"configured":"needs-setup"});
+  if(managed.status==="fulfilled"&&managed.value?.domain)result.addresses.push({kind:"managed",label:"Cloudflare R2",base:`https://${managed.value.domain}/`,state:managed.value.enabled?"configured":"restricted"});
+  if(custom.status==="fulfilled")for(const domain of custom.value?.domains||[])result.addresses.push({kind:"custom",label:"Custom domain",base:`https://${domain.domain}/`,state:!domain.enabled?"restricted":domain.status?.ssl==="active"&&domain.status?.ownership==="active"?"configured":"needs-setup"});
   if(profile?.customAssetDomain){
     const domains=worker.status==="fulfilled"?(Array.isArray(worker.value)?worker.value:worker.value?.result||[]):[];
     const found=domains.find(d=>d.hostname===profile.customAssetDomain&&d.service===profile.scriptName);
-    result.addresses.push({label:"Custom domain · REDOWN Worker",base:`https://${profile.customAssetDomain}/assets/`,state:worker.status==="rejected"?"unknown":!found?"unknown":profile.assetDomainState==="needs-setup"?"needs-setup":found.enabled===false||!profile.publicAssetsEnabled?"restricted":"configured"});
+    result.addresses.push({kind:"worker",label:"Custom domain · REDOWN Worker",base:`https://${profile.customAssetDomain}/assets/`,state:worker.status==="rejected"?"unknown":!found?"unknown":profile.assetDomainState==="needs-setup"?"needs-setup":found.enabled===false||!profile.publicAssetsEnabled?"restricted":"configured"});
   }
-  if(profile?.publicAssetsEnabled&&profile.workerUrl)result.addresses.push({label:"REDOWN Worker URL",base:profile.workerUrl.replace(/\/+$/,"")+"/assets/",state:"configured"});
+  if(profile?.publicAssetsEnabled&&profile.workerUrl)result.addresses.push({kind:"worker",label:"REDOWN Worker URL",base:profile.workerUrl.replace(/\/+$/,"")+"/assets/",state:"configured"});
   for(const read of reads)if(read.status==="rejected")result.errors.push("Some public address configuration could not be refreshed.");
   return result;
 }

@@ -569,3 +569,12 @@ In the **Simple right-click menu** settings panel, a small change to an existing
 - Assess the result with a fresh-user walkthrough: choose a mode, identify the destination, add a location and explain where a file will go without Debug Mode or external guidance.
 
 **Scope:** Record this as a future focused UX/design pass. No palette selection, redesign implementation, visual acceptance or usability-test result is claimed by this report. Related: BUG-003, BUG-004, BUG-010 and BUG-016.
+
+
+## Get URL / operation status — native Chrome acceptance pending (22 October 2026)
+
+Implemented in0.5.16: stable Get URL context action, configured-address pop-out with whole-row clipboard copying, disabled/unverified labeling, source/generation guards, redacted URL/clipboard diagnostics and shared neutral/green/red/amber operation feedback. Automated smoke163/163; full suite281/288 with the seven retained historical failures. Details and exact implementation baseline: [GET_URL_AND_STATUS.md](../docs/explorer/GET_URL_AND_STATUS.md).
+
+Remaining verification: load0.5.16 in an approved Chrome extension environment; right-click `works/...2/chapter_1/001.webp`, inspect r2.dev/custom subdomain/Worker addresses, copy each row and paste into a plain text field to verify the full URL. Check Escape/outside/keyboard behavior and popup fit at1366px/390px. Check native clipboard denial and native download completion/cancellation states. Desktop/narrow visual rendering and installed-extension tests could not run here because the Chromium download was invalid/truncated. Do not call JSDOM geometry fixtures native Chrome evidence. No new cloud configuration is required for Get URL; unavailable endpoints should remain unavailable.
+
+Adjacent correction: the prior managed public-host fallback had overescaped regex dots; it now matches only the intended enabled `pub-<hex>.r2.dev` hosts. Unusual-key preview/download and private-bucket guard regression tests pass, but the existing installed-Chrome403 incident remains open pending the checks above. Virtual archive entries still do not have independently configured public file URLs; Get URL applies to stored objects, including the archive file itself.

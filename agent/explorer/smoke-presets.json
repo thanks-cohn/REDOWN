@@ -2,14 +2,82 @@
   "smokeVersion": "1.0.0",
   "execution": "Fixed local repository tests; mocked providers and in-memory storage. Never live certification.",
   "connectors": [
-    {"id":"cloudflare-r2","state":"implemented","probes":["provider-settings","api-read","direct-head","via-destination-head"],"integrity":"verified transfer tests; live byte verification remains separate"},
-    {"id":"local","state":"partial","probes":[],"limitation":"Upload/download UI exists; no general local filesystem connector or diagnostic executor"},
-    {"id":"github","state":"planned","probes":[],"limitation":"Beta UI is not a verified filesystem connector"}
+    {
+      "id": "cloudflare-r2",
+      "state": "implemented",
+      "probes": [
+        "provider-settings",
+        "api-read",
+        "direct-head",
+        "via-destination-head"
+      ],
+      "integrity": "verified transfer tests; live byte verification remains separate"
+    },
+    {
+      "id": "local",
+      "state": "partial",
+      "probes": [],
+      "limitation": "Upload/download UI exists; no general local filesystem connector or diagnostic executor"
+    },
+    {
+      "id": "github",
+      "state": "planned",
+      "probes": [],
+      "limitation": "Beta UI is not a verified filesystem connector"
+    }
   ],
   "presets": [
-    {"id":"diagnostics","purpose":"Privacy, correlation, concurrent batches, malformed imports, deterministic diagnoses, inspector and probe boundaries","files":["tests/explorer-diagnostics.test.mjs","tests/explorer-diagnostic-fixtures.test.mjs","tests/explorer-diagnostics-ui.test.mjs","tests/explorer-probes.test.mjs"]},
-    {"id":"transfers","purpose":"Real embedded Worker and background: copy, move, rename, exact keys, collision, source preservation and verification","files":["tests/explorer-worker.test.mjs","tests/explorer-copy.test.mjs","tests/download-collisions.test.mjs"]},
-    {"id":"navigation","purpose":"Paged destinations, menus, search, preview/lightbox and private downloads","files":["tests/explorer-destination-menu.test.mjs","tests/explorer-menu-actions.test.mjs","tests/destination-search-regression.test.mjs","tests/lightbox.test.mjs","tests/cloudflare-files.test.mjs"]},
-    {"id":"connections","purpose":"Authorization, renewal, reconnect and bounded runtime reliability","files":["tests/cloudflare-login.test.mjs","tests/cloudflare-session.test.mjs","tests/cloudflare-reconnect.test.mjs","tests/runtime-reliability.test.mjs"]}
+    {
+      "id": "diagnostics",
+      "purpose": "Privacy, correlation, concurrent batches, malformed imports, deterministic diagnoses, inspector and probe boundaries",
+      "files": [
+        "tests/explorer-diagnostics.test.mjs",
+        "tests/explorer-diagnostic-fixtures.test.mjs",
+        "tests/explorer-diagnostics-ui.test.mjs",
+        "tests/explorer-probes.test.mjs"
+      ]
+    },
+    {
+      "id": "transfers",
+      "purpose": "Real embedded Worker and background: copy, move, rename, exact keys, collision, source preservation and verification",
+      "files": [
+        "tests/explorer-worker.test.mjs",
+        "tests/explorer-copy.test.mjs",
+        "tests/download-collisions.test.mjs"
+      ]
+    },
+    {
+      "id": "navigation",
+      "purpose": "Paged destinations, menus, search, preview/lightbox and private downloads",
+      "files": [
+        "tests/explorer-destination-menu.test.mjs",
+        "tests/explorer-menu-actions.test.mjs",
+        "tests/destination-search-regression.test.mjs",
+        "tests/lightbox.test.mjs",
+        "tests/cloudflare-files.test.mjs"
+      ]
+    },
+    {
+      "id": "connections",
+      "purpose": "Authorization, renewal, reconnect and bounded runtime reliability",
+      "files": [
+        "tests/cloudflare-login.test.mjs",
+        "tests/cloudflare-session.test.mjs",
+        "tests/cloudflare-reconnect.test.mjs",
+        "tests/runtime-reliability.test.mjs"
+      ]
+    },
+    {
+      "id": "urls-and-status",
+      "purpose": "Get URL discovery, secure clipboard rows, dismissal, exact paths, shared operation states and stale completion guards",
+      "files": [
+        "tests/get-url.test.mjs",
+        "tests/explorer-status.test.mjs",
+        "tests/public-addresses.test.mjs",
+        "tests/cloudflare-files.test.mjs",
+        "tests/lightbox.test.mjs",
+        "tests/explorer-copy.test.mjs"
+      ]
+    }
   ]
 }

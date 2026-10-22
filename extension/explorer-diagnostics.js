@@ -6,6 +6,9 @@ const operations=['navigation','listing','pagination','search','refresh','select
 const stages=['intent','ui.request','ui.result','message.accept','message.result','source.identity','destination.identity','worker.check','worker.request','worker.response','source.read','destination.write','destination.verify','source.cleanup','api.request','api.response','browser.request','browser.result','state','interrupted'];
 const components=['options','background','worker','cloudflare','chrome','adapter','fixture'];
 const taxonomy={
+ EXPLORER_URL_DISCOVERY_FAILED:['File URL configuration discovery failed.','refresh-configuration'],
+ EXPLORER_URL_UNAVAILABLE:['No eligible configured shareable address was observed.','review-public-configuration'],
+ EXPLORER_CLIPBOARD_FAILED:['The browser did not confirm clipboard writing.','retry-clipboard'],
  EXPLORER_HTTP_NOT_FOUND:['An endpoint returned HTTP 404; the root cause is unknown.','inspect-route'],
  EXPLORER_SOURCE_NOT_FOUND:['The addressed storage binding did not contain the exact requested key.','compare-identities'],
  EXPLORER_SOURCE_KEY_MISMATCH:['Comparable source-key fingerprints disagree.','inspect-key-construction'],
@@ -60,7 +63,7 @@ function safeEvent(event,sequence,now){
  if(['literal','path','query'].includes(event.encoding))out.encoding=event.encoding;
  if(['GET','HEAD','POST','PUT','DELETE'].includes(event.method))out.method=event.method;
  if(['structured-worker','legacy-worker-message','transport','ui'].includes(event.evidence))out.evidence=event.evidence;
- if(['worker.manage','worker.object','api.object','api.list','api.domains','chrome.download','local.clipboard'].includes(event.endpoint))out.endpoint=event.endpoint;
+ if(['worker.manage','worker.object','api.object','api.list','api.domains','chrome.download','local.clipboard','r2.managed','r2.custom','worker.assets','provider.public'].includes(event.endpoint))out.endpoint=event.endpoint;
  if(['source','destination'].includes(event.role))out.role=event.role;
  return out;
 }

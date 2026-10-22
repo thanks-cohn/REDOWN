@@ -1407,6 +1407,13 @@ async function uploadLocalFiles(fileList){
   const profile=uploadProfile();
   const prefix=String($("local-prefix")?.value||"").trim().replace(/^\/+|\/+$/g,"");
   const status=$("local-upload-status");
+  const feedbackGeneration=(status.redownUploadGeneration||0)+1;status.redownUploadGeneration=feedbackGeneration;
+  const operationTicket=setOperation("upload",`Preparing ${files.length} uploads…`);
+  const feedback=(message,state="running")=>{
+    if(status.redownUploadGeneration!==feedbackGeneration)return;
+    status.textContent=message;globalThis.RedownExplorerStatus?.paint(status,state);
+    finishOperation(message,state==="failed",operationTicket,state);
+  };
   let completed=0,skipped=0;
   const permanentFailures=[];
   const queue=files.map(file=>({file,failures:0,nextAt:0}));
@@ -1417,14 +1424,14 @@ async function uploadLocalFiles(fileList){
     if(item.nextAt>Date.now()){
       queue.push(item);
       const earliest=Math.min(...queue.map(entry=>entry.nextAt));
-      status.textContent="Network retry queue: "+completed+" uploaded, "+skipped+" already existed, "+queue.length+" pending. Keep this page open.";
+      feedback("Network retry queue: "+completed+" uploaded, "+skipped+" already existed, "+queue.length+" pending. Keep this page open.");
       await new Promise(resolve=>setTimeout(resolve,Math.min(30000,Math.max(250,earliest-Date.now()))));
       continue;
     }
     let retryable=true;
     let writeAttempted=false;
     status.className="status";
-    status.textContent=`Checking R2 for ${file.name} (attempt ${item.failures+1}, ${completed}/${files.length} uploaded)…`;
+    feedback(`Checking R2 for ${file.name} (attempt ${item.failures+1}, ${completed}/${files.length} uploaded)…`);
     const key=prefix?`${prefix}/${file.name}`:file.name;
     let existed="unknown";
     let firstLookupError="";
@@ -1433,10 +1440,10 @@ async function uploadLocalFiles(fileList){
     if(existed==="yes"){
       skipped++;
       status.className="status ok";
-      status.textContent=`Already exists — skipped ${file.name} (${skipped} skipped; ${completed} uploaded).`;
+      feedback(`Already exists — skipped ${file.name} (${skipped} skipped; ${completed} uploaded).`,"running");
       continue;
     }
-    status.textContent=`Uploading ${file.name} (attempt ${item.failures+1}) · already exists: ${existed}…`;
+    feedback(`Uploading ${file.name} (attempt ${item.failures+1}) · already exists: ${existed}…`);
     try{
       if(existed!=="no")throw new Error("Could not confirm this destination is empty. Retry the file check before uploading.");
       if(file.size>300*1000*1000){retryable=false;throw new Error("Cloudflare's direct upload API has a 300 MB per-file limit.");}
@@ -1478,7 +1485,7 @@ async function uploadLocalFiles(fileList){
 
       await send({type:"recordLocalTransfer",ok:true,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),location:profile?publicObjectUrl(profile,key):`R2: ${target.bucketName}/${key}`}).catch(()=>{});
       status.className="status ok";
-      status.textContent=`Uploaded ${completed}/${files.length} · ${file.name}`;
+      feedback(`Uploaded ${completed}/${files.length} · ${file.name}`,queue.length?"running":permanentFailures.length||skipped?"partial":"success");
     }catch(error){
       let after="unknown";
       let afterSize=null;
@@ -1504,17 +1511,17 @@ async function uploadLocalFiles(fileList){
       }
       if(!retryable)await send({type:"recordLocalTransfer",ok:false,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),error:detail}).catch(()=>{});
       status.className=retryable?"status":"status bad";
-      status.textContent=`${retryable?"Retry queued":writeAttempted?"Completion unconfirmed; inspect the destination before retrying":"Stopped after file checks failed"}: ${file.name} (already exists: ${existed}): ${detail}. ${queue.length} pending; keep this page open.`;
+      feedback(`${retryable?"Retry queued":writeAttempted?"Completion unconfirmed; inspect the destination before retrying":"Stopped after file checks failed"}: ${file.name} (already exists: ${existed}): ${detail}. ${queue.length} pending; keep this page open.`,queue.length?"running":completed||skipped?"partial":"failed");
     }
   }
   await renderHistory();
   status.className=permanentFailures.length?"status bad":"status ok";
-  status.textContent=permanentFailures.length
+  feedback(permanentFailures.length
     ?`Batch finished: ${completed} uploaded, ${skipped} already existed (skipped); ${permanentFailures.length} non-retryable failures. ${permanentFailures.map(entry=>entry.name+" ("+entry.error+")").join("; ")}`
-    :`Batch finished: ${completed} uploaded, ${skipped} already existed (skipped), 0 failures.`;
+    :`Batch finished: ${completed} uploaded, ${skipped} already existed (skipped), 0 failures.`,permanentFailures.length?completed||skipped?"partial":"failed":skipped?"partial":"success");
   if(workspaceTarget?.accountId===target.accountId&&workspaceTarget?.bucketName===target.bucketName){
     workspacePrefix=normalizePrefix(prefix);
-    await browseWorkspace().catch(()=>{});
+    await browseWorkspace({statusTicket:operationTicket}).catch(()=>{});
   }
 }
 function objectContentType(obj,key){
@@ -1563,6 +1570,7 @@ function appendDetails(root,obj,key,url,type){
   root.append(link);
 }
 async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
+  const operationTicket=setOperation("preview","Loading preview…");
   const requestId=++workspacePreviewRequestId;
   const root=$("workspace-preview");
   const hadPreview=Boolean(root.querySelector?.(".preview-head"));
@@ -1591,6 +1599,7 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
       const message=error?.message||"Could not open this preview. Retry.";
       if(!hadPreview)root.textContent=message;
       setWorkspacePreviewProgress(`Could not open ${key}: ${message}`,true);
+      finishOperation(error?.name==="AbortError"?"Preview cancelled":message,error?.name!=="AbortError",operationTicket,error?.name==="AbortError"?"cancelled":"failed");
     }
     return;
   }
@@ -1650,6 +1659,7 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
       pre.textContent=text+(text.length>=524288?"\n\n[Preview truncated at 512 KB]":"");
     }catch(error){
       pre.textContent=`Could not load text preview: ${error?.message||String(error)}`;
+      finishOperation(pre.textContent,true,operationTicket);return false;
     }
   }else{
     const note=document.createElement("div");
@@ -1674,13 +1684,14 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
     root.append(urls.host);void urls.refresh();
   }
   if(workspaceLightboxOpen())mountWorkspaceLightboxMedia();
+  finishOperation("Preview ready",false,operationTicket);return true;
 }
 
 function setWorkspacePreviewProgress(message,bad=false){
   const host=workspaceLightboxLayer()||$("workspace-preview");
   host?.querySelector?.(".preview-progress")?.remove();
   if(!message||!host)return;
-  const status=document.createElement("div");status.className="preview-progress"+(bad?" bad":"");status.setAttribute?.("role","status");status.textContent=message;host.append(status);
+  const status=document.createElement("div");status.className="preview-progress"+(bad?" bad":"");status.setAttribute?.("role","status");status.textContent=message;globalThis.RedownExplorerStatus?.paint(status,bad?"failed":"running");host.append(status);
 }
 function enableWorkspaceImageZoom(stage){
   let zoom=1,x=0,y=0,drag=null;
@@ -2069,13 +2080,16 @@ function explorerSearchTargets() {
   );
 }
 async function runExplorerSearch(query) {
+  explorerUrlPopover?.close();
+  const operationTicket=setOperation("search","Searching remote files…");
   const q=String(query||"").trim();
   const requestId=++explorerSearchRequestId;
   if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
   explorerSearchSessionId="";
   if(!q){
+    finishOperation("Search cleared",false,operationTicket,"cancelled");
     explorerSearchActive=false;
-    $("explorer-status").textContent="";
+    setExplorerStatus("","idle",operationTicket);
     if(workspaceTarget) return browseWorkspace();
     return showBucketRows(explorerBucketAccountId==="__all__"?"":explorerBucketAccountId);
   }
@@ -2095,7 +2109,7 @@ async function runExplorerSearch(query) {
     if(started?.search?.sessionId)void send({type:"cfSearchCancel",sessionId:started.search.sessionId});
     return;
   }
-  if(!started?.ok){$("explorer-status").textContent=friendlyError(new Error(started?.error||""),"search remote files");return;}
+  if(!started?.ok){setExplorerStatus(friendlyError(new Error(started?.error||""),"search remote files"),"failed",operationTicket);return;}
   explorerSearchSessionId=started.search.sessionId;
   explorerItems=[];
   let search=started.search;
@@ -2103,7 +2117,7 @@ async function runExplorerSearch(query) {
     if(search.state==="scanning"){
       const page=await send({type:"cfSearchStep",sessionId:search.sessionId});
       if(requestId!==explorerSearchRequestId){void send({type:"cfSearchCancel",sessionId:search.sessionId});return;}
-      if(!page?.ok){$("explorer-status").textContent="Search interrupted. Search again to resume scanning. Earlier matches are retained.";return;}
+      if(!page?.ok){setExplorerStatus("Search interrupted. Search again to resume scanning. Earlier matches are retained.","partial",operationTicket);return;}
       search=page.search;
     }
     explorerSearchState=search.state;
@@ -2130,11 +2144,11 @@ async function runExplorerSearch(query) {
     };
   });
     const scope=workspaceTarget?"Current bucket (all folders)":explorerBucketAccountId&&explorerBucketAccountId!=="__all__"?"Selected account":"All loaded authorized accounts";
-    $("explorer-status").textContent=`${scope} · Path/name search · ${search.state} · ${search.examined} files examined · ${search.completed}/${search.total} buckets · ${search.matches} matches${search.errors.length?` · ${search.errors.length} bucket errors; search again to retry`:""}${explorerInventoryErrors.size?` · ${explorerInventoryErrors.size} account inventories unavailable; Refresh accounts to retry`:""}${search.state==="limited"?" · Limit reached; narrow your search":""}`;
+    setExplorerStatus(`${scope} · Path/name search · ${search.state} · ${search.examined} files examined · ${search.completed}/${search.total} buckets · ${search.matches} matches${search.errors.length?` · ${search.errors.length} bucket errors; search again to retry`:""}${explorerInventoryErrors.size?` · ${explorerInventoryErrors.size} account inventories unavailable; Refresh accounts to retry`:""}${search.state==="limited"?" · Limit reached; narrow your search":""}`,search.state==="scanning"?"running":search.errors.length||explorerInventoryErrors.size||search.state==="limited"?"partial":"done",operationTicket);
     const focusedId=document.activeElement?.closest?.(".file-row")?.dataset.id;
     renderFileItems();
     if(focusedId)rootRow(focusedId)?.focus({preventScroll:true});
-    if(search.state!=="scanning")break;
+    if(search.state!=="scanning"){finishOperation(search.errors.length?"Search complete with bucket errors":search.state==="limited"?"Search limit reached; narrow your search":"Search complete",false,operationTicket,search.errors.length||explorerInventoryErrors.size||search.state==="limited"?"partial":"done");break;}
     await new Promise(resolve=>setTimeout(resolve,0));
   }
 }
@@ -2164,60 +2178,50 @@ function setExplorerBusy(busy,message=""){
   if(!explorer)return;
   explorer.classList.toggle("busy",Boolean(busy));
   explorer.setAttribute("aria-busy",busy?"true":"false");
-  if(message&&busy)setOperation("navigate",message);
+  if(message&&busy)return setOperation("navigate",message);
 }
-function setOperation(
-  type,
-  message,
-  state = "running",
-  completed = 0,
-  total = 0,
-) {
-  explorerOperation = {
-    id: uid(),
-    type,
-    state,
-    message,
-    completed,
-    total,
-    errors: [],
-  };
-  renderOperation();
+function setExplorerStatus(message,state="running",ticket=null){
+  if(ticket&&ticket!==explorerOperation?.id)return false;
+  const el=$("explorer-status");if(!el)return false;
+  const text=safeUiMessage(message);if(el.textContent!==text)el.textContent=text;
+  globalThis.RedownExplorerStatus?.paint(el,state);
+  if(ticket&&text)finishOperation(text,state==="failed",ticket,state);return true;
 }
-function renderOperation() {
-  const el = $("explorer-operation");
-  if (!el) return;
-  if (!explorerOperation) {
-    el.textContent = "";
-    return;
-  }
-  const progress = explorerOperation.total
-    ? ` · ${explorerOperation.completed} of ${explorerOperation.total}`
-    : "";
-  const message=safeUiMessage(explorerOperation.message);
+function setOperation(type,message,state="running",completed=0,total=0){
+  explorerOperation={id:uid(),type,state,message,completed,total,errors:[]};
+  const detail=$("explorer-status");if(detail)detail.textContent="";
+  renderOperation();return explorerOperation.id;
+}
+function renderOperation(){
+  const el=$("explorer-operation");if(!el)return;
+  const state=explorerOperation?.state||"idle";
+  globalThis.RedownExplorerStatus?.paint(el,state);
+  if(explorerOperation)globalThis.RedownExplorerStatus?.paint($("explorer-status"),state);
+  if(!explorerOperation){el.textContent="";if(el.dataset){delete el.dataset.message;delete el.dataset.state;}return;}
+  const progress=explorerOperation.total?` · ${explorerOperation.completed} of ${explorerOperation.total}`:"";
+  const message=safeUiMessage(explorerOperation.message)+progress;
+  if(el.dataset?.message===message&&el.dataset?.state===state)return;
+  if(el.dataset){el.dataset.message=message;el.dataset.state=state;}
   el.replaceChildren();
-  if(explorerOperation.state==="running"){
-    const indicator=document.createElement("span");indicator.className="connect-progress";indicator.setAttribute("aria-label","Working");
+  if(state==="running"){
+    const indicator=document.createElement("span");indicator.className="connect-progress";indicator.setAttribute("aria-hidden","true");
     for(let i=0;i<5;i++)indicator.append(document.createElement("i"));el.append(indicator);
   }
-  el.append(document.createTextNode(message+progress));
+  el.append(document.createTextNode(message));
 }
-function finishOperation(message, error = false) {
-  if (!explorerOperation)
-    setOperation("status", message, error ? "failed" : "done");
-  else
-    Object.assign(explorerOperation, {
-      message,
-      state: error ? "failed" : "done",
-    });
+function finishOperation(message,error=false,ticket=null,state=null){
+  if(ticket&&ticket!==explorerOperation?.id)return false;
+  const next=state||(error?"failed":"done");
+  if(!explorerOperation)setOperation("status",message,next);
+  else Object.assign(explorerOperation,{message,state:next});
   renderOperation();
-  const finished=explorerOperation;
-  setTimeout(() => {
-    if (explorerOperation===finished&&explorerOperation?.state !== "running") {
-      explorerOperation = null;
-      renderOperation();
+  const finished=explorerOperation,revision=(finished.revision||0)+1;finished.revision=revision;
+  if(next!=="running")setTimeout(()=>{
+    if(explorerOperation===finished&&finished.revision===revision&&explorerOperation?.state!=="running"){
+      explorerOperation=null;renderOperation();
     }
-  }, 6000);
+  },6000);
+  return true;
 }
 function isTransientBucketAccessError(error) {
   const raw = error?.message || String(error || "");
@@ -2232,7 +2236,7 @@ async function refreshProfiles() {
   profiles = (await chrome.storage.local.get("profiles")).profiles || [];
   renderWorkspaceProfiles();
 }
-async function ensurePrepared(target = workspaceTarget) {
+async function ensurePrepared(target = workspaceTarget,statusTicket=null) {
   if (!target?.accountId || !target?.bucketName)
     throw new Error("Choose a bucket first.");
 
@@ -2240,7 +2244,8 @@ async function ensurePrepared(target = workspaceTarget) {
   if (explorerPreparing.has(id)) return explorerPreparing.get(id);
 
   const task = (async () => {
-    setOperation(
+  let operationTicket;
+    operationTicket=statusTicket||setOperation(
       "prepare",
       "Preparing bucket… Verifying Cloudflare access…",
     );
@@ -2256,7 +2261,7 @@ async function ensurePrepared(target = workspaceTarget) {
 
       if (result?.ok) {
         await refreshProfiles();
-        finishOperation("Bucket ready");
+        finishOperation("Bucket ready",false,operationTicket,statusTicket?"running":"done");
         return result.profile;
       }
 
@@ -2265,9 +2270,9 @@ async function ensurePrepared(target = workspaceTarget) {
       );
 
       // Temporary Worker/auth propagation is a readiness state, not a user-facing error.
-      if (explorerOperation) explorerOperation.message =
+      if (explorerOperation?.id===operationTicket) explorerOperation.message =
         "Preparing bucket… Verifying Cloudflare access. This can take a few minutes.";
-      if (explorerOperation) explorerOperation.state = "running";
+      if (explorerOperation?.id===operationTicket) explorerOperation.state = "running";
       renderOperation();
 
       // Clearly non-transient errors should still fail promptly.
@@ -2279,8 +2284,7 @@ async function ensurePrepared(target = workspaceTarget) {
 
     finishOperation(
       "REDOWN could not finish preparing this bucket yet. Try again in a moment.",
-      true,
-    );
+      true,operationTicket);
     throw lastError;
   })().finally(() => explorerPreparing.delete(id));
 
@@ -2301,6 +2305,7 @@ function rememberLocation() {
   updateNavButtons();
 }
 async function goLocation(accountId, bucketName, prefix = "", remember = true) {
+  explorerUrlPopover?.close();
   explorerSearchActive = false;
   explorerSearchRequestId++;
   if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
@@ -2497,6 +2502,7 @@ function renderSources() {
   renderExplorerChrome();
 }
 function showBucketRows(accountId = "") {
+  explorerUrlPopover?.close();
   explorerSearchActive = false;
   explorerSearchRequestId++;
   if(explorerSearchSessionId)void send({type:"cfSearchCancel",sessionId:explorerSearchSessionId});
@@ -2582,9 +2588,15 @@ async function loadExplorerInventory() {
       showBucketRows();
   }
 }
-async function browseWorkspace({ append = false } = {}) {
+let explorerBrowseGeneration=0;
+async function browseWorkspace({ append = false,statusTicket=null } = {}) {
+  const generation=++explorerBrowseGeneration;
+  const target=workspaceTarget?{...workspaceTarget}:null,prefix=workspacePrefix;
+  const current=()=>generation===explorerBrowseGeneration&&target?.accountId===workspaceTarget?.accountId&&target?.bucketName===workspaceTarget?.bucketName&&prefix===workspacePrefix;
+  const operationTicket=statusTicket||setOperation("listing","Loading folder…");
   const root = $("workspace-objects");
   if (!workspaceTarget) {
+    finishOperation("No folder selected",false,operationTicket,"idle");
     renderFileItems();
     return;
   }
@@ -2593,7 +2605,7 @@ async function browseWorkspace({ append = false } = {}) {
     if(typeof explorerDestinationMenus!=="undefined")explorerDestinationMenus?.clearCache();
     root.innerHTML =
       '<div class="file-empty"><span class="operation-spinner"></span><strong>Preparing bucket…</strong>Verifying Cloudflare access</div>';
-    $("explorer-status").textContent = "";
+    setExplorerStatus("","idle",operationTicket);
     explorerRawObjects = [];
     explorerNextCursor = "";
     explorerPage = 0;
@@ -2606,12 +2618,13 @@ async function browseWorkspace({ append = false } = {}) {
   for(let attempt=0;attempt<maxAttempts;attempt++){
     result = await send({
       type: "cfObjects",
-      accountId: workspaceTarget.accountId,
-      bucketName: workspaceTarget.bucketName,
-      prefix: workspacePrefix,
+      accountId: target.accountId,
+      bucketName: target.bucketName,
+      prefix,
       cursor: append ? explorerNextCursor : "",
     });
 
+    if(!current())return;
     if(result?.ok)break;
 
     lastError=new Error(result?.error||"Cloudflare access is still propagating");
@@ -2621,14 +2634,15 @@ async function browseWorkspace({ append = false } = {}) {
     if(!append){
       root.innerHTML =
         '<div class="file-empty"><span class="operation-spinner"></span><strong>Preparing bucket…</strong>Waiting for Cloudflare propagation and verifying access. This can take a minute or two.</div>';
-      $("explorer-status").textContent="";
+      setExplorerStatus("","idle",operationTicket);
     }
 
     // Ask REDOWN to validate/repair the bucket while keeping transient
     // 401/403 states out of the user-facing error surface.
     try{
-      await ensurePrepared(workspaceTarget);
+      await ensurePrepared(target,operationTicket);
     }catch(error){
+      if(!current())return;
       lastError=error;
       if(!isTransientBucketAccessError(error))break;
     }
@@ -2637,6 +2651,7 @@ async function browseWorkspace({ append = false } = {}) {
       await new Promise((resolve)=>setTimeout(resolve,20000));
   }
 
+  if(!current())return;
   if (!result?.ok) {
     if (!append) explorerItems = [];
     if(isTransientBucketAccessError(lastError)){
@@ -2644,24 +2659,24 @@ async function browseWorkspace({ append = false } = {}) {
         root.innerHTML =
           '<div class="file-empty"><strong>Still preparing this bucket</strong>Cloudflare has not finished propagating access yet. Try Refresh in a moment.</div>';
       }
-      $("explorer-status").textContent =
-        "REDOWN is still waiting for Cloudflare to finish preparing this bucket.";
+      setExplorerStatus("REDOWN is still waiting for Cloudflare to finish preparing this bucket.","running",operationTicket);
     }else{
-      $("explorer-status").textContent = safeUiMessage(friendlyError(
+      setExplorerStatus(safeUiMessage(friendlyError(
         lastError || new Error(result?.error || ""),
         "load this folder",
-      ));
+      )),"failed",operationTicket);
     }
   } else {
     explorerRawObjects.push(...(result.objects || []));
     explorerNextCursor = result.cursor || "";
     explorerItems = buildDirectoryItems(explorerRawObjects, workspacePrefix);
-    $("explorer-status").textContent="";
+    setExplorerStatus("","idle",operationTicket);
   }
 
   if (!append) explorerSelected.clear();
   renderFileItems();
   renderExplorerChrome();
+  if(!statusTicket)finishOperation(result?.ok?"Folder loaded":isTransientBucketAccessError(lastError)?"Folder access is still pending":"Could not load folder",!result?.ok,operationTicket,result?.ok?"done":isTransientBucketAccessError(lastError)?"partial":"failed");
 }
 function renderFileItems() {
   const root = $("workspace-objects");
@@ -2897,6 +2912,7 @@ async function previewExplorerItem(item) {
   return showWorkspacePreview({...item.object,key:item.key,size:item.size},rootRow(item.id),"",item.searchResult?{accountId:item.accountId,bucketName:item.bucketName,accountName:item.accountName}:null);
 }
 async function selectSingleExplorerItem(item, { focus = false, scroll = true } = {}) {
+  explorerUrlPopover?.close();
   if (!item || item.kind === "bucket") return;
   const keepFocus=focus||Boolean(document.activeElement?.closest?.("#workspace-objects .file-row"));
   explorerSelected = new Set([item.id]);
@@ -2929,6 +2945,7 @@ async function navigatePreview(delta) {
 }
 
 function selectExplorerItem(item, index, event = {}) {
+  explorerUrlPopover?.close();
   const items = sortedVisibleItems();
   if (event.shiftKey && explorerAnchor >= 0) {
     const [a, b] = [explorerAnchor, index].sort((x, y) => x - y);
@@ -2955,11 +2972,11 @@ function rootRow(id) {
 async function openExplorerItem(item) {
   if(!item)return;
   if(item.searchResult)return item.folder?goToSearchResult(item):previewExplorerItem(item);
-  setExplorerBusy(true,item.folder?"Opening folder…":"Opening preview…");
+  const operationTicket=setExplorerBusy(true,item.folder?"Opening folder…":"Opening preview…");
   try{
     if (item.archiveEntry && item.folder) {
       renderArchiveFolder(item.key);
-      finishOperation("Folder opened");
+      finishOperation("Folder opened",false,operationTicket);
       return;
     }
     if (item.folder) {
@@ -2976,23 +2993,24 @@ async function openExplorerItem(item) {
     }
     if (item.archiveEntry) {
       await previewArchiveEntry(item);
-      finishOperation("Preview ready");
+      finishOperation("Preview ready",false,operationTicket);
       return;
     }
     await showWorkspacePreview(item.object || {key:item.key,size:item.size}, rootRow(item.id));
-    finishOperation("Preview ready");
+    finishOperation("Preview ready",false,operationTicket);
   }catch(error){
-    finishOperation(friendlyError(error,item.folder?"open this folder":"open this preview"),true);
+    finishOperation(friendlyError(error,item.folder?"open this folder":"open this preview"),true,operationTicket);
   }finally{
     setExplorerBusy(false);
   }
 }
 async function openArchive(item) {
-  setOperation("archive", "Inspecting archive…");
+  let operationTicket;
+  operationTicket=setOperation("archive", "Inspecting archive…");
   const result = await send({ type:"cfArchiveEntries", ...explorerSource(), key:item.key });
-  if (!result?.ok) return finishOperation(friendlyError(new Error(result?.error || ""), "inspect this archive"), true);
+  if (!result?.ok) return finishOperation(friendlyError(new Error(result?.error || ""), "inspect this archive"), true,operationTicket);
   explorerArchive = { key:item.key, name:item.name, type:result.archive?.type || "zip", entries:result.archive?.entries || [], prefix:"" };
-  finishOperation(`${explorerArchive.entries.length} archive entries`);
+  finishOperation(`${explorerArchive.entries.length} archive entries`,false,operationTicket);
   renderArchiveFolder();
   renderExplorerChrome();
 }
@@ -3020,13 +3038,14 @@ async function previewArchiveEntry(item) {
   await showWorkspacePreview({...item.object,key:item.key,httpMetadata:{contentType}},rootRow(item.id),result.url);
 }
 async function extractArchiveSelection(items = selectedExplorerItems(), destinationPrefix = workspacePrefix) {
+  let operationTicket;
   const entries = items.filter(item => item.archiveEntry && !item.folder).map(item => item.key);
   if (!explorerArchive || !entries.length) return;
-  setOperation("extract", `Extracting ${entries.length} file${entries.length === 1 ? "" : "s"}…`, entries.length);
+  operationTicket=setOperation("extract", `Extracting ${entries.length} file${entries.length === 1 ? "" : "s"}…`,"running",0,entries.length);
   const result = await send({ type:"cfExtractArchive", ...explorerSource(), key:explorerArchive.key, entries, destinationPrefix });
-  if (!result?.ok) return finishOperation(friendlyError(new Error(result?.error || ""), "extract archive entries"), true);
+  if (!result?.ok) return finishOperation(friendlyError(new Error(result?.error || ""), "extract archive entries"), true,operationTicket);
   const completed=(result.results || []).filter(x=>x.status==="extracted").length, failed=(result.results || []).length-completed;
-  finishOperation(failed ? `${completed} files extracted · ${failed} files could not be extracted` : `${completed} files extracted`, Boolean(failed));
+  finishOperation(failed ? `${completed} files extracted · ${failed} files could not be extracted` : `${completed} files extracted`, Boolean(failed),operationTicket,failed?completed>0?"partial":"failed":result.conflicts?.length?"partial":"done");
 }
 function selectedExplorerItems() {
   return explorerItems.filter((x) => explorerSelected.has(x.id));
@@ -3049,6 +3068,7 @@ async function setExplorerClipboard(
   if (!items.length) return;
   if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to copy or move search results.",true);
   if(operation==="move"&&items.some(item=>item.archiveEntry))return finishOperation("Archive entries cannot be moved. Copy or extract them instead.",true);
+  const operationTicket=setOperation("clipboard",operation==="move"?"Preparing cut selection…":"Copying selection to REDOWN clipboard…");
   explorerClipboard = {
     operation,
     accountId: source?.accountId || workspaceTarget.accountId,
@@ -3059,24 +3079,25 @@ async function setExplorerClipboard(
   };
   await chrome.storage.session.set({ explorerClipboard });
   renderFileItems();
-  finishOperation(`${items.length} item${items.length===1?"":"s"} ${operation==="move"?"cut":"copied"} in REDOWN. Open a destination folder and choose Paste.${operation==="move"?" Originals stay in place until the move succeeds.":""}`);
+  finishOperation(`${items.length} item${items.length===1?"":"s"} ${operation==="move"?"cut":"copied"} in REDOWN. Open a destination folder and choose Paste.${operation==="move"?" Originals stay in place until the move succeeds.":""}`,false,operationTicket);
 }
 async function pasteExplorer(
   destination = { ...explorerSource(), prefix: workspacePrefix },
 ) {
-  if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true);
+  let operationTicket;
+  if(explorerSearchActive)return finishOperation("Open a destination folder before pasting.",true,operationTicket);
   const clipboard=explorerClipboard;
   if (!clipboard?.entries?.length) return;
   if (clipboard.archiveKey) {
     const files=clipboard.entries.filter((entry)=>!entry.folder);
-    setOperation("extract",`Extracting ${files.length} file${files.length===1?"":"s"} to destination…`,files.length);
+    operationTicket=setOperation("extract",`Extracting ${files.length} file${files.length===1?"":"s"} to destination…`,"running",0,files.length);
     const result=await send({type:"cfTransferArchive",source:{accountId:clipboard.accountId,bucketName:clipboard.bucketName,accountName:clipboard.accountName},destination,key:clipboard.archiveKey,entries:files.map((entry)=>entry.key)});
-    if(!result?.ok)return finishOperation(friendlyError(new Error(result?.error||""),"send archive entries"),true);
+    if(!result?.ok)return finishOperation(friendlyError(new Error(result?.error||""),"send archive entries"),true,operationTicket);
     const completed=(result.results||[]).filter((entry)=>entry.status==="extracted").length,failed=(result.results||[]).length-completed;
-    finishOperation(failed?`${completed} files extracted · ${failed} files could not be extracted`:`${completed} files extracted`,Boolean(failed));
+    finishOperation(failed?`${completed} files extracted · ${failed} files could not be extracted`:`${completed} files extracted`,Boolean(failed),operationTicket,failed?completed>0?"partial":"failed":result.conflicts?.length?"partial":"done");
     return;
   }
-  setOperation(
+  operationTicket=setOperation(
     clipboard.operation,
     `${clipboard.operation === "move" ? "Moving" : "Copying"} ${clipboard.entries.length} selected item${clipboard.entries.length === 1 ? "" : "s"}…`,
   );
@@ -3092,11 +3113,11 @@ async function pasteExplorer(
     entries: clipboard.entries,
     conflict: "skip",
   };
-  $("explorer-status").textContent=`${request.operation==="move"?"Moving":"Copying"} ${clipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`;
+  setExplorerStatus(`${request.operation==="move"?"Moving":"Copying"} ${clipboard.entries.length} item(s). Checking bucket access and waiting for confirmation…`,"running",operationTicket);
   let result = await send(request);
   if (!result?.ok) {
     const message=friendlyError(new Error(result?.error || ""),request.operation);
-    finishOperation(message,true);$("explorer-status").textContent=message;
+    finishOperation(message,true,operationTicket);setExplorerStatus(message,"failed",operationTicket);
     return;
   }
   if (result.conflicts?.length) {
@@ -3107,7 +3128,7 @@ async function pasteExplorer(
       ?.trim()
       .toLowerCase();
     if (!choice || choice === "cancel") {
-      finishOperation("Paste cancelled");$("explorer-status").textContent="Paste cancelled";
+      finishOperation("Paste cancelled",false,operationTicket,"cancelled");setExplorerStatus("Paste cancelled","cancelled",operationTicket);
       return;
     }
     const conflict = choice.startsWith("r")
@@ -3128,8 +3149,8 @@ async function pasteExplorer(
         conflict,
       });
       if(!result?.ok){
-        finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true);
-        $("explorer-status").textContent=result?.error||"The transfer was not confirmed. Refresh the destination before retrying.";
+        finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true,operationTicket);
+        setExplorerStatus(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.","failed",operationTicket);
         return;
       }
       result.completed=previousCompleted+(Number(result.completed)||0);
@@ -3145,11 +3166,10 @@ async function pasteExplorer(
     failed
       ? `${result.completed || 0} files completed · ${failed} could not be ${request.operation === "move" ? "moved" : "copied"}`
       : `${result.completed || 0} files ${request.operation === "move" ? "moved" : "copied"}`,
-    Boolean(failed),
-  );
+    Boolean(failed),operationTicket,failed?(Number(result.completed)||0)>0?"partial":"failed":result.conflicts?.length?"partial":"done");
   const summary=failed?`${result.completed||0} files completed · ${failed} failed. ${result.errors?.[0]?.error||"Refresh both locations before retrying."}`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
-  await browseWorkspace();
-  $("explorer-status").textContent=summary;
+  await browseWorkspace({statusTicket:operationTicket});
+  setExplorerStatus(summary,failed?(result.completed>0?"partial":"failed"):result.conflicts?.length?"partial":"done",operationTicket);
 }
 async function moveSelectionTo(destination) {
   if(selectedExplorerItems().some(item=>item.searchResult))return finishOperation("Open the containing folder to move search results.",true);
@@ -3165,16 +3185,17 @@ async function moveSelectionTo(destination) {
   });
 }
 async function deleteSelection() {
+  let operationTicket;
   const items = selectedExplorerItems();
-  if(items.some(item=>item.archiveEntry))return finishOperation("Archive contents cannot be deleted individually. Extract them to manage files.",true);
-  if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to delete search results.",true);
+  if(items.some(item=>item.archiveEntry))return finishOperation("Archive contents cannot be deleted individually. Extract them to manage files.",true,operationTicket);
+  if(items.some(item=>item.searchResult))return finishOperation("Open the containing folder to delete search results.",true,operationTicket);
   if (!items.length) return;
   const label =
     items.length === 1
       ? `“${items[0].name}”`
       : `${items.length} selected items`;
   if (!confirm(`Delete ${label}? This cannot be undone.`)) return;
-  setOperation("delete", `Deleting ${label}…`);
+  operationTicket=setOperation("delete", `Deleting ${label}…`);
   const result = await send({
     type: "cfDeleteObjects",
     source: explorerSource(),
@@ -3186,15 +3207,13 @@ async function deleteSelection() {
         new Error(result?.error || ""),
         "delete the selected items",
       ),
-      true,
-    );
+      true,operationTicket);
   finishOperation(
     result.errors?.length
       ? `${result.completed} files deleted · ${result.errors.length} failed`
       : `${result.completed} files deleted`,
-    Boolean(result.errors?.length),
-  );
-  await browseWorkspace();
+    Boolean(result.errors?.length),operationTicket,result.errors?.length?result.completed>0?"partial":"failed":"done");
+  await browseWorkspace({statusTicket:operationTicket});
 }
 function beginExplorerRename(item) {
   if(item.archiveEntry)return finishOperation("Extract this archive entry before renaming it.",true);
@@ -3214,11 +3233,12 @@ function beginExplorerRename(item) {
   input.setSelectionRange(0, dot > 0 ? dot : item.name.length);
   let done = false;
   const finish = async (save) => {
+  let operationTicket;
     if (done) return;
     done = true;
     if (!save || !input.value.trim() || input.value.trim() === item.name)
       return renderFileItems();
-    setOperation("rename", `Renaming “${item.name}”…`);
+    operationTicket=setOperation("rename", `Renaming “${item.name}”…`);
     const result = await send({
       type: "cfRenameEntry",
       source,
@@ -3233,12 +3253,11 @@ function beginExplorerRename(item) {
               new Error(result?.error || result.errors?.[0]?.error || ""),
               "rename this item",
             ),
-        true,
-      );
+        true,operationTicket);
       return renderFileItems();
     }
-    finishOperation(`Renamed to “${input.value.trim()}”`);
-    await browseWorkspace();
+    finishOperation(`Renamed to “${input.value.trim()}”`,false,operationTicket);
+    await browseWorkspace({statusTicket:operationTicket});
   };
   input.onkeydown = (e) => {
     if (e.key === "Enter") {
@@ -3266,10 +3285,11 @@ function beginNewFolder() {
   input.select();
   let done = false;
   const finish = async (save) => {
+  let operationTicket;
     if (done) return;
     done = true;
     if (!save) return renderFileItems();
-    setOperation("folder", `Creating “${input.value.trim()}”…`);
+    operationTicket=setOperation("folder", `Creating “${input.value.trim()}”…`);
     const result = await send({
       type: "cfCreateFolder",
       ...source,
@@ -3279,12 +3299,11 @@ function beginNewFolder() {
     if (!result?.ok) {
       finishOperation(
         friendlyError(new Error(result?.error || ""), "create the folder"),
-        true,
-      );
+        true,operationTicket);
       return renderFileItems();
     }
-    finishOperation("Folder created");
-    await browseWorkspace();
+    finishOperation("Folder created",false,operationTicket);
+    await browseWorkspace({statusTicket:operationTicket});
   };
   input.onkeydown = (e) => {
     if (e.key === "Enter") finish(true);
@@ -3293,8 +3312,9 @@ function beginNewFolder() {
   input.onblur = () => finish(true);
 }
 async function explorerDownload(item) {
+  let operationTicket;
   if (item.folder) return;
-  setOperation("download", `Preparing “${item.name}” for download…`);
+  operationTicket=setOperation("download", `Preparing “${item.name}” for download…`);
   let terminal=false;
   try {
     const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:explorerSource();
@@ -3303,30 +3323,32 @@ async function explorerDownload(item) {
       if(!result?.ok)throw new Error(result?.error||"Archive entry download unavailable.");
       const id=await chrome.downloads.download({url:result.url,filename:item.name.replace(/[\\/:*?"<>|\x00-\x1f]/g,"_"),saveAs:true});
       if(!Number.isInteger(id))throw new Error("Chrome did not start this download. Check Chrome Downloads.");
-      finishOperation(`Download started for “${item.name}”. Check Chrome Downloads for completion.`);return;
+      finishOperation(`Download started for “${item.name}”. Check Chrome Downloads for completion.`,false,operationTicket,"running");return;
     }
     await RedownCloudflareApi.download(source,item.key,item.name,(state)=>{
-      if(state.state==="complete"){terminal=true;finishOperation(`Downloaded “${item.name}”`);}
-      if(state.state==="interrupted"){terminal=true;finishOperation(`Chrome could not download “${item.name}” (${state.error||"interrupted"}). Open Chrome Downloads for details.`,true);}
+      if(state.state==="complete"){terminal=true;finishOperation(`Downloaded “${item.name}”`,false,operationTicket);}
+      if(state.state==="interrupted"){terminal=true;const cancelled=state.error==="USER_CANCELED";finishOperation(cancelled?`Download cancelled for “${item.name}”`:`Chrome could not download “${item.name}” (${state.error||"interrupted"}). Open Chrome Downloads for details.`,!cancelled,operationTicket,cancelled?"cancelled":"failed");}
     });
-    if(!terminal)finishOperation(`Downloading “${item.name}”…`);
+    if(!terminal)finishOperation(`Downloading “${item.name}”…`,false,operationTicket,"running");
   } catch(error) {
-    finishOperation(error?.message || "Could not download this file. Retry.",true);
+    const cancelled=/USER_CANCELED|user cancel/i.test(error?.message||"");
+    finishOperation(cancelled?"Download cancelled":error?.message||"Could not download this file. Retry.",!cancelled,operationTicket,cancelled?"cancelled":"failed");
   }
 }
 let explorerPropertiesVersion=0;
 async function showProperties(item) {
+  let operationTicket;
   const version=++explorerPropertiesVersion;
   const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
   if(item.folder||item.archiveEntry){
     $("properties-title").textContent=item.name;
     renderProperties([["Name",item.name],["Type",item.archiveEntry?"Archive entry":"Folder"],["Bucket",source.bucketName],["Path",item.key],["Size",item.folder?"—":formatBytes(item.size)]]);return;
   }
-  setOperation("properties","Loading properties…");
+  operationTicket=setOperation("properties","Loading properties…");
   const result=await send({type:"cfObjectProperties",...source,key:item.key});
   if(version!==explorerPropertiesVersion||!item.searchResult&&(source.accountId!==workspaceTarget?.accountId||source.bucketName!==workspaceTarget?.bucketName))return;
-  if(!result?.ok)return finishOperation(result?.error||"Could not load properties. Refresh and retry.",true);
-  finishOperation("Properties loaded");
+  if(!result?.ok)return finishOperation(result?.error||"Could not load properties. Refresh and retry.",true,operationTicket);
+  finishOperation("Properties loaded",false,operationTicket);
   const object=result.object||{};
   $("properties-title").textContent=item.name;
   renderProperties([
@@ -3357,13 +3379,29 @@ function renderProperties(entries) {
   }
   $("explorer-properties").showModal();
 }
-async function copyItemUrl(item) {
-  const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
-  const snapshot=await send({type:"cfPublicAddresses",...source});
-  const available=RedownPublicAddresses.addresses(snapshot,source,item.key).find(item=>item.state==="configured");
-  if(!available)throw new Error("No confirmed public address configuration for this bucket. Add a website or enable public access in Cloudflare; private previews still work.");
-  await navigator.clipboard.writeText(available.url);
-  finishOperation("Configured URL copied. Public file access has not been verified.");
+let explorerUrlPopover;
+function urlPopover(){
+  let ticket;const traces=new WeakMap();
+  return explorerUrlPopover ||= RedownPublicAddresses.popover({document,
+    load:source=>send({type:"cfPublicAddresses",...source}),
+    onState:(message,state)=>{
+      if(state==="running")ticket=setOperation("public.urls",message);
+      finishOperation(message,state==="failed",ticket,state);
+    },
+    onEvent:(context,stage,outcome,details)=>{
+      const bridge=globalThis.redownExplorerBridge,c=bridge?.collector;if(!c?.enabled)return;
+      let trace=traces.get(context);
+      if(!trace){trace={id:c.begin("public.urls")};traces.set(context,trace);void c.identity(trace.id,context.source,context.key,{encoding:"literal"});}
+      if(stage==="browser.request"){trace.clipboard=c.begin("clipboard",{parentId:trace.id});void c.identity(trace.clipboard,context.source,context.key,{encoding:"literal"});}
+      const id=stage.startsWith("browser.")?trace.clipboard:trace.id;
+      bridge.event(id,stage,outcome,details);
+      if(stage==="browser.result"||stage==="ui.result")c.finish(id,outcome==="confirmed"?"confirmed":outcome==="failed"?"failed":"unknown",details.code?{code:details.code,stage,component:"options"}:undefined);
+    }
+  });
+}
+async function copyItemUrl(item,{source,point,returnFocus}={}){
+  const captured={...(source||(item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:explorerSource()))};
+  return urlPopover().show({source:captured,key:item.key,name:item.name,point,returnFocus:returnFocus||rootRow(item.id),isCurrent:()=>item.searchResult||captured.accountId===workspaceTarget?.accountId&&captured.bucketName===workspaceTarget?.bucketName});
 }
 async function explorerUploadFiles(files, prefix = workspacePrefix) {
   if (!files?.length) return;
@@ -3414,12 +3452,13 @@ function destinationMenus(){
     onChoose:async(operation,destination,items,source)=>{await setExplorerClipboard(operation,items,source);await pasteExplorer(destination);},
     onError:error=>{
       const message=error?.name==="TimeoutError"?"The transfer was not confirmed in time. Refresh the destination before retrying; a copy may already exist.":error?.message||"Could not transfer these files.";
-      finishOperation(message,true);$("explorer-status").textContent=message;
+      finishOperation(message,true);setExplorerStatus(message,"failed");
     },
     onDismiss:()=>rootRow([...explorerSelected][0])?.focus({preventScroll:true})
   });
 }
 function showExplorerMenu(x, y, item) {
+  explorerUrlPopover?.close();
   explorerDestinationMenus?.close();
   const menu = $("explorer-menu");
   menu.replaceChildren();
@@ -3439,6 +3478,7 @@ function showExplorerMenu(x, y, item) {
 
   if(item?.searchResult){
     menu.append(menuButton(item.folder?"Open containing folder":"Preview",()=>item.folder?goToSearchResult(item):selectSingleExplorerItem(item,{focus:true})),menuButton("Open containing folder",()=>goToSearchResult(item)));
+    if(!item.folder)menu.append(menuButton("Get URL",()=>copyItemUrl(item,{source:{accountId:item.accountId,bucketName:item.bucketName},point:{x,y},returnFocus:rootRow(item.id)})));
     menu.hidden=false;
     requestAnimationFrame(()=>{menu.style.left=`${Math.max(8,Math.min(x,innerWidth-menu.offsetWidth-8))}px`;menu.style.top=`${Math.max(8,Math.min(y,innerHeight-menu.offsetHeight-8))}px`;menu.querySelector("button")?.focus();});
     return;
@@ -3527,13 +3567,7 @@ function showExplorerMenu(x, y, item) {
     sep();
     if(!item.folder&&!item.archiveEntry){
       const source=item.searchResult?{accountId:item.accountId,bucketName:item.bucketName}:{...explorerSource()};
-      const button=menuButton("Checking public URLs…",()=>copyItemUrl(item),false);
-      menu.append(button);
-      void send({type:"cfPublicAddresses",...source}).then(snapshot=>{
-        const available=RedownPublicAddresses.addresses(snapshot,source,item.key).some(address=>address.state==="configured");
-        button.textContent=available?"Copy public URL":"Public URL unavailable";button.disabled=!available;
-        button.title=available?"Copy a configured URL; public file access is not verified":"No enabled public address configuration. Private previews remain available.";
-      }).catch(()=>{button.textContent="Public URL unavailable";button.title="Could not refresh public address configuration.";});
+      menu.append(menuButton("Get URL",()=>copyItemUrl(item,{source,point:{x,y},returnFocus:rootRow(item.id)}),true,"Choose a configured file URL to copy"));
     }
 
     menu.append(
@@ -4033,7 +4067,7 @@ async function refreshCloudflareState(){
   }).catch(error=>{if(refreshVersion===cloudflareRefreshVersion)setStatus("menu-location-status",safeUiMessage(error?.message||String(error)),"bad");});
   void loadExplorerInventory().catch(error=>{
     if(refreshVersion!==cloudflareRefreshVersion)return;
-    $("explorer-status").textContent=safeUiMessage(friendlyError(error,"load Cloudflare storage"));
+    setExplorerStatus(safeUiMessage(friendlyError(error,"load Cloudflare storage")),"failed");
   });
   return true;
 }
@@ -4418,7 +4452,7 @@ try{
   deleteSelection=observer.wrap("delete",deleteSelection);
   beginNewFolder=observer.wrap("folder.create",beginNewFolder);
   showProperties=observer.wrap("properties",showProperties);
-  copyItemUrl=observer.wrap("public.urls",copyItemUrl);
+  // Get URL records explicit discovery and clipboard child operations.
   setExplorerClipboard=observer.wrap("clipboard",setExplorerClipboard);
   loadExplorerInventory=observer.wrap("account.switch",loadExplorerInventory);
   openArchive=observer.wrap("archive",openArchive);

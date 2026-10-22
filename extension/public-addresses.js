@@ -18,7 +18,7 @@
     return (snapshot.addresses||[]).flatMap(item=>{
       try{
         const base=new URL(item.base);
-        if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash)return [];
+        if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||['api.cloudflare.com','dash.cloudflare.com'].includes(base.hostname)||/^\/(?:private|object)(?:\/|$)/.test(base.pathname))return [];
         const suffix=key===undefined?'':String(key).split('/').map(part=>encodeURIComponent(part)).join('/');
         // Concatenate, rather than resolving: leading slashes and dot segments belong to the key.
         return [{...item,url:base.href.replace(/\/+$/,'')+'/'+suffix}];
@@ -59,5 +59,88 @@
     refreshers.set(host,{source:{accountId:source.accountId,bucketName:source.bucketName},refresh,load});
     return {host,refresh,cancel(){generation++;refreshers.delete(host);}};
   }
-  root.RedownPublicAddresses={addresses,disclosure,refreshVisible};
+  function classify(item){
+    if(item.kind==='worker'||/worker/i.test(item.label||''))return 'worker.assets';
+    if(new URL(item.url).hostname.endsWith('.r2.dev'))return 'r2.managed';
+    return item.kind==='custom'||/custom/i.test(item.label||'')?'r2.custom':'provider.public';
+  }
+  function popover({document,load,copy=text=>navigator.clipboard.writeText(text),onState=()=>{},onEvent=()=>{}}){
+    const view=document.defaultView;let generation=0,active=null;
+    const emit=(context,stage,outcome,details={})=>{try{onEvent(context,stage,outcome,details);}catch{}};
+    function close({restoreFocus=false}={}){
+      generation++;if(!active)return;
+      const old=active;active=null;old.controller.abort();clearTimeout(old.timer);old.panel.remove();
+      if(restoreFocus&&old.returnFocus?.isConnected)old.returnFocus.focus({preventScroll:true});
+    }
+    function place(){
+      if(!active)return;
+      const {panel,point}=active,rect=panel.getBoundingClientRect();
+      panel.style.left=Math.max(8,Math.min(point.x,view.innerWidth-rect.width-8))+'px';
+      panel.style.top=Math.max(8,Math.min(point.y,view.innerHeight-rect.height-8))+'px';
+    }
+    async function show({source,key,name,point={x:24,y:24},returnFocus,isCurrent=()=>true}){
+      close();const token=++generation,context={source:{accountId:source.accountId,bucketName:source.bucketName},key};
+      const controller=new view.AbortController(),panel=document.createElement('section');panel.className='url-popover';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Get URL — '+String(name||'file'));panel.setAttribute('aria-busy','true');
+      const head=document.createElement('div');head.className='url-popover-head';
+      const title=document.createElement('strong');title.textContent='Get URL — '+String(name||'file');
+      const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='url-popover-close';dismiss.textContent='×';dismiss.setAttribute('aria-label','Close Get URL');dismiss.addEventListener('click',()=>close({restoreFocus:true}));head.append(title,dismiss);
+      const list=document.createElement('div');list.className='url-popover-list';
+      const feedback=document.createElement('div');feedback.className='url-popover-feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.textContent='Loading configured addresses…';panel.append(head,list,feedback);
+      active={panel,controller,point,returnFocus,timer:null};document.body.append(panel);place();dismiss.focus({preventScroll:true});
+      const current=()=>token===generation&&active?.panel===panel&&isCurrent();
+      const state=(message,state)=>{if(current()){try{onState(message,state);}catch{}place();}};
+      state('Loading configured file URLs…','running');emit(context,'intent','started');
+      const options={signal:controller.signal};
+      document.addEventListener('pointerdown',event=>{if(!panel.contains(event.target))close();},options);
+      document.addEventListener('keydown',event=>{
+        if(!current())return;
+        if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close({restoreFocus:true});return;}
+        if(!panel.contains(event.target))return;
+        // Stop Explorer shortcuts without blocking normal button activation.
+        event.stopPropagation();
+        if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+          event.preventDefault();const rows=[...list.querySelectorAll('button:not(:disabled)')];if(!rows.length)return;
+          const at=rows.indexOf(document.activeElement),index=event.key==='Home'?0:event.key==='End'?rows.length-1:at<0?(event.key==='ArrowUp'?rows.length-1:0):(at+(event.key==='ArrowUp'?-1:1)+rows.length)%rows.length;rows[index].focus();
+        }
+      },{...options,capture:true});
+      panel.addEventListener('click',event=>event.stopPropagation(),options);
+      panel.addEventListener('contextmenu',event=>{event.preventDefault();event.stopPropagation();},options);
+      panel.addEventListener('focusout',event=>{if(event.relatedTarget&&!panel.contains(event.relatedTarget))close();},options);
+      view.addEventListener('resize',place,options);
+      document.addEventListener('scroll',event=>{if(!panel.contains(event.target))close();},{...options,capture:true});
+      let snapshot;
+      try{snapshot=await load(context.source);}catch{if(!current())return;panel.removeAttribute('aria-busy');feedback.textContent='Could not load file URLs. Close and try again.';state(feedback.textContent,'failed');emit(context,'ui.result','failed',{code:'EXPLORER_URL_DISCOVERY_FAILED'});return;}
+      if(!current()){if(token===generation)close();return;}
+      panel.removeAttribute('aria-busy');
+      if(snapshot?.ok===false){feedback.textContent='Could not load file URLs. Close and try again.';state(feedback.textContent,'failed');emit(context,'ui.result','failed',{code:'EXPLORER_URL_DISCOVERY_FAILED'});return;}
+      const seen=new Set(),items=addresses(snapshot,context.source,key).filter(item=>{if(seen.has(item.url))return false;seen.add(item.url);return true;});
+      let eligible=0;
+      for(const item of items){
+        const enabled=item.state==='configured';if(enabled)eligible++;
+        const endpoint=classify(item);emit(context,'ui.result',enabled?'confirmed':'unknown',{endpoint,loadedCount:1});
+        const row=document.createElement('button');row.type='button';row.className='url-popover-row';row.disabled=!enabled;
+        const label=document.createElement('strong');label.textContent=String(item.label||'Public address').slice(0,100);
+        const address=document.createElement('code');address.textContent=item.url;address.title=item.url;
+        const description=document.createElement('span');description.className='url-popover-state';description.textContent=enabled?'Configured public URL · accessibility not verified':item.state==='restricted'?'Unavailable · public access disabled':item.state==='needs-setup'?'Unavailable · DNS, ownership or SSL pending':'Unavailable · configuration not verified';
+        const indicator=document.createElement('span');indicator.className='url-popover-copy';indicator.textContent='Copy';indicator.setAttribute('aria-hidden','true');
+        row.append(label,address,description,indicator);list.append(row);
+        row.addEventListener('click',async()=>{
+          if(!current())return;
+          const click=++copySequence;state('Copying URL…','running');emit(context,'browser.request','started',{endpoint:'local.clipboard'});
+          try{await copy(item.url);if(!current()||click!==copySequence)return;
+            feedback.textContent='✓ Copied!';row.dataset.copied='true';indicator.textContent='✓';state('URL copied. Public accessibility has not been verified.','success');emit(context,'browser.result','confirmed',{endpoint:'local.clipboard'});
+            clearTimeout(active.timer);active.timer=setTimeout(()=>{if(current()){feedback.textContent='Choose a URL to copy.';panel.querySelectorAll('[data-copied]').forEach(row=>{delete row.dataset.copied;row.querySelector('.url-popover-copy').textContent='Copy';});}},1800);
+          }catch{if(!current()||click!==copySequence)return;feedback.textContent='Clipboard access was denied. Try again.';state(feedback.textContent,'failed');emit(context,'browser.result','failed',{endpoint:'local.clipboard',code:'EXPLORER_CLIPBOARD_FAILED'});}
+        });
+      }
+      let copySequence=0;
+      feedback.textContent=eligible?'Choose a URL to copy.':items.length?'No usable public URL. Configured addresses are disabled or need setup.':'No public addresses are configured for this file’s bucket.';
+      const incomplete=Boolean(snapshot?.errors?.length)||items.some(item=>item.state!=='configured');
+      state(eligible?(incomplete?'File URLs loaded; some addresses are unavailable.':'File URLs loaded. Accessibility has not been verified.'):feedback.textContent,eligible&&!incomplete?'success':'partial');
+      emit(context,'ui.result',eligible&&!incomplete?'confirmed':'unknown',{loadedCount:items.length,code:!eligible?'EXPLORER_URL_UNAVAILABLE':undefined});
+      place();
+    }
+    return {show,close,get element(){return active?.panel||null;}};
+  }
+  root.RedownPublicAddresses={addresses,disclosure,refreshVisible,popover,classify};
 })(globalThis);

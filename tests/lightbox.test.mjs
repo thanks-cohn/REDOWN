@@ -7,7 +7,7 @@ const source=await readFile(new URL('../extension/options.js',import.meta.url),'
 function harness(){
  const dom=new JSDOM('<button id="opener">Open</button><div id="explorer" tabindex="0"><div class="explorer-body"><div id="workspace-preview"></div></div></div>',{runScripts:'outside-only'});
  const w=dom.window;w.eval(addresses);w.send=async()=>({ok:true,addresses:[]});w.eval(`var $=id=>document.getElementById(id);var workspacePreviewLightbox=false,workspacePreviewExpanded=false,workspacePreviewRequestId=0,workspacePreviewAbort=null,workspacePreviewUrl='';`);
- const navigated=[];w.navigatePreview=delta=>navigated.push(delta);w.formatBytes=n=>String(n);w.finishOperation=()=>{};w.explorerSource=()=>({});w.URL.revokeObjectURL=()=>{};
+ const navigated=[];w.navigatePreview=delta=>navigated.push(delta);w.formatBytes=n=>String(n);w.finishOperation=()=>{};w.setOperation=()=>"preview-ticket";w.explorerSource=()=>({});w.URL.revokeObjectURL=()=>{};
  w.RedownCloudflareApi={preview:async()=> 'blob:preview'};
  w.eval(source.slice(source.indexOf('function objectContentType('),source.indexOf('\n\nlet explorerAccounts')));
  return {dom,w,navigated,root:w.document.getElementById('workspace-preview')};

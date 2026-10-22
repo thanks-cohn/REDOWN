@@ -12,7 +12,7 @@ test('menu actions surface synchronous and asynchronous errors',async()=>{
  assert.deepEqual(messages,[{m:'Denied',failed:true},{m:'Offline',failed:true}]);dom.window.close();
 });
 test('Copy confirms internal clipboard contents without copying file bytes or moving originals',async()=>{
- const patches=[],messages=[];const c=vm.createContext({workspaceTarget:{accountId:'a',bucketName:'b'},accountName:()=>'',clipboardEntries:items=>items.map(({key})=>({key})),chrome:{storage:{session:{set:async p=>patches.push(p)}}},renderFileItems(){},finishOperation:(...m)=>messages.push(m)});
+ const patches=[],messages=[];const c=vm.createContext({workspaceTarget:{accountId:'a',bucketName:'b'},accountName:()=>'',setOperation:()=>"clipboard-ticket",clipboardEntries:items=>items.map(({key})=>({key})),chrome:{storage:{session:{set:async p=>patches.push(p)}}},renderFileItems(){},finishOperation:(...m)=>messages.push(m)});
  vm.runInContext(source.slice(source.indexOf('async function setExplorerClipboard('),source.indexOf('\nasync function pasteExplorer(',source.indexOf('async function setExplorerClipboard('))),c);
  await c.setExplorerClipboard('copy',[{key:'folder/benign.txt'}]);assert.equal(patches[0].explorerClipboard.operation,'copy');assert.equal(patches[0].explorerClipboard.entries[0].key,'folder/benign.txt');assert.match(messages[0][0],/REDOWN/);assert.match(messages[0][0],/Paste/);
 });

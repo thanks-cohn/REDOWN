@@ -11,4 +11,4 @@ else if(args.length===2&&args[0]==='--preset'&&(args[1]==='all'||catalog.presets
  const run=spawnSync(process.execPath,['--test',...files],{cwd:root,stdio:'inherit',timeout:120000});
  if(run.error)console.error(JSON.stringify({code:'SMOKE_EXECUTION_FAILED',reason:run.error.code||'unknown'}));
  process.exitCode=run.status??2;
-}else{console.error('Usage: node scripts/explorer-smoke.mjs --list | --preset diagnostics|transfers|navigation|connections|all');process.exitCode=2;}
+}else{console.error('Usage: node scripts/explorer-smoke.mjs --list | --preset diagnostics|transfers|navigation|connections|urls-and-status|all');process.exitCode=2;}
