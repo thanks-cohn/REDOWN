@@ -1123,26 +1123,43 @@ async function configureBucketAssetCors(accountId, bucketName, website) {
     throw new Error(body?.errors?.[0]?.message || `Could not read R2 CORS configuration (${current.status})`);
   }
 
-  const rules = existingRules.map(rule => structuredClone(rule));
+  // Cloudflare's REST API uses camelCase CORS fields. Read responses may carry
+  // legacy/SDK field names or extra metadata; never replay those unfiltered.
+  // Preserve existing rules and their permissions while updating this origin.
+  const allowedMethods = new Set(["GET", "HEAD", "PUT", "POST", "DELETE"]);
+  const stringList = value => Array.isArray(value) ? value.filter(item => typeof item === "string") : [];
+  const rules = existingRules.map(rule => {
+    const allowed = rule?.allowed || {};
+    const methods = stringList(allowed.methods).filter(method => allowedMethods.has(method));
+    const origins = stringList(allowed.origins);
+    if (!methods.length || !origins.length) throw new Error("Existing CORS rules could not be safely preserved. No changes were made.");
+    const normalized = { allowed: { origins, methods } };
+    const headers = stringList(allowed.headers);
+    if (headers.length) normalized.allowed.headers = headers;
+    if (typeof rule.id === "string") normalized.id = rule.id;
+    const exposed = stringList(rule.exposeHeaders ?? rule.expose_headers);
+    if (exposed.length) normalized.exposeHeaders = exposed;
+    const age = rule.maxAgeSeconds ?? rule.max_age_seconds;
+    if (age !== undefined && age !== null && Number.isFinite(Number(age))) normalized.maxAgeSeconds = Number(age);
+    return normalized;
+  });
   let matched = false;
   for (const rule of rules) {
-    const origins = Array.isArray(rule?.allowed?.origins) ? rule.allowed.origins : [];
-    if (!origins.includes(origin)) continue;
+    if (!rule.allowed.origins.includes(origin)) continue;
     matched = true;
-    rule.allowed ??= {};
-    rule.allowed.methods = Array.from(new Set([...(rule.allowed.methods || []), "GET", "HEAD"]));
+    rule.allowed.methods = Array.from(new Set([...rule.allowed.methods, "GET", "HEAD"]));
     rule.allowed.headers = Array.from(new Set([...(rule.allowed.headers || []), "*"]));
-    rule.expose_headers = Array.from(new Set([
-      ...(rule.expose_headers || []),
+    rule.exposeHeaders = Array.from(new Set([
+      ...(rule.exposeHeaders || []),
       "ETag", "Content-Length", "Content-Type", "Accept-Ranges", "Content-Range"
     ]));
-    rule.max_age_seconds = Math.max(Number(rule.max_age_seconds) || 0, 3600);
+    rule.maxAgeSeconds = Math.max(rule.maxAgeSeconds || 0, 3600);
   }
   if (!matched) {
     rules.push({
       allowed: { origins: [origin], methods: ["GET", "HEAD"], headers: ["*"] },
-      expose_headers: ["ETag", "Content-Length", "Content-Type", "Accept-Ranges", "Content-Range"],
-      max_age_seconds: 3600
+      exposeHeaders: ["ETag", "Content-Length", "Content-Type", "Accept-Ranges", "Content-Range"],
+      maxAgeSeconds: 3600
     });
   }
   await cfJson(path, { method: "PUT", body: JSON.stringify({ rules }) });
