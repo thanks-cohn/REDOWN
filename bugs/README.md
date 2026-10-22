@@ -1,5 +1,25 @@
 # REDOWN bugs
 
+## Watch item — Asset domain hostname versus generated URL (2026-10-22)
+
+**Status:** Not reproduced conclusively; preserve for investigation if reported again. No configuration or code changes made for this report.
+
+**User observation:** Earlier file delivery used a subdomain, e.g. `https://cdn.9127000.xyz/7684.png`, whereas a newer file address was observed on the apex hostname, e.g. `https://webrev.online/when-people-get-their-facial-hair-removed-and-end-up-v0-5m5l1bk6lhth1.jpeg`. The user suspects the prefix supplied during setup might sometimes be dropped.
+
+**Evidence checked:** Current `extension/background.js` uses `normalizeWebOrigin()` and `configureAssetDomain()`; the code derives `hostname = new URL(origin).hostname` and stores `customAssetDomain: hostname`, without intentionally stripping subdomains. Cloudflare's Workers-domain associations include `cdn.webrev.online` (Worker `redown-new-404399`), `test.webrev.online`, `cdn-2.webrev.online`, `cdn-6.webrev.online` (Worker `redown-extended-404399`), plus `new.webrev.online`, `ozempic.webrev.online`, and `4chan.webrev.online` on other bucket Workers. This confirms some subdomains have been registered but does **not** establish which subsystem generated the reported apex URL.
+
+**Where to investigate next time:**
+- `extension/options.js` → `assetCorsControl()`, input sent as `cfSetAssetDomain`, and displayed `result.hostname`.
+- `extension/background.js` → `normalizeWebOrigin()`, `configureAssetDomain()`, stored `customAssetDomain`/`publicBaseUrl`, and `cfPublicAddresses` discovery.
+- `extension/public-addresses.js` → constructed public URL labels and concatenation of exact object keys.
+- Compare **input hostname**, Cloudflare **zone** (apex), Workers **domain association**, R2 **custom domain**, and final **generated URL** separately; ensure a parent-zone label is not mistaken for the registered hostname.
+- Check whether the example URL came from REDOWN Worker `/assets/` serving, direct R2 CDN serving, or another link-generation workflow; don't treat an unrelated apex URL as evidence of a subdomain rewrite.
+
+**Reproduction and acceptance:** Record the exact field value entered, UI status returned, selected bucket, copied URL, and Cloudflare domain read-back. Enter `cdn.example.com` for an authorized test zone and verify the full hostname is retained end-to-end without changing another bucket's routes. Ensure existing subdomain mappings remain untouched.
+
+---
+
+
 ## BUG — R2 triple-dot directory object retrieval (2026-10-22)
 
 **Status:** Source mitigation committed to `main`; Chrome end-to-end verification pending.
