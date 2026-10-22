@@ -56,4 +56,6 @@ node agent/explorer/cli.mjs explainOperation --input '{"name":"public.urls"}'
 
 ## Completion record
 
-Published source commit: recorded by the follow-up completion-record commit and the delivery response.
+Published source commit after implementation: `278f0405b1e3defbfba024240f3f3d1a9d15857e`.
+
+Published source tree: `22932235e356a0f7ddef1013ca0180893cafc807`, identical to the locally tested implementation tree. This follow-up record changes documentation only.
