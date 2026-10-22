@@ -122,6 +122,7 @@
       for(const item of items){
         const enabled=item.state==='configured';if(enabled)eligible++;
         const endpoint=classify(item);emit(context,'ui.result',enabled?'confirmed':'unknown',{endpoint,loadedCount:1});
+        if(!enabled)continue;
         const row=document.createElement('button');row.type='button';row.className='url-popover-row';row.disabled=!enabled;if(anchor)row.setAttribute("role","menuitem");
         const label=document.createElement('strong');label.textContent=String(item.label||'Public address').slice(0,100);
         const address=document.createElement('code');address.textContent=item.url;address.title=item.url;
@@ -137,7 +138,8 @@
           }catch{if(!current()||click!==copySequence)return;feedback.textContent='Clipboard access was denied. Try again.';state(feedback.textContent,'failed');emit(context,'browser.result','failed',{endpoint:'local.clipboard',code:'EXPLORER_CLIPBOARD_FAILED'});}
         });
       }
-      if(enable&&snapshot.accountId===context.source.accountId&&snapshot.bucketName===context.source.bucketName&&snapshot.managedPublicAccess==="disabled"){
+      const canEnable=eligible===0&&enable&&snapshot.accountId===context.source.accountId&&snapshot.bucketName===context.source.bucketName&&snapshot.managedPublicAccess==="disabled";
+      if(canEnable){
         const action=document.createElement('button');action.type='button';action.className='url-popover-row';if(anchor)action.setAttribute('role','menuitem');
         const label=document.createElement('strong');label.textContent='Enable public URL…';
         const explanation=document.createElement('span');explanation.className='url-popover-state';explanation.textContent='Enable this bucket’s Cloudflare r2.dev address';action.append(label,explanation);list.append(action);
@@ -163,7 +165,7 @@
         };
       }
       let copySequence=0;
-      feedback.textContent=eligible?'Choose a URL to copy.':items.length?'No usable public URL. Configured addresses are disabled or need setup.':'No public addresses are configured for this file’s bucket.';
+      feedback.textContent=eligible?'Choose a URL to copy.':canEnable?'Enable public access to get a shareable URL.':items.length?'No usable public URL. Configured addresses are disabled or need setup.':'No public addresses are configured for this file’s bucket.';
       const incomplete=Boolean(snapshot?.errors?.length)||items.some(item=>item.state!=='configured');
       state(eligible?(incomplete?'File URLs loaded; some addresses are unavailable.':'File URLs loaded. Accessibility has not been verified.'):feedback.textContent,eligible&&!incomplete?'success':'partial');
       emit(context,'ui.result',eligible&&!incomplete?'confirmed':'unknown',{loadedCount:items.length,code:!eligible?'EXPLORER_URL_UNAVAILABLE':undefined});

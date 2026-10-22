@@ -1,0 +1,34 @@
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (261.483679ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (34.369584ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (13.221368ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (43.845265ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (12.182735ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (20.513644ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (22.676814ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (21.993715ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (16.915123ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (378.296499ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (13.621797ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (13.936054ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (17.402337ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (49.214356ms)
+✔ permission failures remain explained with no false success or leaked provider errors (28.363675ms)
+✔ switching files while enabling cannot reopen the old file or overwrite current choices (12.366767ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (11.695287ms)
+✔ all address combinations stay contextual and encode full literal object paths (178.013276ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (67.879818ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (21.190039ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (16.488416ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (16.874574ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (91.421382ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (40.749357ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (2.346764ms)
+✔ public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes (3.620933ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1729.198649

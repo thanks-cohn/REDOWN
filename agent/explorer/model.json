@@ -641,7 +641,7 @@
           "path": "extension/public-addresses.js",
           "symbol": "function popover(",
           "line": 67,
-          "sha256": "fca2be464dbe78714017080c5e378ca4bcad8f675d780abe286caef5f1d66a93",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
           "evidence": "source-anchor"
         },
         {
@@ -1480,7 +1480,7 @@
         "path": "extension/public-addresses.js",
         "symbol": "function disclosure(",
         "line": 28,
-        "sha256": "fca2be464dbe78714017080c5e378ca4bcad8f675d780abe286caef5f1d66a93",
+        "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1491,7 +1491,7 @@
         "path": "extension/public-addresses.js",
         "symbol": "function popover(",
         "line": 67,
-        "sha256": "fca2be464dbe78714017080c5e378ca4bcad8f675d780abe286caef5f1d66a93",
+        "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -2065,7 +2065,7 @@
           "path": "extension/public-addresses.js",
           "symbol": "function popover(",
           "line": 67,
-          "sha256": "fca2be464dbe78714017080c5e378ca4bcad8f675d780abe286caef5f1d66a93",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
           "evidence": "source-anchor"
         },
         {

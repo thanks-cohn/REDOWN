@@ -87,3 +87,10 @@ Duplicate clicks are suppressed while a mutation is pending. Dismissal/file swit
 Verification: 25 focused URL/provider tests pass. New cases cover inline confirmation/cancel, enable/read-back/refresh/full-key clipboard, already-enabled idempotence, exact endpoint and sender gating, permission/auth rejection, unverified read-back, duplicate clicks and stale file selection. Checks are local DOM/provider mocks, not an installed Chrome or live Cloudflare pass. No live bucket was made public during development. Browser retest remains in bugs/README.md.
 
 Final verification: syntax check passed; full suite **297 total / 290 pass / 7 retained historical failures**; smoke **172/172 pass**. Two Explorer schemas and 17 simulated diagnostic bundles pass; current architecture anchors resolve. The message-inventory regression now expects the documented 36 handlers, including this explicit mutation. Exact outputs are under `verification/enable-public-url/`.
+
+
+## Inactive URL choices hidden — 22 October 2026
+
+Baseline main: `ebe01d8523830b4bb525c3187ec12ec1fe9dcd65`. Get URL now renders address rows only for configured public endpoints. Disabled/pending/unknown addresses remain available to redacted classification diagnostics but their URLs are not inserted into the submenu. When no active URL exists and managed access is disabled, the only initial choice is Enable public URL… (plus explanatory feedback and the close control). After verified activation and refreshed discovery, activation disappears and the configured URLs appear. A configured custom/Worker URL is usable independently of managed r2.dev access; it is shown without a redundant activation action. Properties/preview disclosures are unchanged.
+
+Verification: 26 focused URL/provider tests and all 60 URLs/status smoke tests pass; syntax check and current Explorer anchors pass. Tests assert no inactive URL text/code rows, activation-to-URL replacement, and an active custom domain alongside a hidden disabled managed address. This presentation-only follow-up was not retested in installed Chrome; previous full-suite baseline remains 297/290/7.

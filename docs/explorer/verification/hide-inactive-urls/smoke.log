@@ -1,0 +1,74 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 explorer:smoke
+> node scripts/explorer-smoke.mjs --preset urls-and-status
+
+{"smokeVersion":"1.0.0","preset":"urls-and-status","scope":"local code with simulated providers; no live cloud writes or certification","files":["tests/get-url.test.mjs","tests/explorer-status.test.mjs","tests/public-addresses.test.mjs","tests/cloudflare-files.test.mjs","tests/lightbox.test.mjs","tests/explorer-copy.test.mjs"]}
+✔ private WEBP preview reads nested keys without a Worker or background messaging (340.889315ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (12.29997ms)
+✔ concurrent expired requests refresh rotating credentials once (320.195378ms)
+✔ 401 refresh retries a private read and denied reads report failure (49.863262ms)
+✔ oversized preview stops without allocating an object URL (184.396891ms)
+✔ preview failure replaces spinner and download rejection ends progress (31.933006ms)
+✔ download reports delayed Chrome interruption and removes its listener (61.816768ms)
+✔ download exposes interruption occurring before onChanged registration (55.365926ms)
+✔ download completion is reported and an interruption racing the initial lookup cannot become success (3.866171ms)
+✔ 403 management read falls back to explicitly enabled public R2 domain for unusual keys (68.295566ms)
+✔ 403 does not fall back for private R2 buckets (15.97747ms)
+✔ unusual-key download uses enabled public URL only following a denied authenticated probe (2.430477ms)
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (100.722045ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (10.308236ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (9.731324ms)
+✔ missing per-file copy receipts cannot become a successful zero-file copy (7.143267ms)
+✔ forbidden Worker operations report HTTP status without automatic reprovision or replay (6.699215ms)
+✔ v5 preparation refuses unavailable connections instead of redeploying on network failure (72.742427ms)
+✔ conflict retry retains earlier failures rather than presenting partial move as success (225.993993ms)
+✔ incomplete or cyclic folder listings fail before mutation; exact repeated separators are preserved (97.154105ms)
+✔ one semantic mapping colors pending, completed, error, mixed and cancelled without trusting message wording (171.958524ms)
+✔ older operation callbacks, stale detail messages and old expiry timers cannot overwrite new feedback (26.800225ms)
+✔ download acceptance stays neutral; only native completion turns green and user cancellation stays neutral (18.874812ms)
+✔ late completion of a previous download leaves a new active download neutral (28.111488ms)
+✔ partial Copy and Delete receipts use amber rather than success or an entirely failed operation (22.419591ms)
+✔ rendered colors have sufficient text contrast for the provided dark and light surface palettes (1.146576ms)
+✔ late folder listing cannot repaint the newer folder or its status (21.428495ms)
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (226.92295ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (50.136243ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (26.576077ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (82.482085ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (70.577645ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (23.708388ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (63.957707ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (50.995369ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (31.595398ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (1013.154966ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (27.915876ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (12.489366ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (26.538046ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (46.31534ms)
+✔ permission failures remain explained with no false success or leaked provider errors (8.996924ms)
+✔ switching files while enabling cannot reopen the old file or overwrite current choices (10.485527ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (9.069556ms)
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (263.337636ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (75.111911ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (57.23494ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (68.923079ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (86.682779ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (73.17527ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (60.224904ms)
+✔ all address combinations stay contextual and encode full literal object paths (189.709296ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (95.790099ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (48.006605ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (6.34925ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (83.809474ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (393.527456ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (146.727135ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (3.920191ms)
+✔ public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes (6.974452ms)
+ℹ tests 60
+ℹ suites 0
+ℹ pass 60
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3458.035332
