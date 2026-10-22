@@ -1940,7 +1940,7 @@ async function buildMenus() {
       const displayName=(label,prefix,bucket)=>{
         const explicit=String(label||"").trim();
         const segments=String(prefix||"").split("/").filter(Boolean);
-        if(labelFallback==="menu" && explicit)return explicit;
+        if(explicit)return explicit;
         return labelFallback==="bucket" ? (bucket||segments.at(-1)||"Destination") : (segments.at(-1)||bucket||"Destination");
       };
       chrome.contextMenus.create({

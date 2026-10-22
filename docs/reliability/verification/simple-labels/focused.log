@@ -1,0 +1,20 @@
+✔ keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries (148.07487ms)
+✔ failed persistence restores original array and DOM order (34.483016ms)
+✔ pointer drop reorders at visible insertion marker and cancellation leaves order unchanged (46.557146ms)
+✔ native Simple context menu follows saved section and additional destination order (5.771334ms)
+✔ drag continues outside grip and gaps are valid insertion targets (18.999716ms)
+✔ Escape cancels lifted drag without saving or leaving compact cards behind (16.098412ms)
+✔ saved moves retain focus so repeated arrow keys move the same branch (22.742906ms)
+✔ Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (4.094053ms)
+✔ Simple blank labels honor bucket fallback without adding a submenu or changing explicit names (1.20158ms)
+✔ Menu Label is default for existing profiles without a saved preference (1.066666ms)
+✔ explicit Simple label wins over the lowest-directory fallback (1.154575ms)
+✔ blank and whitespace Simple labels retain automatic naming under every fallback setting (4.66797ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1159.149349

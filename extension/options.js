@@ -659,7 +659,7 @@ function simpleExtraOptions(profile,showIntro=true){
   }
   for(const item of options)addRow(item);
   wrap.addLocation=()=>{
-    const item={id:uid(),label:"New destination",bucketName:profile.bucketName,prefix:""};
+    const item={id:uid(),label:"",bucketName:profile.bucketName,prefix:""};
     wrap.hidden=false;
     options.push(item);addRow(item);saveProfiles();rows.lastElementChild?.scrollIntoView?.({block:"nearest"});rows.lastElementChild?.querySelector("input")?.focus();
   };
@@ -702,7 +702,7 @@ function simpleBucketCreator(){
   fallback.textContent="When a Simple menu label is empty, show";
   const fallbackSelect=document.createElement("select");
   fallbackSelect.setAttribute("aria-label","Simple automatic menu label");
-  for(const [value,label] of [["menu","Menu Label (default)"],["deepest","Lowest directory"],["bucket","Top bucket name"]]){
+  for(const [value,label] of [["deepest","Lowest directory (default)"],["bucket","Top bucket name"]]){
     const o=document.createElement("option");o.value=value;o.textContent=label;fallbackSelect.append(o);
   }
   fallback.append(fallbackSelect);
@@ -713,7 +713,7 @@ function simpleBucketCreator(){
     finally{fallbackSelect.disabled=false;}
   });
   chrome.storage.local.get("simpleLabelFallback").then(settings=>{
-    if(fallbackSelect.isConnected)fallbackSelect.value=["bucket","deepest"].includes(settings.simpleLabelFallback)?settings.simpleLabelFallback:"menu";
+    if(fallbackSelect.isConnected)fallbackSelect.value=settings.simpleLabelFallback==="bucket"?"bucket":"deepest";
   }).catch(()=>{});
   bar.append(heading,note,fallback,form,status);return bar;
 }
@@ -763,7 +763,7 @@ function renderProfiles(){
 
     const grid=document.createElement("div"); grid.className="grid profile-fields";
     grid.append(
-      field("Menu label",p.menuLabel||p.name||"",v=>p.menuLabel=v),
+      field("Menu label",p.type==="cloudflare-r2"?(p.menuLabel||""):(p.menuLabel||p.name||""),v=>p.menuLabel=v),
       p.type==="cloudflare-r2"
         ? simplePrimaryLocationField(p)
         : field("Default path",p.defaultPath||"assets/files",v=>p.defaultPath=v)
