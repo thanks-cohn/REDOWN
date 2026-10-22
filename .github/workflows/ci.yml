@@ -40,3 +40,16 @@ jobs:
       - run: python tests/agent-gateway-schema.py
       - run: python tests/explorer-diagnostic-schema.py
       - run: python tests/runtime-schema-conformance.py
+  windows-contracts:
+    name: Windows syntax and issue-inventory contracts
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/check-syntax.mjs
+      - run: node --test tests/syntax-portability.test.mjs tests/issue-inventory.test.mjs
+      - run: node agent/diagnostics/cli.mjs validateIssues

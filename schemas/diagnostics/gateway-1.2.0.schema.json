@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.local/schemas/diagnostics/gateway-1.2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "diagnosticApiVersion",
+    "state",
+    "scope"
+  ],
+  "properties": {
+    "diagnosticApiVersion": {
+      "const": "1.2.0"
+    },
+    "state": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable",
+        "failed"
+      ]
+    },
+    "scope": {
+      "const": "offline/read-only; repository knowledge and imported observations"
+    },
+    "data": {
+      "type": "object"
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        }
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "data"
+      ]
+    },
+    {
+      "required": [
+        "error"
+      ]
+    }
+  ]
+}

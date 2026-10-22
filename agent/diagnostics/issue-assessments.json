@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "assessments": [
+    {
+      "id": "REPORT-9d785a223e76",
+      "reportSha256": "e9f453f2526ad265a708bf3ab8819cdde0979f779ee041b18a50da9f6ffc1b98",
+      "status": "partially-addressed",
+      "severity": "high",
+      "reviewedOn": "2026-10-22",
+      "summary": "Explicit Simple label precedence and empty defaults are implemented. Missing configured destinations and native menu acceptance remain unresolved.",
+      "evidence": [
+        {
+          "path": "extension/background.js",
+          "symbol": "if(explicit)return explicit;",
+          "sha256": "1b0b60cc7207401d420dd42f395aadb91e45e6680d7ec789c0e89b0b93e7be09"
+        },
+        {
+          "path": "tests/simple-menu-flat.test.mjs",
+          "symbol": "blank and whitespace Simple labels",
+          "sha256": "aedd67649ea7c4097804418eebb57314fdc86944fa0a15401c1985a6b3967a04"
+        }
+      ],
+      "nextAction": "Reconcile configured versus rendered menu items with omission reasons and verify the actual Chrome menu.",
+      "related": [
+        "DBG-002"
+      ]
+    },
+    {
+      "id": "REPORT-06ffddcefe46",
+      "reportSha256": "58b11b6da22babacd1d87000ee19652704ca9bcc13a744903c9a7522ed011e9f",
+      "status": "source-implemented",
+      "severity": "medium",
+      "reviewedOn": "2026-10-22",
+      "summary": "URL submenu, confirmed public activation and shared operation-state feedback exist with local tests; installed-browser/native clipboard acceptance remains pending.",
+      "evidence": [
+        {
+          "path": "extension/public-addresses.js",
+          "symbol": "if(!enabled)continue;",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83"
+        },
+        {
+          "path": "tests/get-url.test.mjs",
+          "symbol": "disabled bucket offers explicit confirmation",
+          "sha256": "e31b65eb91b7ba7af206565d6e54811ac06b7e605bd9f79cb154e437815046c2"
+        }
+      ],
+      "nextAction": "Run native Chrome activation/cancel/copy/keyboard acceptance on the updated package.",
+      "related": [
+        "BUG-015"
+      ]
+    },
+    {
+      "id": "CODE-WINDOWS-SYNTAX",
+      "newIssue": true,
+      "title": "Reliability checker launched npm.cmd without a Windows shell",
+      "status": "source-implemented",
+      "severity": "high",
+      "reviewedOn": "2026-10-22",
+      "summary": "Syntax checks now invoke the current Node executable directly from one target list; no npm.cmd or shell is required. Native Windows execution remains to be observed.",
+      "evidence": [
+        {
+          "path": "scripts/check-syntax.mjs",
+          "symbol": "spawnSync(process.execPath,['--check'",
+          "sha256": "8c8f5ae1c8afef98c54d7d1bc6d041e479c4fe86f6bfd90d70cbad937b2da3d2"
+        },
+        {
+          "path": "tests/syntax-portability.test.mjs",
+          "symbol": "paths with spaces",
+          "sha256": "16742ac00365d9d9bf71aa54305fc0d57804b419bc59d8cb7d73b877f11b7887"
+        }
+      ],
+      "nextAction": "Run npm run reliability:check on Windows and retain platform-specific evidence.",
+      "related": []
+    },
+    {
+      "id": "CODE-UPLOAD-CONCURRENT-CREATE",
+      "newIssue": true,
+      "title": "Local upload existence check and PUT are separate operations",
+      "status": "source-risk",
+      "severity": "critical",
+      "reviewedOn": "2026-10-22",
+      "summary": "Source performs a preflight existence check followed by direct PUT, without an atomic conditional-create boundary. Concurrent-writer safety is unverified.",
+      "evidence": [
+        {
+          "path": "extension/options.js",
+          "symbol": "if(existed!==\"no\")throw new Error",
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+        },
+        {
+          "path": "extension/options.js",
+          "symbol": "method:\"PUT\"",
+          "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+        }
+      ],
+      "nextAction": "Use a provider-supported conditional write or the existing verified Worker path, then test two concurrent writers and ambiguous responses.",
+      "related": [
+        "GATE-local-upload-conditional-races"
+      ]
+    }
+  ]
+}

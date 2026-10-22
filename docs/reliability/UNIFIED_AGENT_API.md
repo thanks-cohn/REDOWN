@@ -17,13 +17,13 @@ npm run diagnostics -- getVerificationStatus
 npm run diagnostics -- getReleaseReadiness
 ```
 
-The gateway version is **1.1.0**; registry schema version is **1.0.0**. Existing namespace versions and direct CLIs remain unchanged. The canonical entry point is `agent/diagnostics/cli.mjs`; library callers use `createDiagnosticAPI().query(operation,input)`. There is no HTTP server, hidden browser connection, shell executor or credential requirement.
+The current gateway version is **1.2.0**; registry schema version is **1.1.0**. The [dependability follow-up](ISSUE_INVENTORY.md) adds current issue triage and portable syntax checks. Existing namespace versions and direct CLIs remain unchanged. The canonical entry point is `agent/diagnostics/cli.mjs`; library callers use `createDiagnosticAPI().query(operation,input)`. There is no HTTP server, hidden browser connection, shell executor or credential requirement.
 
 ## Ownership and overlap audit
 
 | Namespace | Version | Owns | Evidence boundary |
 |---|---|---|---|
-| diagnostics | 1.1.0 | Gateway registry/routing, curated project map, local verification-report inspection, recorded release requirements | Coordination and scoped local evidence |
+| diagnostics | 1.2.0 | Gateway registry/routing, curated project map, local verification-report inspection, recorded release requirements | Coordination and scoped local evidence |
 | project | 0.1 | Frozen historical project catalog and its operation identifiers | Its native source freshness is preserved |
 | debug | 0.1 | Historical DBG incident records and append-only history | Not a live incident feed |
 | semantic | 0.1 | Proposed entity relationships, impact/evidence queries and lesson proposals | Proposed knowledge; no accepted Forever authority |
@@ -63,13 +63,13 @@ Limits:8KiB input;512KiB response;256KiB Explorer bundle;192KiB passive runtime 
 
 ## Read-only boundary
 
-The registry exposes **52 qualified operations**:10 gateway methods and42 native inspection methods across5 existing APIs. All underlying read operations are registered; runtime.clear is deliberately excluded because this entry point is read-only. Native discovery may mention clear as part of the original runtime contract; registry.excluded records that difference. No live probe, prepare/repair, bucket visibility change, deploy, file write or arbitrary command is routable through this gateway. Existing GUI operations and their explicit authorizations remain separate.
+The registry exposes **55 qualified operations**:13 gateway methods and42 native inspection methods across5 existing APIs. All underlying read operations are registered; runtime.clear is deliberately excluded because this entry point is read-only. Native discovery may mention clear as part of the original runtime contract; registry.excluded records that difference. No live probe, prepare/repair, bucket visibility change, deploy, file write or arbitrary command is routable through this gateway. Existing GUI operations and their explicit authorizations remain separate.
 
 ## Automated acceptance
 
 `validateRegistry` compares every native discovery list and version with the registration, checks qualified-ID uniqueness, alias targets and primary ownership, and reports deliberate name overlaps. The reliability runner now treats this as a required stage, so registration/version drift fails CI even if other tests pass. Gateway schemas are also validated in CI.
 
-Tests exercise all52 registered operations with cold-start fixtures, plus ambiguity, mutation rejection, invalid arguments, namespace isolation, copied descriptors, both bundle types, native version/provenance preservation, CLI behavior, and a no-network cold-agent workflow. Schema checks cover56 routed/error fixtures and reject unexpected envelope fields, unsupported states/versions and expanded limits. These checks establish the offline interface milestone; they are not browser/provider acceptance.
+Tests exercise all registered operations with cold-start fixtures, plus ambiguity, mutation rejection, invalid arguments, namespace isolation, copied descriptors, both bundle types, native version/provenance preservation, CLI behavior, and a no-network cold-agent workflow. Current schema checks cover59 routed/error fixtures and reject unexpected envelope fields, unsupported states/versions and expanded limits. These checks establish the offline interface milestone; they are not browser/provider acceptance.
 
 No frozen project/debug/semantic source files, historical hashes, original case Markdown or debug journal entries are rewritten. Existing seven regression failures remain debt, not hidden passes. Direct legacy CLIs remain usable for compatibility, but new agents should begin at this gateway. Proposed operations must never be added to discovery as though implemented.
 
@@ -80,7 +80,7 @@ No frozen project/debug/semantic source files, historical hashes, original case 
 3. Prepare the Forever Works handoff only after explicit review of purposes, obligations, constraints and remaining uncertainty. This milestone supplies implementation evidence and accessible contracts, not accepted purpose or certification.
 
 
-## Milestone verification — 22 October 2026
+## Original milestone verification — 22 October 2026 (gateway1.1.0 snapshot)
 
 Local Node24.19.0: **316 total tests /309 pass /7 retained historical failures /0 new failures /0 skipped**. All three reliability stages pass: syntax, current Explorer architecture and native API registry/version/ownership validation. The 17 focused foundation/gateway tests pass, including10 new routing/ownership/import/cold-start tests. Gateway schemas validate all56 fixtures; Explorer schemas validate17 bundles; runtime schemas validate five responses and one bundle. Bounds/extra-field rejection checks pass. Current verification API reports recorded-files-match over172 tracked source files with no stale findings.
 

@@ -11,15 +11,15 @@ if(args.length>1||args.length===1&&args[0]!=='--strict'){console.error('Usage: n
 else{
  const startedAt=new Date().toISOString();
  const run=(command,argv,timeout)=>{const result=spawnSync(command,argv,{cwd:root,encoding:'utf8',timeout,maxBuffer:16*1024*1024});return {exitCode:result.status,error:result.error?.code||null,stdout:result.stdout||'',stderr:result.stderr||''};};
- const report={version:'1.0.0',startedAt,node:process.version,scope:'local repository code and simulated providers; no installed Chrome or live Cloudflare verification',stages:[],release:{state:'blocked',reason:'Local verification cannot certify browser/cloud/package readiness',recordedGates:JSON.parse(readFileSync(join(root,'docs/runtime/release-gates.json'),'utf8'))}};
+ const report={version:'1.0.0',startedAt,node:process.version,platform:process.platform,architecture:process.arch,scope:'local repository code and simulated providers; no installed Chrome or live Cloudflare verification',stages:[],release:{state:'blocked',reason:'Local verification cannot certify browser/cloud/package readiness',recordedGates:JSON.parse(readFileSync(join(root,'docs/runtime/release-gates.json'),'utf8'))}};
  try{
   const git=run('git',['ls-files','-z','--','extension','agent','scripts','tests','schemas','local','worker','.github','package.json','package-lock.json'],10000);if(git.exitCode!==0||git.error)throw Error('SOURCE_INVENTORY_FAILED');
   const files=git.stdout.split('\0').filter(Boolean).sort();if(!files.length)throw Error('EMPTY_SOURCE_INVENTORY');
   report.source={commit:run('git',['rev-parse','HEAD'],10000).stdout.trim(),trackedDirty:Boolean(run('git',['status','--porcelain','--untracked-files=no'],10000).stdout.trim()),files:files.map(path=>({path,sha256:createHash('sha256').update(readFileSync(join(root,path))).digest('hex')}))};
   report.source.sha256=createHash('sha256').update(JSON.stringify(report.source.files)).digest('hex');
-  for(const [id,command,argv] of [['syntax',process.platform==='win32'?'npm.cmd':'npm',['run','check']],['architecture',process.execPath,['agent/explorer/cli.mjs','validateArchitecture']],['api-registry',process.execPath,['agent/diagnostics/cli.mjs','validateRegistry']]]){
+  for(const [id,command,argv] of [['syntax',process.execPath,['scripts/check-syntax.mjs']],['architecture',process.execPath,['agent/explorer/cli.mjs','validateArchitecture']],['api-registry',process.execPath,['agent/diagnostics/cli.mjs','validateRegistry']],['issue-inventory',process.execPath,['agent/diagnostics/cli.mjs','validateIssues']]]){
    const result=run(command,argv,60000);let passed=!result.error&&result.exitCode===0;
-   if(id==='architecture'||id==='api-registry')try{passed=passed&&JSON.parse(result.stdout).state==='available';}catch{passed=false;}
+   if(id==='architecture'||id==='api-registry'||id==='issue-inventory')try{passed=passed&&JSON.parse(result.stdout).state==='available';}catch{passed=false;}
    report.stages.push({id,state:passed?'passed':'failed',...result});
   }
   const tests=readdirSync(join(root,'tests')).filter(p=>p.endsWith('.test.mjs')).sort().map(p=>'tests/'+p);

@@ -1,0 +1,32 @@
+✔ all five native APIs route through qualified discovery with exact native versions and no registry drift (51.779997ms)
+✔ overlapping methods never silently select a namespace; compatibility aliases have explicit owners (3.403906ms)
+✔ delegation preserves historical provenance and freshness, rather than upgrading stale source evidence (85.181733ms)
+✔ read-only boundary rejects mutation, namespace injection, extra arguments and unsupported versions (19.63643ms)
+✔ registry audit detects duplicate operation ownership, dangling aliases and duplicate primary owners (1.839756ms)
+✔ Explorer and passive runtime imports remain isolated and re-sanitized (3.994177ms)
+✔ a malformed namespace bundle cannot break project discovery or another namespace (1.601316ms)
+✔ cold agent can discover, resolve, inspect ownership, plan tests and see release blockers without network access (44.765067ms)
+✔ unified CLI supports namespace routing and explicit runtime import; refuses ambiguous or conflicting inputs (259.340792ms)
+✔ every registered operation has a cold-start fixture and preserves a native result or an explicit evidence boundary (266.643801ms)
+✔ regression ratchet retains explicit debt and rejects new, renamed or changed failure types (1.409007ms)
+✔ incomplete, timed-out and malformed test executions cannot satisfy the gate (0.500646ms)
+✔ unified diagnostics discovers existing namespaces without advertising execution (4.492148ms)
+✔ project map reports current source and explicit coverage gaps without claiming total understanding (2.45922ms)
+✔ single entry point routes operation contracts, test plans, failures and absent evidence honestly (6.655894ms)
+✔ diagnostic CLI rejects unknown flags and malformed bundles without echoing secrets (89.660055ms)
+✔ verification report inspection is read-only, bounded and never certifies a release (27.067212ms)
+✔ all existing bug sections are indexed and native incidents retain separate provenance (64.318292ms)
+✔ source assessments never close browser-pending issues and stale evidence invalidates the assessment (0.697933ms)
+✔ inventory supports bounded filtering and stable pagination; unknown identifiers and filters fail explicitly (73.289058ms)
+✔ malformed inventory sources do not become a clean empty inventory; unsafe paths are rejected (0.686696ms)
+✔ explicit labels are recorded as partly addressed while the omitted-item report stays open (16.129498ms)
+✔ syntax checks parse files under paths with spaces without executing their code or requiring npm.cmd (230.628993ms)
+✔ syntax command refuses caller-selected targets (70.368381ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 874.319662

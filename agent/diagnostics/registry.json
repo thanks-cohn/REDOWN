@@ -1,6 +1,6 @@
 {
-  "registryVersion": "1.0.0",
-  "gatewayVersion": "1.1.0",
+  "registryVersion": "1.1.0",
+  "gatewayVersion": "1.2.0",
   "limits": {
     "inputBytes": 8192,
     "responseBytes": 524288,
@@ -77,6 +77,42 @@
             "required": false
           }
         }
+      },
+      {
+        "name": "listIssues",
+        "arguments": {
+          "sourceKind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "assessment": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      {
+        "name": "getIssue",
+        "arguments": {
+          "id": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      {
+        "name": "validateIssues",
+        "arguments": {}
       }
     ]
   },
@@ -615,7 +651,10 @@
     "getOperationTrace": "explorer.getOperationTrace",
     "diagnoseOperation": "explorer.diagnoseOperation",
     "getRecentFailures": "explorer.getRecentFailures",
-    "validateArchitecture": "explorer.validateArchitecture"
+    "validateArchitecture": "explorer.validateArchitecture",
+    "listIssues": "diagnostics.listIssues",
+    "getIssue": "diagnostics.getIssue",
+    "validateIssues": "diagnostics.validateIssues"
   },
   "ownership": [
     {
@@ -685,6 +724,15 @@
         "semantic.traceDependencies"
       ],
       "boundary": "Source anchors are not proof of runtime execution"
+    },
+    {
+      "subject": "issues.current-inventory",
+      "owner": "diagnostics.listIssues",
+      "related": [
+        "debug.listIncidents",
+        "explorer.findRelatedIncidents"
+      ],
+      "boundary": "Current assessments are hash-bound review notes; original reports, historical lifecycle and runtime observations are separate evidence"
     }
   ],
   "unimplemented": [

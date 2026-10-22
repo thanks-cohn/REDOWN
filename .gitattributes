@@ -1,0 +1,7 @@
+# Stable text bytes across developer and CI platforms; Git detects binary files.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.png binary
+*.woff binary
+*.zip binary
+*.exe binary

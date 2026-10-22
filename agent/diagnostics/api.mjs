@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import map from './project-map.json' with {type:'json'};
 import smoke from '../explorer/smoke-presets.json' with {type:'json'};
+import {createIssueInventory} from './issues.mjs';
 import {createAdapters} from './adapters.mjs';
 import {registry,operations,resolveOperation,validateStructure,validInput} from './registry.mjs';
 const read=path=>readFileSync(new URL('../../'+path,import.meta.url));
@@ -43,7 +44,7 @@ export function createDiagnosticAPI({bundle,runtimeBundle}={}){
    const owners=catalog.ownership.filter(item=>!input.subject||item.subject===input.subject);
    return owners.length?envelope('available',{owners,unimplemented:catalog.unimplemented}):envelope('unavailable',undefined,'UNKNOWN_SUBJECT');
   }
-  if(operation==='getStartGuide')return envelope('available',{steps:[['Discover APIs','diagnostics.describe',{}],['Check routing/ownership','diagnostics.validateRegistry',{}],['Locate subsystem','diagnostics.getProjectMap',{}],['Check local evidence','diagnostics.getVerificationStatus',{}],['Inspect release blockers','diagnostics.getReleaseReadiness',{}],['Choose a smoke test','diagnostics.getTestPlan',{preset:'all'}]].map(([purpose,operation,input])=>({purpose,operation,input})),runtimeEvidence:'Import the matching reviewed bundle explicitly; discovery does not connect to a live extension',forever:'No accepted purpose model or certification is claimed'});
+  if(operation==='getStartGuide')return envelope('available',{steps:[['Discover APIs','diagnostics.describe',{}],['Check routing/ownership','diagnostics.validateRegistry',{}],['Locate subsystem','diagnostics.getProjectMap',{}],['Review current issues','diagnostics.listIssues',{}],['Check local evidence','diagnostics.getVerificationStatus',{}],['Inspect release blockers','diagnostics.getReleaseReadiness',{}],['Choose a smoke test','diagnostics.getTestPlan',{preset:'all'}]].map(([purpose,operation,input])=>({purpose,operation,input})),runtimeEvidence:'Import the matching reviewed bundle explicitly; discovery does not connect to a live extension',forever:'No accepted purpose model or certification is claimed'});
   if(operation==='validateRegistry'){
    const audit=validateStructure();
    for(const ns of catalog.namespaces){
@@ -53,6 +54,18 @@ export function createDiagnosticAPI({bundle,runtimeBundle}={}){
     }catch{audit.findings.push({code:'ADAPTER_UNAVAILABLE',namespace:ns.id});}
    }
    return envelope(audit.findings.length?'failed':'available',{...audit,scope:'Registry coverage/version/ownership against native discovery; not runtime or semantic completeness'});
+  }
+  if(['listIssues','getIssue','validateIssues'].includes(operation)){
+   const inventory=createIssueInventory({debugQuery:(operation,input)=>adapters.get('debug').query(operation,input)});
+   const errors=inventory.findings.filter(f=>f.code!=='STALE_ASSESSMENT');
+   if(operation==='validateIssues')return envelope(errors.length?'failed':'available',{valid:!errors.length,findings:inventory.findings,coverage:inventory.coverage,count:inventory.items.length,authority:inventory.authority});
+   if(errors.length)return envelope('failed',{findings:inventory.findings,coverage:inventory.coverage},'ISSUE_INVENTORY_INVALID');
+   if(operation==='getIssue'){const issue=inventory.items.find(item=>item.id===input.id);return issue?envelope('partial',{issue,authority:inventory.authority}):envelope('unavailable',undefined,'ISSUE_NOT_FOUND');}
+   const sourceKinds=['bug-report','release-gate','historical-incident','explorer-incident','regression-debt','code-review'];
+   const states=['open','closed','unknown'],assessments=['needs-triage','recorded-only','reported','partially-addressed','source-implemented','source-risk','needs-revalidation'],severities=['critical','high','medium','low','unknown'];
+   if(input.sourceKind&&!sourceKinds.includes(input.sourceKind)||input.state&&!states.includes(input.state)||input.assessment&&!assessments.includes(input.assessment)||input.severity&&!severities.includes(input.severity)||input.limit!==undefined&&(input.limit<1||input.limit>100)||input.offset>10000)return envelope('failed',undefined,'INVALID_INPUT');
+   const matches=inventory.items.filter(item=>['sourceKind','state','severity'].every(key=>!input[key]||item[key]===input[key])&&(!input.assessment||item.assessment.status===input.assessment));const offset=input.offset||0,limit=input.limit??25;
+   return envelope('partial',{issues:matches.slice(offset,offset+limit),total:matches.length,nextOffset:offset+limit<matches.length?offset+limit:null,filters:{sourceKinds,states,assessments,severities},findings:inventory.findings,coverage:inventory.coverage,authority:inventory.authority});
   }
   if(operation==='getProjectMap'){
    const subsystems=map.subsystems.map(s=>{try{const source=read(s.entry);return {...s,source:{state:'present',sha256:createHash('sha256').update(source).digest('hex')},testCoverage:s.tests.length?'listed local presets; results unknown':'no dedicated preset catalogued'};}catch{return {...s,source:{state:'unavailable'}};}});

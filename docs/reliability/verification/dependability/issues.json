@@ -1,0 +1,16 @@
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "available",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "valid": true,
+    "findings": [],
+    "coverage": {
+      "markdownSections": 28,
+      "releaseRequirements": 21,
+      "scope": "All top-level bugs README sections, recorded release gates, baseline test debt, historical DBG records and the Explorer404 case; not live issue detection"
+    },
+    "count": 62,
+    "authority": "Read-only source projection. Source-implemented is not browser/provider-verified. Original reports and records remain unchanged."
+  }
+}

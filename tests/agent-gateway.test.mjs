@@ -13,7 +13,7 @@ import {createRuntimeDiagnostics} from '../agent/runtime/api.mjs';
 test('all five native APIs route through qualified discovery with exact native versions and no registry drift',()=>{
  const api=createDiagnosticAPI(),r=registry();assert.equal(api.query('validateRegistry').state,'available');
  for(const ns of r.namespaces){const result=api.query(ns.id+'.'+(ns.id==='explorer'?'describeExplorer':'describe'));assert.notEqual(result.state,'failed');assert.equal(result.data.namespace,ns.id);assert.equal(result.data.result[ns.versionField],ns.version);}
- assert.equal(operations().length,52);assert.equal(api.query('listOperations',{limit:100}).data.total,52);
+ assert.equal(operations().length,55);assert.equal(api.query('listOperations',{limit:100}).data.total,55);
 });
 test('overlapping methods never silently select a namespace; compatibility aliases have explicit owners',()=>{
  const api=createDiagnosticAPI();const ambiguous=api.query('projectOverview');assert.equal(ambiguous.error.code,'AMBIGUOUS_OPERATION');assert.deepEqual(ambiguous.data.candidates,['project.projectOverview','semantic.projectOverview']);
