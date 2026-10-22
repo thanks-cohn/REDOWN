@@ -10,8 +10,10 @@ const signalScope={};vm.runInNewContext(signalSource,signalScope);
 const source=(await readFile(new URL('../extension/options.js',import.meta.url),'utf8')).replace(/\r\n/g,'\n');
 function harness(){
   const dom=new JSDOM(html,{runScripts:'outside-only'});
-  const calls=[],saved=[];
+  const calls=[],saved=[],opened=[];
   const context=vm.createContext({document:dom.window.document,window:dom.window,debugModeEnabled:false,betaModeEnabled:false,storageTraining:null,bucketLoadVersion:0,RedownStorageSignals:signalScope.RedownStorageSignals,profiles:[],currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',
+    explorerBuckets:new Map([['account',[{name:'test-bucket'}]]]),
+    goLocation:async(...args)=>opened.push(args),loadExplorerInventory:async()=>{},
     $:id=>dom.window.document.getElementById(id),
     setStatus:(id,text)=>{dom.window.document.getElementById(id).textContent=text;},
     send:async msg=>{calls.push(msg);return {ok:true,buckets:[{name:'test-bucket'}]};},
@@ -19,7 +21,7 @@ function harness(){
   vm.runInContext(source.slice(source.indexOf('function isSetupDestination('),source.indexOf('function applyDebugMode(){')),context);
   vm.runInContext(source.slice(source.indexOf('async function refreshBuckets(){'),source.indexOf('async function addBucketPreset(')),context);
   vm.runInContext(source.slice(source.indexOf('function applyDebugMode(){'),source.indexOf('(async()=>{\n  const stored=await chrome.storage.local.get(["profiles"')),context);
-  return {dom,context,calls,saved};
+  return {dom,context,calls,saved,opened};
 }
 test('debug-only sections start hidden and toggle exists only inside header disclosure',()=>{
   const h=harness(),d=h.dom.window.document;
@@ -270,4 +272,32 @@ test('disabling Debug exits practice without moving focus into hidden diagnostic
  d.getElementById('debug-mode-enabled').checked=false;
  d.getElementById('debug-mode-enabled').dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
  assert.equal(exited.focus,false);assert.equal(d.querySelector('[data-debug-detail]').hidden,true);h.dom.window.close();
+});
+
+
+test('primary bucket action opens Explorer at its root after setup; cached selection does not require redeployment',async()=>{
+ for(const verified of [true,false]){
+  const h=harness(),d=h.dom.window.document;await h.context.refreshBuckets();let finish;
+  h.context.addBucketPreset=()=>new Promise(resolve=>finish=resolve);
+  d.querySelector('.bucket-use').click();assert.equal(h.opened.length,0);
+  finish({ok:true,verified});await new Promise(r=>setImmediate(r));
+  assert.deepEqual(h.opened,[['account','test-bucket','']]);assert.equal(d.activeElement,d.getElementById('explorer'));h.dom.window.close();
+ }
+});
+test('repair, failed setup, refreshed lists and newer Explorer interactions never redirect Explorer',async()=>{
+ for(const scenario of ['repair','failed','refreshed','pointerdown','keydown']){
+  const h=harness(),d=h.dom.window.document;await h.context.refreshBuckets();let finish;
+  h.context.addBucketPreset=()=>new Promise(resolve=>finish=resolve);
+  d.querySelector(scenario==='repair'?'.bucket-repair':'.bucket-use').click();
+  if(scenario==='refreshed')await h.context.refreshBuckets();
+  if(['pointerdown','keydown'].includes(scenario))d.getElementById('explorer').dispatchEvent(new h.dom.window.Event(scenario,{bubbles:true}));
+  finish({ok:scenario!=='failed',verified:true});await new Promise(r=>setImmediate(r));assert.equal(h.opened.length,0,scenario);h.dom.window.close();
+ }
+});
+test('missing inventory is refreshed before navigation and navigation failure does not mark a verified bucket broken',async()=>{
+ const h=harness(),d=h.dom.window.document;await h.context.refreshBuckets();h.context.explorerBuckets.clear();
+ let refreshes=0;h.context.loadExplorerInventory=async()=>refreshes++;
+ h.context.goLocation=async()=>{throw Error('Listing unavailable')};
+ d.querySelector('.bucket-use').click();await new Promise(r=>setImmediate(r));
+ assert.equal(refreshes,1);assert.match(d.getElementById('cf-status').textContent,/configured, but Explorer/);assert.equal(d.querySelector('.bucket').dataset.signal,'ready');h.dom.window.close();
 });

@@ -4127,6 +4127,12 @@ async function refreshBuckets(){
     const cached=profiles.some(p=>isSetupDestination(p)&&p.accountId===accountId&&p.bucketName===bucket);
     button.setAttribute("aria-busy","true");signalBucket(el,"working",caption,forceRepair?"Repairing…":cached?"Selecting…":"Setting up…");
     const debugUse=el.querySelector(".bucket-debug-use");if(debugUse)debugUse.textContent=caption.textContent;
+    // A user who starts working in Explorer while setup runs owns the newer intent.
+    let explorerUsed=false;
+    const explorerRoot=$("explorer"),preserveExplorerChoice=()=>{explorerUsed=true;};
+    explorerRoot?.addEventListener("pointerdown",preserveExplorerChoice,true);
+    explorerRoot?.addEventListener("keydown",preserveExplorerChoice,true);
+    const currentChoice=()=>!explorerUsed&&accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected;
     try{
       const done=forceRepair?await addBucketPreset(bucket,{forceRepair:true}):await addBucketPreset(bucket);
       if(accountId!==currentAccountId||requestId!==bucketLoadVersion||!el.isConnected)return;
@@ -4135,9 +4141,23 @@ async function refreshBuckets(){
       el.classList.toggle("is-ready",confirmed);
       signalBucket(el,confirmed?"ready":configured?"attention":"repair",caption,confirmed?"Verified — ready":configured?"Saved · check connection":"Repair needed");
       if(debugUse)debugUse.textContent=configured?"Use this bucket":"Retry setup";
+      if(configured&&!forceRepair&&currentChoice()){
+        try{
+          if(!(explorerBuckets.get(accountId)||[]).some(item=>item.name===bucket))await loadExplorerInventory();
+          if(!currentChoice())return;
+          await goLocation(accountId,bucket,"");
+          if(!currentChoice())return;
+          $("explore-zone")?.scrollIntoView?.({block:"start",behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
+          explorerRoot?.focus({preventScroll:true});
+        }catch(error){
+          if(currentChoice())setStatus("cf-status",bucket+" is configured, but Explorer could not open it: "+(error?.message||"Refresh Explorer and retry."),"bad");
+        }
+      }
     }catch(error){
       if(accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"Repair needed");if(debugUse)debugUse.textContent="Retry setup";}
     }finally{
+      explorerRoot?.removeEventListener("pointerdown",preserveExplorerChoice,true);
+      explorerRoot?.removeEventListener("keydown",preserveExplorerChoice,true);
       settingUp=false;button.removeAttribute("aria-busy");
       if(accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected){root.querySelectorAll(".bucket button").forEach(item=>item.disabled=false);}
     }
