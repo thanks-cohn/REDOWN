@@ -138,3 +138,5 @@ optional protocol1 evidence while safe Worker5 remains accepted. Copy/Move/Paste
 is still open, not live-reproduced or fixed by diagnostics. Latest suite258/251/7
 retains baseline failures. Refresh only the new Explorer source map with
 `scripts/explorer-architecture.mjs --write`; never refresh frozen historical hashes.
+
+Explorer probe/smoke continuation: read [PROBES_AND_SMOKE.md](docs/explorer/PROBES_AND_SMOKE.md). Use `npm run explorer:smoke -- --preset all` for fixed local smoke tests, plus the full suite. `runReadOnlyProbe` is a Debug/sender-gated explicit read action using saved profiles; never substitute preparation handlers or silently upgrade a Worker. Named probe results persist as redacted observations. Per-item request IDs prevent comparing different batch files. Provider routing settings were corrected and read back for13 REDOWN Workers; this does not close the user404 incident or certify live transfers. GitHub remains planned and local filesystem integration partial.

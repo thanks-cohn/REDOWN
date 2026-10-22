@@ -4398,6 +4398,12 @@ try{
  if(globalThis.RedownExplorerBridge){
   globalThis.redownExplorerBridge=RedownExplorerBridge.install({context:"options",chrome,document});
   const observer=globalThis.redownExplorerBridge;
+  observer.setProbeProvider(()=>{
+    const selected=selectedExplorerItems().filter(item=>!item.folder&&!item.archiveEntry&&!item.searchResult);
+    if(explorerClipboard?.entries?.length===1&&!explorerClipboard.entries[0].folder&&!explorerClipboard.archiveKey)return {source:{accountId:explorerClipboard.accountId,bucketName:explorerClipboard.bucketName},destination:explorerSource(),key:explorerClipboard.entries[0].key};
+    if(selected.length===1)return {source:explorerSource(),destination:explorerSource(),key:selected[0].key};
+    throw new Error("Select one ordinary file, or copy one file in REDOWN and open its destination bucket first.");
+  });
   observer.setStateProvider(()=>({source:workspaceTarget?{...workspaceTarget}:null,prefix:workspacePrefix,selectedCount:explorerSelected.size,loadedCount:explorerItems.length,previewGeneration:workspacePreviewRequestId,hasClipboard:Boolean(explorerClipboard),betaMode:betaModeEnabled,debugMode:debugModeEnabled}));
   goLocation=observer.wrap("navigation",goLocation);
   browseWorkspace=observer.wrap("listing",browseWorkspace);

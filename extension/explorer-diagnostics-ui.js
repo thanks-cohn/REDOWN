@@ -18,7 +18,13 @@ function install({document,send,observer=()=>root.redownExplorerBridge,copy=valu
   const select=$('explorer-diagnostic-id'),previous=select.value;select.replaceChildren();for(const op of result.data?.operations||[]){if(failures&&!['failed','unknown'].includes(op.state))continue;const option=document.createElement('option');option.value=op.id;option.textContent=`${op.operation} · ${op.state} · ${op.id}`;select.append(option);}if([...select.options].some(o=>o.value===previous))select.value=previous;show(result);status(`${select.options.length} operations shown. Missing or truncated stages remain unknown.`);
  }
  const bind=(id,action)=>$(id)?.addEventListener('click',()=>{if(!visible())return;void Promise.resolve().then(action).catch(error=>status(error.message||'Diagnostics unavailable.'));});
- bind('explorer-diagnostics-inspect',()=>list());bind('explorer-diagnostics-failures',()=>list(true));
+ bind('explorer-diagnostics-probe',async()=>{
+  const button=$('explorer-diagnostics-probe');if(button.disabled)return;
+  button.disabled=true;const token=++version;
+  try{status('Checking read-only source access and Worker configuration…');const result=await query('runReadOnlyProbe',observer()?.probeInput());if(token!==version||!visible())return;show(result);status('Probe complete. Review checks and diagnostic ID; no files were changed.');}
+  finally{button.disabled=false;}
+ });
+ bind('explorer-diagnostics-inspect' ,()=>list());bind('explorer-diagnostics-failures',()=>list(true));
  bind('explorer-diagnostics-trace',async()=>{const id=$('explorer-diagnostic-id').value;if(!id)return status('Select an operation first.');const trace=await query('getOperationTrace',{id}),diagnosis=await query('diagnoseOperation',{id});show({trace,diagnosis});});
  bind('explorer-diagnostics-copy',async()=>{const id=$('explorer-diagnostic-id').value;if(!id)return status('Select an operation first.');await copy(id);status('Diagnostic ID copied.');});
  bind('explorer-diagnostics-export',async()=>{await flush();const result=await query('exportDiagnosticBundle');generated=result.data||null;show(result);$('explorer-diagnostics-download').hidden=!generated;status('Review this redacted bundle before sharing. Fingerprints still link activity within their scope.');});

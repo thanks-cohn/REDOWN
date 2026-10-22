@@ -1,15 +1,19 @@
 import '../../extension/explorer-diagnostics.js';
 import model from './model.json' with {type:'json'};
+import smoke from './smoke-presets.json' with {type:'json'};
 import {readFileSync} from 'node:fs';
 import {createHash,webcrypto} from 'node:crypto';
 export const createCollector=options=>globalThis.RedownExplorerDiagnostics.create({cryptoApi:webcrypto,...options});
 export function createExplorerAPI({bundle}={}){
  const core=globalThis.RedownExplorerDiagnostics,collector=createCollector({context:'adapter',...(Number.isFinite(bundle?.exportedAt)?{now:()=>bundle.exportedAt}:{})});collector.setEnabled(true);if(bundle)collector.ingest(bundle);
  const envelope=(state,data,error)=>({explorerDiagnosticVersion:core.VERSION,state,...(data?{data}:{}),...(error?{error:{code:error}}:{})});
- const methods=['describeExplorer','listExplorerOperations','explainOperation','getOperationTrace','getRecentFailures','diagnoseOperation','getObjectIdentityTrace','getWorkerCompatibility','getExplorerState','getFailureDependencies','findRelatedIncidents','getVerificationPlan','exportDiagnosticBundle','validateArchitecture'];
+ const methods=['listSmokePresets','getSmokePlan','getConnectorCapabilities','describeExplorer','listExplorerOperations','explainOperation','getOperationTrace','getRecentFailures','diagnoseOperation','getObjectIdentityTrace','getWorkerCompatibility','getExplorerState','getFailureDependencies','findRelatedIncidents','getVerificationPlan','exportDiagnosticBundle','validateArchitecture'];
  return {query(operation,input={}){
   if(!input||typeof input!=='object'||Array.isArray(input))return envelope('failed',null,'INVALID_INPUT');
   if(!methods.includes(operation))return envelope('failed',null,'UNSUPPORTED_OPERATION');
+  if(operation==='listSmokePresets')return envelope('available',smoke);
+  if(operation==='getConnectorCapabilities')return envelope('available',smoke.connectors);
+  if(operation==='getSmokePlan'){const preset=smoke.presets.find(p=>p.id===input.preset);return preset?envelope('available',{...preset,command:['node','scripts/explorer-smoke.mjs','--preset',preset.id],scope:smoke.execution,remoteExecution:false}):envelope('failed',null,'UNKNOWN_SMOKE_PRESET');}
   const trace=collector.getOperationTree(input.id),all=collector.exportBundle().operations;
   if(operation==='describeExplorer')return envelope('available',{operations:methods,version:core.VERSION,limits:core.LIMITS,architecture:model,access:'offline/read-only; no execution, credentials or cloud access',unsupported:['live probing','remote execution','Forever authority','unredacted identity export']});
   if(operation==='listExplorerOperations')return envelope('available',model.operations);

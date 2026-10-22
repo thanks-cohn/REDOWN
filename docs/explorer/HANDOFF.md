@@ -68,3 +68,7 @@ node scripts/storage-signals-preview.mjs work/explorer-url-refresh
 ```
 
 After deliberate source edits, `node scripts/explorer-architecture.mjs --write` refreshes only the new current-source Explorer map. Never use it to replace frozen historical evidence.
+
+## Continuation — routing configuration and preset smoke tests
+
+See [PROBES_AND_SMOKE.md](PROBES_AND_SMOKE.md) for the0.5.15 continuation, actual provider settings read-back, named Debug-only read probes, corrected batch identity diagnoses and fixed local smoke presets. All13 connected REDOWN Workers now have the explicit public-fetch routing flag, with bindings/date preserved. This is settings verification, not closure of the original Copy/Move/Paste404. The incident remains open; current new suite269/262/7 retains the prior seven failures. New proxy code/extension installation remain separate deployment boundaries.

@@ -14,21 +14,21 @@
           "symbol": "goLocation",
           "line": 2156,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjects",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -55,21 +55,21 @@
           "symbol": "browseWorkspace",
           "line": 1517,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -96,21 +96,21 @@
           "symbol": "const goPage=async",
           "line": 2701,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -137,14 +137,14 @@
           "symbol": "runExplorerSearch",
           "line": 2071,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type===\"cfSearchStart\"",
-          "line": 2262,
+          "line": 2336,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/search-session.js",
@@ -178,21 +178,21 @@
           "symbol": "browseWorkspace",
           "line": 1517,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -219,7 +219,7 @@
           "symbol": "selectExplorerItem",
           "line": 2818,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ],
       "tests": [
@@ -246,7 +246,7 @@
           "symbol": "showWorkspacePreview",
           "line": 1565,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -280,7 +280,7 @@
           "symbol": "setWorkspacePreviewLightbox",
           "line": 1607,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ],
       "tests": [
@@ -307,7 +307,7 @@
           "symbol": "explorerDownload",
           "line": 3295,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -341,7 +341,7 @@
           "symbol": "explorerUploadFiles",
           "line": 3368,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -375,21 +375,21 @@
           "symbol": "pasteExplorer",
           "line": 3064,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2321,
+          "line": 2395,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
-          "line": 1521,
+          "line": 1593,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -416,21 +416,21 @@
           "symbol": "pasteExplorer",
           "line": 3064,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2321,
+          "line": 2395,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
-          "line": 1521,
+          "line": 1593,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -457,21 +457,21 @@
           "symbol": "beginExplorerRename",
           "line": 3199,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfRenameEntry\"",
-          "line": 2323,
+          "line": 2397,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "renameExplorerEntry",
-          "line": 1594,
+          "line": 1667,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -498,21 +498,21 @@
           "symbol": "deleteSelection",
           "line": 3167,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfDeleteObjects\"",
-          "line": 2322,
+          "line": 2396,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "deleteExplorerObjects",
-          "line": 1583,
+          "line": 1656,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -539,21 +539,21 @@
           "symbol": "beginNewFolder",
           "line": 3255,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfCreateFolder\"",
-          "line": 2324,
+          "line": 2398,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "createExplorerFolder",
-          "line": 1603,
+          "line": 1676,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -580,21 +580,21 @@
           "symbol": "showProperties",
           "line": 3318,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjectProperties\"",
-          "line": 2335,
+          "line": 2409,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -621,21 +621,21 @@
           "symbol": "assetCorsControl",
           "line": 361,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPublicAddresses\"",
-          "line": 2294,
+          "line": 2368,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "bucketPublicAddresses",
-          "line": 1220,
+          "line": 1234,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -662,7 +662,7 @@
           "symbol": "setExplorerClipboard",
           "line": 3044,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ],
       "tests": [
@@ -689,21 +689,21 @@
           "symbol": "goLocation",
           "line": 2156,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -730,21 +730,21 @@
           "symbol": "loadExplorerInventory",
           "line": 2540,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfBuckets\"",
-          "line": 2288,
+          "line": 2362,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listBuckets",
-          "line": 871,
+          "line": 884,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -771,7 +771,7 @@
           "symbol": "async function loginRequest(",
           "line": 4189,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-auth.js",
@@ -805,21 +805,21 @@
           "symbol": "ensurePrepared",
           "line": 1045,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPrepareBucket\"",
-          "line": 2320,
+          "line": 2394,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "preparedProfile",
-          "line": 1448,
+          "line": 1462,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -846,21 +846,21 @@
           "symbol": "openArchive",
           "line": 2974,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfArchiveEntries\"",
-          "line": 2347,
+          "line": 2421,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "callBucketWorker",
-          "line": 1463,
+          "line": 1477,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ],
       "tests": [
@@ -887,7 +887,7 @@
         "symbol": "workspaceTarget",
         "line": 12,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -899,7 +899,7 @@
         "symbol": "workspacePrefix",
         "line": 1516,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -911,7 +911,7 @@
         "symbol": "explorerSelected",
         "line": 1862,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -923,7 +923,7 @@
         "symbol": "explorerClipboard",
         "line": 1866,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -935,7 +935,7 @@
         "symbol": "explorerNextCursor",
         "line": 1861,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -947,7 +947,7 @@
         "symbol": "workspacePreviewRequestId",
         "line": 16,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -959,7 +959,7 @@
         "symbol": "presetLocationCache",
         "line": 20,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -971,7 +971,7 @@
         "symbol": "explorerDestinationMenus",
         "line": 2593,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     },
     {
@@ -983,7 +983,7 @@
         "symbol": "explorerOperation",
         "line": 1868,
         "evidence": "source-anchor",
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
       }
     }
   ],
@@ -995,7 +995,7 @@
         "symbol": "id=\"explorer\"",
         "line": 635,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1005,7 +1005,7 @@
         "symbol": "id=\"workspace-objects\"",
         "line": 654,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1015,7 +1015,7 @@
         "symbol": "id=\"workspace-preview\"",
         "line": 658,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1025,7 +1025,7 @@
         "symbol": "id=\"explorer-menu\"",
         "line": 664,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1035,7 +1035,7 @@
         "symbol": "id=\"explorer-properties\"",
         "line": 665,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1045,7 +1045,7 @@
         "symbol": "id=\"explorer-operation\"",
         "line": 662,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     },
     {
@@ -1055,7 +1055,7 @@
         "symbol": "id=\"explorer-status\"",
         "line": 655,
         "evidence": "source-anchor",
-        "sha256": "6ba42c7bbc2e39cf06484857a32fb335f90acf6685c6dc2dd25ec1f259a43c89"
+        "sha256": "bf65f14c48a43e31be5a05edc7576d70447542198bb44e34219abf09079e7809"
       }
     }
   ],
@@ -1220,6 +1220,7 @@
     },
     "explorerDiagnosticsV1": {
       "operation": [
+        "runReadOnlyProbe",
         "getOperationTrace",
         "getRecentFailures",
         "diagnoseOperation",
@@ -1241,7 +1242,7 @@
         "path": "extension/options.js",
         "symbol": "async function goLocation(",
         "line": 2303,
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd",
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409",
         "evidence": "source-anchor"
       }
     },
@@ -1252,7 +1253,7 @@
         "path": "extension/options.js",
         "symbol": "function selectExplorerItem(",
         "line": 2931,
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd",
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409",
         "evidence": "source-anchor"
       }
     },
@@ -1263,7 +1264,7 @@
         "path": "extension/options.js",
         "symbol": "async function showWorkspacePreview(",
         "line": 1565,
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd",
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409",
         "evidence": "source-anchor"
       }
     },
@@ -1274,7 +1275,7 @@
         "path": "extension/options.js",
         "symbol": "async function setExplorerClipboard(",
         "line": 3044,
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd",
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409",
         "evidence": "source-anchor"
       }
     },
@@ -1285,7 +1286,7 @@
         "path": "extension/explorer-diagnostics-bridge.js",
         "symbol": "function install(",
         "line": 5,
-        "sha256": "84ccfeab19d5ae32eb1866a375db4b8da59f83e996a396d9ec348bd7d9a91b1f",
+        "sha256": "19d526f93ff7b8240cd735b63334628c96581066127eb3f48606d7da60a62ab7",
         "evidence": "source-anchor"
       }
     }
@@ -1297,7 +1298,7 @@
         "path": "extension/options.js",
         "symbol": "function showExplorerMenu(",
         "line": 3422,
-        "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd",
+        "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1318,8 +1319,8 @@
       "ref": {
         "path": "extension/background.js",
         "symbol": "function cleanExplorerKey(",
-        "line": 1416,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "line": 1430,
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1330,7 +1331,7 @@
         "path": "extension/background.js",
         "symbol": "function exactObjectKey(",
         "line": 92,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1341,7 +1342,7 @@
         "path": "extension/background.js",
         "symbol": "async function copyVerifiedObject(",
         "line": 114,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1352,7 +1353,7 @@
         "path": "extension/background.js",
         "symbol": "async function verifiedObjectPut(",
         "line": 107,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1362,8 +1363,8 @@
       "ref": {
         "path": "extension/background.js",
         "symbol": "name: \"STORAGE\", bucket_name: bucketName",
-        "line": 949,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "line": 963,
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1373,8 +1374,8 @@
       "ref": {
         "path": "extension/background.js",
         "symbol": "async function callBucketWorker(",
-        "line": 1463,
-        "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f",
+        "line": 1477,
+        "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1439,8 +1440,8 @@
       "ref": {
         "path": "extension/explorer-diagnostics.js",
         "symbol": "function create(",
-        "line": 64,
-        "sha256": "d45e976e7741320f27402966edd17ef8127e9e8bf59006e8e3b71967e8a152d2",
+        "line": 67,
+        "sha256": "df3575cf71d182e4efa78efd551c330378a021703564139ec982924a0f0bee74",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1451,7 +1452,7 @@
         "path": "extension/explorer-diagnostics-bridge.js",
         "symbol": "function install(",
         "line": 5,
-        "sha256": "84ccfeab19d5ae32eb1866a375db4b8da59f83e996a396d9ec348bd7d9a91b1f",
+        "sha256": "19d526f93ff7b8240cd735b63334628c96581066127eb3f48606d7da60a62ab7",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1468,21 +1469,21 @@
           "symbol": "goLocation",
           "line": 2156,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjects",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1496,21 +1497,21 @@
           "symbol": "browseWorkspace",
           "line": 1517,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1524,21 +1525,21 @@
           "symbol": "const goPage=async",
           "line": 2701,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1552,14 +1553,14 @@
           "symbol": "runExplorerSearch",
           "line": 2071,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type===\"cfSearchStart\"",
-          "line": 2262,
+          "line": 2336,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/search-session.js",
@@ -1580,21 +1581,21 @@
           "symbol": "browseWorkspace",
           "line": 1517,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1608,7 +1609,7 @@
           "symbol": "selectExplorerItem",
           "line": 2818,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ]
     },
@@ -1622,7 +1623,7 @@
           "symbol": "showWorkspacePreview",
           "line": 1565,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1643,7 +1644,7 @@
           "symbol": "setWorkspacePreviewLightbox",
           "line": 1607,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ]
     },
@@ -1657,7 +1658,7 @@
           "symbol": "explorerDownload",
           "line": 3295,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1678,7 +1679,7 @@
           "symbol": "explorerUploadFiles",
           "line": 3368,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-api.js",
@@ -1699,21 +1700,21 @@
           "symbol": "pasteExplorer",
           "line": 3064,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2321,
+          "line": 2395,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
-          "line": 1521,
+          "line": 1593,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1762,21 +1763,21 @@
           "symbol": "pasteExplorer",
           "line": 3064,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2321,
+          "line": 2395,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
-          "line": 1521,
+          "line": 1593,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1825,21 +1826,21 @@
           "symbol": "beginExplorerRename",
           "line": 3199,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfRenameEntry\"",
-          "line": 2323,
+          "line": 2397,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "renameExplorerEntry",
-          "line": 1594,
+          "line": 1667,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1888,21 +1889,21 @@
           "symbol": "deleteSelection",
           "line": 3167,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfDeleteObjects\"",
-          "line": 2322,
+          "line": 2396,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "deleteExplorerObjects",
-          "line": 1583,
+          "line": 1656,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1916,21 +1917,21 @@
           "symbol": "beginNewFolder",
           "line": 3255,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfCreateFolder\"",
-          "line": 2324,
+          "line": 2398,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "createExplorerFolder",
-          "line": 1603,
+          "line": 1676,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1944,21 +1945,21 @@
           "symbol": "showProperties",
           "line": 3318,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjectProperties\"",
-          "line": 2335,
+          "line": 2409,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -1972,21 +1973,21 @@
           "symbol": "assetCorsControl",
           "line": 361,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPublicAddresses\"",
-          "line": 2294,
+          "line": 2368,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "bucketPublicAddresses",
-          "line": 1220,
+          "line": 1234,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -2000,7 +2001,7 @@
           "symbol": "setExplorerClipboard",
           "line": 3044,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         }
       ]
     },
@@ -2014,21 +2015,21 @@
           "symbol": "goLocation",
           "line": 2156,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2295,
+          "line": 2369,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
-          "line": 839,
+          "line": 852,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -2042,21 +2043,21 @@
           "symbol": "loadExplorerInventory",
           "line": 2540,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfBuckets\"",
-          "line": 2288,
+          "line": 2362,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "listBuckets",
-          "line": 871,
+          "line": 884,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -2070,7 +2071,7 @@
           "symbol": "async function loginRequest(",
           "line": 4189,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/cloudflare-auth.js",
@@ -2091,21 +2092,21 @@
           "symbol": "ensurePrepared",
           "line": 1045,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPrepareBucket\"",
-          "line": 2320,
+          "line": 2394,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "preparedProfile",
-          "line": 1448,
+          "line": 1462,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     },
@@ -2119,21 +2120,21 @@
           "symbol": "openArchive",
           "line": 2974,
           "evidence": "source-anchor",
-          "sha256": "9f99bcf5ef13d4f3ec60b610fc7ac715bc90cd54c5de21d9b147ba46f42291cd"
+          "sha256": "95b0b2f7442090850c22dd4d9cf381bb0b69cc86594e8de63a4aec08799cf409"
         },
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfArchiveEntries\"",
-          "line": 2347,
+          "line": 2421,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         },
         {
           "path": "extension/background.js",
           "symbol": "callBucketWorker",
-          "line": 1463,
+          "line": 1477,
           "evidence": "source-anchor",
-          "sha256": "273f4866a77c7d6b50be17c197f81a2059c25f2062202c5c05d5923040d19e0f"
+          "sha256": "57782da9ab03bbd54e46ffafd6043f3a109787e6aa92e9908ae2e831e7aaabb8"
         }
       ]
     }

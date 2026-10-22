@@ -215,7 +215,8 @@
                     "EXPLORER_RESULT_UNCONFIRMED",
                     "EXPLORER_NETWORK_ERROR",
                     "EXPLORER_SOURCE_CHANGED",
-                    "EXPLORER_RESTART_INTERRUPTED"
+                    "EXPLORER_RESTART_INTERRUPTED",
+                    "EXPLORER_WORKER_ROUTING_CONFIG"
                   ]
                 },
                 "workerVersion": {
@@ -349,6 +350,29 @@
                     "transport",
                     "ui"
                   ]
+                },
+                "expectedKey": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "probe": {
+                  "enum": [
+                    "source.provider-settings",
+                    "destination.provider-settings",
+                    "source.api-read",
+                    "source.direct-head",
+                    "source.via-destination-head"
+                  ]
+                },
+                "durationMs": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "bindingMatches": {
+                  "type": "boolean"
+                },
+                "publicFetchEnabled": {
+                  "type": "boolean"
                 }
               },
               "additionalProperties": false
@@ -389,7 +413,8 @@
                   "EXPLORER_RESULT_UNCONFIRMED",
                   "EXPLORER_NETWORK_ERROR",
                   "EXPLORER_SOURCE_CHANGED",
-                  "EXPLORER_RESTART_INTERRUPTED"
+                  "EXPLORER_RESTART_INTERRUPTED",
+                  "EXPLORER_WORKER_ROUTING_CONFIG"
                 ]
               },
               "description": {

@@ -25,9 +25,10 @@ export const scenarios={
 export async function fixture(name){
  if(!scenarios[name])throw Error('UNKNOWN_FIXTURE');let count=1;
  const api=createCollector({now:()=>1792627200000,id:()=>`00000000-0000-4000-8000-${String(count++).padStart(12,'0')}`,context:'fixture',extensionVersion:'fixture'});api.setEnabled(true);api.useIdentityContext({scope:api.runId,seed:'a'.repeat(64)});
- const [code,stage,status]=scenarios[name],id=api.begin(name==='interrupted-move'?'move':'copy',{origin:'fixture'}),source={accountId:'fixture-account',bucketName:'fixture-source'};await api.identity(id,source,'nested//雪 #?%.txt');
- if(['wrong-key','nested-key'].includes(name))await api.identity(id,source,'nested/雪 #?%.txt');
- if(name==='cross-account')await api.identity(id,{...source,accountId:'fixture-other-account'},'nested//雪 #?%.txt');
+ const requestId='00000000-0000-4000-8000-999999999999';
+ const [code,stage,status]=scenarios[name],id=api.begin(name==='interrupted-move'?'move':'copy',{origin:'fixture'}),source={accountId:'fixture-account',bucketName:'fixture-source'};await api.identity(id,source,'nested//雪 #?%.txt',{requestId});
+ if(['wrong-key','nested-key'].includes(name))await api.identity(id,source,'nested/雪 #?%.txt',{requestId});
+ if(name==='cross-account')await api.identity(id,{...source,accountId:'fixture-other-account'},'nested//雪 #?%.txt',{requestId});
  if(name==='wrong-binding')api.record(id,{stage,component:'worker',outcome:'failed',binding:await api.fingerprint('bucket','wrong'),expectedBinding:await api.fingerprint('bucket','expected'),bindingDeclared:true});
  if(name==='worker-version')api.record(id,{stage,component:'worker',outcome:'failed',workerVersion:4,protocol:0,safeTransfers:false});
  api.record(id,{stage,component:'worker',outcome:['ambiguous-timeout','interrupted-move'].includes(name)?'unknown':'failed',status,code});api.finish(id,['ambiguous-timeout','interrupted-move'].includes(name)?'unknown':'failed',{code,status,stage,component:'worker'});

@@ -1,0 +1,117 @@
+{
+  "recordedOn": "2026-10-22",
+  "scope": "REDOWN Worker settings only; no object operations; no end-to-end transfer certification",
+  "discovered": 13,
+  "report": [
+    {
+      "index": 0,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 1,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 2,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 3,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 4,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 5,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 6,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 7,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 8,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 9,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 10,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 11,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    },
+    {
+      "index": 12,
+      "state": "verified-settings",
+      "bindingsUnchanged": true,
+      "dateUnchanged": true,
+      "flagPresent": true,
+      "previousFlags": []
+    }
+  ],
+  "limitations": [
+    "Connected account only; identifiers omitted",
+    "Provider settings read-back only; no installed Chrome or live transfer proof",
+    "Existing Worker code was not replaced; new read-only proxy needs an explicit code upgrade"
+  ],
+  "rollback": "Remove only global_fetch_strictly_public from compatibility_flags for the changed REDOWN Workers; preserve all other settings."
+}

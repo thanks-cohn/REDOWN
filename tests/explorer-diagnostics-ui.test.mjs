@@ -30,3 +30,11 @@ test('legacy Worker404 is marked as reported evidence rather than invented struc
  const bridge=globalThis.RedownExplorerBridge.install({context:'background',chrome});await bridge.ready;const trace=await bridge.accept({type:'cfTransferObjects',source:{accountId:'a',bucketName:'b'},entries:[{key:'fixture'}]},{url:chrome.runtime.getURL('options.html')});
  const result=bridge.complete({explorerTrace:trace},{ok:true,results:[{status:'failed',error:'Source object was not available (HTTP 404)'}]});assert.equal(result.error.code,'EXPLORER_HTTP_NOT_FOUND');assert.ok(result.events.some(e=>e.status===404&&e.evidence==='legacy-worker-message'));assert.ok(!result.events.some(e=>e.binding));assert.equal(result.error.rootCause,'unknown');bridge.collector.setEnabled(false);
 });
+
+test('read-only probe button is Debug-only, sends captured file context once and presents redacted checks',async()=>{
+ const dom=new JSDOM(html,{runScripts:'outside-only'}),w=dom.window;w.eval(ui);let calls=0,release;
+ const input={source:{accountId:'a',bucketName:'s'},destination:{accountId:'a',bucketName:'d'},key:'雪.txt'};
+ w.RedownExplorerDiagnosticUI.install({document:w.document,observer:()=>({probeInput:()=>input}),send:async message=>{calls++;assert.equal(message.operation,'runReadOnlyProbe');assert.equal(message.input,input);return new Promise(r=>{release=()=>r({ok:true,result:{state:'partial',data:{readOnly:true,checks:[{name:'source.direct-head',state:'passed'}]}}});});}});
+ const button=w.document.getElementById('explorer-diagnostics-probe');button.click();await tick();assert.equal(calls,0);
+ w.document.documentElement.classList.add('debug-mode');button.click();await tick();button.click();assert.equal(calls,1);assert.equal(button.disabled,true);release();await tick();assert.equal(button.disabled,false);assert.match(w.document.getElementById('explorer-diagnostics-output').textContent,/readOnly/);assert.doesNotMatch(w.document.getElementById('explorer-diagnostics-output').textContent,/雪/);dom.window.close();
+});

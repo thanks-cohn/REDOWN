@@ -710,8 +710,9 @@
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
   <details id="explorer-diagnostics-panel" style="margin-top:18px">
     <summary>File Explorer diagnostics</summary>
-    <p class="meta">Redacted, bounded observations. Review the generated bundle before sharing. No cloud probes or repairs run here.</p>
+    <p class="meta">Redacted, bounded observations. Review the generated bundle before sharing. Read-only cloud probes run only when requested. Probes never copy, delete, deploy, or repair.</p>
     <div class="row-actions" style="flex-wrap:wrap">
+      <button id="explorer-diagnostics-probe" class="ghost" type="button">Probe selected / copied file</button>
       <button id="explorer-diagnostics-inspect" class="ghost" type="button">Inspect operations</button>
       <button id="explorer-diagnostics-failures" class="ghost" type="button">Show failures</button>
       <button id="explorer-diagnostics-export" class="ghost" type="button">Generate support bundle</button>

@@ -77,7 +77,7 @@ async function explorerWire(request,env,authorized) {
   let context;try{context=JSON.parse(request.headers.get("x-redown-diagnostic")||"null");}catch{return null;}
   if(context?.protocol!==1||!/^[a-f0-9-]{36}$/.test(context.operationId||"")||!/^[a-f0-9]{64}$/.test(context.seed||""))return null;
   const events=[];let truncated=false;
-  const event=(stage,outcome,details={})=>{if(events.length<32)events.push({stage,component:"worker",outcome,...details});else truncated=true;};
+  const event=(stage,outcome,details={})=>{if(events.length<32)events.push({stage,component:"worker",outcome,requestId:context.requestId,...details});else truncated=true;};
   async function fingerprint(kind,value){
     const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(context.seed),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
     const digest=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(kind+"\\0"+String(value)));
@@ -86,7 +86,7 @@ async function explorerWire(request,env,authorized) {
   event("worker.check","confirmed",{workerVersion:6,protocol:1,safeTransfers:true,bindingDeclared:Boolean(env.REDOWN_DIAGNOSTIC_BINDING),origin:await fingerprint("origin",new URL(request.url).origin),expectedOrigin:context.expectedOrigin});
   if(env.REDOWN_DIAGNOSTIC_BINDING)event("worker.check","confirmed",{binding:await fingerprint("bucket",env.REDOWN_DIAGNOSTIC_BINDING),expectedBinding:context.expectedBinding,bindingDeclared:true});
   function payload(){return {protocol:1,operationId:context.operationId,events,truncated};}
-  return {context,event,fingerprint,payload,header:JSON.stringify(context),headers(){return {"x-redown-diagnostic":JSON.stringify(payload())};},json(body,options={}){return Response.json({...body,explorerDiagnostic:payload()},options);},merge(response){try{const data=JSON.parse(response.headers.get("x-redown-diagnostic")||"null");if(data?.operationId===context.operationId&&data.protocol===1)for(const item of (data.events||[]).slice(0,16))event(item.stage,item.outcome,item);}catch{}},async identity(key,role="source",encoding="literal"){try{event(role==="source"?"source.identity":"destination.identity","confirmed",{key:await fingerprint("key",key),encodedKey:await fingerprint("key",encoding==="query"?encodeURIComponent(key):key),encoding,role,scope:context.scope});}catch{}}};
+  return {context,event,fingerprint,payload,header:JSON.stringify(context),headers(){return {"x-redown-diagnostic":JSON.stringify(payload())};},json(body,options={}){return Response.json({...body,explorerDiagnostic:payload()},options);},merge(response){try{const data=JSON.parse(response.headers.get("x-redown-diagnostic")||"null");if(data?.operationId===context.operationId&&data.protocol===1)for(const item of (data.events||[]).slice(0,16))event(item.stage,item.outcome,item);}catch{}},async identity(key,role="source",encoding="literal"){try{event(role==="source"?"source.identity":"destination.identity","confirmed",{expectedKey:role==="source"?context.expectedKey:undefined,key:await fingerprint("key",key),encodedKey:await fingerprint("key",encoding==="query"?encodeURIComponent(key):key),encoding,role,scope:context.scope});}catch{}}};
 }
 function explorerWorkerError(message,code,status,stage){const error=new Error(message);error.code=code;error.status=status;error.stage=stage;error.component="worker";return error;}
 function exactObjectKey(value) {
@@ -114,6 +114,7 @@ async function verifiedObjectPut(storage,key,body,options,expectedSize,expectedM
 async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conflict,diagnostic) {
   const sourceKey=exactObjectKey(entry.sourceKey);let destinationKey=exactObjectKey(entry.destinationKey);
   if(entry.sameBucket&&sourceKey===destinationKey)throw new Error("Source and destination are the same");
+  if(diagnostic){diagnostic.context.requestId=entry.diagnosticRequestId;diagnostic.context.expectedKey=entry.diagnosticExpectedKey;}
   await diagnostic?.identity(sourceKey);await diagnostic?.identity(destinationKey,"destination");
   let existing=await storage.head(destinationKey);
   if(existing&&conflict==="skip")return {sourceKey,destinationKey,status:"conflict"};
@@ -129,7 +130,7 @@ async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conf
     stream=object.body;size=object.size;etag=object.etag;sourceVersion=object.version;md5=checksumHex(object);httpMetadata=object.httpMetadata;customMetadata=object.customMetadata;
   }else{
     if(!/^https:\\/\\/[^/]+$/.test(sourceWorkerUrl)||!sourceToken)throw new Error("Source bucket is not ready");
-    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",new URL(sourceWorkerUrl).origin)})}:{})},signal:AbortSignal.timeout(25000)});
+    const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{redirect:"manual",headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",new URL(sourceWorkerUrl).origin)})}:{})},signal:AbortSignal.timeout(25000)});
     diagnostic?.merge(response);diagnostic?.event("source.read",response.ok?"confirmed":"failed",{status:response.status,mechanism:"worker",method:"GET",endpoint:"worker.object"});
     if(!response.ok||!response.body)throw explorerWorkerError("Source object was not available (HTTP "+response.status+")",response.status===404?"EXPLORER_HTTP_NOT_FOUND":response.status===401?"EXPLORER_AUTH_EXPIRED":response.status===403?"EXPLORER_PERMISSION_DENIED":"EXPLORER_RESULT_UNCONFIRMED",response.status,"source.read");
     stream=response.body;size=Number(response.headers.get("content-length"));etag=response.headers.get("x-redown-etag");sourceVersion=response.headers.get("x-redown-version");md5=response.headers.get("x-redown-md5")||"";
@@ -586,7 +587,19 @@ export default {
         diagnostic?.event("source.cleanup","confirmed");
         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "probeSource") {
+        const base=new URL(String(body.sourceWorkerUrl||""));
+        if(base.protocol!=="https:"||base.username||base.password||base.pathname!=="/"||base.search||base.hash||!base.hostname.endsWith(".workers.dev")||!body.sourceToken)throw new Error("Choose a configured workers.dev source");
+        const key=exactObjectKey(body.key);
+        await diagnostic?.identity(key);
+        const response=await fetch(base.origin+"/object?key="+encodeURIComponent(key),{method:"HEAD",redirect:"manual",headers:{authorization:"Bearer "+body.sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",base.origin)})}:{})},signal:AbortSignal.timeout(10000)});
+        diagnostic?.merge(response);
+        diagnostic?.event("source.read",response.ok?"confirmed":"failed",{status:response.status,mechanism:"worker",method:"HEAD",endpoint:"worker.object"});
+        await response.body?.cancel();
+        const result={ok:true,readOnly:true,status:response.status};
+        return diagnostic?diagnostic.json(result):Response.json(result);
+      }
       if (body.action === "transferBatch") {
         if(!Array.isArray(body.entries)||!body.entries.length||body.entries.length>25)throw new Error("Choose between 1 and 25 transfer entries");
         const sourceWorkerUrl=String(body.sourceWorkerUrl||"").replace(/\\/+$/,"");
@@ -945,6 +958,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
   const metadata = {
     main_module: "worker.js",
     compatibility_date: "2026-09-26",
+    compatibility_flags: ["global_fetch_strictly_public"],
     bindings: [
       { type: "r2_bucket", name: "STORAGE", bucket_name: bucketName },
       {type:"plain_text",name:"REDOWN_DIAGNOSTIC_BINDING",text:JSON.stringify([accountId,bucketName])},
@@ -1463,7 +1477,7 @@ async function preparedProfile(accountId, bucketName, accountName = "", forceRep
 async function callBucketWorker(profile, body, allowRepair = true) {
   async function run(active){
     const started=globalThis.performance?.now?.()||0;
-    const read=["headObject","capabilities","createReadUrl","listArchive","createArchiveEntryReadUrl"].includes(body.action);
+    const read=["headObject","capabilities","probeSource","createReadUrl","listArchive","createArchiveEntryReadUrl"].includes(body.action);
     const observe=(outcome,code,status)=>{try{globalThis.redownRuntimeObserver?.record({operation:read?"api.read":"api.write",outcome,code,status,durationMs:(globalThis.performance?.now?.()||0)-started});}catch{}};
     let response,result;
     const trace=body.explorerTrace;
@@ -1471,7 +1485,7 @@ async function callBucketWorker(profile, body, allowRepair = true) {
       const wire=await globalThis.redownExplorerBridge?.wire(trace,active);
       globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.request","started",{method:"POST",endpoint:"worker.manage",origin:wire?.expectedOrigin});
       response=await RedownCloudflareApi.boundedFetch(active.workerUrl,{
-        timeoutMs:30000,method:"POST",
+        timeoutMs:body.action==="probeSource"||body.action==="capabilities"?15000:30000,method:"POST",
         headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json"},
         body:JSON.stringify({...body,explorerTrace:wire}),
         ...(wire?{headers:{authorization:`Bearer ${active.token||""}`,"content-type":"application/json","x-redown-diagnostic":JSON.stringify(wire)}}:{})
@@ -1479,8 +1493,8 @@ async function callBucketWorker(profile, body, allowRepair = true) {
       result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
     }catch(error){
       observe("unknown",error?.name==="TimeoutError"?"TIMEOUT":"NETWORK");
-      if(error?.name==="TimeoutError")throw new Error("The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist.");
-      throw new Error("The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
+      const failure=new Error(error?.name==="TimeoutError"?(read?"The read-only bucket request exceeded its deadline.":"The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist."):"The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
+      failure.code=error?.name==="TimeoutError"?"EXPLORER_REQUEST_TIMEOUT":error?.name==="AbortError"?"EXPLORER_RESULT_UNCONFIRMED":"EXPLORER_NETWORK_ERROR";failure.stage="worker.response";throw failure;
     }
     globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.response",response.ok?"confirmed":"failed",{status:response.status,code:response.status===404?"EXPLORER_HTTP_NOT_FOUND":undefined});
     globalThis.redownExplorerBridge?.workerEvents(trace,result.explorerDiagnostic);
@@ -1518,6 +1532,64 @@ async function expandExplorerEntries(accountId, bucketName, entries) {
   }
   return Array.from(new Map(expanded.map(entry => [entry.key, entry])).values());
 }
+// Explicit Debug action. Uses saved endpoints only: never prepares/repairs a Worker.
+let explorerProbeRunning=false;
+async function probeExplorerSource(input) {
+  const bridge=globalThis.redownExplorerBridge,collector=bridge?.collector;
+  if(!collector?.enabled)throw new Error("Enable Debug Mode first.");
+  if(explorerProbeRunning)throw new Error("An Explorer probe is already running.");
+  const valid=value=>value&&typeof value.accountId==="string"&&value.accountId&&typeof value.bucketName==="string"&&value.bucketName;
+  if(!valid(input?.source)||!valid(input?.destination)||typeof input.key!=="string"||!input.key||new TextEncoder().encode(input.key).byteLength>1024||input.key.includes("\0"))throw new Error("Choose one ordinary file and a destination bucket.");
+  explorerProbeRunning=true;
+  try{
+    const profiles=await getProfiles();
+    const find=target=>profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===target.accountId&&p.bucketName===target.bucketName);
+    const source=find(input.source),destination=find(input.destination);
+    const validEndpoint=profile=>{try{const url=new URL(profile?.workerUrl);return url.protocol==="https:"&&!url.username&&!url.password&&url.pathname==="/"&&!url.search&&!url.hash&&url.hostname.endsWith(".workers.dev")&&typeof profile.token==="string"&&profile.token;}catch{return false;}};
+    if(!validEndpoint(source)||!validEndpoint(destination))throw new Error("Both buckets need saved workers.dev connections. Use the existing setup controls; the probe never deploys or repairs.");
+    const id=collector.begin("properties"),checks=[],requestId=crypto.randomUUID();
+    const trace={operationId:id,protocol:1,sourceBinding:await collector.fingerprint("bucket",JSON.stringify([source.accountId,source.bucketName])),requestId,expectedKey:await collector.fingerprint("key",input.key)};
+    const live=()=>{if(!collector.enabled||!collector.getOperationTrace(id))throw new Error("Probe collection was cleared or disabled.");};
+    const check=async(name,stage,fn)=>{
+      live();const started=Date.now();
+      try{const value=await fn();live();checks.push({name,...value});bridge.event(id,stage,value.state==="passed"?"confirmed":value.state==="failed"?"failed":"unknown",{status:value.status,code:value.code,probe:name,bindingMatches:value.bindingMatches,publicFetchEnabled:value.publicFetchEnabled,durationMs:Math.max(0,Date.now()-started),requestId});return value;}
+      catch(error){live();const code=globalThis.RedownExplorerDiagnostics.classify(error);checks.push({name,state:"unknown",code});bridge.event(id,stage,"unknown",{code,probe:name,durationMs:Math.max(0,Date.now()-started),requestId});return {state:"unknown"};}
+    };
+    await collector.identity(id,source,input.key,{encoding:"literal",requestId,expectedKey:trace.expectedKey});
+    for(const [role,profile] of [["source",source],["destination",destination]]){
+      await check(role+".provider-settings","worker.check",async()=>{
+        if(!profile.scriptName)return {state:"unsupported"};
+        const result=await cfJson(`/accounts/${encodeURIComponent(profile.accountId)}/workers/scripts/${encodeURIComponent(profile.scriptName)}/settings`,{timeoutMs:10000});
+        const binding=(result.bindings||[]).find(b=>b.name==="STORAGE"&&b.type==="r2_bucket");
+        const bindingMatches=Boolean(binding&&binding.bucket_name===profile.bucketName);
+        const publicFetchEnabled=(result.compatibility_flags||[]).includes("global_fetch_strictly_public");
+        return {state:bindingMatches&&publicFetchEnabled?"passed":"failed",bindingMatches,publicFetchEnabled,code:!bindingMatches?"EXPLORER_BUCKET_CONTEXT_MISMATCH":!publicFetchEnabled?"EXPLORER_WORKER_ROUTING_CONFIG":undefined};
+      });
+    }
+    await check("source.api-read","api.response",async()=>{
+      const path=`/accounts/${encodeURIComponent(source.accountId)}/r2/buckets/${encodeURIComponent(source.bucketName)}/objects/${input.key.split("/").map(encodeURIComponent).join("/")}`;
+      const response=await cfFetch(path,{headers:{range:"bytes=0-0"},redirect:"error",timeoutMs:10000});
+      await response.body?.cancel();
+      return {state:response.ok?"passed":"failed",status:response.status,code:response.ok?undefined:globalThis.RedownExplorerDiagnostics.classify({status:response.status})};
+    });
+    await check("source.direct-head","source.read",async()=>{
+      const wire=await bridge.wire(trace,source);
+      const response=await RedownCloudflareApi.boundedFetch(source.workerUrl+"/object?key="+encodeURIComponent(input.key),{method:"HEAD",redirect:"manual",timeoutMs:10000,headers:{authorization:`Bearer ${source.token}`,"x-redown-diagnostic":JSON.stringify(wire)}});
+      try{bridge.workerEvents(trace,JSON.parse(response.headers.get("x-redown-diagnostic")||"null"));}catch{}
+      await response.body?.cancel();
+      return {state:response.ok?"passed":"failed",status:response.status,code:response.ok?undefined:globalThis.RedownExplorerDiagnostics.classify({status:response.status})};
+    });
+    await check("source.via-destination-head","source.read",async()=>{
+      const capability=await callBucketWorker(destination,{action:"capabilities",explorerTrace:trace},false);
+      live();if(capability.readOnlyProbe!==true)return {state:"unsupported",code:"EXPLORER_WORKER_CAPABILITY_MISMATCH"};
+      const result=await callBucketWorker(destination,{action:"probeSource",sourceWorkerUrl:source.workerUrl,sourceToken:source.token,key:input.key,explorerTrace:trace},false);
+      return {state:result.status===200?"passed":"failed",status:result.status,code:result.status===200?undefined:globalThis.RedownExplorerDiagnostics.classify({status:result.status})};
+    });
+    const state=checks.some(c=>c.state==="failed")?"failed":checks.every(c=>c.state==="passed")?"confirmed":"unknown";
+    collector.finish(id,state);return {explorerDiagnosticVersion:"1.0.0",state:state==="confirmed"?"available":"partial",data:{operationId:id,readOnly:true,checks,diagnosis:collector.diagnose(id),limitations:["Headers and metadata only; no file byte integrity established","Older Workers may lack the read-only proxy capability","Settings inspect provider configuration, not deployed code identity","No writes, repair, provisioning, or automatic write retries"]}};
+  }finally{explorerProbeRunning=false;}
+}
+
 async function transferExplorerObjects(message) {
   const operation = message.operation === "move" ? "move" : "copy";
   const destinationPrefix = cleanExplorerPrefix(message.destination?.prefix || "");
@@ -1545,6 +1617,7 @@ async function transferExplorerObjects(message) {
   const results = [];
   for (let index = 0; index < mapped.length; index += 25) {
     const batch=mapped.slice(index,index+25);
+    if(message.explorerTrace)for(const entry of batch){entry.diagnosticRequestId=crypto.randomUUID();entry.diagnosticExpectedKey=await globalThis.redownExplorerBridge.collector.fingerprint("key",entry.sourceKey);}
     const response = await callBucketWorker(destinationProfile, { action:"transferBatch", entries:batch, sourceWorkerUrl:sourceProfile.workerUrl, sourceToken:sourceProfile.token, conflict:message.conflict || "skip",explorerTrace:message.explorerTrace });
     const expected=new Set(batch.map(entry=>entry.sourceKey)),seen=new Set();
     if(!Array.isArray(response.results)||response.results.length!==batch.length||response.results.some(result=>{
@@ -2254,6 +2327,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const stored=await chrome.storage.local.get("debugModeEnabled");
         if(_sender?.url!==chrome.runtime.getURL("options.html")||stored.debugModeEnabled!==true)return sendResponse({ok:false,code:"DIAGNOSTICS_DISABLED"});
         await globalThis.redownExplorerBridge.ready;
+        if(message.operation==="runReadOnlyProbe")return sendResponse({ok:true,result:await probeExplorerSource(message.input)});
         if(message.operation==="sessionContext")return sendResponse({ok:true,context:await globalThis.redownExplorerBridge.sessionContext()});
         return sendResponse({ok:true,result:globalThis.redownExplorerBridge.query(message.operation,message.input)});
       }

@@ -274,3 +274,13 @@ test('wrong source binding fixture produces structured 404 evidence and mismatch
   const diagnosis=collector.diagnose(id);assert.equal(diagnosis.rootCause,'unknown');assert.ok(diagnosis.findings.some(f=>f.code==='EXPLORER_SOURCE_NOT_FOUND'));assert.ok(diagnosis.findings.some(f=>f.code==='EXPLORER_BUCKET_CONTEXT_MISMATCH'));assert.ok(diagnosis.findings.some(f=>f.code==='API_WORKER_PATH_DIVERGENCE'));assert.ok(await h.stores.source.head(key));assert.equal(await h.stores.destination.head('copy.txt'),null);
  }finally{h.restore();}
 });
+
+test('read-only source proxy uses HEAD, rejects redirects and never writes/deletes or reads source bytes',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket(),original=globalThis.fetch;let calls=0;
+ try{
+  bucket.put=()=>{throw Error('must not write');};bucket.delete=()=>{throw Error('must not delete');};bucket.get=()=>{throw Error('must not read body');};
+  globalThis.fetch=async(url,options)=>{calls++;assert.equal(options.method,'HEAD');assert.equal(options.redirect,'manual');assert.equal(new URL(url).searchParams.get('key'),'nested//雪 #?%.txt');return new Response(null,{status:404});};
+  const result=await(await worker.fetch(manageRequest({action:'probeSource',key:'nested//雪 #?%.txt',sourceWorkerUrl:'https://source.workers.dev',sourceToken:'test-secret'}),{STORAGE:bucket})).json();assert.equal(result.status,404);assert.equal(result.readOnly,true);assert.equal(calls,1);
+  const rejected=await worker.fetch(manageRequest({action:'probeSource',key:'a',sourceWorkerUrl:'https://not-a-worker.invalid',sourceToken:'test-secret'}),{STORAGE:bucket});assert.equal(rejected.status,400);assert.equal(calls,1);
+ }finally{globalThis.fetch=original;}
+});

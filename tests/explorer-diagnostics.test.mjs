@@ -14,7 +14,7 @@ test('404 is an observation; deterministic diagnosis compares API successes with
  const result=api.diagnose(copy);assert.equal(result.rootCause,'unknown');assert.ok(result.findings.some(f=>f.code==='API_WORKER_PATH_DIVERGENCE'));assert.deepEqual(result.relatedSuccesses,[preview]);assert.equal(result.findings[0].code,'EXPLORER_HTTP_NOT_FOUND');
 });
 test('same-scope key disagreement is confirmed while unrelated scopes cannot establish mismatch',async()=>{
- const api=harness(),id=api.begin('copy');await api.identity(id,source,key);await api.identity(id,source,key.replace('//','/'));assert.ok(api.diagnose(id).findings.some(f=>f.code==='EXPLORER_SOURCE_KEY_MISMATCH'));
+ const api=harness(),id=api.begin('copy'),requestId=randomUUID();await api.identity(id,source,key,{requestId});await api.identity(id,source,key.replace('//','/'),{requestId});assert.ok(api.diagnose(id).findings.some(f=>f.code==='EXPLORER_SOURCE_KEY_MISMATCH'));
 });
 test('bounded collector rejects malformed and oversized imports atomically, preserving prior observations',()=>{
  const api=harness(),id=api.begin('copy');api.record(id,{stage:'intent',component:'options',outcome:'started'});const bundle=api.exportBundle(),before=JSON.stringify(bundle.operations);

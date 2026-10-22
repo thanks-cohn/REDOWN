@@ -10,6 +10,7 @@ const taxonomy={
  EXPLORER_SOURCE_NOT_FOUND:['The addressed storage binding did not contain the exact requested key.','compare-identities'],
  EXPLORER_SOURCE_KEY_MISMATCH:['Comparable source-key fingerprints disagree.','inspect-key-construction'],
  EXPLORER_BUCKET_CONTEXT_MISMATCH:['Comparable bucket-context fingerprints disagree.','inspect-binding'],
+ EXPLORER_WORKER_ROUTING_CONFIG:['Public Worker-to-Worker fetch is missing its explicit routing compatibility flag.','review-routing-configuration'],
  EXPLORER_WORKER_NOT_READY:['Worker execution/readiness could not be established.','check-worker'],
  EXPLORER_WORKER_CAPABILITY_MISMATCH:['Observed Worker capabilities do not satisfy the request.','review-worker-version'],
  EXPLORER_AUTH_EXPIRED:['Authorization was rejected; token expiry is not independently established.','reconnect'],
@@ -47,10 +48,12 @@ function safeEvent(event,sequence,now){
  if(Number.isInteger(event.protocol)&&event.protocol>=0&&event.protocol<100)out.protocol=event.protocol;
  if(typeof event.safeTransfers==='boolean')out.safeTransfers=event.safeTransfers;
  for(const field of ['selectedCount','loadedCount','previewGeneration'])if(Number.isSafeInteger(event[field])&&event[field]>=0)out[field]=event[field];
- for(const field of ['hasClipboard','betaMode','debugMode'])if(typeof event[field]==='boolean')out[field]=event[field];
+ for(const field of ['hasClipboard','betaMode','debugMode','bindingMatches','publicFetchEnabled'])if(typeof event[field]==='boolean')out[field]=event[field];
  if(typeof event.bindingDeclared==='boolean')out.bindingDeclared=event.bindingDeclared;
  if(Number.isSafeInteger(event.size)&&event.size>=0)out.size=event.size;
- for(const key of ['account','bucket','key','encodedKey','etag','binding','expectedBinding','origin','expectedOrigin'])if(hex(event[key]))out[key]=event[key];
+ for(const key of ['account','bucket','key','encodedKey','etag','binding','expectedBinding','origin','expectedOrigin','expectedKey'])if(hex(event[key]))out[key]=event[key];
+ if(['source.provider-settings','destination.provider-settings','source.api-read','source.direct-head','source.via-destination-head'].includes(event.probe))out.probe=event.probe;
+ if(Number.isFinite(event.durationMs)&&event.durationMs>=0)out.durationMs=event.durationMs;
  if(uuid(event.scope))out.scope=event.scope;
  if(uuid(event.requestId))out.requestId=event.requestId;
  if(['api','worker','browser','local'].includes(event.mechanism))out.mechanism=event.mechanism;
@@ -88,10 +91,10 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
   const key=await keyPromise;
   const hash=await cryptoApi.subtle.sign('HMAC',key,new TextEncoder().encode(kind+'\0'+raw));return Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
  }
- async function identity(operationId,source,key,{role='source',stage='source.identity',encoding='path'}={}){
+ async function identity(operationId,source,key,{role='source',stage='source.identity',encoding='path',requestId,expectedKey}={}){
   try{if(!enabled||!uuid(operationId))return;
    const values=await Promise.all([fingerprint('account',source?.accountId),fingerprint('bucket',JSON.stringify([source?.accountId,source?.bucketName])),fingerprint('key',key),fingerprint('key',encoding==='literal'?String(key??''):encoding==='query'?encodeURIComponent(String(key??'')):String(key??'').split('/').map(encodeURIComponent).join('/'))]);
-   record(operationId,{stage,component:context,role,encoding,scope:identityScope,account:values[0],bucket:values[1],key:values[2],encodedKey:values[3],outcome:'confirmed'});
+   record(operationId,{stage,component:context,role,encoding,requestId,expectedKey,scope:identityScope,account:values[0],bucket:values[1],key:values[2],encodedKey:values[3],outcome:'confirmed'});
   }catch{}
  }
  function exportBundle(){prune();return {explorerDiagnosticVersion:VERSION,scope:'redacted-explorer',runId,exportedAt:now(),limits:LIMITS,operations:JSON.parse(JSON.stringify(records)),limitations:['Fingerprints comparable only within their recorded scope','No credentials, private names, URLs or contents','Binding declaration is not platform binding introspection','Collection is bounded and may be truncated','Observed completion is not automatically byte verification']};}
@@ -117,21 +120,37 @@ function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.cr
   return {...JSON.parse(JSON.stringify(trace)),descendants:records.filter(op=>op.id!==operationId&&ids.has(op.id)).map(op=>JSON.parse(JSON.stringify(op))),parentAvailable:trace.parentId?records.some(op=>op.id===trace.parentId):true};
  }
  function diagnose(operationId){
-  const op=records.find(op=>op.id===operationId);if(!op)return {status:'unavailable',findings:[],missing:['operation trace']};
+  prune();const op=records.find(op=>op.id===operationId);if(!op)return {status:'unavailable',findings:[],missing:['operation trace']};
   const group=tree(operationId);const findings=[],events=[op,...group.descendants].flatMap(item=>item.events.map(event=>({...event,operationId:item.id})));
   const add=(confidence,code,evidence,missing)=>findings.push({confidence,kind:confidence==='possible'||confidence==='unknown'?'hypothesis':'observation',code,description:taxonomy[code]?.[0]||code,evidence,missing});
-  for(const event of events.filter(event=>event.status===404))add('confirmed','EXPLORER_HTTP_NOT_FOUND',[event.sequence],['Root cause requires route, binding and exact-key evidence']);
-  for(const event of events.filter(event=>event.code==='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[event.sequence],['A missing key in the addressed binding does not prove the intended bucket lacks it']);
-  for(const event of events.filter(e=>e.binding&&e.expectedBinding&&e.binding!==e.expectedBinding))add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[event.sequence],['This compares declared binding context; provider binding introspection is still required']);
+  for(const event of events.filter(event=>event.status===404))add('confirmed','EXPLORER_HTTP_NOT_FOUND',[{operationId:event.operationId,sequence:event.sequence}],['Root cause requires route, binding and exact-key evidence']);
+  for(const event of events.filter(event=>event.code==='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[{operationId:event.operationId,sequence:event.sequence}],['A missing key in the addressed binding does not prove the intended bucket lacks it']);
+  for(const event of events.filter(e=>e.binding&&e.expectedBinding&&e.binding!==e.expectedBinding))add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[{operationId:event.operationId,sequence:event.sequence}],['This compares declared binding context; provider binding introspection is still required']);
   for(const event of events.filter(e=>e.code&&taxonomy[e.code]&&e.code!=='EXPLORER_SOURCE_NOT_FOUND'))add('confirmed',event.code,[{operationId:event.operationId,sequence:event.sequence}],['Recorded error signature is an observation; its underlying cause may remain unknown']);
   for(const event of events.filter(e=>Number.isInteger(e.workerVersion)&&e.workerVersion<5))add('confirmed','EXPLORER_WORKER_CAPABILITY_MISMATCH',[{operationId:event.operationId,sequence:event.sequence}],['Inspect required endpoint and deployed configuration before repair']);
   const identities=events.filter(e=>e.key&&e.role==='source');
-  for(const a of identities)for(const b of identities)if(a.sequence<b.sequence&&a.scope===b.scope){
-   if(a.key!==b.key)add('confirmed','EXPLORER_SOURCE_KEY_MISMATCH',[a.sequence,b.sequence],[]);
-   if(a.bucket&&b.bucket&&a.bucket!==b.bucket)add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[a.sequence,b.sequence],[]);
+  const ref=event=>({operationId:event.operationId,sequence:event.sequence});
+  // Different batch items are different objects, not mismatches. Legacy traces
+  // without an explicit item correlation cannot establish identity drift.
+  for(const event of identities)if(event.scope&&event.expectedKey&&event.key!==event.expectedKey)add('confirmed','EXPLORER_SOURCE_KEY_MISMATCH',[ref(event)],[]);
+  const correlated=new Map();
+  for(const b of identities){
+   if(!b.scope||!b.requestId)continue;
+   const groupKey=b.operationId+':'+b.scope+':'+b.requestId,a=correlated.get(groupKey);
+   if(!a){correlated.set(groupKey,b);continue;}
+   if(a.key!==b.key)add('confirmed','EXPLORER_SOURCE_KEY_MISMATCH',[ref(a),ref(b)],[]);
+   if(a.bucket&&b.bucket&&a.bucket!==b.bucket)add('confirmed','EXPLORER_BUCKET_CONTEXT_MISMATCH',[ref(a),ref(b)],[]);
   }
-  const match=identities[0];const peers=match?records.filter(other=>other.id!==op.id&&['preview','download'].includes(other.operation)&&other.state==='confirmed'&&other.events.some(e=>e.key===match.key&&e.bucket===match.bucket&&e.scope===match.scope)):[];
-  if(peers.length&&events.some(e=>e.status===404))add('strongly-supported','API_WORKER_PATH_DIVERGENCE',events.filter(e=>e.status===404).map(e=>e.sequence),['Inspect Worker route and binding; API success does not prove Worker identity']);
+  for(const event of events.filter(e=>e.origin&&e.expectedOrigin&&e.origin!==e.expectedOrigin))add('confirmed','EXPLORER_WORKER_NOT_READY',[ref(event)],['Observed endpoint origin differs from the requested origin']);
+  const candidates=identities.filter(e=>e.bucket&&e.scope),uniqueKeys=new Set(candidates.map(e=>e.scope+':'+e.bucket+':'+e.key));
+  const notFound=events.filter(e=>e.status===404);
+  const failedKeys=new Set(identities.filter(e=>e.requestId&&notFound.some(f=>f.operationId===e.operationId&&f.requestId===e.requestId)).map(e=>e.key));
+  const comparable=candidates.filter(e=>failedKeys.has(e.key)||(uniqueKeys.size===1&&notFound.length));
+  const peers=records.filter(other=>other.id!==op.id&&['preview','download'].includes(other.operation)&&other.state==='confirmed'&&other.events.some(e=>comparable.some(match=>e.key===match.key&&e.bucket===match.bucket&&e.scope===match.scope)));
+  if(peers.length&&events.some(e=>e.status===404))add('strongly-supported','API_WORKER_PATH_DIVERGENCE',events.filter(e=>e.status===404).map(e=>({operationId:e.operationId,sequence:e.sequence})),['Inspect Worker route and binding; API success does not prove Worker identity']);
+  const apiProbe=events.find(e=>e.probe==='source.api-read'&&e.outcome==='confirmed');
+  const proxyFailure=events.find(e=>e.probe==='source.via-destination-head'&&e.outcome==='failed');
+  if(apiProbe&&proxyFailure)add('strongly-supported','API_WORKER_PATH_DIVERGENCE',[ref(apiProbe),ref(proxyFailure)],['Same probe: API read succeeds while destination-Worker source access fails; inspect route/configuration and exact identity']);
   if(!findings.length)add('unknown','EXPLORER_RESULT_UNCONFIRMED',[],['No deterministic failure signature is established']);
   findings.sort((a,b)=>['confirmed','strongly-supported','possible','unknown'].indexOf(a.confidence)-['confirmed','strongly-supported','possible','unknown'].indexOf(b.confidence));
   return {status:'partial',operationId,findings,relatedSuccesses:peers.map(p=>p.id),rootCause:'unknown',missing:['Installed extension build identity','Observed provider binding settings','Live destination read/hash unless separately recorded'],verificationPlan:['Use explicitly authorized disposable objects','Compare same-scope source identity fingerprints across API and Worker','Inspect observed Worker version and binding declaration versus provider settings','Copy once, independently read/hash destination and confirm source remains','Do not replay an ambiguous write; inspect destination first']};

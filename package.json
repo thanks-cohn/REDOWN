@@ -16,7 +16,8 @@
     "runtime:chrome": "node scripts/installed-chrome.mjs",
     "package:audit": "python scripts/package_chrome_store.py --audit-only",
     "explorer:preview": "node scripts/explorer-operations-preview.mjs",
-    "explorer:describe": "node agent/explorer/cli.mjs describeExplorer"
+    "explorer:describe": "node agent/explorer/cli.mjs describeExplorer",
+    "explorer:smoke": "node scripts/explorer-smoke.mjs"
   },
   "devDependencies": {
     "jsdom": "^26.1.0",

@@ -69,13 +69,20 @@
       "confidence": "possible",
       "claim": "Worker-to-Worker routing restrictions, stale endpoint/profile, or incorrect binding could explain the divergent source read",
       "evidence": "Hypotheses only; public documentation search did not establish a routing restriction as the cause"
+    },
+    {
+      "confidence": "confirmed",
+      "claim": "All13 connected REDOWN Worker settings lacked the explicit global_fetch_strictly_public flag; the flag was added and provider settings read back with bindings and compatibility dates unchanged.",
+      "evidence": "verification/routing-settings-repair.json; settings only, no live transfer verification"
     }
   ],
   "repairProposal": {
     "status": "collect-evidence-first",
     "safeChangesImplemented": [
       "preserve HTTP404 context rather than mislabeling all404s as missing objects",
-      "versioned redacted tracing of Worker source read, declared binding and destination verification"
+      "versioned redacted tracing of Worker source read, declared binding and destination verification",
+      "Include explicit public fetch routing flag in new provisioning",
+      "Named read-only provider/API/direct/proxy probes and per-item identity correlation; fixed local smoke presets"
     ],
     "conditionalCorrection": [
       "Correct binding/profile only if intended bucket and provider binding mismatch are demonstrated",
