@@ -1156,7 +1156,9 @@ async function fetchUploadBuilderChildren(parentSegments=[]){
   if(requestVersion!==uploadLocationLoadVersion || targetKey!==uploadLocationTargetKey
     || !currentTarget || targetKey!==currentTarget.accountId+":"+currentTarget.bucketName)return [];
   if(!result?.ok)return [];
-  const children=(result.children||[]).map((value)=>String(value||"").trim()).filter(Boolean);
+  // Accept only immediate children of the selected bucket and parent folder.
+  const children=(result.children||[]).map((value)=>String(value||"").trim().replace(/^\\/+|\\/+$/g,""))
+    .filter((value)=>value && !value.includes("/") && value!=="." && value!=="..");
   for(const child of children){
     const full=[...parent,child].join("/");
     if(full&&!uploadLocationPrefixes.includes(full))uploadLocationPrefixes.push(full);
@@ -1342,7 +1344,8 @@ async function loadUploadLocations({ preserve = true } = {}) {
   if(requestVersion!==uploadLocationLoadVersion || key!==uploadLocationTargetKey)return;
   // A saved preset prefix is not proof that a child exists under this bucket.
   uploadLocationPrefixes = result?.ok
-    ? (result.children || []).map((child)=>String(child||"").replace(/^\/+|\/+$/g,"")).filter(Boolean)
+    ? (result.children || []).map((child)=>String(child||"").trim().replace(/^\\/+|\\/+$/g,""))
+        .filter((child)=>child && !child.includes("/") && child!=="." && child!=="..")
     : [];
 
   for (const prefix of uploadLocationPrefixes) {
