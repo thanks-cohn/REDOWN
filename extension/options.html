@@ -63,12 +63,10 @@
     @media(max-width:520px){html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.bucket-surface{gap:5px;padding:8px 6px 24px}.bucket-name{font-size:11px}.bucket-icon{flex-basis:27px;height:27px}.bucket-icon svg{width:26px;height:26px}.bucket-status{font-size:10px}}
     #cloudflare-panel>.card{container-type:inline-size}
     .bucket-grid-viewport{container-type:inline-size}
-    /* Fixed one-row anchor; the scrollport opens over nearby content without page reflow. */
-    html:not(.debug-mode) #cloudflare-panel{position:relative;z-index:2}
-    html:not(.debug-mode) #cloudflare-panel>.card{position:relative;z-index:1}
-    html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));height:calc(var(--bucket-size) + 18px);margin-top:28px;position:relative;overflow:visible;contain:layout}
-    html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:var(--bucket-popup-height,min(75vh,900px));max-height:none;margin-top:0;position:absolute;inset:0 0 auto;background:#10192a;clip-path:inset(0 0 calc(100% - var(--bucket-size) - 18px) 0 round 10px);will-change:transform;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:transparent transparent}
-    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within):not([data-dismissed="true"]) .bucket-grid{clip-path:inset(0 round 10px);animation:storage-fast-open 100ms ease-out both;scrollbar-color:#718097 #111b2c}
+    /* In-flow scrollport: expansion reserves space once; only its entrance animates. */
+    html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));margin-top:28px;position:relative;min-width:0}
+    html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:calc(var(--bucket-size) + 18px);max-height:none;margin-top:0;position:relative;background:#10192a;border-radius:10px;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:transparent transparent}
+    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within):not([data-dismissed="true"]) .bucket-grid{height:var(--bucket-popup-height,min(75vh,900px));animation:storage-fast-open 100ms ease-out both;scrollbar-color:#718097 #111b2c}
     @keyframes storage-fast-open{from{transform:translateY(-4px);opacity:.84}to{transform:translateY(0);opacity:1}}
     html:not(.debug-mode) .bucket-grid::-webkit-scrollbar{width:8px}
     html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-thumb{background:transparent;border-radius:8px;border:2px solid transparent}

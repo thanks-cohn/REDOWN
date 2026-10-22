@@ -13,7 +13,7 @@ const font=await readFile('extension/fonts/dm-sans-latin-variable.woff');
 const css=d.querySelector('style').textContent.replace('url("fonts/dm-sans-latin-variable.woff")',`url("data:font/woff;base64,${font.toString('base64')}")`);
 const bucketCode=source.slice(source.indexOf('async function refreshBuckets(){'),source.indexOf('async function addBucketPreset('));
 const modes=source.slice(source.indexOf('function applyDebugMode(){'),source.indexOf('(async()=>{\n  const stored=await chrome.storage.local.get(["profiles"'));
-const body=`<div class="wrap"><header><p>Local mocked preview · no extension or Cloudflare connection</p>${d.getElementById('settings-disclosure').outerHTML}</header>${d.getElementById('cloudflare-panel').outerHTML}${d.querySelector('[data-debug-detail]').outerHTML}<div id="r2-setup" hidden></div><a id="r2-dashboard" hidden></a><div id="hero-status" hidden></div><div id="profiles-empty" hidden></div>${d.getElementById('add-github').outerHTML}</div>`;
+const body=`<div class="wrap"><header><p>Local mocked preview · no extension or Cloudflare connection</p>${d.getElementById('settings-disclosure').outerHTML}</header>${d.getElementById('cloudflare-panel').outerHTML}<section id="following-section"><h2>Right-click Menu</h2></section>${d.querySelector('[data-debug-detail]').outerHTML}<div id="r2-setup" hidden></div><a id="r2-dashboard" hidden></a><div id="hero-status" hidden></div><div id="profiles-empty" hidden></div>${d.getElementById('add-github').outerHTML}</div>`;
 const mocks=`
 const $=id=>document.getElementById(id);
 let storageTraining=null,currentAccountId='fixture',bucketLoadVersion=0,debugModeEnabled=false,betaModeEnabled=false,onboardingBucketState='choose';
@@ -44,19 +44,22 @@ try{
  await evaluate(`document.open();document.write(${JSON.stringify(preview)});document.close();`);await evaluate('fixture.ready');await evaluate('document.fonts.ready.then(()=>true)');
  const report={scope:'Ordinary Chromium, local mocked HTML and real UI handlers. Not an installed extension or live Cloudflare test.',layouts:[]};
  report.initialAttentionAnimations=await evaluate(`Array.from(document.querySelectorAll('.bucket-repair'),el=>getComputedStyle(el).animationName)`);assert.ok(report.initialAttentionAnimations.every(name=>name==='none'));
- for(const width of [1366,390]){
-  await call('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false},sessionId);
+ for(const [width,height,buckets] of [[1366,768,1],[1366,768,12],[390,844,12],[1366,768,120],[390,844,120]]){
+  await evaluate(`send=async()=>({ok:true,buckets:Array.from({length:${buckets}},(_,i)=>({name:names[i]||'storage-'+i}))});refreshBuckets()`);
+  await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false},sessionId);
   await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:0,y:0},sessionId);await pause(100);
-  const rest=await evaluate(`(()=>{const g=$('bucket-grid');return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,restHeight:g.parentElement.clientHeight,followingTop:$('refresh-storage').getBoundingClientRect().top,restClip:getComputedStyle(g).clipPath,tileHeight:g.querySelector('.bucket').getBoundingClientRect().height,fontLoaded:document.fonts.check('13px "DM Sans"')}})()`);
-  assert.ok(rest.scrollWidth<=width);await shot('rest-'+width);
+  const rest=await evaluate(`(()=>{const g=$('bucket-grid');return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,restHeight:g.parentElement.clientHeight,followingTop:$('following-section').getBoundingClientRect().top+scrollY,restClip:getComputedStyle(g).clipPath,tileHeight:g.querySelector('.bucket').getBoundingClientRect().height,fontLoaded:document.fonts.check('13px "DM Sans"')}})()`);
+  assert.ok(rest.scrollWidth<=width);await shot('rest-'+width+'-'+buckets);
   await evaluate(`$('bucket-grid').focus()`);await pause(150);
-  const opened=await evaluate(`(()=>{const g=$('bucket-grid'),v=g.parentElement,r=g.getBoundingClientRect();return {anchorHeight:v.clientHeight,expandedHeight:r.height,bottom:r.bottom,openClip:getComputedStyle(g).clipPath,animation:getComputedStyle(g).animationName,duration:getComputedStyle(g).animationDuration,followingTop:$('refresh-storage').getBoundingClientRect().top,tileHeight:g.querySelector('.bucket').getBoundingClientRect().height}})()`);
-  assert.equal(opened.anchorHeight,rest.restHeight,'opening never moves the anchor or following sections');
-  assert.ok(Math.abs(opened.followingTop-rest.followingTop)<1);
-  assert.ok(opened.expandedHeight>rest.restHeight);assert.ok(opened.bottom<=901);
-  assert.notEqual(opened.openClip,rest.restClip);assert.equal(opened.duration,'0.1s');
+  const opened=await evaluate(`(()=>{const g=$('bucket-grid'),v=g.parentElement,r=g.getBoundingClientRect();return {anchorHeight:v.clientHeight,expandedHeight:r.height,bottom:r.bottom+scrollY,sectionBottom:$('cloudflare-panel').getBoundingClientRect().bottom+scrollY,openClip:getComputedStyle(g).clipPath,animation:getComputedStyle(g).animationName,duration:getComputedStyle(g).animationDuration,followingTop:$('following-section').getBoundingClientRect().top+scrollY,tileHeight:g.querySelector('.bucket').getBoundingClientRect().height}})()`);
+  assert.ok(Math.abs(opened.anchorHeight-opened.expandedHeight)<2,'parent contains scrollport');
+  assert.ok(opened.followingTop>=opened.sectionBottom,'following section stays outside storage');
+  assert.ok(opened.bottom<=opened.sectionBottom,'grid remains contained');
+  assert.ok(Math.abs((opened.followingTop-rest.followingTop)-(opened.anchorHeight-rest.restHeight))<2);
+  if(buckets>1)assert.ok(opened.expandedHeight>rest.restHeight);
+  assert.equal(opened.duration,'0.1s');
   assert.ok(Math.abs(opened.tileHeight-rest.tileHeight)<1,'tile geometry stays fixed');
-  report.layouts.push({...rest,...opened,followingContentDelta:opened.followingTop-rest.followingTop,anchorHeightDelta:opened.anchorHeight-rest.restHeight});await shot('expanded-'+width);
+  report.layouts.push({...rest,...opened,followingContentDelta:opened.followingTop-rest.followingTop,anchorHeightDelta:opened.anchorHeight-rest.restHeight});await shot('expanded-'+width+'-'+buckets);
   await evaluate(`$('bucket-grid').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);
   assert.equal(await evaluate('document.activeElement.id'),'refresh-storage');
   await evaluate('document.activeElement.blur()');

@@ -37,7 +37,8 @@
       const top=viewport.getBoundingClientRect().top;
       const last=grid.lastElementChild;
       const contentHeight=last?last.offsetTop+last.offsetHeight+12:viewport.clientHeight;
-      const height=Math.max(viewport.clientHeight,Math.min(900,contentHeight,window.innerHeight*.75,window.innerHeight-top-12));
+      const rowHeight=(grid.firstElementChild?.offsetHeight||0)+18;
+      const height=Math.max(rowHeight,Math.min(900,contentHeight,window.innerHeight*.75,window.innerHeight-top-12));
       const value=height+'px';
       if(viewport.style.getPropertyValue('--bucket-popup-height')!==value)viewport.style.setProperty('--bucket-popup-height',value);
     }

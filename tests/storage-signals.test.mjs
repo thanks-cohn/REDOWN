@@ -59,7 +59,7 @@ test('pop-out fits the visible window and Escape returns focus without cloud wor
  const h=setup(),d=h.document,scope={};vm.runInNewContext(code,scope);
  const viewport=d.querySelector('.bucket-grid-viewport'),grid=d.getElementById('bucket-grid');
  Object.defineProperty(viewport,'clientHeight',{value:120});viewport.getBoundingClientRect=()=>({top:300});
- const child=d.createElement('button');grid.append(child);Object.defineProperty(child,'offsetHeight',{value:1000});
+ const first=d.createElement('button'),child=d.createElement('button');grid.append(first,child);Object.defineProperty(first,'offsetHeight',{value:102});Object.defineProperty(child,'offsetHeight',{value:1000});
  Object.defineProperty(h.dom.window,'innerHeight',{value:900,writable:true});
  const expansion=scope.RedownStorageSignals.wireBucketExpansion({document:d,window:h.dom.window});
  grid.focus();assert.equal(viewport.style.getPropertyValue('--bucket-popup-height'),'588px');
