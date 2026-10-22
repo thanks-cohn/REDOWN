@@ -1095,36 +1095,57 @@ async function configureAssetDomain(accountId, bucketName, website) {
     })
   });
 
-  // Keep R2 CORS compatible too, in case the bucket later gets a direct public R2 domain.
-  await configureBucketAssetCors(accountId, bucketName, origin);
+  // Read back the exact association; a stored string or PUT acknowledgement is insufficient.
+  let domains;
+  try{domains=await cfJson(`/accounts/${accountId}/workers/domains?service=${encodeURIComponent(profile.scriptName)}&hostname=${encodeURIComponent(hostname)}`);}
+  catch{return {hostname,state:"unknown",message:"Cloudflare accepted the request, but its association could not be refreshed. Check Cloudflare before retrying."};}
+  const domain=(Array.isArray(domains)?domains:domains?.result||[]).find(item=>item.hostname===hostname&&item.service===profile.scriptName);
+  if(!domain)return {hostname,state:"unknown",message:"Cloudflare has not confirmed this hostname on this bucket’s Worker. Refresh and check the domain before retrying."};
+  // Reload before updating one profile: another page may have changed other destinations.
+  const latest=await getProfiles();
+  const current=latest.findIndex(p=>p.id===profile.id&&p.accountId===accountId&&p.bucketName===bucketName&&p.scriptName===profile.scriptName);
+  if(current<0)return {hostname,state:"unknown",message:"The destination changed while attaching. Refresh Settings to inspect the outcome."};
+  latest[current]={...latest[current],customAssetDomain:hostname,allowedWebsiteOrigin:origin,publicBaseUrl:`https://${hostname}/assets`,publicAssetsEnabled:true,explorerManaged:false};
+  await setProfiles(latest);
+  let published=latest[current];
+  async function finish(state,message){
+    const saved=await getProfiles();
+    const destination=saved.find(p=>p.id===profile.id&&p.accountId===accountId&&p.bucketName===bucketName&&p.customAssetDomain===hostname);
+    if(destination){destination.assetDomainState=state;destination.assetDomainMessage=message;await setProfiles(saved);published=destination;}
+    return {origin,hostname,publicBaseUrl:published.publicBaseUrl,profile:published,domain:attached,state,message};
+  }
+  try{
+    await configureBucketAssetCors(accountId,bucketName,origin);
+    published=await provisionCloudflareProfile({accountId,accountName:profile.accountName,bucketName,profileName:profile.name,folders:profile.folders,explorerOnly:false});
+  }catch(error){return finish("needs-setup",`Attached — Cloudflare reports the hostname association, but public delivery needs setup: ${error.message}. Check the Worker and DNS/SSL before retrying.`);}
+  // This checks the public connection, not the existence or accessibility of any file.
+  let reachable=false;
+  try{
+    const response=await RedownCloudflareApi.boundedFetch(origin+"/",{credentials:"omit",redirect:"error",timeoutMs:8000});
+    const body=await response.json();reachable=response.ok&&isVerifiedWorkerHealth(body);
+  }catch{}
+  return finish(reachable?"verified":"attached",reachable?"Attached — Cloudflare confirmed the association. Public Worker connection verified; individual file access has not been tested.":"Attached — Cloudflare confirmed the association. Public connection is not verified; DNS or SSL may still need time or setup. Check the URLs below.");
+}
 
-  profiles[index] = {
-    ...profile,
-    customAssetDomain: hostname,
-    allowedWebsiteOrigin: origin,
-    publicBaseUrl: `https://${hostname}/assets`,
-    publicAssetsEnabled: true,
-    explorerManaged: false
-  };
-  await setProfiles(profiles);
-
-  // Public delivery is an explicit capability. Redeploy only after the user
-  // attaches a serving domain so merely opening Explorer never publishes R2.
-  const published = await provisionCloudflareProfile({
-    accountId,
-    accountName: profile.accountName,
-    bucketName,
-    profileName: profile.name,
-    folders: profile.folders,
-    explorerOnly: false
-  });
-
-  return {
-    origin,
-    hostname,
-    publicBaseUrl: published.publicBaseUrl,
-    domain: attached
-  };
+// Read-only discovery: never provisions a Worker or enables a public address.
+async function bucketPublicAddresses(accountId,bucketName){
+  if(!accountId||!bucketName)throw new Error("Choose a bucket first.");
+  const path=`/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/domains`;
+  const profiles=await getProfiles();
+  const profile=profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName===bucketName);
+  const result={accountId,bucketName,addresses:[],errors:[]};
+  const reads=await Promise.allSettled([cfJson(path+"/managed"),cfJson(path+"/custom"),profile?.customAssetDomain?cfJson(`/accounts/${encodeURIComponent(accountId)}/workers/domains?service=${encodeURIComponent(profile.scriptName)}&hostname=${encodeURIComponent(profile.customAssetDomain)}`):Promise.resolve([])]);
+  const [managed,custom,worker]=reads;
+  if(managed.status==="fulfilled"&&managed.value?.domain)result.addresses.push({label:"Development URL",base:`https://${managed.value.domain}/`,state:managed.value.enabled?"configured":"restricted"});
+  if(custom.status==="fulfilled")for(const domain of custom.value?.domains||[])result.addresses.push({label:"Custom domain",base:`https://${domain.domain}/`,state:!domain.enabled?"restricted":domain.status?.ssl==="active"&&domain.status?.ownership==="active"?"configured":"needs-setup"});
+  if(profile?.customAssetDomain){
+    const domains=worker.status==="fulfilled"?(Array.isArray(worker.value)?worker.value:worker.value?.result||[]):[];
+    const found=domains.find(d=>d.hostname===profile.customAssetDomain&&d.service===profile.scriptName);
+    result.addresses.push({label:"Custom domain · REDOWN Worker",base:`https://${profile.customAssetDomain}/assets/`,state:worker.status==="rejected"?"unknown":!found?"unknown":profile.assetDomainState==="needs-setup"?"needs-setup":found.enabled===false||!profile.publicAssetsEnabled?"restricted":"configured"});
+  }
+  if(profile?.publicAssetsEnabled&&profile.workerUrl)result.addresses.push({label:"REDOWN Worker URL",base:profile.workerUrl.replace(/\/+$/,"")+"/assets/",state:"configured"});
+  for(const read of reads)if(read.status==="rejected")result.errors.push("Some public address configuration could not be refreshed.");
+  return result;
 }
 
 function publicAssetUrl(profile, key) {
@@ -2133,6 +2154,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
       }
+      if (message?.type === "cfPublicAddresses") return sendResponse({ok:true,...(await bucketPublicAddresses(message.accountId,message.bucketName))});
       if (message?.type === "cfObjects") return sendResponse({ ok:true, ...(await listObjects(message.accountId,message.bucketName,message.prefix,message.cursor)) });
       if (message?.type === "rfisExport") {
         const { rfisPreviewEnabled=false }=await chrome.storage.local.get("rfisPreviewEnabled");

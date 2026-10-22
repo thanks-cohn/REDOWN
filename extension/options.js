@@ -381,41 +381,9 @@ function assetCorsControl(profile){
   status.className="status";
   status.style.marginTop="7px";
 
-  const endpoints=document.createElement("div");
-  endpoints.className="meta";
-  endpoints.style.gridColumn="1 / -1";
-  endpoints.style.marginTop="9px";
-  endpoints.style.wordBreak="break-all";
-
-  function renderEndpoints(){
-    const base=(profile.publicBaseUrl||(`${profile.workerUrl}/assets`)).replace(/\/+$/,"");
-    const folders=profile.folders||{};
-    const lines=[
-      ["Public base",base],
-      ["2D",`${base}/${folders["2d"]||"2d"}/`],
-      ["3D",`${base}/${folders["3d"]||"3d"}/`],
-      ["Videos",`${base}/${folders.videos||"videos"}/`],
-      ["Files",`${base}/${folders.files||"files"}/`]
-    ];
-    endpoints.replaceChildren();
-    for(const [name,url] of lines){
-      const line=document.createElement("div");
-      const strong=document.createElement("strong");
-      strong.textContent=name+": ";
-      const text=document.createElement("span");
-      text.textContent=url;
-      line.append(strong,text);
-      endpoints.append(line);
-    }
-  }
-
-  status.dataset.debugDetail="true";
-  endpoints.dataset.debugDetail="true";
-  status.hidden=!debugModeEnabled;
-  endpoints.hidden=!debugModeEnabled;
-  status.textContent=profile.customAssetDomain
-    ? `Serving through https://${profile.customAssetDomain}`
-    : "Using REDOWN's workers.dev endpoint by default. Add a Cloudflare-hosted domain/subdomain to use it instead.";
+  status.setAttribute("role","status");
+  status.textContent=profile.assetDomainState==="needs-setup"?profile.assetDomainMessage:"Attach a Cloudflare-hosted hostname to REDOWN’s Worker. Files use its /assets/ path. This enables public file delivery.";
+  const urls=RedownPublicAddresses.disclosure({document,source:profile,load:()=>send({type:"cfPublicAddresses",accountId:profile.accountId,bucketName:profile.bucketName})});
 
   apply.addEventListener("click",async()=>{
     if(apply.disabled)return;
@@ -432,17 +400,17 @@ function assetCorsControl(profile){
         website:input.value
       });
       if(!result?.ok)throw new Error(result?.error||"Could not attach asset domain");
-      profile.customAssetDomain=result.hostname;
-      profile.allowedWebsiteOrigin=result.origin;
-      profile.publicBaseUrl=result.publicBaseUrl;
+      // The background owns the saved profile and read-back result. Do not overwrite it
+      // with this Settings page's older copy of every destination.
+      Object.assign(profile,result.profile||{});
       input.value=result.hostname;
-      await saveProfiles();
-      status.className="status ok";
-      status.textContent=`Assets now serve from ${result.publicBaseUrl}`;
-      renderEndpoints();
+      status.className="status"+(result.state==="failed"?" bad":result.state==="verified"?" ok":"");
+      status.textContent=result.message;
+      await urls.refresh();
     }catch(error){
       status.className="status bad";
-      status.textContent=error?.message||String(error);
+      status.textContent="Outcome unknown or failed: "+(error?.message||String(error))+". Refresh URLs and check Cloudflare before retrying.";
+      await urls.refresh();
     }finally{
       apply.disabled=false;
       apply.textContent=previous;
@@ -450,8 +418,8 @@ function assetCorsControl(profile){
   });
 
   row.append(input,apply);
-  wrap.append(label,row,status,endpoints);
-  renderEndpoints();
+  wrap.append(label,row,status,urls.host);
+  void urls.refresh();
   return wrap;
 }
 
@@ -1601,6 +1569,7 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
   setWorkspacePreviewProgress("Loading next file…");
   document.querySelectorAll("#workspace-objects .object.active").forEach(el=>el.classList.remove("active"));
   row?.classList.add("active");
+  const source={...(sourceOverride||explorerSource())};
   const key=obj.key||obj.name||String(obj);
   workspacePreviewAbort?.abort();
   workspacePreviewAbort=new AbortController();
@@ -1683,7 +1652,7 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
     note.className="meta";
     note.textContent=type.includes("gltf")
       ?"Interactive 3D preview · drag to orbit · wheel to zoom · use Reset view to reframe the model."
-      :"No inline renderer for this file type yet. Details and public URL are available below.";
+      :"No inline renderer for this file type yet. Details and available URLs appear below.";
     media.append(note);
     if(type.includes("gltf")){
       const viewer=document.createElement("model-viewer");
@@ -1696,6 +1665,10 @@ async function showWorkspacePreview(obj,row,urlOverride="",sourceOverride=null){
   }
 
   appendDetails(root,obj,key,url,type);
+  if(!urlOverride){
+    const urls=RedownPublicAddresses.disclosure({document,source,key,load:()=>send({type:"cfPublicAddresses",accountId:source.accountId,bucketName:source.bucketName})});
+    root.append(urls.host);void urls.refresh();
+  }
   if(workspaceLightboxOpen())mountWorkspaceLightboxMedia();
 }
 

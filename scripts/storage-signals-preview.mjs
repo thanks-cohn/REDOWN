@@ -8,6 +8,8 @@ import {JSDOM} from 'jsdom';
 const output=resolve(process.argv[2]||'work/storage-signals-preview');await mkdir(output,{recursive:true});
 const html=await readFile('extension/options.html','utf8'),source=await readFile('extension/options.js','utf8');
 const signals=await readFile('extension/storage-signals.js','utf8');
+const publicAddresses=await readFile('extension/public-addresses.js','utf8');
+const domainCode=source.slice(source.indexOf('function assetCorsControl('),source.indexOf('function renderRightClickMode('));
 const dom=new JSDOM(html),d=dom.window.document;d.getElementById('cloudflare-panel').hidden=false;
 const font=await readFile('extension/fonts/dm-sans-latin-variable.woff');
 const css=d.querySelector('style').textContent.replace('url("fonts/dm-sans-latin-variable.woff")',`url("data:font/woff;base64,${font.toString('base64')}")`);
@@ -28,7 +30,7 @@ async function send(message){fixture.calls.push(message.type);return {ok:true,bu
 async function addBucketPreset(name,options){fixture.calls.push(options?.forceRepair?'repair':'select');await new Promise(r=>setTimeout(r,220));if(name==='reference-library')throw Error('Mock connection failed. Retry the repair circle.');return {ok:true,verified:options?.forceRepair===true};}
 `;
 const init=`$('cf-account').innerHTML='<option>Personal workspace</option>';applyDebugMode();storageTraining=fixture.training=RedownStorageSignals.mountTraining({document});fixture.expansion=RedownStorageSignals.wireBucketExpansion({document,window});fixture.ready=refreshBuckets();globalThis.fixture=fixture;`;
-const preview=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body>${body}<script>${signals}\n${mocks}\n${bucketCode}\n${modes}\n${init}</script></body></html>`;
+const preview=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body>${body}<script>${signals}\n${publicAddresses}\n${domainCode}\n${mocks}\n${bucketCode}\n${modes}\n${init}</script></body></html>`;
 dom.window.close();await writeFile(output+'/preview.html',preview);
 if(process.argv.includes('--fixture-only'))process.exit(0);
 const profile=await mkdtemp('/tmp/redown-signals-');const pause=ms=>new Promise(r=>setTimeout(r,ms));let browser,ws;
@@ -103,6 +105,23 @@ try{
  await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]},sessionId);
  report.reducedMotion=await evaluate(`(()=>{const el=document.querySelector('.bucket');RedownStorageSignals.paint(el,'working','Checking…');return {glyphAnimation:getComputedStyle(el.querySelector('.signal-glyph')).animationName,gridTransition:getComputedStyle($('bucket-grid').parentElement).transitionDuration}})()`);
  assert.equal(report.reducedMotion.glyphAnimation,'none');assert.equal(report.reducedMotion.gridTransition,'0s');
+ await call('Emulation.setEmulatedMedia',{features:[]},sessionId);
+ await evaluate(`(()=>{
+  const section=document.createElement('section');section.id='domain-fixture';section.className='section';document.querySelector('.wrap').append(section);
+  send=async message=>message.type==='cfSetAssetDomain'?{ok:true,hostname:'cdn.example',state:'attached',message:'Attached — Cloudflare confirmed the association. Public connection is not verified; DNS or SSL may still need setup.',profile:{customAssetDomain:'cdn.example'}}:{ok:true,accountId:message.accountId,bucketName:message.bucketName,addresses:[{label:'Development URL',base:'https://pub-fixture.r2.dev/',state:'configured'},{label:'Custom domain',base:'https://cdn.example/assets/',state:'configured'}]};
+  section.append(assetCorsControl(profiles[0]));
+  const preview=RedownPublicAddresses.disclosure({document,source:profiles[0],key:'nested/雪 #?.png',load:()=>send({accountId:'fixture',bucketName:'studio'})});section.append(preview.host);preview.refresh();
+ })()`);await pause(100);
+ await evaluate(`$('domain-fixture').querySelector('button').click()`);await pause(100);
+ assert.match(await evaluate(`$('domain-fixture').textContent`),/Attached — Cloudflare confirmed/);
+ for(const width of [1366,390]){
+  await call('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false},sessionId);
+  await evaluate(`$('domain-fixture').querySelectorAll('details').forEach(el=>el.open=true);$('domain-fixture').scrollIntoView({block:'center'})`);await pause(80);
+  assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`));
+  assert.match(await evaluate(`$('domain-fixture').textContent`),/nested\/%E9%9B%AA/);
+  await shot('domain-and-object-urls-'+width);
+ }
+ report.domainAndObjectDisclosures='Rendered with mocked control-plane responses; attachment confirmation, encoded nested object URLs and narrow width passed.';
  await writeFile(output+'/report.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{
  ws?.close();if(browser&&browser.exitCode===null){browser.kill();await Promise.race([new Promise(r=>browser.once('exit',r)),pause(1500)]);if(browser.exitCode===null)browser.kill('SIGKILL');}

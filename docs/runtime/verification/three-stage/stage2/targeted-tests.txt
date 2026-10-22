@@ -1,0 +1,36 @@
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (78.192373ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (21.768119ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (20.405597ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (12.768249ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (13.542758ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (18.539233ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (19.158984ms)
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (192.973262ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (157.086153ms)
+✔ normal primary setup does not invoke the independent inset repair (63.958119ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (64.80262ms)
+✔ successful provisioning refreshes destination editors and inventory before reporting ready (1.984858ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (52.797853ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (49.955835ms)
+✔ settings disclosure dismisses outside and Escape restores focus (21.863899ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (24.521847ms)
+✔ Beta and Debug are independent, persist separate keys, and do not mutate profiles (64.291729ms)
+✔ cached configuration stays amber until explicit verification, and failures allow retry (36.773738ms)
+✔ newer bucket loads win even across A-B-A account switches (20.766587ms)
+✔ persisted mode combinations restore independently, with Beta off when absent (93.873113ms)
+✔ a late repair cannot overwrite a newer bucket list or unlock its active operation (23.432136ms)
+✔ disabling Debug exits practice without moving focus into hidden diagnostics (19.43527ms)
+✔ all address combinations stay contextual and encode full literal object paths (6.53765ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (7.478604ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (4.648874ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (1.259942ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (1.74822ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (6.801798ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1357.331751

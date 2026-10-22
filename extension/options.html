@@ -87,6 +87,11 @@
     @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid-viewport,html:not(.debug-mode) .bucket-grid{transition:none}html:not(.debug-mode) .bucket{transition:none}html:not(.debug-mode) .bucket:hover,html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:none}.bucket-select[aria-busy=true] .bucket-status:before{animation:none}}
     html.debug-mode .bucket .normal-only{display:none!important}
     .header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .url-disclosure{margin-top:10px;font-size:12px;min-width:0}
+    .url-disclosure summary{cursor:pointer;color:var(--muted);padding:6px 0}
+    .url-address{display:grid;gap:6px;padding:12px 0;border-top:1px solid var(--line);min-width:0}
+    .url-address code{overflow-wrap:anywhere;white-space:normal;font-size:12px}
+    .url-actions{display:flex;gap:6px}.url-actions button{padding:5px 10px;font-size:11px}
     .settings-disclosure{position:relative}
     .settings-disclosure > summary{list-style:none;width:42px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
     .settings-disclosure > summary::-webkit-details-marker{display:none}
@@ -714,6 +719,7 @@
 <script src="nested-menu-editor.js"></script>
 <script src="explorer-destination-menu.js"></script>
 <script src="storage-signals.js"></script>
+<script src="public-addresses.js"></script>
 <script src="options.js"></script>
 </body>
 </html>
