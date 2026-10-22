@@ -58,6 +58,18 @@
     .bucket-repair:hover:not(:disabled){background:radial-gradient(ellipse at 55% 85%,#455032,#1d2617 75%);border-color:#344126;color:#f4fdff}
     .bucket-repair:active:not(:disabled){box-shadow:inset 0 4px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,231,.8)}
     .bucket-repair:focus-visible{outline:2px solid #c4b4ff;outline-offset:3px}
+    /* Physical diagnostic lamps: grounded status, lightweight paint-only feedback. */
+    .bucket-repair{transition:border-color .15s ease,color .15s ease,box-shadow .15s ease}
+    .bucket[data-signal="ready"] .bucket-repair{color:#b2f5c4;border-color:#63c18a;box-shadow:inset 0 2px 5px #08190d,0 0 0 1px rgba(99,193,138,.35)}
+    .bucket[data-signal="attention"] .bucket-repair{color:#ffe0a0;border-color:#d0a24d;box-shadow:inset 0 2px 5px #281c09,0 0 0 1px rgba(208,162,77,.35)}
+    .bucket[data-signal="repair"] .bucket-repair{color:#ffb3ac;border-color:#e17d75;box-shadow:inset 0 2px 5px #270f0f,0 0 0 1px rgba(225,125,117,.6);animation:signal-lamp 1.8s ease-in-out infinite}
+    .bucket[data-signal="working"] .bucket-repair{color:#b5dfff;border-color:#79b8eb}
+    .bucket[data-signal="ready"] .bucket-status{color:#2b6241}
+    .bucket[data-signal="repair"] .bucket-status{color:#9b3532}
+    .bucket[data-signal="attention"] .bucket-status{color:#805817}
+    @keyframes signal-lamp{50%{filter:brightness(1.3)}}
+    @media(prefers-reduced-motion:reduce){.bucket[data-signal="repair"] .bucket-repair{animation:none}}
+
     @media(max-width:520px){html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.bucket-surface{gap:5px;padding:8px 6px 24px}.bucket-name{font-size:11px}.bucket-icon{flex-basis:27px;height:27px}.bucket-icon svg{width:26px;height:26px}.bucket-status{font-size:10px}}
     .bucket-grid-viewport{container-type:inline-size}
     /* Normal storage array: stable single-row geometry from first paint.
@@ -621,6 +633,14 @@
 <section data-debug-detail hidden aria-label="Runtime diagnostics">
   <h2>Runtime diagnostics</h2>
   <p>Debug Mode collects a bounded, local trace. It excludes credentials, file names and URLs. Traces reset when the background restarts.</p>
+  <div class="card" style="margin:16px 0;padding:16px">
+    <h3>Storage signal diagnostics</h3>
+    <p>Demonstrates console lights without contacting Cloudflare or changing bucket configuration.</p>
+    <button id="run-signal-diagnostics" class="ghost" type="button">Run Signal Diagnostics</button>
+    <button id="reset-signal-diagnostics" class="ghost" type="button">Reset Signals</button>
+    <p id="signal-diagnostics-message" role="status" aria-live="polite">Signals idle. Choose Run Signal Diagnostics.</p>
+    <div id="signal-diagnostics-lamps" style="display:flex;gap:10px;flex-wrap:wrap" aria-label="Diagnostic signal demonstration"></div>
+  </div>
   <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
   <button id="runtime-diagnostics-export" class="ghost">Export support bundle</button>
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>
