@@ -7,6 +7,7 @@ const html=await readFile(new URL('../extension/options.html',import.meta.url),'
 const code=await readFile(new URL('../extension/storage-signals.js',import.meta.url),'utf8');
 function setup({ignoreCancel=false}={}){
  const dom=new JSDOM(html,{runScripts:'outside-only'}),document=dom.window.document;
+ document.querySelector('[data-debug-detail]').hidden=false;
  const realGrid=document.getElementById('bucket-grid');realGrid.textContent='Real storage remains unchanged';
  const scope={};vm.runInNewContext(code,scope);
  let now=0,id=0;const queue=new Map();
@@ -42,4 +43,14 @@ test('simulation executes without Chrome, fetch, messaging, profiles, or authent
  h.training.start();h.advance(850);h.document.querySelectorAll('.signal-demo-action')[1].click();h.advance(550);
  h.document.querySelectorAll('.signal-demo-action')[2].click();h.advance(3350);
  assert.equal(h.training.stage,'rest');assert.equal(h.realGrid.textContent,'Real storage remains unchanged');h.dom.window.close();
+});
+
+test('simulation lives only in diagnostics and cannot start while Debug is hidden',()=>{
+ const h=setup(),d=h.document;
+ const diagnostics=d.querySelector('[data-debug-detail]');
+ assert.ok(diagnostics.contains(d.getElementById('run-storage-training')));
+ assert.ok(diagnostics.contains(d.getElementById('storage-training')));
+ assert.ok(d.getElementById('cloudflare-panel').contains(d.getElementById('refresh-storage')));
+ assert.equal(d.getElementById('cloudflare-panel').contains(d.getElementById('storage-training')),false);
+ diagnostics.hidden=true;h.training.start();h.advance(5000);assert.equal(h.training.stage,'closed');h.dom.window.close();
 });

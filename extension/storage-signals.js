@@ -47,6 +47,7 @@
     }
     const idle=[['idle','Not checked'],['idle','Not checked'],['idle','Not checked']];
     function start(){
+      if(panel.closest("[data-debug-detail]")?.hidden)return;
       stop();panel.hidden=false;startButton.setAttribute('aria-expanded','true');
       show('checking','Watch the blue signal: a check is in progress.',[['working','Checking…'],...idle.slice(1)]);
       later(350,()=>show('checking','Now checking the bucket list.',[['ready','Connection checked'],['working','Checking…'],idle[2]]));
@@ -63,7 +64,7 @@
         later(3350,()=>show('rest','Test complete. Reset to practice again, or Exit.',idle));
       }
     }
-    function exit(){stop();stage='closed';panel.dataset.stage=stage;panel.hidden=true;startButton.setAttribute('aria-expanded','false');startButton.focus();}
+    function exit({focus=true}={}){stop();stage='closed';panel.dataset.stage=stage;panel.hidden=true;startButton.setAttribute('aria-expanded','false');if(focus)startButton.focus();}
     startButton.addEventListener('click',start);
     byId('reset-storage-training').addEventListener('click',start);
     byId('exit-storage-training').addEventListener('click',exit);

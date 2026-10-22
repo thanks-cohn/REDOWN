@@ -3,6 +3,7 @@ let profiles=[];
 let rightClickMode="simple";
 let debugModeEnabled=false;
 let betaModeEnabled=false;
+let storageTraining=null;
 let bucketLoadVersion=0;
 let cfAccounts=[];
 let currentAccountId="";
@@ -4385,6 +4386,7 @@ function applyDebugMode(){
   $("debug-mode-enabled").checked=debugModeEnabled;
   document.querySelectorAll("[data-debug-detail]").forEach(el=>{el.hidden=!debugModeEnabled;});
   applyBetaMode();
+  if(!debugModeEnabled)storageTraining?.exit({focus:false});
 }
 function applyBetaMode(){
   document.documentElement.classList.toggle("beta-mode",betaModeEnabled);
@@ -4420,7 +4422,7 @@ $("debug-mode-enabled").addEventListener("change",async(event)=>{
 })();
 
 // The educational simulation has no access to send(), profiles or Chrome storage.
-RedownStorageSignals.mountTraining({document});
+storageTraining=RedownStorageSignals.mountTraining({document});
 $("refresh-storage").addEventListener("click",async()=>{
   const button=$("refresh-storage");if(button.disabled)return;button.disabled=true;button.textContent="Refreshing…";button.setAttribute("aria-busy","true");
   try{await refreshBuckets();}finally{button.disabled=false;button.textContent="Refresh buckets";button.removeAttribute("aria-busy");}

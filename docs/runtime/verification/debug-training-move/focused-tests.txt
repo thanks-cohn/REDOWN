@@ -1,0 +1,27 @@
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (302.809145ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (227.417769ms)
+✔ normal primary setup does not invoke the independent inset repair (77.349209ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (36.592483ms)
+✔ successful provisioning refreshes destination editors and inventory before reporting ready (3.172464ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (86.036892ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (62.232234ms)
+✔ settings disclosure dismisses outside and Escape restores focus (34.345115ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (33.283193ms)
+✔ Beta and Debug are independent, persist separate keys, and do not mutate profiles (92.989007ms)
+✔ cached configuration stays amber until explicit verification, and failures allow retry (33.376991ms)
+✔ newer bucket loads win even across A-B-A account switches (41.532531ms)
+✔ persisted mode combinations restore independently, with Beta off when absent (141.124596ms)
+✔ a late repair cannot overwrite a newer bucket list or unlock its active operation (55.606764ms)
+✔ disabling Debug exits practice without moving focus into hidden diagnostics (26.091259ms)
+✔ guided simulation waits for the correct controls, completes, and settles (166.177139ms)
+✔ reset and exit reject old callbacks even if timer cancellation loses a race (66.395495ms)
+✔ simulation executes without Chrome, fetch, messaging, profiles, or authentication (42.418163ms)
+✔ simulation lives only in diagnostics and cannot start while Debug is hidden (53.135554ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2563.638209

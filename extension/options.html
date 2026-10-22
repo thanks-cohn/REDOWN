@@ -8,7 +8,7 @@
   <style>
     @font-face{font-family:"DM Sans";src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-style:normal;font-weight:100 1000;font-display:swap}
     :root{
-      color-scheme:dark;
+      color-scheme:dark;scrollbar-gutter:stable;
       --bg:#0b101b;--panel:#151e30;--panel2:#1b263c;--line:#303e58;
       --text:#f1f4fc;--muted:#aab6ce;--purple:#a48aff;--purple2:#c4b4ff;
       --green:#72ddb0;--red:#ff8b9b;--shadow:0 24px 80px rgba(0,0,0,.28);
@@ -60,28 +60,30 @@
     /* Physical diagnostic lamps: grounded status, lightweight paint-only feedback. */
     .bucket-repair{transition:border-color .15s ease,color .15s ease,box-shadow .15s ease}
     @media(max-width:520px){html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.bucket-surface{gap:5px;padding:8px 6px 24px}.bucket-name{font-size:11px}.bucket-icon{flex-basis:27px;height:27px}.bucket-icon svg{width:26px;height:26px}.bucket-status{font-size:10px}}
+    #cloudflare-panel>.card{container-type:inline-size}
     .bucket-grid-viewport{container-type:inline-size}
-    /* Normal storage array: stable single-row geometry from first paint.
-       Expand immediately on hover/focus; avoid animating layout-heavy 3D tiles. */
-    html:not(.debug-mode) .bucket-grid{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:calc(var(--bucket-size) + 18px);max-height:none;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-width:none;scrollbar-color:transparent transparent}
-    html:not(.debug-mode) .bucket-grid:is(:hover,:focus-within){height:min(75vh,900px);scrollbar-width:thin;scrollbar-color:#718097 #111b2c}
-    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar{width:0}
-    html:not(.debug-mode) .bucket-grid:is(:hover,:focus-within)::-webkit-scrollbar{width:8px}
-    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-thumb{background:#718097;border-radius:8px;border:2px solid #111b2c}
+    /* Animate only the clipping viewport. The 3D tile grid keeps fixed geometry. */
+    html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:2;--bucket-gap:20px;--bucket-size:calc((100cqw - 20px - (var(--bucket-columns) - 1)*var(--bucket-gap))/var(--bucket-columns));height:calc(var(--bucket-size) + 18px);margin-top:28px;overflow:hidden;contain:layout paint;transition:height 220ms cubic-bezier(.2,.7,.2,1)}
+    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within){height:min(75vh,900px)}
+    html:not(.debug-mode) .bucket-grid{grid-template-columns:repeat(var(--bucket-columns),minmax(0,1fr));gap:var(--bucket-gap);height:min(75vh,900px);max-height:none;margin-top:0;overflow-y:auto;overflow-x:hidden;padding:6px 6px 12px;align-content:start;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:transparent transparent}
+    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within) .bucket-grid{scrollbar-color:#718097 #111b2c}
+    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar{width:8px}
+    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-thumb{background:transparent;border-radius:8px;border:2px solid transparent}
+    html:not(.debug-mode) .bucket-grid-viewport:is(:hover,:focus-within) .bucket-grid::-webkit-scrollbar-thumb{background:#718097;border-color:#111b2c}
     html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-button{display:none}
-    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-track{background:#111b2c;border-radius:8px}
+    html:not(.debug-mode) .bucket-grid::-webkit-scrollbar-track{background:transparent;border-radius:8px}
     .bucket-grid:focus-visible{outline:2px solid #c4b4ff;outline-offset:3px}
-    @container(min-width:540px){html:not(.debug-mode) .bucket-grid{--bucket-columns:3}}
-    @container(min-width:720px){html:not(.debug-mode) .bucket-grid{--bucket-columns:4}}
-    @container(min-width:900px){html:not(.debug-mode) .bucket-grid{--bucket-columns:5}}
-    @container(min-width:1080px){html:not(.debug-mode) .bucket-grid{--bucket-columns:6}}
-    @media(max-width:520px){html:not(.debug-mode) .bucket-grid{--bucket-gap:16px}}
+    @container(min-width:540px){html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:3}}
+    @container(min-width:720px){html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:4}}
+    @container(min-width:900px){html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:5}}
+    @container(min-width:1080px){html:not(.debug-mode) .bucket-grid-viewport{--bucket-columns:6}}
+    @media(max-width:520px){html:not(.debug-mode) .bucket-grid-viewport{--bucket-gap:16px}}
     .bucket-debug-select{width:100%;min-height:56px;padding:16px 18px;text-align:left;overflow-wrap:anywhere;background:linear-gradient(145deg,#26344e,#1a263d);color:var(--text);border:1px solid var(--line)}
     .bucket.selected .bucket-debug-select{border-color:var(--purple2)}
     .bucket-debug-details{margin:9px 0;color:var(--muted);font-size:11px}
     .bucket-debug-repair{width:100%;margin-top:8px}
 
-    @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid{transition:none}html:not(.debug-mode) .bucket{transition:none}html:not(.debug-mode) .bucket:hover,html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:perspective(700px)}.bucket-select[aria-busy=true] .bucket-status:before{animation:none}}
+    @media(prefers-reduced-motion:reduce){html:not(.debug-mode) .bucket-grid-viewport,html:not(.debug-mode) .bucket-grid{transition:none}html:not(.debug-mode) .bucket{transition:none}html:not(.debug-mode) .bucket:hover,html:not(.debug-mode) .bucket:has(.bucket-select:active){transform:perspective(700px)}.bucket-select[aria-busy=true] .bucket-status:before{animation:none}}
     html.debug-mode .bucket .normal-only{display:none!important}
     .header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
     .settings-disclosure{position:relative}
@@ -550,14 +552,7 @@
       <div class="bucket-grid-viewport"><div id="bucket-grid" class="bucket-grid" aria-label="Storage buckets" tabindex="0"></div></div>
       <div id="cf-status" class="status" role="status" aria-live="polite"></div>
     </div>
-      <div class="storage-training-controls"><button id="refresh-storage" class="ghost" type="button">Refresh buckets</button><button id="run-storage-training" class="ghost" type="button" aria-controls="storage-training" aria-expanded="false">Run Diagnostic Test</button></div>
-      <section id="storage-training" class="storage-training" hidden aria-label="Storage signal practice">
-        <div class="training-heading"><div><span class="simulation-label">Simulation only</span><h3>Learn the storage signals</h3></div><div class="training-actions"><button id="reset-storage-training" class="ghost" type="button">Reset</button><button id="exit-storage-training" class="ghost" type="button">Exit</button></div></div>
-        <p id="storage-training-message" role="status" aria-live="polite"></p>
-        <div id="storage-training-lamps" class="signal-demo-grid"></div>
-        <p class="training-note">Practice only. These controls never contact Cloudflare or change your files.</p>
-      </section>
-
+      <div class="storage-training-controls"><button id="refresh-storage" class="ghost" type="button">Refresh buckets</button></div>
   </section>
 
   <section id="right-click-presets" class="section requires-storage">
@@ -691,6 +686,14 @@
 <section data-debug-detail hidden aria-label="Runtime diagnostics">
   <h2>Runtime diagnostics</h2>
   <p>Debug Mode collects a bounded, local trace. It excludes credentials, file names and URLs. Traces reset when the background restarts.</p>
+  <div class="storage-training-controls"><button id="run-storage-training" class="ghost" type="button" aria-controls="storage-training" aria-expanded="false">Run Diagnostic Test</button></div>
+      <section id="storage-training" class="storage-training" hidden aria-label="Storage signal practice">
+        <div class="training-heading"><div><span class="simulation-label">Simulation only</span><h3>Learn the storage signals</h3></div><div class="training-actions"><button id="reset-storage-training" class="ghost" type="button">Reset</button><button id="exit-storage-training" class="ghost" type="button">Exit</button></div></div>
+        <p id="storage-training-message" role="status" aria-live="polite"></p>
+        <div id="storage-training-lamps" class="signal-demo-grid"></div>
+        <p class="training-note">Practice only. These controls never contact Cloudflare or change your files.</p>
+      </section>
+
   <button id="runtime-diagnostics-status" class="ghost">Inspect runtime</button>
   <button id="runtime-diagnostics-export" class="ghost">Export support bundle</button>
   <button id="runtime-diagnostics-clear" class="ghost">Clear traces</button>

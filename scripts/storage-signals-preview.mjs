@@ -13,10 +13,10 @@ const font=await readFile('extension/fonts/dm-sans-latin-variable.woff');
 const css=d.querySelector('style').textContent.replace('url("fonts/dm-sans-latin-variable.woff")',`url("data:font/woff;base64,${font.toString('base64')}")`);
 const bucketCode=source.slice(source.indexOf('async function refreshBuckets(){'),source.indexOf('async function addBucketPreset('));
 const modes=source.slice(source.indexOf('function applyDebugMode(){'),source.indexOf('(async()=>{\n  const stored=await chrome.storage.local.get(["profiles"'));
-const body=`<div class="wrap"><header><p>Local mocked preview · no extension or Cloudflare connection</p>${d.getElementById('settings-disclosure').outerHTML}</header>${d.getElementById('cloudflare-panel').outerHTML}<div id="r2-setup" hidden></div><a id="r2-dashboard" hidden></a><div id="hero-status" hidden></div><div id="profiles-empty" hidden></div>${d.getElementById('add-github').outerHTML}</div>`;
+const body=`<div class="wrap"><header><p>Local mocked preview · no extension or Cloudflare connection</p>${d.getElementById('settings-disclosure').outerHTML}</header>${d.getElementById('cloudflare-panel').outerHTML}${d.querySelector('[data-debug-detail]').outerHTML}<div id="r2-setup" hidden></div><a id="r2-dashboard" hidden></a><div id="hero-status" hidden></div><div id="profiles-empty" hidden></div>${d.getElementById('add-github').outerHTML}</div>`;
 const mocks=`
 const $=id=>document.getElementById(id);
-let currentAccountId='fixture',bucketLoadVersion=0,debugModeEnabled=false,betaModeEnabled=false,onboardingBucketState='choose';
+let storageTraining=null,currentAccountId='fixture',bucketLoadVersion=0,debugModeEnabled=false,betaModeEnabled=false,onboardingBucketState='choose';
 const profiles=[{type:'cloudflare-r2',accountId:'fixture',bucketName:'studio',workerUrl:'https://fixture.invalid',token:'fixture'}];
 function isSetupDestination(p){return Boolean(p.workerUrl&&p.token);}
 function applyOnboarding(){}
@@ -27,7 +27,7 @@ const names=['studio','reference-library','client-deliverables','motion','archiv
 async function send(message){fixture.calls.push(message.type);return {ok:true,buckets:names.map(name=>({name}))};}
 async function addBucketPreset(name,options){fixture.calls.push(options?.forceRepair?'repair':'select');await new Promise(r=>setTimeout(r,220));if(name==='reference-library')throw Error('Mock connection failed. Retry the repair circle.');return {ok:true,verified:options?.forceRepair===true};}
 `;
-const init=`$('cf-account').innerHTML='<option>Personal workspace</option>';applyDebugMode();fixture.training=RedownStorageSignals.mountTraining({document});fixture.ready=refreshBuckets();globalThis.fixture=fixture;`;
+const init=`$('cf-account').innerHTML='<option>Personal workspace</option>';applyDebugMode();storageTraining=fixture.training=RedownStorageSignals.mountTraining({document});fixture.ready=refreshBuckets();globalThis.fixture=fixture;`;
 const preview=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body>${body}<script>${signals}\n${mocks}\n${bucketCode}\n${modes}\n${init}</script></body></html>`;
 dom.window.close();await writeFile(output+'/preview.html',preview);
 const profile=await mkdtemp('/tmp/redown-signals-');const pause=ms=>new Promise(r=>setTimeout(r,ms));let browser,ws;
@@ -45,11 +45,14 @@ try{
  for(const width of [1366,390]){
   await call('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false},sessionId);
   await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:0,y:0},sessionId);await pause(100);
-  const rest=await evaluate(`(()=>{const g=$('bucket-grid');return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,restHeight:g.clientHeight,fontLoaded:document.fonts.check('13px "DM Sans"')}})()`);
+  const rest=await evaluate(`(()=>{const g=$('bucket-grid');return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,restHeight:g.parentElement.clientHeight,tileHeight:g.querySelector('.bucket').getBoundingClientRect().height,fontLoaded:document.fonts.check('13px "DM Sans"')}})()`);
   assert.ok(rest.scrollWidth<=width);await shot('rest-'+width);
   await evaluate(`$('bucket-grid').focus()`);await pause(80);
-  const expanded=await evaluate(`$('bucket-grid').clientHeight`);assert.ok(expanded>rest.restHeight);
-  report.layouts.push({...rest,expandedHeight:expanded});await shot('expanded-'+width);await evaluate(`$('bucket-grid').blur()`);
+  const mid=await evaluate(`$('bucket-grid').parentElement.clientHeight`);assert.ok(mid>rest.restHeight);
+  await pause(220);
+  const expanded=await evaluate(`$('bucket-grid').parentElement.clientHeight`);assert.ok(expanded>mid,'expansion must interpolate rather than jump');
+  const tileHeight=await evaluate(`document.querySelector('.bucket').getBoundingClientRect().height`);assert.ok(Math.abs(tileHeight-rest.tileHeight)<1,`tile geometry remains fixed during reveal: ${rest.tileHeight} → ${tileHeight}`);
+  report.layouts.push({...rest,midHeight:mid,expandedHeight:expanded});await shot('expanded-'+width);await evaluate(`$('bucket-grid').blur()`);await pause(260);
  }
  await call('Emulation.setDeviceMetricsOverride',{width:1366,height:900,deviceScaleFactor:1,mobile:false},sessionId);
  await evaluate(`document.querySelector('.bucket-repair').click()`);await pause(40);
@@ -58,6 +61,7 @@ try{
  await pause(2500);report.successPerimeterOpacity=await evaluate(`getComputedStyle(document.querySelector('.bucket-select'),'::after').opacity`);assert.equal(report.successPerimeterOpacity,'0');
  await evaluate(`document.querySelectorAll('.bucket-repair')[1].click()`);await pause(280);
  assert.equal(await evaluate(`document.querySelectorAll('.bucket')[1].dataset.signal`),'repair');await shot('repair-needed');
+ await evaluate(`$('debug-mode-enabled').checked=true;$('debug-mode-enabled').dispatchEvent(new Event('change'))`);
  const count=await evaluate('fixture.calls.length');
  await evaluate(`$('run-storage-training').click();$('storage-training').scrollIntoView({block:'center'})`);await pause(950);
  assert.equal(await evaluate('fixture.training.stage'),'refresh');await shot('training-refresh');
@@ -79,7 +83,7 @@ try{
   assert.equal(result.githubVisible,beta);assert.equal(result.debug,debug);report.modes.push(result);
  }
  await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]},sessionId);
- report.reducedMotion=await evaluate(`(()=>{const el=document.querySelector('.bucket');RedownStorageSignals.paint(el,'working','Checking…');return {glyphAnimation:getComputedStyle(el.querySelector('.signal-glyph')).animationName,gridTransition:getComputedStyle($('bucket-grid')).transitionDuration}})()`);
+ report.reducedMotion=await evaluate(`(()=>{const el=document.querySelector('.bucket');RedownStorageSignals.paint(el,'working','Checking…');return {glyphAnimation:getComputedStyle(el.querySelector('.signal-glyph')).animationName,gridTransition:getComputedStyle($('bucket-grid').parentElement).transitionDuration}})()`);
  assert.equal(report.reducedMotion.glyphAnimation,'none');assert.equal(report.reducedMotion.gridTransition,'0s');
  await writeFile(output+'/report.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{

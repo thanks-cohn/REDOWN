@@ -71,3 +71,14 @@ Screenshots: [desktop resting](runtime/verification/interactive-storage/rest-136
 ## Remaining limits
 
 Installed-extension loading remains blocked by Chromium administrator policy, which was not bypassed. No installed-extension, live Cloudflare repair/creation/transfer, GitHub Actions, screen-reader end-to-end or customer deployment pass is claimed. No real cloud storage was modified during development. Local mock receipts and screenshots are not live health evidence. The six historical failures and licensing/release gates in [readiness](runtime/READINESS.md) remain. Practice is intentionally temporary in Normal Mode pending user evaluation.
+
+
+## Follow-up: Debug-only practice and graceful expansion
+
+This supersedes the temporary Normal Mode placement and immediate expansion described above. Only Run Diagnostic Test and its simulation panel moved into the existing Runtime diagnostics section. Refresh buckets and real bucket operations remain in Storage. Beta behavior is unchanged. Practice refuses to start while its Debug section is hidden; turning Debug off cancels pending practice steps without focusing a hidden launch button.
+
+Normal Storage still rests at one row and expands on hover or keyboard focus. A clipping viewport now interpolates its height over 220ms with a gentle ease-out; the contained 3D tile grid stays at a fixed height. This avoids resizing/reflowing the tiles on every animation frame. Stable page/grid scrollbar space avoids horizontal shifts. Reduced motion makes the reveal immediate. Outer page layout still follows the viewport height; no zero-layout or performance benchmark claim is made.
+
+Verification: **19 focused tests pass**. Full suite: **203 tests, 197 pass, the same six historical failures**, no skips/cancellations. Syntax, whitespace and audit-only packaging checks pass; the package remains blocked by existing license drift. Ordinary Chromium mock renders were inspected at 1366px and 390px: viewport height increased through intermediate values (178→607→675 and 133→601→675), while tile height stayed fixed. The guided exercise ran under Debug, with no mock storage calls from practice. Reduced-motion transition duration was zero. These are local mock/UI results, not installed-extension or live Cloudflare evidence.
+
+[Desktop](runtime/verification/debug-training-move/storage-desktop.png), [narrow](runtime/verification/debug-training-move/storage-narrow.png), [expanded](runtime/verification/debug-training-move/storage-expanded.png), [Debug practice](runtime/verification/debug-training-move/debug-practice.png), [browser checks](runtime/verification/debug-training-move/browser-report.json), [focused tests](runtime/verification/debug-training-move/focused-tests.txt), [full suite](runtime/verification/debug-training-move/full-tests.txt), [package audit](runtime/verification/debug-training-move/package-audit.json).

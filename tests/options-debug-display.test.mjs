@@ -10,7 +10,7 @@ const source=await readFile(new URL('../extension/options.js',import.meta.url),'
 function harness(){
   const dom=new JSDOM(html,{runScripts:'outside-only'});
   const calls=[],saved=[];
-  const context=vm.createContext({document:dom.window.document,window:dom.window,debugModeEnabled:false,betaModeEnabled:false,bucketLoadVersion:0,RedownStorageSignals:signalScope.RedownStorageSignals,profiles:[],currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',
+  const context=vm.createContext({document:dom.window.document,window:dom.window,debugModeEnabled:false,betaModeEnabled:false,storageTraining:null,bucketLoadVersion:0,RedownStorageSignals:signalScope.RedownStorageSignals,profiles:[],currentAccountId:'account',onboardingConnected:true,onboardingBucketState:'loading',
     $:id=>dom.window.document.getElementById(id),
     setStatus:(id,text)=>{dom.window.document.getElementById(id).textContent=text;},
     send:async msg=>{calls.push(msg);return {ok:true,buckets:[{name:'test-bucket'}]};},
@@ -260,4 +260,13 @@ test('a late repair cannot overwrite a newer bucket list or unlock its active op
  finish({ok:true,verified:true});await new Promise(r=>setImmediate(r));
  assert.equal(current.dataset.signal,'attention');assert.equal(old.isConnected,false);
  assert.equal(current.querySelector('.bucket-repair').disabled,false);h.dom.window.close();
+});
+
+test('disabling Debug exits practice without moving focus into hidden diagnostics',async()=>{
+ const h=harness(),d=h.dom.window.document;
+ let exited;
+ h.context.storageTraining={exit:options=>exited=options};
+ d.getElementById('debug-mode-enabled').checked=false;
+ d.getElementById('debug-mode-enabled').dispatchEvent(new h.dom.window.Event('change'));await Promise.resolve();
+ assert.equal(exited.focus,false);assert.equal(d.querySelector('[data-debug-detail]').hidden,true);h.dom.window.close();
 });
