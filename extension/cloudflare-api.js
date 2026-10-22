@@ -100,8 +100,31 @@
     if (!accountId || !bucketName || !key) throw new Error("Choose a bucket and file first.");
     return `/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/objects/${String(key).split("/").map(encodeURIComponent).join("/")}`;
   }
+  // Cloudflare's management API can reject valid keys containing dot-like path
+  // segments at its security layer, even when R2 public delivery succeeds.
+  // Only fall back when the bucket explicitly enables its managed public domain.
+  async function publicObjectUrl(source,key) {
+    const path=`/accounts/${encodeURIComponent(source.accountId)}/r2/buckets/${encodeURIComponent(source.bucketName)}/domains/managed`;
+    const response=await request(path);
+    if(!response.ok)return null;
+    const config=await response.json().catch(()=>({}));
+    const result=config.result||{};
+    if(!result.enabled||!/^pub-[a-f0-9]+\\.r2\\.dev$/i.test(result.domain||''))return null;
+    const suffix=String(key).split('/').map(encodeURIComponent).join('/');
+    return `https://${result.domain}/${suffix}`;
+  }
+  async function readableResponse(source,key,signal) {
+    const response=await request(objectPath(source,key),{signal,explorerTrace:source.explorerTrace});
+    if(response.status!==403)return response;
+    const fallback=await publicObjectUrl(source,key).catch(()=>null);
+    if(!fallback)return response;
+    const result=await boundedFetch(fallback,{signal,credentials:'omit'}).catch(()=>null);
+    if(!result?.ok)return response;
+    await response.body?.cancel();
+    return result;
+  }
   async function preview(source,key,type,signal) {
-    const response = await request(objectPath(source,key),{signal,explorerTrace:source.explorerTrace});
+    const response = await readableResponse(source,key,signal);
     if (!response.ok){const error=new Error(`Cloudflare could not read this file (${response.status}).`);error.status=response.status;throw error;}
     const limit = 64*1024*1024;
     if (Number(response.headers.get("content-length")) > limit) { await response.body?.cancel(); throw new Error("This file is too large for an inline preview. Use Download."); }
@@ -119,8 +142,16 @@
   }
   async function download(source,key,filename,onState) {
     const current = await auth();
-    const id=await chrome.downloads.download({url:API+objectPath(source,key),
-      headers:[{name:"Authorization",value:`Bearer ${current.accessToken}`}],
+    // Probe only problematic dot-segment keys; preserve the existing direct
+    // authenticated Chrome download path for normal keys and private buckets.
+    let fallback=null;
+    if(String(key).split('/').some(segment=>segment.includes('...'))){
+      const probe=await request(objectPath(source,key),{method:'GET',headers:{Range:'bytes=0-0'},timeoutMs:12000});
+      if(probe.status===403)fallback=await publicObjectUrl(source,key).catch(()=>null);
+      await probe.body?.cancel();
+    }
+    const id=await chrome.downloads.download({url:fallback||API+objectPath(source,key),
+      headers:fallback?[]:[{name:"Authorization",value:`Bearer ${current.accessToken}`}],
       filename:String(filename || key.split("/").pop()).replace(/[\\/:*?"<>|\x00-\x1f]/g,"_"),saveAs:true});
     if(!Number.isInteger(id))throw new Error("Chrome did not start the download. Check Chrome Downloads and try again.");
     // Starting a download is not completion. Report delayed browser failures,
