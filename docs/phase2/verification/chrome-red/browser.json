@@ -1,0 +1,27 @@
+{
+  "scope": "Ordinary Chromium / mocked Chrome Beta setting / real local IndexedDB / no installed extension or live providers",
+  "browser": "153.0.8010.0",
+  "checks": [
+    {
+      "width": 1366,
+      "noHorizontalOverflow": true,
+      "viewSwitch": true
+    },
+    {
+      "width": 768,
+      "noHorizontalOverflow": true,
+      "viewSwitch": true
+    },
+    {
+      "width": 390,
+      "noHorizontalOverflow": true,
+      "viewSwitch": true
+    }
+  ],
+  "preview": true,
+  "copyPaste": true,
+  "navigation": true,
+  "betaToggle": true,
+  "reducedMotion": true,
+  "pageErrors": []
+}

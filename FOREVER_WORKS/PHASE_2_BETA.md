@@ -17,3 +17,7 @@ Rebuild the successor using the existing npm lockfile, Node tests and packaged f
 Before retiring legacy: complete real R2 safety/identity/conditional conflict and ambiguous-write tests; implement durable external executor/reconciliation; preserve full keyboard/mouse, preview, URL, pagination and visual obligations; demonstrate second real provider with the same contracts; add gateway adapter, sanitized trace export, performance/accessibility/security acceptance; perform approved installed/live acceptance and an independent cold-agent drill; prove rollback; obtain explicit owner promotion approval. Passing this prototype's tests does not satisfy those gates.
 
 No canonical accepted-intent entities were invented for this increment. Once runtime obligations and mappings are implemented/reviewed, add them through an intentional model migration with actual source/test evidence. Never rewrite frozen baseline evidence to make the successor appear conformant.
+
+## Chrome / crimson Beta presentation
+
+The owner-directed distinct silver/chrome/red/white/black design is recorded in `docs/phase2/CHROME_RED_DESIGN.md` with actual screenshots and ordinary-browser evidence. Preserve the local SVG symbol set, bundled font, responsive sidebar-to-controls layout, grid/list choice, selection/details hierarchy and reduced-motion policy. This is Beta presentation only; simulation and promotion boundaries remain unchanged.
