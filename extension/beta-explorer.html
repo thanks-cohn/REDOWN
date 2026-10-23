@@ -1,13 +1,372 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REDOWN · Beta Explorer</title><link rel="stylesheet" href="beta-explorer.css"></head>
-<body><main><header><div><p class="kicker">REDOWN · Experimental</p><h1>Beta Explorer</h1></div><a href="options.html">Dashboard / Existing Explorer</a></header>
-<p id="gate" role="status">Checking Beta Mode…</p>
-<section id="explorer" hidden>
-<p class="notice">Simulated storage only. No cloud connections or real files are accessed. Jobs are saved locally and separately from production.</p>
-<nav aria-label="Storage"><label>Provider <select id="provider"><option value="fake-r2">Simulated R2</option><option value="fake-drive">Simulated Drive</option></select></label><label>Destination <select id="destination"><option value="fake-r2">Simulated R2</option><option value="fake-drive">Simulated Drive</option></select></label></nav>
-<form id="navigation"><label>Folder <input id="prefix" value="" placeholder="Documents/"></label><label>Search <input id="query" placeholder="Find simulated files"></label><button>Browse</button><button id="up" type="button">Up</button></form>
-<div class="toolbar"><button id="copy">Copy</button><button id="cut">Cut</button><button id="paste">Paste</button><button id="rename">Rename</button><button id="delete">Delete</button><button id="mkdir">New folder</button><label class="upload">Upload text fixture <input id="upload" type="file" accept="text/plain,.txt"></label><button id="read">Preview</button></div>
-<p id="status" role="status" aria-live="polite"></p><ul id="files" aria-label="Files"></ul><button id="next" hidden>Next page</button><pre id="preview" hidden></pre>
-<details><summary>Jobs and agent diagnostics</summary><p>Simulation receipts establish only local fixture results. Inspecting a job never executes it.</p><button id="refresh-jobs">Refresh jobs</button><select id="jobs" aria-label="Operation"></select><button id="inspect">Inspect trace</button><pre id="trace"></pre></details>
-<details><summary>Legacy / Beta comparison</summary><p>Read-only source assessment; no operations are replayed.</p><table><tr><th>Area</th><th>Existing Explorer</th><th>Beta foundation</th></tr><tr><td>Storage</td><td>R2; live reliability unverified</td><td>Two deterministic fake providers</td></tr><tr><td>Operations</td><td>Existing implementation retained</td><td>List, search, metadata, text preview/upload, copy, move, rename, delete, folder creation</td></tr><tr><td>Journal</td><td>Page-lived jobs; bounded observations</td><td>Separate atomic simulation snapshots and traces</td></tr><tr><td>Tests</td><td>Baseline 365 pass / 10 fail</td><td>See Phase/PHASE_2_IMPLEMENTATION.md for current test evidence</td></tr><tr><td>Performance</td><td>No fresh installed measurement</td><td>Unbenchmarked; 5,000 fixture objects / 500 jobs limit</td></tr><tr><td>Open risks</td><td>Copy404, upload race, restart recovery</td><td>No real adapters, asynchronous recovery, binary preview, accessibility audit or live acceptance</td></tr></table></details>
-</section></main><script type="module" src="beta-explorer.mjs"></script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>REDOWN · Beta Explorer</title>
+    <link rel="stylesheet" href="beta-explorer.css" />
+  </head>
+  <body>
+    <svg
+      class="icon-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="chrome-file" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff" />
+          <stop offset=".45" stop-color="#eeeef1" />
+          <stop offset=".52" stop-color="#d7d7de" />
+          <stop offset=".58" stop-color="#fff" />
+          <stop offset="1" stop-color="#e3e3e9" />
+        </linearGradient>
+        <symbol id="i-grid" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        </symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24">
+          <path
+            d="M3 7V5a1 1 0 0 1 1-1h5l3 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"
+          />
+        </symbol>
+        <symbol id="i-file" viewBox="0 0 24 24">
+          <path d="M6 3h8l5 5v13H6Z" />
+          <path d="M14 3v6h5M9 13h7M9 17h5" />
+        </symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24">
+          <rect x="8" y="8" width="12" height="13" rx="2" />
+          <path d="M15 8V3H3v13h5" />
+        </symbol>
+        <symbol id="i-cut" viewBox="0 0 24 24">
+          <circle cx="6" cy="6" r="3" />
+          <circle cx="6" cy="18" r="3" />
+          <path d="m8.5 7.5 12 12m-12-3 12-12" />
+        </symbol>
+        <symbol id="i-paste" viewBox="0 0 24 24">
+          <path d="M8 5H5v16h15V5h-4" />
+          <rect x="8" y="2" width="8" height="6" rx="2" />
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24">
+          <path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M5 12h14m-5-5 5 5-5 5" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="10" cy="10" r="6" />
+          <path d="m15 15 6 6" />
+        </symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24">
+          <path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6" />
+        </symbol>
+        <symbol id="i-list" viewBox="0 0 24 24">
+          <path d="M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1" />
+        </symbol>
+        <symbol id="i-activity" viewBox="0 0 24 24">
+          <path d="M2 12h5l3-8 4 16 3-8h5" />
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        </symbol>
+      </defs>
+    </svg>
+    <main class="app-shell">
+      <header class="masthead">
+        <a class="brand" href="options.html" aria-label="REDOWN dashboard"
+          ><span class="brand-mark">R<span>↘</span></span
+          ><span
+            >REDOWN<span class="brand-edition">EXPLORER / BETA</span></span
+          ></a
+        >
+        <div class="masthead-right">
+          <span class="environment"><i></i> LOCAL SANDBOX</span
+          ><a class="dashboard-link" href="options.html"
+            >Back to dashboard <svg><use href="#i-arrow" /></svg
+          ></a>
+        </div>
+      </header>
+      <p id="gate" class="gate" role="status">Checking Beta Mode…</p>
+      <section id="explorer" class="workspace" hidden>
+        <aside class="sidebar">
+          <div class="workspace-label">
+            <span class="workspace-monogram">W</span>
+            <div>Personal workspace<small>Experimental environment</small></div>
+          </div>
+          <p class="section-label">WORKSPACE</p>
+          <button id="home" class="side-link active">
+            <svg><use href="#i-grid" /></svg>All files <span>01</span></button
+          ><button id="documents" class="side-link">
+            <svg><use href="#i-folder" /></svg>Documents</button
+          ><button id="activity-link" class="side-link">
+            <svg><use href="#i-activity" /></svg>Activity
+          </button>
+          <div class="sidebar-rule"></div>
+          <p class="section-label">STORAGE CONNECTIONS</p>
+          <label class="storage-card"
+            ><span class="storage-icon">R2</span
+            ><span class="storage-description"
+              >Browse storage<small>Simulated providers</small></span
+            ><select id="provider" aria-label="Browse provider">
+              <option value="fake-r2">Simulated R2</option>
+              <option value="fake-drive">Simulated Drive</option>
+            </select></label
+          ><label class="destination-card"
+            ><span>Paste destination</span
+            ><select id="destination">
+              <option value="fake-r2">Simulated R2</option>
+              <option value="fake-drive">Simulated Drive</option>
+            </select></label
+          >
+          <div class="sidebar-note">
+            <span class="sandbox-emblem">◇</span
+            ><strong>A space to experiment.</strong>
+            <p>
+              Try the new Explorer with sample files. Your cloud files stay
+              untouched.
+            </p>
+            <span class="tiny-label">SIMULATION ONLY</span>
+          </div>
+          <div class="sidebar-footer">
+            <span class="live-dot"></span>Local engine <span>v0.1</span>
+          </div>
+        </aside>
+        <div class="content">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">YOUR WORKSPACE, REIMAGINED</p>
+              <h1>All files<span class="beta-badge">BETA</span></h1>
+              <p class="page-subtitle">
+                A little more order. A lot more possibility.
+              </p>
+            </div>
+            <label class="upload primary-button"
+              ><svg><use href="#i-upload" /></svg>Upload file<input
+                id="upload"
+                type="file"
+                accept="text/plain,.txt"
+              /><span class="sr-only"
+                >Upload a text fixture up to 64 KiB</span
+              ></label
+            >
+          </div>
+          <div class="notice">
+            <span class="notice-icon">◇</span>
+            <p>
+              <strong>You’re in the sandbox.</strong> Explore with simulated
+              files. No real cloud storage is connected.
+            </p>
+            <span class="notice-tag">BETA PREVIEW</span>
+          </div>
+          <form id="navigation" class="navigation">
+            <button
+              id="up"
+              class="icon-button"
+              type="button"
+              aria-label="Parent folder"
+              title="Parent folder"
+            >
+              ↑</button
+            ><label class="path-field"
+              ><svg><use href="#i-folder" /></svg
+              ><span class="sr-only">Folder path</span
+              ><input
+                id="prefix"
+                value=""
+                placeholder="All files"
+                autocomplete="off" /></label
+            ><button class="browse-button">
+              Go <svg><use href="#i-arrow" /></svg></button
+            ><label class="search-field"
+              ><svg><use href="#i-search" /></svg
+              ><span class="sr-only">Search files</span
+              ><input
+                id="query"
+                placeholder="Search your files…"
+                autocomplete="off"
+            /></label>
+          </form>
+          <div class="file-panel">
+            <div class="panel-toolbar">
+              <div class="toolbar" role="toolbar" aria-label="File actions">
+                <button id="mkdir">
+                  <svg><use href="#i-plus" /></svg>New folder</button
+                ><span class="tool-divider"></span
+                ><button id="copy" title="Copy">
+                  <svg><use href="#i-copy" /></svg><span>Copy</span></button
+                ><button id="cut" title="Cut">
+                  <svg><use href="#i-cut" /></svg><span>Cut</span></button
+                ><button id="paste" title="Paste">
+                  <svg><use href="#i-paste" /></svg><span>Paste</span></button
+                ><button id="rename">Rename</button
+                ><button id="delete" class="danger" title="Delete">
+                  <svg><use href="#i-trash" /></svg><span>Delete</span>
+                </button>
+              </div>
+              <div class="view-switch" role="group" aria-label="File view">
+                <button
+                  id="view-grid"
+                  aria-label="Grid view"
+                  aria-pressed="true"
+                >
+                  <svg><use href="#i-grid" /></svg></button
+                ><button
+                  id="view-list"
+                  aria-label="List view"
+                  aria-pressed="false"
+                >
+                  <svg><use href="#i-list" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="file-location">
+              <span id="location-label">All files</span
+              ><span id="file-count">Loading files…</span>
+            </div>
+            <div class="file-area">
+              <ul id="files" class="file-grid" aria-label="Files"></ul>
+              <div id="empty-state" class="empty-state" hidden>
+                <svg><use href="#i-folder" /></svg>
+                <h2>Room for something new.</h2>
+                <p>Upload a text file or create your first folder.</p>
+              </div>
+            </div>
+            <button id="next" class="next-page" hidden>
+              Load next page <svg><use href="#i-arrow" /></svg>
+            </button>
+            <div class="status-bar">
+              <span class="live-dot"></span>
+              <p id="status" role="status" aria-live="polite"></p>
+              <span class="status-scope">LOCAL SIMULATION</span>
+            </div>
+          </div>
+          <div class="lower-panels">
+            <section class="selection-panel" aria-labelledby="selection-title">
+              <div class="panel-heading">
+                <h2 id="selection-title">File details</h2>
+                <span class="tiny-label">INSPECT</span>
+              </div>
+              <div class="selection-content">
+                <div id="selection-icon" class="selection-icon">
+                  <svg><use href="#i-file" /></svg>
+                </div>
+                <div class="selection-copy">
+                  <strong id="selection-name">A closer look.</strong>
+                  <p id="selection-meta">
+                    Select a file or folder to see its details.
+                  </p>
+                </div>
+                <button id="read" class="secondary-button">
+                  <svg><use href="#i-eye" /></svg>Preview
+                </button>
+              </div>
+              <pre id="preview" hidden></pre>
+            </section>
+            <section class="activity-summary">
+              <div class="panel-heading">
+                <h2>Session activity</h2>
+                <svg><use href="#i-activity" /></svg>
+              </div>
+              <div class="activity-numbers">
+                <strong id="job-count">0</strong
+                ><span
+                  >recorded operations<small
+                    >Saved locally. Available after reopening.</small
+                  ></span
+                >
+              </div>
+              <button id="show-activity" class="text-button">
+                View operation history <svg><use href="#i-arrow" /></svg>
+              </button>
+            </section>
+          </div>
+          <details id="activity" class="technical-panel">
+            <summary>
+              <span
+                ><svg><use href="#i-activity" /></svg>Operation history &
+                diagnostics</span
+              ><span>Inspect an operation ↗</span>
+            </summary>
+            <p class="detail-note">
+              Simulation receipts describe local sample files. Inspecting a job
+              never executes it.
+            </p>
+            <div class="diagnostic-controls">
+              <button id="refresh-jobs">Refresh</button
+              ><select id="jobs" aria-label="Operation"></select
+              ><button id="inspect">Inspect trace</button>
+            </div>
+            <pre id="trace"></pre>
+          </details>
+          <details class="technical-panel comparison">
+            <summary>
+              <span>Legacy / Beta comparison</span
+              ><span>Feature readiness ↗</span>
+            </summary>
+            <p class="detail-note">
+              Read-only source assessment. Operations are never replayed for
+              comparison.
+            </p>
+            <div class="table-scroll">
+              <table>
+                <tr>
+                  <th>Area</th>
+                  <th>Existing Explorer</th>
+                  <th>Beta foundation</th>
+                </tr>
+                <tr>
+                  <td>Storage</td>
+                  <td>R2; live reliability unverified</td>
+                  <td>Two deterministic fake providers</td>
+                </tr>
+                <tr>
+                  <td>Operations</td>
+                  <td>Existing implementation retained</td>
+                  <td>
+                    List, search, metadata, text preview/upload, copy, move,
+                    rename, delete, folder creation
+                  </td>
+                </tr>
+                <tr>
+                  <td>Journal</td>
+                  <td>Page-lived jobs; bounded observations</td>
+                  <td>Separate atomic simulation snapshots and traces</td>
+                </tr>
+                <tr>
+                  <td>Tests</td>
+                  <td>Baseline 365 pass / 10 fail</td>
+                  <td>
+                    See Phase/PHASE_2_IMPLEMENTATION.md for current evidence
+                  </td>
+                </tr>
+                <tr>
+                  <td>Performance</td>
+                  <td>No fresh installed measurement</td>
+                  <td>Unbenchmarked; 5,000 fixture objects / 500 jobs</td>
+                </tr>
+                <tr>
+                  <td>Open risks</td>
+                  <td>Copy404, upload race, restart recovery</td>
+                  <td>
+                    Real adapters, asynchronous recovery and live acceptance
+                    remain unfinished
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </details>
+          <footer class="content-footer">
+            <span>REDOWN / EXPLORER LAB</span
+            ><span>Built for what comes next.</span>
+          </footer>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="beta-explorer.mjs"></script>
+  </body>
+</html>

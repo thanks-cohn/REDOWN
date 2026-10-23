@@ -1,0 +1,20 @@
+✔ IndexedDB serializes concurrent connections, persists receipts, and aborts state on failure (23.085876ms)
+✔ Beta starts hidden, existing toggle unlocks it, actions trace, disabling retains jobs and blocks actions (376.024175ms)
+✔ dashboard entry extends original Beta gate without gating legacy explorer or new settings (200.75641ms)
+✔ contract rejects incompatible versions, ambiguous keys, destructive requests and self targets (3.510788ms)
+✔ cross-provider copy and move preserve contents and enforce destination conflicts (5.73697ms)
+✔ recursive directory copy refuses merge and never changes unrelated destination (1.066688ms)
+✔ same idempotency key is executed once across engine instances; different request is rejected (1.565046ms)
+✔ journal reopening retains exact transitions, receipt, identities and read-only diagnostics (2.756758ms)
+✔ list consumes every page and rejects a stale cursor after mutation (2.250638ms)
+✔ unknown routing never implies absence; no real provider is accepted (1.259231ms)
+✔ rename, folder, upload, search, delete keep exact identity and independent receipts (2.588938ms)
+✔ failed persistence cannot return a verified completion (0.587119ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1981.488179

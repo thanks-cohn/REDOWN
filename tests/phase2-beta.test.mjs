@@ -24,7 +24,8 @@ test('Beta starts hidden, existing toggle unlocks it, actions trace, disabling r
  try{
   const module=await import('../extension/beta-explorer.mjs?test=gate');await until(()=>gets>0);assert.equal($('explorer').hidden,true);assert.equal($('files').children.length,0);
   beta=true;listeners[0]({betaModeEnabled:{newValue:true}},'local');await until(()=>$('files').children.length===2);
-  $('files').querySelectorAll('input')[1].checked=true;$('files').querySelectorAll('input')[1].dispatchEvent(new dom.window.Event('change'));$('copy').click();await until(()=>$('status').textContent==='Simulated selection copied.');
+  $('view-list').click();assert.equal($('view-list').getAttribute('aria-pressed'),'true');assert.ok($('files').classList.contains('file-list'));$('view-grid').click();assert.equal($('view-grid').getAttribute('aria-pressed'),'true');
+  $('files').querySelectorAll('input')[1].checked=true;$('files').querySelectorAll('input')[1].dispatchEvent(new dom.window.Event('change'));assert.equal($('selection-name').textContent,'Welcome.txt');assert.equal($('read').disabled,false);$('copy').click();await until(()=>$('status').textContent==='Simulated selection copied.');
   $('destination').value='fake-drive';$('prefix').value='Documents/';$('paste').click();await until(()=>$('trace').textContent.includes('completed'));
   const db=await openBetaStore(globalThis.indexedDB),before=await db.read();assert.ok(before.jobs.some(j=>j.request.operation==='copy'));
   beta=false;listeners[0]({betaModeEnabled:{newValue:false}},'local');await until(()=>$('explorer').hidden);
