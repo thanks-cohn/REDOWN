@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-10-23T01:22:59.357890+00:00",
+  "extensionVersion": "0.5.19",
+  "baselineRemoteCommit": "b53faab4be029501102e8b3e523ec1e46ba1da97",
+  "focusedPassed": 44,
+  "explorerSmoke": {
+    "passed": 205,
+    "failed": 0
+  },
+  "fullSuite": {
+    "tests": 358,
+    "passed": 351,
+    "knownFailures": 7,
+    "newFailures": 0
+  },
+  "scope": "Local DOM/message mocks and embedded Worker/in-memory storage; no installed Chrome or live provider writes"
+}

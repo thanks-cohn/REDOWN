@@ -1,3 +1,9 @@
+# Popup destinations — 0.5.19
+
+The first dropdown now discovers all buckets from connected Cloudflare accounts through the existing read-only account/bucket APIs. Duplicate names include their account. Saved destinations remain available when discovery fails; Refresh retries. Opening the popup never prepares a Worker. Sending to a newly selected bucket validates its existence and uses the existing preparation/ingest path. GitHub remains Beta-gated.
+
+Bucket, exact folder prefix, requested depth and category are remembered in extension local storage until changed. Reopening restores folder choices through read-only paginated discovery. Missing saved buckets or folders block Send with guidance instead of silently choosing another destination. User edits invalidate asynchronous restoration; serialized preference writes retain the latest choice. Folder dropdowns and their native options explicitly use black text on white. No new dependencies or permissions.
+
 # Optional popup folder levels — 0.5.18
 
 Baseline main: `3f595320fd8f0c305d3174196fff300a41389dd4`; the owner's detailed0.5.17
@@ -9,8 +15,7 @@ one native folder dropdown starting at Bucket root, with an optional Go deeper c
 Selecting a folder enables another requested level. There is no two-level limit. Each added
 level can remove itself and descendants; changing a parent discards descendants. A compact
 Save to line reflects the exact selected destination. GitHub remains Beta-gated and retains
-its category selector. This selects existing saved connections; it does not discover/provision
-every account bucket merely by opening the popup. Existing Settings setup remains available.
+its category selector. The original 0.5.18 implementation selected saved connections only; 0.5.19 adds read-only discovery of all connected buckets. Existing Settings setup remains available.
 
 Folder reads use the existing paged `cfDestinationFolders` handler. Each requested level
 loads one page; Load more appends choices. Reads have a12-second UI deadline and generic

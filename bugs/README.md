@@ -632,3 +632,5 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 **Status:** source-confirmed while building optional popup dropdown levels; additive exact-path support and pre-write compatibility guard implemented. Installed delivery/Repair acceptance remains pending.
 
 **Recorded:** 2026-10-23T00:55:30+00:00. **Attempt:**01. See [cause, correction and verification boundary](fixes/BUG-020-popup-exact-folder-attempt-01.md). This is distinct from the existing cross-bucket404 incident.
+
+- BUG-021: [popup destination readability/persistence, attempt 01](fixes/BUG-021-popup-destination-attempt-01.md); automated regressions pass, native Chrome acceptance pending.

@@ -8,7 +8,7 @@ const settle=async()=>{for(let i=0;i<8;i++)await new Promise(r=>setImmediate(r))
 function harness(list=async message=>({ok:true,folders:[{name:'next 雪…',prefix:message.prefix+'next 雪…/'}],cursor:''})){
  const dom=new JSDOM(html,{runScripts:'outside-only'}),w=dom.window,calls=[];let onChange;
  const profiles=[{id:'a',type:'cloudflare-r2',accountId:'account',bucketName:'alpha',name:'Alpha'},{id:'b',type:'cloudflare-r2',accountId:'account',bucketName:'beta',name:'Beta'},{id:'g',type:'github',name:'GitHub',repository:'fixture/repo'}];
- w.chrome={storage:{local:{get:async()=>({profiles,betaModeEnabled:true})},onChanged:{addListener:fn=>onChange=fn}},runtime:{openOptionsPage(){},sendMessage:async message=>{calls.push(message);return message.type==='ingest'?{ok:true,location:'https://fixture.invalid/result'}:list(message);}}};w.eval(code);
+ w.chrome={storage:{local:{get:async()=>({profiles,betaModeEnabled:true}),set:async()=>{}},onChanged:{addListener:fn=>onChange=fn}},runtime:{openOptionsPage(){},sendMessage:async message=>{calls.push(message);return message.type==='ingest'?{ok:true,location:'https://fixture.invalid/result'}:list(message);}}};w.eval(code);
  const select=(index,value)=>{const el=w.document.getElementById('folder-level-'+index);el.value=value;el.dispatchEvent(new w.Event('change',{bubbles:true}));};
  return {dom,w,d:w.document,calls,select,refresh:()=>onChange({profiles:{}},"local"),close:()=>w.close()};
 }

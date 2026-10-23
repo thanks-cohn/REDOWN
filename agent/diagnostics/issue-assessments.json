@@ -12,7 +12,7 @@
         {
           "path": "extension/background.js",
           "symbol": "if(explicit)return explicit;",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "tests/simple-menu-flat.test.mjs",
@@ -108,7 +108,7 @@
         {
           "path": "extension/background.js",
           "symbol": "const folderTargets=new Map()",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "tests/explorer-worker.test.mjs",

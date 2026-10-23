@@ -2423,7 +2423,17 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (/^hitomiCapture(Start|Chunk|Finish|Error)$/.test(message?.type||"")) return sendResponse(await handleHitomiCaptureMessage(message,_sender));
       if (message?.type === "ingest") {
         const profiles = await getProfiles();
-        const profile = profiles.find(p => p.id === message.profileId);
+        let profile = profiles.find(p => p.id === message.profileId);
+        if(message.destination){
+          const target=message.destination;
+          if(typeof target.accountId!=="string"||!target.accountId||typeof target.bucketName!=="string"||!target.bucketName)throw new Error("Choose a valid bucket.");
+          profile=profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===target.accountId&&p.bucketName===target.bucketName);
+          if(!profile){
+            const buckets=await listBuckets(target.accountId);
+            if(!buckets.some(bucket=>bucket.name===target.bucketName))throw new Error("The selected bucket is no longer available. Refresh the bucket list.");
+            profile={id:"r2-bucket:"+JSON.stringify([target.accountId,target.bucketName]),type:"cloudflare-r2",accountId:target.accountId,bucketName:target.bucketName,accountName:typeof target.accountName==="string"?target.accountName:"",name:target.bucketName};
+          }
+        }
         if (!profile) throw new Error("Destination not found");
         const sourceUrl = String(message.sourceUrl || "");
         const category = message.category || "files";

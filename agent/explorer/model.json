@@ -62,29 +62,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjects",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/popup.js",
           "symbol": "async function loadFolderLevel(",
-          "line": 44,
-          "sha256": "e54c1c99dddb242cce607115de6de2add3afcf345669b686866b0d438b55520a",
+          "line": 45,
+          "sha256": "17f4b0b7b103077b3f76716b6982690a075b906e28eed95d1cb7cf6c2ebe65a8",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/popup.html",
           "symbol": "id=\"folder-levels\"",
-          "line": 89,
-          "sha256": "803fbfbcd5923a779b68885801eac16177217fec0e962901117a64d79ac65544",
+          "line": 91,
+          "sha256": "5b9cae0b3fa7974aa87ffa08db230bf3c35e764cfdcfd4d2bed34b71e869551c",
           "evidence": "source-anchor"
         }
       ],
@@ -120,16 +120,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -161,16 +161,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -204,7 +204,7 @@
           "symbol": "message?.type===\"cfSearchStart\"",
           "line": 2419,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/search-session.js",
@@ -243,16 +243,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -440,29 +440,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2482,
+          "line": 2492,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
           "line": 1640,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function explorerDirectoryExists(",
           "line": 1634,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ],
@@ -497,29 +497,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2482,
+          "line": 2492,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
           "line": 1640,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function explorerDirectoryExists(",
           "line": 1634,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ],
@@ -554,16 +554,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfRenameEntry\"",
-          "line": 2484,
+          "line": 2494,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "renameExplorerEntry",
           "line": 1742,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -595,16 +595,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfDeleteObjects\"",
-          "line": 2483,
+          "line": 2493,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "deleteExplorerObjects",
           "line": 1731,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -636,16 +636,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfCreateFolder\"",
-          "line": 2485,
+          "line": 2495,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "createExplorerFolder",
           "line": 1751,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -677,16 +677,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjectProperties\"",
-          "line": 2496,
+          "line": 2506,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -718,16 +718,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPublicAddresses\"",
-          "line": 2455,
+          "line": 2465,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "bucketPublicAddresses",
           "line": 1236,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/public-addresses.js",
@@ -754,7 +754,7 @@
           "path": "extension/background.js",
           "symbol": "async function enableBucketPublicAccess(",
           "line": 1258,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ],
@@ -821,16 +821,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -862,16 +862,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfBuckets\"",
-          "line": 2448,
+          "line": 2458,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listBuckets",
           "line": 885,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -937,22 +937,22 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPrepareBucket\"",
-          "line": 2481,
+          "line": 2491,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "preparedProfile",
           "line": 1491,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ],
@@ -985,16 +985,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfArchiveEntries\"",
-          "line": 2508,
+          "line": 2518,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "callBucketWorker",
           "line": 1506,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ],
       "tests": [
@@ -1469,7 +1469,7 @@
         "path": "extension/background.js",
         "symbol": "function cleanExplorerKey(",
         "line": 1459,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1480,7 +1480,7 @@
         "path": "extension/background.js",
         "symbol": "function exactObjectKey(",
         "line": 92,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1491,7 +1491,7 @@
         "path": "extension/background.js",
         "symbol": "async function copyVerifiedObject(",
         "line": 114,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1502,7 +1502,7 @@
         "path": "extension/background.js",
         "symbol": "async function verifiedObjectPut(",
         "line": 107,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1513,7 +1513,7 @@
         "path": "extension/background.js",
         "symbol": "name: \"STORAGE\", bucket_name: bucketName",
         "line": 964,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1524,7 +1524,7 @@
         "path": "extension/background.js",
         "symbol": "async function callBucketWorker(",
         "line": 1506,
-        "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+        "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1673,29 +1673,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjects",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/popup.js",
           "symbol": "async function loadFolderLevel(",
-          "line": 44,
-          "sha256": "e54c1c99dddb242cce607115de6de2add3afcf345669b686866b0d438b55520a",
+          "line": 45,
+          "sha256": "17f4b0b7b103077b3f76716b6982690a075b906e28eed95d1cb7cf6c2ebe65a8",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/popup.html",
           "symbol": "id=\"folder-levels\"",
-          "line": 89,
-          "sha256": "803fbfbcd5923a779b68885801eac16177217fec0e962901117a64d79ac65544",
+          "line": 91,
+          "sha256": "5b9cae0b3fa7974aa87ffa08db230bf3c35e764cfdcfd4d2bed34b71e869551c",
           "evidence": "source-anchor"
         }
       ]
@@ -1715,16 +1715,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -1743,16 +1743,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -1773,7 +1773,7 @@
           "symbol": "message?.type===\"cfSearchStart\"",
           "line": 2419,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/search-session.js",
@@ -1799,16 +1799,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -1918,29 +1918,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2482,
+          "line": 2492,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
           "line": 1640,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function explorerDirectoryExists(",
           "line": 1634,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ]
@@ -1995,29 +1995,29 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfTransferObjects\"",
-          "line": 2482,
+          "line": 2492,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "transferExplorerObjects",
           "line": 1640,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function explorerDirectoryExists(",
           "line": 1634,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ]
@@ -2072,16 +2072,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfRenameEntry\"",
-          "line": 2484,
+          "line": 2494,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "renameExplorerEntry",
           "line": 1742,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2135,16 +2135,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfDeleteObjects\"",
-          "line": 2483,
+          "line": 2493,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "deleteExplorerObjects",
           "line": 1731,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2163,16 +2163,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfCreateFolder\"",
-          "line": 2485,
+          "line": 2495,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "createExplorerFolder",
           "line": 1751,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2191,16 +2191,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjectProperties\"",
-          "line": 2496,
+          "line": 2506,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2219,16 +2219,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPublicAddresses\"",
-          "line": 2455,
+          "line": 2465,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "bucketPublicAddresses",
           "line": 1236,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/public-addresses.js",
@@ -2255,7 +2255,7 @@
           "path": "extension/background.js",
           "symbol": "async function enableBucketPublicAccess(",
           "line": 1258,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ]
@@ -2296,16 +2296,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfObjects\"",
-          "line": 2456,
+          "line": 2466,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listObjectsPage",
           "line": 853,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2324,16 +2324,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfBuckets\"",
-          "line": 2448,
+          "line": 2458,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "listBuckets",
           "line": 885,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     },
@@ -2373,22 +2373,22 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfPrepareBucket\"",
-          "line": 2481,
+          "line": 2491,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "preparedProfile",
           "line": 1491,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "async function assertExplorerTransferSettings(",
           "line": 1624,
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c",
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94",
           "evidence": "source-anchor"
         }
       ]
@@ -2408,16 +2408,16 @@
         {
           "path": "extension/background.js",
           "symbol": "message?.type === \"cfArchiveEntries\"",
-          "line": 2508,
+          "line": 2518,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         },
         {
           "path": "extension/background.js",
           "symbol": "callBucketWorker",
           "line": 1506,
           "evidence": "source-anchor",
-          "sha256": "b297c697d112438aaf1de245021bab9395b5bf5dcb3361ddece4ce8e1041092c"
+          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
         }
       ]
     }

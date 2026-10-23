@@ -32,12 +32,14 @@
     [hidden]{display:none!important}
     .destination{margin:3px 0 16px;padding:14px;border:1px solid rgba(177,153,222,.17);border-radius:15px;background:linear-gradient(145deg,rgba(133,105,189,.09),rgba(12,10,20,.5));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
     .destination .field:last-child{margin-bottom:0}
+    .bucket-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}.bucket-label label{margin:0}#bucket-refresh{background:transparent;border:0;border-radius:5px;color:#c6b0e1;cursor:pointer;font-size:17px;line-height:1;padding:1px 4px}#bucket-refresh:disabled{opacity:.4;cursor:default}
     .destination-heading{display:flex;align-items:center;justify-content:space-between;margin:1px 0 7px;font-size:11px;color:var(--muted);font-weight:650}
     .optional{font-size:10px;font-weight:400;color:#9e93b0}
     #folder-levels{max-height:215px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#594372 transparent;padding:2px}
     .folder-level{margin-bottom:8px}.folder-row{display:flex;align-items:center;gap:7px}
     .folder-step{width:18px;flex:none;color:#a99bbb;font-size:10px;font-variant-numeric:tabular-nums;text-align:center}
-    .folder-row select{min-width:0;padding:9px 10px;border-radius:9px;background:linear-gradient(180deg,#21182f,#171120);font-size:12px;border-color:#40324f;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+    .folder-row select{min-width:0;padding:9px 10px;border-radius:9px;background:#fff;color:#111;color-scheme:light;font-size:12px;border-color:#d5cddd;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+    .folder-row select option{color:#111;background:#fff}
     .folder-remove{width:27px;height:30px;flex:none;background:transparent;border:1px solid transparent;border-radius:7px;color:#baadcb;font-size:17px;cursor:pointer}
     .folder-remove:hover{background:#31233f;border-color:#493457;color:#fff}
     .folder-note{font-size:11px;color:#b9a9cd;margin:5px 0 0 25px}
@@ -81,8 +83,8 @@
 
       <section class="destination" aria-label="Save destination">
         <div class="field">
-          <label for="profile">Bucket / destination</label>
-          <select id="profile"></select>
+          <div class="bucket-label"><label for="profile">Bucket / destination</label><button id="bucket-refresh" type="button" title="Refresh all connected buckets" aria-label="Refresh all connected buckets">↻</button></div>
+          <select id="profile"><option value="">Loading buckets…</option></select>
         </div>
         <div id="cloudflare-folders" hidden>
           <div class="destination-heading"><span>Folder</span><span class="optional">Optional</span></div>
@@ -100,7 +102,7 @@
         </div>
       </section>
 
-      <button id="send" class="send">Send with REDOWN</button>
+      <button id="send" class="send" disabled>Send with REDOWN</button>
       <button id="setup" class="connect" hidden>Connect a destination</button>
       <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
