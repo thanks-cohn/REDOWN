@@ -1,0 +1,36 @@
+# Work / Codex Handoff — Agent-First REDOWN API Hardening
+**Intent:** A separate Work conversation should inspect the REAL repo after reading every `COMP/*.md` page and propose a phased, testable Codex request. This document is a handoff, not authorization to rewrite modules blindly.
+
+## Cold or hot agent requirement
+A cold agent with zero memory, a hot agent mid-transfer, and a human engineer must all be able to determine exactly what REDOWN can do, what is running, who owns it, where bytes are, why it failed, how to recover, and what is safe to mutate. The same documented primitives must underlie UI controls, CLI/devtools automation, tests and future desktop application. Avoid opaque internal-only state.
+
+## First task: evidence-based repository audit
+Inspect README, manifests, MV3 background/service worker, panel/explorer, context menus, auth, Cloudflare Workers/R2, queue, storage, provider integrations, settings, tests, build/deployment, Forever Works obligations and current debug/BETA modes. Map real function->event->queue->executor->provider->verification->UI. Mark every capability VERIFIED IMPLEMENTED / PARTIAL / PROPOSED / UNKNOWN. Record precise paths, existing APIs, data schemas and observed tests. Preserve working v1 flows and provide a reproducible baseline before changes.
+
+## Agent-contract target surfaces (illustrative contracts, not implemented endpoints)
+1. **Introspection:** capability/version/feature-status matrix, runtime health, environment, provider accounts, scopes/expiry/reauth and supported operations. READ endpoints safe by default; stable JSON schemas and human-readable summaries.
+2. **Job lifecycle:** immutable job IDs; create/idempotency-key; queue, start, pause, resume, cancel, retry, inspect, events and provenance; distinguish local bytes, browser transfer, user-owned cloud worker and desktop engine. State machine: planned -> queued -> running -> verifying -> complete | partial | blocked_auth | failed | cancelled. Avoid magic hidden transitions; give a monotonic event log.
+3. **Object/location inventory:** canonical logical object ID vs provider object ID/path; provenance, size, MIME, checksum algorithm/strength, version and destination receipt; cross-cloud map and freshness. Verification should identify what is actually checked: response receipt, server checksum, or downloaded content hash.
+4. **Provider adapters:** capabilities and semantic mismatches (Drive vs GCS vs MEGA Cloud vs MEGA S4 vs R2); connect/disconnect/refresh/test, scopes, token state, folder creation and diagnostic error codes; support per-account least privilege, no secrets in logs, redaction by default.
+5. **Context menu and capture:** exact menu hierarchy/presets, what URL or bytes are captured, screenshot/tab/recording permissions, default configurable shortcuts, source-specific limits, and per-target fanout receipts.
+6. **Cloud orchestration:** customer-owned provision/deployment authorization, cloud resource ledger, executor availability, remote fetch eligibility, per-provider rate/size limits, staging TTL, delayed delivery, polling/event reconciliation, costs, and no false browser-independent guarantees.
+7. **Redundancy + dedup:** protected replication policies, restore from surviving verified source, retention/cost overview, exact-hash identity vs same-name ambiguity, preview cleanup, dry run, protected survivor selection, explicit destructive approval and rollback where provider supports it.
+8. **File explorer:** list/tree/search, incremental pagination, nested hierarchy, folder create/rename/move/copy/delete, preview/lightbox, Get URL submenu, visibility of all entries, transfer/queue state, selectors, accurate progress colors. Historical bugs: simple/nested right-click labels both showing 'Files', missing saved destination item, failing folder creation, unexpected 403 and Cloudflare auth/session expiry, overflow and inconsistent pagination.
+9. **Observability/debug:** structured stable error taxonomy, correlation IDs across UI->worker->provider, chronological events, safe repro bundle/export, validation receipts, retry classification, automatic diagnosis suggestions and fixtureable fake provider.
+10. **Desktop bridge:** do not assume worker-only UX; first decide shared native engine + eventual independently usable desktop UI sharing the extension design system; versioned protocol, local opt-in permissions, queue durability and OS-specific installation. Browser-only baseline must continue operating.
+11. **Privacy/security:** threat model token theft, browser extension content-source SSRF, presigned URL leakage, cross-origin restrictions, multi-tenancy, destructive commands, permission confusion; separation of read-only inspection vs mutation; scopes per agent; confirmation and audit for destructive/irreversible tasks.
+12. **Documentation:** published OpenAPI or machine-readable typed schema, compact examples, error catalog, setup/repair guide, event/state diagram, migration/version rules, architecture decision records, Forever Works purpose-preserving contracts, feature flags and changelog.
+
+## Acceptance tests
+- Fresh Chrome install: connect authorized destination; right-click remote save; report verified success/partial failure honestly; cold agent can explain from exported safe diagnostics.
+- Save same input to one cloud and three; retries do not double-count or silently overwrite; odometer count correct.
+- 403 simulated on folder creation: actionable reason, remediation, safe replay; surviving copies stay protected.
+- Revoke one token mid-three-cloud job: two successful copies remain and third is blocked, never mislabeled DONE.
+- Browser closes during local-only browser transfer: do not assert completion; cloud job continues only with separately verified executor.
+- 2,500 nested explorer objects: pagination and context menu preserve exact hierarchy and saved destination counts.
+- Dedupe test with same filename/different hash, same hash on three providers, and declared two-copy protection; zero auto-deletions.
+- Reduced motion/silent notifications settings; toolbar icon red/green temporary fade; every success effect gated by verified outcome.
+- Cold agent finds documented contracts and state without needing original developer knowledge. Hot agent resumes following a crash or handoff without inventing job state.
+
+## Handoff prompt to paste into Work
+> Inspect every page under `COMP/` plus REDOWN's current repo. Produce a source-backed gap analysis contrasting existing implementation with our one-click DONE product obligations. Then draft phased Codex tasks prioritizing a single agent-accessible API/state/event model across extension UI, customer-owned cloud workers, future desktop app, and debug tooling. Do not start by adding new UI features. First preserve and test existing remote-download and explorer workflows, add machine-readable introspection, queue state, provider diagnostics, verification receipts, and safe dry-run mutation APIs. Provide file-level implementation plans, migration and rollback strategy, automated acceptance tests, and a full cold-agent onboarding guide. Flag any facts you cannot verify; never claim prototypes are production-ready.
