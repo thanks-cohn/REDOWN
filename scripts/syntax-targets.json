@@ -37,5 +37,10 @@
   "scripts/check-syntax.mjs",
   "agent/diagnostics/issues.mjs",
   "extension/transfer-counter.js",
-  "extension/odometer.js"
+  "extension/odometer.js",
+  "extension/beta-explorer.mjs",
+  "extension/file-engine/contract.mjs",
+  "extension/file-engine/simulation.mjs",
+  "extension/file-engine/indexeddb-store.mjs",
+  "scripts/phase2-schema-fixtures.mjs"
 ]

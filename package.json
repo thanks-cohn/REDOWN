@@ -23,6 +23,7 @@
     "explorer:smoke": "node scripts/explorer-smoke.mjs"
   },
   "devDependencies": {
+    "fake-indexeddb": "6.2.6",
     "jsdom": "^26.1.0",
     "wrangler": "^4.0.0"
   },
