@@ -1,0 +1,47 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Installed Chrome color/animation acceptance remains unknown."
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.toolbar-feedback",
+  "kind": "invariant",
+  "name": "Temporary success/failure icon effect preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.toolbar-feedback"
+  ],
+  "scope": [
+    "redown.implementation.toolbar-feedback"
+  ],
+  "severity": "high",
+  "statement": "Notifications require opt-in; newer effects cancel older timers, tint fades back to exact original art/title and cosmetic failures cannot change transfer outcome.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.notification-preference.test",
+        "redown.evidence.test.toolbar-feedback.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

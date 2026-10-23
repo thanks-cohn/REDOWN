@@ -1,0 +1,103 @@
+{
+  "authority": "Observed source/test state; inferred purposes and policies remain unreviewed.",
+  "coldAgentLimit": "Navigation/explanation drill; no change experiment, live behavior or source-independent reconstruction.",
+  "explorerSmoke": {
+    "fail": 1,
+    "pass": 215,
+    "status": "failed architecture freshness"
+  },
+  "features": 40,
+  "finalRegression": {
+    "fail": 10,
+    "introducedFailures": 0,
+    "pass": 365,
+    "state": "failed-existing-baseline"
+  },
+  "historicalBaseline": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "independentColdAgent": "initial eight-question maintenance drill completed; targeted follow-up confirms fixes",
+  "independentFollowup": "FOREVER_WORKS/verification/cold-agent-followup.md",
+  "independentTranscript": "FOREVER_WORKS/verification/cold-agent-initial.md",
+  "installedChrome": "not-executed",
+  "inventoryFiles": 497,
+  "issueRecords": 66,
+  "literalInterfaces": 128,
+  "liveCloudflare": "not-executed",
+  "maintenanceFinding": "Source-present maintenance navigation succeeded; no full reconstruction or live behavior claim.",
+  "modelAudit": {
+    "issueCount": 4,
+    "issues": [
+      {
+        "code": "invariant-no-verification",
+        "message": "invariant has no verification",
+        "path": "redown.invariant.gallery"
+      },
+      {
+        "code": "invariant-no-verification",
+        "message": "invariant has no verification",
+        "path": "redown.invariant.local-bridge"
+      },
+      {
+        "code": "invariant-no-verification",
+        "message": "invariant has no verification",
+        "path": "redown.invariant.rfis"
+      },
+      {
+        "code": "invariant-no-verification",
+        "message": "invariant has no verification",
+        "path": "redown.invariant.sample-worker"
+      }
+    ]
+  },
+  "productionChanges": false,
+  "records": 253,
+  "referenceValidation": "pass",
+  "regression": {
+    "additionalBaselineFailures": [
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "deepStrictEqual"
+        },
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "=="
+        },
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "UNKNOWN",
+          "name": "TypeError",
+          "operator": null
+        },
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      }
+    ],
+    "fail": 10,
+    "knownFailureCount": 7,
+    "pass": 365
+  },
+  "schemaValidation": "pass",
+  "sourceIndependentReconstruction": "not-executed",
+  "status": "current-state-ingestion-first-pass"
+}

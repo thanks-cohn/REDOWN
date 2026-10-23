@@ -1,0 +1,58 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Count semantics are scoped to instrumented completion; no global independent file integrity proof."
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/transfer-counter.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+        },
+        {
+          "path": "extension/odometer.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+        },
+        {
+          "path": "extension/popup.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.delivery-counter",
+  "kind": "invariant",
+  "name": "Delivery counter and dashboard launcher preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.delivery-counter"
+  ],
+  "scope": [
+    "redown.implementation.delivery-counter"
+  ],
+  "severity": "high",
+  "statement": "Only instrumented qualifying completion increments delivery count; queued GitHub dispatch does not; sound remains opt-in and navigation arrival must remain controlled.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.odometer.test",
+        "redown.evidence.test.popup-destinations.test",
+        "redown.evidence.test.transfer-counter.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

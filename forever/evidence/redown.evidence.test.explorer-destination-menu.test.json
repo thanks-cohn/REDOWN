@@ -1,0 +1,90 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "current bucket remains available for sibling destinations and same-folder choice is disabled",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "folder pages append via More folders and closed menus ignore late replies",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "keyboard arrows navigate menus and Escape returns to parent without changing Explorer",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "failed lazy folder reads offer retry and never execute a transfer",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "Copy here is available immediately while child-folder listing is still pending",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-destination-menu.test.mjs",
+          "name": "reopening the same destination reuses a bounded short-lived folder page cache",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 7,
+      "sourceRefs": [
+        {
+          "path": "tests/explorer-destination-menu.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "91c48674dcc973728dda64c45a281e606365d6fb34b5d5bee94031f15eed9426"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.explorer-destination-menu.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/explorer-destination-menu.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

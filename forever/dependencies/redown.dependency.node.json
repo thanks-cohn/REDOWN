@@ -1,0 +1,42 @@
+{
+  "currentImplementation": "redown.implementation.dependency.node",
+  "dependencyName": "Node.js offline helper and inspection",
+  "dependencyType": "runtime",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "package.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "7ef941e088dd110da51acfd990444a5e3824eaac8126f70f7df1cbff6cc75ea2"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.node",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.diagnostics"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "Local HTTP helper and read-only diagnostic tooling",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "CAPABILITY",
+  "replacementRequirements": [
+    "preserve-existing-boundary-node"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.diagnostics"
+  ]
+}

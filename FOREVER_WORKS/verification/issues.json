@@ -1,0 +1,1393 @@
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "partial",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "issues": [
+      {
+        "id": "BUG-019",
+        "title": "BUG-019 — Directory Keep both merges into an existing destination directory",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "critical owner data-safety report; source-confirmed folder merging and lost directory retry identity corrected. Actual installed byte overwrite/recovery remains unverified.",
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Directory conflicts now preflight before merging and Keep both preserves directory identity into a separate sibling. Owner-reported byte loss and installed acceptance remain unverified.",
+          "reviewedOn": "2026-10-23",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "symbol": "const folderTargets=new Map()",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
+            },
+            {
+              "path": "tests/explorer-worker.test.mjs",
+              "symbol": "directory Keep both preserves the entire existing tree",
+              "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22"
+            }
+          ]
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-019 — Directory Keep both merges into an existing destination directory",
+          "line": 623,
+          "sha256": "cf2ef185ea3e5ab207627ebf2d5a9046d5dd8ad280a7859729fe9fb8c3146642"
+        },
+        "nextAction": "Verify disposable installed-directory Copy/Move/drag-and-drop with original destination hashes; no recovery or live closure is claimed.",
+        "related": [
+          "BUG-018",
+          "EXPLORER-COPY-404-2026-10"
+        ]
+      },
+      {
+        "id": "CODE-UPLOAD-CONCURRENT-CREATE",
+        "title": "Local upload existence check and PUT are separate operations",
+        "sourceKind": "code-review",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "Source review; not a live failure",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Source performs a preflight existence check followed by direct PUT, without an atomic conditional-create boundary. Concurrent-writer safety is unverified.",
+          "reviewedOn": "2026-10-22",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/options.js",
+              "symbol": "if(existed!==\"no\")throw new Error",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+            },
+            {
+              "path": "extension/options.js",
+              "symbol": "method:\"PUT\"",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+            }
+          ]
+        },
+        "nextAction": "Use a provider-supported conditional write or the existing verified Worker path, then test two concurrent writers and ambiguous responses.",
+        "related": [
+          "GATE-local-upload-conditional-races"
+        ]
+      },
+      {
+        "id": "GATE-installed-workflow-matrix",
+        "title": "installed-workflow-matrix",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Administrator rejects unpacked extension loading; zero extension assertions"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "7a00b8014c9ae98622d9205b4d1747438e30fafad1906b3b2d12dc8ce78af2f3"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-live-worker-object-truth",
+        "title": "live-worker-object-truth",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No STORAGE Worker revision, HEAD/read/hash evidence"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "f027ca820af8e3479f84cfe0e25e519e255a98d485cc08a5c4cc584690b326ca"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-local-upload-conditional-races",
+        "title": "local-upload-conditional-races",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Initial absence check and direct PUT still race across clients"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "23918a51dafdf038a134455fc47baa2fe8004cbbcc37f85e59c64d0e29c4f3bc"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-real-expiry-and-soak",
+        "title": "real-expiry-and-soak",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No live credentials/scoped resources; accelerated clocks are mock only"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "57fa9691520419857912439ad753c0014c2196282c009233ea160cb579c383ac"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-remote-write-idempotency",
+        "title": "remote-write-idempotency",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No durable operation receipt to reconcile timeout after committed numbered copy"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "7a89976c246bf45023235f319e31382fed263a3d43b68de1f6dc5b21acfd1b38"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-upload-ambiguous-replay",
+        "title": "upload-ambiguous-replay",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Mock transport failure stops automatic replay; no remote byte certification"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "a709c48a1c91006ddbf4f8febf9bd2f42a7cf0223a9fcb01ba20f7db3e283e12"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "CODE-WINDOWS-SYNTAX",
+        "title": "Reliability checker launched npm.cmd without a Windows shell",
+        "sourceKind": "code-review",
+        "state": "open",
+        "severity": "high",
+        "recordedStatus": "Source review; not a live failure",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "assessment": {
+          "status": "source-implemented",
+          "confidence": "source-reviewed",
+          "summary": "Syntax checks now invoke the current Node executable directly from one target list; no npm.cmd or shell is required. Native Windows execution remains to be observed.",
+          "reviewedOn": "2026-10-22",
+          "freshness": "current",
+          "evidence": [
+            {
+              "path": "scripts/check-syntax.mjs",
+              "symbol": "spawnSync(process.execPath,['--check'",
+              "sha256": "8c8f5ae1c8afef98c54d7d1bc6d041e479c4fe86f6bfd90d70cbad937b2da3d2"
+            },
+            {
+              "path": "tests/syntax-portability.test.mjs",
+              "symbol": "paths with spaces",
+              "sha256": "16742ac00365d9d9bf71aa54305fc0d57804b419bc59d8cb7d73b877f11b7887"
+            }
+          ]
+        },
+        "nextAction": "Run npm run reliability:check on Windows and retain platform-specific evidence.",
+        "related": []
+      },
+      {
+        "id": "DBG-001",
+        "title": "Nested editor cannot reliably append deeper children without ancestor reselection",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-001.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      },
+      {
+        "id": "DBG-003",
+        "title": "Upload from Computer mixes existing selection and creation draft; folder listings can mix bucket data",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-003.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      },
+      {
+        "id": "EXPLORER-COPY-404-2026-10",
+        "title": "Cross-bucket Copy/Move/Paste returns HTTP 404",
+        "sourceKind": "explorer-incident",
+        "state": "open",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "reported",
+          "confidence": "user-report",
+          "summary": "Root cause and installed/deployed versions remain unverified."
+        },
+        "source": {
+          "path": "docs/explorer/COPY_404_CASE.json",
+          "sha256": "340c7c5f1a01380e7232ad584bbb2708e2593624095781771bbafe86d1ab9027"
+        },
+        "nextAction": "Capture same-operation source/destination evidence using disposable authorized files; do not infer missing data from HTTP404 alone."
+      },
+      {
+        "id": "GATE-accessibility-workflow-audit",
+        "title": "accessibility-workflow-audit",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Existing fixtures and aria-live are insufficient full audit"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "9824a7c2f04b64ad885d712fb47b8dd59480938dee4e602355da71a27d6e3c55"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-auth-generation-and-read-retry",
+        "title": "auth-generation-and-read-retry",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Mock regressions; not live session proof"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "da8ecc278286b2704a4fb23cc84f4d85a6373dacfe2344d8a0606a94afbef895"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-durable-transfer-recovery",
+        "title": "durable-transfer-recovery",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "General/local queues lack restart-safe File recovery; gallery-specific queue is not universal"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "39830ef3f5281e10e3cf37ccf09d5e86976b170dee0ba63ae85c5f208d093dcb"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-exact-artifact-installation",
+        "title": "exact-artifact-installation",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Extracted ZIP unpacked install blocked; CRX/store distribution not run"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "f05892e80ca303117ba6327f29374b22a28cff0e67ef43b88b6aacdbe6eb1966"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-full-runtime-debug-surface",
+        "title": "full-runtime-debug-surface",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No durable traces, complete span chain or preview/transfer verification adapters"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "3034581827004f1194aed5268755d0049557c68c668a4dee01cf6bde9c6bcab6"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-full-suite",
+        "title": "full-suite",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Six historical freshness/corpus assertions retained; classified individually"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "93a91a9c86abcf3dcc798101ccd19eedce3a63a4fa3757ec28750c99d5db5d0e"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-license-consistency",
+        "title": "license-consistency",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "07325c6f3b5fd895397f3e9d23e43d89f148d574695fb491d66547bb1d1ecb21"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-malformed-listing",
+        "title": "malformed-listing",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Actual source function tested against injected malformed/empty replies"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "03cb0058a0de328e1e9bf0da87c2ffc8f57e3797367ec2375013c9099ab0697b"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-privacy-permissions-current-policy",
+        "title": "privacy-permissions-current-policy",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Caller inventory only; current authoritative review and operator URLs missing"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "860105e4362c54e940edbaf8256c5a8da222b116396c1c6c12e716a067cc1219"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-progressive-search-local",
+        "title": "progressive-search-local",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Pull engine and actual UI VM regressions; installed and restart-resume gates separate"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "c3f0ddeb761803344eda2d55d9c40d72af467be48c78fa4fe5c601956b8556b3"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-store-submission",
+        "title": "store-submission",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "explicitly out of scope",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "User request prohibits submission; store branch preserved"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "cb69a2b6f49f70a2fc218737049c176c192fcf90357b2af93a00ea4b6ef88470"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "REPORT-9d785a223e76",
+        "title": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "Open; user-reported, source inspected, not reproduced against installed Chrome settings. **Priority: P1 menu reliability.** No application code changed in this investigation.",
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Explicit Simple label precedence and empty defaults remain implemented, re-inspected and re-tested after transfer safety changes. Missing configured destinations and native menu acceptance remain unresolved.",
+          "reviewedOn": "2026-10-23",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "symbol": "if(explicit)return explicit;",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
+            },
+            {
+              "path": "tests/simple-menu-flat.test.mjs",
+              "symbol": "blank and whitespace Simple labels",
+              "sha256": "aedd67649ea7c4097804418eebb57314fdc86944fa0a15401c1985a6b3967a04"
+            }
+          ]
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)",
+          "line": 3,
+          "sha256": "e9f453f2526ad265a708bf3ab8819cdde0979f779ee041b18a50da9f6ffc1b98"
+        },
+        "nextAction": "Reconcile configured versus rendered menu items with omission reasons and verify the actual Chrome menu.",
+        "related": [
+          "DBG-002"
+        ]
+      },
+      {
+        "id": "DBG-002",
+        "title": "Simple right-click menu location editor must support redirection and explicit creation without losing child rows",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-002.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      },
+      {
+        "id": "GATE-audit-package-integrity",
+        "title": "audit-package-integrity",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Allowlist, hashes and deterministic ZIP; audit-only, not release"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "af1fca5969db5a7b673085ba3ef3d94e09b3c8a30fb2f033f443f5130573915b"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-local-runtime-contract",
+        "title": "local-runtime-contract",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Mock/local conformance and bounds tests; runtime adapter installed evidence blocked"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "b991fc1e2efb65b2cb63ca97ad918c46c48b70c1f5180cc043b7a61660ae0ecf"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-modest-windows-performance",
+        "title": "modest-windows-performance",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Collector microbenchmark is not product/list/media performance"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "7a37389e4fc990a214b02806a8a09f1735b1be7f2c8b578f24526c196d2205a4"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-search-durable-resume-and-abort",
+        "title": "search-durable-resume-and-abort",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Restart explicitly interrupted; dispatched reads bounded but not aborted"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "0184890807cb33efcc674820c901a4c168bbb967aa096d23fad38e35d7fef873"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "REPORT-06ffddcefe46",
+        "title": "Get URL / operation status — native Chrome acceptance pending (22 October 2026)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Unclassified report or follow-up",
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "URL submenu, confirmed public activation and shared operation-state feedback exist with local tests; installed-browser/native clipboard acceptance remains pending.",
+          "reviewedOn": "2026-10-22",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/public-addresses.js",
+              "symbol": "if(!enabled)continue;",
+              "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83"
+            },
+            {
+              "path": "tests/get-url.test.mjs",
+              "symbol": "disabled bucket offers explicit confirmation",
+              "sha256": "e31b65eb91b7ba7af206565d6e54811ac06b7e605bd9f79cb154e437815046c2"
+            }
+          ]
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Get URL / operation status — native Chrome acceptance pending (22 October 2026)",
+          "line": 574,
+          "sha256": "58b11b6da22babacd1d87000ee19652704ca9bcc13a744903c9a7522ed011e9f"
+        },
+        "nextAction": "Run native Chrome activation/cancel/copy/keyboard acceptance on the updated package.",
+        "related": [
+          "BUG-015"
+        ]
+      },
+      {
+        "id": "TEST-1cf603c204c1",
+        "title": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-4b8f255aa983",
+        "title": "full finite public coverage inventory resolves strata and all canonical case links",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-52dda00bf641",
+        "title": "offline discovery advertises only implemented operations and distinct versions",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-603387dda5ca",
+        "title": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Removed drag handles; unresolved historical expectation"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-73cc7f501bd6",
+        "title": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-e02a16f64fa4",
+        "title": "real discovery, case, history, filters and validation are deterministic and honest",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "TEST-fdf37692be95",
+        "title": "original case and proposal Markdown bytes are retained from pinned upstream",
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "Known baseline failure",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history."
+      },
+      {
+        "id": "BUG-001",
+        "title": "BUG-001 — Bucket root must be a selectable nested destination",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported behavior / usability defect",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-001 — Bucket root must be a selectable nested destination",
+          "line": 77,
+          "sha256": "0e54c890cd45b277d865aeeb420edadd5e827f1413bbcba52634da5f1cd19f42"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-002",
+        "title": "BUG-002 — Replace “Send here” with click-to-send and hover-to-expand",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · interaction requirement",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-002 — Replace “Send here” with click-to-send and hover-to-expand",
+          "line": 94,
+          "sha256": "f231084bbd3870b9d5fa43bdc6cce68fd592e277527f28d5f1a8d41ed46fbe32"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-003",
+        "title": "BUG-003 — Upload from computer: Add child produces a cramped, misaligned row",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "CSS fix committed (2026-10-10); awaiting visual Chrome verification at 1366×768 and deeper nested paths",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-003 — Upload from computer: Add child produces a cramped, misaligned row",
+          "line": 112,
+          "sha256": "ff03a1cb08b2c6c160e9d44ed45f580c51e395c01c6380bffe430adf40a4572a"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-004",
+        "title": "BUG-004 — Nested dropdown interaction rebuilds and rearranges the whole editor",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported behavior with a confirmed full-render code path",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-004 — Nested dropdown interaction rebuilds and rearranges the whole editor",
+          "line": 130,
+          "sha256": "a3f82f33138b0491f08d2fd4cdbc21dd9e25090fe3984483a0da187da45955b3"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-005",
+        "title": "BUG-005 — Cloudflare Simple mode cannot add multiple independent locations",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · source-confirmed editor limitation / user-reported requirement",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-005 — Cloudflare Simple mode cannot add multiple independent locations",
+          "line": 165,
+          "sha256": "99400594ed282f0503a2f6d3e612dfe9ec6ecd76ca98bddd8b017fc03ff69977"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-006",
+        "title": "BUG-006 — Explorer file list expands downward instead of paginating in a bounded scroll area",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Implemented on default branch (2026-10-10); awaiting installed-Chrome verification, especially large R2 cursor results and keyboard selection",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-006 — Explorer file list expands downward instead of paginating in a bounded scroll area",
+          "line": 207,
+          "sha256": "6588ae0ed8a7173d425250d49857401ef344c0c096fc04b8400649c80074686e"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-007",
+        "title": "BUG-007 — Explorer lightbox fails to display selected file reliably",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported broken feature / suspect implementation identified; exact rendering failure not yet reproduced",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-007 — Explorer lightbox fails to display selected file reliably",
+          "line": 225,
+          "sha256": "4267c6f338d486550c1b07beac9ab3ded1a0b909da4bd1429bec2ec1d6418cb8"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-008",
+        "title": "BUG-008 — Clicking a Downloads location does not locate, select, and preview that file in Explorer",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Fix implemented on default branch (2026-10-10), pending Chrome extension end-to-end verification; very large folders and unavailable files need testing",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-008 — Clicking a Downloads location does not locate, select, and preview that file in Explorer",
+          "line": 243,
+          "sha256": "946c06ec5932b47a8b593a8e8fb4071a2f09abfcd37ddf02c036ea03b6216525"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-009",
+        "title": "BUG-009 — Cloudflare authorization expires inconsistently across sections and browser sessions",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · recurring user-reported authentication failure / refresh-token error path confirmed",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-009 — Cloudflare authorization expires inconsistently across sections and browser sessions",
+          "line": 261,
+          "sha256": "fa5a5cd535654de5b4203403324715776d75558d38ac3df5cd28dc88b08eb3fa"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-010",
+        "title": "BUG-010 — Simple and Nested menu settings should share one unified section",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Fix implemented on default branch (2026-10-10), pending visual and interaction testing",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-010 — Simple and Nested menu settings should share one unified section",
+          "line": 295,
+          "sha256": "0986835e288fb9ad37fb4863932872cd7b31c5332d3de446451b9feef35a3734"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-011",
+        "title": "BUG-011 — Right-click video transfers fail on some websites",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported site-specific compatibility; root cause unverified",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-011 — Right-click video transfers fail on some websites",
+          "line": 352,
+          "sha256": "c1c124656a4a70c7b2f7cae760dd39627ddbfafbbfb3eec39b3616725b279e99"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-012",
+        "title": "BUG-012 — Nested destination dropdowns show incorrect folder hierarchy or omit children",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · screenshot-supported user report; exact cause not yet reproduced",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-012 — Nested destination dropdowns show incorrect folder hierarchy or omit children",
+          "line": 376,
+          "sha256": "9f8c567d140d629cb3d5e8b30fc5ee92a9ab2bc3bab7975d5d797235ec6896ef"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-013",
+        "title": "BUG-013 — Upload from Computer child-folder dropdown omits or fails to load existing subfolders",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · screenshot-supported user report; separate from right-click nested menu BUG-012",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-013 — Upload from Computer child-folder dropdown omits or fails to load existing subfolders",
+          "line": 398,
+          "sha256": "78eb64fc310a8404002e191d9c2f0359b5eaf77bdef56aee675599bb29cbf5ff"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-014",
+        "title": "BUG-014 — Upload from Computer: choosing an existing location fills the new-name input",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported regression (October 10, 2026); runtime mechanism not yet verified",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-014 — Upload from Computer: choosing an existing location fills the new-name input",
+          "line": 495,
+          "sha256": "2ffa3083c8c4e25998c80d83262bb38fad92f60de84768646784806d24591f4f"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-015",
+        "title": "BUG-015 — Explorer and file previews should show a verified public URL alongside local blob preview URLs",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · requested capability (October 10, 2026); bucket-by-bucket eligibility unknown",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-015 — Explorer and file previews should show a verified public URL alongside local blob preview URLs",
+          "line": 513,
+          "sha256": "e691935495148ee5be6db4dff64dd1987560ad6806734af916a7632959f5e222"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-016",
+        "title": "BUG-016 — Simple Mode settings unnecessarily rerender the entire panel after small edits",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported UX/state regression (October 10, 2026); exact triggering handlers still to be traced",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-016 — Simple Mode settings unnecessarily rerender the entire panel after small edits",
+          "line": 532,
+          "sha256": "54cfc745a01ac8848acb281e04c84394aaad39904febc340a50304cb8efca8dd"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-017",
+        "title": "BUG-017 — Simple and Nested location editors are visually cluttered and difficult to decipher",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Open · user-reported usability/design defect · recorded October 21, 2026",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-017 — Simple and Nested location editors are visually cluttered and difficult to decipher",
+          "line": 552,
+          "sha256": "a445b5a2894f8e87c50ad21b4d13419806adf4cf21270c13c84164e688219de9"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-018",
+        "title": "BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "source/DOM-confirmed clipboard, stale menu and transport-observability defects corrected; installed transfer outcome remains open.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05",
+          "line": 612,
+          "sha256": "5b1f24f6876b09b082985e741c7aed1f82fb4b45916393f3808943ebaebea40b"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "BUG-020",
+        "title": "BUG-020 — Remote save normalizes an exact selected folder path",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "source-confirmed while building optional popup dropdown levels; additive exact-path support and pre-write compatibility guard implemented. Installed delivery/Repair acceptance remains pending.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-020 — Remote save normalizes an exact selected folder path",
+          "line": 630,
+          "sha256": "c5a65d75e7a715e16981e17e8fdf55c9b76aaeda1899af0d59da19f63842a1e8"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-0591c3903a25",
+        "title": "BUG — R2 triple-dot directory object retrieval (2026-10-22)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Source mitigation committed to `main`; Chrome end-to-end verification pending.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG — R2 triple-dot directory object retrieval (2026-10-22)",
+          "line": 46,
+          "sha256": "8ad7fc6adaeb4c786f039a82902a5d736fafc209fc4a7641b7cd7e9c5933cf1e"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-122b1191cab4",
+        "title": "Upload from Computer — tree connectors and bounded depth (visual testing pending)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Unclassified report or follow-up",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Upload from Computer — tree connectors and bounded depth (visual testing pending)",
+          "line": 456,
+          "sha256": "816aadb51ea9be44b96a6fc1c305c1b18562a0b531e35382da638ea32ea6079e"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-1244c9523c92",
+        "title": "Fixed — DBG-001: Nested editor cannot continue adding deep children (human testing pending)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Fixed in source (`538006a`), regression tests added (`2a5e061`); **human Chrome testing pending**. Automated tests have not been run in this session because the checkout could not be retrieved from GitHub in the execution environment.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Fixed — DBG-001: Nested editor cannot continue adding deep children (human testing pending)",
+          "line": 69,
+          "sha256": "ed3e6475d6a1ade3d25467eaa6648f7969a8a8e12f7293f9963ffb75879ecf59"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-16959653a7a9",
+        "title": "Windows reliability run: paths, CRLF fixtures and symlink permissions — 2026-10-22",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Unclassified report or follow-up",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Windows reliability run: paths, CRLF fixtures and symlink permissions — 2026-10-22",
+          "line": 601,
+          "sha256": "410d825133ee292ead77e08a6766bbe8b7c276d9319fed4da786750e83f48143"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-3cfd32b6fe47",
+        "title": "Source patch — Upload from Computer location separation (human testing pending)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Source changes `79c90c4` and new regression tests `74896f4` committed; automated test execution and installed Chrome testing **pending**.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Source patch — Upload from Computer location separation (human testing pending)",
+          "line": 462,
+          "sha256": "bcdae7993c56bef2bfede26e7593b8c8fb0dcb8b5af47a24a3571a0f9d8bc5ee"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-5979edb56553",
+        "title": "Watch item — Asset domain hostname versus generated URL (2026-10-22)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Not reproduced conclusively; preserve for investigation if reported again. No configuration or code changes made for this report.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Watch item — Asset domain hostname versus generated URL (2026-10-22)",
+          "line": 26,
+          "sha256": "99fe51defbbc5d98ead634ba423d30a015e5ae264e5055b89373c1bc17681721"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-93953e5a24cf",
+        "title": "Source fix — Flat Simple right-click destinations (human testing pending)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Implementation committed `c172731` with focused test `0f88e43`; automated and installed-Chrome verification pending.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Source fix — Flat Simple right-click destinations (human testing pending)",
+          "line": 483,
+          "sha256": "7f8dd3ad5c5c3260fbca447811767b9b6e9b7ca7b81b7eabb5ae16dcfe2c8f31"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-def0921e87ea",
+        "title": "Canonical Simple Menu contract — one popup and configurable automatic labels",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Unclassified report or follow-up",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Canonical Simple Menu contract — one popup and configurable automatic labels",
+          "line": 473,
+          "sha256": "508c85047061a9507d839958f4b71a39812c2d6fd1e47432f43b20637ca8065f"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-e0e2ea2abe27",
+        "title": "Source fix — Simple location row clearing and explicit directory creation (human testing pending)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Source implementation committed (`7c1b0d6`, `3ac4496`, `376d933`); regression tests added (`b6f2cda`); **automated test execution and human Chrome testing pending**.",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Source fix — Simple location row clearing and explicit directory creation (human testing pending)",
+          "line": 149,
+          "sha256": "ac096a931b3ad95bc972dedef9137325a61dbb78eda467cfcfde2a08270a21c1"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      },
+      {
+        "id": "REPORT-e37f66f98fed",
+        "title": "Implementation triage — October 10, 2026",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "unknown",
+        "recordedStatus": "Unclassified report or follow-up",
+        "assessment": {
+          "status": "needs-triage",
+          "confidence": "recorded-only",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "Implementation triage — October 10, 2026",
+          "line": 318,
+          "sha256": "bc75e804ce0bbb3081abddf6a3e6a54d8f6b65885ea005b92512e543db0e4a3a"
+        },
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing."
+      }
+    ],
+    "total": 66,
+    "nextOffset": null,
+    "filters": {
+      "sourceKinds": [
+        "bug-report",
+        "release-gate",
+        "historical-incident",
+        "explorer-incident",
+        "regression-debt",
+        "code-review"
+      ],
+      "states": [
+        "open",
+        "closed",
+        "unknown"
+      ],
+      "assessments": [
+        "needs-triage",
+        "recorded-only",
+        "reported",
+        "partially-addressed",
+        "source-implemented",
+        "source-risk",
+        "needs-revalidation"
+      ],
+      "severities": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+    "findings": [
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "REPORT-9d785a223e76"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "REPORT-06ffddcefe46"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "CODE-UPLOAD-CONCURRENT-CREATE"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "BUG-019"
+      }
+    ],
+    "coverage": {
+      "markdownSections": 32,
+      "releaseRequirements": 21,
+      "scope": "All top-level bugs README sections, recorded release gates, baseline test debt, historical DBG records and the Explorer404 case; not live issue detection"
+    },
+    "authority": "Read-only source projection. Source-implemented is not browser/provider-verified. Original reports and records remain unchanged."
+  }
+}

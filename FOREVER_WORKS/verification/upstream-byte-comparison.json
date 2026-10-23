@@ -1,0 +1,94 @@
+{
+  "upstreamCommit": "f76056aa59942935cad5ab53f26a78cefedff77d",
+  "valid": true,
+  "files": [
+    {
+      "path": "LICENSE",
+      "match": true
+    },
+    {
+      "path": "schemas/capability.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/common.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/compatibility-contract.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/constraint.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/decision.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/dependency-intent.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/evidence.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/implementation.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/invariant.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/manifest.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/migration.schema.json",
+      "match": true
+    },
+    {
+      "path": "schemas/project-intent.schema.json",
+      "match": true
+    },
+    {
+      "path": "src/canonical.js",
+      "match": true
+    },
+    {
+      "path": "src/contracts.js",
+      "match": true
+    },
+    {
+      "path": "src/index.js",
+      "match": true
+    },
+    {
+      "path": "src/json-input.js",
+      "match": true
+    },
+    {
+      "path": "src/lossless-json.js",
+      "match": true
+    },
+    {
+      "path": "src/lossless-model.js",
+      "match": true
+    },
+    {
+      "path": "src/model.js",
+      "match": true
+    },
+    {
+      "path": "src/node.js",
+      "match": true
+    },
+    {
+      "path": "src/structure.js",
+      "match": true
+    }
+  ]
+}

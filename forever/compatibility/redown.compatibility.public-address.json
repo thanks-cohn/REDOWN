@@ -1,0 +1,67 @@
+{
+  "boundary": "Configured public URL disclosure",
+  "contractType": "API",
+  "extensions": {
+    "org.redown": {
+      "authority": "inferred current boundary; not an accepted new architecture",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 364,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "assetCorsControl"
+        },
+        {
+          "anchorState": "present",
+          "line": 2513,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfPublicAddresses\""
+        },
+        {
+          "anchorState": "present",
+          "line": 67,
+          "path": "extension/public-addresses.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
+          "symbol": "function popover("
+        },
+        {
+          "anchorState": "present",
+          "line": 6,
+          "path": "extension/explorer-status.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+          "symbol": "function paint("
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.compatibility.public-address",
+  "kind": "compatibility",
+  "mayChange": [
+    "Internal representation and implementation after scoped evidence of equivalent behavior."
+  ],
+  "migrationPolicy": "Non-destructive; retain old format/read contracts or document explicit migration and rollback.",
+  "mustPreserve": [
+    "Discovery does not enable public access",
+    "Enable managed URL requires exact sender and confirmed whole-bucket action",
+    "Configured URL does not establish object accessibility"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "validationReferences": [
+    "redown.evidence.test.public-addresses.test"
+  ],
+  "version": "baseline-specific"
+}

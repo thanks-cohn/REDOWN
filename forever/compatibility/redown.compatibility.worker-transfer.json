@@ -1,0 +1,52 @@
+{
+  "boundary": "Embedded Worker safe-transfer protocol",
+  "contractType": "protocol",
+  "extensions": {
+    "org.redown": {
+      "authority": "inferred current boundary; not an accepted new architecture",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 3091,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "anchorState": "present",
+          "line": 2540,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.compatibility.worker-transfer",
+  "kind": "compatibility",
+  "mayChange": [
+    "Internal representation and implementation after scoped evidence of equivalent behavior."
+  ],
+  "migrationPolicy": "Non-destructive; retain old format/read contracts or document explicit migration and rollback.",
+  "mustPreserve": [
+    "Exact account/bucket/key ownership",
+    "Conditional destination write and destination read-back",
+    "Source retained on failed or uncertain verification",
+    "Pre-delete source/destination identity checks; no claim of atomic multi-object move"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "validationReferences": [
+    "redown.evidence.test.explorer-worker.test"
+  ],
+  "version": "Worker 5 safeTransfers and Worker 6 diagnostic protocol 1"
+}

@@ -1,0 +1,90 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "one semantic mapping colors pending, completed, error, mixed and cancelled without trusting message wording",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "older operation callbacks, stale detail messages and old expiry timers cannot overwrite new feedback",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "download acceptance stays neutral; only native completion turns green and user cancellation stays neutral",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "late completion of a previous download leaves a new active download neutral",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "partial Copy and Delete receipts use amber rather than success or an entirely failed operation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "rendered colors have sufficient text contrast for the provided dark and light surface palettes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-status.test.mjs",
+          "name": "late folder listing cannot repaint the newer folder or its status",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 7,
+      "sourceRefs": [
+        {
+          "path": "tests/explorer-status.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d7af8e4d9345570e84d207ca674813665a309746df714b32fe4a9af47287c46e"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.explorer-status.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/explorer-status.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

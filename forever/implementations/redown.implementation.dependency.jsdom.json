@@ -1,0 +1,32 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "package-lock.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2f6d1c51deccd29dde241facdba06b14c000783dd545faa5ee4b72cdde155a06"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.dependency.jsdom",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "satisfiesCapabilities": [
+    "redown.capability.packaging"
+  ],
+  "sourceLocations": [
+    "package-lock.json"
+  ],
+  "technology": "JSDOM test harness",
+  "type": "library"
+}

@@ -1,0 +1,50 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "windows/README.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Origin prefix check is not extension-ID pairing; current popup bypasses bridge; missing Windows native source."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 43,
+          "path": "local/bridge.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31",
+          "symbol": "http.createServer"
+        }
+      ],
+      "testEvidence": [],
+      "verificationState": "source-present-unverified"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.local-bridge",
+  "kind": "capability",
+  "name": "Local forwarding helper",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.local-bridge"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.local-bridge"
+  ],
+  "statement": "Loopback HTTP POST /ingest forwards to configured remote ingest URL using helper credential.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": []
+}

@@ -1,0 +1,58 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/upload-location-builder.test.mjs",
+          "name": "BUG-014: selecting an existing child does not fill the new-folder input or create a directory",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/upload-location-builder.test.mjs",
+          "name": "BUG-013: right-side root lists only immediate folders from the selected left bucket",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/upload-location-builder.test.mjs",
+          "name": "BUG-013: stale earlier bucket results cannot overwrite newly selected bucket",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 3,
+      "sourceRefs": [
+        {
+          "path": "tests/upload-location-builder.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0509c9b7f6ad9468f2b2d7114f4cfc62fb5da39987586a78afc405527f838be7"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.upload-location-builder.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/upload-location-builder.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

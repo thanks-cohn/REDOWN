@@ -1,0 +1,54 @@
+{
+  "compatibilityContracts": [
+    "redown.compatibility.diagnostic-gateway"
+  ],
+  "constrainedByInvariants": [
+    "redown.invariant.diagnostics"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Stale evidence and imported bundles cannot certify live health."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [
+        "redown.dependency.node"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 12,
+          "path": "agent/diagnostics/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "6f44388d3c2cd9530390fe0cc78de3dc196f85e8719f831fa918936164c23a77",
+          "symbol": "createDiagnosticAPI"
+        },
+        {
+          "path": "agent/diagnostics/registry.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "017422a9be888c079b14397c68476436c4ef1bbc12e4d1ba00acd08e5874ddb2"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.diagnostics",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.diagnostics"
+  ],
+  "sourceLocations": [
+    "agent/diagnostics/api.mjs",
+    "agent/diagnostics/registry.json"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

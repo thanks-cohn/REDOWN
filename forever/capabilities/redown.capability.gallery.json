@@ -1,0 +1,53 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/HITOMI_CAPTURE_ACCEPTANCE.md",
+        "docs/debug/DBG-005_HITOMI_CONTEXT_CAPTURE_REGRESSION.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "No fresh site/browser acceptance; saved HTML and failing Remote-to-Remote are historical reported cases."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [],
+      "sourceRefs": [
+        {
+          "path": "extension/hitomi-capture.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1"
+        },
+        {
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+        }
+      ],
+      "testEvidence": [],
+      "verificationState": "source-present-unverified"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.gallery",
+  "kind": "capability",
+  "name": "Gallery capture and remote transfer",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.gallery"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.gallery"
+  ],
+  "statement": "Capture supported site URLs in browser and route through existing gallery transfer paths.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": []
+}

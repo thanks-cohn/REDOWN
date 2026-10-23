@@ -1,0 +1,50 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/notification-preference.test.mjs",
+          "name": "desktop notifications require explicit opt-in and reflect subsequent changes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/notification-preference.test.mjs",
+          "name": "notification storage failures do not fail a completed transfer",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 2,
+      "sourceRefs": [
+        {
+          "path": "tests/notification-preference.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "350b7c2f4404d3c995bfc656c7f4eb36bb2e776fd6dfd48986eab6a824b22ff0"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.notification-preference.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/notification-preference.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

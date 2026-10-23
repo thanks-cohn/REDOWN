@@ -1,0 +1,49 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.storage-ui"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Use latest source over superseded animation/visibility reports; mock layout is not installed layout."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "extension/storage-signals.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+        },
+        {
+          "anchorState": "present",
+          "line": 4465,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "applyBetaMode"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.storage-ui",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.storage-ui"
+  ],
+  "sourceLocations": [
+    "extension/storage-signals.js",
+    "extension/options.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

@@ -1,0 +1,191 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 1,
+      "outcomes": [
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "debug-only sections start hidden and toggle exists only inside header disclosure",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "normal mode has inset repair and Debug Mode restores separate controls",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "normal primary setup does not invoke the independent inset repair",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "R2 activation is an actionable neutral step, permission failures remain errors",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "UNKNOWN",
+            "name": "TypeError",
+            "operator": null
+          },
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "activation stays in connection header; Storage appears only after R2 is available",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "settings disclosure dismisses outside and Escape restores focus",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "bucket action keeps its name during setup and blocks duplicate clicks",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "Beta and Debug are independent, persist separate keys, and do not mutate profiles",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "cached configuration stays amber until explicit verification, and failures allow retry",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "newer bucket loads win even across A-B-A account switches",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "persisted mode combinations restore independently, with Beta off when absent",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "a late repair cannot overwrite a newer bucket list or unlock its active operation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "disabling Debug exits practice without moving focus into hidden diagnostics",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "primary bucket action opens Explorer at its root after setup; cached selection does not require redeployment",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "repair, failed setup, refreshed lists and newer Explorer interactions never redirect Explorer",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "missing inventory is refreshed before navigation and navigation failure does not mark a verified bucket broken",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "bucket navigation collapses expansion and focuses Explorer before measuring its top",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 18,
+      "sourceRefs": [
+        {
+          "path": "tests/options-debug-display.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "4639ef92f366a431d8ebb43fb5d5e532bb1d6226ee52094bb5c829b93f8456fd"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.options-debug-display.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/options-debug-display.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

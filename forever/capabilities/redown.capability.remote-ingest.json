@@ -1,0 +1,68 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "bugs/fixes/BUG-020-popup-exact-folder-attempt-01.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Unknown-length source buffering and ambiguous network completion must not be described as durable resume."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedIssues": [
+        "redown.evidence.issue.bug-020"
+      ],
+      "relatedTestFiles": [
+        "tests/download-collisions.test.mjs",
+        "tests/popup-destinations.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1881,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "ingestCloudflareAtPrefix"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.download-collisions.test",
+        "redown.evidence.test.popup-destinations.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.remote-ingest",
+  "kind": "capability",
+  "name": "Remote URL to R2",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.remote-ingest"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.remote-ingest"
+  ],
+  "statement": "Send selected HTTPS sources to the configured per-bucket Worker and validate the returned destination folder.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.download-collisions.test",
+        "redown.evidence.test.popup-destinations.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

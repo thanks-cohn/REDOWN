@@ -1,0 +1,51 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "No complete durable job journal or cross-context live observer."
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/runtime-diagnostics.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+        },
+        {
+          "path": "agent/runtime/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ad38525bebf5026425251979134f8639731283578a188829d3e071c6d0af167c"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.runtime-observation",
+  "kind": "invariant",
+  "name": "Passive runtime observation preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.runtime-observation"
+  ],
+  "scope": [
+    "redown.implementation.runtime-observation"
+  ],
+  "severity": "high",
+  "statement": "Bound and redact Debug traces and expose imported offline runtime records. Preserve its existing external behavior while addressing defects; known limits remain explicit.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

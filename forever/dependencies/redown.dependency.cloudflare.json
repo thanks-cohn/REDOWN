@@ -1,0 +1,42 @@
+{
+  "currentImplementation": "redown.implementation.dependency.cloudflare",
+  "dependencyName": "Cloudflare OAuth and management API",
+  "dependencyType": "service",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.cloudflare",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.authentication"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "OAuth auth/token; client/v4 account, R2, Workers and domain operations",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "SEMANTIC",
+  "replacementRequirements": [
+    "preserve-existing-boundary-cloudflare"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.authentication"
+  ]
+}

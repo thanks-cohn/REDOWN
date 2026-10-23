@@ -1,0 +1,54 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "recorded-only",
+          "status": "needs-triage",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "id": "BUG-007",
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing.",
+        "recordedStatus": "Open · user-reported broken feature / suspect implementation identified; exact rendering failure not yet reproduced",
+        "severity": "unknown",
+        "source": {
+          "heading": "BUG-007 — Explorer lightbox fails to display selected file reliably",
+          "line": 225,
+          "path": "bugs/README.md",
+          "sha256": "4267c6f338d486550c1b07beac9ab3ded1a0b909da4bd1429bec2ec1d6418cb8"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG-007 — Explorer lightbox fails to display selected file reliably"
+      },
+      "issueId": "BUG-007",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.bug-007",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG-007 — Explorer lightbox fails to display selected file reliably; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

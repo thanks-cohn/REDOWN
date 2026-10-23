@@ -1,0 +1,114 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "all five native APIs route through qualified discovery with exact native versions and no registry drift",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "overlapping methods never silently select a namespace; compatibility aliases have explicit owners",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "delegation preserves historical provenance and freshness, rather than upgrading stale source evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "read-only boundary rejects mutation, namespace injection, extra arguments and unsupported versions",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "registry audit detects duplicate operation ownership, dangling aliases and duplicate primary owners",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "Explorer and passive runtime imports remain isolated and re-sanitized",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "a malformed namespace bundle cannot break project discovery or another namespace",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "cold agent can discover, resolve, inspect ownership, plan tests and see release blockers without network access",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "unified CLI supports namespace routing and explicit runtime import; refuses ambiguous or conflicting inputs",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-gateway.test.mjs",
+          "name": "every registered operation has a cold-start fixture and preserves a native result or an explicit evidence boundary",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 10,
+      "sourceRefs": [
+        {
+          "path": "tests/agent-gateway.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "9f4ecf412689a031d344a31fec1b19be74bae526f0d3660e8a7a71dd47c8d4d8"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.agent-gateway.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/agent-gateway.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

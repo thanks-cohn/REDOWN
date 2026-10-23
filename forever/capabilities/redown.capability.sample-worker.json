@@ -1,0 +1,53 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Sample health is not extension readiness; local runtime compatibility requires separate verification."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 97,
+          "path": "worker/src/index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+          "symbol": "async fetch"
+        },
+        {
+          "path": "wrangler.toml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0e40d6f4a7f8486439b9085f24b2f2b629bc5431101c2d9a292799ca2ae37764"
+        }
+      ],
+      "testEvidence": [],
+      "verificationState": "source-present-unverified"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.sample-worker",
+  "kind": "capability",
+  "name": "Separate ASSETS Worker sample",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.sample-worker"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.sample-worker"
+  ],
+  "statement": "GET /health and authenticated POST /ingest write to ASSETS; separate from extension runtime.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": []
+}

@@ -1,0 +1,57 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 3091,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "anchorState": "present",
+          "line": 2540,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.explorer.move",
+  "kind": "invariant",
+  "name": "Explorer move preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.explorer.move"
+  ],
+  "scope": [
+    "redown.implementation.explorer.move"
+  ],
+  "severity": "high",
+  "statement": "Retain originals when copy verification fails; check source and destination identity before deletion; partial delete results remain partial, not success.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

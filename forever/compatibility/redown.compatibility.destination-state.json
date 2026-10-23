@@ -1,0 +1,62 @@
+{
+  "boundary": "Saved destination/profile state",
+  "contractType": "save-format",
+  "extensions": {
+    "org.redown": {
+      "authority": "inferred current boundary; not an accepted new architecture",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1996,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "buildMenus"
+        },
+        {
+          "anchorState": "present",
+          "line": 40,
+          "path": "extension/nested-locations.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "663a0cb8b08f7cddcf7274ccc1c424becb6e9c2ea0e8949b25c3183d9f005f73",
+          "symbol": "destinations"
+        },
+        {
+          "anchorState": "present",
+          "line": 4,
+          "path": "extension/nested-menu-editor.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "dda2c2b8d431ec932e15ecb342ad912c81419bff6c2366a942347dc3c5ac1c92",
+          "symbol": "render"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.compatibility.destination-state",
+  "kind": "compatibility",
+  "mayChange": [
+    "Internal representation and implementation after scoped evidence of equivalent behavior."
+  ],
+  "migrationPolicy": "Non-destructive; retain old format/read contracts or document explicit migration and rollback.",
+  "mustPreserve": [
+    "Preserve configured Simple and Nested modes independently",
+    "Menu removal never deletes cloud objects",
+    "Account/bucket/prefix changes invalidate stale async continuations"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "validationReferences": [
+    "redown.evidence.test.menu-reorder.test",
+    "redown.evidence.test.nested-locations.test",
+    "redown.evidence.test.simple-location-rows.test",
+    "redown.evidence.test.simple-menu-flat.test"
+  ],
+  "version": "baseline-specific chrome.storage.local"
+}

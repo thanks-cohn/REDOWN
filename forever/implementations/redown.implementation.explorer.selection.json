@@ -1,0 +1,43 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.explorer.selection"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 2836,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "selectExplorerItem"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.explorer.selection",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.explorer.selection"
+  ],
+  "sourceLocations": [
+    "extension/options.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

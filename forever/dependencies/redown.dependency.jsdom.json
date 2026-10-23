@@ -1,0 +1,42 @@
+{
+  "currentImplementation": "redown.implementation.dependency.jsdom",
+  "dependencyName": "JSDOM test harness",
+  "dependencyType": "library",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "package-lock.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2f6d1c51deccd29dde241facdba06b14c000783dd545faa5ee4b72cdde155a06"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.jsdom",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.packaging"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "Local DOM simulation only",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "CAPABILITY",
+  "replacementRequirements": [
+    "preserve-existing-boundary-jsdom"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.packaging"
+  ]
+}

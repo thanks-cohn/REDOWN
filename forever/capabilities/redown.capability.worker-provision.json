@@ -1,0 +1,65 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/R2_GUIDED_SETUP_VERIFICATION.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Do not invoke preparation as a diagnostic read."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/options-debug-display.test.mjs",
+        "tests/storage-worker-health.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 985,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "deployCloudflareProfile"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-worker-health.test"
+      ],
+      "verificationState": "local-tests-with-failures"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.worker-provision",
+  "kind": "capability",
+  "name": "Per-bucket Worker provisioning",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.worker-provision"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.worker-provision"
+  ],
+  "statement": "Deploy embedded WORKER_SOURCE with STORAGE and retain profile credentials; preparation can mutate remote configuration.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-worker-health.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

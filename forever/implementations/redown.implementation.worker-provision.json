@@ -1,0 +1,43 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.worker-provision"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Do not invoke preparation as a diagnostic read."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 985,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "deployCloudflareProfile"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.worker-provision",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.worker-provision"
+  ],
+  "sourceLocations": [
+    "extension/background.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

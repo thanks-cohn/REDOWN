@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/9169fc6cb82b/REDOWN/tests/semantic-schema-conformance.py", line 4, in <module>
+    from jsonschema import Draft202012Validator
+ModuleNotFoundError: No module named 'jsonschema'

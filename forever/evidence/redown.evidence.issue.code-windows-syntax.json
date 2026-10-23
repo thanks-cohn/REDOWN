@@ -1,0 +1,66 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "source-reviewed",
+          "evidence": [
+            {
+              "path": "scripts/check-syntax.mjs",
+              "sha256": "8c8f5ae1c8afef98c54d7d1bc6d041e479c4fe86f6bfd90d70cbad937b2da3d2",
+              "symbol": "spawnSync(process.execPath,['--check'"
+            },
+            {
+              "path": "tests/syntax-portability.test.mjs",
+              "sha256": "16742ac00365d9d9bf71aa54305fc0d57804b419bc59d8cb7d73b877f11b7887",
+              "symbol": "paths with spaces"
+            }
+          ],
+          "freshness": "current",
+          "reviewedOn": "2026-10-22",
+          "status": "source-implemented",
+          "summary": "Syntax checks now invoke the current Node executable directly from one target list; no npm.cmd or shell is required. Native Windows execution remains to be observed."
+        },
+        "id": "CODE-WINDOWS-SYNTAX",
+        "nextAction": "Run npm run reliability:check on Windows and retain platform-specific evidence.",
+        "recordedStatus": "Source review; not a live failure",
+        "related": [],
+        "severity": "high",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "sourceKind": "code-review",
+        "state": "open",
+        "title": "Reliability checker launched npm.cmd without a Windows shell"
+      },
+      "issueId": "CODE-WINDOWS-SYNTAX",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "agent/diagnostics/issue-assessments.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2806e1faa232ce7a6c05282583d7a7ab6fa9aa0e3aa1e245cf3af9bf670ba18b"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.code-windows-syntax",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "agent/diagnostics/issue-assessments.json",
+  "statementSupported": "Reliability checker launched npm.cmd without a Windows shell; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

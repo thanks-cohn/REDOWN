@@ -1,0 +1,13 @@
+▶ shared case catalog
+  ✔ minimal (7.142275ms)
+  ✔ complete (31.334076ms)
+  ✔ invalid-missing-id (2.621719ms)
+  ✔ invalid-reference (2.057764ms)
+  ✔ unknown-future-field (2.108391ms)
+  ✔ inferred-provenance (4.064283ms)
+  ✔ circular-relationship (2.86429ms)
+  ✔ old-schema-version (2.828535ms)
+  ✔ migration-violating (16.443692ms)
+  ✔ migration-preserving (29.626504ms)
+✔ shared case catalog (120.166358ms)
+✔ normalization and evaluations equal canonical goldens (115.654384ms)

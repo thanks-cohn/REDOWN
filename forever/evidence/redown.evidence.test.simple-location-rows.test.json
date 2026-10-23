@@ -1,0 +1,98 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: selecting existing folder does not populate creation draft",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: new directory is created under the exact parent only after Create",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: valid names including zero and f create at bucket root",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: invalid path segments never send creation requests",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: stalled creation releases button and explains uncertain outcome",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/simple-location-rows.test.mjs",
+          "name": "Simple: refreshing during creation cannot leave a permanent Creating status",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 8,
+      "sourceRefs": [
+        {
+          "path": "tests/simple-location-rows.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "6b3eaa1494b2f6944046221853f7789227102b66916f1688a8a1480cc946a1be"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.simple-location-rows.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/simple-location-rows.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

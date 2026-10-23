@@ -1,0 +1,151 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 1,
+      "outcomes": [
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "selection never fills the new-name field, and preserves an independently typed draft",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "Add child and Create use the exact parent path; actual dropdown children stay scoped",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "hiding a nested menu preserves its hierarchy and failed creation preserves the draft",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "native nested menu targets every verified depth and offers Send here for parents",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "legacy paths migrate without modifying old configuration or writing remote folders",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "nested saving retains provisioned worker credentials and new Explorer profiles through autosave",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "settings mode checkbox saves only the active mode and keeps both destination configurations",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "native menu mode checkbox changes the same saved setting without downloading anything",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "DBG-001: selecting a new deep child enables its next child without bucket reselection",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "DBG-001: create-new folder enables repeated + Child through five levels",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "DBG-001: selecting existing child enables + Child after the async save lock releases",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/nested-locations.test.mjs",
+          "name": "reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "UNKNOWN",
+            "name": "TypeError",
+            "operator": null
+          },
+          "file": "tests/nested-locations.test.mjs",
+          "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        }
+      ],
+      "passed": 13,
+      "sourceRefs": [
+        {
+          "path": "tests/nested-locations.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "62a9431dac671c4c3bec50e2ce4bc5316b80436a8b15beaf12591da3bda1dd52"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.nested-locations.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/nested-locations.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

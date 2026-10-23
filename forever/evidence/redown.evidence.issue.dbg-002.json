@@ -1,0 +1,54 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.destinations"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "historical",
+          "freshness": "stale",
+          "status": "recorded-only",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately."
+        },
+        "id": "DBG-002",
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible.",
+        "recordedStatus": "open",
+        "severity": "medium",
+        "source": {
+          "path": "debug/cases/DBG-002.json"
+        },
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "title": "Simple right-click menu location editor must support redirection and explicit creation without losing child rows"
+      },
+      "issueId": "DBG-002",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "debug/cases/DBG-002.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c7d9942b489b9a27d424b7f91e5c3b0fb93a5a4edaa05c62df3a83b748be3feb"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.dbg-002",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "debug/cases/DBG-002.json",
+  "statementSupported": "Simple right-click menu location editor must support redirection and explicit creation without losing child rows; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

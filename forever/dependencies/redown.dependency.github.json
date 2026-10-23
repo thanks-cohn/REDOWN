@@ -1,0 +1,42 @@
+{
+  "currentImplementation": "redown.implementation.dependency.github",
+  "dependencyName": "GitHub Contents and Actions",
+  "dependencyType": "service",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "github/remote-ingest.yml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0512a179cbfd41ff2177e3dfc2ddd2a0bd0f4a59fe76006536379d7182837328"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.github",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.github-dispatch"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "Contents installation and workflow dispatch; dispatch is not completion",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "SEMANTIC",
+  "replacementRequirements": [
+    "preserve-existing-boundary-github"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.github-dispatch"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.explorer.copy",
+        "redown.capability.explorer.move"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "stale-review",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+              "symbol": "const folderTargets=new Map()"
+            },
+            {
+              "path": "tests/explorer-worker.test.mjs",
+              "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22",
+              "symbol": "directory Keep both preserves the entire existing tree"
+            }
+          ],
+          "freshness": "stale",
+          "reviewedOn": "2026-10-23",
+          "status": "needs-revalidation",
+          "summary": "Directory conflicts now preflight before merging and Keep both preserves directory identity into a separate sibling. Owner-reported byte loss and installed acceptance remain unverified."
+        },
+        "id": "BUG-019",
+        "nextAction": "Verify disposable installed-directory Copy/Move/drag-and-drop with original destination hashes; no recovery or live closure is claimed.",
+        "recordedStatus": "critical owner data-safety report; source-confirmed folder merging and lost directory retry identity corrected. Actual installed byte overwrite/recovery remains unverified.",
+        "related": [
+          "BUG-018",
+          "EXPLORER-COPY-404-2026-10"
+        ],
+        "severity": "critical",
+        "source": {
+          "heading": "BUG-019 — Directory Keep both merges into an existing destination directory",
+          "line": 623,
+          "path": "bugs/README.md",
+          "sha256": "cf2ef185ea3e5ab207627ebf2d5a9046d5dd8ad280a7859729fe9fb8c3146642"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG-019 — Directory Keep both merges into an existing destination directory"
+      },
+      "issueId": "BUG-019",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.bug-019",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG-019 — Directory Keep both merges into an existing destination directory; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

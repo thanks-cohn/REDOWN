@@ -1,0 +1,114 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "explicit probe compares provider, API, direct and destination-Worker paths without writes or private export",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "probe flags incorrect provider bindings and routing configuration; proxy 404 never means automatic missing-object repair",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "legacy Worker lacks proxy capability explicitly; no speculative transfer or deployment occurs",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "probe requires Debug, exact bounded file input and configured workers.dev endpoints",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "probe stops scheduling reads after clear or disable and rejects concurrent invocations",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "diagnosis does not confuse different files or descendants with identity drift; explicit same-item mismatch is detected",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "expired diagnoses are unavailable; unknown smoke and connectors cannot imply implemented support",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "provisioning includes explicit public Worker fetch compatibility without weakening verified transfers",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "a multi-file 404 cannot borrow an unrelated preview success to imply path divergence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-probes.test.mjs",
+          "name": "new deployment reads provider routing settings before reporting ready or creating prefix objects",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 10,
+      "sourceRefs": [
+        {
+          "path": "tests/explorer-probes.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c5a01f5eb16c76aefcf9d999b0c5630f278d994d5eeeb36ea21eb85d2a6d3d60"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.explorer-probes.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/explorer-probes.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

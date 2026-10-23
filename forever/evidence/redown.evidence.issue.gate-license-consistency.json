@@ -1,0 +1,52 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "historical",
+          "status": "recorded-only",
+          "summary": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+        },
+        "id": "GATE-license-consistency",
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof.",
+        "recordedStatus": "failed",
+        "severity": "high",
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "07325c6f3b5fd895397f3e9d23e43d89f148d574695fb491d66547bb1d1ecb21"
+        },
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "title": "license-consistency"
+      },
+      "issueId": "GATE-license-consistency",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "docs/runtime/release-gates.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "52ee9c9b8ca28abd4205b43a5bb5be5754301a433a67faa307841d384fbc66ad"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.gate-license-consistency",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "docs/runtime/release-gates.json",
+  "statementSupported": "license-consistency; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

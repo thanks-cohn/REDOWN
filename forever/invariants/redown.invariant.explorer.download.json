@@ -1,0 +1,57 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 3330,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "explorerDownload"
+        },
+        {
+          "anchorState": "present",
+          "line": 143,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "download"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.explorer.download",
+  "kind": "invariant",
+  "name": "Explorer download preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.explorer.download"
+  ],
+  "scope": [
+    "redown.implementation.explorer.download"
+  ],
+  "severity": "high",
+  "statement": "GET /objects/{encoded-key} → Chrome Downloads Preserve its existing external behavior while addressing defects; known limits remain explicit.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-files.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "private WEBP preview reads nested keys without a Worker or background messaging",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "downloads use a header, keep credentials out of URLs and sanitize filenames",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "concurrent expired requests refresh rotating credentials once",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "401 refresh retries a private read and denied reads report failure",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "oversized preview stops without allocating an object URL",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "preview failure replaces spinner and download rejection ends progress",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "download reports delayed Chrome interruption and removes its listener",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "download exposes interruption occurring before onChanged registration",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "download completion is reported and an interruption racing the initial lookup cannot become success",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "403 management read falls back to explicitly enabled public R2 domain for unusual keys",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "403 does not fall back for private R2 buckets",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-files.test.mjs",
+          "name": "unusual-key download uses enabled public URL only following a denied authenticated probe",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 12,
+      "sourceRefs": [
+        {
+          "path": "tests/cloudflare-files.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "6efedd7a8437aae7ae13ecef40be2807f56be989191c9a3fc92ab479035f9212"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.cloudflare-files.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/cloudflare-files.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

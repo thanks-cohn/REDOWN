@@ -1,0 +1,50 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/proposals/RFIS_PERSISTENT_FILE_IDENTITY_HISTORY.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Proposal is context only; no import, complete archive or cross-move identity is claimed."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 49,
+          "path": "extension/rfis-index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f",
+          "symbol": "observe"
+        }
+      ],
+      "testEvidence": [],
+      "verificationState": "source-present-unverified"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.rfis",
+  "kind": "capability",
+  "name": "Opt-in file observations",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.rfis"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.rfis"
+  ],
+  "statement": "Record IndexedDB file/event observations and export a partial index; locator is not durable content identity.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": []
+}

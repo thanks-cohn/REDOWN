@@ -1,0 +1,138 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "red connection shows LOGIN in the same odometer and clicking it starts direct sign-in",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "failed or canceled login stays red and retryable without resetting the total",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "odometer carries digits, expands beyond six places and retains exact large totals",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "late count response cannot overwrite a newer storage count",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "reopening during OAuth resumes background login without opening duplicate windows",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "count failure never invents a zero count or hides the disconnected LOGIN action",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "background accepts a discovered unsaved bucket only after read-only existence validation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "reopening starts at the last seen count, rolls to the current total and remembers completion",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "a newer total interrupts an old roll and final persistence never rolls back",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "reduced motion immediately shows the verified total and the sound preference persists",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "the final settled number emits one quiet click and mute suppresses subsequent clicks",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/popup-destinations.test.mjs",
+          "name": "unavailable audio never prevents reaching or saving the verified total",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 13,
+      "sourceRefs": [
+        {
+          "path": "tests/popup-destinations.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c322a0a6471aecb03dc4a29a19251b710481b984149c95500d064c5e9544f15f"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.popup-destinations.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/popup-destinations.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

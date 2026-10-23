@@ -1,0 +1,59 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Non-atomic absent-check/PUT race; File references and queue die with settings page."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1405,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "uploadLocalFiles"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.local-upload",
+  "kind": "invariant",
+  "name": "Upload local files preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.local-upload"
+  ],
+  "scope": [
+    "redown.implementation.local-upload"
+  ],
+  "severity": "high",
+  "statement": "Never write after unknown preflight, skip existing keys, retain uncertain-write reporting and page-lifetime queue limits; absent-check/PUT remains non-atomic.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-files.test",
+        "redown.evidence.test.upload-location-builder.test",
+        "redown.evidence.test.upload-request-context.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

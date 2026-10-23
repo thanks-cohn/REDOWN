@@ -1,0 +1,54 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.authentication"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "No perpetual-session guarantee; offline_access was rejected by registered client."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [
+        "redown.dependency.cloudflare"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 76,
+          "path": "extension/cloudflare-auth.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "startCloudflareLogin"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.authentication",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.authentication"
+  ],
+  "sourceLocations": [
+    "extension/cloudflare-auth.js",
+    "extension/cloudflare-api.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

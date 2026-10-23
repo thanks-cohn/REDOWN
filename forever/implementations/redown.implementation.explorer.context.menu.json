@@ -1,0 +1,61 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.explorer.context.menu"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 3486,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "function showExplorerMenu("
+        },
+        {
+          "anchorState": "present",
+          "line": 96,
+          "path": "extension/explorer-destination-menu.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "bbee7b5870c34075ba07e09d90c8dce2e0b9db110371a011581aa423e1057711",
+          "symbol": "function attach("
+        },
+        {
+          "anchorState": "present",
+          "line": 54,
+          "path": "extension/explorer-diagnostics-bridge.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c",
+          "symbol": "function fail("
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.explorer.context.menu",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.explorer.context.menu"
+  ],
+  "sourceLocations": [
+    "extension/options.js",
+    "extension/explorer-destination-menu.js",
+    "extension/explorer-diagnostics-bridge.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

@@ -1,0 +1,58 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.explorer.copy",
+        "redown.capability.explorer.move",
+        "redown.capability.explorer.clipboard"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "recorded-only",
+          "status": "needs-triage",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "id": "BUG-018",
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing.",
+        "recordedStatus": "source/DOM-confirmed clipboard, stale menu and transport-observability defects corrected; installed transfer outcome remains open.",
+        "severity": "unknown",
+        "source": {
+          "heading": "BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05",
+          "line": 612,
+          "path": "bugs/README.md",
+          "sha256": "5b1f24f6876b09b082985e741c7aed1f82fb4b45916393f3808943ebaebea40b"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05"
+      },
+      "issueId": "BUG-018",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.bug-018",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG-018 — Explorer Copy/Paste and Move to recurrence; remediation round 05; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

@@ -1,0 +1,56 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Use latest source over superseded animation/visibility reports; mock layout is not installed layout."
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/storage-signals.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+        },
+        {
+          "anchorState": "present",
+          "line": 4465,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "applyBetaMode"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.storage-ui",
+  "kind": "invariant",
+  "name": "Storage signals, Debug and Beta preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.storage-ui"
+  ],
+  "scope": [
+    "redown.implementation.storage-ui"
+  ],
+  "severity": "high",
+  "statement": "Debug and Beta remain independent; practice never invokes real repair; preserve keyboard, focus, contained expansion and reduced-motion handling.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test",
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-signals.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}
