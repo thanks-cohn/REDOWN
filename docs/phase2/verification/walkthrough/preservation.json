@@ -1,0 +1,11 @@
+{
+  "valid": true,
+  "checks": [
+    "actual reference validation",
+    "missing replacement proof remains partial",
+    "failed protected obligation fails",
+    "unknown fields retained",
+    "broken canonical reference rejected"
+  ],
+  "scope": "documentation evaluator only; no transfer or migration performed"
+}

@@ -42,5 +42,10 @@
   "extension/file-engine/contract.mjs",
   "extension/file-engine/simulation.mjs",
   "extension/file-engine/indexeddb-store.mjs",
-  "scripts/phase2-schema-fixtures.mjs"
+  "scripts/phase2-schema-fixtures.mjs",
+  "extension/beta-walkthrough.mjs",
+  "extension/beta-walkthrough-steps.mjs",
+  "extension/file-engine/acceptance.mjs",
+  "scripts/beta-walkthrough-acceptance.mjs",
+  "scripts/beta-core-acceptance.mjs"
 ]

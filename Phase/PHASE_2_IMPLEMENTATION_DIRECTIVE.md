@@ -475,3 +475,13 @@ This section overrides any earlier wording that could imply immediate replacemen
 10. No automatic promotion. Retire legacy only after all Phase 2 acceptance conditions, rollback evidence, Forever Works inheritance and **explicit owner approval** of promotion.
 
 Inspect the actual implementation of Beta Mode before extending it. Maintain both implementations, their differences and retirement requirements in Forever Works without rewriting frozen evidence. Proceed incrementally under this policy.
+
+## 15. Owner follow-up — seamless storage and autonomous proof
+
+The intended product is a dependable local/remote file-browser ecosystem: plug in an authorized provider and use familiar laptop-like operations, including previews. Future transfers between the owner's computers require a separate authorized device/transport design. The goal is to become the preferred ecosystem through verified capability and reliability; do not claim competitor parity from design, a walkthrough or mock tests.
+
+Provide a modifiable layer of short instructions and anchored help. Its first five steps are suitable for new-user onboarding; extended steps cover all present controls and core workflows. The same stable feature identities must support autonomous agent/browser acceptance. A human should not be required to click through the initial verification. Keep source intent, UI interaction, actual execution, outcome verification and failure recovery traceable with IDs and explicit evidence scopes.
+
+An agent must be able to discover checks, execute safe isolated acceptance, inspect failures through browser-console/API evidence, verify source preservation and destination contents, and export a structured result. Console logs and promise completion alone are insufficient. Separate observed actions, human reports, automated assertions, unavailable capabilities and real-provider proof. Preserve failures and missing evidence. A green subset never certifies absent local/cloud adapters, binary transfers, restart recovery or future cross-computer operation.
+
+Implement guidance without hidden file mutations. Autonomous tests use a fresh isolated simulator/browser profile first, and only separately authorized test resources for live providers. Maintain the Beta gate, existing Explorer, namespace isolation, safety invariants, migration/rollback and explicit promotion approval from section 14. See `docs/phase2/WALKTHROUGH_AND_ACCEPTANCE.md` for the implemented testing layer and current readiness boundaries.
