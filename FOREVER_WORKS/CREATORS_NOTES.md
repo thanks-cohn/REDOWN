@@ -24,8 +24,6 @@ Offer a strong default experience. Reveal additional control when the user needs
 
 ### The one-click shtick
 
-**“Shtick”** is the spelling. Here, the **one-click shtick** names REDOWN's recognizable habit: make a useful recurring action feel immediate and effortless.
-
 Configure a destination once, remember the user's choices, and make the next save or transfer require as little repeated decision-making as possible. Minimize steps, context switches, forms and unnecessary explanations. Where the workflow needs a destination choice or meaningful confirmation, make that choice clear and compact. “One click” is a design mentality, not a false guarantee that authentication, setup and every possible operation require exactly one literal click.
 
 The return loop begins with ease: “I'll use REDOWN because this is the easiest way to do it.” The user should not need to rebuild their workflow every time they return.
