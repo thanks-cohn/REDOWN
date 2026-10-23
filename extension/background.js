@@ -795,9 +795,9 @@ function createToolbarFeedback(api, loadPixels = async size => {
     return context.getImageData(0,0,size,size);
   } finally { bitmap.close(); }
 }, pause = ms => new Promise(resolve=>setTimeout(resolve,ms))) {
-  let generation=0, pixelsPromise, current=null;
+  let generation=0, pixelsPromise;
   const sizes=[16,32,48], colors={success:[45,205,144],failure:[239,82,107]};
-  const clone=images=>Object.fromEntries(sizes.map(size=>[size,{width:size,height:size,data:new Uint8ClampedArray(images[size].data)}]));
+  const originalPaths=Object.fromEntries(sizes.map(size=>[size,`icons/icon${size}.png`]));
   return async state => {
     if(!api?.setIcon || !colors[state])return;
     const ticket=++generation;
@@ -805,31 +805,46 @@ function createToolbarFeedback(api, loadPixels = async size => {
       pixelsPromise ||= Promise.all(sizes.map(async size=>[size,await loadPixels(size)])).then(Object.fromEntries).catch(error=>{pixelsPromise=null;throw error;});
       const original=await pixelsPromise;
       if(ticket!==generation)return;
-      const start=clone(current||original), color=colors[state];
-      await api.setTitle?.({title:state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard"});
-      // Six eased frames retain transparency, silhouette and the artwork's shading.
-      for(let frame=1;frame<=6;frame++){
-        if(ticket!==generation)return;
-        const mix=1-Math.pow(1-frame/6,3), images={};
-        for(const size of sizes){
-          const data=new Uint8ClampedArray(start[size].data), base=original[size].data;
-          for(let i=0;i<data.length;i+=4){
-            const light=(base[i]*0.2126+base[i+1]*0.7152+base[i+2]*0.0722)/255;
-            for(let c=0;c<3;c++){
-              const target=color[c]*(0.65+0.35*light);
-              data[i+c]=Math.round(start[size].data[i+c]+(target-start[size].data[i+c])*mix);
-            }
-          }
-          images[size]=new ImageData(data,size,size);
+      const color=colors[state], images={};
+      for(const size of sizes){
+        const base=original[size].data, data=new Uint8ClampedArray(base);
+        for(let i=0;i<data.length;i+=4){
+          const light=(base[i]*0.2126+base[i+1]*0.7152+base[i+2]*0.0722)/255;
+          for(let c=0;c<3;c++)data[i+c]=Math.round(color[c]*(0.65+0.35*light));
         }
-        await api.setIcon({imageData:images});
+        images[size]=new ImageData(data,size,size);
+      }
+      await api.setTitle?.({title:state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard"});
+      // A short, two-hit palette flash, like a sprite effect, then exact original art.
+      for(const [tinted,hold] of [[true,120],[false,160],[true,120]]){
         if(ticket!==generation)return;
-        current=images;
-        if(frame<6)await pause(40);
+        await api.setIcon(tinted?{imageData:images}:{path:originalPaths});
+        if(ticket!==generation)return;
+        await pause(hold);
+      }
+      // The last hit leaves a tint that gently dissolves into the original palette.
+      for(let frame=1;frame<=10;frame++){
+        if(ticket!==generation)return;
+        const strength=Math.pow(1-frame/10,2), faded={};
+        for(const size of sizes){
+          const base=original[size].data, tint=images[size].data, data=new Uint8ClampedArray(base);
+          for(let i=0;i<data.length;i+=4)for(let c=0;c<3;c++)data[i+c]=Math.round(base[i+c]+(tint[i+c]-base[i+c])*strength);
+          faded[size]=new ImageData(data,size,size);
+        }
+        await api.setIcon({imageData:faded});
+        if(ticket!==generation)return;
+        await pause(60);
       }
     } catch { /* Toolbar rendering must never change transfer results. */ }
+    finally {
+      if(ticket===generation){
+        try { await api.setIcon({path:originalPaths}); } catch {}
+        if(ticket===generation)try { await api.setTitle?.({title:"REDOWN"}); } catch {}
+      }
+    }
   };
 }
+
 const toolbarFeedback=createToolbarFeedback(chrome.action);
 async function recordTransfer(entry) {
   if(entry?.ok===false)void toolbarFeedback("failure");

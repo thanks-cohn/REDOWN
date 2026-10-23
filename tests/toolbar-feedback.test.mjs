@@ -4,27 +4,42 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const source=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const factory=source.slice(source.indexOf('function createToolbarFeedback('),source.indexOf('const toolbarFeedback='));
-function fixture(overrides={}){
- const frames=[],titles=[];let loads=0;
+function fixture(overrides={},pause){
+ const frames=[],titles=[],delays=[];let loads=0;
  const context=vm.createContext({Uint8ClampedArray,ImageData:class {constructor(data,width,height){Object.assign(this,{data,width,height});}}});
  vm.runInContext(factory,context);
- const feedback=context.createToolbarFeedback({setIcon:async value=>frames.push(value.imageData),setTitle:async value=>titles.push(value.title),...overrides},async size=>{loads++;const data=new Uint8ClampedArray(size*size*4);data.set([100,150,200,128]);return {data,width:size,height:size};},async()=>{});
- return {feedback,frames,titles,get loads(){return loads;}};
+ const feedback=context.createToolbarFeedback({setIcon:async value=>frames.push(value),setTitle:async value=>titles.push(value.title),...overrides},async size=>{loads++;const data=new Uint8ClampedArray(size*size*4);data.set([100,150,200,128]);return {data,width:size,height:size};},pause|| (async ms=>delays.push(ms)));
+ return {feedback,frames,titles,delays,get loads(){return loads;}};
 }
-test('eased toolbar tint preserves alpha and detail sizes, caches artwork and changes green to red',async()=>{
- const h=fixture();await h.feedback('success');assert.equal(h.frames.length,6);assert.equal(h.loads,3);
- const green=h.frames.at(-1)[16].data;
- assert.ok(green[1]>green[0]&&green[1]>green[2]);assert.equal(green[3],128);assert.equal(green[7],0);
- assert.deepEqual(Object.keys(h.frames[0]),['16','32','48']);
- const first=h.frames[0][16].data,last=h.frames[5][16].data;
- assert.ok(first[0]>last[0]);assert.match(h.titles[0],/complete/);
- await h.feedback('failure');assert.equal(h.loads,3);const red=h.frames.at(-1)[16].data;assert.ok(red[0]>red[1]&&red[0]>red[2]);assert.match(h.titles.at(-1),/failed/);
+test('success and failure flash twice, retain alpha and restore exact original art and title',async()=>{
+ const h=fixture();
+ for(const state of ['success','failure']){
+  h.frames.length=0;h.delays.length=0;
+  await h.feedback(state);assert.equal(h.frames.length,14);assert.equal(h.loads,3);
+  const pixel=h.frames[0].imageData[16].data;
+  if(state==='success')assert.ok(pixel[1]>pixel[0]&&pixel[1]>pixel[2]);
+  else assert.ok(pixel[0]>pixel[1]&&pixel[0]>pixel[2]);
+  assert.equal(pixel[3],128);assert.equal(pixel[7],0);
+  assert.deepEqual(Object.keys(h.frames[0].imageData),['16','32','48']);
+  assert.deepEqual(h.frames.slice(0,3).map(frame=>Boolean(frame.imageData)),[true,false,true]);
+  let distance=Infinity;
+  for(const frame of h.frames.slice(3,-1)){const data=frame.imageData[16].data;const next=Math.abs(data[0]-100)+Math.abs(data[1]-150)+Math.abs(data[2]-200);assert.ok(next<=distance);distance=next;assert.equal(data[3],128);}
+  assert.equal(distance,0);
+  assert.equal(h.frames.at(-1).path[16],'icons/icon16.png');
+  assert.deepEqual(h.delays,[120,160,120,...Array(10).fill(60)]);assert.equal(h.titles.at(-1),'REDOWN');
+ }
 });
-test('a newer result cancels old animation frames',async()=>{
- const h=fixture();await Promise.all([h.feedback('success'),h.feedback('failure')]);
- assert.equal(h.frames.length,6);assert.match(h.titles.at(-1),/failed/);
+test('a newer result cancels an old flash and only the newest restores the icon',async()=>{
+ const waiting=[];const h=fixture({},()=>new Promise(resolve=>waiting.push(resolve)));
+ const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+ const first=h.feedback('success');await settle();assert.equal(h.frames.length,1);
+ const second=h.feedback('failure');await settle();assert.equal(h.frames.length,2);
+ waiting.shift()();await first;assert.equal(h.frames.length,2);
+ for(let i=0;i<13;i++){waiting.shift()();await settle();}
+ await second;assert.equal(h.frames.length,15);assert.equal(h.titles.at(-1),'REDOWN');
+ const red=h.frames[1].imageData[16].data;assert.ok(red[0]>red[1]);
 });
-test('cosmetic action API failures never reject transfers',async()=>{
- const h=fixture({setIcon:async()=>{throw Error('unavailable');}});
- await assert.doesNotReject(()=>h.feedback('success'));
+test('cosmetic action API failures never reject transfers and still attempt restoration',async()=>{
+ let restores=0;const h=fixture({setIcon:async value=>{if(value.path)restores++;else throw Error('unavailable');}});
+ await assert.doesNotReject(()=>h.feedback('success'));assert.equal(restores,1);assert.equal(h.titles.at(-1),'REDOWN');
 });
