@@ -56,7 +56,9 @@
         "tests/explorer-menu-actions.test.mjs",
         "tests/destination-search-regression.test.mjs",
         "tests/lightbox.test.mjs",
-        "tests/cloudflare-files.test.mjs"
+        "tests/cloudflare-files.test.mjs",
+        "tests/popup-folders.test.mjs",
+        "tests/beta-popup.test.mjs"
       ]
     },
     {

@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-10-23T00:55:30+00:00",
+  "extensionVersion": "0.5.18",
+  "baselineRemoteCommit": "3f595320fd8f0c305d3174196fff300a41389dd4",
+  "scope": "local DOM/message and embedded Worker/in-memory R2; no installed Chrome or live provider writes",
+  "focused": "32 passed at pre-final focused run; final regressions include the additional profile-refresh/parent-race test",
+  "explorerSmoke": {
+    "tests": 199,
+    "passed": 199,
+    "failed": 0
+  },
+  "reliability": {
+    "state": "partial",
+    "passed": 345,
+    "knownFailures": 7,
+    "newFailures": [],
+    "incomplete": false,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "remaining": [
+    "Installed Chrome native selects, visual layout and keyboard acceptance",
+    "Live provider delivery/Repair acceptance for exact unusual paths",
+    "Existing seven baseline failures and release gates"
+  ]
+}

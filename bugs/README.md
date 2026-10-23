@@ -625,3 +625,10 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 **Status:** critical owner data-safety report; source-confirmed folder merging and lost directory retry identity corrected. Actual installed byte overwrite/recovery remains unverified.
 
 **Recorded:** 2026-10-23T00:21:42+00:00. **Attempt:**01 for this distinct directory conflict. See [cause, correction and acceptance boundary](fixes/BUG-019-directory-keep-both-attempt-01.md).
+
+
+## BUG-020 — Remote save normalizes an exact selected folder path
+
+**Status:** source-confirmed while building optional popup dropdown levels; additive exact-path support and pre-write compatibility guard implemented. Installed delivery/Repair acceptance remains pending.
+
+**Recorded:** 2026-10-23T00:55:30+00:00. **Attempt:**01. See [cause, correction and verification boundary](fixes/BUG-020-popup-exact-folder-attempt-01.md). This is distinct from the existing cross-bucket404 incident.

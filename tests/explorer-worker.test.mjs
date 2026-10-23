@@ -349,3 +349,13 @@ test('directory preflight fails closed on incomplete listings and bounds sibling
   await assert.rejects(h.context.transferExplorerObjects({...h.request,entries:[{key:'folder/',folder:true}],conflict:'keep'}),/available directory name/);assert.equal(reads,65);assert.equal(h.calls.length,0);
  }finally{h.restore();}
 });
+
+test('remote ingest exact-folder capability preserves Unicode, reserved characters and repeated separators',async()=>{
+ const worker=(await workerModule()).default,bucket=new MemoryBucket(),originalFetch=globalThis.fetch;
+ globalThis.fetch=async()=>new Response('new image',{headers:{'content-type':'image/png'}});
+ try{
+  const caps=await(await worker.fetch(manageRequest({action:'capabilities'}),{STORAGE:bucket})).json();assert.equal(caps.exactIngestPaths,true);
+  const folder='works/...2/雪 #?%//deep',r=await(await worker.fetch(manageRequest({sourceUrl:'https://fixture.invalid/photo.png',filename:'photo.png',folder,exactFolder:true}),{STORAGE:bucket})).json();
+  assert.equal(r.ok,true,r.error);assert.equal(r.key,folder+'/photo.png');assert.ok(await bucket.head(folder+'/photo.png'));assert.equal(bucket.objects.size,1);
+ }finally{globalThis.fetch=originalFetch;}
+});

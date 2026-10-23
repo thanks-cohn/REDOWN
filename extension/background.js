@@ -587,7 +587,7 @@ export default {
         diagnostic?.event("source.cleanup","confirmed");
         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "probeSource") {
         const base=new URL(String(body.sourceWorkerUrl||""));
         if(base.protocol!=="https:"||base.username||base.password||base.pathname!=="/"||base.search||base.hash||!base.hostname.endsWith(".workers.dev")||!body.sourceToken)throw new Error("Choose a configured workers.dev source");
@@ -650,7 +650,8 @@ export default {
       const sourceUrl = String(body.sourceUrl || "");
       const source = new URL(sourceUrl);
       const requestedFilename = cleanName(body.filename || source.pathname);
-      const prefix = cleanPrefix(body.folder);
+      const prefix = body.exactFolder===true ? (body.folder===""?"":exactObjectKey(body.folder)) : cleanPrefix(body.folder);
+      if(prefix.split("/").some(part=>part==="."||part===".."))throw new Error("Invalid object path");
 
       const remote = await checkedFetch(sourceUrl);
       if (!remote.ok || !remote.body) throw new Error(\`Remote fetch failed: \${remote.status}\`);
@@ -1836,6 +1837,13 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
     profile.accountName
   );
   const folder = cleanExplorerPrefix(prefix || "").replace(/\/$/, "");
+  // Older Workers normalize these paths. Refuse before writing unless exact paths
+  // are explicitly supported; ordinary legacy ASCII destinations still work.
+  const needsExactPath=/[^a-zA-Z0-9._ /-]/.test(folder)||folder.split("/").some(part=>part!==part.trim())||folder.includes("//")||folder.endsWith("/");
+  if(needsExactPath){
+    const capabilities=await callBucketWorker(prepared,{action:"capabilities"},false);
+    if(capabilities.exactIngestPaths!==true)throw Object.assign(new Error("This folder needs exact-path support. Use the bucket’s Repair control in Settings, then retry. No upload was started."),{code:"EXPLORER_WORKER_CAPABILITY_MISMATCH"});
+  }
   const response = await fetch(prepared.workerUrl, {
     method: "POST",
     headers: {
@@ -1845,6 +1853,7 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
     body: JSON.stringify({
       sourceUrl,
       folder,
+      exactFolder:true,
       filename,
       publicBaseUrl: prepared.publicBaseUrl || `${prepared.workerUrl}/assets`
     })
@@ -2419,7 +2428,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const sourceUrl = String(message.sourceUrl || "");
         const category = message.category || "files";
         try {
-          const location = await ingest(profile, sourceUrl, category, message.filename || undefined);
+          if(Object.hasOwn(message,"prefix")&&typeof message.prefix!=="string")throw new Error("Choose a valid destination folder.");
+          const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
+            ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined)
+            : await ingest(profile, sourceUrl, category, message.filename || undefined);
           await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
           return sendResponse({ ok:true, location });
         } catch (error) {

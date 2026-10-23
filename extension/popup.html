@@ -12,7 +12,7 @@
       --good:#7ce3b2; --bad:#ff8b9b;
     }
     *{box-sizing:border-box}
-    body{margin:0;width:390px;background:
+    body{margin:0;width:390px;max-height:600px;overflow-y:auto;background:
       radial-gradient(circle at 85% 0%,rgba(139,92,246,.22),transparent 32%),
       linear-gradient(180deg,#0b0713 0%,#09060e 100%);
       color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -29,6 +29,23 @@
     input:focus,select:focus{border-color:#7550c9;box-shadow:0 0 0 3px rgba(139,92,246,.12)}
     .field{margin-bottom:13px}
     .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:10px}
+    [hidden]{display:none!important}
+    .destination{margin:3px 0 16px;padding:14px;border:1px solid rgba(177,153,222,.17);border-radius:15px;background:linear-gradient(145deg,rgba(133,105,189,.09),rgba(12,10,20,.5));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+    .destination .field:last-child{margin-bottom:0}
+    .destination-heading{display:flex;align-items:center;justify-content:space-between;margin:1px 0 7px;font-size:11px;color:var(--muted);font-weight:650}
+    .optional{font-size:10px;font-weight:400;color:#9e93b0}
+    #folder-levels{max-height:215px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#594372 transparent;padding:2px}
+    .folder-level{margin-bottom:8px}.folder-row{display:flex;align-items:center;gap:7px}
+    .folder-step{width:18px;flex:none;color:#a99bbb;font-size:10px;font-variant-numeric:tabular-nums;text-align:center}
+    .folder-row select{min-width:0;padding:9px 10px;border-radius:9px;background:linear-gradient(180deg,#21182f,#171120);font-size:12px;border-color:#40324f;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+    .folder-remove{width:27px;height:30px;flex:none;background:transparent;border:1px solid transparent;border-radius:7px;color:#baadcb;font-size:17px;cursor:pointer}
+    .folder-remove:hover{background:#31233f;border-color:#493457;color:#fff}
+    .folder-note{font-size:11px;color:#b9a9cd;margin:5px 0 0 25px}
+    .folder-note button{border:0;background:transparent;color:#d5b6ff;padding:3px 0;cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px}
+    .deeper{display:flex;align-items:center;gap:6px;margin:4px 0 0 25px;padding:6px 9px;border:1px solid #463158;border-radius:8px;background:rgba(134,94,192,.07);color:#d4bee9;font:inherit;font-size:11px;font-weight:600;line-height:1.4;cursor:pointer}
+    .deeper:hover:not(:disabled){background:#2b1c3c;border-color:#82609b}.deeper:disabled{opacity:.4;cursor:default}
+    button:focus-visible{outline:2px solid #c5a5ef;outline-offset:3px}
+    .destination-path{margin-top:11px;padding-top:10px;border-top:1px solid rgba(174,147,212,.12);font-size:11px;color:#c7b8d7;overflow-wrap:anywhere;line-height:1.5}
     .send{width:100%;border:0;border-radius:13px;padding:12px 14px;margin-top:2px;cursor:pointer;
       background:linear-gradient(135deg,#7650e8,#a46df8 58%,#c084fc);color:white;font-weight:850;letter-spacing:.02em;
       box-shadow:0 12px 30px rgba(112,73,216,.34)}
@@ -62,12 +79,18 @@
         <input id="filename" placeholder="first-light-rose.glb" autocomplete="off">
       </div>
 
-      <div class="grid">
+      <section class="destination" aria-label="Save destination">
         <div class="field">
-          <label for="profile">Destination</label>
+          <label for="profile">Bucket / destination</label>
           <select id="profile"></select>
         </div>
-        <div class="field">
+        <div id="cloudflare-folders" hidden>
+          <div class="destination-heading"><span>Folder</span><span class="optional">Optional</span></div>
+          <div id="folder-levels"></div>
+          <button id="folder-deeper" class="deeper" type="button" disabled><span aria-hidden="true">＋</span> Go deeper</button>
+          <div id="folder-destination" class="destination-path" aria-live="polite" aria-atomic="true"></div>
+        </div>
+        <div id="category-field" class="field">
           <label for="category">Place in</label>
           <select id="category">
             <option value="3d">3D</option>
@@ -75,11 +98,11 @@
             <option value="files">Files</option>
           </select>
         </div>
-      </div>
+      </section>
 
       <button id="send" class="send">Send with REDOWN</button>
       <button id="setup" class="connect" hidden>Connect a destination</button>
-      <div id="status" class="status"></div>
+      <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <div class="hint">Right-click any link or media item to send it even faster.</div>
