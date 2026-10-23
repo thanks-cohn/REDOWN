@@ -213,7 +213,7 @@ test('archive extraction conflicts preserve existing destination content',async(
 async function pipeline(){
  const background=await readFile('extension/background.js','utf8'),worker=(await workerModule()).default;
  const stores={source:new MemoryBucket(),destination:new MemoryBucket()},calls=[];
- const context={URL,TextEncoder,Headers,Date,console,performance,Set,Map,RedownCloudflareApi:{boundedFetch:async(url,options)=>{
+ const context={deliveryCount:0,transferCounter:{add:async count=>{context.deliveryCount+=count;}},URL,TextEncoder,Headers,Date,console,performance,Set,Map,RedownCloudflareApi:{boundedFetch:async(url,options)=>{
   const bucket=new URL(url).hostname.split('.')[0];calls.push({bucket,body:JSON.parse(options.body)});return worker.fetch(new Request(url,options),{STORAGE:stores[bucket]});
  }},cfJson:async path=>{const parts=path.split("/");return {bindings:[{name:"STORAGE",type:"r2_bucket",bucket_name:parts[parts.indexOf("scripts")+1]}],compatibility_flags:["global_fetch_strictly_public"]};},listObjectsPage:async(a,b,prefix)=>({objects:[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix)),cursor:"",truncated:false}),listAllObjects:async(a,b,prefix)=>[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix))};
  vm.createContext(context);vm.runInContext(background.slice(background.indexOf('function cleanExplorerPrefix('),background.indexOf('function objectKeyFromLocation(')),context);
@@ -226,8 +226,8 @@ async function pipeline(){
 test('background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content',async()=>{
  const h=await pipeline();try{
   await h.stores.source.put('雪 #?.txt',text('original'),{customMetadata:{owner:'test'},httpMetadata:{contentType:'text/plain',cacheControl:'max-age=23'}});
-  let result=await h.context.transferExplorerObjects({...h.request,operation:'copy'});assert.equal(result.completed,1);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/雪 #?.txt')).bytes),'original');
-  result=await h.context.transferExplorerObjects({...h.request,operation:'move',destination:{...h.request.destination,prefix:'moved/'}});assert.equal(result.completed,1);assert.equal(await h.stores.source.head('雪 #?.txt'),null);assert.equal((await h.stores.destination.head('moved/雪 #?.txt')).customMetadata.owner,'test');
+  let result=await h.context.transferExplorerObjects({...h.request,operation:'copy'});assert.equal(result.completed,1);assert.equal(h.context.deliveryCount,1);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/雪 #?.txt')).bytes),'original');
+  result=await h.context.transferExplorerObjects({...h.request,operation:'move',destination:{...h.request.destination,prefix:'moved/'}});assert.equal(result.completed,1);assert.equal(h.context.deliveryCount,2);assert.equal(await h.stores.source.head('雪 #?.txt'),null);assert.equal((await h.stores.destination.head('moved/雪 #?.txt')).customMetadata.owner,'test');
   result=await h.context.renameExplorerEntry({source:{accountId:'a',bucketName:'destination'},entry:{key:'moved/雪 #?.txt',displayName:'雪 #?.txt'},newName:'renamed #雪.txt'});assert.equal(result.completed,1);assert.equal(await h.stores.destination.head('moved/雪 #?.txt'),null);assert.ok(await h.stores.destination.head('moved/renamed #雪.txt'));
   result=await h.context.deleteExplorerObjects({source:{accountId:'a',bucketName:'destination'},entries:[{key:'moved/renamed #雪.txt'}]});assert.equal(result.completed,1);assert.ok(await h.stores.destination.head('nested/雪 #?.txt'),'unselected object remains');
  }finally{h.restore();}

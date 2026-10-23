@@ -70,6 +70,17 @@
       "adapter": null,
       "tests": [],
       "boundary": "License drift, installed package and store review remain independent gates"
+    },
+    {
+      "id": "popup-deliveries",
+      "purpose": "Dashboard launcher, direct Cloudflare login and local lifetime delivery odometer",
+      "entry": "extension/popup.js",
+      "adapter": "agent/explorer/cli.mjs",
+      "discovery": "describeExplorer",
+      "tests": [
+        "navigation"
+      ],
+      "boundary": "Count covers confirmed cloud saves/local upload observations and verified Explorer copies/moves; retained historical successes only, no reconstruction of discarded history, browser downloads or cross-device totals. Counter state owns no URLs or credentials."
     }
   ]
 }

@@ -1,3 +1,5 @@
+> Superseded in 0.5.22: the owner requested a compact Dashboard launcher instead of the toolbar form. See [current launcher and counter contract](DASHBOARD_LAUNCHER.md). Earlier descriptions below are historical.
+
 # Popup destinations — 0.5.19
 
 The first dropdown now discovers all buckets from connected Cloudflare accounts through the existing read-only account/bucket APIs. Duplicate names include their account. Saved destinations remain available when discovery fails; Refresh retries. Opening the popup never prepares a Worker. Sending to a newly selected bucket validates its existence and uses the existing preparation/ingest path. GitHub remains Beta-gated.

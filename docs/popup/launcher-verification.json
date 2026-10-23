@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-10-23T03:30:51.652557+00:00",
+  "extensionVersion": "0.5.22",
+  "baselineRemoteCommit": "5f7066aacd9149ab2c189563b153e84423c65a03",
+  "focusedLauncherAuthCounterPassed": 33,
+  "focusedBackendWorkerMenuPassed": 46,
+  "smoke": {
+    "passed": 207,
+    "failed": 0
+  },
+  "regression": {
+    "passed": 353,
+    "knownFailures": 7,
+    "newFailures": []
+  },
+  "packaging": "Explicit allowlist audit passed; artifact remains release-blocked by existing gates",
+  "scope": "Local DOM/messages and embedded Worker/in-memory R2; no installed Chrome or live provider certification"
+}

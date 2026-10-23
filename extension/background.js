@@ -786,28 +786,7 @@ async function setProfiles(profiles) {
   await chrome.storage.local.set({ profiles });
 }
 async function recordTransfer(entry) {
-  const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");
-  const history = Array.isArray(transferHistory) ? transferHistory : [];
-  const now = new Date().toISOString();
-
-  let cleaned = history;
-  if (entry?.ok && entry?.sourceUrl) {
-    const successAt = Date.now();
-    cleaned = history.filter(item => {
-      if (item?.ok) return true;
-      if (item?.sourceUrl !== entry.sourceUrl) return true;
-      if (entry.profileId && item?.profileId && item.profileId !== entry.profileId) return true;
-      const age = Math.abs(successAt - new Date(item?.at || 0).getTime());
-      return !Number.isFinite(age) || age > 5 * 60 * 1000;
-    });
-  }
-
-  const next = [{
-    id: crypto.randomUUID(),
-    at: now,
-    ...entry
-  }, ...cleaned].slice(0, 50);
-  await chrome.storage.local.set({ transferHistory: next });
+  return transferCounter.record(entry);
 }
 async function notify(title, message) {
   try {
@@ -834,6 +813,8 @@ async function cfJson(path, options = {}) {
   }
   return body.result ?? body;
 }
+importScripts("transfer-counter.js");
+const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks);
 importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
@@ -1712,6 +1693,7 @@ async function transferExplorerObjects(message) {
       return !(result.verified===true&&typeof result.destinationKey==="string"&&result.destinationKey&&typeof result.sourceEtag==="string"&&result.sourceEtag&&typeof result.destinationEtag==="string"&&result.destinationEtag&&Number.isSafeInteger(result.size)&&result.size>=0&&expectedDestination&&!(batch.find(entry=>entry.sourceKey===result.sourceKey).sameBucket&&result.destinationKey===result.sourceKey));
     }))throw new Error("The bucket did not confirm all selected files. Refresh the destination before retrying; some copies may already exist.");
     results.push(...response.results);
+    if(operation==="copy"&&!message.renameTo){const count=response.results.filter(item=>item.status==="copied"&&!item.sourceKey.endsWith("/")).length;if(count)await transferCounter.add(count).catch(()=>console.warn("REDOWN delivery counter unavailable"));}
   }
   const copied = results.filter(result => result.status === "copied");
   const deleteErrors = [];let deletedCount=0;
@@ -1722,6 +1704,7 @@ async function transferExplorerObjects(message) {
         const result=await callBucketWorker(sourceProfile,{action:"deleteKeys",keys,expected:batch.map(result=>({key:result.sourceKey,etag:result.sourceEtag,version:result.sourceVersion,size:result.size,destinationKey:result.destinationKey,destinationEtag:result.destinationEtag,destinationVersion:result.destinationVersion})),destinationWorkerUrl:destinationProfile.workerUrl,destinationToken:destinationProfile.token,explorerTrace:message.explorerTrace,sameBucket:source.accountId===destination.accountId&&source.bucketName===destination.bucketName});
         if(!Array.isArray(result.deleted)||result.deleted.length!==keys.length||keys.some(key=>!result.deleted.includes(key)))throw new Error("Source deletion was not confirmed. Refresh both locations before retrying.");
         deletedCount+=keys.length;
+        if(!message.renameTo){const count=keys.filter(key=>!key.endsWith("/")).length;if(count)await transferCounter.add(count).catch(()=>console.warn("REDOWN delivery counter unavailable"));}
       }
       catch (error) { deleteErrors.push(error.message || String(error)); }
     }
@@ -2553,6 +2536,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         });
         return sendResponse({ ok:true });
       }
+      if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
         const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");

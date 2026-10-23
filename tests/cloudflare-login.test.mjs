@@ -8,7 +8,7 @@ const source = await readFile(new URL('../extension/background.js', import.meta.
 const authSource = await readFile(new URL('../extension/cloudflare-auth.js', import.meta.url), 'utf8');
 const apiSource = await readFile(new URL('../extension/cloudflare-api.js', import.meta.url), 'utf8');
 const nestedSource = await readFile(new URL('../extension/nested-locations.js', import.meta.url), 'utf8');
-const extraSources=Object.fromEntries(await Promise.all(['rfis-index.js','runtime-diagnostics.js','search-session.js','explorer-diagnostics.js','explorer-diagnostics-bridge.js'].map(async name=>[name,await readFile(new URL('../extension/'+name,import.meta.url),'utf8')])));
+const extraSources=Object.fromEntries(await Promise.all(['transfer-counter.js','rfis-index.js','runtime-diagnostics.js','search-session.js','explorer-diagnostics.js','explorer-diagnostics-bridge.js'].map(async name=>[name,await readFile(new URL('../extension/'+name,import.meta.url),'utf8')])));
 const optionsSource = await readFile(new URL('../extension/options.js', import.meta.url), 'utf8');
 function event() {
   const listeners = [];

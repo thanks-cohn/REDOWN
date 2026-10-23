@@ -634,3 +634,5 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 **Recorded:** 2026-10-23T00:55:30+00:00. **Attempt:**01. See [cause, correction and verification boundary](fixes/BUG-020-popup-exact-folder-attempt-01.md). This is distinct from the existing cross-bucket404 incident.
 
 - BUG-021: [popup destination readability/persistence, attempt 01](fixes/BUG-021-popup-destination-attempt-01.md); automated regressions pass, native Chrome acceptance pending.
+
+- Popup delivery counter (0.5.22): historical totals cannot reconstruct discarded entries beyond the old fifty-entry history cap; uninstrumented paths and MV3 completion-to-local-commit gaps can undercount. See [counter boundaries and remaining acceptance](../docs/popup/DASHBOARD_LAUNCHER.md). Installed Chrome odometer/login acceptance remains pending.

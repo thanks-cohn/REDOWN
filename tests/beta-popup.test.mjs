@@ -1,22 +1,5 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import vm from 'node:vm';
-import {readFile} from 'node:fs/promises';
-import {JSDOM} from 'jsdom';
-const code=await readFile(new URL('../extension/popup.js',import.meta.url),'utf8');
-const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8');
-test('popup gates experimental GitHub choices with Beta, preserving stored configurations',async()=>{
- const dom=new JSDOM(html,{runScripts:'outside-only'}),d=dom.window.document;
- const profiles=[{id:'r2',name:'Storage',type:'cloudflare-r2',bucketName:'assets'},{id:'git',name:'Repository',type:'github',repository:'fixture/assets',token:'fixture'}];
- const stored={profiles},before=JSON.stringify(profiles);let changed;
- const ctx=vm.createContext({document:d,chrome:{storage:{local:{get:async()=>stored},onChanged:{addListener:fn=>changed=fn}},runtime:{openOptionsPage(){},sendMessage(){throw Error('Unexpected transfer');}}}});
- vm.runInContext(code,ctx);await new Promise(r=>setImmediate(r));
- const ids=()=>[...d.getElementById('profile').options].map(x=>x.value);
- assert.deepEqual(ids(),['r2']);stored.betaModeEnabled=true;changed({betaModeEnabled:{}},'local');await new Promise(r=>setImmediate(r));
- assert.deepEqual(ids(),['r2','git']);stored.betaModeEnabled=false;changed({betaModeEnabled:{}},'local');await new Promise(r=>setImmediate(r));
- assert.deepEqual(ids(),['r2']);assert.equal(JSON.stringify(profiles),before);
- stored.profiles=profiles.filter(p=>p.type==='github');changed({profiles:{}},'local');await new Promise(r=>setImmediate(r));
- assert.equal(d.getElementById('send').hidden,true);assert.match(d.getElementById('status').textContent,/Beta Mode/);assert.doesNotMatch(d.getElementById('status').textContent,/ready/i);
- stored.betaModeEnabled=true;changed({betaModeEnabled:{}},'local');await new Promise(r=>setImmediate(r));assert.deepEqual(ids(),['git']);
- assert.equal(JSON.stringify(profiles),before);dom.window.close();
+import test from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {JSDOM} from 'jsdom';
+test('compact launcher replaces destination form without exposing experimental GitHub controls',async()=>{
+ const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),dom=new JSDOM(html);
+ try{assert.equal(dom.window.document.querySelector('input,select'),null);assert.match(dom.window.document.getElementById('dashboard').textContent,/Go to Dashboard/);assert.doesNotMatch(dom.window.document.body.textContent,/GitHub/);}finally{dom.window.close();}
 });

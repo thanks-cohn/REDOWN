@@ -11,7 +11,7 @@
 - Local profile/history responses and RFIS export are sensitive. New agent inspection never calls any handler or serializes browser state.
 - Remote writes, UI save, history/index updates and response delivery cross separate async boundaries; no shared transaction or durable job/journal is demonstrated. Cancellation/worker suspension outcomes remain unknown.
 
-The current inventory adds `cfPublicAddresses` (36 literal branches including the new Debug-only Explorer adapter), a read-only UI capability. The separately confirmed `cfEnablePublicAccess` mutation is now included. Historical catalog hashes remain pinned; this addition does not make stale catalog evidence fresh.
+The earlier inventory added `cfPublicAddresses` (36 literal branches including the new Debug-only Explorer adapter), a read-only UI capability. The separately confirmed `cfEnablePublicAccess` mutation is now included. Historical catalog hashes remain pinned; this addition does not make stale catalog evidence fresh.
 
 ## Complete handler inventory
 
@@ -48,6 +48,7 @@ The current inventory adds `cfPublicAddresses` (36 literal branches including th
 | `cfTransferArchive` | `preparedProfile twice → callBucketWorker` | Explorer pasteExplorer archive clipboard branch | Same profile extracts; cross-profile receiveArchiveEntries Worker-to-Worker; passes source secret to destination Worker, writes objects |
 | `cfTransferObjects` | `transferExplorerObjects` | Explorer pasteExplorer/moveSelectionTo | Expand entries via listing; prepare source/destination; Worker transferBatch; copy writes, move deletes after copied results; partial errors |
 | `ingest` | `ingest → ingestCloudflare / ingestGitHub` | Popup #send | Validate HTTPS; selected profile lookup; R2 write or GitHub workflow install/dispatch; history write separate from remote result |
+| `deliveryCount` | `RedownTransferCounter.read` | Toolbar popup | Local total read/migration; no file identities or credentials |
 | `profiles` | `getProfiles` | No literal current caller found; Settings reads local storage directly | Local profile read; response can contain secrets, so not suitable as public inspection API |
 | `recordLocalTransfer` | `recordTransfer` | Options uploadLocalFiles per-file success/failure | Local capped history write; a claimed observation, no remote verification |
 | `renameTransfer` | `renameTransferHistoryItem` | History beginRename | Find entry/profile; renameCloudflareTransfer remote mutation then local history rewrite; Cloudflare-only validation |
@@ -59,3 +60,9 @@ The current inventory adds `cfPublicAddresses` (36 literal branches including th
 **Unknown unless specifically noted:** individual handler integration coverage, cloud permission propagation, full pagination under caps, browser suspension and destructive-operation recovery. `tests/explorer-worker.test.mjs` executes embedded Worker operations against MemoryBucket; it does not exercise background message routing or Cloudflare REST. `tests/nested-locations.test.mjs` mocks message responses for selection/Create and menu generation. `tests/cloudflare-files.test.mjs` tests direct API reads/downloads. Login tests contain a stale importScripts harness and currently fail before most login behavior can execute.
 
 Important **verified-in-source** paths bypass messages: native context-menu transfers call background ingest directly; Settings Connect Cloudflare uses the shared auth controller; `uploadLocalFiles` posts File bodies directly to Worker; `showWorkspacePreview/explorerDownload` use `RedownCloudflareApi.preview/download` directly; menu mode/profile settings write local storage and trigger `chrome.storage.onChanged`. These paths are why enumerating messages alone does not establish full architecture coverage.
+
+## Dashboard launcher / delivery odometer (0.5.22)
+
+`deliveryCount` is a local background read/migration through `RedownTransferCounter`; it returns only version, decimal total, start timestamp and migration basis. No authentication material, file identities or clipboard content. Opening the popup performs this local read and an authenticated account read if credentials exist; only clicking LOGIN or the red light invokes existing `cfConnect`/`cfLoginStatus`. The former popup URL/folder form is removed by owner request; ingest message contracts remain for existing callers. Dashboard is the user-facing name of options.html.
+
+The current literal-branch inventory contains 37 handlers after the additive local-only `deliveryCount` query. The inventory test checks both exact documented membership and this reviewed count; historical catalog hashes remain unchanged.

@@ -15,7 +15,7 @@ FILES = (
     'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
     'hitomi-capture.js', 'menu-reorder.js', 'nested-locations.js',
     'nested-menu-editor.js', 'storage-signals.js', 'public-addresses.js', 'explorer-status.js', 'options.html', 'options.js', 'popup.html',
-    'popup.js', 'rfis-index.js', 'model-viewer.min.js', 'manifest.json',
+    'popup.js', 'transfer-counter.js', 'rfis-index.js', 'model-viewer.min.js', 'manifest.json',
     'icon.svg', 'settings-mascot.js', 'settings-mascot.png', 'LICENSE', 'fonts/OFL.txt', 'fonts/README.md',
     'fonts/dm-sans-latin-variable.woff',
     'icons/icon16.png', 'icons/icon32.png', 'icons/icon48.png', 'icons/icon128.png',

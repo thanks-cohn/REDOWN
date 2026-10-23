@@ -35,5 +35,6 @@
   "agent/diagnostics/registry.mjs",
   "scripts/agent-gateway-fixtures.mjs",
   "scripts/check-syntax.mjs",
-  "agent/diagnostics/issues.mjs"
+  "agent/diagnostics/issues.mjs",
+  "extension/transfer-counter.js"
 ]

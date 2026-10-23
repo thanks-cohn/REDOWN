@@ -118,5 +118,5 @@ test('M0 inventory covers every literal message branch without inventing handler
   const actual=[...new Set([...source.matchAll(/message\?\.type === "([^"]+)"/g)].map(m=>m[1]))].sort();
   const inventory=readFileSync(new URL('../docs/agent/MESSAGE_INVENTORY.md',import.meta.url),'utf8');
   const documented=[...inventory.matchAll(/^\| `([^`]+)` \|/gm)].map(m=>m[1]).sort();
-  assert.deepEqual(documented,actual);assert.equal(actual.length,36);
+  assert.deepEqual(documented,actual);assert.equal(actual.length,37);
 });

@@ -12,7 +12,7 @@
         {
           "path": "extension/background.js",
           "symbol": "if(explicit)return explicit;",
-          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
         },
         {
           "path": "tests/simple-menu-flat.test.mjs",
@@ -108,12 +108,12 @@
         {
           "path": "extension/background.js",
           "symbol": "const folderTargets=new Map()",
-          "sha256": "d0c5cea94f5b88e9c6e5610608dc221a0e6412be742820e8481bbddd7bbacc94"
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
         },
         {
           "path": "tests/explorer-worker.test.mjs",
           "symbol": "directory Keep both preserves the entire existing tree",
-          "sha256": "8d670c2765f7669ce93816c71bfb6d15b0050b5c06d71dc36379bd14141556a5"
+          "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22"
         }
       ],
       "nextAction": "Verify disposable installed-directory Copy/Move/drag-and-drop with original destination hashes; no recovery or live closure is claimed.",
