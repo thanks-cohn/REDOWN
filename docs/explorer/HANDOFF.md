@@ -84,3 +84,20 @@ See [reliability foundation](../reliability/README.md). `agent/diagnostics/cli.m
 ## Unified inspection milestone
 
 All five offline namespaces now route through `agent/diagnostics/cli.mjs` with qualified IDs, explicit ownership, isolated bundle imports and native provenance preservation. Start at [the unified contract](../reliability/UNIFIED_AGENT_API.md). Registry/version drift is a required reliability stage; no new live execution authority or incident closure is implied.
+
+
+## 23 October 2026 — routing round06 and directory Keep both safety
+
+See [BUG-018 round06](../../bugs/fixes/BUG-018-explorer-routing-attempt-06.md) and
+[BUG-019 attempt01](../../bugs/fixes/BUG-019-directory-keep-both-attempt-01.md).
+A user-identified failing destination had historical pre-routing-fix Worker code and lacked
+the explicit routing flag. Its flag was corrected/read back with bindings/date unchanged;
+which installed client uploaded that older code remains unknown. Installed transfer closure
+is pending. New creation and cross-bucket requests verify actual provider binding/routing
+settings; Worker health/version alone is insufficient. These checks need Worker settings
+read permission and never auto-replay writes. Extension0.5.17 identifies this correction.
+Directory conflicts now stop that tree before merging; Keep both retries its typed directory
+into one separate sibling. Existing conditional writes/read-back/move cleanup remain; no
+directory-wide transaction is claimed. Original destination byte overwrite is reported, not
+live-established. Local smoke189/189; full343 tests,336 pass,7 known failures,0 new.
+Current issue-assessment revalidation is distinct from frozen historical evidence.

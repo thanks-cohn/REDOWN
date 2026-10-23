@@ -71,3 +71,12 @@ test('a multi-file 404 cannot borrow an unrelated preview success to imply path 
  const requestId=randomUUID();await c.identity(id,target,'b',{requestId});c.record(id,{stage:'source.read',component:'worker',status:404,outcome:'failed',requestId});
  assert.ok(!c.diagnose(id).findings.some(f=>f.code==='API_WORKER_PATH_DIVERGENCE'));
 });
+
+test('new deployment reads provider routing settings before reporting ready or creating prefix objects',async()=>{
+ const calls=[];let saved=false;
+ const c=vm.createContext({TextEncoder,FormData,Blob,getProfiles:async()=>[],setProfiles:async()=>{saved=true;},chrome:{storage:{session:{get:async()=>({}),set:async()=>{}}}},randomString:()=> 'fixture-secret',safeSlug:s=>s,ensureWorkersSubdomain:async()=> 'fixture',WORKER_SOURCE:'fixture __REDOWN_SHARED_SECRET__',cfFetch:async(path,options)=>{calls.push({path,method:options.method});return new Response(null,{status:200});},cfJson:async()=>({bindings:[{name:'STORAGE',type:'r2_bucket',bucket_name:'bucket'}],compatibility_flags:[]}),RedownCloudflareApi:{boundedFetch:async()=>{throw Error('Must not use health/ensurePrefixes after bad settings');}}});
+ vm.runInContext(bg.slice(bg.indexOf('async function assertExplorerTransferSettings('),bg.indexOf('async function explorerDirectoryExists(')),c);
+ vm.runInContext(bg.slice(bg.indexOf('async function deployCloudflareProfile('),bg.indexOf('function normalizeWebOrigin(')),c);
+ await assert.rejects(c.deployCloudflareProfile({accountId:'a',bucketName:'bucket'}),{code:'EXPLORER_WORKER_ROUTING_CONFIG'});
+ assert.equal(saved,false);assert.equal(calls.length,2);assert.equal(calls[0].method,'PUT');assert.ok(calls[1].path.endsWith('/subdomain'));
+});

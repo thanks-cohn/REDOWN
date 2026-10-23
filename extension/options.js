@@ -3132,7 +3132,7 @@ async function pasteExplorer(
     }
     if (result.conflicts?.length) {
       const choice = prompt(
-        `${result.conflicts.length} item${result.conflicts.length === 1 ? "" : "s"} already exist. Type Replace, Keep both, Skip, or Cancel.`,
+        `${result.conflicts.length} item${result.conflicts.length === 1 ? "" : "s"} already exist. Keep both creates a separate directory for directory conflicts; Replace merges and replaces matching files. Type Replace, Keep both, Skip, or Cancel.`,
         "Keep both",
       )
         ?.trim()
@@ -3153,8 +3153,8 @@ async function pasteExplorer(
           entries: result.conflicts.map((x) => ({
             key: x.sourceKey,
             destinationKey: x.destinationKey,
-            folder: false,
-            displayName: x.sourceKey.split("/").pop(),
+            folder: x.folder===true,
+            displayName: x.sourceKey.replace(/\/$/,"").split("/").pop(),
           })),
           conflict,
         });

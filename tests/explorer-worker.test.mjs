@@ -215,9 +215,9 @@ async function pipeline(){
  const stores={source:new MemoryBucket(),destination:new MemoryBucket()},calls=[];
  const context={URL,TextEncoder,Headers,Date,console,performance,Set,Map,RedownCloudflareApi:{boundedFetch:async(url,options)=>{
   const bucket=new URL(url).hostname.split('.')[0];calls.push({bucket,body:JSON.parse(options.body)});return worker.fetch(new Request(url,options),{STORAGE:stores[bucket]});
- }},listAllObjects:async(a,b,prefix)=>[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix))};
+ }},cfJson:async path=>{const parts=path.split("/");return {bindings:[{name:"STORAGE",type:"r2_bucket",bucket_name:parts[parts.indexOf("scripts")+1]}],compatibility_flags:["global_fetch_strictly_public"]};},listObjectsPage:async(a,b,prefix)=>({objects:[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix)),cursor:"",truncated:false}),listAllObjects:async(a,b,prefix)=>[...stores[b].objects.values()].filter(o=>o.key.startsWith(prefix))};
  vm.createContext(context);vm.runInContext(background.slice(background.indexOf('function cleanExplorerPrefix('),background.indexOf('function objectKeyFromLocation(')),context);
- context.preparedProfile=async(accountId,bucketName)=>({id:bucketName,accountId,bucketName,workerUrl:`https://${bucketName}.workers.dev`,token:'test-secret'});
+ context.preparedProfile=async(accountId,bucketName)=>({id:bucketName,accountId,bucketName,scriptName:bucketName,workerUrl:`https://${bucketName}.workers.dev`,token:'test-secret'});
  const originalFetch=globalThis.fetch;globalThis.fetch=(url,options)=>{
   const bucket=new URL(url).hostname.split('.')[0];if(stores[bucket])return worker.fetch(new Request(url,options),{STORAGE:stores[bucket]});return originalFetch(url,options);
  };
@@ -283,4 +283,69 @@ test('read-only source proxy uses HEAD, rejects redirects and never writes/delet
   const result=await(await worker.fetch(manageRequest({action:'probeSource',key:'nested//雪 #?%.txt',sourceWorkerUrl:'https://source.workers.dev',sourceToken:'test-secret'}),{STORAGE:bucket})).json();assert.equal(result.status,404);assert.equal(result.readOnly,true);assert.equal(calls,1);
   const rejected=await worker.fetch(manageRequest({action:'probeSource',key:'a',sourceWorkerUrl:'https://not-a-worker.invalid',sourceToken:'test-secret'}),{STORAGE:bucket});assert.equal(rejected.status,400);assert.equal(calls,1);
  }finally{globalThis.fetch=original;}
+});
+
+test('directory collision is reported before any child is merged or source is deleted',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('photos/shared.txt',text('incoming'));
+  await h.stores.source.put('photos/new.txt',text('new child'));
+  await h.stores.destination.put('nested/photos/shared.txt',text('original'));
+  await h.stores.destination.put('nested/photos/only-original.txt',text('original child'));
+  const result=await h.context.transferExplorerObjects({...h.request,operation:'move',entries:[{key:'photos/',folder:true}],conflict:'skip'});
+  assert.equal(result.completed,0);assert.equal(result.conflicts.length,1);assert.equal(result.conflicts[0].folder,true);
+  assert.equal(result.conflicts[0].sourceKey,'photos/');assert.equal(h.calls.length,0);
+  assert.equal(await h.stores.destination.head('nested/photos/new.txt'),null);
+  assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/photos/shared.txt')).bytes),'original');
+  assert.ok(await h.stores.source.head('photos/new.txt'));
+ }finally{h.restore();}
+});
+
+test('directory Keep both preserves the entire existing tree and uses one unused sibling for all incoming children',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('parent/photos.v1 雪/shared.txt',text('incoming'));
+  await h.stores.source.put('parent/photos.v1 雪/deep/new.txt',text('new child'));
+  await h.stores.destination.put('nested/photos.v1 雪/shared.txt',text('original'));
+  await h.stores.destination.put('nested/photos.v1 雪/only-original.txt',text('original child'));
+  await h.stores.destination.put('nested/photos.v1 雪 (2)/',text(''));
+  const before=new Map([...h.stores.destination.objects].map(([key,o])=>[key,Buffer.from(o.bytes).toString('hex')]));
+  const result=await h.context.transferExplorerObjects({...h.request,operation:'copy',entries:[{key:'parent/photos.v1 雪/',folder:true,destinationKey:'nested/photos.v1 雪/'}],conflict:'keep'});
+  assert.equal(result.completed,2);assert.equal(result.conflicts.length,0);
+  assert.ok(await h.stores.destination.head('nested/photos.v1 雪 (3)/shared.txt'));assert.ok(await h.stores.destination.head('nested/photos.v1 雪 (3)/deep/new.txt'));
+  assert.equal(await h.stores.destination.head('nested/photos.v1 雪/deep/new.txt'),null);
+  for(const [key,bytes] of before)assert.equal(Buffer.from((await h.stores.destination.get(key)).bytes).toString('hex'),bytes);
+  assert.ok(await h.stores.source.head('parent/photos.v1 雪/shared.txt'));
+ }finally{h.restore();}
+});
+
+test('directory Keep both move verifies the new sibling before deleting exact source children',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('folder//deep/a.txt',text('new'));
+  await h.stores.destination.put('nested/folder/a.txt',text('existing'));
+  const result=await h.context.transferExplorerObjects({...h.request,operation:'move',entries:[{key:'folder/',folder:true}],conflict:'keep'});
+  assert.equal(result.completed,1);assert.equal(await h.stores.source.head('folder//deep/a.txt'),null);
+  assert.ok(await h.stores.destination.head('nested/folder (2)//deep/a.txt'));
+  assert.equal(new TextDecoder().decode((await h.stores.destination.get('nested/folder/a.txt')).bytes),'existing');
+ }finally{h.restore();}
+});
+
+test('cross-bucket settings drift fails before transfer/deletion with a structured diagnostic code',async()=>{
+ for(const mode of ['missing-flag','wrong-binding','unavailable']){
+  const h=await pipeline();try{
+   await h.stores.source.put('雪 #?.txt',text('source'));
+   h.context.cfJson=async()=>{if(mode==='unavailable')throw Error('settings unavailable');return {bindings:[{name:'STORAGE',type:'r2_bucket',bucket_name:mode==='wrong-binding'?'unintended':'source'}],compatibility_flags:mode==='missing-flag'?[]:['global_fetch_strictly_public']};};
+   const expected=mode==='missing-flag'?'EXPLORER_WORKER_ROUTING_CONFIG':mode==='wrong-binding'?'EXPLORER_BUCKET_CONTEXT_MISMATCH':undefined;
+   await assert.rejects(h.context.transferExplorerObjects({...h.request,operation:'move'}),expected?{code:expected}:/settings unavailable/);
+   assert.equal(h.calls.length,0);assert.ok(await h.stores.source.head('雪 #?.txt'));assert.equal(h.stores.destination.objects.size,0);
+  }finally{h.restore();}
+ }
+});
+
+test('directory preflight fails closed on incomplete listings and bounds sibling allocation',async()=>{
+ const h=await pipeline();try{
+  await h.stores.source.put('folder/file',text('source'));
+  h.context.listObjectsPage=async()=>({objects:[],truncated:true,cursor:''});
+  await assert.rejects(h.context.transferExplorerObjects({...h.request,entries:[{key:'folder/',folder:true}],conflict:'keep'}),/existence could not be confirmed/);assert.equal(h.calls.length,0);
+  let reads=0;h.context.listObjectsPage=async()=>{reads++;return {objects:[{key:'occupied'}]};};
+  await assert.rejects(h.context.transferExplorerObjects({...h.request,entries:[{key:'folder/',folder:true}],conflict:'keep'}),/available directory name/);assert.equal(reads,65);assert.equal(h.calls.length,0);
+ }finally{h.restore();}
 });

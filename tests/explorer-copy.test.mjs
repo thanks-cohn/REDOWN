@@ -25,7 +25,7 @@ test('copy summary includes successful first-pass and conflict-resolution files'
  assert.match(h.messages.at(-1).message,/3 files copied/);assert.match(h.status.textContent,/3 files copied/);assert.equal(h.refreshed,1);
 });
 test('missing per-file copy receipts cannot become a successful zero-file copy',async()=>{
- const c=vm.createContext({cleanExplorerPrefix:x=>x,expandExplorerEntries:async()=>[{key:'file.txt'}],preparedProfile:async(a,b)=>({id:b,workerUrl:'https://fixture.invalid',token:'fixture'}),callBucketWorker:async()=>({ok:true,results:[]})});
+ const c=vm.createContext({assertExplorerTransferSettings:async()=>{},cleanExplorerPrefix:x=>x,expandExplorerEntries:async()=>[{key:'file.txt'}],preparedProfile:async(a,b)=>({id:b,workerUrl:'https://fixture.invalid',token:'fixture'}),callBucketWorker:async()=>({ok:true,results:[]})});
  vm.runInContext(bg.slice(bg.indexOf('async function transferExplorerObjects('),bg.indexOf('\nasync function deleteExplorerObjects(',bg.indexOf('async function transferExplorerObjects('))),c);
  await assert.rejects(c.transferExplorerObjects({source:{accountId:'a',bucketName:'source'},destination:{accountId:'a',bucketName:'target',prefix:''},entries:[{key:'file.txt'}]}),/did not confirm/);
 });
@@ -67,4 +67,11 @@ test('rejected transfer transport clears working status, preserves clipboard and
  h.c.send=async()=>{calls++;throw Object.assign(Error('private URL must not become feedback'),{name:'TimeoutError'});};
  await assert.rejects(h.c.pasteExplorer({accountId:'a',bucketName:'target'}),{name:'TimeoutError'});
  assert.equal(calls,1);assert.equal(h.c.explorerClipboard,clipboard);assert.match(h.status.textContent,/not confirmed.*Refresh/);assert.doesNotMatch(h.status.textContent,/private URL/);assert.equal(h.messages.at(-1).failed,true);
+});
+
+test('directory conflict retry preserves its directory identity and destination root',async()=>{
+ const h=pasteHarness({ok:true,completed:2,errors:[],conflicts:[]});let calls=0,retry;
+ h.c.send=async message=>{if(++calls===1)return {ok:true,completed:0,conflicts:[{sourceKey:'photos/',destinationKey:'target/photos/',folder:true}]};retry=message;return {ok:true,completed:2,errors:[],conflicts:[]};};
+ await h.c.pasteExplorer({accountId:'a',bucketName:'target',prefix:'target/'});
+ assert.equal(retry.conflict,'keep');assert.equal(retry.entries[0].folder,true);assert.equal(retry.entries[0].key,'photos/');assert.equal(retry.entries[0].destinationKey,'target/photos/');
 });

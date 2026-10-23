@@ -614,3 +614,14 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 **Status:** source/DOM-confirmed clipboard, stale menu and transport-observability defects corrected; installed transfer outcome remains open.
 
 **Recorded:** 2026-10-22T23:56:43+00:00. See [timestamped attempt ledger, causes, solution and acceptance boundary](fixes/BUG-018-explorer-transfer-recurrence-attempt-05.md). Related live incident EXPLORER-COPY-404-2026-10 is not closed by local tests.
+
+
+### BUG-018 continuation — Cross-bucket routing discrepancy; round06
+
+**Status:** one user-confirmed failed destination had pre-routing-fix code and lacked its public fetch flag. Setting corrected/read back with bindings/date preserved. Creation and cross-bucket settings checks added; installed transfer verification remains open. See [round06 evidence and solution](fixes/BUG-018-explorer-routing-attempt-06.md).
+
+## BUG-019 — Directory Keep both merges into an existing destination directory
+
+**Status:** critical owner data-safety report; source-confirmed folder merging and lost directory retry identity corrected. Actual installed byte overwrite/recovery remains unverified.
+
+**Recorded:** 2026-10-23T00:21:42+00:00. **Attempt:**01 for this distinct directory conflict. See [cause, correction and acceptance boundary](fixes/BUG-019-directory-keep-both-attempt-01.md).

@@ -989,6 +989,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
   }
 
   const workerUrl = `https://${scriptName}.${subdomain}.workers.dev`;
+  await assertExplorerTransferSettings({accountId,bucketName,scriptName});
 
   // Do not save a broken preset. Confirm Cloudflare can actually execute the Worker.
   let health = null;
@@ -1617,6 +1618,24 @@ async function probeExplorerSource(input) {
   }finally{explorerProbeRunning=false;}
 }
 
+// Cross-bucket reads must use the intended storage binding and public fetch routing.
+// Read settings afresh: an older extension can redeploy a Worker without its routing flag.
+async function assertExplorerTransferSettings(profile, trace, role="destination") {
+  if(!profile.scriptName)throw Object.assign(new Error("The bucket connection has no Worker identity. Use its Repair control before transferring."),{code:"EXPLORER_WORKER_NOT_READY",stage:"worker.check"});
+  const settings=await cfJson(`/accounts/${encodeURIComponent(profile.accountId)}/workers/scripts/${encodeURIComponent(profile.scriptName)}/settings`,{timeoutMs:10000});
+  const binding=(settings.bindings||[]).find(b=>b.name==="STORAGE"&&b.type==="r2_bucket");
+  const bindingMatches=binding?.bucket_name===profile.bucketName;
+  const publicFetchEnabled=(settings.compatibility_flags||[]).includes("global_fetch_strictly_public");
+  const code=!bindingMatches?"EXPLORER_BUCKET_CONTEXT_MISMATCH":!publicFetchEnabled?"EXPLORER_WORKER_ROUTING_CONFIG":undefined;
+  globalThis.redownExplorerBridge?.event(trace?.operationId,"worker.check",code?"failed":"confirmed",{bindingMatches,publicFetchEnabled,code,probe:role+".provider-settings"});
+  if(code)throw Object.assign(new Error(!bindingMatches?"The saved bucket and Worker storage binding disagree. Use Repair before transferring; no files were changed.":"The bucket Worker is missing its cross-bucket routing setting. Use Repair before transferring; no files were changed."),{code,stage:"worker.check"});
+}
+async function explorerDirectoryExists(destination, prefix) {
+  const page=await listObjectsPage(destination.accountId,destination.bucketName,prefix);
+  if(page.objects.length||page.delimited?.length)return true;
+  if(page.truncated||page.cursor)throw new Error("Directory existence could not be confirmed. Refresh before transferring; no files were changed.");
+  return false;
+}
 async function transferExplorerObjects(message) {
   const operation = message.operation === "move" ? "move" : "copy";
   const destinationPrefix = cleanExplorerPrefix(message.destination?.prefix || "");
@@ -1628,19 +1647,47 @@ async function transferExplorerObjects(message) {
   const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName,false,message.explorerTrace);
   const destinationProfile = source.accountId === destination.accountId && source.bucketName === destination.bucketName
     ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName,false,message.explorerTrace);
+  if(sourceProfile!==destinationProfile)await Promise.all([[sourceProfile,"source"],[destinationProfile,"destination"]].map(([profile,role])=>assertExplorerTransferSettings(profile,message.explorerTrace,role)));
   const roots = new Map((message.entries || []).filter(entry=>entry.folder).map(entry => [cleanExplorerPrefix(entry.key), entry]));
+  const folderTargets=new Map(),folderConflicts=[],reserved=new Set();
+  const planningDeadline=Date.now()+10000;
+  const directoryExists=async prefix=>{
+    if(Date.now()>planningDeadline)throw new Error("Directory planning exceeded its deadline. No files were changed.");
+    const exists=await explorerDirectoryExists(destination,prefix);
+    if(Date.now()>planningDeadline)throw new Error("Directory planning exceeded its deadline. No files were changed.");
+    return exists;
+  };
+  for(const [root,entry] of roots){
+    const requested=entry.destinationKey?cleanExplorerPrefix(entry.destinationKey):destinationPrefix+(message.renameTo||root.split("/").filter(Boolean).pop())+"/";
+    if(source.accountId===destination.accountId&&source.bucketName===destination.bucketName&&requested.startsWith(root))throw new Error("A folder cannot be moved into itself");
+    let target=requested;
+    const exists=reserved.has(target)||await directoryExists(target);
+    if(exists&&message.conflict!=="replace"){
+      if(message.conflict!=="keep"){
+        folderConflicts.push({sourceKey:root,destinationKey:requested,folder:true,status:"conflict",code:"EXPLORER_DESTINATION_CONFLICT"});continue;
+      }
+      const base=requested.slice(0,-1);let available=false;
+      for(let index=2;index<66;index++){
+        target=base+" ("+index+")/";
+        if(!reserved.has(target)&&!await directoryExists(target)){available=true;break;}
+      }
+      if(!available)throw new Error("Could not choose an available directory name. No files were changed.");
+    }
+    reserved.add(target);folderTargets.set(root,target);
+  }
   const mapped = expanded.map(entry => {
     const folderRoot = Array.from(roots.keys()).find(root => root.endsWith("/") && entry.key.startsWith(root));
-    const explicitDestination = (message.entries || []).find(candidate => candidate.key === entry.key)?.destinationKey;
+    if(folderRoot&&!folderTargets.has(folderRoot))return null;
+    const explicitDestination = (message.entries || []).find(candidate => !candidate.folder&&candidate.key === entry.key)?.destinationKey;
     const destinationKey = explicitDestination
       ? cleanExplorerKey(explicitDestination)
       : folderRoot
-        ? destinationPrefix + (message.renameTo || folderRoot.split("/").filter(Boolean).pop()) + "/" + entry.key.slice(folderRoot.length)
+        ? folderTargets.get(folderRoot) + entry.key.slice(folderRoot.length)
         : destinationPrefix + (message.renameTo || entry.key.split("/").pop());
     if (source.accountId === destination.accountId && source.bucketName === destination.bucketName && destinationKey === entry.key) throw new Error("Source and destination are the same");
     if (source.accountId === destination.accountId && source.bucketName === destination.bucketName && folderRoot && destinationKey.startsWith(folderRoot)) throw new Error("A folder cannot be moved into itself");
     return { sourceKey:entry.key, destinationKey, sameBucket:source.accountId === destination.accountId && source.bucketName === destination.bucketName };
-  });
+  }).filter(Boolean);
   const results = [];
   for (let index = 0; index < mapped.length; index += 25) {
     const batch=mapped.slice(index,index+25);
@@ -1678,7 +1725,7 @@ async function transferExplorerObjects(message) {
       catch (error) { deleteErrors.push(error.message || String(error)); }
     }
   }
-  return { total:mapped.length, completed:operation==="move"?deletedCount:copied.length, copied:copied.length, conflicts:results.filter(x => x.status === "conflict"), errors:[...results.filter(x => x.status === "failed"), ...deleteErrors.map(error => ({ error }))], partialMove:Boolean(deleteErrors.length), results };
+  return { total:expanded.length, completed:operation==="move"?deletedCount:copied.length, copied:copied.length, conflicts:[...folderConflicts,...results.filter(x => x.status === "conflict")], errors:[...results.filter(x => x.status === "failed"), ...deleteErrors.map(error => ({ error }))], partialMove:Boolean(deleteErrors.length), results };
 }
 async function deleteExplorerObjects(message) {
   const source = message.source || {};

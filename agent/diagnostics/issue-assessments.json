@@ -6,13 +6,13 @@
       "reportSha256": "e9f453f2526ad265a708bf3ab8819cdde0979f779ee041b18a50da9f6ffc1b98",
       "status": "partially-addressed",
       "severity": "high",
-      "reviewedOn": "2026-10-22",
-      "summary": "Explicit Simple label precedence and empty defaults are implemented. Missing configured destinations and native menu acceptance remain unresolved.",
+      "reviewedOn": "2026-10-23",
+      "summary": "Explicit Simple label precedence and empty defaults remain implemented, re-inspected and re-tested after transfer safety changes. Missing configured destinations and native menu acceptance remain unresolved.",
       "evidence": [
         {
           "path": "extension/background.js",
           "symbol": "if(explicit)return explicit;",
-          "sha256": "1b0b60cc7207401d420dd42f395aadb91e45e6680d7ec789c0e89b0b93e7be09"
+          "sha256": "60618b280fa324c04d02ee6cb4852bb88d8a57155e9d96290d00081585ede204"
         },
         {
           "path": "tests/simple-menu-flat.test.mjs",
@@ -95,6 +95,31 @@
       "nextAction": "Use a provider-supported conditional write or the existing verified Worker path, then test two concurrent writers and ambiguous responses.",
       "related": [
         "GATE-local-upload-conditional-races"
+      ]
+    },
+    {
+      "id": "BUG-019",
+      "reportSha256": "93d51bdc074a7e45e766a72d04a6ff46a98b9f9be799581bb6cf290f575c3947",
+      "status": "source-implemented",
+      "severity": "critical",
+      "reviewedOn": "2026-10-23",
+      "summary": "Directory conflicts now preflight before merging and Keep both preserves directory identity into a separate sibling. Owner-reported byte loss and installed acceptance remain unverified.",
+      "evidence": [
+        {
+          "path": "extension/background.js",
+          "symbol": "const folderTargets=new Map()",
+          "sha256": "60618b280fa324c04d02ee6cb4852bb88d8a57155e9d96290d00081585ede204"
+        },
+        {
+          "path": "tests/explorer-worker.test.mjs",
+          "symbol": "directory Keep both preserves the entire existing tree",
+          "sha256": "8453c1173ce61fdaa3acd1f7fd24d8c0e9ee8da2c308ac123b03ba003acee3b2"
+        }
+      ],
+      "nextAction": "Verify disposable installed-directory Copy/Move/drag-and-drop with original destination hashes; no recovery or live closure is claimed.",
+      "related": [
+        "BUG-018",
+        "EXPLORER-COPY-404-2026-10"
       ]
     }
   ]

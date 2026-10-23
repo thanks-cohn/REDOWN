@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-10-23T00:23:21.943416+00:00",
+  "beforeRemoteCommit": "70301260af6fb377e28d154b45e710710fb017f4",
+  "extensionVersion": "0.5.17",
+  "scope": "local source/DOM/VM/actual embedded Worker with in-memory R2; one live routing setting read-back, no installed transfer or customer object mutation",
+  "beforeSourceComparison": {
+    "tests": 35,
+    "passed": 29,
+    "failed": 6
+  },
+  "explorerSmoke": {
+    "tests": 189,
+    "passed": 189,
+    "failed": 0
+  },
+  "reliability": {
+    "state": "partial",
+    "passed": 336,
+    "knownFailures": [
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions"
+      },
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+      },
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links"
+      }
+    ],
+    "newFailures": [],
+    "incomplete": false,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "assessmentReview": "Current Simple label assessment re-inspected and existing tests passed; its current-source hash refreshed deliberately. Frozen historical project/debug/semantic evidence untouched. New critical BUG-019 indexed with source-implemented/installed-pending status.",
+  "remaining": [
+    "Installed extension cross-bucket transfer retest",
+    "Installed disposable directory Keep both and original destination hash verification",
+    "Client identity that uploaded historical Worker code remains unknown",
+    "Directory copies are per-object conditional operations, not whole-tree atomic transactions"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-10-23T00:13:35.919Z",
+  "scope": "one user-confirmed failed destination Worker; configuration repair only, no object writes or live copy",
+  "audit": {
+    "redownWorkers": 14,
+    "missingPublicFetchFlag": 1,
+    "storageBindingsPresent": 14,
+    "bindingDeclarationMatchesWherePresent": true,
+    "missingBindingDeclarations": 3
+  },
+  "deployedSource": {
+    "exactPublicBodyMatch": "f2868d4",
+    "credentialDeclarationExcluded": true,
+    "currentSourceMatch": false,
+    "clientDeploymentIdentity": "unknown; provider record cannot identify which installed extension uploaded this code"
+  },
+  "repair": {
+    "state": "verified-settings",
+    "previousFlags": [],
+    "currentFlags": [
+      "global_fetch_strictly_public"
+    ],
+    "bindingsUnchanged": true,
+    "dateUnchanged": true
+  },
+  "runtimeRootCause": "routing configuration discrepancy confirmed on a user-identified failing destination; actual transfer retest pending"
+}
