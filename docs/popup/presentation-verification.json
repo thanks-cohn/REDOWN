@@ -1,0 +1,10 @@
+{
+  "recordedAt": "2026-10-23T02:39:05.033799+00:00",
+  "version": "0.5.21",
+  "baselineCommit": "fc5a9d9b2db261fd7509647dfb9a881631b94f9f",
+  "focusedPassed": 17,
+  "regressionPassed": 353,
+  "knownFailures": 7,
+  "newFailures": [],
+  "scope": "Existing DOM/message regressions and computed contrast checks; installed Chrome visual acceptance pending"
+}

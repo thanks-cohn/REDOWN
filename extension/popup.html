@@ -5,61 +5,44 @@
   <meta charset="utf-8">
   <title>REDOWN</title>
   <style>
-    :root{
-      color-scheme:dark;
-      --bg:#0a0711; --panel:#120d1d; --panel2:#171022; --line:#2a1d3b;
-      --text:#f7f4fb; --muted:#a99fb8; --purple:#8b5cf6; --purple2:#c084fc;
-      --good:#7ce3b2; --bad:#ff8b9b;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;width:390px;max-height:600px;overflow-y:auto;background:
-      radial-gradient(circle at 85% 0%,rgba(139,92,246,.22),transparent 32%),
-      linear-gradient(180deg,#0b0713 0%,#09060e 100%);
-      color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .shell{padding:18px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand img{width:36px;height:36px;border-radius:11px;box-shadow:0 10px 26px rgba(92,44,190,.28)}
-    .wordmark{font-weight:900;letter-spacing:.16em;font-size:17px}
-    .tag{font-size:11px;color:var(--muted);margin-top:1px}
-    .header-actions{display:flex;align-items:center;gap:9px}
-    .connection{width:30px;height:30px;border:1px solid #483347;border-radius:50%;background:#1b101b;display:grid;place-items:center;cursor:pointer}.connection span{width:9px;height:9px;border-radius:50%;background:var(--bad);box-shadow:0 0 9px #ff8b9b55}.connection[data-state="connected"] span{background:var(--good);box-shadow:0 0 9px #7ce3b255}.connection[data-state="checking"] span{background:#d4bee9;animation:connection-breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes connection-breathe{50%{opacity:.35;transform:scale(.75)}}@media(prefers-reduced-motion:reduce){.connection[data-state="checking"] span{animation:none}}
-    .settings{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);width:34px;height:34px;border-radius:10px;cursor:pointer}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 18px 50px rgba(0,0,0,.22)}
-    label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 7px}
-    input,select{width:100%;border:1px solid var(--line);background:#0d0914;color:var(--text);border-radius:12px;padding:11px 12px;outline:none;font:inherit}
-    input:focus,select:focus{border-color:#7550c9;box-shadow:0 0 0 3px rgba(139,92,246,.12)}
-    .field{margin-bottom:13px}
-    .grid{display:grid;grid-template-columns:1.35fr .65fr;gap:10px}
-    [hidden]{display:none!important}
-    .destination{margin:3px 0 16px;padding:14px;border:1px solid rgba(177,153,222,.17);border-radius:15px;background:linear-gradient(145deg,rgba(133,105,189,.09),rgba(12,10,20,.5));box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
-    .destination .field:last-child{margin-bottom:0}
-    .bucket-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}.bucket-label label{margin:0}#bucket-refresh{background:transparent;border:0;border-radius:5px;color:#c6b0e1;cursor:pointer;font-size:17px;line-height:1;padding:1px 4px}#bucket-refresh:disabled{opacity:.4;cursor:default}
-    .destination-heading{display:flex;align-items:center;justify-content:space-between;margin:1px 0 7px;font-size:11px;color:var(--muted);font-weight:650}
-    .optional{font-size:10px;font-weight:400;color:#9e93b0}
-    #folder-levels{max-height:215px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#594372 transparent;padding:2px}
-    .folder-level{margin-bottom:8px}.folder-row{display:flex;align-items:center;gap:7px}
-    .folder-step{width:18px;flex:none;color:#a99bbb;font-size:10px;font-variant-numeric:tabular-nums;text-align:center}
-    .folder-row select{min-width:0;padding:9px 10px;border-radius:9px;background:#fff;color:#111;color-scheme:light;font-size:12px;border-color:#d5cddd;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}
+    :root{color-scheme:dark;--bg:#0d0b15;--panel:#171320;--line:#33293f;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}
+    *{box-sizing:border-box} [hidden]{display:none!important}
+    body{margin:0;width:390px;max-height:600px;overflow-y:auto;background:radial-gradient(ellipse at 100% 0%,#30204466,transparent 55%),var(--bg);color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif;scrollbar-width:thin;scrollbar-color:#665472 var(--bg)}
+    .shell{padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .brand{display:flex;align-items:center;gap:10px}.brand img{width:36px;height:36px;border-radius:12px}
+    .wordmark{font-weight:850;letter-spacing:.15em;font-size:15px}.tag{font-size:11px;color:var(--muted);margin-top:1px}
+    .header-actions{display:flex;align-items:center;gap:8px}
+    .settings,.connection{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--line);border-radius:10px;background:#ffffff04;color:var(--muted);cursor:pointer}
+    .connection{border-radius:50%}.connection span{width:8px;height:8px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}
+    .connection[data-state="connected"] span{background:var(--good);box-shadow:0 0 8px #7ce3b233}
+    .connection[data-state="checking"] span{background:#d4bee9;animation:connection-breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}
+    @keyframes connection-breathe{50%{opacity:.35;transform:scale(.75)}}
+    .card{background:linear-gradient(150deg,#1b1624,#14111b);border:1px solid #ffffff0e;border-radius:18px;padding:14px;box-shadow:0 8px 24px #0002}
+    label{display:block;font-size:11px;font-weight:650;color:var(--muted);margin:0 0 6px}
+    input,select{width:100%;min-width:0;border:1px solid var(--line);background:#100d18;color:var(--text);border-radius:10px;padding:9px 11px;outline:none;font:inherit}
+    input::placeholder{color:#91839e;opacity:1}input:focus,select:focus{border-color:#a887d0;box-shadow:0 0 0 3px #b18bd017}
+    .field{margin-bottom:12px}.filename-field{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:8px}.filename-field label{margin:0}.filename-field input{font-size:12px;padding:8px 10px}.optional{font-size:10px;font-weight:400;color:var(--muted)}
+    .destination{margin:4px 0 12px;padding:12px;border:1px solid #bca1d422;border-radius:13px;background:#0d0a1255}
+    .destination .field:last-child{margin-bottom:0}.bucket-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.bucket-label label{margin:0;color:#e1d5ed}
+    #bucket-refresh{display:grid;place-items:center;width:24px;height:24px;background:transparent;border:0;border-radius:6px;color:var(--muted);cursor:pointer;font-size:15px}#bucket-refresh:hover{background:#ffffff09}#bucket-refresh:disabled{opacity:.4;cursor:default}
+    .destination-heading{display:flex;align-items:center;justify-content:space-between;margin:0 0 9px;font-size:11px;color:var(--muted);font-weight:600}
+    #folder-levels{max-height:174px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#665472 transparent;padding:2px 2px 0}
+    .folder-level{position:relative;padding-bottom:7px}.folder-level:not(:last-child)::after{content:"";position:absolute;top:27px;bottom:0;left:9px;width:1px;background:#79628d66}
+    .folder-row{display:flex;align-items:center;gap:9px}.folder-step{display:grid;place-items:center;width:19px;height:19px;flex:none;border:1px solid #77608466;border-radius:50%;color:#d0b9e2;background:#21192c;font-size:9px;font-variant-numeric:tabular-nums}
+    .folder-row select{min-width:0;padding:7px 10px;border-radius:8px;background:#fff;color:#111;color-scheme:light;font-size:12px;border-color:#d5cddd}
     .folder-row select option{color:#111;background:#fff}
-    .folder-remove{width:27px;height:30px;flex:none;background:transparent;border:1px solid transparent;border-radius:7px;color:#baadcb;font-size:17px;cursor:pointer}
-    .folder-remove:hover{background:#31233f;border-color:#493457;color:#fff}
-    .folder-note{font-size:11px;color:#b9a9cd;margin:5px 0 0 25px}
-    .folder-note button{border:0;background:transparent;color:#d5b6ff;padding:3px 0;cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px}
-    .deeper{display:flex;align-items:center;gap:6px;margin:4px 0 0 25px;padding:6px 9px;border:1px solid #463158;border-radius:8px;background:rgba(134,94,192,.07);color:#d4bee9;font:inherit;font-size:11px;font-weight:600;line-height:1.4;cursor:pointer}
-    .deeper:hover:not(:disabled){background:#2b1c3c;border-color:#82609b}.deeper:disabled{opacity:.4;cursor:default}
+    .folder-remove{width:23px;height:29px;flex:none;background:transparent;border:0;border-radius:6px;color:#b6a2c7;font-size:16px;cursor:pointer}.folder-remove:hover{background:#ffffff0b;color:#fff}
+    .folder-note{font-size:10px;color:var(--muted);margin:3px 0 0 28px}.folder-note button{border:0;background:transparent;color:#d9bafa;padding:3px 0;cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:3px}
+    .deeper{display:flex;align-items:center;gap:6px;margin:1px 0 0 28px;padding:5px 0;border:0;border-radius:5px;background:transparent;color:#d8baf1;font:inherit;font-size:11px;font-weight:600;cursor:pointer}.deeper:hover:not(:disabled){color:#fff}.deeper:disabled{opacity:.4;cursor:default}
+    .destination-path{margin-top:8px;padding-top:9px;border-top:1px solid #bca1d419;font-size:10px;color:#bcaec9;overflow-wrap:anywhere;line-height:1.5}
+    .send{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #d6b7ff33;border-radius:11px;padding:10px 13px;cursor:pointer;background:linear-gradient(110deg,#8053cd,#a674e5);color:#fff;font:inherit;font-weight:750;box-shadow:0 4px 14px #7942ba22;transition:filter .15s,transform .15s}.send::after{content:"↗";font-size:17px;line-height:1;font-weight:400}.send:hover:not(:disabled){filter:brightness(1.08)}.send:active:not(:disabled){transform:translateY(1px)}.send:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .status{margin-top:10px;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.status:empty{display:none}.status.ok{color:var(--good)}.status.bad{color:var(--bad)}
+    .connect{margin-top:8px;width:100%;border:1px solid #6846b5;background:#21162d;color:#eadeff;border-radius:10px;padding:10px;font:inherit;font-weight:650;cursor:pointer}
+    .hint{margin:12px 4px 0;font-size:10px;color:#b0a0be;text-align:center}.hint span{color:#d0b1e8;margin-right:4px}
     button:focus-visible{outline:2px solid #c5a5ef;outline-offset:3px}
-    .destination-path{margin-top:11px;padding-top:10px;border-top:1px solid rgba(174,147,212,.12);font-size:11px;color:#c7b8d7;overflow-wrap:anywhere;line-height:1.5}
-    .send{width:100%;border:0;border-radius:13px;padding:12px 14px;margin-top:2px;cursor:pointer;
-      background:linear-gradient(135deg,#7650e8,#a46df8 58%,#c084fc);color:white;font-weight:850;letter-spacing:.02em;
-      box-shadow:0 12px 30px rgba(112,73,216,.34)}
-    .send:disabled{opacity:.48;cursor:not-allowed;box-shadow:none}
-    .status{min-height:20px;margin-top:12px;color:var(--muted);font-size:12px;word-break:break-word}
-    .status.ok{color:var(--good)} .status.bad{color:var(--bad)}
-    .empty{padding:18px;text-align:center;color:var(--muted)}
-    .empty strong{display:block;color:var(--text);margin-bottom:5px}
-    .connect{margin-top:12px;width:100%;border:1px solid #6846b5;background:#161020;color:#eadeff;border-radius:12px;padding:10px;font-weight:700;cursor:pointer}
-    .hint{margin-top:12px;font-size:11px;color:#81778e;text-align:center}
+    @media(prefers-reduced-motion:reduce){.connection[data-state="checking"] span{animation:none}.send{transition:none}}
   </style>
 </head>
 <body>
@@ -67,7 +50,7 @@
     <header>
       <div class="brand">
         <img src="icon.svg" alt="">
-        <div><div class="wordmark">REDOWN</div><div class="tag">remote in, stored out</div></div>
+        <div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div>
       </div>
       <div class="header-actions"><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span aria-hidden="true"></span></button><button id="settings" class="settings" title="Destinations">⚙</button></div>
     </header>
@@ -78,20 +61,20 @@
         <input id="url" type="url" placeholder="https://example.com/model.glb" autocomplete="off">
       </div>
 
-      <div class="field">
+      <div class="field filename-field">
         <label for="filename">Filename <span style="text-transform:none;font-weight:500;letter-spacing:0">(optional)</span></label>
-        <input id="filename" placeholder="first-light-rose.glb" autocomplete="off">
+        <input id="filename" placeholder="Keep the original name" autocomplete="off">
       </div>
 
       <section class="destination" aria-label="Save destination">
         <div class="field">
-          <div class="bucket-label"><label for="profile">Bucket / destination</label><button id="bucket-refresh" type="button" title="Refresh all connected buckets" aria-label="Refresh all connected buckets">↻</button></div>
+          <div class="bucket-label"><label for="profile">Destination bucket</label><button id="bucket-refresh" type="button" title="Refresh all connected buckets" aria-label="Refresh all connected buckets">↻</button></div>
           <select id="profile"><option value="">Loading buckets…</option></select>
         </div>
         <div id="cloudflare-folders" hidden>
-          <div class="destination-heading"><span>Folder</span><span class="optional">Optional</span></div>
+          <div class="destination-heading"><span>Folder trail</span><span class="optional">Optional</span></div>
           <div id="folder-levels"></div>
-          <button id="folder-deeper" class="deeper" type="button" disabled><span aria-hidden="true">＋</span> Go deeper</button>
+          <button id="folder-deeper" class="deeper" type="button" disabled><span aria-hidden="true">＋</span> One level deeper</button>
           <div id="folder-destination" class="destination-path" aria-live="polite" aria-atomic="true"></div>
         </div>
         <div id="category-field" class="field">
@@ -104,12 +87,12 @@
         </div>
       </section>
 
-      <button id="send" class="send" disabled>Send with REDOWN</button>
+      <button id="send" class="send" disabled>Send it home</button>
       <button id="setup" class="connect" hidden>Connect a destination</button>
       <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
 
-    <div class="hint">Right-click any link or media item to send it even faster.</div>
+    <div class="hint"><span aria-hidden="true">✦</span> Ready when you are. Right-click a link for a shortcut.</div>
   </div>
   <script src="popup.js"></script>
 </body>

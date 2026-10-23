@@ -51,7 +51,7 @@ function renderFolderLevels(focusIndex){
   folderLevels.forEach((level,index)=>{
     const section=document.createElement("div");section.className="folder-level";
     const row=document.createElement("div");row.className="folder-row";
-    const step=document.createElement("span");step.className="folder-step";step.textContent=String(index+1).padStart(2,"0");step.setAttribute("aria-hidden","true");
+    const step=document.createElement("span");step.className="folder-step";step.textContent=String(index+1);step.setAttribute("aria-hidden","true");
     const select=document.createElement("select");select.id="folder-level-"+index;select.setAttribute("aria-label","Folder level "+(index+1));select.disabled=sending||level.loading;
     const empty=document.createElement("option");empty.value="";empty.textContent=level.loading?"Loading folders…":index===0?"Bucket root":level.folders.length?"Stay in current folder":"No subfolders — stay here";select.append(empty);
     for(const folder of level.folders){const option=document.createElement("option");option.value=folder.prefix;option.textContent=folder.name;select.append(option);}
@@ -248,7 +248,7 @@ send.addEventListener("click",async()=>{
     setStatus(error?.message||String(error),"bad");
   }finally{
     sending=false;profileSelect.disabled=!popupProfiles.length;categorySelect.disabled=false;$("bucket-refresh").disabled=false;renderFolderLevels();
-    send.textContent="Send with REDOWN";
+    send.textContent="Send it home";
   }
 });
 chrome.storage.onChanged.addListener((changes,area)=>{
