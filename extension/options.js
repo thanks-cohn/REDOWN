@@ -4253,6 +4253,7 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
   const verified=result?.verification?.workerReachable===true;
   const stored=await chrome.storage.local.get("profiles");
   if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
+  $("notifications-enabled").checked=stored.notificationsEnabled===true;
   profiles=stored.profiles||[];
   renderProfiles();
   await refreshLocationEditors();
@@ -4465,6 +4466,9 @@ function applyBetaMode(){
   $("beta-mode-enabled").checked=betaModeEnabled;
   $("profiles-empty").hidden=profiles.some(p=>!p.explorerManaged&&(betaModeEnabled||p.type!=="github"));
 }
+$("notifications-enabled").addEventListener("change",async(event)=>{
+  await chrome.storage.local.set({notificationsEnabled:event.target.checked});
+});
 $("beta-mode-enabled").addEventListener("change",async(event)=>{
   betaModeEnabled=event.target.checked;applyBetaMode();
   await chrome.storage.local.set({betaModeEnabled});
@@ -4511,7 +4515,8 @@ try{
  }
 }catch{}
 (async()=>{
-  const stored=await chrome.storage.local.get(["profiles","cloudflareAuth","rightClickMode","debugModeEnabled","betaModeEnabled"]);
+  const stored=await chrome.storage.local.get(["profiles","cloudflareAuth","rightClickMode","debugModeEnabled","betaModeEnabled","notificationsEnabled"]);
+  $("notifications-enabled").checked=stored.notificationsEnabled===true;
   profiles=stored.profiles||[];
   onboardingConnected=Boolean(stored.cloudflareAuth?.accessToken)&&!stored.cloudflareAuth?.reconnectRequired;
   betaModeEnabled=stored.betaModeEnabled===true;

@@ -785,11 +785,61 @@ async function getProfiles() {
 async function setProfiles(profiles) {
   await chrome.storage.local.set({ profiles });
 }
+// Toolbar feedback is cosmetic and independent of desktop notification preferences.
+function createToolbarFeedback(api, loadPixels = async size => {
+  const response = await fetch(chrome.runtime.getURL(`icons/icon${size}.png`));
+  const bitmap = await createImageBitmap(await response.blob());
+  try {
+    const canvas = new OffscreenCanvas(size,size), context = canvas.getContext("2d");
+    context.drawImage(bitmap,0,0,size,size);
+    return context.getImageData(0,0,size,size);
+  } finally { bitmap.close(); }
+}, pause = ms => new Promise(resolve=>setTimeout(resolve,ms))) {
+  let generation=0, pixelsPromise, current=null;
+  const sizes=[16,32,48], colors={success:[45,205,144],failure:[239,82,107]};
+  const clone=images=>Object.fromEntries(sizes.map(size=>[size,{width:size,height:size,data:new Uint8ClampedArray(images[size].data)}]));
+  return async state => {
+    if(!api?.setIcon || !colors[state])return;
+    const ticket=++generation;
+    try {
+      pixelsPromise ||= Promise.all(sizes.map(async size=>[size,await loadPixels(size)])).then(Object.fromEntries).catch(error=>{pixelsPromise=null;throw error;});
+      const original=await pixelsPromise;
+      if(ticket!==generation)return;
+      const start=clone(current||original), color=colors[state];
+      await api.setTitle?.({title:state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard"});
+      // Six eased frames retain transparency, silhouette and the artwork's shading.
+      for(let frame=1;frame<=6;frame++){
+        if(ticket!==generation)return;
+        const mix=1-Math.pow(1-frame/6,3), images={};
+        for(const size of sizes){
+          const data=new Uint8ClampedArray(start[size].data), base=original[size].data;
+          for(let i=0;i<data.length;i+=4){
+            const light=(base[i]*0.2126+base[i+1]*0.7152+base[i+2]*0.0722)/255;
+            for(let c=0;c<3;c++){
+              const target=color[c]*(0.65+0.35*light);
+              data[i+c]=Math.round(start[size].data[i+c]+(target-start[size].data[i+c])*mix);
+            }
+          }
+          images[size]=new ImageData(data,size,size);
+        }
+        await api.setIcon({imageData:images});
+        if(ticket!==generation)return;
+        current=images;
+        if(frame<6)await pause(40);
+      }
+    } catch { /* Toolbar rendering must never change transfer results. */ }
+  };
+}
+const toolbarFeedback=createToolbarFeedback(chrome.action);
 async function recordTransfer(entry) {
+  if(entry?.ok===false)void toolbarFeedback("failure");
+  else if(entry?.ok===true&&typeof entry.location==="string"&&/^(https?:\/\/|R2: )/.test(entry.location))void toolbarFeedback("success");
   return transferCounter.record(entry);
 }
 async function notify(title, message) {
   try {
+    const { notificationsEnabled } = await chrome.storage.local.get("notificationsEnabled");
+    if (notificationsEnabled !== true) return;
     await chrome.notifications.create({
       type: "basic", iconUrl: "icons/icon128.png", title, message: String(message || "")
     });
@@ -2472,7 +2522,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       if (message?.type === "cfSearchObjects") return sendResponse({ ok:true, results:await searchExplorerObjects(message.targets || [], message.query, message.limit || 200) });
       if (message?.type === "cfPrepareBucket") return sendResponse({ ok:true, profile:await preparedProfile(message.accountId,message.bucketName,message.accountName) });
-      if (message?.type === "cfTransferObjects") return sendResponse({ ok:true, ...(await transferExplorerObjects(message)) });
+      if (message?.type === "cfTransferObjects") {
+        const result=await transferExplorerObjects(message);
+        if(result.errors?.length||result.partialMove)void toolbarFeedback("failure");
+        else if(result.completed>0)void toolbarFeedback("success");
+        return sendResponse({ok:true,...result});
+      }
       if (message?.type === "cfDeleteObjects") return sendResponse({ ok:true, ...(await deleteExplorerObjects(message)) });
       if (message?.type === "cfRenameEntry") return sendResponse({ ok:true, ...(await renameExplorerEntry(message)) });
       if (message?.type === "cfCreateFolder") return sendResponse({ ok:true, ...(await createExplorerFolder(message)) });
@@ -2547,6 +2602,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       throw new Error("Unknown request");
     } catch (error) {
+      if(message?.type==="cfTransferObjects")void toolbarFeedback("failure");
       sendResponse({ ok:false, error:error?.message || String(error),diagnosticError:{code:error?.code,status:error?.status,stage:error?.stage,component:"background"} });
     }
   })();
