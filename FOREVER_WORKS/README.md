@@ -30,3 +30,19 @@ python3 FOREVER_WORKS/tools/validate.py
 ```
 
 [POLICY.md](POLICY.md) records the owner's current-state instruction. [TRACEABILITY.md](TRACEABILITY.md) explains authority and link semantics. [GAPS_AND_MIGRATION.md](GAPS_AND_MIGRATION.md) lists coverage limits. [RECONSTRUCTION.md](RECONSTRUCTION.md) records what can and cannot be recovered.
+
+## Consumer presentation — first capture
+
+[Current UX/UI capture](CONSUMER_PRESENTATION_CAPTURE.md) and
+[project preservation obligations](CONSUMER_PRESENTATION_PRESERVATION.md) record
+the source-declared presentation, typography, spacing, animation, generated sound,
+visibility gates, aesthetic comparisons and remaining installed-browser evidence.
+This draft is separate from accepted canonical intent; it does not certify runtime
+appearance or close existing incidents.
+
+## Creators Notes
+
+[Interface as Operating System, Interface as Product](CREATORS_NOTES.md) records
+the owner-directed proposal: the highest aesthetics with easy entry, the
+one-click shtick, and useful, satisfying game-like feedback. Intended philosophy
+and future gamification remain distinct from demonstrated current behavior.

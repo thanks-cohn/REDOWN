@@ -1,0 +1,45 @@
+✔ compact launcher replaces destination form without exposing experimental GitHub controls (1785.256227ms)
+✔ desktop notifications require explicit opt-in and reflect subsequent changes (13.260885ms)
+✔ notification storage failures do not fail a completed transfer (12.764188ms)
+✔ large roll-ups stay bounded, increase exactly and slow down across the last three single steps (7.94385ms)
+✔ completion clicks once after landing; restart cancels obsolete completion and callbacks (27.168024ms)
+✔ reduced motion, unchanged values and counter resets settle without animation or sound (0.504496ms)
+✔ closing during a roll cancels all remaining updates and sound (0.423368ms)
+✔ green zero-delivery state reads READY! and Dashboard opens the existing options page (644.375977ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (158.348579ms)
+✔ failed or canceled login stays red and retryable without resetting the total (1147.524208ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (1155.624296ms)
+✔ late count response cannot overwrite a newer storage count (502.651415ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (143.989553ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (483.154954ms)
+✔ background accepts a discovered unsaved bucket only after read-only existence validation (84.638257ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (1717.896292ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (1440.250479ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (772.435748ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (527.521596ms)
+✔ unavailable audio never prevents reaching or saving the verified total (264.328531ms)
+✔ mascot idles, returns on nested scrolling, and hides when page is hidden (1112.434836ms)
+✔ tab favicon and toolbar icons point to correctly sized packaged PNGs (114.666322ms)
+✔ guided simulation waits for the correct controls, completes, and settles (767.117959ms)
+✔ reset and exit reject old callbacks even if timer cancellation loses a race (289.840212ms)
+✔ simulation executes without Chrome, fetch, messaging, profiles, or authentication (522.754122ms)
+✔ simulation lives only in diagnostics and cannot start while Debug is hidden (175.829297ms)
+✔ pop-out fits the visible window and Escape returns focus without cloud work (298.816874ms)
+✔ initial cached attention stays steady; attention after a user operation is marked fresh (296.842885ms)
+✔ success and failure flash twice, retain alpha and restore exact original art and title (2122.132966ms)
+✔ a newer result cancels an old flash and only the newest restores the icon (183.192109ms)
+✔ cosmetic action API failures never reject transfers and still attempt restoration (173.420477ms)
+✔ new installations start at zero and retained history migrates exactly once (30.128886ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (110.271231ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (22.126887ms)
+✔ large counts preserve integer precision and invalid increments are rejected (21.699395ms)
+✔ recording a successful retry retains the previous history cleanup contract (30.688012ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (31.722516ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16888.492914

@@ -1,0 +1,13 @@
+{
+  "scope": "documentation local-link/source-index/canonical-ID checks; no runtime certification",
+  "node": "v24.19.0",
+  "os": "Linux",
+  "focusedTests": {
+    "total": 37,
+    "pass": 37,
+    "fail": 0,
+    "log": "local-tests.log",
+    "boundary": "Node fixtures with mocks/jsdom; no installed Chrome/provider/audio observation"
+  },
+  "errors": []
+}

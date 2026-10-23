@@ -1,0 +1,100 @@
+{
+  "captureVersion": "draft-0.1",
+  "baseline": "31fdbee412361c1d4e01d24929960e6e39aa1a84",
+  "date": "2026-10-23",
+  "observationMode": "source inspection and local fixture execution; no installed Chrome or provider observation",
+  "files": [
+    {
+      "path": "extension/manifest.json",
+      "sha256": "ed0f9f887e63651e7cc34af7952aa8121e81d3eda2b7f5208fd2a73206e64ab3"
+    },
+    {
+      "path": "extension/popup.html",
+      "sha256": "c740d510a713982a156e790d826fabf21e03bd5ce1b7878b1e9d5d1bc92b6e4a"
+    },
+    {
+      "path": "extension/popup.js",
+      "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd"
+    },
+    {
+      "path": "extension/odometer.js",
+      "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+    },
+    {
+      "path": "extension/transfer-counter.js",
+      "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+    },
+    {
+      "path": "extension/options.html",
+      "sha256": "5c16bc0b573df05565b421d1d58df3cf617ded62e42243f9dacceaf2509f65f6"
+    },
+    {
+      "path": "extension/options.js",
+      "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf"
+    },
+    {
+      "path": "extension/storage-signals.js",
+      "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+    },
+    {
+      "path": "extension/settings-mascot.js",
+      "sha256": "ff0a7ed5a804737a185c5aaa96e589172688a0c553430ac21b603968ccf09b85"
+    },
+    {
+      "path": "extension/settings-mascot.png",
+      "sha256": "9cde0fdaa70a54cf238fa7a865f67f92d5f631385531a613e59d204af9a5f935"
+    },
+    {
+      "path": "extension/explorer-status.js",
+      "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348"
+    },
+    {
+      "path": "extension/public-addresses.js",
+      "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83"
+    },
+    {
+      "path": "extension/background.js",
+      "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+    },
+    {
+      "path": "extension/nested-locations.js",
+      "sha256": "663a0cb8b08f7cddcf7274ccc1c424becb6e9c2ea0e8949b25c3183d9f005f73"
+    },
+    {
+      "path": "extension/nested-menu-editor.js",
+      "sha256": "dda2c2b8d431ec932e15ecb342ad912c81419bff6c2366a942347dc3c5ac1c92"
+    },
+    {
+      "path": "extension/icon.svg",
+      "sha256": "4321cd1c9774c065fa6ef12749418757f1a96eb07d17430000ea6a1955132ad2"
+    },
+    {
+      "path": "extension/fonts/dm-sans-latin-variable.woff",
+      "sha256": "d94569f0465994cab08cb03bc063dedfbd81729d0dc5ba62bcdc62a58690de14"
+    },
+    {
+      "path": "extension/fonts/README.md",
+      "sha256": "566685fdf5611bd21d8baed01eba457fc626dbb5b88c4d448701bdb6e4340334"
+    },
+    {
+      "path": "extension/fonts/OFL.txt",
+      "sha256": "2af94f4fb533be8fa23282eb33e08ca311ddf47c2f32777e2040b282deeec65c"
+    },
+    {
+      "path": "extension/icons/icon16.png",
+      "sha256": "cb0c019e985b4bd98c1717c886b6654320b95cec49ea4cf6d1f48b2e70abb80d"
+    },
+    {
+      "path": "extension/icons/icon32.png",
+      "sha256": "a69ab77a8f8738e4c6e1a1bd65807b2a86a2ae67e32effcef873ed97ccf57c32"
+    },
+    {
+      "path": "extension/icons/icon48.png",
+      "sha256": "2d8185b8ef2f17329b4f315bd433d523115b5da065ab30a266baa1f72ddc6c44"
+    },
+    {
+      "path": "extension/icons/icon128.png",
+      "sha256": "6750978d01b8daf16101c7e5495a021e74f5aec91ca6e738968d28eb07bf9e7d"
+    }
+  ]
+}
