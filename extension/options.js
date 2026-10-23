@@ -4166,8 +4166,12 @@ async function refreshBuckets(){
           if(!currentChoice())return;
           await goLocation(accountId,bucket,"");
           if(!currentChoice())return;
-          $("explore-zone")?.scrollIntoView?.({block:"start",behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
+          // Collapse the in-flow bucket expansion before Chrome measures the scroll target.
+          // Moving focus after starting smooth scroll would shrink the page mid-flight.
+          const bucketViewport=root.closest(".bucket-grid-viewport");
+          if(bucketViewport)bucketViewport.dataset.dismissed="true";
           explorerRoot?.focus({preventScroll:true});
+          $("explore-zone")?.scrollIntoView?.({block:"start",behavior:window.matchMedia?.("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
         }catch(error){
           if(currentChoice())setStatus("cf-status",bucket+" is configured, but Explorer could not open it: "+(error?.message||"Refresh Explorer and retry."),"bad");
         }

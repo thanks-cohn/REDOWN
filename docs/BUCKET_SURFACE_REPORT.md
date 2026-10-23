@@ -54,3 +54,21 @@ Existing mocked interaction tests pass **9/9**, and syntax checks pass. Ordinary
 The recessed repair glyph now glows icy blue-white. Normal-mode bucket grids use a responsive two-row viewport with a vertical scrollbar when more buckets are present, plus keyboard focus for native scrolling. Container queries adjust column count, preserving square tiles. Debug Mode keeps its existing layout.
 
 Existing mocked interaction tests **9/9 pass** and syntax checks pass. Local Chromium previews at desktop/narrow widths show no horizontal overflow; narrow fixture scrolling was exercised programmatically (see recorded scrollTop/contentHeight). Evidence: [desktop](runtime/verification/bucket-scroll-desktop.png), [narrow](runtime/verification/bucket-scroll-narrow.png), [layout/scroll metrics](runtime/verification/bucket-scroll-layout.json), [tests](runtime/verification/bucket-scroll-tests.txt). Fixture rendering/mock tests do not certify installed-extension or live Cloudflare behavior. No full-suite rerun; prior historical evidence failures and installed/live blockers remain unchanged.
+
+## 0.5.26: land at Explorer's top after bucket selection
+
+The expanded bucket grid occupies normal document flow. Previously navigation
+started scrolling before moving focus away from the bucket; that focus change
+could collapse the grid and move Explorer upward during the smooth scroll.
+Navigation now dismisses the bucket expansion and focuses Explorer with
+preventScroll before asking Chrome to align the Explore section at block:start.
+The existing 24px section scroll margin and reduced-motion instant behavior remain.
+Repair, setup failure and newer-navigation guards remain unchanged.
+
+Local regression checks assert collapse/focus/scroll ordering for both normal and
+reduced motion. Focused file: 18 pass, one pre-existing provisioning failure.
+Full reliability: 365 pass, seven failures, matching the previous run's failures.
+The gateway still classifies three of these as new against its older pinned baseline;
+this change adds none compared with the preceding 0.5.25 local run. Earlier summaries
+calling the gateway's new-failure list empty were inaccurate. Audit-only packaging
+passes. Installed Chrome scroll-position acceptance remains pending.

@@ -301,3 +301,17 @@ test('missing inventory is refreshed before navigation and navigation failure do
  d.querySelector('.bucket-use').click();await new Promise(r=>setImmediate(r));
  assert.equal(refreshes,1);assert.match(d.getElementById('cf-status').textContent,/configured, but Explorer/);assert.equal(d.querySelector('.bucket').dataset.signal,'ready');h.dom.window.close();
 });
+
+test('bucket navigation collapses expansion and focuses Explorer before measuring its top',async()=>{
+ for(const reduced of [false,true]){
+  const h=harness(),d=h.dom.window.document;await h.context.refreshBuckets();
+  h.dom.window.matchMedia=()=>({matches:reduced});
+  const viewport=d.querySelector('.bucket-grid-viewport'),explorer=d.getElementById('explorer'),zone=d.getElementById('explore-zone');
+  const events=[];const focus=explorer.focus.bind(explorer);
+  explorer.focus=options=>{assert.equal(viewport.dataset.dismissed,'true');assert.equal(options.preventScroll,true);events.push('focus');focus(options);};
+  zone.scrollIntoView=options=>{assert.equal(viewport.dataset.dismissed,'true');assert.equal(d.activeElement,explorer);assert.equal(options.block,'start');assert.equal(options.behavior,reduced?'instant':'smooth');events.push('scroll');};
+  d.querySelector('.bucket-use').focus();d.querySelector('.bucket-use').click();
+  await new Promise(r=>setImmediate(r));
+  assert.deepEqual(events,['focus','scroll']);h.dom.window.close();
+ }
+});
