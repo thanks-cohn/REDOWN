@@ -60,7 +60,8 @@
         "tests/popup-folders.test.mjs",
         "tests/popup-destinations.test.mjs",
         "tests/beta-popup.test.mjs",
-        "tests/transfer-counter.test.mjs"
+        "tests/transfer-counter.test.mjs",
+        "tests/odometer.test.mjs"
       ]
     },
     {

@@ -636,3 +636,5 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 - BUG-021: [popup destination readability/persistence, attempt 01](fixes/BUG-021-popup-destination-attempt-01.md); automated regressions pass, native Chrome acceptance pending.
 
 - Popup delivery counter (0.5.22): historical totals cannot reconstruct discarded entries beyond the old fifty-entry history cap; uninstrumented paths and MV3 completion-to-local-commit gaps can undercount. See [counter boundaries and remaining acceptance](../docs/popup/DASHBOARD_LAUNCHER.md). Installed Chrome odometer/login acceptance remains pending.
+
+- Odometer roll-up (0.5.23): deterministic animation, sound, mute and cancellation regressions pass. Actual Chrome motion, audio volume/autoplay policy and interrupted-popup preference persistence still need installed acceptance; see [presentation boundaries](../docs/popup/DASHBOARD_LAUNCHER.md).

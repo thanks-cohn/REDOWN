@@ -47,9 +47,9 @@ $('connection').addEventListener('click',async()=>{
   }catch(error){connectionBusy=false;paintConnection('disconnected','Open Cloudflare login');setStatus(error.message);}
 });
 $('dashboard').addEventListener('click',()=>Promise.resolve(chrome.runtime.openOptionsPage()).catch(()=>setStatus('Dashboard could not open. Please try again.')));
-function renderCount(total){
+function paintCount(total){
   if(total!==null&&(typeof total!=='string'||!/^(0|[1-9]\d*)$/.test(total)))throw Error('Invalid delivery count');
-  const host=$('odometer'),login=connectionState==='disconnected',working=connectionState==='checking',ready=total==='0';
+  const host=$('odometer'),login=connectionState==='disconnected',working=connectionState==='checking'||(!preferencesReady&&!login),ready=total==='0'&&!host.hasAttribute('data-rolling');
   const text=login?'LOGIN!':working?'WAIT..':total===null?'------':ready?'READY!':total.padStart(6,'0'),numeric=/^\d+$/.test(text);
   host.disabled=!login;host.toggleAttribute('data-login',login);
   host.setAttribute('aria-label',login?'LOGIN — open Cloudflare sign-in':working?'Connecting to Cloudflare':total===null?'Delivery count unavailable':ready?'Ready for your first delivery':total+' files delivered');host.style.setProperty('--digits',text.length);
@@ -64,8 +64,66 @@ function renderCount(total){
   }else [...host.children].forEach((wheel,index)=>wheel.firstChild.style.setProperty('--digit',text[index]));
   $('counter-note').textContent=login?'Tap LOGIN. Let’s get you connected ✦':working?'A quick hello to Cloudflare…':total===null?'Counter is resting. Reopen REDOWN to retry.':ready?'First adventure? Ready when you are ✦':'Every delivery, a little further ✦';
   host.title=login?'Open Cloudflare login':'Completed cloud saves, uploads, copies and moves. Includes retained history from earlier versions; older discarded history cannot be recovered. This device only.';
-  lastTotal=total;displayedText=text;
+  displayedText=text;
 }
+let preferencesReady=false,seenTotal=null,shownTotal=null,activeTarget=null,soundEnabled=true,audio=null,preferenceQueue=Promise.resolve();
+const motionQuery=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
+const reducedMotion=()=>motionQuery?.matches===true;
+function savePreferences(){
+  const value={version:1,lastSeenTotal:seenTotal,soundEnabled};
+  preferenceQueue=preferenceQueue.catch(()=>{}).then(()=>chrome.storage.local.set({popupOdometer:value})).catch(()=>{
+    if(connectionState==='connected')$('counter-note').textContent='Display preferences could not be saved. Your delivery total is safe.';
+  });
+}
+function paintSound(){
+  const button=$('counter-sound');button.disabled=!preferencesReady;button.textContent=soundEnabled?(audio?.state==='suspended'?'Enable sound ♪':'Sound on ♪'):'Sound off';button.setAttribute('aria-pressed',String(soundEnabled));button.title=soundEnabled?(audio?.state==='suspended'?'Enable counter sound — Chrome requires a click':'Mute counter sound'):'Enable counter sound';
+}
+async function prepareAudio(){
+  if(!soundEnabled||reducedMotion())return;
+  try{
+    const Audio=globalThis.AudioContext||globalThis.webkitAudioContext;if(!Audio)return;
+    audio||=new Audio();paintSound();if(audio.state==='suspended')await audio.resume();paintSound();
+  }catch{/* Browser audio policy must never block the counter. */}
+}
+function playClick(){
+  if(!soundEnabled||reducedMotion()||audio?.state!=='running')return;
+  try{
+    const buffer=audio.createBuffer(1,Math.ceil(audio.sampleRate*.018),audio.sampleRate),data=buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length)**4;
+    const source=audio.createBufferSource(),gain=audio.createGain();gain.gain.value=.09;source.buffer=buffer;source.connect(gain);gain.connect(audio.destination);source.onended=()=>{source.disconnect();gain.disconnect();};source.start();
+  }catch{/* Optional feedback never changes transfer or login behavior. */}
+}
+const roller=RedownOdometer.create({
+  paint:value=>{shownTotal=value;paintCount(value);},
+  settled:value=>{$('odometer').removeAttribute('data-rolling');$('odometer').removeAttribute('aria-busy');seenTotal=value;savePreferences();},
+  click:playClick,reduced:reducedMotion
+});
+function renderCount(total){
+  if(total!==null&&(typeof total!=='string'||!/^(0|[1-9]\d*)$/.test(total)))throw Error('Invalid delivery count');
+  lastTotal=total;
+  if(connectionState!=='connected'||total===null||!preferencesReady){
+    roller.cancel();activeTarget=null;$('odometer').removeAttribute('data-rolling');$('odometer').removeAttribute('aria-busy');paintCount(total);return;
+  }
+  if(activeTarget===total)return;
+  const previous=shownTotal??seenTotal??total,from=BigInt(previous)>BigInt(total)?total:previous;
+  activeTarget=total;
+  const rolling=from!==total&&!reducedMotion();$('odometer').toggleAttribute('data-rolling',rolling);if(rolling)$('odometer').setAttribute('aria-busy','true');
+  roller.roll(from,total);
+}
+$('counter-sound').addEventListener('click',async()=>{
+  if(soundEnabled&&audio?.state==='suspended'){await prepareAudio();playClick();return;}
+  soundEnabled=!soundEnabled;paintSound();savePreferences();
+  if(soundEnabled){await prepareAudio();playClick();}
+});
+async function loadPreferences(){
+  try{
+    const {popupOdometer:prefs}=await chrome.storage.local.get('popupOdometer');
+    if(prefs?.version===1){if(typeof prefs.lastSeenTotal==='string'&&/^(0|[1-9]\d*)$/.test(prefs.lastSeenTotal))seenTotal=prefs.lastSeenTotal;soundEnabled=prefs.soundEnabled!==false;}
+  }catch{/* With no trustworthy prior reading, start at the real current total. */}
+  preferencesReady=true;paintSound();void prepareAudio();renderCount(lastTotal);
+}
+motionQuery?.addEventListener?.('change',()=>{activeTarget=null;renderCount(lastTotal);});
+void loadPreferences();
 $('odometer').addEventListener('click',()=>{if(connectionState==='disconnected')$('connection').click();});
 async function refreshCount(){
   const epoch=++countEpoch;
@@ -77,7 +135,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   if(changes.cloudflareAuth)void checkConnection();
   if(changes.transferCounter?.newValue){countEpoch++;try{renderCount(changes.transferCounter.newValue.total);}catch{void refreshCount();}}
 });
-globalThis.addEventListener?.('pagehide',()=>clearTimeout(loginTimer));
+globalThis.addEventListener?.('pagehide',()=>{clearTimeout(loginTimer);roller.cancel();if(shownTotal!==null&&preferencesReady){seenTotal=shownTotal;savePreferences();}try{void audio?.close();}catch{}});
 void checkConnection();void refreshCount();
 if(chrome.storage.session?.get)chrome.storage.session.get('cloudflareLogin').then(stored=>{
   if(['opening','authorizing','verifying'].includes(stored.cloudflareLogin?.phase)){

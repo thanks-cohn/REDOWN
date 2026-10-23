@@ -896,7 +896,7 @@
           "path": "extension/popup.js",
           "symbol": "async function followLogin(",
           "line": 27,
-          "sha256": "5ed70d6be8c25b74a2458621bafad7af48ade6ba35d6c0e42a4ccf2f5f6d631e",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
           "evidence": "source-anchor"
         }
       ],
@@ -1438,8 +1438,19 @@
       "ref": {
         "path": "extension/popup.js",
         "symbol": "function renderCount(",
-        "line": 50,
-        "sha256": "5ed70d6be8c25b74a2458621bafad7af48ade6ba35d6c0e42a4ccf2f5f6d631e",
+        "line": 101,
+        "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
+        "evidence": "source-anchor"
+      },
+      "evidence": "source-anchor; not runtime proof"
+    },
+    {
+      "id": "odometer-motion",
+      "ref": {
+        "path": "extension/odometer.js",
+        "symbol": "function plan(",
+        "line": 4,
+        "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -2360,7 +2371,7 @@
           "path": "extension/popup.js",
           "symbol": "async function followLogin(",
           "line": 27,
-          "sha256": "5ed70d6be8c25b74a2458621bafad7af48ade6ba35d6c0e42a4ccf2f5f6d631e",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
           "evidence": "source-anchor"
         }
       ]

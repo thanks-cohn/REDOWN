@@ -56,3 +56,33 @@ frozen catalog/debug/semantic evidence hashes remain unchanged.
 
 See launcher-verification.json. Installed Chrome appearance, native keyboard/OAuth acceptance,
 real profile history migration and provider transfers remain separate owner acceptance tasks.
+
+## Roll-up presentation — 0.5.23
+
+Baseline main: `f433e56c607556e85c892e5ebe23971ad47ada9f`.
+The popup remembers its last displayed total in local `popupOdometer` version1 preferences,
+separately from the authoritative background delivery count. On reopening after more completed
+files, it shows the remembered reading, rolls quickly through the increase and slows through
+the final three single-file increments. A bounded BigInt plan has at most21 updates and finishes
+within2.5 seconds regardless of count magnitude; no per-file loop for huge batches. The final
+landing waits for the digit transition before one quiet18ms synthesized mechanical click.
+
+Last reading and sound preference persist through serialized local writes. With no trustworthy
+previous reading, show the real current total immediately rather than inventing an old value.
+New totals interrupt from the current displayed reading; obsolete callbacks never settle or click.
+Closing cancels timers, attempts to save the visible reading and closes audio resources. Last
+settled reading remains the fallback if popup destruction prevents the final preference write.
+LOGIN! and READY! remain in the same windows. Authentication checks cancel animation; count
+presentation never increments, replays or mutates the authoritative transfer total.
+
+The small Sound on/off control persists mute; audio is best-effort through standard Web Audio,
+without assets, dependencies or permissions. If Chrome suspends audio until a gesture, Enable
+sound offers that gesture. Browser policy/audio-device failure never blocks the counter. Reduced
+motion shows the current total immediately and suppresses the decorative click, including when
+the preference changes while open. Screen-reader labels expose the landing value without a live
+announcement for every step; aria-busy brackets an active roll.
+
+Automated tests use deterministic clocks to verify bounded/decelerating plans, exact large totals,
+retargeting, close cancellation, last-seen restoration, stale-response protection, mute and audio
+failures. No installed Chrome visual or audio/autoplay-policy acceptance is claimed. See
+rollup-verification.json; historical count reconstruction and other counting limitations above remain.

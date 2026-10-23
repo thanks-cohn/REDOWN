@@ -1,11 +1,14 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {JSDOM} from 'jsdom';import vm from 'node:vm';
-const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),code=await readFile(new URL('../extension/popup.js',import.meta.url),'utf8');
+const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),code=await readFile(new URL('../extension/popup.js',import.meta.url),'utf8'),odometer=await readFile(new URL('../extension/odometer.js',import.meta.url),'utf8');
 const settle=async()=>{for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));};
-function open({total='0',connected=true,handler,session}={}){
+function open({total='0',connected=true,handler,session,preferences,animate=false,audioClass}={}){
  const dom=new JSDOM(html,{runScripts:'outside-only'}),w=dom.window,calls=[];let changed,opened=0;
- const data={cloudflareAuth:connected?{accessToken:'fixture'}:null};
- w.chrome={storage:{local:{get:async()=>data},session:session?{get:async()=>({cloudflareLogin:session})}:undefined,onChanged:{addListener:fn=>changed=fn}},runtime:{openOptionsPage:async()=>{opened++;},sendMessage:async m=>{calls.push(m);return handler?handler(m):m.type==='cfAccounts'?{ok:true,accounts:[]}:m.type==='deliveryCount'?{ok:true,counter:{total}}:m.type==='cfConnect'?{ok:true,pending:true}:m.type==='cfLoginStatus'?{ok:true,phase:'connected'}:null;}}};
- w.eval(code);return {w,d:w.document,calls,data,change:patch=>changed(patch,'local'),opened:()=>opened,close:()=>w.close()};
+ const data={cloudflareAuth:connected?{accessToken:'fixture'}:null,popupOdometer:preferences};
+ const jobs=new Map();let clock=0,jobId=0;
+ w.matchMedia=()=>({matches:!animate});if(audioClass)w.AudioContext=audioClass;
+ if(animate){w.setTimeout=(fn,delay)=>{const id=++jobId;jobs.set(id,{fn,at:clock+delay});return id;};w.clearTimeout=id=>jobs.delete(id);}
+ w.chrome={storage:{local:{get:async()=>data,set:async patch=>Object.assign(data,structuredClone(patch))},session:session?{get:async()=>({cloudflareLogin:session})}:undefined,onChanged:{addListener:fn=>changed=fn}},runtime:{openOptionsPage:async()=>{opened++;},sendMessage:async m=>{calls.push(m);return handler?handler(m):m.type==='cfAccounts'?{ok:true,accounts:[]}:m.type==='deliveryCount'?{ok:true,counter:{total}}:m.type==='cfConnect'?{ok:true,pending:true}:m.type==='cfLoginStatus'?{ok:true,phase:'connected'}:null;}}};
+ w.eval(odometer);w.eval(code);return {tick:()=>{const [id,job]=[...jobs].sort((a,b)=>a[1].at-b[1].at)[0]||[];if(!job)return false;jobs.delete(id);clock=job.at;job.fn();return true;},w,d:w.document,calls,data,change:patch=>changed(patch,'local'),opened:()=>opened,close:()=>w.close()};
 }
 const display=h=>[...h.d.querySelectorAll('.wheel')].map(w=>w.querySelector('.reel')?.style.getPropertyValue('--digit')||w.textContent).join('');
 test('green zero-delivery state reads READY! and Dashboard opens the existing options page',async()=>{
@@ -35,4 +38,29 @@ test('background accepts a discovered unsaved bucket only after read-only existe
  const c=vm.createContext({message:{type:'ingest',prefix:'child/',sourceUrl:'https://fixture.invalid/file',destination:{accountId:'a',bucketName:'new'}},getProfiles:async()=>[],listBuckets:async()=>[{name:'new'}],cleanExplorerPrefix:x=>x,ingestCloudflareAtPrefix:async p=>{uploaded++;assert.equal(p.bucketName,'new');return 'stored';},recordTransfer:async()=>{},sendResponse:r=>response=r});
  await vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c);assert.equal(response.ok,true);assert.equal(uploaded,1);
  c.message.destination.bucketName='missing';await assert.rejects(vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c),/no longer available/);assert.equal(uploaded,1);
+});
+
+test('reopening starts at the last seen count, rolls to the current total and remembers completion',async()=>{
+ const h=open({total:'120',animate:true,preferences:{version:1,lastSeenTotal:'10',soundEnabled:false}});
+ try{await settle();assert.equal(display(h),'000010');assert.equal(h.d.getElementById('odometer').getAttribute('aria-busy'),'true');let steps=0;while(h.tick()){assert.ok(++steps<30);}await settle();assert.equal(display(h),'000120');assert.equal(h.data.popupOdometer.lastSeenTotal,'120');assert.equal(h.d.getElementById('odometer').hasAttribute('aria-busy'),false);assert.equal(h.data.popupOdometer.soundEnabled,false);}finally{h.close();}
+});
+test('a newer total interrupts an old roll and final persistence never rolls back',async()=>{
+ const h=open({total:'20',animate:true,preferences:{version:1,lastSeenTotal:'10',soundEnabled:false}});
+ try{await settle();h.tick();h.change({transferCounter:{newValue:{total:'100'}}});let steps=0;while(h.tick())assert.ok(++steps<30);await settle();assert.equal(display(h),'000100');assert.equal(h.data.popupOdometer.lastSeenTotal,'100');}finally{h.close();}
+});
+test('reduced motion immediately shows the verified total and the sound preference persists',async()=>{
+ const h=open({total:'25',preferences:{version:1,lastSeenTotal:'10',soundEnabled:false}});
+ try{await settle();assert.equal(display(h),'000025');assert.equal(h.d.getElementById('counter-sound').getAttribute('aria-pressed'),'false');h.d.getElementById('counter-sound').click();await settle();assert.equal(h.data.popupOdometer.soundEnabled,true);}finally{h.close();}
+});
+
+test('the final settled number emits one quiet click and mute suppresses subsequent clicks',async()=>{
+ let clicks=0;
+ class Audio {state='running';sampleRate=22050;destination={};createBuffer(_channels,length){return {getChannelData:()=>new Float32Array(length)};}createBufferSource(){return {connect(){},disconnect(){},start(){clicks++;}};}createGain(){return {gain:{value:0},connect(){},disconnect(){}};}close(){return Promise.resolve();}}
+ const h=open({total:'50',animate:true,audioClass:Audio,preferences:{version:1,lastSeenTotal:'5',soundEnabled:true}});
+ try{await settle();assert.equal(clicks,0);let steps=0;while(h.tick())assert.ok(++steps<30);await settle();assert.equal(clicks,1);h.d.getElementById('counter-sound').click();await settle();h.change({transferCounter:{newValue:{total:'60'}}});steps=0;while(h.tick())assert.ok(++steps<30);await settle();assert.equal(clicks,1);assert.equal(display(h),'000060');assert.equal(h.data.popupOdometer.soundEnabled,false);}finally{h.close();}
+});
+test('unavailable audio never prevents reaching or saving the verified total',async()=>{
+ class Audio {constructor(){throw Error('Audio blocked');}}
+ const h=open({total:'8',animate:true,audioClass:Audio,preferences:{version:1,lastSeenTotal:'2',soundEnabled:true}});
+ try{await settle();let steps=0;while(h.tick())assert.ok(++steps<30);await settle();assert.equal(display(h),'000008');assert.equal(h.data.popupOdometer.lastSeenTotal,'8');}finally{h.close();}
 });

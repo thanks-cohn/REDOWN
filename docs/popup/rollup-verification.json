@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-10-23T03:42:35.499189+00:00",
+  "extensionVersion": "0.5.23",
+  "baselineRemoteCommit": "f433e56c607556e85c892e5ebe23971ad47ada9f",
+  "focusedPassed": 18,
+  "explorerSmokePassed": 216,
+  "regressionPassed": 362,
+  "knownFailures": 7,
+  "newFailures": [],
+  "packaging": "Explicit allowlist audit passed; existing release gates remain",
+  "scope": "DOM/message mocks and deterministic animation/audio stubs; installed Chrome visual/audio acceptance pending"
+}

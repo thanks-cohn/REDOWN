@@ -36,5 +36,6 @@
   "scripts/agent-gateway-fixtures.mjs",
   "scripts/check-syntax.mjs",
   "agent/diagnostics/issues.mjs",
-  "extension/transfer-counter.js"
+  "extension/transfer-counter.js",
+  "extension/odometer.js"
 ]
