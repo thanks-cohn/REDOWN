@@ -1,0 +1,8 @@
+{
+  "valid": true,
+  "records": 253,
+  "sourceAndExtensionChecks": true,
+  "schemaDraft": "2020-12",
+  "errors": [],
+  "scope": "Structural/source freshness only; not accepted intent or live product proof."
+}

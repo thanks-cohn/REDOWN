@@ -1,0 +1,71 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "stale-review",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+              "symbol": "if(explicit)return explicit;"
+            },
+            {
+              "path": "tests/simple-menu-flat.test.mjs",
+              "sha256": "aedd67649ea7c4097804418eebb57314fdc86944fa0a15401c1985a6b3967a04",
+              "symbol": "blank and whitespace Simple labels"
+            }
+          ],
+          "freshness": "stale",
+          "reviewedOn": "2026-10-23",
+          "status": "needs-revalidation",
+          "summary": "Explicit Simple label precedence and empty defaults remain implemented, re-inspected and re-tested after transfer safety changes. Missing configured destinations and native menu acceptance remain unresolved."
+        },
+        "id": "REPORT-9d785a223e76",
+        "nextAction": "Reconcile configured versus rendered menu items with omission reasons and verify the actual Chrome menu.",
+        "recordedStatus": "Open; user-reported, source inspected, not reproduced against installed Chrome settings. **Priority: P1 menu reliability.** No application code changed in this investigation.",
+        "related": [
+          "DBG-002"
+        ],
+        "severity": "high",
+        "source": {
+          "heading": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)",
+          "line": 3,
+          "path": "bugs/README.md",
+          "sha256": "e9f453f2526ad265a708bf3ab8819cdde0979f779ee041b18a50da9f6ffc1b98"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)"
+      },
+      "issueId": "REPORT-9d785a223e76",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.report-9d785a223e76",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22); recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

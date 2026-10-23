@@ -1,0 +1,71 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/explorer/HANDOFF.md",
+        "docs/explorer/GET_URL_AND_STATUS.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/explorer-copy.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1048,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "ensurePrepared"
+        },
+        {
+          "anchorState": "present",
+          "line": 2539,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfPrepareBucket\""
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.explorer-copy.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.explorer.worker.readiness",
+  "kind": "capability",
+  "name": "Explorer worker.readiness",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.explorer.worker.readiness"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.explorer.worker.readiness"
+  ],
+  "statement": "POST capabilities; may provision only through existing action contract",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-copy.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

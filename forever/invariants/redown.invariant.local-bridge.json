@@ -1,0 +1,41 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Origin prefix check is not extension-ID pairing; current popup bypasses bridge; missing Windows native source."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 43,
+          "path": "local/bridge.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31",
+          "symbol": "http.createServer"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.local-bridge",
+  "kind": "invariant",
+  "name": "Local forwarding helper preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.local-bridge"
+  ],
+  "scope": [
+    "redown.implementation.local-bridge"
+  ],
+  "severity": "high",
+  "statement": "Loopback HTTP POST /ingest forwards to configured remote ingest URL using helper credential. Preserve its existing external behavior while addressing defects; known limits remain explicit.",
+  "verification": []
+}

@@ -1,0 +1,32 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "package.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "7ef941e088dd110da51acfd990444a5e3824eaac8126f70f7df1cbff6cc75ea2"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.dependency.node",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "satisfiesCapabilities": [
+    "redown.capability.diagnostics"
+  ],
+  "sourceLocations": [
+    "package.json"
+  ],
+  "technology": "Node.js offline helper and inspection",
+  "type": "runtime"
+}

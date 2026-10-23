@@ -1,0 +1,54 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "recorded-only",
+          "status": "needs-triage",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "id": "REPORT-0591c3903a25",
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing.",
+        "recordedStatus": "Source mitigation committed to `main`; Chrome end-to-end verification pending.",
+        "severity": "unknown",
+        "source": {
+          "heading": "BUG — R2 triple-dot directory object retrieval (2026-10-22)",
+          "line": 46,
+          "path": "bugs/README.md",
+          "sha256": "8ad7fc6adaeb4c786f039a82902a5d736fafc209fc4a7641b7cd7e9c5933cf1e"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG — R2 triple-dot directory object retrieval (2026-10-22)"
+      },
+      "issueId": "REPORT-0591c3903a25",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.report-0591c3903a25",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG — R2 triple-dot directory object retrieval (2026-10-22); recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

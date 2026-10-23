@@ -1,0 +1,38 @@
+{
+  "publicApi": {
+    "foreverApiVersion": "0.1",
+    "supportedModelVersions": [
+      "0.1"
+    ],
+    "modelVersionCompatibility": "0.x minor versions with understood required semantics",
+    "operations": [
+      "audit",
+      "describe",
+      "evaluateReplacement",
+      "explainDependency",
+      "getEntity",
+      "getProjectIntent",
+      "listCapabilities",
+      "listDependencies",
+      "listImplementations",
+      "listInvariants",
+      "normalize",
+      "traceEntity",
+      "validateModel",
+      "verifyMigration"
+    ],
+    "implementation": {
+      "name": "@forever-works/javascript",
+      "version": "0.1.0"
+    },
+    "adapter": {
+      "name": "node-filesystem"
+    }
+  },
+  "documentationOperations": [
+    "currentState",
+    "issues",
+    "help"
+  ],
+  "scope": "Offline preservation queries; documentation operations are not Forever API operations."
+}

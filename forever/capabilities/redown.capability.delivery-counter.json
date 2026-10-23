@@ -1,0 +1,75 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/popup/DASHBOARD_LAUNCHER.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Count semantics are scoped to instrumented completion; no global independent file integrity proof."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/odometer.test.mjs",
+        "tests/popup-destinations.test.mjs",
+        "tests/transfer-counter.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/transfer-counter.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+        },
+        {
+          "path": "extension/odometer.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+        },
+        {
+          "path": "extension/popup.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.odometer.test",
+        "redown.evidence.test.popup-destinations.test",
+        "redown.evidence.test.transfer-counter.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.delivery-counter",
+  "kind": "capability",
+  "name": "Delivery counter and dashboard launcher",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.delivery-counter"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.delivery-counter"
+  ],
+  "statement": "Persist qualifying delivery counts, display mechanical odometer and land dashboard navigation at intended Explorer position.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.odometer.test",
+        "redown.evidence.test.popup-destinations.test",
+        "redown.evidence.test.transfer-counter.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

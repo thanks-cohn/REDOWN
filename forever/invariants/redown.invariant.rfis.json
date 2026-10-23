@@ -1,0 +1,41 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Proposal is context only; no import, complete archive or cross-move identity is claimed."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 49,
+          "path": "extension/rfis-index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f",
+          "symbol": "observe"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.rfis",
+  "kind": "invariant",
+  "name": "Opt-in file observations preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.rfis"
+  ],
+  "scope": [
+    "redown.implementation.rfis"
+  ],
+  "severity": "high",
+  "statement": "Record IndexedDB file/event observations and export a partial index; locator is not durable content identity. Preserve its existing external behavior while addressing defects; known limits remain explicit.",
+  "verification": []
+}

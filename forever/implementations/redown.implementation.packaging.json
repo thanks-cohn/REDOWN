@@ -1,0 +1,54 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.packaging"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "License mismatch blocks normal release; current baseline fails reliability; Windows/native/live acceptance not established."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [
+        "redown.dependency.jsdom"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "scripts/package_chrome_store.py",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "50628a2b638a12c4799ac57dcae8c290c9514b2036c1f214157c309bea94fc26"
+        },
+        {
+          "path": "scripts/reliability-check.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ad9daf02b6bd3b5b008e0e40946850e173e812af0504b5726787018bfb755398"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2b0479983a825c16b31fb1b535f6a75856ea90f921ff29c6cccca66abfbc8c3b"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.packaging",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.packaging"
+  ],
+  "sourceLocations": [
+    "scripts/package_chrome_store.py",
+    "scripts/reliability-check.mjs",
+    ".github/workflows/ci.yml"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

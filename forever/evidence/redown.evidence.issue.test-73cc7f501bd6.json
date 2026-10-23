@@ -1,0 +1,51 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "historical",
+          "status": "recorded-only",
+          "summary": "Frozen historical evidence differs from current source"
+        },
+        "id": "TEST-73cc7f501bd6",
+        "nextAction": "Inspect current test results and resolve the maintenance decision without weakening assertions or rewriting frozen history.",
+        "recordedStatus": "Known baseline failure",
+        "severity": "medium",
+        "source": {
+          "path": "agent/diagnostics/regression-baseline.json"
+        },
+        "sourceKind": "regression-debt",
+        "state": "unknown",
+        "title": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+      },
+      "issueId": "TEST-73cc7f501bd6",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "agent/diagnostics/regression-baseline.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "37cf430dd8b7c03f9577076ef9abb47187bef89ea392237a206995d71bb87716"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.test-73cc7f501bd6",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "agent/diagnostics/regression-baseline.json",
+  "statementSupported": "catalog IDs, evidence labels, source hashes and references are internally consistent; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

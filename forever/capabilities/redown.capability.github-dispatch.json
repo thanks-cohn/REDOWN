@@ -1,0 +1,67 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/STORAGE_SIGNALS_BETA_REPORT.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Beta gates setup choices; no fresh executed Actions proof."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/beta-popup.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1924,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "ingestGitHub"
+        },
+        {
+          "path": "github/remote-ingest.yml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0512a179cbfd41ff2177e3dfc2ddd2a0bd0f4a59fe76006536379d7182837328"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.beta-popup.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.github-dispatch",
+  "kind": "capability",
+  "name": "Experimental GitHub workflow dispatch",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.github-dispatch"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.github-dispatch"
+  ],
+  "statement": "Ensure workflow and dispatch Actions for configured GitHub profiles; accepted dispatch is not delivered-file proof.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

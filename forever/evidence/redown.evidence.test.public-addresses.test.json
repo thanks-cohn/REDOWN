@@ -1,0 +1,106 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "all address combinations stay contextual and encode full literal object paths",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "older asynchronous refresh and cancelled responses cannot replace newer configuration",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "attachment requires exact read-back; public connection verification and setup failures are separate",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "Normal Mode attachment feedback stays visible and does not overwrite background profiles",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/public-addresses.test.mjs",
+          "name": "public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 9,
+      "sourceRefs": [
+        {
+          "path": "tests/public-addresses.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "fbefd5814f7d2da765d03d0d5803a70c21218a42d6244e24f814b953857ec707"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.public-addresses.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/public-addresses.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

@@ -1,0 +1,186 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "click creates a visible window before network navigation; repeated clicks focus it",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "successful callback exchanges PKCE and verifies access before saving token",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "callback resumes after service worker restart from session state",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "state mismatch fails without token exchange and allows a fresh retry",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "denied consent and missing authorization code fail cleanly",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "closed popup releases attempt and stale window is replaced on next click",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "expired attempt clears secrets, closes popup, and permits retry",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "failed API verification never stores an access token",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "duplicate navigation events exchange a code only once",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "verification network stall aborts and releases the attempt",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "popup creation errors are returned instead of leaving an in-flight lock",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "settings opens and completes Cloudflare login with no background worker or messaging",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "settings and worker observing the same callback exchange the code once across contexts",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "two settings contexts share one visible sign-in window",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "authorization URL requests only the registered resource scopes, preserving PKCE",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/cloudflare-login.test.mjs",
+          "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 19,
+      "sourceRefs": [
+        {
+          "path": "tests/cloudflare-login.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "78e1b6de12787037404de9dbbe7f84fb3f328a543f6c3acd8fa84604848c0414"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.cloudflare-login.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/cloudflare-login.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

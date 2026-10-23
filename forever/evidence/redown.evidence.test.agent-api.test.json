@@ -1,0 +1,116 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 2,
+      "outcomes": [
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "strictEqual"
+          },
+          "file": "tests/agent-api.test.mjs",
+          "name": "offline discovery advertises only implemented operations and distinct versions",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "operation descriptions retain exact destination, side effect and coverage limits",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "errors are deterministic, exact-id and version aware without echoing arbitrary input",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "unknown Forever mappings never become accepted records or a conformance claim",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "reference inspection detects content drift, missing anchors/files and unsafe paths",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "CLI works outside checkout, emits one JSON envelope and uses exit 2 for errors",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "deepStrictEqual"
+          },
+          "file": "tests/agent-api.test.mjs",
+          "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "portable request fixtures and JSON envelope contract",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/agent-api.test.mjs",
+          "name": "M0 inventory covers every literal message branch without inventing handlers",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 7,
+      "sourceRefs": [
+        {
+          "path": "tests/agent-api.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "eb2cc34a897e516ac165111f1c983c9ec764fd218e19bebd65b2a2c1fa8d4884"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.agent-api.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/agent-api.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

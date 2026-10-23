@@ -1,0 +1,73 @@
+{
+  "compatibilityContracts": [
+    "redown.compatibility.public-address"
+  ],
+  "constrainedByInvariants": [
+    "redown.invariant.explorer.public.urls"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 364,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "assetCorsControl"
+        },
+        {
+          "anchorState": "present",
+          "line": 2513,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfPublicAddresses\""
+        },
+        {
+          "anchorState": "present",
+          "line": 67,
+          "path": "extension/public-addresses.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
+          "symbol": "function popover("
+        },
+        {
+          "anchorState": "present",
+          "line": 6,
+          "path": "extension/explorer-status.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+          "symbol": "function paint("
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.explorer.public.urls",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.explorer.public.urls"
+  ],
+  "sourceLocations": [
+    "extension/options.js",
+    "extension/background.js",
+    "extension/public-addresses.js",
+    "extension/explorer-status.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

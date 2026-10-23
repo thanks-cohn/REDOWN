@@ -1,0 +1,51 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.sample-worker"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Sample health is not extension readiness; local runtime compatibility requires separate verification."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [
+        "redown.dependency.wrangler"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 97,
+          "path": "worker/src/index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+          "symbol": "async fetch"
+        },
+        {
+          "path": "wrangler.toml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0e40d6f4a7f8486439b9085f24b2f2b629bc5431101c2d9a292799ca2ae37764"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.sample-worker",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.sample-worker"
+  ],
+  "sourceLocations": [
+    "worker/src/index.js",
+    "wrangler.toml"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

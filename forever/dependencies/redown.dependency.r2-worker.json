@@ -1,0 +1,79 @@
+{
+  "compatibilityObligations": [
+    "redown.compatibility.worker-transfer"
+  ],
+  "currentImplementation": "redown.implementation.dependency.r2-worker",
+  "dependencyName": "R2 Workers binding",
+  "dependencyType": "service",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "replacementCriteria": {
+        "r2.conflicts-and-directory-identity": "Retain skip/Keep both and directory sibling identity without merging original destination content; honor documented conflict retries.",
+        "r2.exact-destination": "Preserve exact account, bucket and object keys for remote ingest and Explorer; unsupported exact-path Workers refuse before writing.",
+        "r2.protocol-compatibility-and-private-diagnostics": "Preserve existing message/protocol compatibility and bounded redacted observations; optional protocol1 is not permission to deploy.",
+        "r2.truthful-partial-and-uncertain-outcomes": "Per-item receipts, partial moves, timeouts and uncertain writes must not be aggregated into false success or automatically replayed.",
+        "r2.verified-copy-before-delete": "Conditional write plus read-back precedes copy completion; source/destination checks precede deletion; no deletion on failed verification."
+      },
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 53,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "const WORKER_SOURCE ="
+        },
+        {
+          "anchorState": "present",
+          "line": 1686,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "async function transferExplorerObjects("
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.r2-worker",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.remote-ingest",
+    "redown.invariant.explorer.copy",
+    "redown.invariant.explorer.move",
+    "redown.invariant.explorer.rename",
+    "redown.invariant.explorer.delete",
+    "redown.invariant.explorer.folder.create",
+    "redown.invariant.explorer.archive"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "STORAGE get/head/put/delete/list with exact-key and verified transfer semantics",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "CAPABILITY",
+  "replacementRequirements": [
+    "r2.exact-destination",
+    "r2.verified-copy-before-delete",
+    "r2.conflicts-and-directory-identity",
+    "r2.truthful-partial-and-uncertain-outcomes",
+    "r2.protocol-compatibility-and-private-diagnostics"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.remote-ingest",
+    "redown.capability.explorer.copy",
+    "redown.capability.explorer.move",
+    "redown.capability.explorer.rename",
+    "redown.capability.explorer.delete",
+    "redown.capability.explorer.folder.create",
+    "redown.capability.explorer.archive"
+  ]
+}

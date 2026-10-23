@@ -1,0 +1,70 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.local-upload"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "stale-review",
+          "evidence": [
+            {
+              "path": "extension/options.js",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
+              "symbol": "if(existed!==\"no\")throw new Error"
+            },
+            {
+              "path": "extension/options.js",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2",
+              "symbol": "method:\"PUT\""
+            }
+          ],
+          "freshness": "stale",
+          "reviewedOn": "2026-10-22",
+          "status": "needs-revalidation",
+          "summary": "Source performs a preflight existence check followed by direct PUT, without an atomic conditional-create boundary. Concurrent-writer safety is unverified."
+        },
+        "id": "CODE-UPLOAD-CONCURRENT-CREATE",
+        "nextAction": "Use a provider-supported conditional write or the existing verified Worker path, then test two concurrent writers and ambiguous responses.",
+        "recordedStatus": "Source review; not a live failure",
+        "related": [
+          "GATE-local-upload-conditional-races"
+        ],
+        "severity": "critical",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "sourceKind": "code-review",
+        "state": "unknown",
+        "title": "Local upload existence check and PUT are separate operations"
+      },
+      "issueId": "CODE-UPLOAD-CONCURRENT-CREATE",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "agent/diagnostics/issue-assessments.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2806e1faa232ce7a6c05282583d7a7ab6fa9aa0e3aa1e245cf3af9bf670ba18b"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.code-upload-concurrent-create",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "agent/diagnostics/issue-assessments.json",
+  "statementSupported": "Local upload existence check and PUT are separate operations; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

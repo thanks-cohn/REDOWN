@@ -1,0 +1,42 @@
+{
+  "currentImplementation": "redown.implementation.dependency.model-viewer",
+  "dependencyName": "Bundled model-viewer",
+  "dependencyType": "library",
+  "extensions": {
+    "org.redown": {
+      "alternativesStatus": "Not ingested as current dependencies; investigate only when replacement is requested.",
+      "classificationAuthority": "inferred/unreviewed",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "path": "extension/model-viewer.min.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "8367184a607fbe07a78b650c0d359e5ebbd96f7e2b22f95f761f559b63430386"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "historicalContext": "No original rationale invented. Classification is an unreviewed inference for evaluation, not accepted dependency policy.",
+  "id": "redown.dependency.model-viewer",
+  "kind": "dependency",
+  "protectedInvariants": [
+    "redown.invariant.explorer.preview"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "purpose": "3D preview implementation; third-party internal bundle unaudited",
+  "reasonSelected": "Original selection rationale is not established; current use is observed in the cited source.",
+  "replacementClassification": "SEMANTIC",
+  "replacementRequirements": [
+    "preserve-existing-boundary-model-viewer"
+  ],
+  "requiredCapabilities": [
+    "redown.capability.explorer.preview"
+  ]
+}

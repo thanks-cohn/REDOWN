@@ -1,0 +1,170 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "inactive endpoints have no visible URL rows; unsafe share URLs are rejected",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "clipboard failure has structured error and no false Copied state or raw browser error",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "rapid switching and closed dialogs discard stale discovery and clipboard completion",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "production stylesheet makes URL menu a visible fixed overlay above the context menu",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "actual Get URL parent click keeps context menu visible and opens a copyable child menu",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "permission failures remain explained with no false success or leaked provider errors",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "switching files while enabling cannot reopen the old file or overwrite current choices",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/get-url.test.mjs",
+          "name": "active custom URL is shown while disabled managed URLs and redundant activation remain hidden",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 17,
+      "sourceRefs": [
+        {
+          "path": "tests/get-url.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "1b6a792da13e3043e7c36ac25a1a0800647704d5af800c5d08cd20316a204500"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.get-url.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/get-url.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

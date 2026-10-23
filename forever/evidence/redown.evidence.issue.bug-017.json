@@ -1,0 +1,54 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "recorded-only",
+          "status": "needs-triage",
+          "summary": "Historical wording is not a current reproduction or acceptance result."
+        },
+        "id": "BUG-017",
+        "nextAction": "Review linked source/tests and obtain the missing browser/provider evidence before closing.",
+        "recordedStatus": "Open · user-reported usability/design defect · recorded October 21, 2026",
+        "severity": "unknown",
+        "source": {
+          "heading": "BUG-017 — Simple and Nested location editors are visually cluttered and difficult to decipher",
+          "line": 552,
+          "path": "bugs/README.md",
+          "sha256": "a445b5a2894f8e87c50ad21b4d13419806adf4cf21270c13c84164e688219de9"
+        },
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "title": "BUG-017 — Simple and Nested location editors are visually cluttered and difficult to decipher"
+      },
+      "issueId": "BUG-017",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "bugs/README.md",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "34e25915ffa7999c6a7e0dc1185a07de972ce0cd6db62c38b4891f583d4a6aa6"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.bug-017",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "bugs/README.md",
+  "statementSupported": "BUG-017 — Simple and Nested location editors are visually cluttered and difficult to decipher; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

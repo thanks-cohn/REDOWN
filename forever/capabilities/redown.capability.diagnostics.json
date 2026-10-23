@@ -1,0 +1,73 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/reliability/UNIFIED_AGENT_API.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Stale evidence and imported bundles cannot certify live health."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/agent-gateway.test.mjs",
+        "tests/diagnostic-foundation.test.mjs",
+        "tests/issue-inventory.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 12,
+          "path": "agent/diagnostics/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "6f44388d3c2cd9530390fe0cc78de3dc196f85e8719f831fa918936164c23a77",
+          "symbol": "createDiagnosticAPI"
+        },
+        {
+          "path": "agent/diagnostics/registry.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "017422a9be888c079b14397c68476436c4ef1bbc12e4d1ba00acd08e5874ddb2"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.agent-gateway.test",
+        "redown.evidence.test.diagnostic-foundation.test",
+        "redown.evidence.test.issue-inventory.test"
+      ],
+      "verificationState": "local-tests-with-failures"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.diagnostics",
+  "kind": "capability",
+  "name": "Unified offline diagnostic inspection",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.diagnostics"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.diagnostics"
+  ],
+  "statement": "Route registered qualified read operations across existing project/debug/semantic/runtime/explorer knowledge owners.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.agent-gateway.test",
+        "redown.evidence.test.diagnostic-foundation.test",
+        "redown.evidence.test.issue-inventory.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

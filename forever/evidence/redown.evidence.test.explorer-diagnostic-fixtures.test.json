@@ -1,0 +1,199 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 1,
+      "outcomes": [
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: missing-source",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: wrong-key",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: wrong-binding",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: expired-authorization",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: worker-version",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: unsupported-endpoint",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: network-interruption",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: source-read",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: destination-write",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: ambiguous-timeout",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: conflict",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: verification-failed",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: interrupted-move",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: stale-ui",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: cross-account",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: concurrent-source-change",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "safe diagnostic fixture: nested-key",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "deepStrictEqual"
+          },
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "name": "actual reported404 case remains open and separates reports, repository and deployed evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 19,
+      "sourceRefs": [
+        {
+          "path": "tests/explorer-diagnostic-fixtures.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c005aeff8ab3b0f22289d3d66aa90c6d3f2b1d82675d713bca986edeae52ad4e"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.explorer-diagnostic-fixtures.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/explorer-diagnostic-fixtures.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

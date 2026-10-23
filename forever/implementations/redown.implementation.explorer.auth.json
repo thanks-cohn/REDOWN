@@ -1,0 +1,61 @@
+{
+  "constrainedByInvariants": [
+    "redown.invariant.explorer.auth"
+  ],
+  "extensions": {
+    "org.redown": {
+      "boundaryNotes": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "dependsOn": [],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 4277,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "async function loginRequest("
+        },
+        {
+          "anchorState": "present",
+          "line": 136,
+          "path": "extension/cloudflare-auth.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "async function connectCloudflare("
+        },
+        {
+          "anchorState": "present",
+          "line": 27,
+          "path": "extension/popup.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
+          "symbol": "async function followLogin("
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.implementation.explorer.auth",
+  "kind": "implementation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "replaceability": "Only after equivalent scoped boundary proof; current policy inferred, unreviewed.",
+  "satisfiesCapabilities": [
+    "redown.capability.explorer.auth"
+  ],
+  "sourceLocations": [
+    "extension/options.js",
+    "extension/cloudflare-auth.js",
+    "extension/popup.js"
+  ],
+  "technology": "JavaScript/MV3/Node/Workers as located; replaceable implementation evidence",
+  "type": "existing-source-component"
+}

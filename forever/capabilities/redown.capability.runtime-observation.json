@@ -1,0 +1,64 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/runtime/READINESS.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "No complete durable job journal or cross-context live observer."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/runtime-reliability.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/runtime-diagnostics.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+        },
+        {
+          "path": "agent/runtime/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ad38525bebf5026425251979134f8639731283578a188829d3e071c6d0af167c"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.runtime-observation",
+  "kind": "capability",
+  "name": "Passive runtime observation",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.runtime-observation"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.runtime-observation"
+  ],
+  "statement": "Bound and redact Debug traces and expose imported offline runtime records.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

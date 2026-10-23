@@ -1,0 +1,212 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 2,
+      "outcomes": [
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "central discovery is deterministic and versions and authority remain separate",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "strictEqual"
+          },
+          "file": "tests/semantic-api.test.mjs",
+          "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "pagination is sorted, exhaustive and rejects invalid limits or depths",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "independent DFS agrees with reader bidirectional traversal on cyclic portable golden",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "reverse direction and supporting/counterevidence remain explicit",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "exact debug events, unknown optional fields and original provenance survive semantic evidence queries",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "duplicate IDs, endpoints, aliases, ownership, coverage and forged proof fail closed",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "traversal attempts, secret-like content and symlinks cannot expose private files",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "changed bytes and moved anchors yield stale warnings; cached snapshots stay pinned",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "real change impact is possible and unknown changes never get invented proof",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "strictEqual"
+          },
+          "file": "tests/semantic-api.test.mjs",
+          "name": "full finite public coverage inventory resolves strata and all canonical case links",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "lesson is a portable proposal validated by actual upstream reference API, without acceptance",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "missing normative references fail independent upstream validation and future fields survive",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "archived graph/golden remains readable; normalization preserves bytes, optional fields and stable identity across rewrite",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "aliases resolve deterministically, deprecation metadata stays visible and no guessed split",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "oversized models and graph depths are bounded and errors do not echo unsafe input",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "workflow is dry-run by default and arbitrary commands cannot be supplied",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "DOM observer requires independent consent and reads structure only, not values/storage",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "CLI works from outside checkout, emits one JSON result and rejects malformed flags",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "innocent internal symlink aliases cannot read excluded credential paths",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/semantic-api.test.mjs",
+          "name": "aggregate frozen-debug corpus has a semantic-reader memory budget before delegation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 19,
+      "sourceRefs": [
+        {
+          "path": "tests/semantic-api.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "08a88409f01b482111ea7f4f3c5cc357ab3c6a458e40ea87b6b2efd988e871e3"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.semantic-api.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/semantic-api.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

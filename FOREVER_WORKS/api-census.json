@@ -1,0 +1,2670 @@
+{
+  "explorerOperations": [
+    {
+      "coverage": {
+        "background": "not-applicable",
+        "live": "unverified",
+        "ui": "DOM boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "showExplorerMenu",
+      "message": null,
+      "name": "context.menu",
+      "pathway": "local context menu; existing transfer and clipboard operations own execution",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3486,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "function showExplorerMenu("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 96,
+          "path": "extension/explorer-destination-menu.js",
+          "sha256": "bbee7b5870c34075ba07e09d90c8dce2e0b9db110371a011581aa423e1057711",
+          "symbol": "function attach("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 54,
+          "path": "extension/explorer-diagnostics-bridge.js",
+          "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c",
+          "symbol": "function fail("
+        }
+      ],
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs",
+        "tests/explorer-destination-menu.test.mjs",
+        "tests/explorer-diagnostics-ui.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Invocation observation does not establish successful transfer; installed Chrome needs reviewed traces."
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "goLocation",
+      "message": "cfObjects",
+      "name": "navigation",
+      "pathway": "GET /accounts/{account}/r2/buckets/{bucket}/objects",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2173,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "goLocation"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2449,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjects"
+        }
+      ],
+      "tests": [
+        "tests/runtime-reliability.test.mjs",
+        "tests/popup-folders.test.mjs",
+        "tests/beta-popup.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "browseWorkspace",
+      "message": "cfObjects",
+      "name": "listing",
+      "pathway": "Cloudflare listing",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 1527,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "browseWorkspace"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2449,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjectsPage"
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "goPage (renderFileItems closure)",
+      "message": "cfObjects",
+      "name": "pagination",
+      "pathway": "Cloudflare cursor",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2719,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "const goPage=async"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2449,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjectsPage"
+        }
+      ],
+      "tests": [
+        "tests/runtime-reliability.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "runExplorerSearch",
+      "message": "cfSearchStart/cfSearchStep/cfSearchCancel/cfSearchRetry",
+      "name": "search",
+      "pathway": "Cloudflare listing pages",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2085,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "runExplorerSearch"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2402,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type===\"cfSearchStart\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 3,
+          "path": "extension/search-session.js",
+          "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce",
+          "symbol": "function create("
+        }
+      ],
+      "tests": [
+        "tests/runtime-reliability.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "browseWorkspace",
+      "message": "cfObjects",
+      "name": "refresh",
+      "pathway": "same active location",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 1527,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "browseWorkspace"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2449,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjectsPage"
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "selectExplorerItem",
+      "message": null,
+      "name": "selection",
+      "pathway": "local Set and item identity",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2836,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "selectExplorerItem"
+        }
+      ],
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "showWorkspacePreview",
+      "message": null,
+      "name": "preview",
+      "pathway": "GET /objects/{encoded-key} via OAuth",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 1575,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "showWorkspacePreview"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 126,
+          "path": "extension/cloudflare-api.js",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "preview"
+        }
+      ],
+      "tests": [
+        "tests/lightbox.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "setWorkspacePreviewLightbox",
+      "message": null,
+      "name": "lightbox",
+      "pathway": "same authenticated blob/media node",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 1619,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "setWorkspacePreviewLightbox"
+        }
+      ],
+      "tests": [
+        "tests/lightbox.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "explorerDownload",
+      "message": null,
+      "name": "download",
+      "pathway": "GET /objects/{encoded-key} → Chrome Downloads",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3330,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "explorerDownload"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 143,
+          "path": "extension/cloudflare-api.js",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "download"
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-files.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "explorerUploadFiles",
+      "message": null,
+      "name": "upload",
+      "pathway": "PUT /objects/{encoded-key}; post-error lookup",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3423,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "explorerUploadFiles"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "tests": [
+        "tests/upload-request-context.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "pasteExplorer",
+      "message": "cfTransferObjects",
+      "name": "copy",
+      "pathway": "Worker POST transferBatch → source GET /object → R2.put → R2.head",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3091,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2475,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1621,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "transferExplorerObjects"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1605,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function assertExplorerTransferSettings("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1615,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function explorerDirectoryExists("
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence",
+        "Directory Keep both plans a separate sibling; per-object conditional writes are not a directory-wide atomic transaction.",
+        "Cross-bucket provider binding/routing settings are checked before writes; installed/live acceptance is separate."
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "pasteExplorer",
+      "message": "cfTransferObjects",
+      "name": "move",
+      "pathway": "verified copy → source/destination checks → deleteKeys",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3091,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2475,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1621,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "transferExplorerObjects"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1605,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function assertExplorerTransferSettings("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1615,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function explorerDirectoryExists("
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence",
+        "Directory Keep both plans a separate sibling; per-object conditional writes are not a directory-wide atomic transaction.",
+        "Cross-bucket provider binding/routing settings are checked before writes; installed/live acceptance is separate."
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "beginExplorerRename",
+      "message": "cfRenameEntry",
+      "name": "rename",
+      "pathway": "verified move; conflict skip",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3234,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "beginExplorerRename"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2477,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfRenameEntry\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1725,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "renameExplorerEntry"
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "deleteSelection",
+      "message": "cfDeleteObjects",
+      "name": "delete",
+      "pathway": "confirmed selection → deleteKeys → R2.head",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3203,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "deleteSelection"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2476,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfDeleteObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1714,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "deleteExplorerObjects"
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "beginNewFolder",
+      "message": "cfCreateFolder",
+      "name": "folder.create",
+      "pathway": "ensurePrefixes → conditional .redown marker",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3290,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "beginNewFolder"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2478,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfCreateFolder\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1734,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "createExplorerFolder"
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "showProperties",
+      "message": "cfObjectProperties",
+      "name": "properties",
+      "pathway": "OAuth exact-key metadata; no preparation",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3355,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "showProperties"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2489,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjectProperties\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjectsPage"
+        }
+      ],
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "copyItemUrl → RedownPublicAddresses.popover",
+      "message": "cfPublicAddresses/cfEnablePublicAccess",
+      "name": "public.urls",
+      "pathway": "read-only address discovery; separately confirmed bucket-wide r2.dev enable with read-back",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 364,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "assetCorsControl"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2448,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfPublicAddresses\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1217,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "bucketPublicAddresses"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 67,
+          "path": "extension/public-addresses.js",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
+          "symbol": "function popover("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 3399,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "function urlPopover("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 6,
+          "path": "extension/explorer-status.js",
+          "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+          "symbol": "function paint("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1239,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function enableBucketPublicAccess("
+        }
+      ],
+      "tests": [
+        "tests/public-addresses.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "setExplorerClipboard",
+      "message": null,
+      "name": "clipboard",
+      "pathway": "Chrome session REDOWN clipboard; not OS file bytes",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 3066,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "setExplorerClipboard"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 3399,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "function urlPopover("
+        }
+      ],
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "goLocation",
+      "message": "cfObjects",
+      "name": "bucket.switch",
+      "pathway": "captured account/bucket; stale response guards",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2173,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "goLocation"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2449,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfObjects\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 834,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listObjectsPage"
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "loadExplorerInventory",
+      "message": "cfBuckets",
+      "name": "account.switch",
+      "pathway": "authorized account inventory",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2549,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "loadExplorerInventory"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2441,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfBuckets\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 866,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "listBuckets"
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "not-applicable-or-direct",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "not-applicable"
+      },
+      "entryPoint": "loginRequest",
+      "message": null,
+      "name": "auth",
+      "pathway": "OAuth PKCE and serialized refresh",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 4272,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "async function loginRequest("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 136,
+          "path": "extension/cloudflare-auth.js",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "async function connectCloudflare("
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 27,
+          "path": "extension/popup.js",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
+          "symbol": "async function followLogin("
+        }
+      ],
+      "tests": [
+        "tests/cloudflare-login.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "ensurePrepared",
+      "message": "cfPrepareBucket",
+      "name": "worker.readiness",
+      "pathway": "POST capabilities; may provision only through existing action contract",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 1048,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "ensurePrepared"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2474,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfPrepareBucket\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1472,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "preparedProfile"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1605,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "async function assertExplorerTransferSettings("
+        }
+      ],
+      "tests": [
+        "tests/explorer-copy.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    },
+    {
+      "coverage": {
+        "background": "message-boundary",
+        "live": "unverified",
+        "ui": "boundary",
+        "worker": "stage-events-if-protocol-1"
+      },
+      "entryPoint": "openArchive",
+      "message": "cfArchiveEntries",
+      "name": "archive",
+      "pathway": "Worker ZIP inspection/private entry read/conditional extraction",
+      "sourceRefs": [
+        {
+          "evidence": "source-anchor",
+          "line": 2994,
+          "path": "extension/options.js",
+          "sha256": "425af2e8849a7d78126801b11cba6fe1303bd5123733212d7e8c1695a19864aa",
+          "symbol": "openArchive"
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 2501,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "message?.type === \"cfArchiveEntries\""
+        },
+        {
+          "evidence": "source-anchor",
+          "line": 1487,
+          "path": "extension/background.js",
+          "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7",
+          "symbol": "callBucketWorker"
+        }
+      ],
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ],
+      "uncertainEdges": [
+        "Cloudflare deployment and installed version require runtime evidence"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2444,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"runtimeDiagnosticsV1\""
+      },
+      "type": "message-handler",
+      "value": "runtimeDiagnosticsV1"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2457,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"explorerDiagnosticsV1\""
+      },
+      "type": "message-handler",
+      "value": "explorerDiagnosticsV1"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2467,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfSearchStart\""
+      },
+      "type": "message-handler",
+      "value": "cfSearchStart"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2468,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfSearchStep\""
+      },
+      "type": "message-handler",
+      "value": "cfSearchStep"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2469,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfSearchCancel\""
+      },
+      "type": "message-handler",
+      "value": "cfSearchCancel"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2470,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfSearchRetry\""
+      },
+      "type": "message-handler",
+      "value": "cfSearchRetry"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2472,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"ingest\""
+      },
+      "type": "message-handler",
+      "value": "ingest"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2501,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfConnect\""
+      },
+      "type": "message-handler",
+      "value": "cfConnect"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2502,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfLoginStatus\""
+      },
+      "type": "message-handler",
+      "value": "cfLoginStatus"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2503,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfLoginCancel\""
+      },
+      "type": "message-handler",
+      "value": "cfLoginCancel"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2504,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfDisconnect\""
+      },
+      "type": "message-handler",
+      "value": "cfDisconnect"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2505,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfAccounts\""
+      },
+      "type": "message-handler",
+      "value": "cfAccounts"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2506,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfBuckets\""
+      },
+      "type": "message-handler",
+      "value": "cfBuckets"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2507,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfCreateBucket\""
+      },
+      "type": "message-handler",
+      "value": "cfCreateBucket"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2508,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfProvision\""
+      },
+      "type": "message-handler",
+      "value": "cfProvision"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2509,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfSetAssetCors\""
+      },
+      "type": "message-handler",
+      "value": "cfSetAssetCors"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2509,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfSetAssetDomain\""
+      },
+      "type": "message-handler",
+      "value": "cfSetAssetDomain"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2512,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfEnablePublicAccess\""
+      },
+      "type": "message-handler",
+      "value": "cfEnablePublicAccess"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2513,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfPublicAddresses\""
+      },
+      "type": "message-handler",
+      "value": "cfPublicAddresses"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2514,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      "type": "message-handler",
+      "value": "cfObjects"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2515,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"rfisExport\""
+      },
+      "type": "message-handler",
+      "value": "rfisExport"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2520,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfFolderPrefixes\""
+      },
+      "type": "message-handler",
+      "value": "cfFolderPrefixes"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2521,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfFolderChildren\""
+      },
+      "type": "message-handler",
+      "value": "cfFolderChildren"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2525,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfDestinationFolders\""
+      },
+      "type": "message-handler",
+      "value": "cfDestinationFolders"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2538,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfSearchObjects\""
+      },
+      "type": "message-handler",
+      "value": "cfSearchObjects"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2539,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfPrepareBucket\""
+      },
+      "type": "message-handler",
+      "value": "cfPrepareBucket"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2540,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfTransferObjects\""
+      },
+      "type": "message-handler",
+      "value": "cfTransferObjects"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2546,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfDeleteObjects\""
+      },
+      "type": "message-handler",
+      "value": "cfDeleteObjects"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2547,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfRenameEntry\""
+      },
+      "type": "message-handler",
+      "value": "cfRenameEntry"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2548,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfCreateFolder\""
+      },
+      "type": "message-handler",
+      "value": "cfCreateFolder"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2549,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfEnsurePrefixes\""
+      },
+      "type": "message-handler",
+      "value": "cfEnsurePrefixes"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2559,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfObjectProperties\""
+      },
+      "type": "message-handler",
+      "value": "cfObjectProperties"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2566,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfPrivateObjectUrl\""
+      },
+      "type": "message-handler",
+      "value": "cfPrivateObjectUrl"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2571,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfArchiveEntries\""
+      },
+      "type": "message-handler",
+      "value": "cfArchiveEntries"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2575,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfArchiveEntryUrl\""
+      },
+      "type": "message-handler",
+      "value": "cfArchiveEntryUrl"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2579,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfExtractArchive\""
+      },
+      "type": "message-handler",
+      "value": "cfExtractArchive"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2583,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfTransferArchive\""
+      },
+      "type": "message-handler",
+      "value": "cfTransferArchive"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2589,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"cfDownloadObject\""
+      },
+      "type": "message-handler",
+      "value": "cfDownloadObject"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2597,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"recordLocalTransfer\""
+      },
+      "type": "message-handler",
+      "value": "recordLocalTransfer"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2609,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"deliveryCount\""
+      },
+      "type": "message-handler",
+      "value": "deliveryCount"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2610,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"profiles\""
+      },
+      "type": "message-handler",
+      "value": "profiles"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2611,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"transferHistory\""
+      },
+      "type": "message-handler",
+      "value": "transferHistory"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2615,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type === \"renameTransfer\""
+      },
+      "type": "message-handler",
+      "value": "renameTransfer"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 2620,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "message?.type===\"cfTransferObjects\""
+      },
+      "type": "message-handler",
+      "value": "cfTransferObjects"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 513,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"headObject\""
+      },
+      "type": "worker-action",
+      "value": "headObject"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 519,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"createReadUrl\""
+      },
+      "type": "worker-action",
+      "value": "createReadUrl"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 524,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"listArchive\""
+      },
+      "type": "worker-action",
+      "value": "listArchive"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 528,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"createArchiveEntryReadUrl\""
+      },
+      "type": "worker-action",
+      "value": "createArchiveEntryReadUrl"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 535,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"extractArchiveEntries\""
+      },
+      "type": "worker-action",
+      "value": "extractArchiveEntries"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 549,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"receiveArchiveEntries\""
+      },
+      "type": "worker-action",
+      "value": "receiveArchiveEntries"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 565,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"deleteKeys\""
+      },
+      "type": "worker-action",
+      "value": "deleteKeys"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 590,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"capabilities\""
+      },
+      "type": "worker-action",
+      "value": "capabilities"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 591,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"probeSource\""
+      },
+      "type": "worker-action",
+      "value": "probeSource"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 603,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"transferBatch\""
+      },
+      "type": "worker-action",
+      "value": "transferBatch"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 615,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"renameObject\""
+      },
+      "type": "worker-action",
+      "value": "renameObject"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 632,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action === \"ensurePrefixes\""
+      },
+      "type": "worker-action",
+      "value": "ensurePrefixes"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 1563,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action===\"probeSource\""
+      },
+      "type": "worker-action",
+      "value": "probeSource"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 1563,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "body.action===\"capabilities\""
+      },
+      "type": "worker-action",
+      "value": "capabilities"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 914,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.remove"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 997,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 999,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 786,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 782,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 397,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "requestUrl.pathname === \"/private/archive-entry\""
+      },
+      "type": "http-route",
+      "value": "/private/archive-entry"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 405,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "requestUrl.pathname === \"/object\""
+      },
+      "type": "http-route",
+      "value": "/object"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 405,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "requestUrl.pathname === \"/private/object\""
+      },
+      "type": "http-route",
+      "value": "/private/object"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 405,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "requestUrl.pathname === \"/private/object\""
+      },
+      "type": "http-route",
+      "value": "/private/object"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 1623,
+        "path": "extension/background.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+        "symbol": "url.pathname===\"/\""
+      },
+      "type": "http-route",
+      "value": "/"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 3083,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 3172,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.session.remove"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 56,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 51,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 4535,
+        "path": "extension/options.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 35,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 63,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 63,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 63,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 63,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.set"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 47,
+        "path": "extension/cloudflare-auth.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+        "symbol": "chrome.storage.session.get"
+      },
+      "type": "storage-access",
+      "value": "session"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 12,
+        "path": "extension/cloudflare-api.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 18,
+        "path": "extension/cloudflare-api.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 18,
+        "path": "extension/cloudflare-api.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 18,
+        "path": "extension/cloudflare-api.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "symbol": "chrome.storage.local.set"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 12,
+        "path": "extension/cloudflare-api.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "symbol": "chrome.storage.local.get"
+      },
+      "type": "storage-access",
+      "value": "local"
+    },
+    {
+      "coverage": "literal observation only; caller/auth/side effects require traced review",
+      "source": {
+        "anchorState": "present",
+        "line": 100,
+        "path": "worker/src/index.js",
+        "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+        "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+        "symbol": "url.pathname === \"/health\""
+      },
+      "type": "http-route",
+      "value": "/health"
+    }
+  ],
+  "scope": "Literal message/action/route/storage-call inventory, not a complete parser or API contract"
+}

@@ -1,0 +1,74 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/STORAGE_SIGNALS_BETA_REPORT.md",
+        "docs/STORAGE_POPOUT_PERFORMANCE_REPORT.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Use latest source over superseded animation/visibility reports; mock layout is not installed layout."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/beta-popup.test.mjs",
+        "tests/options-debug-display.test.mjs",
+        "tests/storage-signals.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/storage-signals.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+        },
+        {
+          "anchorState": "present",
+          "line": 4465,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "applyBetaMode"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.beta-popup.test",
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-signals.test"
+      ],
+      "verificationState": "local-tests-with-failures"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.storage-ui",
+  "kind": "capability",
+  "name": "Storage signals, Debug and Beta",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.storage-ui"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.storage-ui"
+  ],
+  "statement": "Maintain independent mode gates, contained bucket expansion, keyboard access and reduced-motion handling; simulation is Debug-only.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test",
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-signals.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

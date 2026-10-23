@@ -1,0 +1,54 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.destinations"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "historical",
+          "freshness": "stale",
+          "status": "recorded-only",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately."
+        },
+        "id": "DBG-001",
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible.",
+        "recordedStatus": "open",
+        "severity": "high",
+        "source": {
+          "path": "debug/cases/DBG-001.json"
+        },
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "title": "Nested editor cannot reliably append deeper children without ancestor reselection"
+      },
+      "issueId": "DBG-001",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "debug/cases/DBG-001.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "cc65ff2b037832d319b4cee7fd7043121c903be66cf8dca2cdaee7ca25a80508"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.dbg-001",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "debug/cases/DBG-001.json",
+  "statementSupported": "Nested editor cannot reliably append deeper children without ancestor reselection; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

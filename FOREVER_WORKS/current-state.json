@@ -1,0 +1,1515 @@
+{
+  "baseline": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "features": [
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-login.test",
+        "redown.evidence.test.cloudflare-reconnect.test",
+        "redown.evidence.test.cloudflare-session.test"
+      ],
+      "id": "redown.capability.authentication",
+      "limits": [
+        "No perpetual-session guarantee; offline_access was rejected by registered client."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 28,
+      "name": "Cloudflare login and session recovery",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 76,
+          "path": "extension/cloudflare-auth.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "startCloudflareLogin"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-login.test.mjs",
+        "tests/cloudflare-reconnect.test.mjs",
+        "tests/cloudflare-session.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.menu-reorder.test",
+        "redown.evidence.test.nested-locations.test",
+        "redown.evidence.test.simple-location-rows.test",
+        "redown.evidence.test.simple-menu-flat.test"
+      ],
+      "id": "redown.capability.destinations",
+      "limits": [
+        "Removed drag-handle expectation fails; missing destination report remains unclosed."
+      ],
+      "localFailingEvents": 1,
+      "localPassingEvents": 33,
+      "name": "Simple and Nested right-click routing",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1996,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "buildMenus"
+        },
+        {
+          "anchorState": "present",
+          "line": 40,
+          "path": "extension/nested-locations.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "663a0cb8b08f7cddcf7274ccc1c424becb6e9c2ea0e8949b25c3183d9f005f73",
+          "symbol": "destinations"
+        },
+        {
+          "anchorState": "present",
+          "line": 4,
+          "path": "extension/nested-menu-editor.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "dda2c2b8d431ec932e15ecb342ad912c81419bff6c2366a942347dc3c5ac1c92",
+          "symbol": "render"
+        }
+      ],
+      "state": "local-tests-with-failures",
+      "tests": [
+        "tests/menu-reorder.test.mjs",
+        "tests/nested-locations.test.mjs",
+        "tests/simple-location-rows.test.mjs",
+        "tests/simple-menu-flat.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.download-collisions.test",
+        "redown.evidence.test.popup-destinations.test"
+      ],
+      "id": "redown.capability.remote-ingest",
+      "limits": [
+        "Unknown-length source buffering and ambiguous network completion must not be described as durable resume."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 17,
+      "name": "Remote URL to R2",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1881,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "ingestCloudflareAtPrefix"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/download-collisions.test.mjs",
+        "tests/popup-destinations.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-files.test",
+        "redown.evidence.test.upload-location-builder.test",
+        "redown.evidence.test.upload-request-context.test"
+      ],
+      "id": "redown.capability.local-upload",
+      "limits": [
+        "Non-atomic absent-check/PUT race; File references and queue die with settings page."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 18,
+      "name": "Upload local files",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1405,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "uploadLocalFiles"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-files.test.mjs",
+        "tests/upload-location-builder.test.mjs",
+        "tests/upload-request-context.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-worker-health.test"
+      ],
+      "id": "redown.capability.worker-provision",
+      "limits": [
+        "Do not invoke preparation as a diagnostic read."
+      ],
+      "localFailingEvents": 1,
+      "localPassingEvents": 19,
+      "name": "Per-bucket Worker provisioning",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 985,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "deployCloudflareProfile"
+        }
+      ],
+      "state": "local-tests-with-failures",
+      "tests": [
+        "tests/options-debug-display.test.mjs",
+        "tests/storage-worker-health.test.mjs"
+      ]
+    },
+    {
+      "evidence": [],
+      "id": "redown.capability.gallery",
+      "limits": [
+        "No fresh site/browser acceptance; saved HTML and failing Remote-to-Remote are historical reported cases."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 0,
+      "name": "Gallery capture and remote transfer",
+      "source": [
+        {
+          "path": "extension/hitomi-capture.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1"
+        },
+        {
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+        }
+      ],
+      "state": "source-present-unverified",
+      "tests": []
+    },
+    {
+      "evidence": [],
+      "id": "redown.capability.rfis",
+      "limits": [
+        "Proposal is context only; no import, complete archive or cross-move identity is claimed."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 0,
+      "name": "Opt-in file observations",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 49,
+          "path": "extension/rfis-index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f",
+          "symbol": "observe"
+        }
+      ],
+      "state": "source-present-unverified",
+      "tests": []
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test"
+      ],
+      "id": "redown.capability.github-dispatch",
+      "limits": [
+        "Beta gates setup choices; no fresh executed Actions proof."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 1,
+      "name": "Experimental GitHub workflow dispatch",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1924,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "ingestGitHub"
+        },
+        {
+          "path": "github/remote-ingest.yml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0512a179cbfd41ff2177e3dfc2ddd2a0bd0f4a59fe76006536379d7182837328"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/beta-popup.test.mjs"
+      ]
+    },
+    {
+      "evidence": [],
+      "id": "redown.capability.local-bridge",
+      "limits": [
+        "Origin prefix check is not extension-ID pairing; current popup bypasses bridge; missing Windows native source."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 0,
+      "name": "Local forwarding helper",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 43,
+          "path": "local/bridge.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31",
+          "symbol": "http.createServer"
+        }
+      ],
+      "state": "source-present-unverified",
+      "tests": []
+    },
+    {
+      "evidence": [],
+      "id": "redown.capability.sample-worker",
+      "limits": [
+        "Sample health is not extension readiness; local runtime compatibility requires separate verification."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 0,
+      "name": "Separate ASSETS Worker sample",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 97,
+          "path": "worker/src/index.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+          "symbol": "async fetch"
+        },
+        {
+          "path": "wrangler.toml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "0e40d6f4a7f8486439b9085f24b2f2b629bc5431101c2d9a292799ca2ae37764"
+        }
+      ],
+      "state": "source-present-unverified",
+      "tests": []
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.agent-gateway.test",
+        "redown.evidence.test.diagnostic-foundation.test",
+        "redown.evidence.test.issue-inventory.test"
+      ],
+      "id": "redown.capability.diagnostics",
+      "limits": [
+        "Stale evidence and imported bundles cannot certify live health."
+      ],
+      "localFailingEvents": 1,
+      "localPassingEvents": 21,
+      "name": "Unified offline diagnostic inspection",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 12,
+          "path": "agent/diagnostics/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "6f44388d3c2cd9530390fe0cc78de3dc196f85e8719f831fa918936164c23a77",
+          "symbol": "createDiagnosticAPI"
+        },
+        {
+          "path": "agent/diagnostics/registry.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "017422a9be888c079b14397c68476436c4ef1bbc12e4d1ba00acd08e5874ddb2"
+        }
+      ],
+      "state": "local-tests-with-failures",
+      "tests": [
+        "tests/agent-gateway.test.mjs",
+        "tests/diagnostic-foundation.test.mjs",
+        "tests/issue-inventory.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "id": "redown.capability.runtime-observation",
+      "limits": [
+        "No complete durable job journal or cross-context live observer."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Passive runtime observation",
+      "source": [
+        {
+          "path": "extension/runtime-diagnostics.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+        },
+        {
+          "path": "agent/runtime/api.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ad38525bebf5026425251979134f8639731283578a188829d3e071c6d0af167c"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/runtime-reliability.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.notification-preference.test",
+        "redown.evidence.test.toolbar-feedback.test"
+      ],
+      "id": "redown.capability.toolbar-feedback",
+      "limits": [
+        "Installed Chrome color/animation acceptance remains unknown."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 5,
+      "name": "Temporary success/failure icon effect",
+      "source": [
+        {
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/notification-preference.test.mjs",
+        "tests/toolbar-feedback.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.odometer.test",
+        "redown.evidence.test.popup-destinations.test",
+        "redown.evidence.test.transfer-counter.test"
+      ],
+      "id": "redown.capability.delivery-counter",
+      "limits": [
+        "Count semantics are scoped to instrumented completion; no global independent file integrity proof."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 23,
+      "name": "Delivery counter and dashboard launcher",
+      "source": [
+        {
+          "path": "extension/transfer-counter.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+        },
+        {
+          "path": "extension/odometer.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+        },
+        {
+          "path": "extension/popup.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/odometer.test.mjs",
+        "tests/popup-destinations.test.mjs",
+        "tests/transfer-counter.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test",
+        "redown.evidence.test.options-debug-display.test",
+        "redown.evidence.test.storage-signals.test"
+      ],
+      "id": "redown.capability.storage-ui",
+      "limits": [
+        "Use latest source over superseded animation/visibility reports; mock layout is not installed layout."
+      ],
+      "localFailingEvents": 1,
+      "localPassingEvents": 25,
+      "name": "Storage signals, Debug and Beta",
+      "source": [
+        {
+          "path": "extension/storage-signals.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+        },
+        {
+          "anchorState": "present",
+          "line": 4465,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "applyBetaMode"
+        }
+      ],
+      "state": "local-tests-with-failures",
+      "tests": [
+        "tests/beta-popup.test.mjs",
+        "tests/options-debug-display.test.mjs",
+        "tests/storage-signals.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.syntax-portability.test"
+      ],
+      "id": "redown.capability.packaging",
+      "limits": [
+        "License mismatch blocks normal release; current baseline fails reliability; Windows/native/live acceptance not established."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 2,
+      "name": "Check and package extension",
+      "source": [
+        {
+          "path": "scripts/package_chrome_store.py",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "50628a2b638a12c4799ac57dcae8c290c9514b2036c1f214157c309bea94fc26"
+        },
+        {
+          "path": "scripts/reliability-check.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ad9daf02b6bd3b5b008e0e40946850e173e812af0504b5726787018bfb755398"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2b0479983a825c16b31fb1b535f6a75856ea90f921ff29c6cccca66abfbc8c3b"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/syntax-portability.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-destination-menu.test",
+        "redown.evidence.test.explorer-diagnostics-ui.test",
+        "redown.evidence.test.explorer-menu-actions.test"
+      ],
+      "id": "redown.capability.explorer.context.menu",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 21,
+      "name": "Explorer context.menu",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3486,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "function showExplorerMenu("
+        },
+        {
+          "anchorState": "present",
+          "line": 96,
+          "path": "extension/explorer-destination-menu.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "bbee7b5870c34075ba07e09d90c8dce2e0b9db110371a011581aa423e1057711",
+          "symbol": "function attach("
+        },
+        {
+          "anchorState": "present",
+          "line": 54,
+          "path": "extension/explorer-diagnostics-bridge.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c",
+          "symbol": "function fail("
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-destination-menu.test.mjs",
+        "tests/explorer-diagnostics-ui.test.mjs",
+        "tests/explorer-menu-actions.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.beta-popup.test",
+        "redown.evidence.test.popup-folders.test",
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "id": "redown.capability.explorer.navigation",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 12,
+      "name": "Explorer navigation",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2173,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "goLocation"
+        },
+        {
+          "anchorState": "present",
+          "line": 2514,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/beta-popup.test.mjs",
+        "tests/popup-folders.test.mjs",
+        "tests/runtime-reliability.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-reconnect.test"
+      ],
+      "id": "redown.capability.explorer.listing",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 3,
+      "name": "Explorer listing",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1527,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "browseWorkspace"
+        },
+        {
+          "anchorState": "present",
+          "line": 2514,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "id": "redown.capability.explorer.pagination",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer pagination",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2719,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "const goPage=async"
+        },
+        {
+          "anchorState": "present",
+          "line": 2514,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/runtime-reliability.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.runtime-reliability.test"
+      ],
+      "id": "redown.capability.explorer.search",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer search",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2085,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "runExplorerSearch"
+        },
+        {
+          "anchorState": "present",
+          "line": 2467,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type===\"cfSearchStart\""
+        },
+        {
+          "anchorState": "present",
+          "line": 3,
+          "path": "extension/search-session.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce",
+          "symbol": "function create("
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/runtime-reliability.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-reconnect.test"
+      ],
+      "id": "redown.capability.explorer.refresh",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 3,
+      "name": "Explorer refresh",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1527,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "browseWorkspace"
+        },
+        {
+          "anchorState": "present",
+          "line": 2514,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-menu-actions.test"
+      ],
+      "id": "redown.capability.explorer.selection",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer selection",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2836,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "selectExplorerItem"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.lightbox.test"
+      ],
+      "id": "redown.capability.explorer.preview",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 7,
+      "name": "Explorer preview",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1575,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "showWorkspacePreview"
+        },
+        {
+          "anchorState": "present",
+          "line": 126,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "preview"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/lightbox.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.lightbox.test"
+      ],
+      "id": "redown.capability.explorer.lightbox",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 7,
+      "name": "Explorer lightbox",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1619,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "setWorkspacePreviewLightbox"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/lightbox.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-files.test"
+      ],
+      "id": "redown.capability.explorer.download",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 12,
+      "name": "Explorer download",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3330,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "explorerDownload"
+        },
+        {
+          "anchorState": "present",
+          "line": 143,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "download"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-files.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.upload-request-context.test"
+      ],
+      "id": "redown.capability.explorer.upload",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 3,
+      "name": "Explorer upload",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3423,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "explorerUploadFiles"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/upload-request-context.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.copy",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer copy",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3091,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "anchorState": "present",
+          "line": 2540,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.move",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer move",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3091,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "pasteExplorer"
+        },
+        {
+          "anchorState": "present",
+          "line": 2540,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfTransferObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.rename",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer rename",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3234,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "beginExplorerRename"
+        },
+        {
+          "anchorState": "present",
+          "line": 2547,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfRenameEntry\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.delete",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer delete",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3203,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "deleteSelection"
+        },
+        {
+          "anchorState": "present",
+          "line": 2546,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfDeleteObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.folder.create",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer folder.create",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3290,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "beginNewFolder"
+        },
+        {
+          "anchorState": "present",
+          "line": 2548,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfCreateFolder\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-menu-actions.test"
+      ],
+      "id": "redown.capability.explorer.properties",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer properties",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3355,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "showProperties"
+        },
+        {
+          "anchorState": "present",
+          "line": 2559,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjectProperties\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.public-addresses.test"
+      ],
+      "id": "redown.capability.explorer.public.urls",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer public.urls",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 364,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "assetCorsControl"
+        },
+        {
+          "anchorState": "present",
+          "line": 2513,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfPublicAddresses\""
+        },
+        {
+          "anchorState": "present",
+          "line": 67,
+          "path": "extension/public-addresses.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83",
+          "symbol": "function popover("
+        },
+        {
+          "anchorState": "present",
+          "line": 6,
+          "path": "extension/explorer-status.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+          "symbol": "function paint("
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/public-addresses.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-menu-actions.test"
+      ],
+      "id": "redown.capability.explorer.clipboard",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 9,
+      "name": "Explorer clipboard",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 3066,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "setExplorerClipboard"
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-menu-actions.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-reconnect.test"
+      ],
+      "id": "redown.capability.explorer.bucket.switch",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 3,
+      "name": "Explorer bucket.switch",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2173,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "goLocation"
+        },
+        {
+          "anchorState": "present",
+          "line": 2514,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfObjects\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-reconnect.test"
+      ],
+      "id": "redown.capability.explorer.account.switch",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 3,
+      "name": "Explorer account.switch",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2549,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "loadExplorerInventory"
+        },
+        {
+          "anchorState": "present",
+          "line": 2506,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfBuckets\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-reconnect.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-login.test"
+      ],
+      "id": "redown.capability.explorer.auth",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 19,
+      "name": "Explorer auth",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 4277,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "async function loginRequest("
+        },
+        {
+          "anchorState": "present",
+          "line": 136,
+          "path": "extension/cloudflare-auth.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "async function connectCloudflare("
+        },
+        {
+          "anchorState": "present",
+          "line": 27,
+          "path": "extension/popup.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd",
+          "symbol": "async function followLogin("
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/cloudflare-login.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-copy.test"
+      ],
+      "id": "redown.capability.explorer.worker.readiness",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 12,
+      "name": "Explorer worker.readiness",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 1048,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "ensurePrepared"
+        },
+        {
+          "anchorState": "present",
+          "line": 2539,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfPrepareBucket\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-copy.test.mjs"
+      ]
+    },
+    {
+      "evidence": [
+        "redown.evidence.test.explorer-worker.test"
+      ],
+      "id": "redown.capability.explorer.archive",
+      "limits": [
+        "Original Explorer map may be stale; current anchors are recomputed here without rewriting it."
+      ],
+      "localFailingEvents": 0,
+      "localPassingEvents": 24,
+      "name": "Explorer archive",
+      "source": [
+        {
+          "anchorState": "present",
+          "line": 2994,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "openArchive"
+        },
+        {
+          "anchorState": "present",
+          "line": 2571,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "message?.type === \"cfArchiveEntries\""
+        }
+      ],
+      "state": "local-fixtures-pass",
+      "tests": [
+        "tests/explorer-worker.test.mjs"
+      ]
+    }
+  ],
+  "issuesSnapshot": "verification/issues.json",
+  "policy": "Current source and fresh fixture outcomes; no proposal establishes implementation or passing behavior.",
+  "regression": {
+    "baselineResolved": [],
+    "execution": {
+      "error": null,
+      "exitCode": 1,
+      "stderr": ""
+    },
+    "incomplete": false,
+    "knownFailures": [
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "strictEqual"
+        },
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "deepStrictEqual"
+        },
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "deepStrictEqual"
+        },
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "strictEqual"
+        },
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "UNKNOWN",
+          "name": "TypeError",
+          "operator": null
+        },
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "strictEqual"
+        },
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "strictEqual"
+        },
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      }
+    ],
+    "newFailures": [
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "deepStrictEqual"
+        },
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "ERR_ASSERTION",
+          "name": "AssertionError",
+          "operator": "=="
+        },
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      },
+      {
+        "error": {
+          "code": "UNKNOWN",
+          "name": "TypeError",
+          "operator": null
+        },
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "type": "fail"
+      }
+    ],
+    "passed": 365,
+    "skipped": 0,
+    "state": "failed",
+    "unseenBaselineTests": []
+  },
+  "stages": [
+    {
+      "exitCode": 0,
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "exitCode": 0,
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "exitCode": 0,
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "exitCode": 0,
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ]
+}

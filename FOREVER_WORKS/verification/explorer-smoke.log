@@ -1,0 +1,651 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 explorer:smoke
+> node scripts/explorer-smoke.mjs --preset all
+
+{"smokeVersion":"1.0.0","preset":"all","scope":"local code with simulated providers; no live cloud writes or certification","files":["tests/explorer-diagnostics.test.mjs","tests/explorer-diagnostic-fixtures.test.mjs","tests/explorer-diagnostics-ui.test.mjs","tests/explorer-probes.test.mjs","tests/explorer-worker.test.mjs","tests/explorer-copy.test.mjs","tests/download-collisions.test.mjs","tests/explorer-menu-actions.test.mjs","tests/explorer-destination-menu.test.mjs","tests/destination-search-regression.test.mjs","tests/lightbox.test.mjs","tests/cloudflare-files.test.mjs","tests/popup-folders.test.mjs","tests/popup-destinations.test.mjs","tests/beta-popup.test.mjs","tests/transfer-counter.test.mjs","tests/odometer.test.mjs","tests/cloudflare-login.test.mjs","tests/cloudflare-session.test.mjs","tests/cloudflare-reconnect.test.mjs","tests/runtime-reliability.test.mjs","tests/get-url.test.mjs","tests/explorer-status.test.mjs","tests/public-addresses.test.mjs"]}
+✔ compact launcher replaces destination form without exposing experimental GitHub controls (119.303795ms)
+✔ private WEBP preview reads nested keys without a Worker or background messaging (31.786685ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (2.516876ms)
+✔ concurrent expired requests refresh rotating credentials once (7.697085ms)
+✔ 401 refresh retries a private read and denied reads report failure (6.733995ms)
+✔ oversized preview stops without allocating an object URL (6.547354ms)
+✔ preview failure replaces spinner and download rejection ends progress (4.321053ms)
+✔ download reports delayed Chrome interruption and removes its listener (2.469779ms)
+✔ download exposes interruption occurring before onChanged registration (1.472716ms)
+✔ download completion is reported and an interruption racing the initial lookup cannot become success (2.183998ms)
+✔ 403 management read falls back to explicitly enabled public R2 domain for unusual keys (25.027608ms)
+✔ 403 does not fall back for private R2 buckets (6.623424ms)
+✔ unusual-key download uses enabled public URL only following a denied authenticated probe (3.791379ms)
+✔ click creates a visible window before network navigation; repeated clicks focus it (66.666038ms)
+✔ successful callback exchanges PKCE and verifies access before saving token (55.057336ms)
+✔ callback resumes after service worker restart from session state (27.587115ms)
+✔ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (5.145338ms)
+✔ state mismatch fails without token exchange and allows a fresh retry (32.34811ms)
+✔ denied consent and missing authorization code fail cleanly (20.570989ms)
+✔ closed popup releases attempt and stale window is replaced on next click (15.605418ms)
+✔ expired attempt clears secrets, closes popup, and permits retry (10.163386ms)
+✔ failed API verification never stores an access token (19.286022ms)
+✔ duplicate navigation events exchange a code only once (36.521795ms)
+✔ verification network stall aborts and releases the attempt (3.971283ms)
+✔ popup creation errors are returned instead of leaving an in-flight lock (9.244289ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (27.397287ms)
+✔ settings and worker observing the same callback exchange the code once across contexts (20.481531ms)
+✔ two settings contexts share one visible sign-in window (18.127648ms)
+✔ Worker deployments cannot overlap and a failed deployment releases the lock (4.095999ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (20.039937ms)
+✔ runtime adapter gates actual background messages by settings sender and Debug Mode without network (7.693343ms)
+✔ destination folder pages preserve parent prefix, immediate children and continuation (29.948676ms)
+✔ verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests (561.672308ms)
+✔ slow bucket loading does not block locations, Explorer, or connection refresh (266.36958ms)
+✔ an invalidated connection reply cannot replace a newer account view (212.860584ms)
+✔ Cloudflare 403 authentication error refreshes once and retries the read (30.954756ms)
+✔ permission-denied 403 does not renew credentials or repeat the request (25.39846ms)
+✔ expired credentials shared by settings and worker rotate once under the shared lock (5.250984ms)
+✔ invalid refresh grant preserves connection and requests reconnect without disconnect (4.513519ms)
+✔ transient renewal failure retains credentials and can recover on the next refresh (12.052038ms)
+✔ login token storage shares the refresh lock and clears reconnect state (1.793927ms)
+✔ explicit nested folder is sent intact and receipt uses actual target bucket and key (9.846651ms)
+✔ history uses explicit bucket/key rather than mistaking public assets route for storage folder (4.261569ms)
+✔ search previews retain result set and use each result account/bucket and exact key (4.662763ms)
+✔ history location opens exact folder and preview without scroll or focus jump (8.458847ms)
+✔ download collision preserves originals and returns numbered key and URL (46.778985ms)
+✔ concurrent collision never overwrites or reports a successful download (1.601184ms)
+✔ remote download uses numbered key within requested folder (2.247041ms)
+✔ first collision starts at one and a different folder keeps the original name (27.620374ms)
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (23.245686ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (8.330508ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (3.772569ms)
+✔ missing per-file copy receipts cannot become a successful zero-file copy (25.915075ms)
+✔ forbidden Worker operations report HTTP status without automatic reprovision or replay (14.62589ms)
+✔ v5 preparation refuses unavailable connections instead of redeploying on network failure (2.929969ms)
+✔ conflict retry retains earlier failures rather than presenting partial move as success (11.289301ms)
+✔ incomplete or cyclic folder listings fail before mutation; exact repeated separators are preserved (6.82986ms)
+✔ Paste uses an explicit operation clipboard even when the global clipboard changes (1.455015ms)
+✔ empty clipboard and missing destination produce actionable feedback and no transfer (13.85368ms)
+✔ rejected transfer transport clears working status, preserves clipboard and never replays (1.710384ms)
+✔ directory conflict retry preserves its directory identity and destination root (1.779904ms)
+✔ Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes (219.538443ms)
+✔ current bucket remains available for sibling destinations and same-folder choice is disabled (76.991053ms)
+✔ folder pages append via More folders and closed menus ignore late replies (77.66313ms)
+✔ keyboard arrows navigate menus and Escape returns to parent without changing Explorer (27.60827ms)
+✔ failed lazy folder reads offer retry and never execute a transfer (21.899762ms)
+✔ Copy here is available immediately while child-folder listing is still pending (22.307138ms)
+✔ reopening the same destination reuses a bounded short-lived folder page cache (41.586894ms)
+✔ safe diagnostic fixture: missing-source (59.892027ms)
+✔ safe diagnostic fixture: wrong-key (9.76765ms)
+✔ safe diagnostic fixture: wrong-binding (2.719556ms)
+✔ safe diagnostic fixture: expired-authorization (12.045469ms)
+✔ safe diagnostic fixture: worker-version (2.299485ms)
+✔ safe diagnostic fixture: unsupported-endpoint (4.122602ms)
+✔ safe diagnostic fixture: network-interruption (7.67212ms)
+✔ safe diagnostic fixture: source-read (3.805555ms)
+✔ safe diagnostic fixture: destination-write (3.756652ms)
+✔ safe diagnostic fixture: ambiguous-timeout (1.833824ms)
+✔ safe diagnostic fixture: conflict (6.115445ms)
+✔ safe diagnostic fixture: verification-failed (2.590338ms)
+✔ safe diagnostic fixture: interrupted-move (2.402627ms)
+✔ safe diagnostic fixture: stale-ui (3.724204ms)
+✔ safe diagnostic fixture: cross-account (7.247836ms)
+✔ safe diagnostic fixture: concurrent-source-change (1.635152ms)
+✔ safe diagnostic fixture: nested-key (17.179391ms)
+✔ operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces (2.229224ms)
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (173.654412ms)
+✔ actual reported404 case remains open and separates reports, repository and deployed evidence (29.680067ms)
+✔ Debug inspector selects traces, copies ID, previews redacted bundle before download and clears safely (625.886268ms)
+✔ bridge shares local fingerprint context and keeps concurrent message IDs and parent chains separate (37.549124ms)
+✔ legacy Worker404 is marked as reported evidence rather than invented structured source telemetry (9.205159ms)
+✔ read-only probe button is Debug-only, sends captured file context once and presents redacted checks (277.926371ms)
+✔ message transport failures finish their trace without recording private error text (7.273208ms)
+✔ identity HMAC preserves exact keys, compares only equal scopes and exports no names or secrets (37.954227ms)
+✔ 404 is an observation; deterministic diagnosis compares API successes without inventing a root cause (14.760482ms)
+✔ same-scope key disagreement is confirmed while unrelated scopes cannot establish mismatch (3.237325ms)
+✔ bounded collector rejects malformed and oversized imports atomically, preserving prior observations (6.17031ms)
+✔ retention, event caps, disabled collection and restart interruption are explicit (7.034071ms)
+✔ portable agent API preserves evidence IDs and has no execution or network capabilities (1.482894ms)
+✔ menu actions surface synchronous and asynchronous errors (186.865008ms)
+✔ Copy confirms internal clipboard contents without copying file bytes or moving originals (3.166702ms)
+✔ Properties message reads exact control-plane metadata without preparing a Worker (29.205292ms)
+✔ operation feedback renders untrusted filenames/error text literally (105.235351ms)
+✔ clipboard publication is transactional and returns the exact captured selection (2.39661ms)
+✔ Move to never pastes a previous clipboard when the requested selection is rejected (5.62022ms)
+✔ background Paste retains its opened-menu destination and clipboard after navigation (42.181275ms)
+✔ right-click on Explorer home does not require a selected bucket (28.349301ms)
+✔ send records rejected transport through the existing diagnostic bridge and rethrows once (13.448917ms)
+✔ explicit probe compares provider, API, direct and destination-Worker paths without writes or private export (60.720131ms)
+✔ probe flags incorrect provider bindings and routing configuration; proxy 404 never means automatic missing-object repair (19.17795ms)
+✔ legacy Worker lacks proxy capability explicitly; no speculative transfer or deployment occurs (9.55822ms)
+✔ probe requires Debug, exact bounded file input and configured workers.dev endpoints (6.84871ms)
+✔ probe stops scheduling reads after clear or disable and rejects concurrent invocations (13.062025ms)
+✔ diagnosis does not confuse different files or descendants with identity drift; explicit same-item mismatch is detected (16.64754ms)
+✔ expired diagnoses are unavailable; unknown smoke and connectors cannot imply implemented support (1.149335ms)
+✔ provisioning includes explicit public Worker fetch compatibility without weakening verified transfers (1.491592ms)
+✔ a multi-file 404 cannot borrow an unrelated preview success to imply path divergence (14.949781ms)
+✔ new deployment reads provider routing settings before reporting ready or creating prefix objects (11.635437ms)
+✔ one semantic mapping colors pending, completed, error, mixed and cancelled without trusting message wording (139.333779ms)
+✔ older operation callbacks, stale detail messages and old expiry timers cannot overwrite new feedback (30.009942ms)
+✔ download acceptance stays neutral; only native completion turns green and user cancellation stays neutral (39.918971ms)
+✔ late completion of a previous download leaves a new active download neutral (17.767451ms)
+✔ partial Copy and Delete receipts use amber rather than success or an entirely failed operation (20.533389ms)
+✔ rendered colors have sufficient text contrast for the provided dark and light surface palettes (0.51123ms)
+✔ late folder listing cannot repaint the newer folder or its status (31.951707ms)
+✔ same-bucket transfers stream objects and preserve metadata (138.732086ms)
+✔ cross-bucket transfers stay Worker-to-Worker and keep-both resolves conflicts (36.415157ms)
+✔ folder markers, properties, and batched deletes are real R2 operations (21.079908ms)
+✔ private Explorer reads require auth while explicitly enabled public assets still work (27.817778ms)
+✔ short-lived private preview URLs support ranges for text, PDF, and GLB (25.573205ms)
+✔ ZIP and CBZ archives are listed as virtual folders and selected entries extract safely (20.529394ms)
+✔ archive traversal and malformed archives are rejected (21.803123ms)
+✔ management keeps exact Unicode, punctuation and repeated-slash keys; rename preserves bytes (7.487473ms)
+✔ conditional copies preserve racing destinations and failed verification never reports copied (28.3632ms)
+✔ move deletion rejects changed sources and changed destinations, then confirms exact deletion (6.348927ms)
+✔ large streamed fixture and metadata survive local copy; capabilities reject legacy readiness (1089.946054ms)
+✔ archive extraction conflicts preserve existing destination content (14.759043ms)
+✔ background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content (25.195005ms)
+✔ background rejects incomplete/incorrect destination receipts and never deletes original (9.362838ms)
+✔ background folder copy/rename uses exact descendants; explicit conflicts preserve both sides (13.394217ms)
+✔ instrumented cross-Worker copy records exact read/write/verify timeline with no raw keys or seed (46.738692ms)
+✔ wrong source binding fixture produces structured 404 evidence and mismatch without claiming a production cause (34.26703ms)
+✔ read-only source proxy uses HEAD, rejects redirects and never writes/deletes or reads source bytes (5.667077ms)
+✔ directory collision is reported before any child is merged or source is deleted (10.935825ms)
+✔ directory Keep both preserves the entire existing tree and uses one unused sibling for all incoming children (20.632809ms)
+✔ directory Keep both move verifies the new sibling before deleting exact source children (27.739789ms)
+✔ cross-bucket settings drift fails before transfer/deletion with a structured diagnostic code (59.234108ms)
+✔ directory preflight fails closed on incomplete listings and bounds sibling allocation (37.990695ms)
+✔ remote ingest exact-folder capability preserves Unicode, reserved characters and repeated separators (11.062669ms)
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (207.083636ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (113.805728ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (23.206713ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (69.783269ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (32.616087ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (45.935978ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (77.215976ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (42.476886ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (62.155439ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (631.428257ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (59.568862ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (22.412803ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (21.899507ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (101.399827ms)
+✔ permission failures remain explained with no false success or leaked provider errors (466.757009ms)
+✔ switching files while enabling cannot reopen the old file or overwrite current choices (18.168674ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (22.670032ms)
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (351.773933ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (106.868607ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (118.890771ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (87.437399ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (104.628042ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (96.891502ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (82.309259ms)
+✔ large roll-ups stay bounded, increase exactly and slow down across the last three single steps (6.451977ms)
+✔ completion clicks once after landing; restart cancels obsolete completion and callbacks (2.248991ms)
+✔ reduced motion, unchanged values and counter resets settle without animation or sound (0.415966ms)
+✔ closing during a roll cancels all remaining updates and sound (0.379009ms)
+✔ green zero-delivery state reads READY! and Dashboard opens the existing options page (833.955031ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (115.83105ms)
+✔ failed or canceled login stays red and retryable without resetting the total (209.094167ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (55.072456ms)
+✔ late count response cannot overwrite a newer storage count (34.619392ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (25.026211ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (44.533441ms)
+✔ background accepts a discovered unsaved bucket only after read-only existence validation (11.675406ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (45.479849ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (49.401624ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (26.172519ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (38.0746ms)
+✔ unavailable audio never prevents reaching or saving the verified total (18.933887ms)
+✔ background ingest honors explicit root/deep prefixes and preserves the legacy category route (24.570207ms)
+✔ legacy Worker cannot silently normalize an exact destination before capability verification (21.330832ms)
+✔ all address combinations stay contextual and encode full literal object paths (152.357099ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (67.777473ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (24.53381ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (3.994416ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (31.155073ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (490.833679ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (39.053334ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (2.329865ms)
+✔ public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes (3.070436ms)
+✔ read retry never crosses a newly authorized session (19.120243ms)
+✔ safe reads honor bounded Retry-After; writes are never replayed on 503 (31.15735ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (143.192033ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (10.370557ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (3.754581ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (13.456587ms)
+✔ malformed successful listings cannot masquerade as empty buckets (17.699613ms)
+✔ progressive UI retains selection, emits early results and rejects late query responses (13.206152ms)
+✔ local upload does not replay an ambiguous write or write after an unknown preflight (15.668044ms)
+✔ new installations start at zero and retained history migrates exactly once (14.166506ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (49.26876ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (12.057893ms)
+✔ large counts preserve integer precision and invalid increments are rejected (3.579775ms)
+✔ recording a successful retry retains the previous history cleanup contract (1.727945ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (2.788272ms)
+ℹ tests 216
+ℹ suites 0
+ℹ pass 215
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5677.483667
+
+✖ failing tests:
+
+test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (173.654412ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function showExplorerMenu('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'const goPage=async'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'runExplorerSearch'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type==="cfSearchStart"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'selectExplorerItem'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showWorkspacePreview'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setWorkspacePreviewLightbox'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDownload'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerUploadFiles'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginExplorerRename'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfRenameEntry"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'renameExplorerEntry'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'deleteSelection'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfDeleteObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'deleteExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginNewFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfCreateFolder"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'createExplorerFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showProperties'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjectProperties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'assetCorsControl'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPublicAddresses"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'bucketPublicAddresses'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function enableBucketPublicAccess('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setExplorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'loadExplorerInventory'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfBuckets"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listBuckets'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function loginRequest('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'ensurePrepared'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPrepareBucket"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'preparedProfile'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'openArchive'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfArchiveEntries"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'callBucketWorker'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-objects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-preview"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-menu"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-properties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-operation"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-status"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspaceTarget'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePrefix'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerSelected'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerNextCursor'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePreviewRequestId'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'presetLocationCache'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDestinationMenus'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerOperation'
+  +   }
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///workspace/scratch/9169fc6cb82b/REDOWN/tests/explorer-diagnostic-fixtures.test.mjs:18:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function showExplorerMenu(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'const goPage=async' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'runExplorerSearch' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type==="cfSearchStart"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'selectExplorerItem' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showWorkspacePreview' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setWorkspacePreviewLightbox' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDownload' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerUploadFiles' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginExplorerRename' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfRenameEntry"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'renameExplorerEntry' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'deleteSelection' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfDeleteObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'deleteExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginNewFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfCreateFolder"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'createExplorerFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showProperties' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjectProperties"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'assetCorsControl' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPublicAddresses"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'bucketPublicAddresses' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function enableBucketPublicAccess(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setExplorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'loadExplorerInventory' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfBuckets"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listBuckets' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'async function loginRequest(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'ensurePrepared' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPrepareBucket"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'preparedProfile' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'openArchive' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfArchiveEntries"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'callBucketWorker' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-objects"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-preview"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-menu"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-properties"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-operation"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-status"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspaceTarget' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePrefix' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerSelected' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerNextCursor' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePreviewRequestId' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'presetLocationCache' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDestinationMenus' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerOperation' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

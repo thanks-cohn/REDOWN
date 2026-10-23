@@ -1,0 +1,80 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/debug/DBG-004_LOCAL_UPLOAD_FETCH_FAILURE.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "Non-atomic absent-check/PUT race; File references and queue die with settings page."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedIssues": [
+        "redown.evidence.issue.code-upload-concurrent-create",
+        "redown.evidence.issue.dbg-003"
+      ],
+      "relatedTestFiles": [
+        "tests/cloudflare-files.test.mjs",
+        "tests/upload-location-builder.test.mjs",
+        "tests/upload-request-context.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1405,
+          "path": "extension/options.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf",
+          "symbol": "uploadLocalFiles"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.cloudflare-files.test",
+        "redown.evidence.test.upload-location-builder.test",
+        "redown.evidence.test.upload-request-context.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.local-upload",
+  "kind": "capability",
+  "name": "Upload local files",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.local-upload"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.local-upload"
+  ],
+  "statement": "Preflight exact keys, skip existing objects, reject unknown preflight, PUT through OAuth management API and check response size when supplied.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-files.test",
+        "redown.evidence.test.upload-location-builder.test",
+        "redown.evidence.test.upload-request-context.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}

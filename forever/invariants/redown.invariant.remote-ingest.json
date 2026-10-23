@@ -1,0 +1,50 @@
+{
+  "extensions": {
+    "org.redown": {
+      "authority": "Behavior-derived preservation candidate, not a claim of flawless operation.",
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "knownLimits": [
+        "Unknown-length source buffering and ambiguous network completion must not be described as durable resume."
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 1881,
+          "path": "extension/background.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0",
+          "symbol": "ingestCloudflareAtPrefix"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.invariant.remote-ingest",
+  "kind": "invariant",
+  "name": "Remote URL to R2 preservation boundary",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedCapabilities": [
+    "redown.capability.remote-ingest"
+  ],
+  "scope": [
+    "redown.implementation.remote-ingest"
+  ],
+  "severity": "high",
+  "statement": "Preserve the exact selected account/bucket/prefix; refuse unsupported exact-path Workers before writing; do not equate a returned URL with independently hashed object integrity.",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.download-collisions.test",
+        "redown.evidence.test.popup-destinations.test"
+      ],
+      "expected": "Retain applicable fixture behavior and explicitly add missing acceptance evidence.",
+      "type": "unit-test"
+    }
+  ]
+}

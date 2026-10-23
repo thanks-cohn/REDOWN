@@ -1,0 +1,25 @@
+{
+  "issues": [
+    {
+      "code": "invariant-no-verification",
+      "path": "redown.invariant.gallery",
+      "message": "invariant has no verification"
+    },
+    {
+      "code": "invariant-no-verification",
+      "path": "redown.invariant.local-bridge",
+      "message": "invariant has no verification"
+    },
+    {
+      "code": "invariant-no-verification",
+      "path": "redown.invariant.rfis",
+      "message": "invariant has no verification"
+    },
+    {
+      "code": "invariant-no-verification",
+      "path": "redown.invariant.sample-worker",
+      "message": "invariant has no verification"
+    }
+  ],
+  "issueCount": 4
+}

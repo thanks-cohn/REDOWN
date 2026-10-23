@@ -1,0 +1,55 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "affectedCapabilities": [
+        "redown.capability.explorer.copy",
+        "redown.capability.explorer.move"
+      ],
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "issue": {
+        "assessment": {
+          "confidence": "user-report",
+          "status": "reported",
+          "summary": "Root cause and installed/deployed versions remain unverified."
+        },
+        "id": "EXPLORER-COPY-404-2026-10",
+        "nextAction": "Capture same-operation source/destination evidence using disposable authorized files; do not infer missing data from HTTP404 alone.",
+        "recordedStatus": "open",
+        "severity": "high",
+        "source": {
+          "path": "docs/explorer/COPY_404_CASE.json",
+          "sha256": "340c7c5f1a01380e7232ad584bbb2708e2593624095781771bbafe86d1ab9027"
+        },
+        "sourceKind": "explorer-incident",
+        "state": "open",
+        "title": "Cross-bucket Copy/Move/Paste returns HTTP 404"
+      },
+      "issueId": "EXPLORER-COPY-404-2026-10",
+      "observationState": "recorded-issue-not-automatically-active-defect",
+      "relationshipMeaning": "investigation lead; not established shared cause",
+      "sourceRefs": [
+        {
+          "path": "docs/explorer/COPY_404_CASE.json",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "2dd77051a11a287de95de4085d1ab3ce089e09544f33020ca35b911dd400dce8"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.issue.explorer-copy-404-2026-10",
+  "immutableReference": "8b4e4a66b351dd5331af03568ba6a7e411736186f4fb63e2dc7134685316fcde",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "imported"
+  },
+  "source": "docs/explorer/COPY_404_CASE.json",
+  "statementSupported": "Cross-bucket Copy/Move/Paste returns HTTP 404; recorded status and current assessment are separate; no live closure asserted.",
+  "timestampVersion": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "type": "current-gateway-issue-snapshot"
+}

@@ -1,0 +1,30 @@
+{
+  "commit": "f76056aa59942935cad5ab53f26a78cefedff77d",
+  "files": {
+    "LICENSE": "97fab02a46a83e464d7e679afc1188f440f7b663a0f35374e4fbc8486ad67581",
+    "schemas/capability.schema.json": "e3984fe4719af88cb12b3965cce62b2a111026abee2475c2fa30994b3bb18546",
+    "schemas/common.schema.json": "820c5fd0126e1b353e2b54496beb373f192108ade30f238af65123823b7901e7",
+    "schemas/compatibility-contract.schema.json": "c07e561224da20b570c81c781ce711eb4e2461b8797f6866fd87b03bf4d3e52c",
+    "schemas/constraint.schema.json": "4d6ae1770ca038f5189d35b3d7f1e251739decfa88f2ae126b9b82726b6b99cf",
+    "schemas/decision.schema.json": "a14215ef9ee953b909e70cd456ab13983411703329ba6a9b6a44859d10a8fee2",
+    "schemas/dependency-intent.schema.json": "eac220176beccd53c0c1dc19d09aa7c84124080ca02ee1b82f82460470874d1e",
+    "schemas/evidence.schema.json": "6a4bb407e6fe84e576c8e4d95ff33d23e305ea2beba246e1d23acb40272c45fe",
+    "schemas/implementation.schema.json": "8dc418b00dff42b6e480989817ad0fa99e565157e161f1d446970de2fec6ad0e",
+    "schemas/invariant.schema.json": "e7126899f6871d6a4d6a288b4462a43164766eeccfa215188de7abfc478f0ff4",
+    "schemas/manifest.schema.json": "cb312380c8d5f7ca5aa7e35e16a128ccfe6ab322d68b7c8918355b82e483715e",
+    "schemas/migration.schema.json": "75aa90a16419c6d5aebd42dc4d73d1e1a6a6567d45b49ab017916e776bcbd494",
+    "schemas/project-intent.schema.json": "cca2b71d428316afc548d7605805360a3ca6e7efb96c32d273160496a06a6d8d",
+    "src/canonical.js": "72928b7797efc532acf94e1e81e02725054b3be441601ab121392d81b738f49d",
+    "src/contracts.js": "245bab067930d0ba83e3a2b93313a7d902b9d8562634e03d5d25f579eafa4955",
+    "src/index.js": "4e7524d7ddf411484f7158a1845b5cf78212bbf4b3170d90ebbbe21688fd36d3",
+    "src/json-input.js": "a6138e8337a15236986d949b920598eda2d459a574f64d1ae8c9fe179c4d0c90",
+    "src/lossless-json.js": "4d6d8681f6692c334e08110c568ee9f643139785937a65c12c64e2c96c25368d",
+    "src/lossless-model.js": "79c1bd1b02aaa60b3fe419c1464a39431035ad63750e4a6f2ece17c0d862b4c3",
+    "src/model.js": "18476bdc91f97f7e75a704e10c4971f929371267885316108498440061427cb9",
+    "src/node.js": "f06262c75bac857e01b8beca0fca8f1497fd429289010431ae8d00fcfeab7796",
+    "src/structure.js": "de1814c22f77b676f4ee908d63ece420b559bf733e2479f9143aa4a15129d448"
+  },
+  "license": "MIT",
+  "relationToLegacy": "New isolated reference snapshot. agent/semantic/vendor remains unchanged.",
+  "repository": "thanks-cohn/forever-works"
+}

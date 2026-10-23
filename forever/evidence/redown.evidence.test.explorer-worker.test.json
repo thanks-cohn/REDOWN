@@ -1,0 +1,226 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 0,
+      "outcomes": [
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "same-bucket transfers stream objects and preserve metadata",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "cross-bucket transfers stay Worker-to-Worker and keep-both resolves conflicts",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "folder markers, properties, and batched deletes are real R2 operations",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "private Explorer reads require auth while explicitly enabled public assets still work",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "short-lived private preview URLs support ranges for text, PDF, and GLB",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "ZIP and CBZ archives are listed as virtual folders and selected entries extract safely",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "archive traversal and malformed archives are rejected",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "management keeps exact Unicode, punctuation and repeated-slash keys; rename preserves bytes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "conditional copies preserve racing destinations and failed verification never reports copied",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "move deletion rejects changed sources and changed destinations, then confirms exact deletion",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "large streamed fixture and metadata survive local copy; capabilities reject legacy readiness",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "archive extraction conflicts preserve existing destination content",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "background rejects incomplete/incorrect destination receipts and never deletes original",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "background folder copy/rename uses exact descendants; explicit conflicts preserve both sides",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "instrumented cross-Worker copy records exact read/write/verify timeline with no raw keys or seed",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "wrong source binding fixture produces structured 404 evidence and mismatch without claiming a production cause",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "read-only source proxy uses HEAD, rejects redirects and never writes/deletes or reads source bytes",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "directory collision is reported before any child is merged or source is deleted",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "directory Keep both preserves the entire existing tree and uses one unused sibling for all incoming children",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "directory Keep both move verifies the new sibling before deleting exact source children",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "cross-bucket settings drift fails before transfer/deletion with a structured diagnostic code",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "directory preflight fails closed on incomplete listings and bounds sibling allocation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/explorer-worker.test.mjs",
+          "name": "remote ingest exact-folder capability preserves Unicode, reserved characters and repeated separators",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 24,
+      "sourceRefs": [
+        {
+          "path": "tests/explorer-worker.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.explorer-worker.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/explorer-worker.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

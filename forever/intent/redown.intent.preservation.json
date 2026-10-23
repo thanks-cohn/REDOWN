@@ -1,0 +1,75 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "sourceRefs": []
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.intent.preservation",
+  "kind": "intent",
+  "name": "Preserve current REDOWN behavior and known defects",
+  "nonGoals": [
+    "Treating future proposals as implemented capabilities",
+    "Production redesign or cloud mutation"
+  ],
+  "priorities": [
+    "Current source and executable evidence",
+    "Honest failure and uncertainty records",
+    "Preserve user experience and data boundaries"
+  ],
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "FOREVER_WORKS/POLICY.md: owner current-state instruction, 23 October 2026",
+    "sourceType": "explicit"
+  },
+  "purpose": [
+    "Allow an unfamiliar maintainer to locate current behavior, preserve working features and investigate known bugs."
+  ],
+  "relatedCapabilities": [
+    "redown.capability.authentication",
+    "redown.capability.destinations",
+    "redown.capability.remote-ingest",
+    "redown.capability.local-upload",
+    "redown.capability.worker-provision",
+    "redown.capability.gallery",
+    "redown.capability.rfis",
+    "redown.capability.github-dispatch",
+    "redown.capability.local-bridge",
+    "redown.capability.sample-worker",
+    "redown.capability.diagnostics",
+    "redown.capability.runtime-observation",
+    "redown.capability.toolbar-feedback",
+    "redown.capability.delivery-counter",
+    "redown.capability.storage-ui",
+    "redown.capability.packaging",
+    "redown.capability.explorer.context.menu",
+    "redown.capability.explorer.navigation",
+    "redown.capability.explorer.listing",
+    "redown.capability.explorer.pagination",
+    "redown.capability.explorer.search",
+    "redown.capability.explorer.refresh",
+    "redown.capability.explorer.selection",
+    "redown.capability.explorer.preview",
+    "redown.capability.explorer.lightbox",
+    "redown.capability.explorer.download",
+    "redown.capability.explorer.upload",
+    "redown.capability.explorer.copy",
+    "redown.capability.explorer.move",
+    "redown.capability.explorer.rename",
+    "redown.capability.explorer.delete",
+    "redown.capability.explorer.folder.create",
+    "redown.capability.explorer.properties",
+    "redown.capability.explorer.public.urls",
+    "redown.capability.explorer.clipboard",
+    "redown.capability.explorer.bucket.switch",
+    "redown.capability.explorer.account.switch",
+    "redown.capability.explorer.auth",
+    "redown.capability.explorer.worker.readiness",
+    "redown.capability.explorer.archive"
+  ],
+  "statement": "Capture what currently works and what does not, grounded in source and local tests.",
+  "status": "current-state-observation"
+}

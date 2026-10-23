@@ -1,0 +1,236 @@
+{
+  "confidence": 0,
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "failed": 2,
+      "outcomes": [
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "deepStrictEqual"
+          },
+          "file": "tests/debug-api.test.mjs",
+          "name": "real discovery, case, history, filters and validation are deterministic and honest",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "error": {
+            "code": "ERR_ASSERTION",
+            "name": "AssertionError",
+            "operator": "strictEqual"
+          },
+          "file": "tests/debug-api.test.mjs",
+          "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "fail"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "archived 0.1 semantic golden, unknown fields and inferred provenance survive JSON round trips",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "portable structural fixtures and frozen schema assertions match the lightweight evaluator",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "new unknown optional fields are retained without reinterpreting lifecycle or evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "missing case, bad requests, unsupported operations/versions have stable sanitized errors",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "malformed JSON, non-UTF8, blank lines and truncated JSONL never yield partial query success",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "required fields, types, enum values, bounds and array uniqueness are actually checked",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "every record format version is rejected explicitly; missing versions are structural failures",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "duplicate case/event IDs and paths, mismatched case IDs and missing event links are not hidden",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "recorded chronology and exact physical sequence are validated; dates are never invented or sorted",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "deterministic list ordering and filter semantics do not depend on manifest order",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "source hash drift, missing anchors and absence are freshness warnings, not falsified historical claims",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "path traversal, absolute/Windows paths, NUL and escaping symlinks are rejected for records and evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "internal symlinks work; directories, unavailable roots/files and oversized records fail deterministically",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "operation references resolve exactly; Forever mappings remain unknown rather than invented",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "source confirmation is scoped and requires proof; test pointers never imply test success",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "hypothesis revisions and counterevidence preserve earlier beliefs and latest projection",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "closure requires recorded automation and browser outcomes; reopening retains closure evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "invalid hypothesis, outcome and lifecycle payloads cannot masquerade as verified results",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "immutable API snapshots avoid rescans and refresh only when a new reader is created",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "CLI adapter emits one JSON envelope, legible summaries and exact error/validation exits",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "actual CLI entry point works outside the checkout and exits 2 for invalid corpus validation",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        },
+        {
+          "file": "tests/debug-api.test.mjs",
+          "name": "queries never modify the canonical corpus or cited historical evidence",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "type": "pass"
+        }
+      ],
+      "passed": 22,
+      "sourceRefs": [
+        {
+          "path": "tests/debug-api.test.mjs",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "47361fc0e4a1fbbe36b4849788444c0395f777459ae4c3fe1ebc15bbbb515b4d"
+        }
+      ]
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.evidence.test.debug-api.test",
+  "immutableReference": "a33f17e0893258422e6bd2fbad75d30a34787a3d50f2ad3fdfe61d18edbbb153",
+  "kind": "evidence",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "explicit"
+  },
+  "source": "FOREVER_WORKS/verification/test-events.jsonl",
+  "statementSupported": "Only the named local fixtures in tests/debug-api.test.mjs executed with the outcomes retained below; not a provider/browser pass.",
+  "timestampVersion": "2026-10-23T11:27:00.674Z",
+  "type": "local-test-execution"
+}

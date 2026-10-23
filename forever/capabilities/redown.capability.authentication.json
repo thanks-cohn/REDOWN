@@ -1,0 +1,76 @@
+{
+  "extensions": {
+    "org.redown": {
+      "confidenceMeaning": "0 is a conservative required-field value, not measured probability",
+      "documentation": [
+        "docs/SESSION_AND_DRAG_RECOVERY_REPORT.md"
+      ],
+      "evidenceScope": "offline source/local fixtures; installed Chrome and live provider unverified",
+      "implementationState": "source-present",
+      "installedBrowser": "unknown",
+      "knownLimits": [
+        "No perpetual-session guarantee; offline_access was rejected by registered client."
+      ],
+      "liveProvider": "unknown",
+      "purposeAuthority": "inferred from existing behavior; not owner acceptance of a new feature",
+      "relatedTestFiles": [
+        "tests/cloudflare-login.test.mjs",
+        "tests/cloudflare-reconnect.test.mjs",
+        "tests/cloudflare-session.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "anchorState": "present",
+          "line": 76,
+          "path": "extension/cloudflare-auth.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+          "symbol": "startCloudflareLogin"
+        },
+        {
+          "anchorState": "present",
+          "line": 1,
+          "path": "extension/cloudflare-api.js",
+          "revision": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+          "symbol": "request"
+        }
+      ],
+      "testEvidence": [
+        "redown.evidence.test.cloudflare-login.test",
+        "redown.evidence.test.cloudflare-reconnect.test",
+        "redown.evidence.test.cloudflare-session.test"
+      ],
+      "verificationState": "local-fixtures-pass"
+    }
+  },
+  "foreverVersion": "0.1",
+  "id": "redown.capability.authentication",
+  "kind": "capability",
+  "name": "Cloudflare login and session recovery",
+  "provenance": {
+    "confidence": 0,
+    "reviewStatus": "unreviewed",
+    "sourceReference": "REDOWN@424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+    "sourceType": "inferred"
+  },
+  "relatedImplementations": [
+    "redown.implementation.authentication"
+  ],
+  "relatedInvariants": [
+    "redown.invariant.authentication"
+  ],
+  "statement": "PKCE login, shared token lock and error-specific renewal; refresh-token issuance remains provider/client dependent.",
+  "status": "implemented-with-unverified-boundaries",
+  "verification": [
+    {
+      "evidence": [
+        "redown.evidence.test.cloudflare-login.test",
+        "redown.evidence.test.cloudflare-reconnect.test",
+        "redown.evidence.test.cloudflare-session.test"
+      ],
+      "expected": "Named local fixtures pass; no installed/provider claim.",
+      "type": "unit-test"
+    }
+  ]
+}
