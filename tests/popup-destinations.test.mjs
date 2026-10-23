@@ -42,3 +42,17 @@ test('background accepts a discovered unsaved bucket only after read-only existe
  await vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c);assert.equal(response.ok,true);assert.equal(uploaded,1);
  c.message.destination.bucketName='missing';await assert.rejects(vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c),/no longer available/);assert.equal(uploaded,1);
 });
+
+test('connection light verifies reads and reconnects directly without settings or writes',async()=>{
+ const data=store();let authorized=false;
+ const h=open(data,m=>{
+  if(m.type==='cfAccounts'&&!authorized)return {ok:false};
+  if(m.type==='cfConnect'){authorized=true;return {ok:true,pending:true};}
+  if(m.type==='cfLoginStatus')return {ok:true,phase:'connected'};
+  return provider(m);
+ });try{await settle();const light=h.d.getElementById('connection');assert.equal(light.dataset.state,'disconnected');assert.match(light.getAttribute('aria-label'),/reconnect/);light.click();assert.equal(light.dataset.state,'checking');assert.equal(light.disabled,true);await settle();assert.equal(light.dataset.state,'connected');assert.equal(light.disabled,false);assert.equal(h.calls.filter(m=>m.type==='cfConnect').length,1);assert.equal(h.calls.some(m=>m.type==='ingest'||m.type==='cfProvision'),false);}finally{h.close();}
+});
+test('failed sign-in leaves a retryable red light rather than claiming success',async()=>{
+ const h=open(store(),m=>m.type==='cfAccounts'?{ok:false}:m.type==='cfConnect'?{ok:true,pending:true}:m.type==='cfLoginStatus'?{ok:true,phase:'failed',error:'Sign-in was closed'}:provider(m));
+ try{await settle();h.d.getElementById('connection').click();await settle();assert.equal(h.d.getElementById('connection').dataset.state,'disconnected');assert.equal(h.d.getElementById('connection').disabled,false);assert.match(h.d.getElementById('status').textContent,/closed/);}finally{h.close();}
+});

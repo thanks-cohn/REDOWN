@@ -76,15 +76,15 @@
         {
           "path": "extension/popup.js",
           "symbol": "async function loadFolderLevel(",
-          "line": 45,
-          "sha256": "17f4b0b7b103077b3f76716b6982690a075b906e28eed95d1cb7cf6c2ebe65a8",
+          "line": 77,
+          "sha256": "348d0e2f308c1e70b9b87bb1f78994e929ee9cd9a5982231a876768ce217dbba",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/popup.html",
           "symbol": "id=\"folder-levels\"",
-          "line": 91,
-          "sha256": "5b9cae0b3fa7974aa87ffa08db230bf3c35e764cfdcfd4d2bed34b71e869551c",
+          "line": 93,
+          "sha256": "290d7560ba0ac3eb1c205795122f0d703abfe630843aa21462af2c5cdb49fb9e",
           "evidence": "source-anchor"
         }
       ],
@@ -1687,15 +1687,15 @@
         {
           "path": "extension/popup.js",
           "symbol": "async function loadFolderLevel(",
-          "line": 45,
-          "sha256": "17f4b0b7b103077b3f76716b6982690a075b906e28eed95d1cb7cf6c2ebe65a8",
+          "line": 77,
+          "sha256": "348d0e2f308c1e70b9b87bb1f78994e929ee9cd9a5982231a876768ce217dbba",
           "evidence": "source-anchor"
         },
         {
           "path": "extension/popup.html",
           "symbol": "id=\"folder-levels\"",
-          "line": 91,
-          "sha256": "5b9cae0b3fa7974aa87ffa08db230bf3c35e764cfdcfd4d2bed34b71e869551c",
+          "line": 93,
+          "sha256": "290d7560ba0ac3eb1c205795122f0d703abfe630843aa21462af2c5cdb49fb9e",
           "evidence": "source-anchor"
         }
       ]

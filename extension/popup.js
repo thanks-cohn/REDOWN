@@ -3,6 +3,38 @@ const urlInput=$("url"), filenameInput=$("filename"), profileSelect=$("profile")
 const send=$("send"), setup=$("setup"), status=$("status");
 let popupProfiles=[],folderLevels=[],folderGeneration=0,profileGeneration=0,sending=false;
 let destinationEpoch=0,restoringDestination=false,restoreBlocked=false,hasRestored=false,rememberQueue=Promise.resolve();
+let connectionBusy=false,loginTimer=null,loginDeadline=0;
+function paintConnection(state,label){
+  const button=$("connection");button.dataset.state=state;button.title=label;button.setAttribute("aria-label",label);button.disabled=connectionBusy;
+}
+async function followLogin(){
+  try{
+    const result=await popupDiscovery({type:"cfLoginStatus"});
+    if(!result?.ok)throw Error("Connection status unavailable");
+    if(["opening","authorizing","verifying"].includes(result.phase)){
+      if(Date.now()>loginDeadline)throw Error("Sign-in is taking longer than expected. Click the connection light to retry.");
+      loginTimer=setTimeout(followLogin,1000);return;
+    }
+    connectionBusy=false;
+    if(result.phase!=="connected"&&result.phase!=="complete"&&result.phase!=="success"){
+      // The account read below is the authority for connection readiness.
+      if(["failed","cancelled","canceled"].includes(result.phase))throw Error(result.error||"Sign-in was not completed. Click the connection light to retry.");
+    }
+    await loadProfiles();
+  }catch(error){connectionBusy=false;paintConnection("disconnected","Cloudflare unavailable — click to reconnect");setStatus(error.message||"Could not reconnect. Click the connection light to retry.","bad");}
+}
+$("connection").addEventListener("click",async()=>{
+  if(connectionBusy)return;
+  if($("connection").dataset.state==="connected"){void loadProfiles();return;}
+  connectionBusy=true;paintConnection("checking","Connecting to Cloudflare…");setStatus("Complete Cloudflare sign-in in the window that opens.");
+  try{
+    const result=await popupDiscovery({type:"cfConnect"});
+    if(!result?.ok)throw Error(result?.error||"Could not open Cloudflare sign-in. Click the connection light to retry.");
+    loginDeadline=Date.now()+5*60*1000;await followLogin();
+  }catch(error){connectionBusy=false;paintConnection("disconnected","Cloudflare disconnected — click to reconnect");setStatus(error.message,"bad");}
+});
+globalThis.addEventListener?.("pagehide",()=>clearTimeout(loginTimer));
+if(chrome.storage.session?.get)chrome.storage.session.get("cloudflareLogin").then(stored=>{if(["opening","authorizing","verifying"].includes(stored.cloudflareLogin?.phase)){connectionBusy=true;paintConnection("checking","Connecting to Cloudflare…");loginDeadline=Date.now()+5*60*1000;void followLogin();}}).catch(()=>{});
 const currentProfile=()=>popupProfiles.find(profile=>profile.id===profileSelect.value);
 const selectedPrefix=()=>folderLevels.filter(level=>level.selected).at(-1)?.selected||"";
 function updateDestination(){
@@ -121,10 +153,13 @@ async function loadProfiles(){
   if(generation!==profileGeneration)return;
   let profiles=(stored.profiles||[]).filter(profile=>profile.type!=="github"||stored.betaModeEnabled===true);
   let discoveryWarning="";
+  let connectionConfirmed=false;
+  paintConnection("checking",connectionBusy?"Connecting to Cloudflare…":"Checking Cloudflare connection…");
   if(stored.cloudflareAuth?.accessToken){
     try{
       const response=await popupDiscovery({type:"cfAccounts"});
       if(!response?.ok||!Array.isArray(response.accounts))throw Error("Accounts unavailable");
+      connectionConfirmed=true;
       const accounts=response.accounts,choices=[],discovered=new Set();
       for(let offset=0;offset<accounts.length;offset+=4){
         const batch=accounts.slice(offset,offset+4);
@@ -145,8 +180,9 @@ async function loadProfiles(){
         });
       }
       profiles=[...choices,...profiles.filter(p=>p.type!=="cloudflare-r2")];
-    }catch{discoveryWarning="Buckets could not be refreshed. Saved destinations remain available; reconnect in Settings if needed.";}
+    }catch{discoveryWarning="Buckets could not be refreshed. Saved destinations remain available; click the connection light to reconnect.";}
   }
+  if(!connectionBusy)paintConnection(connectionConfirmed?"connected":"disconnected",connectionConfirmed?"Cloudflare connected — click to check again":"Cloudflare disconnected or unavailable — click to reconnect");
   const previousTarget=currentProfile(),previous=profileSelect.value;
   popupProfiles=profiles;
   profileSelect.replaceChildren();

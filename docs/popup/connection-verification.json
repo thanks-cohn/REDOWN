@@ -1,0 +1,11 @@
+{
+  "recordedAt": "2026-10-23T02:10:58.278578+00:00",
+  "version": "0.5.20",
+  "baselineCommit": "20a22560bd0e43c0d597f475bc2a5b5b51675954",
+  "focusedPassed": 17,
+  "smokePassed": 207,
+  "regressionPassed": 353,
+  "retainedKnownFailures": 7,
+  "newFailures": 0,
+  "scope": "DOM/message mocks; no installed Chrome or live OAuth verification"
+}

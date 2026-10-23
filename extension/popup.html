@@ -22,6 +22,8 @@
     .brand img{width:36px;height:36px;border-radius:11px;box-shadow:0 10px 26px rgba(92,44,190,.28)}
     .wordmark{font-weight:900;letter-spacing:.16em;font-size:17px}
     .tag{font-size:11px;color:var(--muted);margin-top:1px}
+    .header-actions{display:flex;align-items:center;gap:9px}
+    .connection{width:30px;height:30px;border:1px solid #483347;border-radius:50%;background:#1b101b;display:grid;place-items:center;cursor:pointer}.connection span{width:9px;height:9px;border-radius:50%;background:var(--bad);box-shadow:0 0 9px #ff8b9b55}.connection[data-state="connected"] span{background:var(--good);box-shadow:0 0 9px #7ce3b255}.connection[data-state="checking"] span{background:#d4bee9;animation:connection-breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes connection-breathe{50%{opacity:.35;transform:scale(.75)}}@media(prefers-reduced-motion:reduce){.connection[data-state="checking"] span{animation:none}}
     .settings{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);width:34px;height:34px;border-radius:10px;cursor:pointer}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 18px 50px rgba(0,0,0,.22)}
     label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 7px}
@@ -67,7 +69,7 @@
         <img src="icon.svg" alt="">
         <div><div class="wordmark">REDOWN</div><div class="tag">remote in, stored out</div></div>
       </div>
-      <button id="settings" class="settings" title="Destinations">⚙</button>
+      <div class="header-actions"><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span aria-hidden="true"></span></button><button id="settings" class="settings" title="Destinations">⚙</button></div>
     </header>
 
     <div class="card">

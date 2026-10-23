@@ -51,3 +51,7 @@ Worker is exercised against in-memory R2 for unusual-path preservation. See veri
 for final counts. This environment did not verify the installed Chrome popup's native selects,
 visual appearance, clipboard or live provider delivery; DOM/style checks are not visual or
 installed-extension acceptance. Existing browser administrator-policy restrictions remain.
+
+## Connection light — 0.5.20
+
+Top-right Cloudflare light: green means the account API read succeeded; red means disconnected or unavailable and offers direct OAuth reconnect. A restrained pulse indicates checking/sign-in; reduced motion disables the animation. Accessible title/label explains the state without relying on color. Clicking green rechecks accounts; clicking red uses existing cfConnect/cfLoginStatus, never preparation. Sign-in remains background-owned if the popup closes; reopening resumes pending status. OAuth may require user approval. Failed/canceled login stays red and retryable. Green confirms authentication/account access, not Worker health or transfer success. Local tests cover reconnect success and failure; installed Chrome/OAuth visual acceptance remains pending.
