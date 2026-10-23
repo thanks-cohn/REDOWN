@@ -46,3 +46,7 @@ appearance or close existing incidents.
 the owner-directed proposal: the highest aesthetics with easy entry, the
 one-click shtick, and useful, satisfying game-like feedback. Intended philosophy
 and future gamification remain distinct from demonstrated current behavior.
+
+## Phase 2 Beta successor — separate current-source supplement
+
+[PHASE_2_BETA.md](PHASE_2_BETA.md) records the owner-mandated Beta-first release boundary, the isolated simulation foundation, actual source/test paths, recovery policy and requirements for retiring legacy. The checkpoint corpus and its recorded behavior remain historical evidence; no live provider or promotion claim follows from the supplement.

@@ -12,6 +12,8 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'extension'
 FILES = (
+    'beta-explorer.html', 'beta-explorer.css', 'beta-explorer.mjs',
+    'file-engine/schema.json', 'file-engine/contract.mjs', 'file-engine/simulation.mjs', 'file-engine/indexeddb-store.mjs',
     'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
     'hitomi-capture.js', 'menu-reorder.js', 'nested-locations.js',
     'nested-menu-editor.js', 'storage-signals.js', 'public-addresses.js', 'explorer-status.js', 'options.html', 'options.js', 'popup.html',
@@ -39,7 +41,7 @@ def build():
             data = (SOURCE / name).read_bytes()
             assert data[:8] == b'\x89PNG\r\n\x1a\n', f'Not PNG: {name}'
             assert struct.unpack('>II', data[16:24]) == (int(size), int(size)), name
-    for html in ('options.html', 'popup.html'):
+    for html in ('options.html', 'popup.html', 'beta-explorer.html'):
         for ref in re.findall(r'(?:src|href)=["\']([^"\']+)', (SOURCE / html).read_text()):
             if not ref.startswith(('#', 'https:', 'http:', 'data:')):
                 refs.append(ref.split('#')[0].split('?')[0])
