@@ -87,3 +87,17 @@ A REDOWN-specific visual vocabulary must still be developed. Possible representa
 This close correspondence concerns the selected semantic abstraction, not an obligation to expose every internal process or recreate a literal server diagram. A future implementation may replace the machinery while preserving the understandable relationship between the user's action, the represented work and the visible result. The intended effect is a beautiful instrument that feels alive because its visible mechanisms meaningfully follow its real workings.
 
 This remains owner-directed design intent for exploration. No component-to-visual mapping or live telemetry implementation is claimed by adding this caveat.
+
+## Addendum: The Human Desire for Awe — The Love of Wonder
+
+**Status:** owner-directed product axiom, recorded 23 October 2026. This expresses intended experience, not a demonstrated consumer response.
+
+The creator invokes locomotives, trains and cars as examples of a familiar fascination: seeing a powerful machine work before us, understanding something of its movement, and feeling its presence. Software can carry that fascination forward. The desire to feel awe—to appreciate an ingenious mechanism and enjoy watching it accomplish something—is worth designing for.
+
+We should not surrender that instinct in the name of professionalism. Dependability, clarity and mature engineering can coexist with beauty, character and wonder. REDOWN should invite users to feel that something remarkable is working for them, and let them appreciate the workings through a pleasing, desirable and intelligible representation.
+
+The axiom is **the human desire for awe**, also expressed as **the love of wonder**. Give it substance through convincing correspondence between visible mechanisms and actual product activity. Let components appear to cooperate because they really cooperate; let movement acknowledge work because that work is occurring or has been confirmed. Compose those relationships with enough weight, timing, continuity and visual craft that the result feels fulfilling to operate.
+
+Avoid the feeling of theatre: arbitrary machinery running on a loop, invented progress or spectacle detached from the task. An abstract representation can be imaginative and still be truthful. Its fidelity lies in the relationship between the user's action, the represented mechanism and the actual result. Waiting, interruption and uncertainty also deserve coherent expressions within that world.
+
+This is an ambition for sustained craftsmanship, including the small and ordinary interactions. The user should be able to enjoy the instrument repeatedly and discover that its charm has a dependable foundation. Preserve both the working system and the opportunity to experience its workings with fascination.
