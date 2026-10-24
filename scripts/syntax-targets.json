@@ -47,5 +47,20 @@
   "extension/beta-walkthrough-steps.mjs",
   "extension/file-engine/acceptance.mjs",
   "scripts/beta-walkthrough-acceptance.mjs",
-  "scripts/beta-core-acceptance.mjs"
+  "scripts/beta-core-acceptance.mjs",
+  "extension/file-engine/adapters/memory.mjs",
+  "extension/file-engine/adapters/r2-http.mjs",
+  "scripts/r2-lab/catalog.mjs",
+  "scripts/r2-lab/conformance.mjs",
+  "scripts/r2-lab/deployment-plan.mjs",
+  "scripts/r2-lab/file-store.mjs",
+  "scripts/r2-lab/live.mjs",
+  "scripts/r2-lab/prepare.mjs",
+  "scripts/r2-lab/schema.mjs",
+  "scripts/r2-lab/ui.mjs",
+  "worker/laboratory/index.mjs",
+  "extension/file-engine/engine.mjs",
+  "scripts/r2-lab/forever-records.mjs",
+  "scripts/r2-lab/preservation.mjs",
+  "scripts/r2-lab/schema-fixtures.mjs"
 ]

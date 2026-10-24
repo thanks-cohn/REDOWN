@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "run": "f7dcbbe0-afb1-41a7-b71e-524a2d1247fe",
+  "targets": [
+    {
+      "bucket": "test-1-new",
+      "key": "__redown_test__/f7dcbbe0-afb1-41a7-b71e-524a2d1247fe/ui/UI.txt"
+    },
+    {
+      "bucket": "test-3-new",
+      "key": "__redown_test__/f7dcbbe0-afb1-41a7-b71e-524a2d1247fe/ui/UI.txt"
+    }
+  ]
+}

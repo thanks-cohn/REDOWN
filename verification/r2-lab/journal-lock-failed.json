@@ -1,0 +1,1635 @@
+{
+  "version": "1.0.0",
+  "scope": "live R2 through leased four-bucket Worker; oracle bypasses engine/adapter and uses direct R2-binding reads",
+  "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+  "prefix": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/",
+  "sourceCommit": "53093b62c7cf70a21eee05c59075703d457ab321",
+  "fixtureCommit": "4eccf9069342fac51e56eac488fd41925042294c",
+  "finishedAt": "2026-10-24T04:45:06.343Z",
+  "requests": 219,
+  "oracleReadBytes": 9404,
+  "results": [
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-archive.zip",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:11.244Z",
+      "finishedAt": "2026-10-24T04:43:17.351Z",
+      "operationId": "5dd4d5e7-51e3-4eea-b92d-559a2ebd33cd",
+      "expectedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594",
+      "observedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594",
+      "bytes": 146,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-bytes.bin",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:17.351Z",
+      "finishedAt": "2026-10-24T04:43:18.503Z",
+      "operationId": "00cefc97-216c-4c50-8b99-1d7a6d46e29c",
+      "expectedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9",
+      "observedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9",
+      "bytes": 1024,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-data.json",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:18.504Z",
+      "finishedAt": "2026-10-24T04:43:19.635Z",
+      "operationId": "0e1be42f-26c7-4139-b11b-b35eb8ff7659",
+      "expectedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503",
+      "observedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503",
+      "bytes": 38,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-empty.bin",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:19.636Z",
+      "finishedAt": "2026-10-24T04:43:20.504Z",
+      "operationId": "5c973922-3629-425d-9632-4bafa699ddc3",
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-page.html",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:20.504Z",
+      "finishedAt": "2026-10-24T04:43:21.618Z",
+      "operationId": "3f25694f-6be5-4358-8e44-1602b670755b",
+      "expectedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4",
+      "observedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4",
+      "bytes": 67,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-page.pdf",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:21.618Z",
+      "finishedAt": "2026-10-24T04:43:22.858Z",
+      "operationId": "e615f3a6-da3a-4e65-ab48-eef7fb996c17",
+      "expectedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8",
+      "observedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8",
+      "bytes": 412,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-pixel.png",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:22.858Z",
+      "finishedAt": "2026-10-24T04:43:23.889Z",
+      "operationId": "e468a759-8190-4f49-a2ce-8a62eaf33669",
+      "expectedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640",
+      "observedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640",
+      "bytes": 69,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-shape.svg",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:23.890Z",
+      "finishedAt": "2026-10-24T04:43:25.160Z",
+      "operationId": "1b33d010-67f6-476e-8a8e-ab250281137b",
+      "expectedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8",
+      "observedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8",
+      "bytes": 110,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-silence.wav",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:25.161Z",
+      "finishedAt": "2026-10-24T04:43:26.231Z",
+      "operationId": "6e0c2688-5531-40af-833f-ec9aefdabc26",
+      "expectedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068",
+      "observedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068",
+      "bytes": 204,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-table.csv",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:26.232Z",
+      "finishedAt": "2026-10-24T04:43:27.587Z",
+      "operationId": "f26d6dc8-6750-43ec-9455-d0b9896fa04a",
+      "expectedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d",
+      "observedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d",
+      "bytes": 26,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-unicode.txt",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:27.588Z",
+      "finishedAt": "2026-10-24T04:43:28.814Z",
+      "operationId": "0f930601-389f-4f3e-9f34-20bc59543cae",
+      "expectedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320",
+      "observedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320",
+      "bytes": 37,
+      "verification": "independent-readback-sha256",
+      "transport": "cloudflare-worker-remote-fetch"
+    },
+    {
+      "operation": "list",
+      "direction": "test-1-new",
+      "category": "complete-pagination",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:28.814Z",
+      "finishedAt": "2026-10-24T04:43:29.601Z",
+      "expected": 11,
+      "observed": 11
+    },
+    {
+      "operation": "read",
+      "direction": "test-1-new",
+      "category": "range",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:43:29.601Z",
+      "finishedAt": "2026-10-24T04:43:29.955Z",
+      "operationId": "f4c6daeb-566d-4719-ac4e-ab87779676a9",
+      "rangeHash": "fc214461e1b6f9d7bc969a795d96cb6039e07def6d6a7b7788ed521b32b38302"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-1-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:29.955Z",
+      "finishedAt": "2026-10-24T04:43:33.463Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-1-new",
+      "category": "folder-marker",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:33.463Z",
+      "finishedAt": "2026-10-24T04:43:33.977Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:33.978Z",
+      "finishedAt": "2026-10-24T04:43:34.492Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:34.493Z",
+      "finishedAt": "2026-10-24T04:43:35.009Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:35.010Z",
+      "finishedAt": "2026-10-24T04:43:35.524Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:35.525Z",
+      "finishedAt": "2026-10-24T04:43:36.038Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:36.039Z",
+      "finishedAt": "2026-10-24T04:43:36.552Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:36.553Z",
+      "finishedAt": "2026-10-24T04:43:37.071Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:37.072Z",
+      "finishedAt": "2026-10-24T04:43:37.585Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:37.586Z",
+      "finishedAt": "2026-10-24T04:43:38.098Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:38.098Z",
+      "finishedAt": "2026-10-24T04:43:38.612Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:38.612Z",
+      "finishedAt": "2026-10-24T04:43:39.126Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:39.126Z",
+      "finishedAt": "2026-10-24T04:43:39.639Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "list",
+      "direction": "test-2-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:39.639Z",
+      "finishedAt": "2026-10-24T04:43:40.151Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "read",
+      "direction": "test-2-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:40.151Z",
+      "finishedAt": "2026-10-24T04:43:40.663Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-2-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:40.663Z",
+      "finishedAt": "2026-10-24T04:43:41.176Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-2-new",
+      "category": "folder-marker",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:41.176Z",
+      "finishedAt": "2026-10-24T04:43:42.204Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:42.204Z",
+      "finishedAt": "2026-10-24T04:43:42.719Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:42.720Z",
+      "finishedAt": "2026-10-24T04:43:43.232Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:43.233Z",
+      "finishedAt": "2026-10-24T04:43:43.746Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:43.746Z",
+      "finishedAt": "2026-10-24T04:43:44.258Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:44.259Z",
+      "finishedAt": "2026-10-24T04:43:44.772Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:44.772Z",
+      "finishedAt": "2026-10-24T04:43:45.289Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:45.290Z",
+      "finishedAt": "2026-10-24T04:43:45.808Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:45.809Z",
+      "finishedAt": "2026-10-24T04:43:46.328Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:46.329Z",
+      "finishedAt": "2026-10-24T04:43:46.849Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:46.849Z",
+      "finishedAt": "2026-10-24T04:43:47.360Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:47.361Z",
+      "finishedAt": "2026-10-24T04:43:47.874Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "list",
+      "direction": "test-3-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:47.874Z",
+      "finishedAt": "2026-10-24T04:43:48.387Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "read",
+      "direction": "test-3-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:48.387Z",
+      "finishedAt": "2026-10-24T04:43:48.902Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-3-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:48.902Z",
+      "finishedAt": "2026-10-24T04:43:49.417Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-3-new",
+      "category": "folder-marker",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:49.417Z",
+      "finishedAt": "2026-10-24T04:43:50.446Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:50.446Z",
+      "finishedAt": "2026-10-24T04:43:50.958Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:50.958Z",
+      "finishedAt": "2026-10-24T04:43:51.472Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:51.472Z",
+      "finishedAt": "2026-10-24T04:43:51.984Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:51.985Z",
+      "finishedAt": "2026-10-24T04:43:52.500Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:52.500Z",
+      "finishedAt": "2026-10-24T04:43:53.014Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:53.014Z",
+      "finishedAt": "2026-10-24T04:43:53.527Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:53.527Z",
+      "finishedAt": "2026-10-24T04:43:54.040Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:54.041Z",
+      "finishedAt": "2026-10-24T04:43:54.554Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:54.554Z",
+      "finishedAt": "2026-10-24T04:43:55.067Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:55.067Z",
+      "finishedAt": "2026-10-24T04:43:55.580Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:55.581Z",
+      "finishedAt": "2026-10-24T04:43:56.092Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "list",
+      "direction": "test-4-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:56.092Z",
+      "finishedAt": "2026-10-24T04:43:56.610Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "read",
+      "direction": "test-4-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:56.610Z",
+      "finishedAt": "2026-10-24T04:43:57.125Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-4-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:57.125Z",
+      "finishedAt": "2026-10-24T04:43:57.641Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-4-new",
+      "category": "folder-marker",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:57.641Z",
+      "finishedAt": "2026-10-24T04:43:58.674Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:43:58.674Z",
+      "finishedAt": "2026-10-24T04:44:01.717Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:01.717Z",
+      "finishedAt": "2026-10-24T04:44:01.935Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:01.935Z",
+      "finishedAt": "2026-10-24T04:44:02.451Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:02.452Z",
+      "finishedAt": "2026-10-24T04:44:03.147Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:03.147Z",
+      "finishedAt": "2026-10-24T04:44:03.249Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:03.249Z",
+      "finishedAt": "2026-10-24T04:44:03.761Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:03.761Z",
+      "finishedAt": "2026-10-24T04:44:04.480Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:04.480Z",
+      "finishedAt": "2026-10-24T04:44:04.835Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:04.835Z",
+      "finishedAt": "2026-10-24T04:44:05.352Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:05.352Z",
+      "finishedAt": "2026-10-24T04:44:06.050Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:06.050Z",
+      "finishedAt": "2026-10-24T04:44:06.199Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:06.199Z",
+      "finishedAt": "2026-10-24T04:44:06.717Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:06.717Z",
+      "finishedAt": "2026-10-24T04:44:06.817Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:06.817Z",
+      "finishedAt": "2026-10-24T04:44:09.659Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:09.659Z",
+      "finishedAt": "2026-10-24T04:44:10.179Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:10.179Z",
+      "finishedAt": "2026-10-24T04:44:10.291Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:10.291Z",
+      "finishedAt": "2026-10-24T04:44:10.403Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:10.403Z",
+      "finishedAt": "2026-10-24T04:44:10.920Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:10.920Z",
+      "finishedAt": "2026-10-24T04:44:11.018Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:11.018Z",
+      "finishedAt": "2026-10-24T04:44:11.257Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:11.257Z",
+      "finishedAt": "2026-10-24T04:44:11.774Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:11.774Z",
+      "finishedAt": "2026-10-24T04:44:11.893Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:11.893Z",
+      "finishedAt": "2026-10-24T04:44:12.034Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:12.034Z",
+      "finishedAt": "2026-10-24T04:44:12.553Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:12.554Z",
+      "finishedAt": "2026-10-24T04:44:12.772Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:12.772Z",
+      "finishedAt": "2026-10-24T04:44:12.962Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:12.962Z",
+      "finishedAt": "2026-10-24T04:44:13.478Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:13.478Z",
+      "finishedAt": "2026-10-24T04:44:13.740Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:13.740Z",
+      "finishedAt": "2026-10-24T04:44:13.838Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:13.838Z",
+      "finishedAt": "2026-10-24T04:44:14.354Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:14.354Z",
+      "finishedAt": "2026-10-24T04:44:14.597Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:14.597Z",
+      "finishedAt": "2026-10-24T04:44:14.897Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:14.897Z",
+      "finishedAt": "2026-10-24T04:44:15.419Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:15.419Z",
+      "finishedAt": "2026-10-24T04:44:15.671Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:15.671Z",
+      "finishedAt": "2026-10-24T04:44:15.806Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:15.806Z",
+      "finishedAt": "2026-10-24T04:44:16.321Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:16.321Z",
+      "finishedAt": "2026-10-24T04:44:16.442Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:16.442Z",
+      "finishedAt": "2026-10-24T04:44:16.598Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:16.598Z",
+      "finishedAt": "2026-10-24T04:44:17.116Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:17.116Z",
+      "finishedAt": "2026-10-24T04:44:17.253Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:17.253Z",
+      "finishedAt": "2026-10-24T04:44:17.363Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:17.363Z",
+      "finishedAt": "2026-10-24T04:44:17.877Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:17.877Z",
+      "finishedAt": "2026-10-24T04:44:18.015Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:18.015Z",
+      "finishedAt": "2026-10-24T04:44:18.225Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:18.225Z",
+      "finishedAt": "2026-10-24T04:44:18.741Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:18.741Z",
+      "finishedAt": "2026-10-24T04:44:18.876Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:18.876Z",
+      "finishedAt": "2026-10-24T04:44:19.029Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:19.029Z",
+      "finishedAt": "2026-10-24T04:44:19.545Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:19.545Z",
+      "finishedAt": "2026-10-24T04:44:20.062Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:20.062Z",
+      "finishedAt": "2026-10-24T04:44:20.578Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:20.578Z",
+      "finishedAt": "2026-10-24T04:44:21.093Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:44:21.093Z",
+      "finishedAt": "2026-10-24T04:44:21.606Z",
+      "code": "JOURNAL_BUSY"
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-1-new",
+      "category": "authorization",
+      "status": "passed",
+      "expectedPublic": true,
+      "httpStatus": 200
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-2-new",
+      "category": "authorization",
+      "status": "passed",
+      "expectedPublic": false,
+      "httpStatus": 401
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-3-new",
+      "category": "authorization",
+      "status": "passed",
+      "expectedPublic": false,
+      "httpStatus": 401
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-4-new",
+      "category": "authorization",
+      "status": "blocked",
+      "reason": "PUBLIC_READ_MISMATCH"
+    },
+    {
+      "operation": "anonymous-write",
+      "category": "authorization",
+      "status": "passed",
+      "httpStatus": 401
+    }
+  ],
+  "cleanup": [
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/copies/test-1-new.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/copies/test-1-new.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/copies/test-1-new.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/copies/test-1-new.bin"
+      },
+      "absent": true
+    }
+  ],
+  "errors": [],
+  "passed": 17,
+  "failed": 99,
+  "blocked": 1,
+  "releaseReady": false,
+  "limitations": [
+    "Atomic conditional delete/move/rename blocked on R2 binding",
+    "No second distinct real provider",
+    "Multipart/large streaming unavailable beyond 2 MiB",
+    "Installed extension not tested",
+    "R2 search and reverse sorting unsupported",
+    "No complete native filesystem or cross-computer adapter",
+    "Oracle shares lab Worker binding; public fixtures additionally verified over public r2.dev"
+  ]
+}

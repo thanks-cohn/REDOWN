@@ -12,7 +12,7 @@ export function createExplorerAPI({bundle}={}){
   if(!input||typeof input!=='object'||Array.isArray(input))return envelope('failed',null,'INVALID_INPUT');
   if(!methods.includes(operation))return envelope('failed',null,'UNSUPPORTED_OPERATION');
   if(operation==='listSmokePresets')return envelope('available',smoke);
-  if(operation==='getConnectorCapabilities')return envelope('available',smoke.connectors);
+  if(operation==='getConnectorCapabilities')return envelope('available',smoke.connectors.concat([{id:'universal-file-api',state:'partial',api:JSON.parse(readFileSync(new URL('../../extension/file-engine/catalog.json',import.meta.url),'utf8')),readiness:JSON.parse(readFileSync(new URL('../../extension/file-engine/readiness.json',import.meta.url),'utf8')),execution:false,liveMutation:false,evidenceBoundary:'Read-only catalog and recorded evidence; connected execution requires a separate authorized client'}]));
   if(operation==='getSmokePlan'){const preset=smoke.presets.find(p=>p.id===input.preset);return preset?envelope('available',{...preset,command:['node','scripts/explorer-smoke.mjs','--preset',preset.id],scope:smoke.execution,remoteExecution:false}):envelope('failed',null,'UNKNOWN_SMOKE_PRESET');}
   const trace=collector.getOperationTree(input.id),all=collector.exportBundle().operations;
   if(operation==='describeExplorer')return envelope('available',{operations:methods,version:core.VERSION,limits:core.LIMITS,architecture:model,access:'offline/read-only; no execution, credentials or cloud access',unsupported:['live probing','remote execution','Forever authority','unredacted identity export']});

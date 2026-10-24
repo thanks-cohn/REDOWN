@@ -1,0 +1,92 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p2.implementation.engine",
+  "kind": "implementation",
+  "type": "library",
+  "technology": "Portable ES modules, IndexedDB/file journal, capability-based provider adapters and scoped Cloudflare Worker",
+  "version": "0.2.0",
+  "satisfiesCapabilities": [
+    "redown.p2.capability.list",
+    "redown.p2.capability.metadata",
+    "redown.p2.capability.read",
+    "redown.p2.capability.upload",
+    "redown.p2.capability.ingest",
+    "redown.p2.capability.mkdir",
+    "redown.p2.capability.copy",
+    "redown.p2.capability.move",
+    "redown.p2.capability.rename",
+    "redown.p2.capability.delete"
+  ],
+  "constrainedByInvariants": [
+    "redown.p2.invariant.isolation"
+  ],
+  "compatibilityContracts": [
+    "redown.p2.compatibility.beta"
+  ],
+  "sourceLocations": [
+    "extension/file-engine/engine.mjs",
+    "extension/file-engine/simulation.mjs",
+    "extension/file-engine/adapters/memory.mjs",
+    "extension/file-engine/adapters/r2-http.mjs",
+    "extension/beta-explorer.mjs",
+    "worker/laboratory/index.mjs",
+    "tests/universal-file-engine.test.mjs",
+    "tests/r2-laboratory-transport.test.mjs",
+    "scripts/r2-lab/file-store.mjs"
+  ],
+  "replaceability": "Preserve literal identities, schemas, idempotent journal reservation, state/error semantics, destination read-back and safe deletion gates. Port adapters without erasing provider semantics.",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "partial; promotion requires explicit owner approval",
+      "sourceRefs": [
+        {
+          "path": "extension/file-engine/engine.mjs",
+          "sha256": "5324fef3c6c41d60a5fab4edb0d96a7f1eb7396c0a4303cab52536156d21b33c",
+          "symbol": "createFileEngine"
+        },
+        {
+          "path": "extension/file-engine/simulation.mjs",
+          "sha256": "aaf4ceea7d8b4e8a127090e20ce28bbec4a5e187abb0e809bb5f9ce4fb3ae1d0",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "extension/file-engine/adapters/memory.mjs",
+          "sha256": "83a268320e0d5828efd4ce92c9c25d6f3eb247dde601408a0cd88ebdf6497b0a",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "extension/file-engine/adapters/r2-http.mjs",
+          "sha256": "fb66ca0ebce0a29e566fd529f0f8039abfabfa91a622a754327639b308891ff7",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "extension/beta-explorer.mjs",
+          "sha256": "dbc0d539d77732151b93b03df019d28b4c254181529e0cd40c6db540aba4d309",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "worker/laboratory/index.mjs",
+          "sha256": "bcba306e35ef2a83ff8014832c3c4f8b85a5f3c86915a22644097bd7e1a29b3a",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "tests/universal-file-engine.test.mjs",
+          "sha256": "35aa1742d94abbe03aee121bd062e173a4ec14938f150ad0a7059820dc50d954",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "tests/r2-laboratory-transport.test.mjs",
+          "sha256": "0aa76b575c42af5b6669061955123fced260860e2e4e1b7a6ebf86aedb396551",
+          "symbol": "see module exports"
+        },
+        {
+          "path": "scripts/r2-lab/file-store.mjs",
+          "sha256": "01cdd46e6fda04b7fd7549073832722f87fb0e76e0c4fdd0e06108aeaba13865",
+          "symbol": "see module exports"
+        }
+      ],
+      "limitations": "extension/file-engine/readiness.json"
+    }
+  }
+}

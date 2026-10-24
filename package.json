@@ -22,7 +22,16 @@
     "explorer:describe": "node agent/explorer/cli.mjs describeExplorer",
     "explorer:smoke": "node scripts/explorer-smoke.mjs",
     "beta:acceptance": "node scripts/beta-walkthrough-acceptance.mjs",
-    "beta:selftest": "node scripts/beta-core-acceptance.mjs"
+    "beta:selftest": "node scripts/beta-core-acceptance.mjs",
+    "file:unit": "node --test tests/phase2-engine.test.mjs tests/universal-file-engine.test.mjs tests/r2-laboratory-transport.test.mjs tests/universal-file-discovery.test.mjs",
+    "file:schema": "python tests/universal-file-schema.py",
+    "file:catalog": "node scripts/r2-lab/catalog.mjs",
+    "file:preservation": "node scripts/r2-lab/preservation.mjs",
+    "file:verify": "npm run file:unit && npm run file:schema && npm run file:preservation",
+    "file:live": "node scripts/r2-lab/live.mjs",
+    "file:live-ui": "node scripts/r2-lab/ui.mjs",
+    "file:prepare": "node scripts/r2-lab/prepare.mjs",
+    "file:deployment-plan": "node scripts/r2-lab/deployment-plan.mjs"
   },
   "devDependencies": {
     "fake-indexeddb": "6.2.6",

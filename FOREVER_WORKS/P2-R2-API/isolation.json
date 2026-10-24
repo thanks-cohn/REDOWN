@@ -1,0 +1,14 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p2.invariant.isolation",
+  "kind": "invariant",
+  "name": "Beta isolation and safe recovery",
+  "statement": "Preserve production Explorer and records. Gate Beta interface with existing betaModeEnabled. Never replay uncertain writes, duplicate mutations for comparison, or delete an unverified move source. Real lab access is restricted to authorized four-bucket prefixes.",
+  "severity": "critical",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "partial; promotion requires explicit owner approval"
+    }
+  }
+}

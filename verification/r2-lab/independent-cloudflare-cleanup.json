@@ -1,0 +1,90 @@
+{
+  "scope": "Cloudflare management API independent of lab Worker, engine, adapter and journal",
+  "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+  "results": [
+    {
+      "bucket": "test-1-new",
+      "objects": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": [],
+        "status": 200
+      },
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": true,
+          "bucketId": "25920d47f1304399ac6595978b656919",
+          "domain": "pub-25920d47f1304399ac6595978b656919.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-2-new",
+      "objects": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": [],
+        "status": 200
+      },
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": false,
+          "bucketId": "44d63486fe6846e0bdaf64f745b7bcd0",
+          "domain": "pub-44d63486fe6846e0bdaf64f745b7bcd0.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-3-new",
+      "objects": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": [],
+        "status": 200
+      },
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": false,
+          "bucketId": "8e250d1bed29406d83641d1deaf802c1",
+          "domain": "pub-8e250d1bed29406d83641d1deaf802c1.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-4-new",
+      "objects": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": [],
+        "status": 200
+      },
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": true,
+          "bucketId": "0c095f2b1b604cf78451ebbae41e2b1b",
+          "domain": "pub-0c095f2b1b604cf78451ebbae41e2b1b.r2.dev"
+        },
+        "status": 200
+      }
+    }
+  ]
+}

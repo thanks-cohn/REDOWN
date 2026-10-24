@@ -1,0 +1,487 @@
+{
+  "version": "1.0.0",
+  "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+  "prefix": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/",
+  "buckets": [
+    "test-1-new",
+    "test-2-new",
+    "test-3-new",
+    "test-4-new"
+  ],
+  "budgets": {
+    "maxRequests": 2000,
+    "maxBytes": 33554432,
+    "maxObjects": 256,
+    "maxObjectBytes": 2097152
+  },
+  "fixtures": [
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "expectedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "expectedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "expectedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "expectedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "expectedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "expectedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "expectedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "expectedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "expectedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "expectedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "expectedSha256": "1f87aefe2955045a670651ae72cf9d39be2211eeeb102f0da722cfec58d39eb9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "expectedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "expectedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "expectedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "expectedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "expectedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "expectedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "expectedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "expectedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "expectedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "expectedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "expectedSha256": "1f87aefe2955045a670651ae72cf9d39be2211eeeb102f0da722cfec58d39eb9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "expectedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "expectedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "expectedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "expectedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "expectedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "expectedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "expectedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "expectedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "expectedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "expectedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "expectedSha256": "1f87aefe2955045a670651ae72cf9d39be2211eeeb102f0da722cfec58d39eb9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "expectedSha256": "465005a66f1b552af690b18a02dff3d2dd6a356eca3d6cb4558b6a7cbdcb0594"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "expectedSha256": "785b0751fc2c53dc14a4ce3d800e69ef9ce1009eb327ccf458afe09c242c26c9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "expectedSha256": "c8614662d647265c451318c347fadd82d243fe84301630394854ab4afd618503"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "expectedSha256": "65be06ac99928473d3bdff7a012d6ae05ea86f591f245eef0229eaadf93945a4"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "expectedSha256": "12bb439ff3abef87bb4143ffcac5404276ecaca0ce4e82e28824e1dc6b2c45e8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "expectedSha256": "b1ff9c8ea3a780bad09b346c423d2d0e46815926879b18e841d928376a946640"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "expectedSha256": "49a92610bad0a0369eb93ff34bf77285c30846dad61f898ac2312435e528f8f8"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "expectedSha256": "60c0b6c740c791f5d9c1b7d688aa4e6719b93c8f4e7c4b7919ab86ad78b74068"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "expectedSha256": "e7a3929e0913e80f475f937db1615bfa29484299e93ea55d8c87e92770c8078d"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "expectedSha256": "4295e073efc13308ae8f1f94596601c337208ea2e9f1cc6d1a15f23cfdc2b320"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "expectedSha256": "1f87aefe2955045a670651ae72cf9d39be2211eeeb102f0da722cfec58d39eb9"
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "expectedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

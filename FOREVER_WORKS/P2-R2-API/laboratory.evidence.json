@@ -1,0 +1,30 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p2.evidence.laboratory",
+  "kind": "evidence",
+  "type": "integration-test",
+  "source": "verification/r2-lab/live.json",
+  "statementSupported": "Latest live R2 subset: 96 assertions passed, 1 failed, 20 blocked; all 16 copy directions and independent read-back; ordinary Chromium upload/preview/copy verified separately. A journal-related live failure remains unresolved. No universal readiness or complete provider parity established.",
+  "confidence": 1,
+  "immutableReference": "sha256:622649cf9f99a0944fa20bdc08e3d151022c2c77f243cf2d478b55147b32c58e",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "partial; promotion requires explicit owner approval",
+      "evidenceClassification": "live-R2-subset",
+      "failedAttempt": "verification/r2-lab/initial-failed.json",
+      "cleanup": "verification/r2-lab/final-cleanup-and-teardown.json",
+      "browser": "verification/r2-lab/live-ui.json",
+      "tests": [
+        "tests/universal-file-engine.test.mjs",
+        "tests/r2-laboratory-transport.test.mjs"
+      ],
+      "sourceRefs": [
+        {
+          "path": "verification/r2-lab/live.json",
+          "sha256": "622649cf9f99a0944fa20bdc08e3d151022c2c77f243cf2d478b55147b32c58e"
+        }
+      ]
+    }
+  }
+}
