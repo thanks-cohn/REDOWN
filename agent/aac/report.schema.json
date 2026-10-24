@@ -1,0 +1,1453 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:redown:aac:1.0.0:report",
+  "type": "object",
+  "properties": {
+    "aacVersion": {
+      "const": "1.0.0"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "commit",
+        "dirty",
+        "files",
+        "boundary"
+      ],
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object"
+    },
+    "profileTrials": {
+      "type": "object"
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "cold": {
+          "type": "object"
+        },
+        "hot": {
+          "type": "object"
+        },
+        "external": {
+          "type": "object"
+        },
+        "maintenance": {
+          "type": "object"
+        },
+        "restricted": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "cold",
+        "hot",
+        "external",
+        "maintenance",
+        "restricted"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "capabilityCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "graphNodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "graphEdges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "discovery": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "contract": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "execution": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "authorization": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "uiParity": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "observation": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "verification": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "recovery": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "maintenance": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            },
+            "tokenEfficiency": {
+              "type": "object",
+              "properties": {
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "PASS": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "FAIL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "PARTIAL": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "BLOCKED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "UNSUPPORTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "NOT_TESTED": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "PASS",
+                    "FAIL",
+                    "PARTIAL",
+                    "BLOCKED",
+                    "UNSUPPORTED",
+                    "NOT_TESTED"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "percentage": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "partialExcluded": {
+                  "const": true
+                },
+                "notTestedExcluded": {
+                  "const": true
+                }
+              },
+              "required": [
+                "counts",
+                "denominator",
+                "passed",
+                "percentage",
+                "partialExcluded",
+                "notTestedExcluded"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "discovery",
+            "contract",
+            "execution",
+            "authorization",
+            "uiParity",
+            "observation",
+            "verification",
+            "recovery",
+            "maintenance",
+            "tokenEfficiency"
+          ],
+          "additionalProperties": false
+        },
+        "checks": {
+          "type": "object"
+        },
+        "tokenCost": {
+          "type": "object"
+        },
+        "noAggregateScore": {
+          "const": true
+        },
+        "capabilityStatusIsNotFrameworkTestStatus": {
+          "const": true
+        }
+      },
+      "required": [
+        "capabilityCount",
+        "graphNodes",
+        "graphEdges",
+        "coverage",
+        "checks",
+        "tokenCost",
+        "noAggregateScore",
+        "capabilityStatusIsNotFrameworkTestStatus"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^aac\\."
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sourceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "apiOperations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "declared": {
+            "type": "string"
+          },
+          "discovery": {
+            "type": "string"
+          },
+          "dimensions": {
+            "type": "object",
+            "properties": {
+              "discovery": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "contract": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "execution": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "authorization": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "uiParity": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "observation": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "verification": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "recovery": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "maintenance": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              },
+              "tokenEfficiency": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "PASS",
+                      "FAIL",
+                      "PARTIAL",
+                      "BLOCKED",
+                      "UNSUPPORTED",
+                      "NOT_TESTED"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidence"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "discovery",
+              "contract",
+              "execution",
+              "authorization",
+              "uiParity",
+              "observation",
+              "verification",
+              "recovery",
+              "maintenance",
+              "tokenEfficiency"
+            ],
+            "additionalProperties": false
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PARTIAL",
+              "BLOCKED",
+              "UNSUPPORTED",
+              "NOT_TESTED"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "sourceRefs",
+          "apiOperations",
+          "declared",
+          "discovery",
+          "dimensions",
+          "status",
+          "checks"
+        ],
+        "additionalProperties": true
+      },
+      "maxItems": 10000
+    },
+    "graph": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "reference": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "reference"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "relation": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "verified",
+                  "inferred",
+                  "missing",
+                  "blocked"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "relation",
+              "status",
+              "evidence"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "dimension": {
+            "enum": [
+              "discovery",
+              "contract",
+              "execution",
+              "authorization",
+              "uiParity",
+              "observation",
+              "verification",
+              "recovery",
+              "maintenance",
+              "tokenEfficiency"
+            ]
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PARTIAL",
+              "BLOCKED",
+              "UNSUPPORTED",
+              "NOT_TESTED"
+            ]
+          },
+          "evidenceClass": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "dimension",
+          "capabilities",
+          "status",
+          "evidenceClass"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "tasks": {
+      "type": "array"
+    },
+    "blindTrials": {
+      "type": "array"
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PARTIAL",
+              "BLOCKED",
+              "UNSUPPORTED",
+              "NOT_TESTED"
+            ]
+          },
+          "capabilities": {
+            "type": "array"
+          },
+          "finding": {
+            "type": "string"
+          },
+          "boundary": {
+            "type": "string"
+          },
+          "remediation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "severity",
+          "status",
+          "capabilities",
+          "finding",
+          "boundary",
+          "remediation"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "standards": {
+      "type": "object"
+    },
+    "liveEvidence": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "browserEvidence": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "uiStates": {
+      "type": "array"
+    },
+    "evidence": {
+      "type": "array"
+    },
+    "reproduction": {
+      "type": "object"
+    },
+    "certification": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "NOT_CERTIFIED",
+            "CERTIFIED_SCOPED"
+          ]
+        },
+        "safetyGate": {
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "safetyGate",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "aacVersion",
+    "generatedAt",
+    "source",
+    "environment",
+    "profileTrials",
+    "profiles",
+    "summary",
+    "capabilities",
+    "graph",
+    "checks",
+    "tasks",
+    "blindTrials",
+    "gaps",
+    "standards",
+    "liveEvidence",
+    "browserEvidence",
+    "uiStates",
+    "evidence",
+    "reproduction",
+    "certification"
+  ],
+  "additionalProperties": false
+}

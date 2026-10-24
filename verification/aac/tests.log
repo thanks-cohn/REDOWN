@@ -1,0 +1,20 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 aac:test
+> node --test tests/aac.test.mjs
+
+✔ source inventory has stable unique IDs and includes hidden templates, events, routes and each current HTML control (338.849307ms)
+✔ graph traverses the same edges in reverse, references only real nodes and never promotes inferred UI mappings (4.364815ms)
+✔ coverage excludes untested and partial from successful numerator and failures cannot be averaged away (0.599845ms)
+✔ real coordinator tasks succeed while authority escape and runtime/schema drift remain explicit failing conformance findings (575.155262ms)
+✔ actual Beta DOM, engine and IndexedDB show gate enforcement, parity and guide keyboard behavior (180.014994ms)
+✔ read-only gateway discovers AAC with bounded pages; refuses mutation, path injection and arbitrary comparison files (27.657229ms)
+✔ machine report is explicit about safety veto and every check/capability/evidence edge is traceable (7.722721ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1505.260287

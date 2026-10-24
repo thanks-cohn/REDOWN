@@ -67,5 +67,15 @@
   "agent/resources/api.mjs",
   "scripts/resource-atlas-benchmark.mjs",
   "scripts/resource-atlas-forever.mjs",
-  "tests/resource-atlas.test.mjs"
+  "tests/resource-atlas.test.mjs",
+  "agent/aac/model.mjs",
+  "agent/aac/api.mjs",
+  "agent/aac/scenarios.mjs",
+  "agent/aac/ui.mjs",
+  "agent/aac/cli.mjs",
+  "scripts/aac-audit.mjs",
+  "scripts/aac-live.mjs",
+  "scripts/aac-browser.mjs",
+  "scripts/aac-forever.mjs",
+  "tests/aac.test.mjs"
 ]

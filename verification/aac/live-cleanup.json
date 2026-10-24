@@ -1,0 +1,36 @@
+{
+  "run": "0dbd6761-9cba-4864-9d41-0b1d10b485eb",
+  "prefix": "__redown_test__/0dbd6761-9cba-4864-9d41-0b1d10b485eb/",
+  "managementPrefixInspection": [
+    {
+      "bucket": "test-1-new",
+      "status": 200,
+      "empty": true
+    },
+    {
+      "bucket": "test-2-new",
+      "status": 200,
+      "empty": true
+    },
+    {
+      "bucket": "test-3-new",
+      "status": 200,
+      "empty": true
+    },
+    {
+      "bucket": "test-4-new",
+      "status": 200,
+      "empty": true
+    }
+  ],
+  "worker": "redown-p2-lab-0dbd6761",
+  "deletion": {
+    "success": true,
+    "status": 200
+  },
+  "subsequentRead": {
+    "absent": true,
+    "status": 404
+  },
+  "scope": "Independent Cloudflare management connector observations; no bucket or production Worker modified"
+}

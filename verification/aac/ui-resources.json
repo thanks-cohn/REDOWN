@@ -1,0 +1,2049 @@
+{
+  "resourceApiVersion": "1.0.0",
+  "traces": [
+    {
+      "operationId": "2d504e07-64ef-417f-a590-711d7ce9f0b0",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.536Z",
+      "durationMs": 3.3720570000000407,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.537Z",
+          "durationMs": 1.5214960000000701,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.538Z",
+          "durationMs": 0.4906100000000606,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.538Z",
+          "durationMs": 0.523450000000139,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.538Z",
+          "durationMs": 0.33636700000010933,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.538Z",
+          "durationMs": 0.34650299999998424,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.3015949999999066,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.31049800000005234,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.1418740000001435,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.14685099999996964,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.09549399999991692,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.10176299999989169,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.13430300000004536,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.13891899999998714,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.539Z",
+          "durationMs": 0.18639099999995778,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.14009099999998398,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.1472320000000309,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.15467400000011367,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.1593599999998787,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.1506179999998949,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.540Z",
+          "durationMs": 0.15458300000000236,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.543Z",
+          "durationMs": 2.531248999999889,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.536Z",
+        "heapBytes": 84540752,
+        "processBytes": 258113536,
+        "externalBytes": 4478192,
+        "arrayBufferBytes": 348354,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.540Z",
+        "heapBytes": 85241280,
+        "processBytes": 258113536,
+        "externalBytes": 4478473,
+        "arrayBufferBytes": 348603,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "5421b8a3-da61-4fa6-8e7b-93c7bd4221db",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.547Z",
+      "durationMs": 2.6926229999999123,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.548Z",
+          "durationMs": 0.5997950000000856,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.548Z",
+          "durationMs": 0.19409300000006624,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.548Z",
+          "durationMs": 0.1991800000000694,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.548Z",
+          "durationMs": 0.1604820000000018,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.548Z",
+          "durationMs": 0.1639270000000579,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.4701390000000174,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.47542699999985416,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.1692160000000058,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.17301099999986036,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.13883899999996174,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.14271500000018023,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.1528610000000299,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.1558150000000751,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.549Z",
+          "durationMs": 0.17261099999996077,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.24968699999999444,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.2535419999999249,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.19338200000015604,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.19707799999991948,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.22185500000000502,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.550Z",
+          "durationMs": 0.22523000000001048,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.552Z",
+          "durationMs": 1.4322910000000775,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.547Z",
+        "heapBytes": 86505928,
+        "processBytes": 258113536,
+        "externalBytes": 4478473,
+        "arrayBufferBytes": 348603,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.550Z",
+        "heapBytes": 87319640,
+        "processBytes": 258113536,
+        "externalBytes": 4478754,
+        "arrayBufferBytes": 348852,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "eae5863d-aa40-4c87-adca-c449a292249a",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.555Z",
+      "durationMs": 3.5205519999999524,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.555Z",
+          "durationMs": 1.2479130000001533,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.556Z",
+          "durationMs": 0.3813350000000355,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.556Z",
+          "durationMs": 0.38735399999995934,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.556Z",
+          "durationMs": 0.23567499999990105,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.556Z",
+          "durationMs": 0.23940099999981612,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.3815150000000358,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.38611199999991186,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.2860610000000179,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.29019799999991847,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.21248000000014144,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.2168570000001182,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.32534099999998034,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.557Z",
+          "durationMs": 0.3334629999999379,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.3055409999999483,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.24144400000000132,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.2449500000000171,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.241465000000062,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.24452900000005684,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.23757900000009613,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.558Z",
+          "durationMs": 0.24022199999990335,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.561Z",
+          "durationMs": 1.5959179999999833,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.555Z",
+        "heapBytes": 88677176,
+        "processBytes": 258113536,
+        "externalBytes": 4478754,
+        "arrayBufferBytes": 348852,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.558Z",
+        "heapBytes": 89430272,
+        "processBytes": 258113536,
+        "externalBytes": 4479038,
+        "arrayBufferBytes": 349104,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "757b34d6-e28e-4c31-a2ee-5d841aea37df",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.563Z",
+      "durationMs": 4.2192849999999,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.563Z",
+          "durationMs": 0.817442999999912,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.39492600000016864,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.4006449999999404,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.2982399999998506,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.3018660000000182,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.29266099999995276,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.564Z",
+          "durationMs": 0.2957969999999932,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.40203599999995276,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.40594199999986813,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.2851100000000315,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.28886599999987084,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.28640199999995275,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.565Z",
+          "durationMs": 0.289346999999907,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.566Z",
+          "durationMs": 0.3789010000000417,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.566Z",
+          "durationMs": 0.3898789999998371,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.566Z",
+          "durationMs": 0.39496600000006765,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.567Z",
+          "durationMs": 0.44876700000008896,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.567Z",
+          "durationMs": 0.4533839999999145,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.567Z",
+          "durationMs": 0.32901600000013786,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.567Z",
+          "durationMs": 0.33260199999995166,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.569Z",
+          "durationMs": 1.453033000000005,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.563Z",
+        "heapBytes": 90502944,
+        "processBytes": 258244608,
+        "externalBytes": 4479038,
+        "arrayBufferBytes": 349104,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.567Z",
+        "heapBytes": 92050656,
+        "processBytes": 258244608,
+        "externalBytes": 4479322,
+        "arrayBufferBytes": 349356,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "b1f9951e-829f-4219-b7c7-800dd5fa7c6e",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.573Z",
+      "durationMs": 5.8135409999999865,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.573Z",
+          "durationMs": 1.0971460000000661,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.574Z",
+          "durationMs": 0.5507910000001175,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.574Z",
+          "durationMs": 0.557311000000027,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.575Z",
+          "durationMs": 0.37947200000007797,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.575Z",
+          "durationMs": 0.38376900000002934,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.575Z",
+          "durationMs": 0.43691000000012536,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.575Z",
+          "durationMs": 0.4412850000001072,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.6695400000000973,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.6747080000000096,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.36624299999994037,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.3700980000000982,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.3604139999999916,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.576Z",
+          "durationMs": 0.3636380000000372,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.577Z",
+          "durationMs": 0.46577300000012656,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.577Z",
+          "durationMs": 0.47767099999987295,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.577Z",
+          "durationMs": 0.48250800000005256,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.578Z",
+          "durationMs": 0.44625300000006973,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.578Z",
+          "durationMs": 0.450570000000198,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.578Z",
+          "durationMs": 0.48028499999986707,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.578Z",
+          "durationMs": 0.48428100000000995,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.581Z",
+          "durationMs": 1.7125139999998282,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.573Z",
+        "heapBytes": 93472472,
+        "processBytes": 258244608,
+        "externalBytes": 4479557,
+        "arrayBufferBytes": 349559,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.578Z",
+        "heapBytes": 95419624,
+        "processBytes": 258244608,
+        "externalBytes": 4479838,
+        "arrayBufferBytes": 349808,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "b5b09ed5-f4f5-4562-8594-a4eb7b2fc267",
+      "operation": "copy",
+      "startedAt": "2026-10-24T16:32:58.586Z",
+      "durationMs": 11.160519000000022,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.587Z",
+          "durationMs": 1.0494129999999586,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.588Z",
+          "durationMs": 0.6927760000000944,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.588Z",
+          "durationMs": 0.7011780000000272,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.589Z",
+          "durationMs": 0.591041000000132,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.589Z",
+          "durationMs": 0.5981530000001385,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.589Z",
+          "durationMs": 0.5526640000000498,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.589Z",
+          "durationMs": 0.558172999999897,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.590Z",
+          "durationMs": 0.5037099999999555,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.590Z",
+          "durationMs": 0.5082569999999578,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.590Z",
+          "durationMs": 0.485732999999982,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.590Z",
+          "durationMs": 0.49070099999994454,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.591Z",
+          "durationMs": 0.6793450000000121,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.591Z",
+          "durationMs": 0.6847330000000511,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.592Z",
+          "durationMs": 0.4866939999999431,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.592Z",
+          "durationMs": 0.7066569999999501,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.593Z",
+          "durationMs": 0.4684070000000702,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.593Z",
+          "durationMs": 0.4733539999999721,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.593Z",
+          "durationMs": 0.4351970000000165,
+          "error": null
+        },
+        {
+          "phase": "verification",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.593Z",
+          "durationMs": 0.1382690000000366,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.594Z",
+          "durationMs": 0.6629900000000362,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.595Z",
+          "durationMs": 0.8384450000000925,
+          "error": null
+        },
+        {
+          "phase": "verification",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.595Z",
+          "durationMs": 0.10603000000014617,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.596Z",
+          "durationMs": 0.696329999999989,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.596Z",
+          "durationMs": 0.7048630000001594,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.596Z",
+          "durationMs": 0.5142359999999826,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.596Z",
+          "durationMs": 0.5183420000000751,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.597Z",
+          "durationMs": 0.7940380000000005,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.597Z",
+          "durationMs": 0.7987550000000283,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.598Z",
+          "durationMs": 0.5359380000002147,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.598Z",
+          "durationMs": 0.5404249999999138,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.586Z",
+        "heapBytes": 97133120,
+        "processBytes": 258375680,
+        "externalBytes": 4479838,
+        "arrayBufferBytes": 349808,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.598Z",
+        "heapBytes": 100694776,
+        "processBytes": 258375680,
+        "externalBytes": 4480612,
+        "arrayBufferBytes": 350486,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "ccf68436-c89d-4d4c-8015-bf9bbb0b7349",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.601Z",
+      "durationMs": 7.728601000000026,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.602Z",
+          "durationMs": 1.1438959999998133,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.603Z",
+          "durationMs": 0.6157889999999497,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.603Z",
+          "durationMs": 0.6212880000000496,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.604Z",
+          "durationMs": 0.6370509999999285,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.604Z",
+          "durationMs": 0.6415280000001076,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.604Z",
+          "durationMs": 0.617432000000008,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.604Z",
+          "durationMs": 0.6219590000000608,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.605Z",
+          "durationMs": 0.5719530000001214,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.605Z",
+          "durationMs": 0.5761589999999615,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.606Z",
+          "durationMs": 0.6624589999998989,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.606Z",
+          "durationMs": 0.6675270000000637,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.606Z",
+          "durationMs": 0.7160799999999199,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.606Z",
+          "durationMs": 0.7228210000000672,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.607Z",
+          "durationMs": 0.7975329999999303,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.608Z",
+          "durationMs": 0.7131160000001273,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.608Z",
+          "durationMs": 0.7179730000000291,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.608Z",
+          "durationMs": 0.5397740000000795,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.608Z",
+          "durationMs": 0.5433199999999943,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.609Z",
+          "durationMs": 0.7470980000000509,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.609Z",
+          "durationMs": 0.7511540000000423,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.612Z",
+          "durationMs": 1.7323640000001888,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.601Z",
+        "heapBytes": 101819816,
+        "processBytes": 258375680,
+        "externalBytes": 4480612,
+        "arrayBufferBytes": 350486,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.609Z",
+        "heapBytes": 104646960,
+        "processBytes": 258375680,
+        "externalBytes": 4480931,
+        "arrayBufferBytes": 350773,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "d10f826a-c995-4fc2-b7c0-d56359a7791f",
+      "operation": "list",
+      "startedAt": "2026-10-24T16:32:58.623Z",
+      "durationMs": 10.058256000000029,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.624Z",
+          "durationMs": 1.983201999999892,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.626Z",
+          "durationMs": 0.963423000000148,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.626Z",
+          "durationMs": 0.9704239999998663,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.626Z",
+          "durationMs": 0.6818990000001577,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.626Z",
+          "durationMs": 0.6859950000000481,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.627Z",
+          "durationMs": 0.868741,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.627Z",
+          "durationMs": 0.8733979999999519,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.628Z",
+          "durationMs": 0.7241120000001047,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.628Z",
+          "durationMs": 0.7281689999999799,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.629Z",
+          "durationMs": 1.0264680000000226,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.629Z",
+          "durationMs": 1.0317959999999857,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.630Z",
+          "durationMs": 0.742149000000154,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.630Z",
+          "durationMs": 0.7464660000000549,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.631Z",
+          "durationMs": 0.7226709999999912,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.631Z",
+          "durationMs": 0.7316139999998086,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.631Z",
+          "durationMs": 0.7352789999999914,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.632Z",
+          "durationMs": 0.8092410000001564,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.632Z",
+          "durationMs": 0.8133769999999458,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.633Z",
+          "durationMs": 0.737002000000075,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.633Z",
+          "durationMs": 0.7408070000001317,
+          "error": null
+        },
+        {
+          "phase": "ui.render",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.636Z",
+          "durationMs": 1.714627000000064,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.623Z",
+        "heapBytes": 107985912,
+        "processBytes": 260079616,
+        "externalBytes": 4480931,
+        "arrayBufferBytes": 350773,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.633Z",
+        "heapBytes": 111187160,
+        "processBytes": 263225344,
+        "externalBytes": 4481212,
+        "arrayBufferBytes": 351022,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 128
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 128
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "operationId": "cfc450e9-c562-40ec-b2bb-b5dca2eb1b35",
+      "operation": "read",
+      "startedAt": "2026-10-24T16:32:58.641Z",
+      "durationMs": 10.908599000000095,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "ui.input",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.642Z",
+          "durationMs": 1.6342449999999644,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.643Z",
+          "durationMs": 0.855591000000004,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.643Z",
+          "durationMs": 0.8612490000000435,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.644Z",
+          "durationMs": 0.7842339999999695,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.644Z",
+          "durationMs": 0.7887809999999718,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.645Z",
+          "durationMs": 0.8919350000001032,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.645Z",
+          "durationMs": 0.8980349999999362,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.646Z",
+          "durationMs": 0.9550509999999122,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.646Z",
+          "durationMs": 0.9598280000000159,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.647Z",
+          "durationMs": 0.8710040000000845,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.647Z",
+          "durationMs": 0.8784760000000915,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.648Z",
+          "durationMs": 0.9154309999998986,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.648Z",
+          "durationMs": 0.9220119999999952,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T16:32:58.649Z",
+          "durationMs": 1.1808320000000094,
+          "error": null
+        },
+        {
+          "phase": "verification",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.649Z",
+          "durationMs": 0.12642000000005282,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.650Z",
+          "durationMs": 0.8472779999999602,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.650Z",
+          "durationMs": 0.85215600000015,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.651Z",
+          "durationMs": 1.0198080000000118,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.651Z",
+          "durationMs": 1.0244359999999233,
+          "error": null
+        },
+        {
+          "phase": "persistence",
+          "source": "extension/file-engine/indexeddb-store.mjs",
+          "at": "2026-10-24T16:32:58.652Z",
+          "durationMs": 0.9084210000000894,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T16:32:58.652Z",
+          "durationMs": 0.9138990000001286,
+          "error": null
+        },
+        {
+          "phase": "ui.preview",
+          "source": "extension/beta-explorer.mjs",
+          "at": "2026-10-24T16:32:58.654Z",
+          "durationMs": 0.09207900000001246,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T16:32:58.641Z",
+        "heapBytes": 113123728,
+        "processBytes": 265322496,
+        "externalBytes": 4481212,
+        "arrayBufferBytes": 351022,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T16:32:58.652Z",
+        "heapBytes": 116659896,
+        "processBytes": 268861440,
+        "externalBytes": 4481619,
+        "arrayBufferBytes": 351365,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "resourcesAfter": {
+        "event-listener": {
+          "count": 1,
+          "bytes": 0
+        },
+        "metadata-cache": {
+          "count": 1,
+          "bytes": 256
+        },
+        "transfer-buffer": {
+          "count": 0,
+          "bytes": 0
+        }
+      },
+      "error": null
+    }
+  ],
+  "snapshot": {
+    "memory": {
+      "at": "2026-10-24T16:32:58.700Z",
+      "heapBytes": 99513392,
+      "processBytes": 278953984,
+      "externalBytes": 4497517,
+      "arrayBufferBytes": 332837,
+      "provenance": "node.process.memoryUsage",
+      "unavailable": [
+        "worker-memory",
+        "per-operation-heap-attribution",
+        "cpu-percent",
+        "object-url-lifecycle-not-used-by-beta",
+        "thumbnail-cache-not-implemented",
+        "worker-cpu",
+        "exclusive-journal-lock-wait"
+      ]
+    },
+    "resources": {
+      "event-listener": {
+        "count": 1,
+        "bytes": 0
+      },
+      "metadata-cache": {
+        "count": 1,
+        "bytes": 256
+      },
+      "transfer-buffer": {
+        "count": 0,
+        "bytes": 0
+      },
+      "preview": {
+        "count": 1,
+        "bytes": 50
+      }
+    },
+    "storage": "persisted",
+    "storageFailures": 0,
+    "active": 0,
+    "dropped": 0,
+    "limits": {
+      "maxTraces": 64,
+      "maxSpans": 96
+    },
+    "scope": "whole runtime memory; counters cover explicitly instrumented owners only"
+  }
+}

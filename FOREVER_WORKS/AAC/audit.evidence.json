@@ -1,0 +1,38 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.evidence.audit",
+  "kind": "evidence",
+  "type": "integration-test",
+  "source": "verification/aac/baseline.json",
+  "statementSupported": "Initial AAC snapshot inventories 466 capabilities. Conformance is NOT_CERTIFIED; safety gate FAIL. One independent cold trial and scoped live R2/browser evidence are recorded separately; no complete accessibility claim.",
+  "confidence": 1,
+  "immutableReference": "sha256:7af2c5bf92f46fac25e0b2f3212d3e4c8b7f9582a8aebc8fd5db7f223c6fa815",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification.",
+      "evidence": [
+        "verification/aac/schema.json",
+        "verification/aac/tests.log",
+        "verification/aac/blind-trials.json",
+        "verification/aac/browser.json",
+        "verification/aac/browser-controls.json",
+        "verification/aac/live.json",
+        "verification/aac/live-cleanup.json"
+      ],
+      "uncertainty": "Source digests, dirty-snapshot boundary and trial limitations are explicit in the report; no assertion upgrades unknown controls.",
+      "reproduction": [
+        "npm run aac:audit",
+        "npm run aac:schema",
+        "npm run aac:test",
+        "npm run aac:certify"
+      ],
+      "repairComparison": "aac.compareReports with before=baseline after=latest"
+    }
+  }
+}

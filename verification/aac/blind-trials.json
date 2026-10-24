@@ -1,0 +1,232 @@
+[
+  {
+    "trial": "blind-cold",
+    "entryPoint": "docs/aac/START_HERE.md",
+    "scope": "Local simulated files only; no repository writes, cloud, browser, credentials, delegation or human intervention",
+    "actualModelTokenUsage": "unavailable",
+    "tasks": {
+      "discoverCapabilities": {
+        "status": "PASS",
+        "operations": [
+          "list",
+          "metadata",
+          "read",
+          "upload",
+          "ingest",
+          "mkdir",
+          "copy",
+          "move",
+          "rename",
+          "delete"
+        ],
+        "source": "getConnectorCapabilities plus engine.describe",
+        "limits": {
+          "maxBytes": 2097152,
+          "maxTreeObjects": 1000,
+          "maxJobs": 500
+        }
+      },
+      "browseLocate": {
+        "status": "PASS",
+        "rootItems": [
+          "Documents/",
+          "Welcome.txt"
+        ],
+        "located": "Documents/Example.txt"
+      },
+      "copyVerify": {
+        "status": "PASS",
+        "destination": "Blind-copy.txt",
+        "bytes": 28,
+        "sha256": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e",
+        "method": "Fresh raw journal read bypassing engine/adapter result path; shared simulated backing store, not a separate provider",
+        "details": "/tmp/aac-blind-cold-execution.json"
+      },
+      "resources": {
+        "status": "PASS",
+        "bundle": "/tmp/aac-blind-cold-resources.json",
+        "operationId": "6edbd1db-36ef-4651-886d-f74a67f7ae79",
+        "durationMs": 33.26164600000001,
+        "heapBeforeBytes": 8756472,
+        "heapAfterBytes": 8795600,
+        "heapDeltaBytes": 39128,
+        "limitations": "Whole runtime memory, no per-operation heap attribution; overlapping latency phases; local sample only"
+      },
+      "contextMenuMaintenance": {
+        "status": "PARTIAL",
+        "implementation": "extension/background.js:2264 redown-nested-mode saves rightClickMode",
+        "test": "tests/nested-locations.test.mjs:150 native menu mode checkbox changes the same saved setting without downloading anything",
+        "testOutcome": "Target test passes; complete file 13 pass / 1 fail",
+        "failure": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact: TypeError Cannot read properties of null (reading dispatchEvent), tests/nested-locations.test.mjs:229",
+        "gap": "Initially selected redown-manage has implementation openOptionsPage at background.js:2268, but graph reports missing test relationship. Repository search found a different concrete context-menu operation with an explicit test.",
+        "observedOriginalStatus": "PASS_WITH_GAP"
+      },
+      "newAdapter": {
+        "status": "PASS",
+        "steps": [
+          "Implement adapter id, capabilities, assertIdentity and stat/list/read/create/delete following memory adapter and engine interface.",
+          "Inject adapter into createFileEngine adapters; negotiate describe().providers; require explicit authorize(request) for real providers.",
+          "Declare atomic create and conditional delete honestly; preserve identity, 2 MiB and destructive-operation gates; verify destination bytes afresh.",
+          "Extend tests/universal-file-engine.test.mjs for identity, malformed replies, authorization, conflicts, uncertainty and no blind retry; reuse scripts/r2-lab/conformance.mjs with independent oracle for real provider acceptance.",
+          "Update catalog/readiness mappings and keep production Explorer isolated; simulation alone does not certify provider."
+        ]
+      }
+    },
+    "humanIntervention": [],
+    "blockers": [
+      {
+        "kind": "test_failure",
+        "message": "Existing nested-locations whole-file test fails as recorded; targeted context-menu test passed."
+      },
+      {
+        "kind": "discovery_gap",
+        "message": "Context-menu graph links generic missing test node, requiring manual repository search."
+      }
+    ],
+    "shortcuts": [],
+    "unnecessaryDiscovery": [
+      {
+        "step": "Repeated describe invocation",
+        "reason": "Tool logging attempted unavailable TextEncoder in orchestration, discarded first result; repeated solely to recover output.",
+        "classification": "avoidable tool-handling overhead"
+      },
+      {
+        "step": "Read entire universal-file-engine test file first 100 lines",
+        "reason": "Useful adapter conformance details but broader than needed for simple browse/copy; compact adapter contract would reduce discovery.",
+        "classification": "partly avoidable broad read"
+      },
+      {
+        "step": "Full getConnectorCapabilities output",
+        "reason": "Documented operation returned broad Explorer and readiness inventory; combined output was truncated in tool rendering.",
+        "classification": "interface verbosity overhead, not skipped discovery"
+      }
+    ],
+    "implementationAwareMaterial": {
+      "read": [
+        "extension/file-engine/adapters/memory.mjs",
+        "scripts/r2-lab/file-store.mjs",
+        "extension/file-engine/simulation.mjs",
+        "extension/file-engine/engine.mjs",
+        "tests/universal-file-engine.test.mjs"
+      ],
+      "scenarioHarnessRead": false,
+      "note": "All reached through entry-point docs/source references or their imports; custom execution script written to /tmp, not AAC scenarios."
+    },
+    "commands": [
+      {
+        "command": "cat docs/aac/START_HERE.md",
+        "outputBytes": 4178,
+        "note": "Exact bytes measured with wc -c after reading"
+      },
+      {
+        "command": "node agent/aac/cli.mjs describe",
+        "outputBytes": 1716,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/aac/cli.mjs listCapabilities --input '{\"limit\":10}'",
+        "outputBytes": 7128,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/diagnostics/cli.mjs getConnectorCapabilities",
+        "outputBytes": 16565,
+        "exitCode": 0
+      },
+      {
+        "command": "cat docs/phase2/UNIVERSAL_API_LAB.md",
+        "outputBytes": 13141,
+        "exitCode": 0
+      },
+      {
+        "command": "cat extension/file-engine/adapters/memory.mjs",
+        "outputBytes": 2715,
+        "exitCode": 0
+      },
+      {
+        "command": "cat scripts/r2-lab/file-store.mjs",
+        "outputBytes": 2054,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/aac/cli.mjs getCapability --input '{\"id\":\"aac.contextmenu.redown-manage\"}'",
+        "outputBytes": 2196,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/aac/cli.mjs traverseGraph --input '{\"id\":\"aac.contextmenu.redown-manage\",\"direction\":\"forward\",\"depth\":2,\"limit\":15}'",
+        "outputBytes": 3749,
+        "exitCode": 0
+      },
+      {
+        "command": "cat docs/phase2/RESOURCE_ATLAS.md",
+        "outputBytes": 10012,
+        "exitCode": 0
+      },
+      {
+        "command": "rg -n 'describe|async run|operation.*list|query|resources|return \\{' extension/file-engine/engine.mjs",
+        "outputBytes": 9780,
+        "exitCode": 0
+      },
+      {
+        "command": "cat extension/file-engine/simulation.mjs",
+        "outputBytes": 3259,
+        "exitCode": 0
+      },
+      {
+        "command": "rg -n 'redown-manage|contextMenus' extension/background.js tests",
+        "outputBytes": 2835,
+        "exitCode": 0
+      },
+      {
+        "command": "sed -n '1,100p' tests/universal-file-engine.test.mjs",
+        "outputBytes": 12413,
+        "exitCode": 0
+      },
+      {
+        "command": "cat > /tmp/aac-blind-cold-run.mjs <<'EOF'\nimport {createFileEngine} from '/workspace/scratch/27fa6ff6c3a9/REDOWN/extension/file-engine/engine.mjs';\nimport {memoryAdapter} from '/workspace/scratch/27fa6ff6c3a9/REDOWN/extension/file-engine/adapters/memory.mjs';\nimport {fileStore} from '/workspace/scratch/27fa6ff6c3a9/REDOWN/scripts/r2-lab/file-store.mjs';\nimport {readFile,writeFile,mkdtemp} from 'node:fs/promises';\nimport {createHash} from 'node:crypto';\nconst dir=await mkdtemp('/tmp/aac-blind-cold-'), path=dir+'/journal.json',store=fileStore(path),engine=createFileEngine({store,adapters:[memoryAdapter(store,'fake-r2')]});\nconst identity=key=>({provider:'fake-r2',account:'demo',container:'sandbox',key});\nconst run=(operation,props)=>engine.run({apiVersion:'0.2.0',operation,idempotencyKey:'blind-'+operation,...props});\nconst browse=await run('list',{source:identity('')});\nconst locate=await engine.run({apiVersion:'0.2.0',operation:'list',idempotencyKey:'blind-locate',source:identity('Documents/'),query:'Example'});\nconst key=locate.result.objects[0].key;\nconst copy=await run('copy',{source:identity(key),destination:identity('Blind-copy.txt')});\nconst raw=JSON.parse(await readFile(path,'utf8'));\nconst object=k=>raw.objects.find(o=>o.provider==='fake-r2'&&o.account==='demo'&&o.container==='sandbox'&&o.key===k);\nconst bytes=o=>o.bytesBase64!==undefined?Buffer.from(o.bytesBase64,'base64'):Buffer.from(o.content);\nconst hash=b=>createHash('sha256').update(b).digest('hex');\nconst a=bytes(object(key)),b=bytes(object('Blind-copy.txt'));\nconst output={directory:dir,capabilities:engine.describe(),browse,locate,copy,independentVerification:{method:'Direct fresh journal file read; bypass engine and adapter results, shared simulated backing store',sourceSha256:hash(a),destinationSha256:hash(b),sourceBytes:a.length,destinationBytes:b.length,equal:a.equals(b)}};\nawait writeFile('/tmp/aac-blind-cold-execution.json',JSON.stringify(output,null,2));\nawait writeFile('/tmp/aac-blind-cold-resources.json',JSON.stringify(await engine.resources.exportEvidence(),null,2));\nconsole.log(JSON.stringify({capabilities:output.capabilities,browse:browse.result,locate:locate.result,copy:{id:copy.id,state:copy.state,receipt:copy.receipt},independentVerification:output.independentVerification}));\nEOF\nnode /tmp/aac-blind-cold-run.mjs",
+        "outputBytes": 1958,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/diagnostics/cli.mjs resources.listTraces --resource-bundle /tmp/aac-blind-cold-resources.json",
+        "outputBytes": 1601,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/diagnostics/cli.mjs resources.getLatencyBreakdown --resource-bundle /tmp/aac-blind-cold-resources.json --input '{\"operationId\":\"6edbd1db-36ef-4651-886d-f74a67f7ae79\"}'",
+        "outputBytes": 1666,
+        "exitCode": 0
+      },
+      {
+        "command": "node agent/diagnostics/cli.mjs resources.getMemoryProfile --resource-bundle /tmp/aac-blind-cold-resources.json --input '{\"operationId\":\"6edbd1db-36ef-4651-886d-f74a67f7ae79\"}'",
+        "outputBytes": 2161,
+        "exitCode": 0
+      },
+      {
+        "command": "sed -n '140,180p' tests/nested-locations.test.mjs",
+        "outputBytes": 2733,
+        "exitCode": 0
+      },
+      {
+        "command": "sed -n '2260,2290p' extension/background.js",
+        "outputBytes": 1938,
+        "exitCode": 0
+      },
+      {
+        "command": "node --test tests/nested-locations.test.mjs",
+        "outputBytes": 2091,
+        "exitCode": 1
+      }
+    ],
+    "id": "AAC-BLIND-COLD-001",
+    "sourceCommit": "782c9c2b1f33ac0bdf8103abf3f4c65627b6c8fa",
+    "frameworkWorkingSnapshot": "AAC uncommitted implementation under test; entry point digest retained",
+    "entryPointSha256": "e7e280e9a63d193b84c1531cc2c6e136485e58e944f44bd0a6a1d2d531b3655a",
+    "loggedCommandCount": 21,
+    "measuredLoggedOutputBytes": 105889,
+    "toolCallCount": null,
+    "sampleSize": 1,
+    "generalization": "One independent cold agent; no model-population certification"
+  }
+]

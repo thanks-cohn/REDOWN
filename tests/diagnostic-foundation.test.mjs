@@ -14,7 +14,7 @@ test('incomplete, timed-out and malformed test executions cannot satisfy the gat
  const resolved=evaluateRegression({events:[pass],baseline,exitCode:0});assert.equal(resolved.state,'passed');assert.equal(resolved.baselineResolved.length,1);
 });
 test('unified diagnostics discovers existing namespaces without advertising execution',()=>{
- const api=createDiagnosticAPI(),d=api.query('describe');assert.equal(d.data.execution,false);assert.equal(d.data.liveAccess,false);assert.equal(d.data.namespaces.length,6);assert.equal(api.query('repair').state,'failed');assert.equal(api.query('describe',{command:'rm'}).error.code,'INVALID_INPUT');d.data.namespaces.length=0;assert.equal(api.query('describe').data.namespaces.length,6);
+ const api=createDiagnosticAPI(),d=api.query('describe');assert.equal(d.data.execution,false);assert.equal(d.data.liveAccess,false);assert.equal(d.data.namespaces.length,7);assert.equal(api.query('repair').state,'failed');assert.equal(api.query('describe',{command:'rm'}).error.code,'INVALID_INPUT');d.data.namespaces.length=0;assert.equal(api.query('describe').data.namespaces.length,7);
 });
 test('project map reports current source and explicit coverage gaps without claiming total understanding',()=>{
  const result=createDiagnosticAPI().query('getProjectMap');assert.equal(result.state,'partial');assert.ok(result.data.subsystems.every(s=>s.source.state==='present'&&/^[a-f0-9]{64}$/.test(s.source.sha256)));assert.match(result.data.subsystems.find(s=>s.id==='local-bridge').boundary,/No general/);

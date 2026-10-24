@@ -1,3 +1,4 @@
+import {createAACAPI} from '../aac/api.mjs';
 import {createResourceAPI} from '../resources/api.mjs';
 // Reuse existing libraries; no shell, network, browser session, preparation or dynamic module path.
 import {createAgentApi} from '../api.mjs';
@@ -7,6 +8,6 @@ import {createRuntimeDiagnostics,inspectBundle} from '../runtime/api.mjs';
 import {createExplorerAPI} from '../explorer/api.mjs';
 export function createAdapters({bundle,runtimeBundle,resourceBundle}={}){
  const instances=new Map();
- const factories={resources:()=>createResourceAPI({resourceBundle}),project:()=>createAgentApi(),debug:()=>createDebugApi(),semantic:()=>createSemanticApi(),runtime:()=>runtimeBundle?inspectBundle(runtimeBundle):createRuntimeDiagnostics({context:'offline'}),explorer:()=>createExplorerAPI({bundle})};
+ const factories={aac:()=>createAACAPI(),resources:()=>createResourceAPI({resourceBundle}),project:()=>createAgentApi(),debug:()=>createDebugApi(),semantic:()=>createSemanticApi(),runtime:()=>runtimeBundle?inspectBundle(runtimeBundle):createRuntimeDiagnostics({context:'offline'}),explorer:()=>createExplorerAPI({bundle})};
  return {get(namespace){if(!Object.hasOwn(factories,namespace))throw Error('UNKNOWN_NAMESPACE');if(!instances.has(namespace))instances.set(namespace,factories[namespace]());return instances.get(namespace);}};
 }

@@ -1,0 +1,26 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.capability.audit",
+  "kind": "capability",
+  "name": "Repeatable agent accessibility conformance",
+  "statement": "Discover meaningful software surfaces, traverse capability relationships in both directions, execute permitted reproducible trials, expose dimension/profile coverage and ranked gaps, and verify improvements after repair without relying on original implementers.",
+  "status": "partial",
+  "criticality": "essential",
+  "relatedInvariants": [
+    "redown.aac.invariant.honest-evidence"
+  ],
+  "relatedImplementations": [
+    "redown.aac.implementation.framework"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification."
+    }
+  }
+}

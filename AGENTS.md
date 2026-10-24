@@ -181,3 +181,18 @@ The existing gateway exposes ten read-only `resources.*` methods. Start with
 72 passed / 29 failed / 16 blocked assertions, with cleanup independently confirmed.
 Do not declare Phase 2.4 complete or merge this branch as verified acceptance. Preserve
 failed evidence, production Explorer isolation and all four-bucket safety restrictions.
+
+## Agent Accessibility Conformance (AAC 1.0.0)
+
+Cold entry: `docs/aac/START_HERE.md`; methodology: `docs/aac/SPECIFICATION.md`.
+The existing read-only diagnostics gateway owns the additive `aac.*` namespace.
+Run `node agent/aac/cli.mjs describe`, `getReport`, and `listGaps`; use bounded
+`listCapabilities`, `getCapability`, `traverseGraph` and `getReproduction` queries.
+`npm run aac:audit` records scoped findings; `aac:test` and `aac:schema` verify the
+framework. `aac:certify` is a separate gate and is currently expected to fail.
+The audit reproduces a privileged engine-handle journal escape and a Resource Atlas
+runtime/schema mismatch. Neither is an offline gateway execution privilege.
+Keep restricted clients on the gateway; never distribute an engine/adapter/store
+as read-only. Do not remove failing conformance findings to make the framework green.
+New source/runtime/blind/live evidence remains distinct from full certification.
+Fresh four-bucket and ordinary Chromium subsets pass, but do not erase older failures.

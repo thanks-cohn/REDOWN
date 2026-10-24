@@ -1,0 +1,104 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.implementation.framework",
+  "kind": "implementation",
+  "type": "library",
+  "technology": "Node ES modules, existing diagnostics gateway, JSDOM/fake IndexedDB, existing ordinary Chromium harness, JSON Schema and scoped R2 laboratory",
+  "version": "1.0.0",
+  "satisfiesCapabilities": [
+    "redown.aac.capability.audit"
+  ],
+  "constrainedByInvariants": [
+    "redown.aac.invariant.honest-evidence"
+  ],
+  "compatibilityContracts": [
+    "redown.aac.compatibility.inspection"
+  ],
+  "sourceLocations": [
+    "agent/aac/model.mjs",
+    "agent/aac/scenarios.mjs",
+    "agent/aac/ui.mjs",
+    "agent/aac/api.mjs",
+    "agent/aac/cli.mjs",
+    "agent/aac/profile.json",
+    "agent/aac/report.schema.json",
+    "scripts/aac-audit.mjs",
+    "scripts/aac-live.mjs",
+    "scripts/aac-browser.mjs",
+    "tests/aac.test.mjs",
+    "tests/aac-schema.py",
+    "docs/aac/SPECIFICATION.md",
+    "docs/aac/START_HERE.md"
+  ],
+  "replaceability": "Reconstruct inventory from real sources, declarations and runtime snapshots. Reuse the canonical file coordinator. Reproduce scripted and independent blind tasks, source-bound negative controls and conservative coverage math before any certification.",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification.",
+      "sourceRefs": [
+        {
+          "path": "agent/aac/model.mjs",
+          "sha256": "ae2d395906f31a2dea5bf670e5b506053ae534a26189aaf14c90be0c053774e4"
+        },
+        {
+          "path": "agent/aac/scenarios.mjs",
+          "sha256": "89cd733fed394e4c56ef671a5724baa4277778d76552354f40b3c68cefa92bde"
+        },
+        {
+          "path": "agent/aac/ui.mjs",
+          "sha256": "4ab669d55f236c80ceb47dee4d3a68891bb4315f785edf99722fdf7c9f8ff95a"
+        },
+        {
+          "path": "agent/aac/api.mjs",
+          "sha256": "4629f777ff5638a63fc0d39588d1c50d51111bae83fd1b5c974b3ead47db8606"
+        },
+        {
+          "path": "agent/aac/cli.mjs",
+          "sha256": "d4baca3f58a7ec3bb8c3a40e7c1de4565045fb9e9f9da17ffdc2c440e717c968"
+        },
+        {
+          "path": "agent/aac/profile.json",
+          "sha256": "8f6e39933cdad4793bdaba5f7341c9900791ca86168e1d317ef2bb9cf97a0dd5"
+        },
+        {
+          "path": "agent/aac/report.schema.json",
+          "sha256": "f96d8624eee428708aa6547a1bec1c3faebb9170f9d471906645d713698d2389"
+        },
+        {
+          "path": "scripts/aac-audit.mjs",
+          "sha256": "9b76b2dc824c6e5d74dd799dfb1e99e47fe5f8a3acade34b9e3b560fb4c5a26a"
+        },
+        {
+          "path": "scripts/aac-live.mjs",
+          "sha256": "b8eb9ca7dcb96f62efaf00f6aab4678ac6304ccbebe478d65d66791558cc5684"
+        },
+        {
+          "path": "scripts/aac-browser.mjs",
+          "sha256": "bfd2d1e97033d534e151ce5b5411650072f51cf43e2b0d6f3c00eb1bb37c5fe2"
+        },
+        {
+          "path": "tests/aac.test.mjs",
+          "sha256": "3b44f5f9b92a546b376b4397f50d550fb89144463f3548a12f9eaf31b903e91e"
+        },
+        {
+          "path": "tests/aac-schema.py",
+          "sha256": "75a4e38862fdcb6876898fd310dee6e6e1d27f430cb317eaee75f01e66881ffe"
+        },
+        {
+          "path": "docs/aac/SPECIFICATION.md",
+          "sha256": "cf0a2aa59874f3ecda5178ba9ec6ed928775dfe11e70bb91fc6056b11462bc6f"
+        },
+        {
+          "path": "docs/aac/START_HERE.md",
+          "sha256": "e7e280e9a63d193b84c1531cc2c6e136485e58e944f44bd0a6a1d2d531b3655a"
+        }
+      ],
+      "standards": "agent/aac/profile.json"
+    }
+  }
+}

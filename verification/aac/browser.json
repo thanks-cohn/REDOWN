@@ -1,0 +1,409 @@
+{
+  "version": "1.0.0",
+  "sourceCommit": "782c9c2b1f33ac0bdf8103abf3f4c65627b6c8fa",
+  "sourceFiles": [
+    {
+      "path": "extension/beta-explorer.html",
+      "sha256": "fb8b5ca9db3b69b89d7bcbedbb4c608bbffe6074d4c34f42219a78c57e4fe0fb"
+    },
+    {
+      "path": "extension/beta-explorer.css",
+      "sha256": "e41a3a0e66b00cbf3fb156797b98c6bbf992c2af5f4ede49235747bd2c895113"
+    },
+    {
+      "path": "extension/beta-explorer.mjs",
+      "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c"
+    },
+    {
+      "path": "extension/beta-walkthrough.mjs",
+      "sha256": "7c67da8485b090fa7e5d997d0d9618c28bd4bc37e38f90d5967a0e2370f10010"
+    },
+    {
+      "path": "extension/beta-walkthrough-steps.mjs",
+      "sha256": "d40050a5b572c846d27782b66c66540405667d66e3daa615267122ccc86b66f8"
+    },
+    {
+      "path": "extension/file-engine/simulation.mjs",
+      "sha256": "573b2a29ef2df1f192d3d22ecaa615f36334c998c73ad73bfb1289e34782bad5"
+    },
+    {
+      "path": "extension/file-engine/acceptance.mjs",
+      "sha256": "ee764edb69e64525e14315e498c1e8046843e9641cca0124175ecb2dcd183a44"
+    },
+    {
+      "path": "scripts/beta-walkthrough-acceptance.mjs",
+      "sha256": "5e43c94485cd94a674354cbdd111523f3b99b49a9062c0f397405205ff80ee81"
+    }
+  ],
+  "readiness": {
+    "releaseReady": false,
+    "scope": "simulation foundation",
+    "requiredBeforeRelease": [
+      "real R2 adapter and authorized byte-integrity acceptance",
+      "second real provider with the same explorer contract",
+      "local filesystem adapter and permission model",
+      "binary upload/download and media preview",
+      "durable interrupted-job recovery and safe reconciliation",
+      "installed-extension security/accessibility/performance acceptance",
+      "published competitor workflow benchmarks"
+    ],
+    "future": [
+      "authorized cross-computer transport and device identity"
+    ]
+  },
+  "scope": "automated ordinary Chromium; fresh isolated profile, actual UI/shared engine/IndexedDB, mocked Chrome setting, no cloud/provider certification",
+  "browser": "153.0.8010.0",
+  "finishedAt": "2026-10-24T16:26:07.394Z",
+  "passed": 34,
+  "failed": 0,
+  "results": [
+    {
+      "stepId": "welcome",
+      "state": "passed",
+      "durationMs": 59,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "storage",
+      "state": "passed",
+      "durationMs": 60,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "navigation",
+      "state": "passed",
+      "durationMs": 149,
+      "evidence": {},
+      "operationIds": [
+        "fa620dda-b2c8-4fb3-8220-70dd6cb2cc2c",
+        "37e4f186-29b8-48e7-8c8e-2f2a0103b1c4"
+      ]
+    },
+    {
+      "stepId": "files",
+      "state": "passed",
+      "durationMs": 65,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "help",
+      "state": "passed",
+      "durationMs": 270,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "browse",
+      "state": "passed",
+      "durationMs": 66,
+      "evidence": {},
+      "operationIds": [
+        "6d0e48e3-e41a-4da6-a4fc-442b27a0e29d"
+      ]
+    },
+    {
+      "stepId": "selection",
+      "state": "passed",
+      "durationMs": 56,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "details",
+      "state": "passed",
+      "durationMs": 54,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "preview",
+      "state": "passed",
+      "durationMs": 107,
+      "evidence": {},
+      "operationIds": [
+        "8723157d-ac7c-45a8-9c81-77fb9adaee15"
+      ]
+    },
+    {
+      "stepId": "grid",
+      "state": "passed",
+      "durationMs": 81,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "list",
+      "state": "passed",
+      "durationMs": 98,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "folder",
+      "state": "passed",
+      "durationMs": 147,
+      "evidence": {},
+      "operationIds": [
+        "351eb525-aa3a-43d7-ada2-74821f0f554a"
+      ]
+    },
+    {
+      "stepId": "parent",
+      "state": "passed",
+      "durationMs": 142,
+      "evidence": {},
+      "operationIds": [
+        "dbfbe5bf-7568-4d02-a5dd-59d596be8350"
+      ]
+    },
+    {
+      "stepId": "search",
+      "state": "passed",
+      "durationMs": 76,
+      "evidence": {},
+      "operationIds": [
+        "8b544ad9-bd32-428b-a675-9dd4ee7554b1"
+      ]
+    },
+    {
+      "stepId": "empty",
+      "state": "passed",
+      "durationMs": 144,
+      "evidence": {},
+      "operationIds": [
+        "dc53c4f1-509a-426f-b523-d6c7b2379d59",
+        "acb4ae2c-b6fb-4f0f-8114-e862906325ac"
+      ]
+    },
+    {
+      "stepId": "mkdir",
+      "state": "passed",
+      "durationMs": 151,
+      "evidence": {},
+      "operationIds": [
+        "99244aff-55f2-49b0-82c7-2032c13cb410",
+        "36741f71-d185-4880-8785-111eacc6b581"
+      ]
+    },
+    {
+      "stepId": "upload",
+      "state": "passed",
+      "durationMs": 194,
+      "evidence": {
+        "algorithm": "SHA-256",
+        "expected": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7",
+        "observed": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "736bf4cb-5898-4704-b92f-893d2cf74f02",
+        "547ce268-151a-4785-a8cd-db279f819dda",
+        "4e7b5038-2595-49b2-a068-68dc3aa2068e"
+      ]
+    },
+    {
+      "stepId": "copy",
+      "state": "passed",
+      "durationMs": 90,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "destination",
+      "state": "passed",
+      "durationMs": 59,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "paste",
+      "state": "passed",
+      "durationMs": 172,
+      "evidence": {
+        "sourceRetained": true,
+        "sourceHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7",
+        "destinationHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "31e4e388-8d6e-4aa6-8a79-1ec9c7b24423",
+        "e793e786-d889-4c13-890a-61037830fba6"
+      ]
+    },
+    {
+      "stepId": "switch",
+      "state": "passed",
+      "durationMs": 146,
+      "evidence": {},
+      "operationIds": [
+        "ba0e31f9-6452-4b5e-aa5c-1bd6d13b8a70",
+        "56891aea-f2b1-49bd-8b06-99279ee316de"
+      ]
+    },
+    {
+      "stepId": "cut",
+      "state": "passed",
+      "durationMs": 95,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "move",
+      "state": "passed",
+      "durationMs": 201,
+      "evidence": {
+        "sourceRemoved": true,
+        "destinationHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "f8f1f57d-6b72-4079-8387-6e1e60a02983",
+        "e59aa749-e7f3-4458-b6ea-9b224ac70ea4"
+      ]
+    },
+    {
+      "stepId": "rename",
+      "state": "passed",
+      "durationMs": 363,
+      "evidence": {},
+      "operationIds": [
+        "ec471c1c-b3d0-4c43-ae4b-df9ee63f6081",
+        "51ff0515-76dc-43e6-a9fb-8c8b1bf2f40a",
+        "77433529-49ca-430e-8255-5628a5ee8f51",
+        "b0b93a61-d5e2-45db-8f19-829f3aa59b4f"
+      ]
+    },
+    {
+      "stepId": "conflict",
+      "state": "passed",
+      "durationMs": 372,
+      "evidence": {
+        "expectedFailure": "CONFLICT",
+        "observedFailure": "CONFLICT",
+        "sourceUnchanged": true,
+        "destinationUnchanged": true
+      },
+      "operationIds": [
+        "0cdd9f3d-e58d-49d1-83e8-d26fd69707bb",
+        "9ac6d5fb-702f-468a-8783-e4b4d415620b",
+        "ef0f1430-45de-45e7-9237-7b7007b89d7f"
+      ]
+    },
+    {
+      "stepId": "delete",
+      "state": "passed",
+      "durationMs": 251,
+      "evidence": {
+        "cancelRetained": true,
+        "exactTargetRemoved": true,
+        "unrelatedRetained": true
+      },
+      "operationIds": [
+        "b3ea7f3b-4abf-45d5-afee-756b026b2597",
+        "cba973eb-8eeb-43f6-995b-2e61a14dbeec"
+      ]
+    },
+    {
+      "stepId": "history",
+      "state": "passed",
+      "durationMs": 88,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "trace",
+      "state": "passed",
+      "durationMs": 105,
+      "evidence": {
+        "operationId": "cba973eb-8eeb-43f6-995b-2e61a14dbeec",
+        "stages": 7
+      },
+      "operationIds": []
+    },
+    {
+      "stepId": "refresh-history",
+      "state": "passed",
+      "durationMs": 86,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "pagination",
+      "state": "passed",
+      "durationMs": 4295,
+      "evidence": {
+        "expected": 55,
+        "observed": 55
+      },
+      "operationIds": [
+        "54ce0119-232b-4a69-83b6-31b57e8b532d",
+        "2280cb5e-6d89-4a11-a0b4-c92f9aefaf19"
+      ]
+    },
+    {
+      "stepId": "comparison",
+      "state": "passed",
+      "durationMs": 61,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "reopen",
+      "state": "passed",
+      "durationMs": 474,
+      "evidence": {
+        "guideResumed": true,
+        "onlyListingAdded": true
+      },
+      "operationIds": [
+        "fe8fd0f7-aff2-464b-b8fd-38e4884637e0"
+      ]
+    },
+    {
+      "stepId": "rollback",
+      "state": "passed",
+      "durationMs": 159,
+      "evidence": {},
+      "operationIds": [
+        "4a94259f-689e-47b9-95d0-becbb3cd64eb"
+      ]
+    },
+    {
+      "stepId": "review",
+      "state": "passed",
+      "durationMs": 205,
+      "evidence": {
+        "exportParsed": true,
+        "isolatedCoreChecks": 12,
+        "userJournalUnchanged": true
+      },
+      "operationIds": []
+    }
+  ],
+  "layouts": [
+    {
+      "width": 1366,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 768,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 390,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "pageErrors": [],
+  "unverified": [
+    "installed Chrome extension",
+    "live provider bindings and bytes",
+    "local filesystem bridge",
+    "cross-computer transport",
+    "competitor parity"
+  ],
+  "aacEvidenceBoundary": "Fresh ordinary Chromium, mocked Chrome storage, actual Beta and IndexedDB. Not installed extension or cloud proof."
+}

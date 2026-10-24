@@ -1,0 +1,20 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 resources:test
+> node --test tests/resource-atlas.test.mjs
+
+✔ actual engine correlation, bounded traces, supported memory, privacy and gateway methods (33.038426ms)
+✔ R2 adapter actual HTTP path is observable without leaking bearer or location (119.776087ms)
+✔ timeouts and journal contention remain classified failures and measured waits (953.417949ms)
+✔ restart retains finished and interrupted evidence without replay; bounded span storage (32.515364ms)
+✔ controlled repeated retention is detected, cleanup and unavailable heap are explicit (1.131013ms)
+✔ collector persistence failure never changes filesystem outcome (1.793491ms)
+✔ real file-journal lock contention produces bounded wait evidence without a filesystem mutation (1592.190285ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2839.081373

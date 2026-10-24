@@ -1,0 +1,3 @@
+// Convenience entrance; all queries route through the existing diagnostics gateway.
+import {createDiagnosticAPI} from '../diagnostics/api.mjs';
+try{const [method='describe',flag,value,...extra]=process.argv.slice(2);if(extra.length||flag&&flag!=='--input'||flag&&!value)throw Error();const input=value?JSON.parse(value):{};const response=createDiagnosticAPI().query('aac.'+method,input);console.log(JSON.stringify(response,null,2));process.exitCode=response.state==='failed'?2:response.state==='unavailable'?3:0;}catch{console.log(JSON.stringify({aacVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}}));process.exitCode=2;}

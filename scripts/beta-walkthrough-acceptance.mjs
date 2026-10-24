@@ -56,6 +56,9 @@ try {
     viewport: { width: 1366, height: 960 },
   });
   await context.addInitScript(() => {
+    globalThis.aacRegistrations=[];
+    const originalAdd=EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener=function(type,listener,options){if(globalThis.aacRegistrations.length<1000)globalThis.aacRegistrations.push({type,target:this.id||this.tagName||this.constructor.name});return originalAdd.call(this,type,listener,options);};
     globalThis.betaEnabled = true;
     globalThis.betaListeners = [];
     globalThis.chrome = {
@@ -135,6 +138,9 @@ try {
   const destination = async (value) =>
     page.locator("#destination").selectOption(value);
   const sha = (text) => createHash("sha256").update(text).digest("hex");
+  const aacControlStates=[];
+  const captureAAC=async(step)=>aacControlStates.push({step,controls:await page.evaluate(()=>[...document.querySelectorAll('form,button,input,select,textarea,a[href],summary,[role=button],[role=menuitem]')].map(el=>({id:el.id||null,tag:el.tagName.toLowerCase(),hidden:!!el.closest('[hidden]')||el.getClientRects().length===0,disabled:el.disabled===true,tabIndex:el.tabIndex,hasName:!!(el.getAttribute('aria-label')||el.textContent?.trim()||el.labels?.length),propertyHandlers:['onclick','onchange','onsubmit','onkeydown','ondrop','ondragover','oncontextmenu'].filter(k=>typeof el[k]==='function')})))});
+  await captureAAC('initial');
   async function check(id, fn) {
     const start = Date.now();
     await page.evaluate((id) => {
@@ -163,6 +169,7 @@ try {
         code: error.code || "UI_ASSERTION_FAILED",
       });
     }
+    await captureAAC(id);
     await page.evaluate(() => globalThis.RedownBetaQA.getWalkthroughReport());
   }
   await check("welcome", async () => {
@@ -446,7 +453,10 @@ try {
     assert.equal(await page.locator("#explorer").isVisible(), false);
     assert.equal(await page.locator("#walkthrough-restore").isVisible(), false);
     await page.evaluate(() => {
-      globalThis.betaEnabled = true;
+      globalThis.aacRegistrations=[];
+    const originalAdd=EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener=function(type,listener,options){if(globalThis.aacRegistrations.length<1000)globalThis.aacRegistrations.push({type,target:this.id||this.tagName||this.constructor.name});return originalAdd.call(this,type,listener,options);};
+    globalThis.betaEnabled = true;
       for (const fn of globalThis.betaListeners)
         fn({ betaModeEnabled: { newValue: true } }, "local");
     });
@@ -504,7 +514,9 @@ try {
   assert.ok(atlas.traces.some(t=>t.spans.some(s=>s.phase==='ui.preview')));
   assert.ok(atlas.traces.some(t=>t.spans.some(s=>s.phase==='provider')));
   await mkdir('verification/resources',{recursive:true});
-  await writeFile('verification/resources/browser-evidence.json',JSON.stringify(atlas,null,2)+'\n');
+  await writeFile(process.env.RESOURCE_EVIDENCE_OUT||'verification/resources/browser-evidence.json',JSON.stringify(atlas,null,2)+'\n');
+  await mkdir('verification/aac',{recursive:true});
+  await writeFile('verification/aac/browser-controls.json',JSON.stringify({scope:'Fresh ordinary Chromium states and EventTarget registrations; fake Chrome settings, no installed-extension or production session',states:aacControlStates,registrations:await page.evaluate(()=>globalThis.aacRegistrations)},null,2)+'\n');
   const catalog = await page.evaluate(() => globalThis.RedownBetaQA.describe());
   assert.equal(results.length, catalog.steps.length);
   assert.deepEqual(errors, []);

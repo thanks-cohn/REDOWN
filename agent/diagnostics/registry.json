@@ -721,6 +721,136 @@
           "arguments": {}
         }
       ]
+    },
+    {
+      "id": "aac",
+      "version": "1.0.0",
+      "versionField": "aacVersion",
+      "discovery": "describe",
+      "authority": "Reproducible scoped audit observations; not certification or file execution",
+      "excluded": [],
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {}
+        },
+        {
+          "name": "listCapabilities",
+          "arguments": {
+            "profile": {
+              "type": "string",
+              "required": false
+            },
+            "kind": {
+              "type": "string",
+              "required": false
+            },
+            "status": {
+              "type": "string",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "getCapability",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "traverseGraph",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            },
+            "direction": {
+              "type": "string",
+              "required": false
+            },
+            "depth": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "getReport",
+          "arguments": {
+            "profile": {
+              "type": "string",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "listGaps",
+          "arguments": {
+            "severity": {
+              "type": "string",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            },
+            "offset": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "listTasks",
+          "arguments": {
+            "profile": {
+              "type": "string",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "compareReports",
+          "arguments": {
+            "before": {
+              "type": "string",
+              "required": true
+            },
+            "after": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getReproduction",
+          "arguments": {
+            "id": {
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      ]
     }
   ],
   "aliases": {
@@ -836,6 +966,15 @@
       "related": [
         "resources.getTrace",
         "resources.getBottlenecks"
+      ]
+    },
+    {
+      "subject": "agent-accessibility-conformance",
+      "owner": "aac.describe",
+      "related": [
+        "aac.getReport",
+        "aac.listGaps",
+        "aac.getCapability"
       ]
     }
   ],

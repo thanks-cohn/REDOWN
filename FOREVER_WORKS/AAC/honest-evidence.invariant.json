@@ -1,0 +1,19 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.invariant.honest-evidence",
+  "kind": "invariant",
+  "name": "Evidence before accessibility claims",
+  "statement": "Never equate advertised capabilities, source visibility or passing simulations with complete accessibility. Preserve profile permissions, tested environment, explicit unavailable metrics, failed checks, token boundaries, proprietary ownership and production Explorer isolation. Read-only diagnostics confer no file mutation or administrative permissions.",
+  "severity": "critical",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification."
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.compatibility.inspection",
+  "kind": "compatibility",
+  "contractType": "API",
+  "boundary": "Existing diagnostics gateway aac namespace; separate explicitly invoked conformance harness",
+  "version": "1.0.0",
+  "mustPreserve": [
+    "Read-only bounded paginated inspection and explicit evidence boundaries",
+    "Stable capability/check IDs and reviewed migrations for semantic renames",
+    "PASS-only coverage numerators with visible NOT_TESTED and safety veto",
+    "Optional MCP adapters delegate to authoritative engine",
+    "Four-bucket manifests, independent cleanup and destructive-operation gates"
+  ],
+  "migrationPolicy": "Version reports and preserve baselines. Replacement may change scanners and runners but must retain provenance, profile permissions, reverse graph traversal, uncertainty, executable negative controls and reproducible source bindings.",
+  "validationReferences": [
+    "redown.aac.evidence.audit"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification."
+    }
+  }
+}

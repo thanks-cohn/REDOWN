@@ -1,0 +1,32 @@
+{
+  "foreverVersion": "0.1",
+  "projectId": "redown-agent-accessibility-conformance",
+  "records": {
+    "capabilities": [
+      "audit.capability.json"
+    ],
+    "invariants": [
+      "honest-evidence.invariant.json"
+    ],
+    "compatibility": [
+      "inspection.compatibility.json"
+    ],
+    "implementations": [
+      "framework.implementation.json"
+    ],
+    "evidence": [
+      "audit.evidence.json"
+    ]
+  },
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner AAC audit and framework assignment, 2026-10-24. Agent-observed current-state evidence; no promotion of inferred historical intent.",
+      "methodology": "docs/aac/SPECIFICATION.md",
+      "entryPoint": "docs/aac/START_HERE.md",
+      "profile": "agent/aac/profile.json",
+      "report": "verification/aac/latest.json",
+      "graph": "verification/aac/latest.json#graph",
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification."
+    }
+  }
+}

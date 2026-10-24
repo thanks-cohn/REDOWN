@@ -1,0 +1,118 @@
+{
+  "aacVersion": "1.0.0",
+  "sourceBaseline": "782c9c2b1f33ac0bdf8103abf3f4c65627b6c8fa",
+  "sourceSnapshot": "Audited dirty working snapshot identified by latest.json source-file digests",
+  "mainUpdated": false,
+  "certification": {
+    "state": "NOT_CERTIFIED",
+    "safetyGate": "FAIL",
+    "reason": "Scoped evidence and explicit gaps; source visibility, simulations or aggregate percentages cannot establish complete accessibility"
+  },
+  "capabilities": 466,
+  "graph": {
+    "nodes": 749,
+    "edges": 3451
+  },
+  "frameworkTests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "schema": {
+    "valid": true,
+    "negativeControls": 4
+  },
+  "forever": "FOREVER_WORKS/AAC/manifest.json",
+  "fileTests": {
+    "passed": 30,
+    "failed": 0
+  },
+  "resourceTests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 34,
+    "failed": 0,
+    "pageErrors": 0
+  },
+  "live": {
+    "passed": 21,
+    "failed": 0,
+    "blocked": 0,
+    "cleanupFailed": 0,
+    "managementCleanupVerified": true
+  },
+  "regression": {
+    "passed": 421,
+    "knownFailures": 7,
+    "additionalFailures": [
+      {
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "observedBeforeAAC": true
+      },
+      {
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "observedBeforeAAC": true
+      }
+    ],
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "blindTrial": {
+    "sampleSize": 1,
+    "passedTasks": 5,
+    "partialTasks": 1,
+    "loggedCommands": 21,
+    "loggedOutputBytes": 105889,
+    "actualModelTokens": null,
+    "humanIntervention": 0
+  },
+  "tokenCost": {
+    "fixtureObjects": 100000,
+    "returnedObjects": 20,
+    "responseBytes": 3278,
+    "estimatedTokens": 820,
+    "tokenMethod": "UTF-8 bytes/4 heuristic, not a model tokenizer",
+    "scope": "Seeded synthetic listing only; create capacity remains 5,000, no 100,000-object operational certification",
+    "conventionalComputation": "Provider filtering/pagination done in JavaScript; remaining objects never enter this output"
+  },
+  "blockingFindings": [
+    {
+      "id": "AAC-SEC-001",
+      "severity": "critical",
+      "finding": "An authorize-denied engine handle exposes resources.store().update(), allowing direct changes to its journal/object store."
+    },
+    {
+      "id": "AAC-SCHEMA-001",
+      "severity": "high",
+      "finding": "Resource Atlas runtime import accepts a trace missing memoryBefore although its JSON Schema requires it."
+    }
+  ],
+  "entryPoint": "docs/aac/START_HERE.md",
+  "methodology": "docs/aac/SPECIFICATION.md",
+  "remediation": "docs/aac/REMEDIATION.md",
+  "report": "verification/aac/latest.json",
+  "baseline": "verification/aac/baseline.json",
+  "foreverValidation": {
+    "valid": true,
+    "records": 5
+  }
+}

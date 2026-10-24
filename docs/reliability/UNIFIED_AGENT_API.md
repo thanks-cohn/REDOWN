@@ -87,3 +87,11 @@ Local Node24.19.0: **316 total tests /309 pass /7 retained historical failures /
 Exact evidence: [local report](verification/unified-agent-api/local.json), [gateway registry audit](verification/unified-agent-api/registry.json), [focused tests](verification/unified-agent-api/focused.log), [schema checks](verification/unified-agent-api/schemas.log). The local report's tracked-dirty state and file hashes describe the tested source before the implementation commit. The published commit is recorded in the delivery response; it cannot be embedded in itself.
 
 The offline inspection milestone is implemented and locally verified. Remote CI execution, installed-extension behavior, live Cloudflare transfers, historical-debt disposition, release1 readiness and accepted Forever Works purpose remain unverified/open. No provider configuration, customer file, extension permission or ordinary GUI operation was changed for this milestone.
+
+## AAC conformance namespace
+
+The additive `aac` 1.0.0 namespace exposes bounded read-only capability, graph, task,
+coverage, gap and reproduction queries. Begin at `docs/aac/START_HERE.md` or
+`npm run diagnostics -- aac.describe`. The external conformance runner is explicitly
+invoked with `npm run aac:audit`; discovery never executes it. A completed audit may
+report failed or untested product capabilities. `aac:certify` remains a separate gate.
