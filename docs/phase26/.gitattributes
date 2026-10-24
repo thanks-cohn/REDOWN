@@ -1,0 +1,2 @@
+# Keep the owner-uploaded source prompt byte-exact, including its original CRLF endings.
+ORIGINAL_PROMPT.md -text
