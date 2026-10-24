@@ -1,0 +1,17 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p26.evidence.foundation",
+  "kind": "evidence",
+  "type": "integration-test",
+  "source": "verification/phase26/provider-evidence.json",
+  "statementSupported": "Three credential-free/reference providers completed a deterministic session copy with separate persisted-byte or filesystem verification and operation-correlated Atlas evidence. Python and R2 evidence are separately scoped.",
+  "confidence": 1,
+  "immutableReference": "sha256:6bb7ce0dbba96ae531035e6e414a8b412bb15eeef3a68fed137e29cf873c205a",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md"
+    }
+  }
+}

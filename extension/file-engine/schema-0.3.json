@@ -1,0 +1,442 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:redown:file-api:0.3.0",
+  "$defs": {
+    "identity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/pathIdentity"
+        },
+        {
+          "$ref": "#/$defs/locatorIdentity"
+        }
+      ]
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "operation",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "0.3.0"
+        },
+        "operation": {
+          "enum": [
+            "list",
+            "metadata",
+            "read",
+            "upload",
+            "ingest",
+            "mkdir",
+            "copy",
+            "move",
+            "rename",
+            "delete"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "source": {
+          "$ref": "#/$defs/identity"
+        },
+        "destination": {
+          "$ref": "#/$defs/identity"
+        },
+        "content": {
+          "type": "string",
+          "maxLength": 2097152
+        },
+        "bytesBase64": {
+          "type": "string",
+          "maxLength": 2796208
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "conflict": {
+          "const": "fail"
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "expectedSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 8192
+        },
+        "query": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "sort": {
+          "enum": [
+            "key-asc",
+            "key-desc"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "offset",
+            "length"
+          ],
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "length": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "contentType"
+          ],
+          "properties": {
+            "contentType": {
+              "type": "string",
+              "maxLength": 128
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "list",
+                  "metadata",
+                  "read",
+                  "copy",
+                  "move",
+                  "rename",
+                  "delete"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "source"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "upload",
+                  "ingest",
+                  "mkdir",
+                  "copy",
+                  "move",
+                  "rename"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "destination"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "move",
+                  "rename",
+                  "delete"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "confirmed"
+            ],
+            "properties": {
+              "confirmed": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "upload"
+              }
+            }
+          },
+          "then": {
+            "oneOf": [
+              {
+                "required": [
+                  "content"
+                ],
+                "not": {
+                  "required": [
+                    "bytesBase64"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "bytesBase64"
+                ],
+                "not": {
+                  "required": [
+                    "content"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "ingest"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "url",
+              "expectedSha256"
+            ]
+          }
+        }
+      ]
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "operationId",
+        "state",
+        "stage",
+        "at",
+        "component"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "requested",
+            "validated",
+            "planned",
+            "queued",
+            "executing",
+            "verifying",
+            "completed",
+            "failed",
+            "uncertain",
+            "cancelled",
+            "partially_completed",
+            "blocked_authorization"
+          ]
+        },
+        "stage": {
+          "type": "string"
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "component": {
+          "const": "file-engine/engine.mjs"
+        }
+      }
+    },
+    "job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "id",
+        "request",
+        "executor",
+        "state",
+        "events",
+        "receipt",
+        "checkpoints"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "0.3.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "request": {
+          "$ref": "#/$defs/request"
+        },
+        "executor": {
+          "const": "canonical-coordinator"
+        },
+        "state": {
+          "enum": [
+            "requested",
+            "validated",
+            "planned",
+            "queued",
+            "executing",
+            "verifying",
+            "completed",
+            "failed",
+            "uncertain",
+            "cancelled",
+            "partially_completed",
+            "blocked_authorization"
+          ]
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "receipt": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "checkpoints": {
+          "type": "array"
+        },
+        "result": {
+          "type": "object"
+        },
+        "error": {
+          "type": "string"
+        },
+        "recovery": {
+          "type": "object"
+        },
+        "writeAttempted": {
+          "type": "boolean"
+        },
+        "cancelRequested": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pathIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "account",
+        "container",
+        "key"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "account": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "container": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "maxLength": 1024
+        }
+      }
+    },
+    "locatorIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "account",
+        "container",
+        "locator"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "account": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "container": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "locator": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 16,
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 2048
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/job"
+    },
+    {
+      "$ref": "#/$defs/event"
+    }
+  ]
+}

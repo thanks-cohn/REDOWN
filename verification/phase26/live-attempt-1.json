@@ -1,0 +1,25 @@
+{
+  "version": "0.3.0",
+  "run": "6598b905-6c9e-4ff6-838f-4885a90ea962",
+  "worker": "redown-p2-lab-6598b905",
+  "results": [
+    {
+      "state": "failed",
+      "error": "HTTPError"
+    }
+  ],
+  "cleanup": [
+    {
+      "container": "test-1-new",
+      "state": "failed",
+      "error": "HTTPError"
+    }
+  ],
+  "independence": "Worker binding read bypasses engine and adapter; separate management prefix inspection still required",
+  "limitations": [
+    "small bounded fixtures",
+    "not full corpus or streaming",
+    "not independent S3 implementation",
+    "not cold agent or rclone comparison"
+  ]
+}

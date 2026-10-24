@@ -40,7 +40,9 @@
     "aac:test": "node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs",
     "aac:schema": "python tests/aac-schema.py",
     "aac:live": "node scripts/aac-live.mjs",
-    "aac:browser": "node scripts/aac-browser.mjs"
+    "aac:browser": "node scripts/aac-browser.mjs",
+    "providers:test": "node scripts/phase26/compile-contracts.mjs --check && node --test tests/provider-*.test.mjs",
+    "python:test": "python -m unittest discover -s clients/python/tests -v"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

@@ -1,0 +1,82 @@
+{
+  "version": "0.1.0",
+  "workload": {
+    "files": 16,
+    "bytesPerFile": 8192,
+    "concurrency": 1,
+    "verification": "fresh local SHA-256 for both candidates",
+    "scope": "Linux owner-exclusive local reference; not R2"
+  },
+  "trials": [
+    {
+      "trial": 0,
+      "candidate": "REDOWN",
+      "elapsedMs": 382.3018060002141,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    },
+    {
+      "trial": 0,
+      "candidate": "rclone",
+      "elapsedMs": 41.97748800015688,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    },
+    {
+      "trial": 1,
+      "candidate": "rclone",
+      "elapsedMs": 54.77963700013788,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    },
+    {
+      "trial": 1,
+      "candidate": "REDOWN",
+      "elapsedMs": 370.03690400024425,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    },
+    {
+      "trial": 2,
+      "candidate": "REDOWN",
+      "elapsedMs": 398.1467899998279,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    },
+    {
+      "trial": 2,
+      "candidate": "rclone",
+      "elapsedMs": 41.04059600012988,
+      "state": "passed",
+      "error": null,
+      "condition": "OS cache uncontrolled; new destination/process each trial"
+    }
+  ],
+  "limitations": [
+    "no network/provider timing",
+    "no cold-agent measure",
+    "no process peak memory sampling",
+    "no rclone comparison if unavailable"
+  ],
+  "rclone": "rclone v1.75.2",
+  "state": "measured-local-only",
+  "summary": {
+    "REDOWN": {
+      "n": 3,
+      "medianMs": 382.3018060002141,
+      "minMs": 370.03690400024425,
+      "maxMs": 398.1467899998279
+    },
+    "rclone": {
+      "n": 3,
+      "medianMs": 41.97748800015688,
+      "minMs": 41.04059600012988,
+      "maxMs": 54.77963700013788
+    }
+  }
+}

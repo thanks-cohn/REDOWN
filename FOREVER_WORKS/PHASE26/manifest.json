@@ -1,0 +1,28 @@
+{
+  "foreverVersion": "0.1",
+  "projectId": "redown-phase26-universal-foundation",
+  "records": {
+    "capabilities": [
+      "universal.json"
+    ],
+    "invariants": [
+      "portability.json"
+    ],
+    "compatibility": [
+      "versions.json"
+    ],
+    "implementations": [
+      "foundation.json"
+    ],
+    "evidence": [
+      "foundation-evidence.json"
+    ]
+  },
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md"
+    }
+  }
+}

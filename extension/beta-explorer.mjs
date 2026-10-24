@@ -1,3 +1,5 @@
+import {createFileEngine} from './file-engine/engine.mjs';
+import {createProviderRegistry,modelFor,providerDescription} from './file-engine/provider-contract.mjs';
 import {r2HttpAdapter,LAB_BUCKETS} from "./file-engine/adapters/r2-http.mjs";
 import { installWalkthrough } from "./beta-walkthrough.mjs";
 import { API_VERSION } from "./file-engine/contract.mjs";
@@ -10,13 +12,25 @@ export function installBetaExplorer({
   indexedDB = globalThis.indexedDB,
   confirm = globalThis.confirm,
   prompt = globalThis.prompt,
+  providerBindings,
+  authorize,
 }) {
   const $ = (id) => document.getElementById(id);
   // Optional explicit, ephemeral lab injection. Never reads production profiles or persists a bearer.
   const lab=document.defaultView.RedownLabConfig?.enabled===true?document.defaultView.RedownLabConfig:null;
   const extraAdapters=lab?[r2HttpAdapter(lab)]:[];
   if(lab){for(const control of ['provider','destination'])for(const bucket of LAB_BUCKETS){const option=document.createElement('option');option.value='r2-lab:'+bucket;option.textContent='Live lab · '+bucket;$(control).append(option);}document.querySelector('.notice p').textContent='Authorized live test laboratory available. Only the four dedicated buckets and leased run prefix are accessible.';}
-  const displayProvider=id=>id==='r2-lab'?'Live R2 test laboratory':id==='fake-r2'?'Simulated R2':'Simulated Drive';
+  const registry=providerBindings?createProviderRegistry(providerBindings):null;
+  const bindings=new Map((providerBindings||[]).map((b,i)=>['binding-'+i,b]));
+  const positions=new Map(),parents=new Map();
+  if(registry)for(const control of ['provider','destination'])$(control).replaceChildren(...[...bindings].map(([key,b])=>{const option=document.createElement('option');option.value=key;option.textContent=b.label||b.adapter.id;return option;}));
+  const activeBinding=control=>bindings.get($(control).value);
+  const position=control=>positions.get($(control).value)||activeBinding(control)?.root;
+  const objectIdentity=object=>object.identity||{provider:object.provider,account:object.account,container:object.container,key:object.key};
+  const nameOf=object=>object.name||displayName(object.key);
+  const destinationFor=(control,name,folder=false)=>registry?modelFor(activeBinding(control).adapter).child(position(control),name,folder):identity($(control).value,$('prefix').value+name+(folder?'/':''));
+  const navigateObject=object=>{const key=$('provider').value;if(registry&&object.identity?.locator){const stack=parents.get(key)||[];stack.push(position('provider'));parents.set(key,stack);positions.set(key,object.identity);$('prefix').value=object.name;}else $('prefix').value=object.key;};
+  const displayProvider=id=>registry?(providerBindings.find(b=>b.adapter.id===id)?.label||id):id==='r2-lab'?'Live R2 test laboratory':id==='fake-r2'?'Simulated R2':'Simulated Drive';
   const walkthrough = installWalkthrough({
     document,
     inspectOperation: async (id) => {
@@ -60,6 +74,7 @@ export function installBetaExplorer({
     cursor = null,
     generation = 0;
   const identity = (provider,key) => {
+    if(registry){const binding=bindings.get(provider);const root=positions.get(provider)||binding.root;return root.locator?structuredClone(root):{...root,key:key||root.key};}
     if(lab&&provider.startsWith('r2-lab:'))return {provider:'r2-lab',account:'lab',container:provider.slice(7),key:key.startsWith(lab.prefix)?key:lab.prefix+key};
     return {provider,account:'demo',container:'sandbox',key};
   };
@@ -76,18 +91,19 @@ export function installBetaExplorer({
   }
   function updateSelection() {
     $("selection-name").textContent = selected
-      ? displayName(selected.key)
+      ? nameOf(selected)
       : "A closer look.";
     $("selection-meta").textContent = selected
       ? (selected.folder ? "Folder" : selected.size + " bytes") +
         " · " +
-        displayProvider(selected.provider)
+        displayProvider(objectIdentity(selected).provider)
       : "Select a file or folder to see its details.";
     $("selection-icon").replaceChildren(
       icon(selected?.folder ? "folder" : "file"),
     );
     for (const id of ["copy", "cut", "rename", "delete"])
       $(id).disabled = !enabled || !selected || selected.provider==='r2-lab'&&['cut','rename','delete'].includes(id);
+    if(registry&&selected){const b=providerBindings.find(b=>b.adapter.id===objectIdentity(selected).provider),ops=providerDescription(b.adapter).operations;for(const [button,op] of [['cut','move'],['rename','rename'],['delete','delete']])$(button).disabled=!enabled||ops[op]==='unsupported';}
     $("read").disabled = !enabled || !selected || selected.folder;
     $("paste").disabled = !enabled || !clipboard;
     for (const row of $("files").children)
@@ -142,7 +158,7 @@ export function installBetaExplorer({
       opening = openBetaStore(indexedDB).then((value) => {
         store = value;
         collector=createResourceAtlas({store});
-        engine = createSimulationEngine(store,{resources:collector,extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
+        engine = registry?createFileEngine({store,resources:collector,adapters:registry.adapters,authorize:async request=>{if(authorize?!await authorize(request):[request.source,request.destination].filter(Boolean).some(id=>registry.adapters.find(a=>a.id===id.provider)?.capabilities.realProvider!==false))return false;for(const id of [request.source,request.destination].filter(Boolean)){let within=false;for(const b of providerBindings)if(await registry.contains(b.root,id)){within=true;break;}if(!within)return false;}return true;}}):createSimulationEngine(store,{resources:collector,extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
       });
     await opening;
     if(!listenerRelease)listenerRelease=collector.track('event-listener');
@@ -157,8 +173,8 @@ export function installBetaExplorer({
     await allowed();
     const traceId=await collector.begin(operation);
     collector.record(traceId,"ui.input","extension/beta-explorer.mjs",inputAt);
-    const result = await (args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?engine.runCanonical.bind(engine):engine.run.bind(engine))({
-      apiVersion: args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?'0.2.0':API_VERSION,
+    const result = await (registry?engine.run.bind(engine):args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?engine.runCanonical.bind(engine):engine.run.bind(engine))({
+      apiVersion: registry?'0.3.0':args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?'0.2.0':API_VERSION,
       operation,
       idempotencyKey: crypto.randomUUID(),
       ...args,
@@ -190,6 +206,7 @@ export function installBetaExplorer({
   }
   async function browse(append = false) {
     await allowed();
+    if(registry){const b=activeBinding('provider');$('prefix').disabled=!!b.root.locator;$('documents').disabled=!!b.root.locator;}
     const ticket = ++generation;
     const result = await run("list", {
       source: identity($("provider").value, $("prefix").value),
@@ -215,7 +232,7 @@ export function installBetaExplorer({
       row.dataset.key = object.key;
       check.type = "radio";
       check.name = "selected";
-      check.setAttribute("aria-label", "Select " + object.key);
+      check.setAttribute("aria-label", "Select " + nameOf(object));
       check.onchange = () => selectObject(object, check);
       const art = document.createElement("span"),
         name = document.createElement("span"),
@@ -223,7 +240,7 @@ export function installBetaExplorer({
       art.className = "file-art" + (object.folder ? " folder-art" : "");
       art.append(icon(object.folder ? "folder" : "file"));
       name.className = "file-name";
-      name.textContent = displayName(object.key);
+      name.textContent = nameOf(object);
       meta.className = "file-meta";
       meta.textContent = object.folder
         ? "Folder"
@@ -232,7 +249,7 @@ export function installBetaExplorer({
       button.title = object.folder ? "Open " + object.key : object.key;
       button.onclick = () => {
         if (object.folder) {
-          $("prefix").value = object.key;
+          navigateObject(object);
           $("query").value = "";
           safe(() => browse());
         } else selectObject(object, check);
@@ -292,6 +309,7 @@ export function installBetaExplorer({
   }
   function requireSelection() {
     if (!selected) throw Error("Select one file or folder.");
+    if(registry)return objectIdentity(selected);
     return selected.provider==='r2-lab'?{provider:selected.provider,account:selected.account,container:selected.container,key:selected.key}:identity(selected.provider, selected.key);
   }
   async function mutation(operation, args) {
@@ -302,7 +320,7 @@ export function installBetaExplorer({
     );
     await refreshJobs();
     $("trace").textContent = JSON.stringify(
-      await engine.diagnose(result.id),
+      await (registry?engine.exportEvidence(result.id):engine.diagnose(result.id)),
       null,
       2,
     );
@@ -315,6 +333,7 @@ export function installBetaExplorer({
   };
   $("provider").onchange = () => {
     clipboard = null;
+    if(registry){const b=activeBinding('provider');$('prefix').disabled=!!b.root.locator;$('documents').disabled=!!b.root.locator;positions.delete($('provider').value);parents.delete($('provider').value);}
     $("prefix").value = lab&&$("provider").value.startsWith("r2-lab:")?lab.prefix:"";
     safe(async () => {
       await browse();
@@ -329,6 +348,7 @@ export function installBetaExplorer({
       guideEvent({ kind: "action", action: "next-page" });
     });
   $("up").onclick = () => {
+    if(registry&&position('provider')?.locator){const key=$('provider').value,stack=parents.get(key)||[];positions.set(key,stack.pop()||activeBinding('provider').root);$('prefix').value=stack.length?'Folder':'';safe(()=>browse());return;}
     const parts = $("prefix").value.replace(/\/$/, "").split("/");
     parts.pop();
     $("prefix").value = parts.length ? parts.join("/") + "/" : "";
@@ -340,7 +360,7 @@ export function installBetaExplorer({
   $("copy").onclick = () =>
     safe(async () => {
       await allowed();
-      clipboard = { operation: "copy", source: requireSelection() };
+      clipboard = { operation: "copy", source: requireSelection(),name:nameOf(selected),folder:selected.folder };
       updateSelection();
       message(clipboard.source.provider==='r2-lab'?"Test laboratory selection copied.":"Simulated selection copied.");
       guideEvent({ kind: "action", action: "copy" });
@@ -348,7 +368,7 @@ export function installBetaExplorer({
   $("cut").onclick = () =>
     safe(async () => {
       await allowed();
-      clipboard = { operation: "move", source: requireSelection() };
+      clipboard = { operation: "move", source: requireSelection(),name:nameOf(selected),folder:selected.folder };
       updateSelection();
       message("Simulated selection cut; source retained until paste.");
       guideEvent({ kind: "action", action: "cut" });
@@ -362,12 +382,12 @@ export function installBetaExplorer({
         !confirm("Move this simulated item?")
       )
         return;
-      const name =
+      const name = registry?captured.name:
         captured.source.key.replace(/\/$/, "").split("/").pop() +
         (captured.source.key.endsWith("/") ? "/" : "");
       const result = await mutation(captured.operation, {
         source: captured.source,
-        destination: identity($("destination").value, $("prefix").value + name),
+        destination: registry?destinationFor("destination",name,captured.folder):identity($("destination").value, $("prefix").value + name),
         ...(captured.operation === "move" ? { confirmed: true } : {}),
       });
       if (result.state === "completed" && captured.operation === "move") {
@@ -388,6 +408,7 @@ export function installBetaExplorer({
       if (!name) return;
       if (name.includes("/") || name.includes("\\"))
         throw Error("Enter a single name.");
+      if(registry){const b=providerBindings.find(b=>b.adapter.id===source.provider),parent=position('provider');await mutation('rename',{source,destination:modelFor(b.adapter).child(parent,name,selected.folder),confirmed:true});return;}
       const parts = source.key.replace(/\/$/, "").split("/");
       parts.pop();
       await mutation("rename", {
@@ -408,10 +429,7 @@ export function installBetaExplorer({
       if (!name) return;
       if (/[\/\\]/.test(name)) throw Error("Enter a single name.");
       await mutation("mkdir", {
-        destination: identity(
-          $("provider").value,
-          $("prefix").value + name + "/",
-        ),
+        destination: destinationFor("provider",name,true),
       });
     });
   $("upload").onchange = () =>
@@ -423,10 +441,7 @@ export function installBetaExplorer({
       if (file.type && !file.type.startsWith("text/"))
         throw Error("Choose a text fixture.");
       await mutation("upload", {
-        destination: identity(
-          $("provider").value,
-          $("prefix").value + file.name,
-        ),
+        destination: destinationFor("provider",file.name),
         content: await file.text(),
       });
       $("upload").value = "";
@@ -434,7 +449,7 @@ export function installBetaExplorer({
   $("read").onclick = () =>
     safe(async () => {
       const source = requireSelection();
-      if (source.key.endsWith("/"))
+      if (selected.folder)
         throw Error("Open the folder to browse it.");
       const result = await run("read", { source });
       if (result.state !== "completed") throw Error(result.error);
@@ -457,7 +472,7 @@ export function installBetaExplorer({
     safe(async () => {
       await allowed();
       $("trace").textContent = JSON.stringify(
-        await engine.diagnose($("jobs").value),
+        await (registry?engine.exportEvidence($("jobs").value):engine.diagnose($("jobs").value)),
         null,
         2,
       );
@@ -465,6 +480,7 @@ export function installBetaExplorer({
     });
 
   $("home").onclick = () => {
+    if(registry){const key=$('provider').value;positions.delete(key);parents.delete(key);}
     $("prefix").value = "";
     $("query").value = "";
     safe(() => browse());

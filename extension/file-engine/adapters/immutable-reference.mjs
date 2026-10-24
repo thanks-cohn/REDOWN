@@ -1,0 +1,16 @@
+// Independent immutable document collection: opaque IDs, duplicate display names including '/'.
+import {OPTIONAL_FEATURES,validateLocator} from '../provider-contract.mjs';
+const fail=code=>Object.assign(Error(code),{code});
+export function immutableReferenceAdapter(){
+ const id='immutable-reference',root={provider:id,account:'archive',container:'collection',locator:{id:'root'}};
+ const identity=object=>({...root,locator:{id:object}});
+ const assertIdentity=i=>{validateLocator(i);if(i.provider!==id||i.account!==root.account||i.container!==root.container||Object.keys(i.locator).join(',')!=='id')throw fail('SCOPE_DENIED');};
+ const rows=['alpha','beta'].map((key,i)=>({identity:identity(key),name:'Same/Name.TXT',size:9,revision:'immutable-'+i,folder:false,contentType:'text/plain',bytes:new TextEncoder().encode('payload-'+i)}));
+ const info=row=>{if(!row)return null;const {bytes,...metadata}=row;return structuredClone(metadata);};
+ const model={validate:assertIdentity,same:(a,b)=>a.provider===b.provider&&a.account===b.account&&a.container===b.container&&a.locator.id===b.locator.id,identity:m=>m.identity,name:m=>m.name,child:()=>identity('unsupported-destination'),matchesMetadata:(m,i)=>model.same(m.identity,i),contains(scope,i){assertIdentity(scope);assertIdentity(i);return scope.locator.id==='root'||model.same(scope,i);}};
+ return {id,assertIdentity,identityModel:model,root,capabilities:{realProvider:false,atomicCreate:false,atomicConditionalDelete:false,maxBytes:2097152},manifest:{contractVersion:'1.0.0',provider:id,realProvider:false,identity:{model:'opaque-document-id',directories:'none',root:{locator:{id:'root'}}},features:{...Object.fromEntries(OPTIONAL_FEATURES.map(f=>[f,false])),duplicateNames:true,stableIds:true,pagination:true,metadataRead:true},checksums:['sha256-client-readback'],authentication:['owner-process'],consistency:'Immutable collection snapshot',limits:{maxBytes:2097152},operations:{list:'implemented',metadata:'implemented',read:'implemented',upload:'unsupported',copy:'unsupported',mkdir:'unsupported',move:'unsupported',rename:'unsupported',delete:'unsupported',ingest:'unsupported',trash:'unsupported',restore:'unsupported',sync:'unsupported'}},
+ async stat(i){assertIdentity(i);return i.locator.id==='root'?{identity:root,name:'Archive',folder:true,size:0,revision:'snapshot-1',contentType:'application/octet-stream'}:info(rows.find(r=>model.same(r.identity,i)));},
+ async list(i,{limit=50,cursor,query='',sort='key-asc',recursive=false}={}){assertIdentity(i);if(i.locator.id!=='root')throw fail('NOT_A_DIRECTORY');if(query||sort!=='key-asc'||recursive)throw fail('PROVIDER_OPERATION_UNSUPPORTED');const offset=cursor===undefined?0:Number(cursor);if(!Number.isSafeInteger(offset)||offset<0||offset>rows.length)throw fail('INVALID_CURSOR');const more=offset+limit<rows.length;return {objects:rows.slice(offset,offset+limit).map(info),complete:!more,cursor:more?String(offset+limit):null};},
+ async read(i,{range}={}){assertIdentity(i);if(range)throw fail('PROVIDER_OPERATION_UNSUPPORTED');const row=rows.find(r=>model.same(r.identity,i));if(!row)throw fail('NOT_FOUND_OR_INACCESSIBLE');return {metadata:info(row),bytes:row.bytes.slice()};}
+ };
+}

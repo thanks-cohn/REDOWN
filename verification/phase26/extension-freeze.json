@@ -1,0 +1,23 @@
+{
+  "purpose": "Captured before implementing immutable-reference adapter and registering it. Earlier local extension review and AOB cleanup correction remain separately recorded.",
+  "files": {
+    "extension/file-engine/engine.mjs": "6ed94a79c9177d0db8325ddbd7fd8ac7543cb0127a9624ca12799900ee92b6f7",
+    "extension/file-engine/universal-operations.mjs": "ddb1a3b3df8e0cb4dd23c39fa58f0a1abf7ba16f475a0dc2e3c04692afc4fb5f",
+    "extension/file-engine/provider-contract.mjs": "9d387870173079d429cd108a8745bad2c0fcce3cc9e04c4895390e1ea45f7e10",
+    "extension/file-engine/resources.mjs": "2337d482bcd44e52458544ce72d82d769968b469f13c8a322b5387fa6f18fdd1",
+    "agent/files/api.mjs": "c6c3f819345722b4cb534b97e491a2870e58caa173177173ff18e023513b5bec",
+    "agent/files/bootstrap.mjs": "ef2d0ae99645e86c8e408b2f740bc1ab5becd04c5284d1ab2262d8df9a57ca7d",
+    "extension/beta-explorer.mjs": "f74ab22fbb29e303cddf2d4d1222293c8bff311ecaa474497ef59cc4de1fc34a",
+    "clients/python/redown/__init__.py": "ff7fe7479c0fdac32f6a385f42d708f15f7d57bcda84f7a8532316f02ae75c80",
+    "clients/python/redown/cli.py": "0d35b818d677bdcd250bef873eb1a5005cc7fcd72684c533d03d08a61fa9f83f",
+    "clients/python/redown/client.py": "7a9072a1b2a104558646284a149e9d887946e000f2ee0247ccaeae9d40efc87b",
+    "agent/aac/model.mjs": "4a46013c2ab5ed327e5c6179988a52373fef0d2bdb522a913ec7e3280b8e537c",
+    "scripts/aob/runner.mjs": "f3a3764c8d13316f5cbdfe6e5ccc68f43d8542dbd97c26ae82dac35d33dd64aa",
+    "agent/files/session.schema.json": "2115ddcdf6a0dccb7df1e84a1fd80ebfa81d9f5c738676167d793b3490a1e1ef",
+    "extension/file-engine/schema-0.3.json": "0648b3aa290743adefe22ca255d05848f6490616b23c5eaf580c8a8166b7fcd9",
+    "extension/file-engine/provider.schema.json": "3047995b7de9f111e0271b71feadccbdb3864d9391cffd04c5b53ee19170413f",
+    "tests/providers/baseline.mjs": "80cf84e579a106028c6a4a541a5907c283dbdc62142048d8e24fb79c7c6b9ac0",
+    "agent/aac/api.mjs": "4629f777ff5638a63fc0d39588d1c50d51111bae83fd1b5c974b3ead47db8606"
+  },
+  "reviewCorrection": "Earlier migration changes were necessary universal abstractions/implementation defects. This new independent immutable fixture is the final adapter-only exercise; no core edits follow this freeze."
+}

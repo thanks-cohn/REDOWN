@@ -1,0 +1,25 @@
+✔ portable runner accepts unrelated application bindings and refuses unverifiable favorable results (1.616515ms)
+✔ a missing cleanup oracle cannot earn a successful task outcome (0.346381ms)
+✔ same Beta renders duplicate native names, navigates stable IDs, copies and reads without path interpretation (221.577111ms)
+✔ owner-bound Beta cannot escape its advertised path root even with a permissive owner authorizer (46.140122ms)
+✔ universal session baseline: object keys (82.229807ms)
+✔ universal session baseline: native IDs (27.307808ms)
+✔ native duplicate names remain distinct, ambiguous aliases fail, case-insensitive conflicts preserve bytes (7.114176ms)
+✔ native containment denies sibling scopes and checks authority again before writes (7.862319ms)
+✔ native stale pages and interrupted jobs never imply safe replay (4.020572ms)
+✔ native capabilities refuse rename before changing stable IDs, and malformed pagination is rejected (2.457106ms)
+✔ universal transfer rechecks per-child authority and preserves source after corrupt readback (3.75422ms)
+✔ account and container identity routes multiple instances without aliasing provider data (5.239811ms)
+✔ new immutable adapter inherits unchanged baseline, session, coordinator and Atlas (55.414816ms)
+✔ unchanged AAC discovery automatically inventories the newly registered adapter without credit for execution (484.04513ms)
+✔ adapter-only local reference extension inherits universal baseline and refuses symlinks (95.331721ms)
+✔ mandatory universal baseline runs real R2 adapter + Worker against offline binding (84.28274ms)
+✔ published provider and 0.3 job/request schemas agree with runtime envelopes (98.487181ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 838.930681

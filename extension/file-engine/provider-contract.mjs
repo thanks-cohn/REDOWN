@@ -1,3 +1,4 @@
+import validateProvider from './provider-validator.mjs';
 // Provider model 1.0.0. Locators are owned by adapters, never interpreted as universal paths.
 export const PROVIDER_CONTRACT_VERSION='1.0.0';
 export const OPTIONAL_FEATURES=['nativeDirectories','caseSensitive','duplicateNames','stableIds','nativeSearch','recursiveListing','pagination','rangeReads','streamingReads','streamingUploads','multipart','serverCopy','serverMove','conditionalWrites','revisionDelete','conflictSafeRename','timestamps','metadataRead','metadataWrite','sharedLinks','trash','restore','notifications','quotas','rateLimits'];
@@ -21,12 +22,17 @@ export const pathModel=Object.freeze({
 });
 export const modelFor=adapter=>adapter.identityModel||pathModel;
 export function providerDescription(adapter){
- const custom=adapter.manifest;if(custom){if(custom.contractVersion!==PROVIDER_CONTRACT_VERSION||custom.provider!==adapter.id||!custom.features||OPTIONAL_FEATURES.some(k=>typeof custom.features[k]!=='boolean')||!Array.isArray(custom.authentication)||!Array.isArray(custom.checksums))throw problem('INVALID_PROVIDER_CONTRACT');return structuredClone(custom);}
+ const custom=adapter.manifest;if(custom){if(!validateProvider(custom)||custom.contractVersion!==PROVIDER_CONTRACT_VERSION||custom.provider!==adapter.id||!custom.features||OPTIONAL_FEATURES.some(k=>typeof custom.features[k]!=='boolean')||!Array.isArray(custom.authentication)||!Array.isArray(custom.checksums))throw problem('INVALID_PROVIDER_CONTRACT');return structuredClone(custom);}
  const real=adapter.capabilities.realProvider,features=Object.fromEntries(OPTIONAL_FEATURES.map(k=>[k,false]));
  Object.assign(features,{caseSensitive:true,recursiveListing:true,pagination:true,rangeReads:true,metadataRead:true,conditionalWrites:!!adapter.capabilities.atomicCreate,revisionDelete:!!adapter.capabilities.atomicConditionalDelete,conflictSafeRename:!!adapter.capabilities.atomicConditionalDelete});
  return {contractVersion:PROVIDER_CONTRACT_VERSION,provider:adapter.id,realProvider:real,identity:{model:'exact-object-key',directories:'prefix',root:{key:''}},features,checksums:['sha256-client-readback'],authentication:[real?'leased-worker-bearer':'owner-process'],consistency:'Provider-specific; fresh readback required',limits:{maxBytes:adapter.capabilities.maxBytes||2097152},operations:{list:'implemented',metadata:'implemented',read:'implemented',upload:'implemented',copy:'coordinator',mkdir:'prefix-marker',move:features.revisionDelete?'coordinator':'unsupported',rename:features.revisionDelete?'coordinator':'unsupported',delete:features.revisionDelete?'implemented':'unsupported',ingest:typeof adapter.ingest==='function'?'implemented':'unsupported',...Object.fromEntries(OPTIONAL_OPERATIONS.map(k=>[k,'unsupported']))}};
 }
 export function createProviderRegistry(bindings){
- const seen=new Set();for(const b of bindings){if(seen.has(b.adapter.id))throw problem('DUPLICATE_PROVIDER');seen.add(b.adapter.id);providerDescription(b.adapter);b.adapter.assertIdentity(b.root);}
- return Object.freeze({adapters:bindings.map(b=>b.adapter),describe:()=>bindings.map(b=>({root:structuredClone(b.root),label:b.label||b.adapter.id,...providerDescription(b.adapter)})),async contains(scope,id){if(!['provider','account','container'].every(k=>scope[k]===id[k]))return false;const b=bindings.find(b=>b.adapter.id===id.provider);return !!b&&await modelFor(b.adapter).contains(scope,id);}});
+ const adapters=[...new Set(bindings.map(b=>b.adapter))],roots=new Set();
+ for(const b of bindings){providerDescription(b.adapter);b.adapter.assertIdentity(b.root);const key=JSON.stringify(b.root);if(roots.has(key))throw problem('DUPLICATE_PROVIDER_ROOT');roots.add(key);}
+ return Object.freeze({adapters,describe:()=>bindings.map(b=>({root:structuredClone(b.root),label:b.label||b.adapter.id,...providerDescription(b.adapter)})),async contains(scope,id){
+  if(!['provider','account','container'].every(k=>scope[k]===id[k]))return false;
+  for(const b of bindings.filter(b=>b.adapter.id===id.provider)){try{b.adapter.assertIdentity(scope);b.adapter.assertIdentity(id);const model=modelFor(b.adapter);if(await model.contains(b.root,scope)&&await model.contains(scope,id))return true;}catch{}}
+  return false;
+ }});
 }

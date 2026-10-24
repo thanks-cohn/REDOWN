@@ -1,0 +1,15 @@
+{
+  "purpose": "Captured before adding local reference adapter; compare after extension exercise",
+  "files": {
+    "extension/file-engine/engine.mjs": "7cf8d139b2d2a39caf9739b2e1a6d0467ccb4fbf4ef992eea545b96b7f1b96d6",
+    "extension/file-engine/universal-operations.mjs": "ddb1a3b3df8e0cb4dd23c39fa58f0a1abf7ba16f475a0dc2e3c04692afc4fb5f",
+    "extension/file-engine/provider-contract.mjs": "5a1b4545473e82edbb6ddb737474480e26bc631a0d50f798b209ec7808bcf6b3",
+    "extension/file-engine/resources.mjs": "2337d482bcd44e52458544ce72d82d769968b469f13c8a322b5387fa6f18fdd1",
+    "agent/files/api.mjs": "48997777084d30bf8ab56f5963d372428157020dd71e7a257083f8dd1b9c28c8",
+    "agent/files/bootstrap.mjs": "19dd23a644d495118c4f01195b119fdcc4022f1f7da3574b3539f51510e23108",
+    "extension/beta-explorer.mjs": "3f4d9b4c835471268df170b53c6d6ca2f44184720f10dd63e7587841b078cbd9",
+    "clients/python/redown/__init__.py": "ff7fe7479c0fdac32f6a385f42d708f15f7d57bcda84f7a8532316f02ae75c80",
+    "clients/python/redown/cli.py": "0d35b818d677bdcd250bef873eb1a5005cc7fcd72684c533d03d08a61fa9f83f",
+    "clients/python/redown/client.py": "7a9072a1b2a104558646284a149e9d887946e000f2ee0247ccaeae9d40efc87b"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "registryVersion": "1.0.0",
+  "providers": [
+    {
+      "id": "fake-r2",
+      "source": "extension/file-engine/adapters/memory.mjs",
+      "classification": "simulation"
+    },
+    {
+      "id": "fake-drive",
+      "source": "extension/file-engine/adapters/memory.mjs",
+      "classification": "simulation"
+    },
+    {
+      "id": "r2-lab",
+      "source": "extension/file-engine/adapters/r2-http.mjs",
+      "classification": "authorized-live-lab"
+    },
+    {
+      "id": "native-reference",
+      "source": "extension/file-engine/adapters/native-reference.mjs",
+      "classification": "reference-fixture"
+    },
+    {
+      "id": "local-reference",
+      "source": "extension/file-engine/adapters/local-reference.mjs",
+      "classification": "owner-exclusive-reference"
+    },
+    {
+      "id": "immutable-reference",
+      "source": "extension/file-engine/adapters/immutable-reference.mjs",
+      "classification": "reference-fixture"
+    }
+  ],
+  "requiredVerification": [
+    "tests/providers/baseline.mjs",
+    "tests/provider-schema.test.mjs",
+    "clients/python/tests/test_client.py"
+  ],
+  "evidencePolicy": "Registration is discovery only. Execution, independent verification and certification remain separate."
+}

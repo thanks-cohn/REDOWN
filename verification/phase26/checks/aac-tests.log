@@ -1,0 +1,32 @@
+
+> remote-asset-ingest@0.1.0 aac:test
+> node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs
+
+✔ source inventory has stable unique IDs and includes hidden templates, events, routes and each current HTML control (348.478366ms)
+✔ graph traverses the same edges in reverse, references only real nodes and never promotes inferred UI mappings (3.937723ms)
+✔ coverage excludes untested and partial from successful numerator and failures cannot be averaged away (0.578023ms)
+✔ real coordinator tasks enforce repaired authority and schema boundaries (585.800758ms)
+✔ actual Beta DOM, engine and IndexedDB show gate enforcement, parity and guide keyboard behavior (1137.203534ms)
+✔ read-only gateway discovers AAC with bounded pages; refuses mutation, path injection and arbitrary comparison files (28.517925ms)
+✔ machine report is explicit about safety veto and every check/capability/evidence edge is traceable (31.749205ms)
+✔ redown-manage registers a real control and dispatches to options without invoking storage execution (5.387186ms)
+✔ scoped sessions execute canonical operations, correlate evidence and expose no runtime handles (39.881155ms)
+✔ session scope intersects engine authority, prevents escapes and limits payloads (9.340143ms)
+✔ actual stdio process rejects malformed lines and executes within explicitly launched simulation (248.845734ms)
+✔ denied engine exposes no collector, store, adapters or implementation helper (11.330859ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (31.62996ms)
+✔ caller trace collision cannot rewrite an existing job (6.735346ms)
+{"contract":"urn:redown:resources:1.0.0:evidence","cases":78,"independentValidator":"Python jsonschema 4.26.0"}
+✔ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (493.111681ms)
+✔ direct resource queries enforce the same method-specific input contracts as the gateway (13.149764ms)
+✔ imported resource API returns detached snapshots and memory observations (4.38887ms)
+✔ Trace Event export preserves measured duration and correlation without inventing CPU or threads (11.365504ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2706.985736
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

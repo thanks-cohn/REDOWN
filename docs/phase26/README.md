@@ -1,9 +1,13 @@
-# REDOWN Phase 2.6 — paused assignment
+# REDOWN Phase 2.6
 
-Start with [the continuation handoff](HANDOFF.md).
+Implementation resumed on 24 October 2026. The foundation has focused and live evidence, but full acceptance and main promotion remain blocked.
 
-- [Original complete assignment](ORIGINAL_PROMPT.md) — byte-preserved uploaded prompt.
-- [Mandatory universal API / adapter-only requirement](ADAPTER_ONLY_REQUIREMENT.md) — accompanying owner instruction.
-- Draft implementation checkpoint: [`feat/phase26-universal-agents`](https://github.com/thanks-cohn/REDOWN/tree/feat/phase26-universal-agents).
+- [Current implementation, results and blockers](IMPLEMENTATION.md)
+- [Versioned universal contracts](CONTRACTS.md)
+- [Python package and invocation](../../clients/python/README.md)
+- [Machine-readable status](../../verification/phase26/status.json)
+- [Original assignment, exact upload bytes](ORIGINAL_PROMPT.md)
+- [Mandatory adapter-only architectural requirement](ADAPTER_ONLY_REQUIREMENT.md)
+- [Historical paused handoff](HANDOFF.md)
 
-Implementation was stopped by the owner. This documentation preserves the assignment for later continuation. It does not certify or resume the draft. Main contains these documents only; unfinished Phase 2.6 runtime changes remain on the checkpoint branch.
+Work branch: `feat/phase26-universal-agents`. The original stop/checkpoint evidence remains historical; it is not the current implementation report.

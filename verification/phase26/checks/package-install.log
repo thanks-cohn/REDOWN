@@ -1,0 +1,12 @@
+Processing ./clients/python
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: redown-client
+  Building wheel for redown-client (pyproject.toml): started
+  Building wheel for redown-client (pyproject.toml): finished with status 'done'
+  Created wheel for redown-client: filename=redown_client-0.3.0-py3-none-any.whl size=4547 sha256=0fc398f862c165067be57670a8ca3428b1a9dfd2959b076e5dc09d4af608e357
+  Stored in directory: /tmp/pip-ephem-wheel-cache-3p4b949n/wheels/1f/28/6f/e0d1088bfbf664b568f3882db0a46f48edd1e58a7f110a8ac3
+Successfully built redown-client
+Installing collected packages: redown-client
+Successfully installed redown-client-0.3.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.

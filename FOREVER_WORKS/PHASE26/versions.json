@@ -1,0 +1,25 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p26.compatibility.versions",
+  "kind": "compatibility",
+  "contractType": "API",
+  "boundary": "0.1 simulation facade, 0.2 exact-key callers, additive 0.3 locator callers, provider contract 1.0.0",
+  "version": "1.0",
+  "mustPreserve": [
+    "Existing callers and production Explorer isolation",
+    "No automatic ambiguous write retry or unsafe deletion",
+    "No provider-specific Python authentication or transfers",
+    "Explicit provider differences and unsupported operations"
+  ],
+  "migrationPolicy": "Additive optional fields/capabilities within a contract major; preserve old request schemas. Incompatible required semantics require a new version with compatibility tests and purpose-preserving migration.",
+  "validationReferences": [
+    "redown.p26.evidence.foundation"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md"
+    }
+  }
+}
