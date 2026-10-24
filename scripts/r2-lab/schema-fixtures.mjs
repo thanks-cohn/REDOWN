@@ -1,0 +1,10 @@
+import {mkdir,writeFile} from 'node:fs/promises';
+import {createFileEngine} from '../../extension/file-engine/engine.mjs';
+import {memoryAdapter} from '../../extension/file-engine/adapters/memory.mjs';
+import {initialState} from '../../extension/file-engine/simulation.mjs';
+let state=initialState(),tail=Promise.resolve();const store={read:async()=>structuredClone(state),update(fn){const task=tail.then(()=>fn(state));tail=task.catch(()=>{});return task;}};
+const engine=createFileEngine({store,adapters:[memoryAdapter(store,'fake-r2')]});
+const source={provider:'fake-r2',account:'demo',container:'sandbox',key:'Welcome.txt'};
+const requests=[{operation:'read',source},{operation:'upload',destination:{...source,key:'schema.bin'},bytesBase64:'AAE='},{operation:'copy',source,destination:{...source,key:'schema-copy'}},{operation:'move',source:{...source,key:'schema-copy'},destination:{...source,key:'schema-moved'},confirmed:true},{operation:'list',source:{...source,key:''},limit:2}].map((r,i)=>({apiVersion:'0.2.0',idempotencyKey:'schema-'+i,...r}));
+const jobs=[];for(const request of requests)jobs.push(await engine.run(request));
+await mkdir('work/r2-lab',{recursive:true});await writeFile('work/r2-lab/schema-fixtures.json',JSON.stringify([...requests,...jobs,...jobs.flatMap(j=>j.events)]));

@@ -733,6 +733,14 @@
         "explorer.findRelatedIncidents"
       ],
       "boundary": "Current assessments are hash-bound review notes; original reports, historical lifecycle and runtime observations are separate evidence"
+    },
+    {
+      "subject": "canonical-file-operations",
+      "owner": "explorer.getConnectorCapabilities",
+      "related": [
+        "diagnostics.getProjectMap",
+        "explorer.explainOperation"
+      ]
     }
   ],
   "unimplemented": [

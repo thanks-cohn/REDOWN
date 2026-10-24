@@ -1,0 +1,1561 @@
+{
+  "version": "1.0.0",
+  "scope": "live R2 through leased four-bucket Worker; oracle bypasses engine/adapter and uses direct R2-binding reads",
+  "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+  "prefix": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/",
+  "sourceCommit": "53093b62c7cf70a21eee05c59075703d457ab321",
+  "fixtureCommit": "4eccf9069342fac51e56eac488fd41925042294c",
+  "finishedAt": "2026-10-24T04:25:57.665Z",
+  "requests": 261,
+  "oracleReadBytes": 144,
+  "results": [
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:54.754Z",
+      "finishedAt": "2026-10-24T04:24:58.420Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.421Z",
+      "finishedAt": "2026-10-24T04:24:58.501Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.501Z",
+      "finishedAt": "2026-10-24T04:24:58.552Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.553Z",
+      "finishedAt": "2026-10-24T04:24:58.602Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.602Z",
+      "finishedAt": "2026-10-24T04:24:58.647Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.647Z",
+      "finishedAt": "2026-10-24T04:24:58.693Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.694Z",
+      "finishedAt": "2026-10-24T04:24:58.776Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.776Z",
+      "finishedAt": "2026-10-24T04:24:58.892Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.892Z",
+      "finishedAt": "2026-10-24T04:24:58.942Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.942Z",
+      "finishedAt": "2026-10-24T04:24:58.992Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-1-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:58.992Z",
+      "finishedAt": "2026-10-24T04:24:59.038Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "list",
+      "direction": "test-1-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:59.038Z",
+      "finishedAt": "2026-10-24T04:24:59.279Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "read",
+      "direction": "test-1-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:24:59.279Z",
+      "finishedAt": "2026-10-24T04:24:59.524Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-1-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:24:59.524Z",
+      "finishedAt": "2026-10-24T04:25:03.706Z",
+      "operationIds": [
+        "9b738b25-0284-44ac-85b5-aac34b968b13",
+        "cf8b598c-32d8-42d3-9c35-6b90a2799d71"
+      ],
+      "winners": 1,
+      "conflicts": 1
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-1-new",
+      "category": "folder-marker",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:03.706Z",
+      "finishedAt": "2026-10-24T04:25:04.558Z",
+      "operationId": "d03ab7b0-54e9-4931-a0d6-b7571be80ca6"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.559Z",
+      "finishedAt": "2026-10-24T04:25:04.626Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.627Z",
+      "finishedAt": "2026-10-24T04:25:04.675Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.676Z",
+      "finishedAt": "2026-10-24T04:25:04.727Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.727Z",
+      "finishedAt": "2026-10-24T04:25:04.851Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.851Z",
+      "finishedAt": "2026-10-24T04:25:04.909Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.909Z",
+      "finishedAt": "2026-10-24T04:25:04.961Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:04.961Z",
+      "finishedAt": "2026-10-24T04:25:05.028Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.029Z",
+      "finishedAt": "2026-10-24T04:25:05.081Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.081Z",
+      "finishedAt": "2026-10-24T04:25:05.134Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.134Z",
+      "finishedAt": "2026-10-24T04:25:05.187Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-2-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.188Z",
+      "finishedAt": "2026-10-24T04:25:05.236Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "list",
+      "direction": "test-2-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.236Z",
+      "finishedAt": "2026-10-24T04:25:05.489Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "read",
+      "direction": "test-2-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:05.489Z",
+      "finishedAt": "2026-10-24T04:25:05.606Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-2-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:05.606Z",
+      "finishedAt": "2026-10-24T04:25:06.275Z",
+      "operationIds": [
+        "89f443e8-43fa-4943-9432-a65070fdb649",
+        "161fe8b0-3cab-423c-8914-5eb297fccca9"
+      ],
+      "winners": 1,
+      "conflicts": 1
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-2-new",
+      "category": "folder-marker",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:06.275Z",
+      "finishedAt": "2026-10-24T04:25:06.640Z",
+      "operationId": "009b5a30-ae6a-4c4a-99e7-3aa9ea33aadd"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.641Z",
+      "finishedAt": "2026-10-24T04:25:06.700Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.700Z",
+      "finishedAt": "2026-10-24T04:25:06.758Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.759Z",
+      "finishedAt": "2026-10-24T04:25:06.812Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.812Z",
+      "finishedAt": "2026-10-24T04:25:06.868Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.868Z",
+      "finishedAt": "2026-10-24T04:25:06.921Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.921Z",
+      "finishedAt": "2026-10-24T04:25:06.978Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:06.978Z",
+      "finishedAt": "2026-10-24T04:25:07.038Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.038Z",
+      "finishedAt": "2026-10-24T04:25:07.090Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.091Z",
+      "finishedAt": "2026-10-24T04:25:07.199Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.200Z",
+      "finishedAt": "2026-10-24T04:25:07.254Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-3-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.255Z",
+      "finishedAt": "2026-10-24T04:25:07.311Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "list",
+      "direction": "test-3-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.311Z",
+      "finishedAt": "2026-10-24T04:25:07.473Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "read",
+      "direction": "test-3-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:07.473Z",
+      "finishedAt": "2026-10-24T04:25:07.628Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-3-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:07.628Z",
+      "finishedAt": "2026-10-24T04:25:08.385Z",
+      "operationIds": [
+        "38332e50-f9d8-42d3-8bda-cec12d0bbeb5",
+        "459ee2a3-efa4-44f6-98c2-4b760f18f0d7"
+      ],
+      "winners": 1,
+      "conflicts": 1
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-3-new",
+      "category": "folder-marker",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:08.385Z",
+      "finishedAt": "2026-10-24T04:25:08.910Z",
+      "operationId": "53d94372-a9d3-4e90-a842-c5719094944e"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-archive.zip",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:08.910Z",
+      "finishedAt": "2026-10-24T04:25:08.965Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-bytes.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:08.965Z",
+      "finishedAt": "2026-10-24T04:25:09.017Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-data.json",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.017Z",
+      "finishedAt": "2026-10-24T04:25:09.073Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-empty.bin",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.073Z",
+      "finishedAt": "2026-10-24T04:25:09.126Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-page.html",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.127Z",
+      "finishedAt": "2026-10-24T04:25:09.176Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-page.pdf",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.176Z",
+      "finishedAt": "2026-10-24T04:25:09.234Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-pixel.png",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.235Z",
+      "finishedAt": "2026-10-24T04:25:09.292Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-shape.svg",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.292Z",
+      "finishedAt": "2026-10-24T04:25:09.356Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-silence.wav",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.356Z",
+      "finishedAt": "2026-10-24T04:25:09.408Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-table.csv",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.408Z",
+      "finishedAt": "2026-10-24T04:25:09.459Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "ingest",
+      "direction": "test-4-new",
+      "category": "content-unicode.txt",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.459Z",
+      "finishedAt": "2026-10-24T04:25:09.515Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "list",
+      "direction": "test-4-new",
+      "category": "complete-pagination",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.515Z",
+      "finishedAt": "2026-10-24T04:25:09.914Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "read",
+      "direction": "test-4-new",
+      "category": "range",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:09.914Z",
+      "finishedAt": "2026-10-24T04:25:10.070Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "upload",
+      "direction": "test-4-new",
+      "category": "atomic-conflict-concurrency",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:10.070Z",
+      "finishedAt": "2026-10-24T04:25:10.758Z",
+      "operationIds": [
+        "74d6740d-4c1b-4096-b6e8-a439bfabdda9",
+        "513bf7cd-6889-46bf-bab9-4b8fcdc2241b"
+      ],
+      "winners": 1,
+      "conflicts": 1
+    },
+    {
+      "operation": "mkdir",
+      "direction": "test-4-new",
+      "category": "folder-marker",
+      "status": "passed",
+      "startedAt": "2026-10-24T04:25:10.758Z",
+      "finishedAt": "2026-10-24T04:25:11.230Z",
+      "operationId": "f6274aff-2c85-456c-abe8-883e4a61da25"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:11.230Z",
+      "finishedAt": "2026-10-24T04:25:11.386Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:11.386Z",
+      "finishedAt": "2026-10-24T04:25:11.661Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:11.661Z",
+      "finishedAt": "2026-10-24T04:25:11.851Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:11.851Z",
+      "finishedAt": "2026-10-24T04:25:12.033Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.033Z",
+      "finishedAt": "2026-10-24T04:25:12.157Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.157Z",
+      "finishedAt": "2026-10-24T04:25:12.358Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.358Z",
+      "finishedAt": "2026-10-24T04:25:12.570Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.570Z",
+      "finishedAt": "2026-10-24T04:25:12.796Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.796Z",
+      "finishedAt": "2026-10-24T04:25:12.950Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:12.950Z",
+      "finishedAt": "2026-10-24T04:25:13.167Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-1-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.167Z",
+      "finishedAt": "2026-10-24T04:25:13.300Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-1-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.300Z",
+      "finishedAt": "2026-10-24T04:25:13.464Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.464Z",
+      "finishedAt": "2026-10-24T04:25:13.562Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.563Z",
+      "finishedAt": "2026-10-24T04:25:13.755Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.755Z",
+      "finishedAt": "2026-10-24T04:25:13.858Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.858Z",
+      "finishedAt": "2026-10-24T04:25:13.955Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:13.955Z",
+      "finishedAt": "2026-10-24T04:25:14.063Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.063Z",
+      "finishedAt": "2026-10-24T04:25:14.170Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.170Z",
+      "finishedAt": "2026-10-24T04:25:14.271Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.271Z",
+      "finishedAt": "2026-10-24T04:25:14.470Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.470Z",
+      "finishedAt": "2026-10-24T04:25:14.604Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.604Z",
+      "finishedAt": "2026-10-24T04:25:14.689Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-2-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.689Z",
+      "finishedAt": "2026-10-24T04:25:14.820Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-2-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.820Z",
+      "finishedAt": "2026-10-24T04:25:14.925Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:14.925Z",
+      "finishedAt": "2026-10-24T04:25:15.031Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.031Z",
+      "finishedAt": "2026-10-24T04:25:15.192Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.192Z",
+      "finishedAt": "2026-10-24T04:25:15.314Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.314Z",
+      "finishedAt": "2026-10-24T04:25:15.526Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.526Z",
+      "finishedAt": "2026-10-24T04:25:15.625Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.625Z",
+      "finishedAt": "2026-10-24T04:25:15.743Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.743Z",
+      "finishedAt": "2026-10-24T04:25:15.863Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.863Z",
+      "finishedAt": "2026-10-24T04:25:15.976Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:15.976Z",
+      "finishedAt": "2026-10-24T04:25:16.183Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.183Z",
+      "finishedAt": "2026-10-24T04:25:16.368Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-3-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.368Z",
+      "finishedAt": "2026-10-24T04:25:16.502Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-3-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.502Z",
+      "finishedAt": "2026-10-24T04:25:16.621Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-1-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.621Z",
+      "finishedAt": "2026-10-24T04:25:16.828Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-1-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.828Z",
+      "finishedAt": "2026-10-24T04:25:16.983Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:16.983Z",
+      "finishedAt": "2026-10-24T04:25:17.105Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-2-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.105Z",
+      "finishedAt": "2026-10-24T04:25:17.235Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-2-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.235Z",
+      "finishedAt": "2026-10-24T04:25:17.342Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.342Z",
+      "finishedAt": "2026-10-24T04:25:17.486Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-3-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.486Z",
+      "finishedAt": "2026-10-24T04:25:17.618Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-3-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.618Z",
+      "finishedAt": "2026-10-24T04:25:17.762Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.762Z",
+      "finishedAt": "2026-10-24T04:25:17.894Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-4-new",
+      "category": "normal",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:17.894Z",
+      "finishedAt": "2026-10-24T04:25:18.009Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "copy",
+      "direction": "test-4-new→test-4-new",
+      "category": "conflict",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.009Z",
+      "finishedAt": "2026-10-24T04:25:18.125Z",
+      "code": "ORACLE_HTTP"
+    },
+    {
+      "operation": "move",
+      "direction": "test-4-new→test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.125Z",
+      "finishedAt": "2026-10-24T04:25:18.282Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-1-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.282Z",
+      "finishedAt": "2026-10-24T04:25:18.428Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-2-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.428Z",
+      "finishedAt": "2026-10-24T04:25:18.532Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-3-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.533Z",
+      "finishedAt": "2026-10-24T04:25:18.653Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "delete",
+      "direction": "test-4-new",
+      "category": "destructive-capability-gate",
+      "status": "failed",
+      "startedAt": "2026-10-24T04:25:18.653Z",
+      "finishedAt": "2026-10-24T04:25:18.781Z",
+      "code": "ERR_ASSERTION"
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-1-new",
+      "category": "authorization",
+      "status": "blocked",
+      "reason": "PUBLIC_READ_MISMATCH"
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-2-new",
+      "category": "authorization",
+      "status": "passed",
+      "expectedPublic": false,
+      "httpStatus": 401
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-3-new",
+      "category": "authorization",
+      "status": "passed",
+      "expectedPublic": false,
+      "httpStatus": 401
+    },
+    {
+      "operation": "anonymous-read",
+      "direction": "test-4-new",
+      "category": "authorization",
+      "status": "blocked",
+      "reason": "PUBLIC_READ_MISMATCH"
+    },
+    {
+      "operation": "anonymous-write",
+      "category": "authorization",
+      "status": "passed",
+      "httpStatus": 401
+    }
+  ],
+  "cleanup": [
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-1-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-2-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-3-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/archive.zip"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/bytes.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/data.json"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/empty.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.html"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/page.pdf"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/pixel.png"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/shape.svg"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/silence.wav"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/table.csv"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/sources/unicode.txt"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/race.bin"
+      },
+      "absent": true
+    },
+    {
+      "target": {
+        "provider": "r2-lab",
+        "account": "lab",
+        "container": "test-4-new",
+        "key": "__redown_test__/b92f503c-9cb3-47d6-9880-0bb8f869a201/empty-folder/"
+      },
+      "absent": true
+    }
+  ],
+  "errors": [],
+  "passed": 11,
+  "failed": 104,
+  "blocked": 2,
+  "releaseReady": false,
+  "limitations": [
+    "Atomic conditional delete/move/rename blocked on R2 binding",
+    "No second distinct real provider",
+    "Multipart/large streaming unavailable beyond 2 MiB",
+    "Installed extension not tested",
+    "R2 search and reverse sorting unsupported",
+    "No complete native filesystem or cross-computer adapter",
+    "Oracle shares lab Worker binding; public fixtures additionally verified over public r2.dev"
+  ]
+}

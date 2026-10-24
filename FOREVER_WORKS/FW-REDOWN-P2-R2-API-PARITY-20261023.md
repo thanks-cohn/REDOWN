@@ -1,6 +1,6 @@
 # FW-REDOWN-P2-R2-API-PARITY-20261023 — Live Adapter and Agent Verification Contract
 
-Status: SPECIFIED / NOT IMPLEMENTED. This record is a Forever Works purpose-and-evidence handoff, not proof of REDOWN production readiness.
+Status: PARTIALLY IMPLEMENTED / NOT ACCEPTED (2026-10-24). This record is a Forever Works purpose-and-evidence handoff, not proof of REDOWN production readiness.
 Repository: thanks-cohn/REDOWN
 Origin baseline main: db694ad68395aca492af11d875c97d012c520c48
 Record identity: fw.redown.phase2.r2-api-parity.2026-10-23.v1
@@ -94,3 +94,14 @@ Run all 16 ordered bucket source→destination pairs where meaningful, including
 
 ### Graduation gate
 A provider-specific live implementation must pass its supported operation tests, recover safely from induced failures, and prove private/public isolation. API/UI release readiness requires actual browser usage of the same engine, and multi-cloud readiness requires a SECOND DISTINCT real provider. Unsupported capabilities cannot be hidden by passing simulator tests.
+
+
+## 2026-10-24 implementation evidence addendum
+
+The canonical 0.2 coordinator, 0.1 Beta compatibility facade, memory adapter, scoped R2 laboratory adapter/Worker, reproducible CC0 corpus, reusable conformance runner, structured matrix, schemas and read-only gateway discovery are implemented. See `docs/phase2/UNIVERSAL_API_LAB.md` for exact commands, recovery, authorization and retirement requirements; `FOREVER_WORKS/P2-R2-API/manifest.json` uses the pinned actual Forever Works schemas and reference API. Frozen historical project records remain unchanged.
+
+Earlier live subset: 97 passed, zero failed, 20 blocked; all sixteen copy directions and eleven content fixtures per bucket. Separate ordinary Chromium UI-to-live upload/preview/copy evidence is recorded. Independent management API confirms cleaned run prefixes and preserved intended bucket exposure. Preserve the initial failed run and its remote-fetch incompatibility diagnosis. These are scoped observations, not acceptance of all operation/scenario combinations.
+
+`extension/file-engine/readiness.json` remains releaseReady:false. R2 move/rename/delete refuse execution without atomic revision-conditioned source deletion. A simulated Drive adapter is not second-provider verification. Installed extension, large/multipart streaming, complete UI parity, true multi-provider compatibility, durable distributed ownership and other gaps remain blocked in `verification/r2-lab/coverage.json`. The production Explorer remains independent; Beta still uses existing betaModeEnabled. No automatic promotion or legacy retirement is approved.
+
+Latest fresh-prefix validation: 96 passed, one journal-related concurrency failure, 20 blocked. Preserve `verification/r2-lab/live.json` and both failed journal attempts. A new monotonic journal guard fails closed on backward state; its offline regression passes, but the live durability issue remains unresolved. Independent management-API evidence confirms all run prefixes empty, intended exposure unchanged, and deletion of the temporary lab Worker only.

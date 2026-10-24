@@ -1,0 +1,206 @@
+{
+  "scope": "Independent Cloudflare management API inspection of every run prefix, intended exposure and deletion of the newly created lab Worker only",
+  "results": [
+    {
+      "bucket": "test-1-new",
+      "prefixes": [
+        {
+          "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "f7dcbbe0-afb1-41a7-b71e-524a2d1247fe",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        }
+      ],
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": true,
+          "bucketId": "25920d47f1304399ac6595978b656919",
+          "domain": "pub-25920d47f1304399ac6595978b656919.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-2-new",
+      "prefixes": [
+        {
+          "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "f7dcbbe0-afb1-41a7-b71e-524a2d1247fe",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        }
+      ],
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": false,
+          "bucketId": "44d63486fe6846e0bdaf64f745b7bcd0",
+          "domain": "pub-44d63486fe6846e0bdaf64f745b7bcd0.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-3-new",
+      "prefixes": [
+        {
+          "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "f7dcbbe0-afb1-41a7-b71e-524a2d1247fe",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        }
+      ],
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": false,
+          "bucketId": "8e250d1bed29406d83641d1deaf802c1",
+          "domain": "pub-8e250d1bed29406d83641d1deaf802c1.r2.dev"
+        },
+        "status": 200
+      }
+    },
+    {
+      "bucket": "test-4-new",
+      "prefixes": [
+        {
+          "run": "b92f503c-9cb3-47d6-9880-0bb8f869a201",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        },
+        {
+          "run": "f7dcbbe0-afb1-41a7-b71e-524a2d1247fe",
+          "response": {
+            "success": true,
+            "errors": [],
+            "messages": [],
+            "result": [],
+            "status": 200
+          }
+        }
+      ],
+      "domain": {
+        "success": true,
+        "errors": [],
+        "messages": [],
+        "result": {
+          "enabled": true,
+          "bucketId": "0c095f2b1b604cf78451ebbae41e2b1b",
+          "domain": "pub-0c095f2b1b604cf78451ebbae41e2b1b.r2.dev"
+        },
+        "status": 200
+      }
+    }
+  ],
+  "teardown": {
+    "worker": "redown-p2-lab-b92f503c",
+    "scope": "only temporary lab Worker created for this assignment",
+    "deleted": {
+      "result": {
+        "id": "e258e0359307462e8ee65dd5614dba48"
+      },
+      "success": true,
+      "errors": [],
+      "messages": [],
+      "status": 200
+    },
+    "verification": {
+      "absent": true,
+      "error": "Cloudflare API error: GET /accounts/40439992e793a00d8f33b19f898fa0c2/workers/scripts/redown-p2-lab-b92f503c returned HTTP 404: 10007: This Worker does not exist on your account"
+    }
+  }
+}

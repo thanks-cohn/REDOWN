@@ -1,0 +1,27 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p2.capability.list",
+  "kind": "capability",
+  "name": "Canonical list",
+  "statement": "Expose list through the provider-neutral authorized engine, capability negotiation and durable receipts.",
+  "status": "partial",
+  "criticality": "essential",
+  "relatedInvariants": [
+    "redown.p2.invariant.isolation"
+  ],
+  "relatedImplementations": [
+    "redown.p2.implementation.engine"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "extension/file-engine/readiness.json",
+      "evidenceClassification": [
+        "simulated-unit",
+        "live-R2-subset"
+      ],
+      "statusDetails": "Implemented with provider and resource limits; matrix identifies untested categories.",
+      "coverage": "verification/r2-lab/coverage.json"
+    }
+  }
+}

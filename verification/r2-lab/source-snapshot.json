@@ -1,0 +1,198 @@
+{
+  "scope": "Delivery worktree source hashes; live evidence was recorded on uncommitted source. This snapshot is not a claim every file received live acceptance.",
+  "baseCommit": "4eccf9069342fac51e56eac488fd41925042294c",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "65d768fc4cd855c3d6fe3a86f268b6e9bd7da975618eadef02c39a4a02ab5224"
+    },
+    {
+      "path": "FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md",
+      "sha256": "17643ad91869d43435cc10d27b6cdd49281fc3e2ac7d448b6168957d66421a35"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/compatibility.json",
+      "sha256": "9f2f7b36aa3bc31215ea84a7700dd7bba50544c251c256a212a3c7238721790f"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/copy.capability.json",
+      "sha256": "919d058640183c6a028b429fa2a0571b48c95f952ab2b27d8c3ddaec83359c32"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/delete.capability.json",
+      "sha256": "00621e2e4bd1e8e60a8673b8dfa8d3a325d3ff979f71a2bac931956e7db1e9c6"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/engine.implementation.json",
+      "sha256": "2fdd6ee7f8748fde8839211c9859bad4afef8f2cf7b547e40541be57bf4f1cb7"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/ingest.capability.json",
+      "sha256": "f893c8ebea80bc3485aff536db6b2855681a8e94c27fb86d4e4144f9f82ed772"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/isolation.json",
+      "sha256": "7cc3b9028bcd448d4c6d314a77c98ca7173df37bef2f06c8015faaf4e48a74c3"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/laboratory.evidence.json",
+      "sha256": "7c6618399cdd9a2dabc04aed7187a0f2bceb8905241020631002abc4c3c159ca"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/list.capability.json",
+      "sha256": "3ac6f2d59d27d8f6d36954eb23e0d85e8ab931cb0ef271549f2ee4a0dc5b07bc"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/manifest.json",
+      "sha256": "1767ab19ed4fac189be72dfdd8f7d10e37e2dc434fa8f07ba84706057bbbc953"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/metadata.capability.json",
+      "sha256": "77ce4a2a986f8eef00b1816905ea5fc091ead01aaade63aab1d5c898b0deba2d"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/mkdir.capability.json",
+      "sha256": "53d6b0fc2144697312804bb6faa519bfc151fca44bc80767c0a0f6b27112e52e"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/move.capability.json",
+      "sha256": "d6c76b8f4f7993544a640ab71b331087fe52769eec7e813419775f45ab78cd2c"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/read.capability.json",
+      "sha256": "9f8d716d2453cca34e322c993f035eb19827a78b8c3f9c5dbf4d772bd89bd16b"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/rename.capability.json",
+      "sha256": "442d71c95339c620563a52c4a4d43fcfc6d6238cb36d48d79f663d6f8eb63398"
+    },
+    {
+      "path": "FOREVER_WORKS/P2-R2-API/upload.capability.json",
+      "sha256": "a06874c18ddab4fc22081331fda5153709be29d9299b598ca3a7854c3289a5b7"
+    },
+    {
+      "path": "agent/diagnostics/project-map.json",
+      "sha256": "e0425b3d8535ed804d0fe71e144e47f43bb9f2a31969915cebda86a662eff189"
+    },
+    {
+      "path": "agent/diagnostics/registry.json",
+      "sha256": "33e40b3f52158ce40fa9d1f9879f41daed968d6a04ec7a2c7b32bf8e81e00ebb"
+    },
+    {
+      "path": "agent/explorer/api.mjs",
+      "sha256": "85f51f38f29ef317ebfb7625761c8f6e4ccbda0e400104002ee523fedba4e180"
+    },
+    {
+      "path": "docs/phase2/UNIVERSAL_API_LAB.md",
+      "sha256": "febb5cad72f2f7a4f708d5f629b3f9b8a11b4e4e2bbf89769b0de92a6bd62ae7"
+    },
+    {
+      "path": "extension/beta-explorer.mjs",
+      "sha256": "dbc0d539d77732151b93b03df019d28b4c254181529e0cd40c6db540aba4d309"
+    },
+    {
+      "path": "extension/file-engine/adapters/memory.mjs",
+      "sha256": "83a268320e0d5828efd4ce92c9c25d6f3eb247dde601408a0cd88ebdf6497b0a"
+    },
+    {
+      "path": "extension/file-engine/adapters/r2-http.mjs",
+      "sha256": "fb66ca0ebce0a29e566fd529f0f8039abfabfa91a622a754327639b308891ff7"
+    },
+    {
+      "path": "extension/file-engine/catalog.json",
+      "sha256": "a0ecb7269849c64e0f525eb9005b7f40f30ad8efc069b7517f308230bcd9cec2"
+    },
+    {
+      "path": "extension/file-engine/engine.mjs",
+      "sha256": "5324fef3c6c41d60a5fab4edb0d96a7f1eb7396c0a4303cab52536156d21b33c"
+    },
+    {
+      "path": "extension/file-engine/readiness.json",
+      "sha256": "d42848eb9d3f590a612f4373f05d264b0d7d9ec661a797f7d1dc1bd3d7997460"
+    },
+    {
+      "path": "extension/file-engine/schema-0.2.json",
+      "sha256": "832b8c01f908198dea965bdf9daebab697cc3c031b1389c955bad0e915a341ea"
+    },
+    {
+      "path": "extension/file-engine/simulation.mjs",
+      "sha256": "aaf4ceea7d8b4e8a127090e20ce28bbec4a5e187abb0e809bb5f9ce4fb3ae1d0"
+    },
+    {
+      "path": "package.json",
+      "sha256": "f5901ad1713d843e1a15b3b8129548cf1c278663184fddd813f353a3f8486f86"
+    },
+    {
+      "path": "scripts/package_chrome_store.py",
+      "sha256": "9aa636e9dd429b6ffc6dbb21611d9b98bd6562f7cf917552acbf1aff285aeb2d"
+    },
+    {
+      "path": "scripts/r2-lab/catalog.mjs",
+      "sha256": "7724b7196a043706744fab82bff435e32ace17a1d815ed2f49e0c1ae2cc5fa3c"
+    },
+    {
+      "path": "scripts/r2-lab/conformance.mjs",
+      "sha256": "6f31f30de514b26bbf4858cb015a3fdc34e977411fa182bc45b7cb8c09053e56"
+    },
+    {
+      "path": "scripts/r2-lab/deployment-plan.mjs",
+      "sha256": "e038c6ace42084950484af2b768e99ffb0b96839aaf647a02e936415f9f8ac00"
+    },
+    {
+      "path": "scripts/r2-lab/file-store.mjs",
+      "sha256": "01cdd46e6fda04b7fd7549073832722f87fb0e76e0c4fdd0e06108aeaba13865"
+    },
+    {
+      "path": "scripts/r2-lab/forever-records.mjs",
+      "sha256": "0f36adb8f8e6fcb97226b7a022ba26b1853c259a403ccd5e0358c730c92150de"
+    },
+    {
+      "path": "scripts/r2-lab/live.mjs",
+      "sha256": "08c71af7f60884fa9b5c902d7b13f82120a969a8282ca88e1322c91afc00a62a"
+    },
+    {
+      "path": "scripts/r2-lab/prepare.mjs",
+      "sha256": "1e63f02e7a53ac456b8f4ee9a17ce964a958b8208e383b525786c042f865f774"
+    },
+    {
+      "path": "scripts/r2-lab/preservation.mjs",
+      "sha256": "500986fe0f5e168e8337851b80a98850ffce6e837ef2a64e5cf63ead9bdf9d8e"
+    },
+    {
+      "path": "scripts/r2-lab/schema-fixtures.mjs",
+      "sha256": "cc52739faa31c39beba315a6b24ef516defe93723c274a369a9dd3fe5ae54a60"
+    },
+    {
+      "path": "scripts/r2-lab/schema.mjs",
+      "sha256": "add821ac65cd8cc1159404e36d548dd510faa740ba7a29c09bd95aaa75f3882e"
+    },
+    {
+      "path": "scripts/r2-lab/ui.mjs",
+      "sha256": "a6a514aee49ef53369cac4e99b256a05b09aa5ddffae16eee83e3f58df395f4e"
+    },
+    {
+      "path": "scripts/syntax-targets.json",
+      "sha256": "8e86e268c432f4e0dd91bc95f6f6069499cd02b4620c6293244b0e8a7ecc1c62"
+    },
+    {
+      "path": "tests/phase2-beta.test.mjs",
+      "sha256": "cbc022617dffed007813d9f7fde79997d4fb49977e4846d85afa4e9bead8072a"
+    },
+    {
+      "path": "tests/r2-laboratory-transport.test.mjs",
+      "sha256": "0aa76b575c42af5b6669061955123fced260860e2e4e1b7a6ebf86aedb396551"
+    },
+    {
+      "path": "tests/universal-file-discovery.test.mjs",
+      "sha256": "834abe90ecf5841d049af738006d7c4325eedc770f236a91e9102ab9c8cceef7"
+    },
+    {
+      "path": "tests/universal-file-engine.test.mjs",
+      "sha256": "35aa1742d94abbe03aee121bd062e173a4ec14938f150ad0a7059820dc50d954"
+    },
+    {
+      "path": "tests/universal-file-schema.py",
+      "sha256": "ef0a323addfeae178300d377a54caa748eea7348c542ee97f3b5032a9adaf66c"
+    }
+  ]
+}

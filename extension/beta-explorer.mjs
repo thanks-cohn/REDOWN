@@ -1,3 +1,4 @@
+import {r2HttpAdapter,LAB_BUCKETS} from "./file-engine/adapters/r2-http.mjs";
 import { installWalkthrough } from "./beta-walkthrough.mjs";
 import { API_VERSION } from "./file-engine/contract.mjs";
 import { createSimulationEngine } from "./file-engine/simulation.mjs";
@@ -10,6 +11,11 @@ export function installBetaExplorer({
   prompt = globalThis.prompt,
 }) {
   const $ = (id) => document.getElementById(id);
+  // Optional explicit, ephemeral lab injection. Never reads production profiles or persists a bearer.
+  const lab=document.defaultView.RedownLabConfig?.enabled===true?document.defaultView.RedownLabConfig:null;
+  const extraAdapters=lab?[r2HttpAdapter(lab)]:[];
+  if(lab){for(const control of ['provider','destination'])for(const bucket of LAB_BUCKETS){const option=document.createElement('option');option.value='r2-lab:'+bucket;option.textContent='Live lab · '+bucket;$(control).append(option);}document.querySelector('.notice p').textContent='Authorized live test laboratory available. Only the four dedicated buckets and leased run prefix are accessible.';}
+  const displayProvider=id=>id==='r2-lab'?'Live R2 test laboratory':id==='fake-r2'?'Simulated R2':'Simulated Drive';
   const walkthrough = installWalkthrough({
     document,
     inspectOperation: async (id) => {
@@ -50,12 +56,10 @@ export function installBetaExplorer({
     selected = null,
     cursor = null,
     generation = 0;
-  const identity = (provider, key) => ({
-    provider,
-    account: "demo",
-    container: "sandbox",
-    key,
-  });
+  const identity = (provider,key) => {
+    if(lab&&provider.startsWith('r2-lab:'))return {provider:'r2-lab',account:'lab',container:provider.slice(7),key:key.startsWith(lab.prefix)?key:lab.prefix+key};
+    return {provider,account:'demo',container:'sandbox',key};
+  };
   function icon(name) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"),
       use = document.createElementNS("http://www.w3.org/2000/svg", "use");
@@ -74,13 +78,13 @@ export function installBetaExplorer({
     $("selection-meta").textContent = selected
       ? (selected.folder ? "Folder" : selected.size + " bytes") +
         " · " +
-        (selected.provider === "fake-r2" ? "Simulated R2" : "Simulated Drive")
+        displayProvider(selected.provider)
       : "Select a file or folder to see its details.";
     $("selection-icon").replaceChildren(
       icon(selected?.folder ? "folder" : "file"),
     );
     for (const id of ["copy", "cut", "rename", "delete"])
-      $(id).disabled = !enabled || !selected;
+      $(id).disabled = !enabled || !selected || selected.provider==='r2-lab'&&['cut','rename','delete'].includes(id);
     $("read").disabled = !enabled || !selected || selected.folder;
     $("paste").disabled = !enabled || !clipboard;
     for (const row of $("files").children)
@@ -111,7 +115,7 @@ export function installBetaExplorer({
     $("explorer").hidden = !enabled;
     $("gate").dataset.enabled = String(enabled);
     $("gate").textContent = enabled
-      ? "Beta Mode enabled · Simulation foundation"
+      ? (lab?"Beta Mode enabled · Authorized test laboratory":"Beta Mode enabled · Simulation foundation")
       : "Beta Explorer is hidden. Enable the existing Beta Mode in Dashboard settings. Saved simulation jobs are retained.";
     if (!enabled) {
       generation++;
@@ -131,7 +135,7 @@ export function installBetaExplorer({
     if (!opening)
       opening = openBetaStore(indexedDB).then((value) => {
         store = value;
-        engine = createSimulationEngine(store);
+        engine = createSimulationEngine(store,{extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
       });
     await opening;
   }
@@ -142,8 +146,8 @@ export function installBetaExplorer({
   }
   async function run(operation, args = {}) {
     await allowed();
-    const result = await engine.run({
-      apiVersion: API_VERSION,
+    const result = await (args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?engine.runCanonical.bind(engine):engine.run.bind(engine))({
+      apiVersion: args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?'0.2.0':API_VERSION,
       operation,
       idempotencyKey: crypto.randomUUID(),
       ...args,
@@ -272,7 +276,7 @@ export function installBetaExplorer({
   }
   function requireSelection() {
     if (!selected) throw Error("Select one file or folder.");
-    return identity(selected.provider, selected.key);
+    return selected.provider==='r2-lab'?{provider:selected.provider,account:selected.account,container:selected.container,key:selected.key}:identity(selected.provider, selected.key);
   }
   async function mutation(operation, args) {
     const result = await run(operation, args);
@@ -295,7 +299,7 @@ export function installBetaExplorer({
   };
   $("provider").onchange = () => {
     clipboard = null;
-    $("prefix").value = "";
+    $("prefix").value = lab&&$("provider").value.startsWith("r2-lab:")?lab.prefix:"";
     safe(async () => {
       await browse();
       guideEvent({ kind: "action", action: "provider" });
@@ -322,7 +326,7 @@ export function installBetaExplorer({
       await allowed();
       clipboard = { operation: "copy", source: requireSelection() };
       updateSelection();
-      message("Simulated selection copied.");
+      message(clipboard.source.provider==='r2-lab'?"Test laboratory selection copied.":"Simulated selection copied.");
       guideEvent({ kind: "action", action: "copy" });
     });
   $("cut").onclick = () =>
