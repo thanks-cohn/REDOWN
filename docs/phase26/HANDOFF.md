@@ -99,8 +99,6 @@ SHA-256: `8a4a07c802b21bb47de80f4439045434e2fe2a25d71c88e184c177b07bcd8d77`
 
 Size: 32747 bytes. The repository copy retains the original upload bytes and line endings.
 
-## Published immutable code checkpoint
+## Continuation resumed — 24 October 2026
 
-Paused implementation commit: [`86a5ac0727e0d24618afa23e9331580cb284a569`](https://github.com/thanks-cohn/REDOWN/commit/86a5ac0727e0d24618afa23e9331580cb284a569).
-
-The runtime draft and focused test log are preserved at that commit. This main-branch handoff update contains documentation only. Use the checkpoint as a reviewable starting point; it is not a claim that the proposed contract or adapter passes acceptance.
+The owner subsequently resumed the assignment. This document remains the historical pause record. Read [IMPLEMENTATION.md](IMPLEMENTATION.md), [CONTRACTS.md](CONTRACTS.md), and [current status](../../verification/phase26/status.json) for implemented behavior, actual live results, review corrections and remaining acceptance blockers. The preserved remote pause checkpoint is `86a5ac0727e0d24618afa23e9331580cb284a569`; runtime work continues on `feat/phase26-universal-agents`, without incomplete runtime promotion to main.

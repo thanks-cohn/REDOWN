@@ -1,0 +1,43 @@
+{
+  "cleanup": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"prefix\": \"__redown_test__/00ffc921-a0ed-4414-9ab6-ae05356fa0c5/\",\n  \"buckets\": [\n    {\n      \"bucket\": \"test-1-new\",\n      \"success\": true,\n      \"count\": 0,\n      \"publicEnabled\": true\n    },\n    {\n      \"bucket\": \"test-2-new\",\n      \"success\": true,\n      \"count\": 0,\n      \"publicEnabled\": false\n    },\n    {\n      \"bucket\": \"test-3-new\",\n      \"success\": true,\n      \"count\": 0,\n      \"publicEnabled\": false\n    },\n    {\n      \"bucket\": \"test-4-new\",\n      \"success\": true,\n      \"count\": 0,\n      \"publicEnabled\": true\n    }\n  ]\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "deletion": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"worker\": \"redown-p2-lab-00ffc921\",\n  \"success\": true,\n  \"status\": 200\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "absence": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"absent\": true,\n  \"observation\": \"Cloudflare API error: GET /accounts/40439992e793a00d8f33b19f898fa0c2/workers/scripts/redown-p2-lab-00ffc921 returned HTTP 404: 10007: This Worker does not exist on your account\"\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "initialAbsenceObservation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"absent\": false,\n  \"status\": 200\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "scriptListConfirmedAbsent": true
+}

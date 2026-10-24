@@ -20,7 +20,14 @@
       "type": "object",
       "properties": {
         "request": {
-          "$ref": "urn:redown:file-api:0.2.0#/$defs/request"
+          "oneOf": [
+            {
+              "$ref": "urn:redown:file-api:0.2.0#/$defs/request"
+            },
+            {
+              "$ref": "urn:redown:file-api:0.3.0#/$defs/request"
+            }
+          ]
         },
         "id": {
           "type": "string",

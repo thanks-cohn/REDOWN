@@ -1,0 +1,15 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p26.invariant.portability",
+  "kind": "invariant",
+  "name": "Adapter-only provider evolution",
+  "statement": "New providers implement and register primitives, identity semantics and declarative capabilities. Preserve one canonical coordinator, authorized session intersection, source preservation, independent integrity evidence, job identity, Atlas instrumentation and SDK/UI compatibility. Unsupported operations remain explicit.",
+  "severity": "critical",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md"
+    }
+  }
+}

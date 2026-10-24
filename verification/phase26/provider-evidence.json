@@ -1,0 +1,1620 @@
+{
+  "version": "0.1.0",
+  "reports": [
+    {
+      "benchmarkVersion": "0.1.0-experimental",
+      "application": {
+        "name": "REDOWN",
+        "provider": "simulation"
+      },
+      "environment": {
+        "runtime": "v24.22.1",
+        "platform": "linux"
+      },
+      "profile": "deterministic-authorized-reference",
+      "trials": [
+        {
+          "taskId": "transfer-with-integrity",
+          "action": "copy",
+          "state": "passed",
+          "error": null,
+          "durationMs": 192.491918,
+          "toolCalls": 4,
+          "oracle": {
+            "verified": true,
+            "method": "independent fresh journal read",
+            "expectedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+            "observedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc"
+          },
+          "diagnostics": {
+            "evidence": {
+              "fileApiVersion": "0.3.0",
+              "id": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+              "operation": "copy",
+              "executor": "canonical-coordinator",
+              "state": "completed",
+              "source": {
+                "provider": "fake-r2",
+                "fingerprint": "a0de1694ccfed13589e890eedd877dce0e728b1ca454200aa427a2b3894968a5"
+              },
+              "destination": {
+                "provider": "fake-r2",
+                "fingerprint": "c8afb133a033a9750b422e2493894ad861fa10d8e9964495f057e839eec42dcc"
+              },
+              "events": [
+                {
+                  "sequence": 1,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "requested",
+                  "stage": "request",
+                  "at": "2026-10-24T20:53:03.326Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 2,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "validated",
+                  "stage": "validation",
+                  "at": "2026-10-24T20:53:03.328Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 3,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "planned",
+                  "stage": "planning",
+                  "at": "2026-10-24T20:53:03.331Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 4,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "queued",
+                  "stage": "queue",
+                  "at": "2026-10-24T20:53:03.332Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 5,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "executing",
+                  "stage": "provider",
+                  "at": "2026-10-24T20:53:03.335Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 6,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "verifying",
+                  "stage": "verification",
+                  "at": "2026-10-24T20:53:03.343Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 7,
+                  "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                  "state": "completed",
+                  "stage": "result",
+                  "at": "2026-10-24T20:53:03.348Z",
+                  "component": "file-engine/engine.mjs"
+                }
+              ],
+              "verification": {
+                "level": "content-sha256",
+                "providerEvidence": false
+              },
+              "error": null,
+              "checkpoints": [
+                {
+                  "sha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+                  "size": 4
+                }
+              ],
+              "recovery": null
+            },
+            "resources": {
+              "resourceApiVersion": "1.0.0",
+              "state": "available",
+              "data": {
+                "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6",
+                "operation": "copy",
+                "startedAt": "2026-10-24T20:53:03.323Z",
+                "durationMs": 26.35118799999998,
+                "state": "completed",
+                "spans": [
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.325Z",
+                    "durationMs": 0.011818000000005213,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.326Z",
+                    "durationMs": 0.06925300000000334,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.328Z",
+                    "durationMs": 2.487062999999978,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.328Z",
+                    "durationMs": 0.004637000000002445,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.328Z",
+                    "durationMs": 0.059347999999999956,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.330Z",
+                    "durationMs": 1.8892000000000166,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.330Z",
+                    "durationMs": 0.0050079999999752545,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.330Z",
+                    "durationMs": 0.08722899999997935,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.332Z",
+                    "durationMs": 2.0052109999999743,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.332Z",
+                    "durationMs": 0.0036249999999995453,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.332Z",
+                    "durationMs": 0.095862000000011,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.334Z",
+                    "durationMs": 2.0543140000000335,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.334Z",
+                    "durationMs": 0.3075450000000046,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.334Z",
+                    "durationMs": 0.004266000000029635,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.335Z",
+                    "durationMs": 0.1133670000000393,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.336Z",
+                    "durationMs": 1.9494280000000117,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.337Z",
+                    "durationMs": 0.2896369999999706,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.337Z",
+                    "durationMs": 0.274234999999976,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.338Z",
+                    "durationMs": 0.26472000000001117,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.338Z",
+                    "durationMs": 0.2523219999999924,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.340Z",
+                    "durationMs": 1.946183000000019,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.340Z",
+                    "durationMs": 0.29473600000000033,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.340Z",
+                    "durationMs": 0.0049769999999966785,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.341Z",
+                    "durationMs": 0.1720640000000344,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.342Z",
+                    "durationMs": 1.978591999999992,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.342Z",
+                    "durationMs": 0.0027640000000133114,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.342Z",
+                    "durationMs": 0.07918699999999035,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.345Z",
+                    "durationMs": 3.0112060000000156,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.345Z",
+                    "durationMs": 0.0022839999999746396,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.345Z",
+                    "durationMs": 0.06021899999996094,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.347Z",
+                    "durationMs": 2.019301999999982,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.347Z",
+                    "durationMs": 0.004506999999989603,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.347Z",
+                    "durationMs": 0.05086500000004435,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.349Z",
+                    "durationMs": 1.5987109999999802,
+                    "error": null
+                  }
+                ],
+                "droppedSpans": 0,
+                "memoryBefore": {
+                  "at": "2026-10-24T20:53:03.323Z",
+                  "heapBytes": 15970328,
+                  "processBytes": 63582208,
+                  "externalBytes": 4261884,
+                  "arrayBufferBytes": 326562,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "memoryAfter": {
+                  "at": "2026-10-24T20:53:03.349Z",
+                  "heapBytes": 17779840,
+                  "processBytes": 62320640,
+                  "externalBytes": 4595551,
+                  "arrayBufferBytes": 660133,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "resourcesBefore": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "resourcesAfter": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "error": null,
+                "interrupted": false,
+                "interpretation": "measured"
+              }
+            }
+          },
+          "cleanup": {
+            "verified": true,
+            "scope": "entire exclusively owned temporary sandbox"
+          },
+          "modelTokens": {
+            "state": "unavailable"
+          },
+          "humanInterventions": {
+            "state": "unmeasured"
+          }
+        }
+      ],
+      "certification": "NOT_CERTIFIED",
+      "score": null,
+      "rank": null,
+      "limitations": [
+        "deterministic reference client, not cold-agent evaluation",
+        "no cross-project validation",
+        "no model token measurement"
+      ]
+    },
+    {
+      "benchmarkVersion": "0.1.0-experimental",
+      "application": {
+        "name": "REDOWN",
+        "provider": "native-reference"
+      },
+      "environment": {
+        "runtime": "v24.22.1",
+        "platform": "linux"
+      },
+      "profile": "deterministic-authorized-reference",
+      "trials": [
+        {
+          "taskId": "transfer-with-integrity",
+          "action": "copy",
+          "state": "passed",
+          "error": null,
+          "durationMs": 55.74798400000003,
+          "toolCalls": 4,
+          "oracle": {
+            "verified": true,
+            "method": "independent fresh journal read",
+            "expectedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+            "observedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc"
+          },
+          "diagnostics": {
+            "evidence": {
+              "fileApiVersion": "0.3.0",
+              "id": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+              "operation": "copy",
+              "executor": "canonical-coordinator",
+              "state": "completed",
+              "source": {
+                "provider": "native-reference",
+                "fingerprint": "17c5620c4af80aa5c2d2e707ff0f10c28c4aff97a0e5f25b6f8e05f12b8c540a"
+              },
+              "destination": {
+                "provider": "native-reference",
+                "fingerprint": "5068814e31daabceafac72da660cbb5f81f317e4c8c5589ef64bcc78aabdb5c0"
+              },
+              "events": [
+                {
+                  "sequence": 1,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "requested",
+                  "stage": "request",
+                  "at": "2026-10-24T20:53:03.392Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 2,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "validated",
+                  "stage": "validation",
+                  "at": "2026-10-24T20:53:03.394Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 3,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "planned",
+                  "stage": "planning",
+                  "at": "2026-10-24T20:53:03.396Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 4,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "queued",
+                  "stage": "queue",
+                  "at": "2026-10-24T20:53:03.398Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 5,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "executing",
+                  "stage": "provider",
+                  "at": "2026-10-24T20:53:03.400Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 6,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "verifying",
+                  "stage": "verification",
+                  "at": "2026-10-24T20:53:03.408Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 7,
+                  "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                  "state": "completed",
+                  "stage": "result",
+                  "at": "2026-10-24T20:53:03.412Z",
+                  "component": "file-engine/engine.mjs"
+                }
+              ],
+              "verification": {
+                "level": "content-sha256",
+                "providerEvidence": false
+              },
+              "error": null,
+              "checkpoints": [
+                {
+                  "sha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+                  "size": 4
+                }
+              ],
+              "recovery": null
+            },
+            "resources": {
+              "resourceApiVersion": "1.0.0",
+              "state": "available",
+              "data": {
+                "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143",
+                "operation": "copy",
+                "startedAt": "2026-10-24T20:53:03.389Z",
+                "durationMs": 24.48406200000005,
+                "state": "completed",
+                "spans": [
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.392Z",
+                    "durationMs": 0.007199999999954798,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.392Z",
+                    "durationMs": 0.0665079999999989,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.394Z",
+                    "durationMs": 1.708642999999995,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.394Z",
+                    "durationMs": 0.00312399999995705,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.394Z",
+                    "durationMs": 0.05138499999998203,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.396Z",
+                    "durationMs": 2.027774000000022,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.396Z",
+                    "durationMs": 0.003906000000029053,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.396Z",
+                    "durationMs": 0.05114599999996017,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.398Z",
+                    "durationMs": 1.9508110000000443,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.398Z",
+                    "durationMs": 0.0026540000000068176,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.398Z",
+                    "durationMs": 0.04985400000003892,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.399Z",
+                    "durationMs": 1.5552860000000237,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.400Z",
+                    "durationMs": 0.2019290000000069,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.400Z",
+                    "durationMs": 0.0023640000000000327,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.400Z",
+                    "durationMs": 0.059577999999987696,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.401Z",
+                    "durationMs": 1.8146800000000098,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.402Z",
+                    "durationMs": 0.24939800000004197,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.402Z",
+                    "durationMs": 0.2058640000000196,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.403Z",
+                    "durationMs": 0.40178299999996625,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.403Z",
+                    "durationMs": 0.35119900000000825,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.405Z",
+                    "durationMs": 1.9538049999999885,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.405Z",
+                    "durationMs": 0.3244589999999903,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.406Z",
+                    "durationMs": 0.003964999999993779,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.406Z",
+                    "durationMs": 0.058025999999983924,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.408Z",
+                    "durationMs": 2.2213100000000168,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.408Z",
+                    "durationMs": 0.0028639999999882093,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.408Z",
+                    "durationMs": 0.07723399999997582,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.410Z",
+                    "durationMs": 1.9710999999999785,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.410Z",
+                    "durationMs": 0.0024139999999874817,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.410Z",
+                    "durationMs": 0.04160100000001421,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.412Z",
+                    "durationMs": 2.0500370000000316,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.412Z",
+                    "durationMs": 0.0027940000000512555,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.412Z",
+                    "durationMs": 0.0584559999999783,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.414Z",
+                    "durationMs": 2.1046079999999847,
+                    "error": null
+                  }
+                ],
+                "droppedSpans": 0,
+                "memoryBefore": {
+                  "at": "2026-10-24T20:53:03.389Z",
+                  "heapBytes": 14150752,
+                  "processBytes": 64008192,
+                  "externalBytes": 4433118,
+                  "arrayBufferBytes": 493656,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "memoryAfter": {
+                  "at": "2026-10-24T20:53:03.414Z",
+                  "heapBytes": 15695112,
+                  "processBytes": 64139264,
+                  "externalBytes": 4801115,
+                  "arrayBufferBytes": 861557,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "resourcesBefore": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "resourcesAfter": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "error": null,
+                "interrupted": false,
+                "interpretation": "measured"
+              }
+            }
+          },
+          "cleanup": {
+            "verified": true,
+            "scope": "entire exclusively owned temporary sandbox"
+          },
+          "modelTokens": {
+            "state": "unavailable"
+          },
+          "humanInterventions": {
+            "state": "unmeasured"
+          }
+        }
+      ],
+      "certification": "NOT_CERTIFIED",
+      "score": null,
+      "rank": null,
+      "limitations": [
+        "deterministic reference client, not cold-agent evaluation",
+        "no cross-project validation",
+        "no model token measurement"
+      ]
+    },
+    {
+      "benchmarkVersion": "0.1.0-experimental",
+      "application": {
+        "name": "REDOWN",
+        "provider": "local-reference"
+      },
+      "environment": {
+        "runtime": "v24.22.1",
+        "platform": "linux"
+      },
+      "profile": "deterministic-authorized-reference",
+      "trials": [
+        {
+          "taskId": "transfer-with-integrity",
+          "action": "copy",
+          "state": "passed",
+          "error": null,
+          "durationMs": 55.288656,
+          "toolCalls": 4,
+          "oracle": {
+            "verified": true,
+            "method": "independent fs.readFile",
+            "expectedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+            "observedSha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc"
+          },
+          "diagnostics": {
+            "evidence": {
+              "fileApiVersion": "0.3.0",
+              "id": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+              "operation": "copy",
+              "executor": "canonical-coordinator",
+              "state": "completed",
+              "source": {
+                "provider": "local-reference",
+                "fingerprint": "f74f84e2f1d662570c688adb54bfe0a6d3ec835b9339254c187ef917782fc396"
+              },
+              "destination": {
+                "provider": "local-reference",
+                "fingerprint": "896b0b9474041cb81730c4fb3af15df32af24b1e060a1c0d06993d9befcab6f2"
+              },
+              "events": [
+                {
+                  "sequence": 1,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "requested",
+                  "stage": "request",
+                  "at": "2026-10-24T20:53:03.449Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 2,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "validated",
+                  "stage": "validation",
+                  "at": "2026-10-24T20:53:03.451Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 3,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "planned",
+                  "stage": "planning",
+                  "at": "2026-10-24T20:53:03.454Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 4,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "queued",
+                  "stage": "queue",
+                  "at": "2026-10-24T20:53:03.455Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 5,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "executing",
+                  "stage": "provider",
+                  "at": "2026-10-24T20:53:03.458Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 6,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "verifying",
+                  "stage": "verification",
+                  "at": "2026-10-24T20:53:03.464Z",
+                  "component": "file-engine/engine.mjs"
+                },
+                {
+                  "sequence": 7,
+                  "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                  "state": "completed",
+                  "stage": "result",
+                  "at": "2026-10-24T20:53:03.468Z",
+                  "component": "file-engine/engine.mjs"
+                }
+              ],
+              "verification": {
+                "level": "content-sha256",
+                "providerEvidence": true
+              },
+              "error": null,
+              "checkpoints": [
+                {
+                  "sha256": "787a4bce1c8b1ef7f111820f3840c98b4ddf51d55f5e7a9b007fb6224bb563bc",
+                  "size": 4
+                }
+              ],
+              "recovery": null
+            },
+            "resources": {
+              "resourceApiVersion": "1.0.0",
+              "state": "available",
+              "data": {
+                "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50",
+                "operation": "copy",
+                "startedAt": "2026-10-24T20:53:03.447Z",
+                "durationMs": 23.273693999999978,
+                "state": "completed",
+                "spans": [
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.449Z",
+                    "durationMs": 0.0070010000000024775,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.449Z",
+                    "durationMs": 0.11233599999997068,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.451Z",
+                    "durationMs": 2.1348220000000424,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.451Z",
+                    "durationMs": 0.004896999999971285,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.451Z",
+                    "durationMs": 0.05267799999995759,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.453Z",
+                    "durationMs": 2.0396920000000023,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.453Z",
+                    "durationMs": 0.006109000000037668,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.453Z",
+                    "durationMs": 0.07766500000002452,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.455Z",
+                    "durationMs": 1.757846000000029,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.455Z",
+                    "durationMs": 0.0024139999999874817,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.455Z",
+                    "durationMs": 0.057114000000012766,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.457Z",
+                    "durationMs": 1.8825300000000311,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.457Z",
+                    "durationMs": 0.20661499999999933,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.457Z",
+                    "durationMs": 0.002392999999983658,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.457Z",
+                    "durationMs": 0.06114999999999782,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.459Z",
+                    "durationMs": 1.810342999999989,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.459Z",
+                    "durationMs": 0.13055200000002287,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.read",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.459Z",
+                    "durationMs": 0.30859600000002274,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.460Z",
+                    "durationMs": 0.18652600000001485,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.460Z",
+                    "durationMs": 0.41257000000001653,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.461Z",
+                    "durationMs": 1.0163110000000302,
+                    "error": null
+                  },
+                  {
+                    "phase": "provider",
+                    "source": "extension/file-engine/adapters/",
+                    "at": "2026-10-24T20:53:03.462Z",
+                    "durationMs": 0.4107759999999985,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.462Z",
+                    "durationMs": 0.00885300000004463,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.462Z",
+                    "durationMs": 0.08272199999998975,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.464Z",
+                    "durationMs": 2.254107999999974,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.464Z",
+                    "durationMs": 0.0023429999999962092,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.464Z",
+                    "durationMs": 0.046297999999978856,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.466Z",
+                    "durationMs": 2.033362000000011,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.466Z",
+                    "durationMs": 0.0037750000000187356,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.466Z",
+                    "durationMs": 0.06466500000004771,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.468Z",
+                    "durationMs": 1.9462539999999535,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.queue",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.468Z",
+                    "durationMs": 0.002192999999977019,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.lock",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.468Z",
+                    "durationMs": 0.09516999999999598,
+                    "error": null
+                  },
+                  {
+                    "phase": "journal.update",
+                    "source": "extension/file-engine/engine.mjs",
+                    "at": "2026-10-24T20:53:03.470Z",
+                    "durationMs": 1.8944970000000012,
+                    "error": null
+                  }
+                ],
+                "droppedSpans": 0,
+                "memoryBefore": {
+                  "at": "2026-10-24T20:53:03.447Z",
+                  "heapBytes": 17599144,
+                  "processBytes": 65318912,
+                  "externalBytes": 7118863,
+                  "arrayBufferBytes": 3179145,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "memoryAfter": {
+                  "at": "2026-10-24T20:53:03.470Z",
+                  "heapBytes": 18846208,
+                  "processBytes": 66760704,
+                  "externalBytes": 11590010,
+                  "arrayBufferBytes": 7650196,
+                  "provenance": "node.process.memoryUsage",
+                  "unavailable": [
+                    "worker-memory",
+                    "per-operation-heap-attribution",
+                    "cpu-percent",
+                    "object-url-lifecycle-not-used-by-beta",
+                    "thumbnail-cache-not-implemented",
+                    "worker-cpu",
+                    "exclusive-journal-lock-wait"
+                  ]
+                },
+                "resourcesBefore": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "resourcesAfter": {
+                  "transfer-buffer": {
+                    "count": 0,
+                    "bytes": 0
+                  }
+                },
+                "error": null,
+                "interrupted": false,
+                "interpretation": "measured"
+              }
+            }
+          },
+          "cleanup": {
+            "verified": true,
+            "scope": "entire exclusively owned temporary sandbox"
+          },
+          "modelTokens": {
+            "state": "unavailable"
+          },
+          "humanInterventions": {
+            "state": "unmeasured"
+          }
+        }
+      ],
+      "certification": "NOT_CERTIFIED",
+      "score": null,
+      "rank": null,
+      "limitations": [
+        "deterministic reference client, not cold-agent evaluation",
+        "no cross-project validation",
+        "no model token measurement"
+      ]
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "simulation:command",
+        "kind": "command",
+        "path": "clients/python/redown/client.py",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:session",
+        "kind": "session",
+        "path": "agent/files/api.mjs",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:engine",
+        "kind": "engine",
+        "path": "extension/file-engine/engine.mjs",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:adapter",
+        "kind": "adapter",
+        "path": "extension/file-engine/adapters/memory.mjs",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:result",
+        "kind": "result",
+        "path": "verification/phase26/provider-evidence.json",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:verification",
+        "kind": "verification",
+        "path": "scripts/phase26/provider-evidence.mjs",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:resources",
+        "kind": "resources",
+        "path": "extension/file-engine/resources.mjs",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:test",
+        "kind": "test",
+        "path": "clients/python/tests/test_client.py",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "simulation:preservation",
+        "kind": "preservation",
+        "path": "FOREVER_WORKS/PHASE26/manifest.json",
+        "operationId": "6380c474-1f2f-4669-bd34-b17fd0fdf8d6"
+      },
+      {
+        "id": "native-reference:command",
+        "kind": "command",
+        "path": "clients/python/redown/client.py",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:session",
+        "kind": "session",
+        "path": "agent/files/api.mjs",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:engine",
+        "kind": "engine",
+        "path": "extension/file-engine/engine.mjs",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:adapter",
+        "kind": "adapter",
+        "path": "extension/file-engine/adapters/native-reference.mjs",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:result",
+        "kind": "result",
+        "path": "verification/phase26/provider-evidence.json",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:verification",
+        "kind": "verification",
+        "path": "scripts/phase26/provider-evidence.mjs",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:resources",
+        "kind": "resources",
+        "path": "extension/file-engine/resources.mjs",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:test",
+        "kind": "test",
+        "path": "clients/python/tests/test_client.py",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "native-reference:preservation",
+        "kind": "preservation",
+        "path": "FOREVER_WORKS/PHASE26/manifest.json",
+        "operationId": "ef076b55-b76c-4d95-b910-28e76c2d8143"
+      },
+      {
+        "id": "local-reference:command",
+        "kind": "command",
+        "path": "clients/python/redown/client.py",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:session",
+        "kind": "session",
+        "path": "agent/files/api.mjs",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:engine",
+        "kind": "engine",
+        "path": "extension/file-engine/engine.mjs",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:adapter",
+        "kind": "adapter",
+        "path": "extension/file-engine/adapters/local-reference.mjs",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:result",
+        "kind": "result",
+        "path": "verification/phase26/provider-evidence.json",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:verification",
+        "kind": "verification",
+        "path": "scripts/phase26/provider-evidence.mjs",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:resources",
+        "kind": "resources",
+        "path": "extension/file-engine/resources.mjs",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:test",
+        "kind": "test",
+        "path": "clients/python/tests/test_client.py",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      },
+      {
+        "id": "local-reference:preservation",
+        "kind": "preservation",
+        "path": "FOREVER_WORKS/PHASE26/manifest.json",
+        "operationId": "b47f79fd-61d8-4eba-88ed-43bf57320c50"
+      }
+    ],
+    "edges": [
+      {
+        "from": "simulation:command",
+        "to": "simulation:session",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:session",
+        "to": "simulation:engine",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:engine",
+        "to": "simulation:adapter",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:adapter",
+        "to": "simulation:result",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:result",
+        "to": "simulation:verification",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:verification",
+        "to": "simulation:resources",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:resources",
+        "to": "simulation:test",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "simulation:test",
+        "to": "simulation:preservation",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:command",
+        "to": "native-reference:session",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:session",
+        "to": "native-reference:engine",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:engine",
+        "to": "native-reference:adapter",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:adapter",
+        "to": "native-reference:result",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:result",
+        "to": "native-reference:verification",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:verification",
+        "to": "native-reference:resources",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:resources",
+        "to": "native-reference:test",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "native-reference:test",
+        "to": "native-reference:preservation",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:command",
+        "to": "local-reference:session",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:session",
+        "to": "local-reference:engine",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:engine",
+        "to": "local-reference:adapter",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:adapter",
+        "to": "local-reference:result",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:result",
+        "to": "local-reference:verification",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:verification",
+        "to": "local-reference:resources",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:resources",
+        "to": "local-reference:test",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      },
+      {
+        "from": "local-reference:test",
+        "to": "local-reference:preservation",
+        "relation": "traceability-reference",
+        "boundary": "Source/test references; only session-to-result/verification/Atlas executed by this runner. Python process is tested separately."
+      }
+    ]
+  },
+  "aacStatus": "supplemental source/test/runtime graph; not full AAC certification"
+}

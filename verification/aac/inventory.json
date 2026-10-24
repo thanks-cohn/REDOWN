@@ -314,6 +314,30 @@
       "notes": "Inspection returns command as data; no execution is implicit."
     },
     {
+      "id": "aac.command.providers-test",
+      "kind": "command",
+      "name": "providers:test",
+      "sourceRefs": [
+        "package.json"
+      ],
+      "apiOperations": [],
+      "declared": "explicit-local-execution",
+      "discovery": "package-manifest",
+      "notes": "Inspection returns command as data; no execution is implicit."
+    },
+    {
+      "id": "aac.command.python-test",
+      "kind": "command",
+      "name": "python:test",
+      "sourceRefs": [
+        "package.json"
+      ],
+      "apiOperations": [],
+      "declared": "explicit-local-execution",
+      "discovery": "package-manifest",
+      "notes": "Inspection returns command as data; no execution is implicit."
+    },
+    {
       "id": "aac.command.reliability-check",
       "kind": "command",
       "name": "reliability:check",
@@ -2626,6 +2650,39 @@
       "discovery": "source-pattern"
     },
     {
+      "id": "aac.export.extension-file-engine-provider-contract.mjs.createproviderregistry",
+      "kind": "library-export",
+      "name": "createProviderRegistry",
+      "sourceRefs": [
+        "extension/file-engine/provider-contract.mjs"
+      ],
+      "apiOperations": [],
+      "declared": "in-process-library",
+      "discovery": "source-pattern"
+    },
+    {
+      "id": "aac.export.extension-file-engine-provider-contract.mjs.providerdescription",
+      "kind": "library-export",
+      "name": "providerDescription",
+      "sourceRefs": [
+        "extension/file-engine/provider-contract.mjs"
+      ],
+      "apiOperations": [],
+      "declared": "in-process-library",
+      "discovery": "source-pattern"
+    },
+    {
+      "id": "aac.export.extension-file-engine-provider-contract.mjs.validatelocator",
+      "kind": "library-export",
+      "name": "validateLocator",
+      "sourceRefs": [
+        "extension/file-engine/provider-contract.mjs"
+      ],
+      "apiOperations": [],
+      "declared": "in-process-library",
+      "discovery": "source-pattern"
+    },
+    {
       "id": "aac.export.extension-file-engine-resources.mjs.createresourceatlas",
       "kind": "library-export",
       "name": "createResourceAtlas",
@@ -2697,6 +2754,17 @@
       "name": "initialState",
       "sourceRefs": [
         "extension/file-engine/simulation.mjs"
+      ],
+      "apiOperations": [],
+      "declared": "in-process-library",
+      "discovery": "source-pattern"
+    },
+    {
+      "id": "aac.export.extension-file-engine-universal-operations.mjs.performuniversal",
+      "kind": "library-export",
+      "name": "performUniversal",
+      "sourceRefs": [
+        "extension/file-engine/universal-operations.mjs"
       ],
       "apiOperations": [],
       "declared": "in-process-library",
@@ -3835,390 +3903,1200 @@
       "kind": "provider-operation",
       "name": "fake-drive.copy",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.copy"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.delete",
       "kind": "provider-operation",
       "name": "fake-drive.delete",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.delete"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.ingest",
       "kind": "provider-operation",
       "name": "fake-drive.ingest",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.ingest"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.list",
       "kind": "provider-operation",
       "name": "fake-drive.list",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.list"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.metadata",
       "kind": "provider-operation",
       "name": "fake-drive.metadata",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.metadata"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.mkdir",
       "kind": "provider-operation",
       "name": "fake-drive.mkdir",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.mkdir"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.move",
       "kind": "provider-operation",
       "name": "fake-drive.move",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.move"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.read",
       "kind": "provider-operation",
       "name": "fake-drive.read",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.read"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.rename",
       "kind": "provider-operation",
       "name": "fake-drive.rename",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.rename"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-drive.upload",
       "kind": "provider-operation",
       "name": "fake-drive.upload",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.upload"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.copy",
       "kind": "provider-operation",
       "name": "fake-r2.copy",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.copy"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.delete",
       "kind": "provider-operation",
       "name": "fake-r2.delete",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.delete"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.ingest",
       "kind": "provider-operation",
       "name": "fake-r2.ingest",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.ingest"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.list",
       "kind": "provider-operation",
       "name": "fake-r2.list",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.list"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.metadata",
       "kind": "provider-operation",
       "name": "fake-r2.metadata",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.metadata"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.mkdir",
       "kind": "provider-operation",
       "name": "fake-r2.mkdir",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.mkdir"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.move",
       "kind": "provider-operation",
       "name": "fake-r2.move",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.move"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.read",
       "kind": "provider-operation",
       "name": "fake-r2.read",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.read"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.rename",
       "kind": "provider-operation",
       "name": "fake-r2.rename",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.rename"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.fake-r2.upload",
       "kind": "provider-operation",
       "name": "fake-r2.upload",
       "sourceRefs": [
-        "extension/file-engine/adapters/memory.mjs"
+        "extension/file-engine/adapters/memory.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.upload"
       ],
       "declared": "simulation",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.copy",
+      "kind": "provider-operation",
+      "name": "immutable-reference.copy",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.copy"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.delete",
+      "kind": "provider-operation",
+      "name": "immutable-reference.delete",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.delete"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.ingest",
+      "kind": "provider-operation",
+      "name": "immutable-reference.ingest",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.ingest"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.list",
+      "kind": "provider-operation",
+      "name": "immutable-reference.list",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.list"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.metadata",
+      "kind": "provider-operation",
+      "name": "immutable-reference.metadata",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.metadata"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.mkdir",
+      "kind": "provider-operation",
+      "name": "immutable-reference.mkdir",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.mkdir"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.move",
+      "kind": "provider-operation",
+      "name": "immutable-reference.move",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.move"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.read",
+      "kind": "provider-operation",
+      "name": "immutable-reference.read",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.read"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.rename",
+      "kind": "provider-operation",
+      "name": "immutable-reference.rename",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.rename"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.immutable-reference.upload",
+      "kind": "provider-operation",
+      "name": "immutable-reference.upload",
+      "sourceRefs": [
+        "extension/file-engine/adapters/immutable-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.upload"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.copy",
+      "kind": "provider-operation",
+      "name": "local-reference.copy",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.copy"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.delete",
+      "kind": "provider-operation",
+      "name": "local-reference.delete",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.delete"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.ingest",
+      "kind": "provider-operation",
+      "name": "local-reference.ingest",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.ingest"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.list",
+      "kind": "provider-operation",
+      "name": "local-reference.list",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.list"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.metadata",
+      "kind": "provider-operation",
+      "name": "local-reference.metadata",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.metadata"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.mkdir",
+      "kind": "provider-operation",
+      "name": "local-reference.mkdir",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.mkdir"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.move",
+      "kind": "provider-operation",
+      "name": "local-reference.move",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.move"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.read",
+      "kind": "provider-operation",
+      "name": "local-reference.read",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.read"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.rename",
+      "kind": "provider-operation",
+      "name": "local-reference.rename",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.rename"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.local-reference.upload",
+      "kind": "provider-operation",
+      "name": "local-reference.upload",
+      "sourceRefs": [
+        "extension/file-engine/adapters/local-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.upload"
+      ],
+      "declared": "owner-exclusive-reference",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.copy",
+      "kind": "provider-operation",
+      "name": "native-reference.copy",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.copy"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.delete",
+      "kind": "provider-operation",
+      "name": "native-reference.delete",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.delete"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.ingest",
+      "kind": "provider-operation",
+      "name": "native-reference.ingest",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.ingest"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.list",
+      "kind": "provider-operation",
+      "name": "native-reference.list",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.list"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.metadata",
+      "kind": "provider-operation",
+      "name": "native-reference.metadata",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.metadata"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.mkdir",
+      "kind": "provider-operation",
+      "name": "native-reference.mkdir",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.mkdir"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.move",
+      "kind": "provider-operation",
+      "name": "native-reference.move",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.move"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.read",
+      "kind": "provider-operation",
+      "name": "native-reference.read",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.read"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.rename",
+      "kind": "provider-operation",
+      "name": "native-reference.rename",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.rename"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
+    },
+    {
+      "id": "aac.provider.native-reference.upload",
+      "kind": "provider-operation",
+      "name": "native-reference.upload",
+      "sourceRefs": [
+        "extension/file-engine/adapters/native-reference.mjs",
+        "extension/file-engine/providers.json"
+      ],
+      "apiOperations": [
+        "file.upload"
+      ],
+      "declared": "reference-fixture",
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.copy",
       "kind": "provider-operation",
       "name": "r2-lab.copy",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.copy"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.delete",
       "kind": "provider-operation",
       "name": "r2-lab.delete",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.delete"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.ingest",
       "kind": "provider-operation",
       "name": "r2-lab.ingest",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.ingest"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.list",
       "kind": "provider-operation",
       "name": "r2-lab.list",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.list"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.metadata",
       "kind": "provider-operation",
       "name": "r2-lab.metadata",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.metadata"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.mkdir",
       "kind": "provider-operation",
       "name": "r2-lab.mkdir",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.mkdir"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.move",
       "kind": "provider-operation",
       "name": "r2-lab.move",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.move"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.read",
       "kind": "provider-operation",
       "name": "r2-lab.read",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.read"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.rename",
       "kind": "provider-operation",
       "name": "r2-lab.rename",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.rename"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.provider.r2-lab.upload",
       "kind": "provider-operation",
       "name": "r2-lab.upload",
       "sourceRefs": [
-        "extension/file-engine/adapters/r2-http.mjs"
+        "extension/file-engine/adapters/r2-http.mjs",
+        "extension/file-engine/providers.json"
       ],
       "apiOperations": [
         "file.upload"
       ],
       "declared": "authorized-live-lab",
-      "discovery": "adapter-source"
+      "discovery": "versioned-provider-registry",
+      "testRefs": [
+        "tests/providers/baseline.mjs",
+        "tests/provider-schema.test.mjs",
+        "clients/python/tests/test_client.py"
+      ],
+      "notes": "Registration grants discovery only; no execution, integrity, authorization or readiness credit follows."
     },
     {
       "id": "aac.requested.account-session-beta",
@@ -7150,7 +8028,7 @@
     },
     {
       "path": "extension/beta-explorer.mjs",
-      "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
+      "sha256": "f74ab22fbb29e303cddf2d4d1222293c8bff311ecaa474497ef59cc4de1fc34a"
     },
     {
       "path": "extension/beta-walkthrough-steps.mjs",
@@ -7270,11 +8148,23 @@
     },
     {
       "path": "extension/file-engine/engine.mjs",
-      "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
+      "sha256": "662040c10b4deb73eb93361ddf04919ae1fbf41d7c693770f742ed4bbc61a38d"
     },
     {
       "path": "extension/file-engine/indexeddb-store.mjs",
       "sha256": "f6328a0020ee0fdc47dc14728df623e10d64c7cd5e90b23fbad6df2f1cdf848b"
+    },
+    {
+      "path": "extension/file-engine/provider-contract.mjs",
+      "sha256": "9d387870173079d429cd108a8745bad2c0fcce3cc9e04c4895390e1ea45f7e10"
+    },
+    {
+      "path": "extension/file-engine/provider-validator.mjs",
+      "sha256": "dc3f092c2e2569e0523a11b8dca9d53f83b6aa4ff0b3db519214f3992751e33e"
+    },
+    {
+      "path": "extension/file-engine/request-03-validator.mjs",
+      "sha256": "691c061628d448a69f193aec4a5a5188691bc623bfff708afeccd6867d7e85ae"
     },
     {
       "path": "extension/file-engine/resource-evidence-validator.mjs",
@@ -7286,19 +8176,27 @@
     },
     {
       "path": "extension/file-engine/resources.mjs",
-      "sha256": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
+      "sha256": "2337d482bcd44e52458544ce72d82d769968b469f13c8a322b5387fa6f18fdd1"
     },
     {
       "path": "extension/file-engine/simulation.mjs",
       "sha256": "573b2a29ef2df1f192d3d22ecaa615f36334c998c73ad73bfb1289e34782bad5"
     },
     {
+      "path": "extension/file-engine/universal-operations.mjs",
+      "sha256": "ddb1a3b3df8e0cb4dd23c39fa58f0a1abf7ba16f475a0dc2e3c04692afc4fb5f"
+    },
+    {
       "path": "package.json",
-      "sha256": "6f9f5b263e7e366f8abab0ebeab15f78d77b6c4eec2fd2d37f890d6da0cb87fc"
+      "sha256": "327fe556494267d191ffd425d87c0e687fcc4eeb54ac0b475bb3143fdbe151ac"
     },
     {
       "path": "agent/explorer/model.json",
       "sha256": "599c338e65f008b72b752b5b95ae9490ecedfe2e937231727466086fe2902616"
+    },
+    {
+      "path": "extension/file-engine/providers.json",
+      "sha256": "95fde31c00aba14122581e4687be3eef5afb7a99dc5f927f7d34b5b8ef601e0c"
     },
     {
       "path": "extension/file-engine/adapters/memory.mjs",

@@ -1,0 +1,9 @@
+{
+  "version": "v1.75.2",
+  "source": "https://downloads.rclone.org/v1.75.2/rclone-v1.75.2-linux-amd64.zip",
+  "checksumSource": "https://downloads.rclone.org/v1.75.2/SHA256SUMS",
+  "zipSha256": "349ac8fba6ff65d6247043f1750cdcb518ec5d500ef91463a10d37c0ccdf3702",
+  "verified": true,
+  "installation": "isolated temporary directory; not system installed",
+  "failedInitialChecksumURL": "https://downloads.rclone.org/SHA256SUMS returned 404; corrected to versioned official release directory"
+}

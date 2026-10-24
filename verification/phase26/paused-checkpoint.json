@@ -1,0 +1,49 @@
+{
+  "phase": "2.6",
+  "state": "PAUSED_UNVERIFIED_DRAFT",
+  "baseMain": "fc5fe3019fe52316b51a1b0fee4d58779f588548",
+  "checkpointBranch": "feat/phase26-universal-agents",
+  "ownerStoppedImplementation": true,
+  "preservationOnly": true,
+  "prompt": {
+    "file": "docs/phase26/ORIGINAL_PROMPT.md",
+    "uploadedName": "Pasted text(20261024-192431).txt",
+    "sha256": "8a4a07c802b21bb47de80f4439045434e2fe2a25d71c88e184c177b07bcd8d77",
+    "bytes": 32747,
+    "byteExact": true
+  },
+  "architecturalAddendum": "docs/phase26/ADAPTER_ONLY_REQUIREMENT.md",
+  "sourceFiles": [
+    {
+      "path": "extension/file-engine/engine.mjs",
+      "sha256": "fc26ac41244816fb88204b07fde94df21f62be0839279e33836f3e7c02acf225"
+    },
+    {
+      "path": "extension/file-engine/resources.mjs",
+      "sha256": "2337d482bcd44e52458544ce72d82d769968b469f13c8a322b5387fa6f18fdd1"
+    },
+    {
+      "path": "extension/file-engine/provider-contract.mjs",
+      "sha256": "bd826972363d6e15a7f7ac1da076982b4ba7495d8f9ac43afeac076e2544ca5d"
+    },
+    {
+      "path": "extension/file-engine/adapters/native-reference.mjs",
+      "sha256": "4106419ee36a6a9ce9a17d9257395fc7bd459cf260bb097d177b90e1dd13292e"
+    },
+    {
+      "path": "extension/file-engine/universal-operations.mjs",
+      "sha256": "e7e15c160ce5aa319742a2d2b7bf49e4d928533fc27b9c51b8e9fe2eb986078b"
+    }
+  ],
+  "verification": {
+    "command": "node --test tests/universal-file-engine.test.mjs tests/file-engine-authority.test.mjs",
+    "passed": 19,
+    "failed": 0,
+    "scope": "Existing legacy tests only; native reference adapter and proposed 0.3 path not acceptance-tested",
+    "log": "verification/phase26/paused-legacy-regression.log"
+  },
+  "implementedPythonSdk": false,
+  "phase26LiveCloudActions": false,
+  "phase26CloudCleanupRequired": false,
+  "fullCertification": false
+}

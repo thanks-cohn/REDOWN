@@ -1,12 +1,20 @@
 // No network listener, credentials or automatic real-provider setup.
-import {createFileSession} from './api.mjs';
-import {createFileEngine} from '../../extension/file-engine/engine.mjs';
-import {memoryAdapter} from '../../extension/file-engine/adapters/memory.mjs';
-import {initialState} from '../../extension/file-engine/simulation.mjs';
+import {bootstrap,readOwnerConfig} from './bootstrap.mjs';
 const args=process.argv.slice(2);
-if(args[0]!=='--simulation'||args.length!==3||args[1]!=='--operations')throw Error('Usage: node agent/files/cli.mjs --simulation --operations list,metadata,read,copy');
-let state=initialState();const store={read:async()=>structuredClone(state),update:async fn=>fn(state)};
-const session=createFileSession({engine:createFileEngine({store,adapters:['fake-r2','fake-drive'].map(id=>memoryAdapter(store,id))}),scope:{operations:args[2].split(','),locations:['fake-r2','fake-drive'].map(provider=>({provider,account:'demo',container:'sandbox',key:''})),maxOperations:32}});
+const usage='Usage: node agent/files/cli.mjs (--simulation|--native-reference|--config OWNER_JSON) --operations list,metadata,read [--journal PRIVATE_PATH]';
+const opts={};
+try{
+ for(let i=0;i<args.length;i++){
+  const arg=args[i];
+  if(arg==='--simulation'||arg==='--native-reference'){if(opts.profile||opts.config)throw Error();opts.profile=arg.slice(2);}
+  else if(['--config','--operations','--journal'].includes(arg)){const value=args[++i];if(!value||value.startsWith('--'))throw Error();const key=arg.slice(2);if(opts[key])throw Error();opts[key]=value;}
+  else throw Error();
+ }
+ if(!opts.profile&&!opts.config||!opts.operations||opts.profile&&opts.config)throw Error();
+}catch{process.stderr.write(usage+'\n');process.exit(2);}
+let session;
+try{session=await bootstrap({profile:opts.profile,operations:opts.operations.split(','),journal:opts.journal,config:opts.config?readOwnerConfig(opts.config):undefined});}
+catch(error){process.stderr.write(JSON.stringify({error:{code:/^[A-Z_0-9]+$/.test(error.code||'')?error.code:'BOOTSTRAP_FAILED'}})+'\n');process.exit(2);}
 // Consume bytes before decoding/JSON parsing; an oversized or invalid line never reaches execution.
 let chunks=[],size=0,discard=false;
 const respond=value=>process.stdout.write(JSON.stringify(value)+'\n');

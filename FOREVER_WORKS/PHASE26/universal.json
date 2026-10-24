@@ -1,0 +1,22 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p26.capability.universal",
+  "kind": "capability",
+  "name": "Universal provider contracts and external client",
+  "statement": "Expose versioned filesystem operations through the same authorized bridge and coordinator for path and native-ID adapters.",
+  "status": "partial",
+  "criticality": "essential",
+  "relatedInvariants": [
+    "redown.p26.invariant.portability"
+  ],
+  "relatedImplementations": [
+    "redown.p26.implementation.foundation"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md"
+    }
+  }
+}

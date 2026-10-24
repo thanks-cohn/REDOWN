@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:redown:provider-contract:1.0.0",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "provider",
+    "realProvider",
+    "identity",
+    "features",
+    "checksums",
+    "authentication",
+    "consistency",
+    "limits",
+    "operations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "realProvider": {
+      "type": "boolean"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "model",
+        "directories",
+        "root"
+      ],
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "directories": {
+          "enum": [
+            "native",
+            "prefix",
+            "none"
+          ]
+        },
+        "root": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "object",
+      "required": [
+        "nativeDirectories",
+        "caseSensitive",
+        "duplicateNames",
+        "stableIds",
+        "nativeSearch",
+        "recursiveListing",
+        "pagination",
+        "rangeReads",
+        "streamingReads",
+        "streamingUploads",
+        "multipart",
+        "serverCopy",
+        "serverMove",
+        "conditionalWrites",
+        "revisionDelete",
+        "conflictSafeRename",
+        "timestamps",
+        "metadataRead",
+        "metadataWrite",
+        "sharedLinks",
+        "trash",
+        "restore",
+        "notifications",
+        "quotas",
+        "rateLimits"
+      ],
+      "properties": {
+        "nativeDirectories": {
+          "type": "boolean"
+        },
+        "caseSensitive": {
+          "type": "boolean"
+        },
+        "duplicateNames": {
+          "type": "boolean"
+        },
+        "stableIds": {
+          "type": "boolean"
+        },
+        "nativeSearch": {
+          "type": "boolean"
+        },
+        "recursiveListing": {
+          "type": "boolean"
+        },
+        "pagination": {
+          "type": "boolean"
+        },
+        "rangeReads": {
+          "type": "boolean"
+        },
+        "streamingReads": {
+          "type": "boolean"
+        },
+        "streamingUploads": {
+          "type": "boolean"
+        },
+        "multipart": {
+          "type": "boolean"
+        },
+        "serverCopy": {
+          "type": "boolean"
+        },
+        "serverMove": {
+          "type": "boolean"
+        },
+        "conditionalWrites": {
+          "type": "boolean"
+        },
+        "revisionDelete": {
+          "type": "boolean"
+        },
+        "conflictSafeRename": {
+          "type": "boolean"
+        },
+        "timestamps": {
+          "type": "boolean"
+        },
+        "metadataRead": {
+          "type": "boolean"
+        },
+        "metadataWrite": {
+          "type": "boolean"
+        },
+        "sharedLinks": {
+          "type": "boolean"
+        },
+        "trash": {
+          "type": "boolean"
+        },
+        "restore": {
+          "type": "boolean"
+        },
+        "notifications": {
+          "type": "boolean"
+        },
+        "quotas": {
+          "type": "boolean"
+        },
+        "rateLimits": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "checksums": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "authentication": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "consistency": {
+      "type": "string",
+      "minLength": 1
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "implemented",
+          "coordinator",
+          "prefix-marker",
+          "unsupported",
+          "client-filter",
+          "coordinator-files"
+        ]
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  }
+}

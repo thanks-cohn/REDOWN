@@ -1,0 +1,928 @@
+{
+  "fixtureCohort": "final-verified",
+  "runtimeSourceHashes": {
+    "extension/file-engine/engine.mjs": "662040c10b4deb73eb93361ddf04919ae1fbf41d7c693770f742ed4bbc61a38d",
+    "extension/file-engine/universal-operations.mjs": "ddb1a3b3df8e0cb4dd23c39fa58f0a1abf7ba16f475a0dc2e3c04692afc4fb5f",
+    "extension/file-engine/provider-contract.mjs": "9d387870173079d429cd108a8745bad2c0fcce3cc9e04c4895390e1ea45f7e10",
+    "extension/file-engine/resources.mjs": "2337d482bcd44e52458544ce72d82d769968b469f13c8a322b5387fa6f18fdd1",
+    "agent/files/api.mjs": "c6c3f819345722b4cb534b97e491a2870e58caa173177173ff18e023513b5bec",
+    "agent/files/bootstrap.mjs": "ef2d0ae99645e86c8e408b2f740bc1ab5becd04c5284d1ab2262d8df9a57ca7d",
+    "extension/beta-explorer.mjs": "f74ab22fbb29e303cddf2d4d1222293c8bff311ecaa474497ef59cc4de1fc34a",
+    "clients/python/redown/__init__.py": "ff7fe7479c0fdac32f6a385f42d708f15f7d57bcda84f7a8532316f02ae75c80",
+    "clients/python/redown/cli.py": "0d35b818d677bdcd250bef873eb1a5005cc7fcd72684c533d03d08a61fa9f83f",
+    "clients/python/redown/client.py": "7a9072a1b2a104558646284a149e9d887946e000f2ee0247ccaeae9d40efc87b",
+    "agent/aac/model.mjs": "4a46013c2ab5ed327e5c6179988a52373fef0d2bdb522a913ec7e3280b8e537c",
+    "scripts/aob/runner.mjs": "f3a3764c8d13316f5cbdfe6e5ccc68f43d8542dbd97c26ae82dac35d33dd64aa",
+    "agent/files/session.schema.json": "2115ddcdf6a0dccb7df1e84a1fd80ebfa81d9f5c738676167d793b3490a1e1ef",
+    "extension/file-engine/schema-0.3.json": "0648b3aa290743adefe22ca255d05848f6490616b23c5eaf580c8a8166b7fcd9",
+    "extension/file-engine/provider.schema.json": "3047995b7de9f111e0271b71feadccbdb3864d9391cffd04c5b53ee19170413f",
+    "tests/providers/baseline.mjs": "80cf84e579a106028c6a4a541a5907c283dbdc62142048d8e24fb79c7c6b9ac0",
+    "agent/aac/api.mjs": "4629f777ff5638a63fc0d39588d1c50d51111bae83fd1b5c974b3ead47db8606"
+  },
+  "oracleImplementation": "scripts/phase26/oracle.mjs: independent native-fetch process; no engine/SDK/adapter imports",
+  "version": "0.3.0",
+  "run": "00ffc921-a0ed-4414-9ab6-ae05356fa0c5",
+  "worker": "redown-p2-lab-00ffc921",
+  "results": [
+    {
+      "operation": "upload",
+      "operationId": "a2019491-5ee4-4077-ac36-7f667bbfa2aa",
+      "state": "passed",
+      "bytes": 0,
+      "elapsedMs": 7815.006220999749,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "a2019491-5ee4-4077-ac36-7f667bbfa2aa",
+          "durationMs": 3801.379184,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.15328400000026932,
+              "maxMs": 0.0917349999999999
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 1.7487510000008228,
+              "maxMs": 0.967087999999876
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 28.84077399999967,
+              "maxMs": 6.503551999999672
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.339408000000077,
+              "maxMs": 1.0019090000000688
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 3751.8124139999995,
+              "maxMs": 3146.641528
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 2.76930799999991,
+              "maxMs": 1.1489759999999478
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 3755.2525940000005,
+              "maxMs": 3147.891773
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "d93e7650-dac5-4b1a-addc-a7dc6352ebb7",
+      "state": "passed",
+      "bytes": 8192,
+      "elapsedMs": 8388.721781000186,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "d93e7650-dac5-4b1a-addc-a7dc6352ebb7",
+          "durationMs": 4695.384354000001,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.08781199999884848,
+              "maxMs": 0.024645999999847845
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 1.3573829999995723,
+              "maxMs": 0.7046800000007352
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 25.38520199999857,
+              "maxMs": 4.23719600000004
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.1036290000001827,
+              "maxMs": 0.6483570000000327
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 4653.400127,
+              "maxMs": 3788.587724
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.6507870000004914,
+              "maxMs": 0.6861830000016198
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 4657.7275150000005,
+              "maxMs": 3788.9402840000002
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "4574b34f-8890-4be3-9bb2-efa4e398c9ef",
+      "state": "passed",
+      "bytes": 9,
+      "elapsedMs": 1339.1948869998487,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "4574b34f-8890-4be3-9bb2-efa4e398c9ef",
+          "durationMs": 1092.4514649999983,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.03931700000248384,
+              "maxMs": 0.008612999998149462
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.8888729999998759,
+              "maxMs": 0.2900779999981751
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 21.4519509999991,
+              "maxMs": 3.0809840000001714
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.0584520000011253,
+              "maxMs": 0.8067910000027041
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 1063.767155000005,
+              "maxMs": 609.1262240000033
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.4116439999997965,
+              "maxMs": 0.7015759999994771
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 1065.4664249999987,
+              "maxMs": 609.7165759999989
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "6ea22321-ec01-49c8-8a45-a5114cfc16df",
+      "state": "passed",
+      "bytes": 0,
+      "elapsedMs": 1050.5959339998299,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "6ea22321-ec01-49c8-8a45-a5114cfc16df",
+          "durationMs": 864.6375069999995,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.04305300001215073,
+              "maxMs": 0.010967000001983251
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.6833989999977348,
+              "maxMs": 0.1118849999984377
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 21.06513700000869,
+              "maxMs": 3.043414000003395
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.2554250000030152,
+              "maxMs": 0.773763000001054
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 836.9812800000036,
+              "maxMs": 506.4628580000026
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 0.948631999999634,
+              "maxMs": 0.39932000000044354
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 838.2926760000009,
+              "maxMs": 506.91849100000036
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "48b4459d-374f-4ec9-9cc9-9b7f5975a96e",
+      "state": "passed",
+      "bytes": 8192,
+      "elapsedMs": 1462.6278740001908,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "48b4459d-374f-4ec9-9cc9-9b7f5975a96e",
+          "durationMs": 1194.5125800000023,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.04058900000018184,
+              "maxMs": 0.007971000002726214
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.6848729999983334,
+              "maxMs": 0.09746399999858113
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 23.572289000003366,
+              "maxMs": 3.222107000001415
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.144389000000956,
+              "maxMs": 0.7563260000024457
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 1160.6062859999984,
+              "maxMs": 696.1180269999968
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.0583699999951932,
+              "maxMs": 0.4830519999995886
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 1162.5550719999992,
+              "maxMs": 696.7888859999985
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "df3b6b21-bec4-4594-863c-1a24b5b16a95",
+      "state": "passed",
+      "bytes": 9,
+      "elapsedMs": 1415.799977000006,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "df3b6b21-bec4-4594-863c-1a24b5b16a95",
+          "durationMs": 1197.422709999999,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.035894000000553206,
+              "maxMs": 0.007951999999932013
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 1.301908999997977,
+              "maxMs": 0.5207480000026408
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 23.044060999996873,
+              "maxMs": 3.4211119999999937
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.7475180000001274,
+              "maxMs": 1.3828799999973853
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 1167.440303000003,
+              "maxMs": 699.22912
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.0116930000003777,
+              "maxMs": 0.4672900000005029
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 1168.722615999999,
+              "maxMs": 699.6228320000009
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "220d5c83-e169-44f9-ae7b-8097f7338627",
+      "state": "passed",
+      "bytes": 0,
+      "elapsedMs": 443.6844550000387,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "220d5c83-e169-44f9-ae7b-8097f7338627",
+          "durationMs": 320.99844900000244,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.043573999999352964,
+              "maxMs": 0.012017000000923872
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.8720490000014252,
+              "maxMs": 0.19826300000204355
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 32.15679099999397,
+              "maxMs": 8.107084999999643
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.649132999998983,
+              "maxMs": 1.0913599999985308
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 280.790946000001,
+              "maxMs": 131.6264110000011
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 0.9499609999984386,
+              "maxMs": 0.41073600000163424
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 281.95559400000275,
+              "maxMs": 132.08722000000125
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "34840665-9d6d-4808-9ec0-1f96dae8e6eb",
+      "state": "passed",
+      "bytes": 8192,
+      "elapsedMs": 922.2904559997005,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "34840665-9d6d-4808-9ec0-1f96dae8e6eb",
+          "durationMs": 718.9648850000012,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.03902599999855738,
+              "maxMs": 0.008892999998352025
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.741373000004387,
+              "maxMs": 0.13806400000248686
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 28.27934699999605,
+              "maxMs": 3.7335429999984626
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.456108000002132,
+              "maxMs": 0.8713050000005751
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 679.3032920000005,
+              "maxMs": 345.46264900000097
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.1590810000016063,
+              "maxMs": 0.6087689999985741
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 681.7038349999966,
+              "maxMs": 346.5568639999983
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "0a173ee8-b1ee-4ffb-b409-c1220caa5dfb",
+      "state": "passed",
+      "bytes": 9,
+      "elapsedMs": 1843.055533000097,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "0a173ee8-b1ee-4ffb-b409-c1220caa5dfb",
+          "durationMs": 650.5060750000011,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.03934799999478855,
+              "maxMs": 0.008893000001990004
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.6741150000088965,
+              "maxMs": 0.1530559999991965
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 29.17249599999559,
+              "maxMs": 4.151884999999311
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.6789390000012645,
+              "maxMs": 1.097170000000915
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 613.184448,
+              "maxMs": 384.4491049999997
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.0474949999988894,
+              "maxMs": 0.484824999999546
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 614.5616800000062,
+              "maxMs": 385.0173130000003
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "39988eaa-56b1-437c-85b6-6916e06540b0",
+      "state": "passed",
+      "bytes": 0,
+      "elapsedMs": 475.64920500008157,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "39988eaa-56b1-437c-85b6-6916e06540b0",
+          "durationMs": 358.4254480000018,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.04357199999867589,
+              "maxMs": 0.01151699999900302
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.9465169999966747,
+              "maxMs": 0.2326229999998759
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 35.201526999990165,
+              "maxMs": 7.367882999998983
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.6713980000022275,
+              "maxMs": 1.1126430000003893
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 313.39632000000347,
+              "maxMs": 113.1464870000018
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.035699999996723,
+              "maxMs": 0.4938899999979185
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 314.65938500000266,
+              "maxMs": 113.61491800000294
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "ebe010e5-c294-4588-8494-c18a215862b7",
+      "state": "passed",
+      "bytes": 8192,
+      "elapsedMs": 2147.49041999994,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "ebe010e5-c294-4588-8494-c18a215862b7",
+          "durationMs": 1998.5288690000016,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.12242100000366918,
+              "maxMs": 0.08234099999754108
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 0.7997900000082154,
+              "maxMs": 0.18980000000010477
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 31.613053000000946,
+              "maxMs": 4.836616999997204
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.7118270000028133,
+              "maxMs": 1.086674000001949
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 1955.626056999994,
+              "maxMs": 1667.7166509999988
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 1.0462840000036522,
+              "maxMs": 0.4528780000000552
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 1957.4651620000004,
+              "maxMs": 1668.237100000002
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "upload",
+      "operationId": "42f93047-0f26-4626-9f8e-dec9ec4a62fe",
+      "state": "passed",
+      "bytes": 9,
+      "elapsedMs": 1852.4309419999554,
+      "oracle": "fresh Worker R2 binding read; shared transport",
+      "trace": {
+        "resourceApiVersion": "1.0.0",
+        "state": "available",
+        "data": {
+          "operationId": "42f93047-0f26-4626-9f8e-dec9ec4a62fe",
+          "durationMs": 1716.384452000002,
+          "phases": {
+            "journal.queue": {
+              "count": 9,
+              "totalMs": 0.039467000005970476,
+              "maxMs": 0.008723000002646586
+            },
+            "journal.lock": {
+              "count": 9,
+              "totalMs": 1.3221420000045327,
+              "maxMs": 0.6044020000008459
+            },
+            "journal.update": {
+              "count": 9,
+              "totalMs": 32.9690010000013,
+              "maxMs": 4.942638000000443
+            },
+            "journal.read": {
+              "count": 2,
+              "totalMs": 1.7096740000015416,
+              "maxMs": 1.07564800000182
+            },
+            "network": {
+              "count": 3,
+              "totalMs": 1674.3132589999987,
+              "maxMs": 1412.0786079999998
+            },
+            "network.decode": {
+              "count": 3,
+              "totalMs": 0.8473900000026333,
+              "maxMs": 0.36793300000135787
+            },
+            "provider": {
+              "count": 3,
+              "totalMs": 1675.3528540000007,
+              "maxMs": 1412.4930510000013
+            }
+          },
+          "overlap": true,
+          "truncated": false
+        }
+      }
+    },
+    {
+      "operation": "copy",
+      "operationId": "8f07be87-dda9-4c91-aa7c-baa1d9902743",
+      "state": "passed",
+      "direction": "test-1-new -> test-1-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "e005292f-6344-442d-bc84-127c984a84e0",
+      "state": "passed",
+      "direction": "test-1-new -> test-2-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "a8c86a0f-583e-47f3-80b7-f66ce214c602",
+      "state": "passed",
+      "direction": "test-1-new -> test-3-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "9f8fcadc-d7d2-40a7-b42e-67bc2b7b4191",
+      "state": "passed",
+      "direction": "test-1-new -> test-4-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "a6ebb4ec-42b0-4cb0-9f42-0fd992be4eb3",
+      "state": "passed",
+      "direction": "test-2-new -> test-1-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "0f91c6bf-ea4f-4003-ae35-7f13d1ce8661",
+      "state": "passed",
+      "direction": "test-2-new -> test-2-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "15d78b98-e78f-4607-abb7-41ccc7a4d825",
+      "state": "passed",
+      "direction": "test-2-new -> test-3-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "03791ae8-70e0-4779-80eb-4f7e47b7cc08",
+      "state": "passed",
+      "direction": "test-2-new -> test-4-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "1a3a5590-743d-4c27-b86d-1b4ba5b1e6d4",
+      "state": "passed",
+      "direction": "test-3-new -> test-1-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "f80b3b40-7de5-48f9-956b-989635435c23",
+      "state": "passed",
+      "direction": "test-3-new -> test-2-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "d98a24fb-b0eb-4319-bb5b-185f926f81a3",
+      "state": "passed",
+      "direction": "test-3-new -> test-3-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "db25c62d-6471-4ee7-b1a7-8a33e47c1930",
+      "state": "passed",
+      "direction": "test-3-new -> test-4-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "c99b36d6-b6e4-40ec-a030-4dfae2dfcc13",
+      "state": "passed",
+      "direction": "test-4-new -> test-1-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "6355df65-935d-4a5b-b0b2-d8ab7a6cae7d",
+      "state": "passed",
+      "direction": "test-4-new -> test-2-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "45ca60ac-cd72-4dba-ba8e-426c473994e8",
+      "state": "passed",
+      "direction": "test-4-new -> test-3-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "copy",
+      "operationId": "b547b060-0445-44e9-975a-2f2781ff5d68",
+      "state": "passed",
+      "direction": "test-4-new -> test-4-new",
+      "sourcePreserved": true
+    },
+    {
+      "operation": "move",
+      "state": "guard-passed",
+      "operationId": "66a220d9-d5be-46de-b054-15cb7c4512dc",
+      "error": "UNSUPPORTED_ATOMIC_DELETE"
+    }
+  ],
+  "cleanup": [
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-1-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-2-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-3-new",
+      "state": "absent"
+    },
+    {
+      "container": "test-4-new",
+      "state": "absent"
+    }
+  ],
+  "independence": "Worker binding read bypasses engine and adapter; separate management prefix inspection still required",
+  "oracleUserAgent": "node; initial urllib/default-user-agent failure preserved separately",
+  "limitations": [
+    "small bounded fixtures",
+    "not full corpus or streaming",
+    "not independent S3 implementation",
+    "not cold agent or rclone comparison"
+  ]
+}

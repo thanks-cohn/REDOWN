@@ -1,0 +1,124 @@
+{
+  "runtime": "v24.22.1",
+  "platform": "linux",
+  "results": [
+    {
+      "id": "providers",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "scripts/phase26/compile-contracts.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 180.926526,
+      "state": "passed"
+    },
+    {
+      "id": "provider-tests",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--test",
+        "tests/provider-beta.test.mjs",
+        "tests/provider-contract.test.mjs",
+        "tests/provider-immutable-contract.test.mjs",
+        "tests/provider-local-contract.test.mjs",
+        "tests/provider-r2-contract.test.mjs",
+        "tests/provider-schema.test.mjs",
+        "tests/aob-runner.test.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 873.8750419999999,
+      "state": "passed"
+    },
+    {
+      "id": "python",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "clients/python/tests",
+        "-v"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2655.885199,
+      "state": "passed"
+    },
+    {
+      "id": "aac-tests",
+      "command": [
+        "npm",
+        "run",
+        "aac:test"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2880.8148929999998,
+      "state": "passed"
+    },
+    {
+      "id": "resource-tests",
+      "command": [
+        "npm",
+        "run",
+        "resources:test"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2972.1404820000007,
+      "state": "passed"
+    },
+    {
+      "id": "resource-schema",
+      "command": [
+        "npm",
+        "run",
+        "resources:schema"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1050.4648809999999,
+      "state": "passed"
+    },
+    {
+      "id": "file-verification",
+      "command": [
+        "npm",
+        "run",
+        "file:verify"
+      ],
+      "exitCode": 1,
+      "error": null,
+      "durationMs": 5987.476334999999,
+      "state": "failed"
+    },
+    {
+      "id": "aac-schema",
+      "command": [
+        "npm",
+        "run",
+        "aac:schema"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1960.0956130000013,
+      "state": "passed"
+    },
+    {
+      "id": "syntax",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 4689.228483999999,
+      "state": "passed"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p26.implementation.foundation",
+  "kind": "implementation",
+  "type": "library",
+  "technology": "Canonical ES module coordinator, versioned JSON Schema, Python stdio SDK",
+  "version": "0.3.0",
+  "satisfiesCapabilities": [
+    "redown.p26.capability.universal"
+  ],
+  "constrainedByInvariants": [
+    "redown.p26.invariant.portability"
+  ],
+  "compatibilityContracts": [
+    "redown.p26.compatibility.versions"
+  ],
+  "sourceLocations": [
+    "extension/file-engine/engine.mjs",
+    "extension/file-engine/provider-contract.mjs",
+    "extension/file-engine/universal-operations.mjs",
+    "extension/file-engine/providers.json",
+    "agent/files/api.mjs",
+    "agent/files/bootstrap.mjs",
+    "clients/python/redown/client.py",
+    "extension/beta-explorer.mjs",
+    "agent/aac/model.mjs"
+  ],
+  "replaceability": "Preserve locator ownership, version negotiation, capability limits, engine/session scope intersection, conditional deletion refusal, job receipts, independent byte verification and bounded diagnostic outputs.",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.6 assignment plus mandatory adapter-only addendum in docs/phase26; observed implementation is partial, not accepted intent or certification.",
+      "promoted": false,
+      "limitations": "docs/phase26/IMPLEMENTATION.md",
+      "sourceRefs": [
+        {
+          "path": "extension/file-engine/engine.mjs",
+          "sha256": "662040c10b4deb73eb93361ddf04919ae1fbf41d7c693770f742ed4bbc61a38d"
+        },
+        {
+          "path": "extension/file-engine/provider-contract.mjs",
+          "sha256": "9d387870173079d429cd108a8745bad2c0fcce3cc9e04c4895390e1ea45f7e10"
+        },
+        {
+          "path": "extension/file-engine/universal-operations.mjs",
+          "sha256": "ddb1a3b3df8e0cb4dd23c39fa58f0a1abf7ba16f475a0dc2e3c04692afc4fb5f"
+        },
+        {
+          "path": "extension/file-engine/providers.json",
+          "sha256": "95fde31c00aba14122581e4687be3eef5afb7a99dc5f927f7d34b5b8ef601e0c"
+        },
+        {
+          "path": "agent/files/api.mjs",
+          "sha256": "c6c3f819345722b4cb534b97e491a2870e58caa173177173ff18e023513b5bec"
+        },
+        {
+          "path": "agent/files/bootstrap.mjs",
+          "sha256": "ef2d0ae99645e86c8e408b2f740bc1ab5becd04c5284d1ab2262d8df9a57ca7d"
+        },
+        {
+          "path": "clients/python/redown/client.py",
+          "sha256": "7a9072a1b2a104558646284a149e9d887946e000f2ee0247ccaeae9d40efc87b"
+        },
+        {
+          "path": "extension/beta-explorer.mjs",
+          "sha256": "f74ab22fbb29e303cddf2d4d1222293c8bff311ecaa474497ef59cc4de1fc34a"
+        },
+        {
+          "path": "agent/aac/model.mjs",
+          "sha256": "4a46013c2ab5ed327e5c6179988a52373fef0d2bdb522a913ec7e3280b8e537c"
+        }
+      ],
+      "historicalBindings": "Existing P2-R2-API source bindings are retained unchanged; their freshness check fails after this intentional migration. This supplement does not erase that failure."
+    }
+  }
+}

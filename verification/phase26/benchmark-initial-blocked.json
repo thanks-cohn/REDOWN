@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "workload": {
+    "files": 16,
+    "bytesPerFile": 8192,
+    "concurrency": 1,
+    "verification": "fresh local SHA-256 for both candidates",
+    "scope": "Linux owner-exclusive local reference; not R2"
+  },
+  "trials": [],
+  "limitations": [
+    "no network/provider timing",
+    "no cold-agent measure",
+    "no process peak memory sampling",
+    "no rclone comparison if unavailable"
+  ],
+  "state": "blocked",
+  "blocker": "RCLONE_NOT_INSTALLED",
+  "rclone": null
+}
