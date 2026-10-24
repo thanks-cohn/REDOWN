@@ -59,3 +59,38 @@ Inspect current main and baseline, identify and preserve sound code; propose inc
 
 ## Design decision log
 D1: API-first; interface is a client. D2: Provider capability negotiation over lowest-common-denominator deception. D3: Verification evidence stronger than logs. D4: All data-destructive testing scoped to newly created isolated fixture keys. D5: Forever Works cold-agent discoverability is a mandatory deliverable, not post-hoc documentation.
+
+
+## Addendum v2 — four-bucket exhaustive conformance lab (2026-10-23)
+Cloudflare connector created and verified two additional isolated R2 buckets:
+- test-3-new: PRIVATE, r2.dev disabled, destination for authenticated private storage.
+- test-4-new: PUBLIC, r2.dev enabled, https://pub-0c095f2b1b604cf78451ebbae41e2b1b.r2.dev, public destination.
+Existing: test-1-new PUBLIC and test-2-new PRIVATE. Recheck policy before each live test. Never grant anonymous write privileges. Public endpoint is not a directory listing.
+
+### Four-bucket topology / direction matrix
+Run all 16 ordered bucket source→destination pairs where meaningful, including 4 self-bucket pairs with distinct keys, plus within-folder and cross-folder scenarios. For cross-bucket moves, verify source removal ONLY after independent destination confirmation. Repeat with public/private policy contrasts. Test public GET from test-1-new and test-4-new and anonymous denial on test-2-new and test-3-new for test-owned fixtures. Cross-provider testing is a separate tier and cannot be claimed from four R2 buckets alone.
+
+### Scenario taxonomy: each applicable API operation needs positive, negative, boundary, authorization, failure, recovery and concurrency proofs
+1. Discovery: versioning, schema conformance, unknown operation, unsupported provider, capability negotiation, backward compatibility, input limits, malformed JSON, missing/unknown fields, response shapes and error codes.
+2. Identity/path: empty key, root, Unicode NFC/NFD, emoji, multilingual, whitespace, leading/trailing spaces, dots, dot segments, slashes, percent encoding, URL encoding, reserved names, long keys, case sensitivity, control chars, path traversal, collisions, prefixes and folder markers; Google Drive IDs must not be treated as S3 paths.
+3. Enumeration: empty/huge folders, nested folders, recursive listing, pagination boundaries (0/1/limit/limit+1/multiple pages), stale/malformed cursors, concurrent mutation, sorting, filtering, search, deduplication and completeness.
+4. Data: zero bytes, tiny text, binary/random bytes, image/PDF/media fixture, sparse/large multipart, 64KiB threshold, 5MiB and >multipart threshold, unusual MIME, metadata, custom metadata, etag/version, content type and content disposition, checksums, full read-back and range reads.
+5. Mutations: create, upload, download, copy, move, rename, recursive trees, delete, batch, conflict skip/fail/keep-both/overwrite policies ONLY when supported, self targets, descendants, idempotent retries, atomic vs partial behavior, source protection, eventual reconciliation and cleanup.
+6. Security: unauthenticated public read vs private denial, forbidden write, expired/revoked credentials, wrong tenant/account, least privilege, CORS/browser origins, signed URLs and expiration, traversal protection, secret redaction, safe telemetry, harmful content rejection where appropriate and no public exposure of private fixtures.
+7. Reliability: DNS/network loss, timeout, TLS issues, 401/403/404 ambiguity, 409/412 conflict, 429 backoff/Retry-After, 5xx, truncated payload, provider acknowledgment with lost response, checksum mismatch, clock skew, quota exhaustion, process/browser restart, duplicate deliveries, retry storms, cancellation and resume/uncertain outcomes.
+8. Concurrency and performance: parallel transfers, overlapping writers, rate-limit fairness, max queue depth, scheduling, memory bounds, UI responsiveness, metadata-heavy directories, streaming/backpressure, load and soak tests with explicit safe quotas; measure baselines rather than invent targets.
+9. Observability: operation IDs, trace correlation, state-machine legal transitions, durable journal/receipts, replay/restart, error provenance, proof classification, metrics, export privacy, diagnostics not mutating storage, deterministic fixtures and CI artifacts.
+10. UX/API parity: every menu/keyboard/drag-drop/copy-cut-paste/preview/progress/cancel/retry interaction is mapped to canonical API and automated browser test; UI never implements shadow transfer code.
+11. Portability: run same provider conformance kit against simulation, R2, then distinct real provider; separate OAuth/token refresh, file IDs, revisions, native docs, folder semantics, virtual folders, rename/copy availability, conflict behavior, resumability and quota variations.
+12. Lifecycle: test fixture leases, manifest ownership, post-cleanup proofs, interrupted cleanup recovery, orphan reporting; no arbitrary bucket-wide purge.
+
+### Test runner contract
+- A deterministic command for unit/contract tests; an isolated emulator/fault suite; live R2 suite explicitly enabled; actual installed-extension browser tier; cross-provider tier separately credentialed.
+- Automated oracle must assert remote read-back byte hash and object presence/absence independently from production engine. Timeouts and unmet prerequisites are BLOCKED not PASS; skipped tests count in readiness.
+- Matrix coverage report lists each operation × provider × direction × case class and supported/pass/fail/blocked/not-applicable, with justified applicability and zero false-green indicators.
+- Fuzz/property-based and model/stateful testing cover sequences, not only individual methods. Random seed logged and reproducible. Maintain regression fixtures for discovered issues.
+- CI artifacts include exact git SHA, harness version, schemas, test seed, budgets, permission scopes, fixture manifests, sanitized operation traces, expected/observed hashes, cleanup confirmation and unresolved risks.
+- Safety: unique per-run prefix; hard stop on any bucket name outside allowlist; explicit bounded transfer size/operation count; no public sensitive data; immutable evidence; zero production mutation.
+
+### Graduation gate
+A provider-specific live implementation must pass its supported operation tests, recover safely from induced failures, and prove private/public isolation. API/UI release readiness requires actual browser usage of the same engine, and multi-cloud readiness requires a SECOND DISTINCT real provider. Unsupported capabilities cannot be hidden by passing simulator tests.
