@@ -1,0 +1,1 @@
+CC0-1.0: these newly generated synthetic test fixtures are dedicated to the public domain. No existing project code or third-party asset is relicensed. https://creativecommons.org/publicdomain/zero/1.0/
