@@ -193,6 +193,10 @@
     {
       "path": "tests/universal-file-schema.py",
       "sha256": "ef0a323addfeae178300d377a54caa748eea7348c542ee97f3b5032a9adaf66c"
+    },
+    {
+      "path": "worker/laboratory/index.mjs",
+      "sha256": "bcba306e35ef2a83ff8014832c3c4f8b85a5f3c86915a22644097bd7e1a29b3a"
     }
   ]
 }
