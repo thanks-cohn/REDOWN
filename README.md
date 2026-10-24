@@ -29,6 +29,21 @@ For remote transfers, REDOWN uses a Cloudflare Worker to send data to R2 without
 
 **Note:** Keep the settings page open until local uploads finish. An interrupted upload session does not currently resume after closing or reloading that page.
 
+## Agent Operability Benchmark (AOB) — founding proposal
+
+**How effectively can unfamiliar, authorized AI agents discover, operate, verify, diagnose, recover and maintain software without undocumented human knowledge?**
+
+On **24 October 2026**, REDOWN documented its proposal for the **Agent Operability Benchmark (AOB)**: a general-purpose methodology intended to evaluate the *operability of software by agents*, rather than only the performance of AI models on tasks. REDOWN is its **initial case study and proposed first demonstration** through existing Agent Accessibility Conformance (AAC), Resource Atlas, Universal File API and Forever Works evidence. **AOB is currently a proposal, not an established standard, independently validated benchmark, public leaderboard or claim of being the first such idea anywhere.** REDOWN has no certified AOB score.
+
+The approach proposes comparable task outcomes across software projects, documented permissions, independent verification, resource and context efficiency, reproducible research evidence, and mandatory safety gates. It is designed to stand independently of REDOWN so that other software may eventually be studied fairly, including software that outperforms REDOWN.
+
+- [AOB founding statement and reading guide](docs/aob/README.md)
+- [General benchmark methodology and provisional scoring](docs/aob/SPECIFICATION.md)
+- [Research validity, independence and governance](docs/aob/RESEARCH_AND_GOVERNANCE.md)
+- [REDOWN initial case-study evidence and limitations](docs/aob/REDOWN_DEMONSTRATION.md)
+
+The repository remains proprietary. A potential later independent publication or license for AOB requires an explicit owner decision.
+
 ## License
 
 REDOWN's original materials are provided under the [REDOWN Proprietary Source License 2.0](LICENSE). Reuse requires prior written permission, subject to applicable law and existing third-party rights.
