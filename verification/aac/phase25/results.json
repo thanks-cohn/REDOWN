@@ -1,0 +1,617 @@
+{
+  "phase": "2.5",
+  "startingMain": "6f7653d3f4ee8ebf5419c8ae8495811ee6bf9958",
+  "branch": "fix/aac-phase-2-5",
+  "sourceSnapshot": {
+    "commit": "d78165b4bd9b318f40d6f77bad1493cd4e0c8ba1",
+    "dirty": true,
+    "files": [
+      {
+        "path": "agent/aac/api.mjs",
+        "sha256": "4629f777ff5638a63fc0d39588d1c50d51111bae83fd1b5c974b3ead47db8606"
+      },
+      {
+        "path": "agent/aac/cli.mjs",
+        "sha256": "d4baca3f58a7ec3bb8c3a40e7c1de4565045fb9e9f9da17ffdc2c440e717c968"
+      },
+      {
+        "path": "agent/aac/context-menu.mjs",
+        "sha256": "0495c5d2f05a84b62051a25243f9ca207797f61483bd1ce8e3a0f227acbbcf41"
+      },
+      {
+        "path": "agent/aac/model.mjs",
+        "sha256": "6f52d1e1b95bddd53a321076523f34bd585f1f9f325d06869358be20d9ac6b95"
+      },
+      {
+        "path": "agent/aac/profile.json",
+        "sha256": "8f6e39933cdad4793bdaba5f7341c9900791ca86168e1d317ef2bb9cf97a0dd5"
+      },
+      {
+        "path": "agent/aac/report.schema.json",
+        "sha256": "3060c0154c517c44c0d8caec34f4e8dc8a831aa51e494f5efc0617b476828f71"
+      },
+      {
+        "path": "agent/aac/scenarios.mjs",
+        "sha256": "74256dcec4096fbe9aaa18f1975df1ef09cfd5be44dabdd803b9ef876d3bfd12"
+      },
+      {
+        "path": "agent/aac/ui.mjs",
+        "sha256": "b5e731db853ab228149ffb9e3111559a34e64eac8d4ae75b657323a3581ac98a"
+      },
+      {
+        "path": "agent/api.mjs",
+        "sha256": "a7384efd461c85c58abd451d29c029f436c974c37244d0ecbbee21b3292450a5"
+      },
+      {
+        "path": "agent/debug/api.mjs",
+        "sha256": "ce2ddb7a0a08b3be2590cf882e7dcc141c95652cd7b98bc23cf29d12e997ea5b"
+      },
+      {
+        "path": "agent/diagnostics/adapters.mjs",
+        "sha256": "61c9fc589e78881735396f0b33fca18bda2f65759ac75daa0e53d4a85d37d9e0"
+      },
+      {
+        "path": "agent/diagnostics/api.mjs",
+        "sha256": "5976faf028b529eed65990b2fd06d1637ad305a7ad6f1b1e06b47436cf5c3ebf"
+      },
+      {
+        "path": "agent/diagnostics/registry.json",
+        "sha256": "a6802d6138f7c3fbc86cc017fb5640c5f5cc05173226260ae0e78ddda7025f91"
+      },
+      {
+        "path": "agent/explorer/api.mjs",
+        "sha256": "85f51f38f29ef317ebfb7625761c8f6e4ccbda0e400104002ee523fedba4e180"
+      },
+      {
+        "path": "agent/explorer/model.json",
+        "sha256": "599c338e65f008b72b752b5b95ae9490ecedfe2e937231727466086fe2902616"
+      },
+      {
+        "path": "agent/files/api.mjs",
+        "sha256": "1cd18cd22723653c26b8f1154f0b9971139a983c4493bb9e84ef151f020dc959"
+      },
+      {
+        "path": "agent/files/cli.mjs",
+        "sha256": "609be40f3c98c7b1b239caedb3b6ac491757a948919e5f22c84c58c4312196e5"
+      },
+      {
+        "path": "agent/files/session.schema.json",
+        "sha256": "d742c5d771274ac5e0425a73d28e17b7daa72847a8f68474ed352b78217d89f2"
+      },
+      {
+        "path": "agent/resources/api.mjs",
+        "sha256": "0e4a450b2aa1ad6b2774f7b41b4fed52ac34e53fdfca07a3ada40ab6606ca345"
+      },
+      {
+        "path": "agent/resources/contracts.json",
+        "sha256": "56384772adc5854e25545408ad949c7837b7899ef866bd4c9053abcf574ce85b"
+      },
+      {
+        "path": "agent/resources/evidence.schema.json",
+        "sha256": "ca3d176fc5c7a405f352ca09e251934ff113581a88545bb80568a27cf19784d0"
+      },
+      {
+        "path": "agent/resources/trace-event.mjs",
+        "sha256": "a9cbb8662d11b7106fda926d2f868404043f3cacba2436b6d5cc5d5d402572f0"
+      },
+      {
+        "path": "agent/runtime/api.mjs",
+        "sha256": "ad38525bebf5026425251979134f8639731283578a188829d3e071c6d0af167c"
+      },
+      {
+        "path": "agent/semantic/api.mjs",
+        "sha256": "6097005a2bce659444eb5fd5e84c188aacb4e0ad483cb7a246302af29e52b2c9"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha256": "bf2046528f0bdae8e9b104e29cfb37a42735c81769c55700ca5a02989e7653be"
+      },
+      {
+        "path": "docs/aac/FILES.md",
+        "sha256": "f17fe395d05c215ca4fcbabd9bf99f11370298fb97d0e9bb04b4d97a9af86201"
+      },
+      {
+        "path": "docs/aac/PHASE25.md",
+        "sha256": "d6b409087a3c24d8f9ffd1b24e5109fdd7fe726f2ae42908e13a4cfba5778308"
+      },
+      {
+        "path": "docs/aac/REMEDIATION.md",
+        "sha256": "f51a76ae4714fe47b26dc534fdf4996af6fc713fbe51300648fcb29e6a46d616"
+      },
+      {
+        "path": "docs/aac/SPECIFICATION.md",
+        "sha256": "e3e2877e8cdce81c76a2ae4972bda69affc12b62be0f129bd6436084e501143a"
+      },
+      {
+        "path": "docs/aac/START_HERE.md",
+        "sha256": "339679fc6939dc536eb4c20663ddd6cc10d5e4cd0c2574dbf18af2fecf9ce9f2"
+      },
+      {
+        "path": "extension/background.js",
+        "sha256": "d8064257653cba3156c7f7050471bfa467d97d2160dc435c5a9fe309d6c384f0"
+      },
+      {
+        "path": "extension/beta-explorer.html",
+        "sha256": "fb8b5ca9db3b69b89d7bcbedbb4c608bbffe6074d4c34f42219a78c57e4fe0fb"
+      },
+      {
+        "path": "extension/beta-explorer.mjs",
+        "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
+      },
+      {
+        "path": "extension/beta-walkthrough-steps.mjs",
+        "sha256": "d40050a5b572c846d27782b66c66540405667d66e3daa615267122ccc86b66f8"
+      },
+      {
+        "path": "extension/beta-walkthrough.mjs",
+        "sha256": "196a0533458f92165456cc047afabe1fdf3b14d6d85eee3f1c2fce365702aeb6"
+      },
+      {
+        "path": "extension/cloudflare-api.js",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+      },
+      {
+        "path": "extension/cloudflare-auth.js",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789"
+      },
+      {
+        "path": "extension/explorer-destination-menu.js",
+        "sha256": "bbee7b5870c34075ba07e09d90c8dce2e0b9db110371a011581aa423e1057711"
+      },
+      {
+        "path": "extension/explorer-diagnostics-bridge.js",
+        "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c"
+      },
+      {
+        "path": "extension/explorer-diagnostics-ui.js",
+        "sha256": "14482bcec6c690689d4e4e913068b2a35137dfb4855d7435b4cdad8bba46c809"
+      },
+      {
+        "path": "extension/explorer-diagnostics.js",
+        "sha256": "e7ee43dc9a94d39023cca4e63791667541f448e136900c02595bc7bb93eeb9e7"
+      },
+      {
+        "path": "extension/explorer-status.js",
+        "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348"
+      },
+      {
+        "path": "extension/file-engine/acceptance.mjs",
+        "sha256": "ee764edb69e64525e14315e498c1e8046843e9641cca0124175ecb2dcd183a44"
+      },
+      {
+        "path": "extension/file-engine/adapters/memory.mjs",
+        "sha256": "83a268320e0d5828efd4ce92c9c25d6f3eb247dde601408a0cd88ebdf6497b0a"
+      },
+      {
+        "path": "extension/file-engine/adapters/r2-http.mjs",
+        "sha256": "2e790bbc4be6fc00544ff2c0e014287c0f6f25ee7f5ead9d4edefc823e204a91"
+      },
+      {
+        "path": "extension/file-engine/contract.mjs",
+        "sha256": "d4c7701947531a336105815121009e65abed3c36e37193f5ac4701cbb89ef445"
+      },
+      {
+        "path": "extension/file-engine/engine.mjs",
+        "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
+      },
+      {
+        "path": "extension/file-engine/indexeddb-store.mjs",
+        "sha256": "f6328a0020ee0fdc47dc14728df623e10d64c7cd5e90b23fbad6df2f1cdf848b"
+      },
+      {
+        "path": "extension/file-engine/readiness.json",
+        "sha256": "d42848eb9d3f590a612f4373f05d264b0d7d9ec661a797f7d1dc1bd3d7997460"
+      },
+      {
+        "path": "extension/file-engine/resource-evidence-validator.mjs",
+        "sha256": "7313c89b101d8a11cc34ecfd862edc79c20d542f8106060b19376049ee5ef567"
+      },
+      {
+        "path": "extension/file-engine/resource-input-validators.mjs",
+        "sha256": "eb8530f2ec19398c14fc7973f3cc9a808c40664e58128fcbd748d2b5e0b39e37"
+      },
+      {
+        "path": "extension/file-engine/resources.mjs",
+        "sha256": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
+      },
+      {
+        "path": "extension/file-engine/simulation.mjs",
+        "sha256": "573b2a29ef2df1f192d3d22ecaa615f36334c998c73ad73bfb1289e34782bad5"
+      },
+      {
+        "path": "extension/hitomi-capture.js",
+        "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1"
+      },
+      {
+        "path": "extension/manifest.json",
+        "sha256": "ed0f9f887e63651e7cc34af7952aa8121e81d3eda2b7f5208fd2a73206e64ab3"
+      },
+      {
+        "path": "extension/menu-reorder.js",
+        "sha256": "8871bcc1b6781fbe2f4e5649d501553325942d8c5b9e53319fd8a4d046d71ace"
+      },
+      {
+        "path": "extension/model-viewer.min.js",
+        "sha256": "8367184a607fbe07a78b650c0d359e5ebbd96f7e2b22f95f761f559b63430386"
+      },
+      {
+        "path": "extension/nested-locations.js",
+        "sha256": "663a0cb8b08f7cddcf7274ccc1c424becb6e9c2ea0e8949b25c3183d9f005f73"
+      },
+      {
+        "path": "extension/nested-menu-editor.js",
+        "sha256": "dda2c2b8d431ec932e15ecb342ad912c81419bff6c2366a942347dc3c5ac1c92"
+      },
+      {
+        "path": "extension/odometer.js",
+        "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+      },
+      {
+        "path": "extension/options.html",
+        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+      },
+      {
+        "path": "extension/options.js",
+        "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf"
+      },
+      {
+        "path": "extension/popup.html",
+        "sha256": "c740d510a713982a156e790d826fabf21e03bd5ce1b7878b1e9d5d1bc92b6e4a"
+      },
+      {
+        "path": "extension/popup.js",
+        "sha256": "316042a1ce61daabe3ec3368647184ec6097f3c53550193abf27434dc42d37fd"
+      },
+      {
+        "path": "extension/public-addresses.js",
+        "sha256": "c8f546940dc5828576624b85ce466df11dd5fb932ba91c8ad58a9d0a90dc4b83"
+      },
+      {
+        "path": "extension/rfis-index.js",
+        "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f"
+      },
+      {
+        "path": "extension/runtime-diagnostics.js",
+        "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+      },
+      {
+        "path": "extension/search-session.js",
+        "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce"
+      },
+      {
+        "path": "extension/settings-mascot.js",
+        "sha256": "ff0a7ed5a804737a185c5aaa96e589172688a0c553430ac21b603968ccf09b85"
+      },
+      {
+        "path": "extension/storage-signals.js",
+        "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+      },
+      {
+        "path": "extension/transfer-counter.js",
+        "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+      },
+      {
+        "path": "local/bridge.mjs",
+        "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31"
+      },
+      {
+        "path": "package.json",
+        "sha256": "6f9f5b263e7e366f8abab0ebeab15f78d77b6c4eec2fd2d37f890d6da0cb87fc"
+      },
+      {
+        "path": "scripts/aac-audit.mjs",
+        "sha256": "2a2c33e3e92c12bf017f5a932ad3d04db6dad151d0619185e4cb2a91b57aca0a"
+      },
+      {
+        "path": "scripts/aac-volume.mjs",
+        "sha256": "2e22ab90341a463b773ab8b50d7c24dc549e32322dc6d4022d55c88ee50a918e"
+      },
+      {
+        "path": "scripts/compile-resource-schema.mjs",
+        "sha256": "cc282af1b1dbd5f11c15abbde25365c082c4502cca00f5c815903191b7b995c8"
+      },
+      {
+        "path": "scripts/resource-atlas-benchmark.mjs",
+        "sha256": "999eec3ebe8eaadbddae228711a1c2ff05bf26cde00ba018f766002f96da5432"
+      },
+      {
+        "path": "scripts/resource-trace-export.mjs",
+        "sha256": "d1f397d6ebf98c60cd090aac0dd8fefbbca7179f68e791cc8a7b7582b90c4818"
+      },
+      {
+        "path": "tests/aac-schema.py",
+        "sha256": "75a4e38862fdcb6876898fd310dee6e6e1d27f430cb317eaee75f01e66881ffe"
+      },
+      {
+        "path": "tests/aac.test.mjs",
+        "sha256": "538a6f7c87b610a29cbd50d92f1cbe5d20a717b6df592480cb69c16b13768499"
+      },
+      {
+        "path": "tests/beta-popup.test.mjs",
+        "sha256": "ee23ac033e915ace0822cf54657aceeefe81a42ef60cb88a97314c5757aeefc8"
+      },
+      {
+        "path": "tests/cloudflare-files.test.mjs",
+        "sha256": "6efedd7a8437aae7ae13ecef40be2807f56be989191c9a3fc92ab479035f9212"
+      },
+      {
+        "path": "tests/cloudflare-login.test.mjs",
+        "sha256": "78e1b6de12787037404de9dbbe7f84fb3f328a543f6c3acd8fa84604848c0414"
+      },
+      {
+        "path": "tests/cloudflare-reconnect.test.mjs",
+        "sha256": "08061aeb3b42147ea9269e6f9fd0827621c37c043e2abe0d7f5113e7f012f9b1"
+      },
+      {
+        "path": "tests/context-menu-agent.test.mjs",
+        "sha256": "bcb8c932481dc03bad1b1a962f4a7b0ea15d5553587d4a8d613b212a42639560"
+      },
+      {
+        "path": "tests/explorer-copy.test.mjs",
+        "sha256": "283a7b1411d55bead1d1ed39da44981753a2268018f01d88a4e6b463378c3437"
+      },
+      {
+        "path": "tests/explorer-destination-menu.test.mjs",
+        "sha256": "91c48674dcc973728dda64c45a281e606365d6fb34b5d5bee94031f15eed9426"
+      },
+      {
+        "path": "tests/explorer-diagnostics-ui.test.mjs",
+        "sha256": "22e9cd5586568130248c6f82f5218a7b1699c30d860d0cabf5502de823f5b929"
+      },
+      {
+        "path": "tests/explorer-menu-actions.test.mjs",
+        "sha256": "267e3d41c787487fab5d54561d254d8c1c4120d2e0f62d64940a79c15d22ad54"
+      },
+      {
+        "path": "tests/explorer-worker.test.mjs",
+        "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22"
+      },
+      {
+        "path": "tests/file-agent-session.test.mjs",
+        "sha256": "49f35a5b0837c54f5101ad6aab26d2e652f2b3e33c91399b26b08b17c822d3f4"
+      },
+      {
+        "path": "tests/file-engine-authority.test.mjs",
+        "sha256": "127392841d83b3838dbb5fe2fa83d4a66487eec251f1fcc20c732414a465e0e2"
+      },
+      {
+        "path": "tests/lightbox.test.mjs",
+        "sha256": "60d0e829606f7b86ce038d60d52984397fff15a8620b32bab36b2f7f15ace330"
+      },
+      {
+        "path": "tests/popup-folders.test.mjs",
+        "sha256": "b3df0819be4d795dcb9dc0c951788037ee4918f9b2c2ea3f0481454a29485e9a"
+      },
+      {
+        "path": "tests/public-addresses.test.mjs",
+        "sha256": "fbefd5814f7d2da765d03d0d5803a70c21218a42d6244e24f814b953857ec707"
+      },
+      {
+        "path": "tests/resource-schema-agreement.mjs",
+        "sha256": "c15703bded4606153c22f0552440b50c9b46fc43644f6a6140f93ba6517d8ec7"
+      },
+      {
+        "path": "tests/resource-trace-export.test.mjs",
+        "sha256": "90ffdeea04d09fc168c76c232ff19282e0c20e4e17dbdebfb32a9b4f78a612fc"
+      },
+      {
+        "path": "tests/runtime-reliability.test.mjs",
+        "sha256": "8d0cbba310b278c108f1501e7f7cf7dd6e498205af0341c9104c3572f7a955f9"
+      },
+      {
+        "path": "tests/upload-request-context.test.mjs",
+        "sha256": "e82e1b9f1c4384354bdecd467060e004dbc842c855e4e88b2d3f540699b32a9a"
+      },
+      {
+        "path": "worker/laboratory/index.mjs",
+        "sha256": "bcba306e35ef2a83ff8014832c3c4f8b85a5f3c86915a22644097bd7e1a29b3a"
+      },
+      {
+        "path": "worker/src/index.js",
+        "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4"
+      }
+    ],
+    "boundary": "Commit plus recorded-file digests identifies the audited working snapshot; a dirty snapshot is not falsely assigned to commit bytes"
+  },
+  "delivery": "BRANCH_ONLY_ACCEPTANCE_BLOCKED",
+  "mainUpdated": false,
+  "security": {
+    "status": "PASS",
+    "reproduction": "privileged-handle-escape",
+    "originalObjectsUnchanged": true,
+    "negativeTests": "tests/file-engine-authority.test.mjs"
+  },
+  "schema": {
+    "status": "PASS",
+    "contract": "agent/resources/evidence.schema.json",
+    "differentialEvidenceCases": 78,
+    "additionalMethodAndDetachmentTests": 2
+  },
+  "checks": [
+    {
+      "command": "npm run aac:test",
+      "status": "PASS",
+      "passed": 18,
+      "failed": 0,
+      "evidence": "verification/aac/phase25/tests.log"
+    },
+    {
+      "command": "npm run aac:audit",
+      "status": "PASS",
+      "meaning": "Detector completed; certification still NOT_CERTIFIED",
+      "checks": {
+        "passed": 545,
+        "failed": 0,
+        "blocked": 0,
+        "notTested": 3
+      },
+      "evidence": "verification/aac/phase25/audit.log"
+    },
+    {
+      "command": "npm run aac:schema",
+      "status": "PASS",
+      "evidence": "verification/aac/phase25/schema.log"
+    },
+    {
+      "command": "npm run aac:certify",
+      "status": "BLOCKED",
+      "exitCode": 1,
+      "evidence": "verification/aac/phase25/certify.log"
+    },
+    {
+      "command": "npm run file:verify",
+      "status": "PASS",
+      "unitTests": 30,
+      "schemaFixtures": 45,
+      "negativeControls": 5,
+      "currentSourceBindings": 10,
+      "evidence": "verification/aac/phase25/file.log"
+    },
+    {
+      "command": "npm run resources:test",
+      "status": "PASS",
+      "passed": 7,
+      "evidence": "verification/aac/phase25/resources.log"
+    },
+    {
+      "command": "npm run resources:schema",
+      "status": "PASS",
+      "evidence": "verification/aac/phase25/resources-schema.log"
+    },
+    {
+      "command": "npm run reliability:check",
+      "status": "FAIL",
+      "passed": 429,
+      "formalKnownFailures": 7,
+      "additionalPreviouslyRecordedFailures": [
+        {
+          "type": "fail",
+          "file": "tests/issue-inventory.test.mjs",
+          "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "operator": "=="
+          }
+        },
+        {
+          "type": "fail",
+          "file": "tests/options-debug-display.test.mjs",
+          "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+          "nesting": 0,
+          "skipped": false,
+          "todo": false,
+          "error": {
+            "name": "TypeError",
+            "code": "UNKNOWN",
+            "operator": null
+          }
+        }
+      ],
+      "newPhase25Failures": 0,
+      "classificationEvidence": "Starting-main verification/aac/summary.json regression.additionalFailures; formal regression baseline remains unchanged",
+      "evidence": "verification/aac/phase25/reliability.log"
+    },
+    {
+      "command": "npm run aac:browser",
+      "status": "BLOCKED",
+      "reason": "No Chromium; download produced invalid archive",
+      "evidence": "verification/aac/phase25/browser-attempt.log"
+    },
+    {
+      "command": "REDOWN_ALLOW_LIVE_R2=1 npm run aac:live",
+      "status": "PASS",
+      "passed": 21,
+      "failed": 0,
+      "blocked": 0,
+      "cleanupFailed": 0,
+      "independentManagementCleanup": true,
+      "temporaryWorkerRemoved": true,
+      "evidence": "verification/aac/phase25/live.json",
+      "cleanupEvidence": "verification/aac/phase25/live-management-cleanup.json"
+    }
+  ],
+  "certification": {
+    "state": "NOT_CERTIFIED",
+    "safetyGate": "PASS",
+    "reason": "Scoped evidence and explicit gaps; source visibility, simulations or aggregate percentages cannot establish complete accessibility"
+  },
+  "remainingGaps": [
+    {
+      "id": "AAC-EXT-001",
+      "severity": "high",
+      "status": "PARTIAL",
+      "finding": "Owner-scoped embedded and stdio execution are implemented; real-provider external integration remains unverified."
+    },
+    {
+      "id": "AAC-LIVE-001",
+      "severity": "high",
+      "status": "PARTIAL",
+      "finding": "Fresh Phase 2.5 four-bucket subset passed 21 checks with separate management cleanup and temporary Worker removal. Earlier broader live durability failures remain unresolved."
+    },
+    {
+      "id": "AAC-OBS-001",
+      "severity": "high",
+      "status": "PARTIAL",
+      "finding": "Resource Atlas custom spans are not OpenTelemetry traces; browser/worker attribution remains incomplete."
+    },
+    {
+      "id": "AAC-UI-001",
+      "severity": "high",
+      "status": "PARTIAL",
+      "finding": "Most discovered controls have no directly executed UI/API parity trial."
+    },
+    {
+      "id": "AAC-DISC-001",
+      "severity": "medium",
+      "status": "PARTIAL",
+      "finding": "Pattern-based inventory cannot prove absence of computed event handlers or authenticated UI states."
+    },
+    {
+      "id": "AAC-SCALE-001",
+      "severity": "medium",
+      "status": "PARTIAL",
+      "finding": "100,000-object seeded listing is bounded; operational create capacity remains 5,000 and journal 500."
+    },
+    {
+      "id": "AAC-WCAG-001",
+      "severity": "medium",
+      "status": "NOT_TESTED",
+      "finding": "DOM names and one Escape action do not establish WCAG 2.2 conformance."
+    }
+  ],
+  "coldTrials": {
+    "newIndependentColdSamples": 2,
+    "continuations": 1,
+    "historicalSamplePreserved": true,
+    "profiles": [
+      "readOnly",
+      "cold",
+      "hot",
+      "external",
+      "maintenance",
+      "restricted"
+    ],
+    "index": "verification/aac/phase25/trials-index.json",
+    "actualModelTokens": null,
+    "humanIntervention": 0
+  },
+  "scale": "verification/aac/phase25/volume.json",
+  "overhead": "verification/aac/phase25/resource-benchmark/benchmark.json",
+  "forever": "verification/aac/phase25/forever-validation.json",
+  "preservedHistoricalAudit": {
+    "baselineSha256": "7af2c5bf92f46fac25e0b2f3212d3e4c8b7f9582a8aebc8fd5db7f223c6fa815",
+    "blindTrialsSha256": "eeee521c8bdb71e491c5c1209b4d776b408de156b40dab0cb88ad52355268e2f"
+  },
+  "limitations": [
+    "No full certification or main promotion",
+    "Fresh live subset does not resolve older R2 durability failures",
+    "No installed-browser/assistive-technology verification",
+    "Worker CPU/heap, true input delay and layout/paint unavailable",
+    "No 100,000-real-file operational certification",
+    "Same-engine session readback is distinguished from independent backing-store oracle"
+  ]
+}

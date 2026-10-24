@@ -42,7 +42,7 @@
       "sourceRefs": [
         {
           "path": "extension/file-engine/engine.mjs",
-          "sha256": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67",
+          "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286",
           "symbol": "createFileEngine"
         },
         {
@@ -62,7 +62,7 @@
         },
         {
           "path": "extension/beta-explorer.mjs",
-          "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c",
+          "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f",
           "symbol": "see module exports"
         },
         {
@@ -72,7 +72,7 @@
         },
         {
           "path": "tests/universal-file-engine.test.mjs",
-          "sha256": "35aa1742d94abbe03aee121bd062e173a4ec14938f150ad0a7059820dc50d954",
+          "sha256": "1dc1777a22e3f8bc12cdfd0a7fc5746486347b8f92045bc9c4240484c001bad6",
           "symbol": "see module exports"
         },
         {
@@ -86,7 +86,29 @@
           "symbol": "see module exports"
         }
       ],
-      "limitations": "extension/file-engine/readiness.json"
+      "limitations": "extension/file-engine/readiness.json",
+      "phase25SourceTransition": {
+        "originalRecord": "verification/aac/phase25/before/P2-R2-API-engine.implementation.json",
+        "changes": [
+          {
+            "path": "extension/file-engine/engine.mjs",
+            "before": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67",
+            "after": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
+          },
+          {
+            "path": "extension/beta-explorer.mjs",
+            "before": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c",
+            "after": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
+          },
+          {
+            "path": "tests/universal-file-engine.test.mjs",
+            "before": "35aa1742d94abbe03aee121bd062e173a4ec14938f150ad0a7059820dc50d954",
+            "after": "1dc1777a22e3f8bc12cdfd0a7fc5746486347b8f92045bc9c4240484c001bad6"
+          }
+        ],
+        "reason": "Reviewed Phase 2.5 authority/schema/session/UI repair. Original record bytes and failed baseline remain preserved; current bindings require the repaired implementation and conformance tests.",
+        "verification": "verification/aac/phase25/results.json"
+      }
     }
   }
 }

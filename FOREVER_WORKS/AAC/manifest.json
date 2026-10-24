@@ -6,16 +6,20 @@
       "audit.capability.json"
     ],
     "invariants": [
-      "honest-evidence.invariant.json"
+      "honest-evidence.invariant.json",
+      "capability-boundary.invariant.json"
     ],
     "compatibility": [
-      "inspection.compatibility.json"
+      "inspection.compatibility.json",
+      "phase25.compatibility.json"
     ],
     "implementations": [
-      "framework.implementation.json"
+      "framework.implementation.json",
+      "phase25.implementation.json"
     ],
     "evidence": [
-      "audit.evidence.json"
+      "audit.evidence.json",
+      "phase25.evidence.json"
     ]
   },
   "extensions": {
@@ -26,7 +30,8 @@
       "profile": "agent/aac/profile.json",
       "report": "verification/aac/latest.json",
       "graph": "verification/aac/latest.json#graph",
-      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification."
+      "limitations": "Scoped source/runtime inventory; untested and unsupported capabilities remain explicit. One independent cold-agent sample is not population certification.",
+      "phase25": "docs/aac/PHASE25.md"
     }
   }
 }

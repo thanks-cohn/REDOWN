@@ -2,6 +2,7 @@ import {r2HttpAdapter,LAB_BUCKETS} from "./file-engine/adapters/r2-http.mjs";
 import { installWalkthrough } from "./beta-walkthrough.mjs";
 import { API_VERSION } from "./file-engine/contract.mjs";
 import { createSimulationEngine } from "./file-engine/simulation.mjs";
+import {createResourceAtlas} from "./file-engine/resources.mjs";
 import { openBetaStore } from "./file-engine/indexeddb-store.mjs";
 export function installBetaExplorer({
   document,
@@ -50,7 +51,7 @@ export function installBetaExplorer({
     );
   let previewRelease,metadataRelease,listenerRelease,observer;
   const startupAt=performance.now();
-  let engine,
+  let collector, engine,
     store,
     opening,
     enabled = false,
@@ -121,6 +122,7 @@ export function installBetaExplorer({
       ? (lab?"Beta Mode enabled · Authorized test laboratory":"Beta Mode enabled · Simulation foundation")
       : "Beta Explorer is hidden. Enable the existing Beta Mode in Dashboard settings. Saved simulation jobs are retained.";
     if (!enabled) {
+      if($("explorer").contains(document.activeElement)){ $("gate").tabIndex=-1; $("gate").focus(); }
       previewRelease?.();previewRelease=null;$("preview").textContent="";
       generation++;
       clipboard = null;
@@ -139,10 +141,11 @@ export function installBetaExplorer({
     if (!opening)
       opening = openBetaStore(indexedDB).then((value) => {
         store = value;
-        engine = createSimulationEngine(store,{extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
+        collector=createResourceAtlas({store});
+        engine = createSimulationEngine(store,{resources:collector,extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
       });
     await opening;
-    if(!listenerRelease)listenerRelease=engine.resources.track('event-listener');
+    if(!listenerRelease)listenerRelease=collector.track('event-listener');
   }
   async function allowed() {
     await gate();
@@ -152,8 +155,8 @@ export function installBetaExplorer({
   async function run(operation, args = {}) {
     const inputAt=performance.now();
     await allowed();
-    const traceId=await engine.resources.begin(operation);
-    engine.resources.record(traceId,"ui.input","extension/beta-explorer.mjs",inputAt);
+    const traceId=await collector.begin(operation);
+    collector.record(traceId,"ui.input","extension/beta-explorer.mjs",inputAt);
     const result = await (args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?engine.runCanonical.bind(engine):engine.run.bind(engine))({
       apiVersion: args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?'0.2.0':API_VERSION,
       operation,
@@ -255,9 +258,9 @@ export function installBetaExplorer({
         (result.result.complete ? "complete" : "more pages available"),
       "completed",
     );
-    metadataRelease?.();metadataRelease=engine.resources.track("metadata-cache",$("files").children.length*128);
-    engine.resources.record(result.id,"ui.render","extension/beta-explorer.mjs",renderStart);
-    await engine.resources.close();
+    metadataRelease?.();metadataRelease=collector.track("metadata-cache",$("files").children.length*128);
+    collector.record(result.id,"ui.render","extension/beta-explorer.mjs",renderStart);
+    await collector.close();
     await refreshJobs();
   }
   async function refreshJobs() {
@@ -437,11 +440,11 @@ export function installBetaExplorer({
       if (result.state !== "completed") throw Error(result.error);
       if (!enabled) return;
       const previewStart=performance.now();previewRelease?.();
-      previewRelease=engine.resources.track("preview",new TextEncoder().encode(result.result.content).length);
+      previewRelease=collector.track("preview",new TextEncoder().encode(result.result.content).length);
       $("preview").textContent = result.result.content;
       $("preview").hidden = false;
-      engine.resources.record(result.id,"ui.preview","extension/beta-explorer.mjs",previewStart);
-      await engine.resources.close();
+      collector.record(result.id,"ui.preview","extension/beta-explorer.mjs",previewStart);
+      await collector.close();
       await refreshJobs();
     });
   $("refresh-jobs").onclick = () =>
@@ -496,9 +499,9 @@ export function installBetaExplorer({
     await gate();
     if (!enabled) return;
     await initialize();
-    const startup=await engine.resources.begin("startup");
-    engine.resources.record(startup,"startup","extension/beta-explorer.mjs",startupAt);
-    await engine.resources.finish(startup);
+    const startup=await collector.begin("startup");
+    collector.record(startup,"startup","extension/beta-explorer.mjs",startupAt);
+    await collector.finish(startup);
     await browse();
   });
 

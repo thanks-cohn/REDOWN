@@ -43,15 +43,15 @@
       "sourceRefs": [
         {
           "path": "agent/aac/model.mjs",
-          "sha256": "ae2d395906f31a2dea5bf670e5b506053ae534a26189aaf14c90be0c053774e4"
+          "sha256": "6f52d1e1b95bddd53a321076523f34bd585f1f9f325d06869358be20d9ac6b95"
         },
         {
           "path": "agent/aac/scenarios.mjs",
-          "sha256": "89cd733fed394e4c56ef671a5724baa4277778d76552354f40b3c68cefa92bde"
+          "sha256": "74256dcec4096fbe9aaa18f1975df1ef09cfd5be44dabdd803b9ef876d3bfd12"
         },
         {
           "path": "agent/aac/ui.mjs",
-          "sha256": "4ab669d55f236c80ceb47dee4d3a68891bb4315f785edf99722fdf7c9f8ff95a"
+          "sha256": "b5e731db853ab228149ffb9e3111559a34e64eac8d4ae75b657323a3581ac98a"
         },
         {
           "path": "agent/aac/api.mjs",
@@ -67,11 +67,11 @@
         },
         {
           "path": "agent/aac/report.schema.json",
-          "sha256": "f96d8624eee428708aa6547a1bec1c3faebb9170f9d471906645d713698d2389"
+          "sha256": "3060c0154c517c44c0d8caec34f4e8dc8a831aa51e494f5efc0617b476828f71"
         },
         {
           "path": "scripts/aac-audit.mjs",
-          "sha256": "9b76b2dc824c6e5d74dd799dfb1e99e47fe5f8a3acade34b9e3b560fb4c5a26a"
+          "sha256": "2a2c33e3e92c12bf017f5a932ad3d04db6dad151d0619185e4cb2a91b57aca0a"
         },
         {
           "path": "scripts/aac-live.mjs",
@@ -83,7 +83,7 @@
         },
         {
           "path": "tests/aac.test.mjs",
-          "sha256": "3b44f5f9b92a546b376b4397f50d550fb89144463f3548a12f9eaf31b903e91e"
+          "sha256": "538a6f7c87b610a29cbd50d92f1cbe5d20a717b6df592480cb69c16b13768499"
         },
         {
           "path": "tests/aac-schema.py",
@@ -91,14 +91,56 @@
         },
         {
           "path": "docs/aac/SPECIFICATION.md",
-          "sha256": "cf0a2aa59874f3ecda5178ba9ec6ed928775dfe11e70bb91fc6056b11462bc6f"
+          "sha256": "e3e2877e8cdce81c76a2ae4972bda69affc12b62be0f129bd6436084e501143a"
         },
         {
           "path": "docs/aac/START_HERE.md",
-          "sha256": "e7e280e9a63d193b84c1531cc2c6e136485e58e944f44bd0a6a1d2d531b3655a"
+          "sha256": "339679fc6939dc536eb4c20663ddd6cc10d5e4cd0c2574dbf18af2fecf9ce9f2"
         }
       ],
-      "standards": "agent/aac/profile.json"
+      "standards": "agent/aac/profile.json",
+      "phase25SourceTransition": {
+        "originalRecord": "verification/aac/phase25/before/AAC-framework.implementation.json",
+        "changes": [
+          {
+            "path": "agent/aac/model.mjs",
+            "before": "ae2d395906f31a2dea5bf670e5b506053ae534a26189aaf14c90be0c053774e4",
+            "after": "6f52d1e1b95bddd53a321076523f34bd585f1f9f325d06869358be20d9ac6b95"
+          },
+          {
+            "path": "agent/aac/scenarios.mjs",
+            "before": "89cd733fed394e4c56ef671a5724baa4277778d76552354f40b3c68cefa92bde",
+            "after": "74256dcec4096fbe9aaa18f1975df1ef09cfd5be44dabdd803b9ef876d3bfd12"
+          },
+          {
+            "path": "agent/aac/ui.mjs",
+            "before": "4ab669d55f236c80ceb47dee4d3a68891bb4315f785edf99722fdf7c9f8ff95a",
+            "after": "b5e731db853ab228149ffb9e3111559a34e64eac8d4ae75b657323a3581ac98a"
+          },
+          {
+            "path": "scripts/aac-audit.mjs",
+            "before": "9b76b2dc824c6e5d74dd799dfb1e99e47fe5f8a3acade34b9e3b560fb4c5a26a",
+            "after": "2a2c33e3e92c12bf017f5a932ad3d04db6dad151d0619185e4cb2a91b57aca0a"
+          },
+          {
+            "path": "tests/aac.test.mjs",
+            "before": "3b44f5f9b92a546b376b4397f50d550fb89144463f3548a12f9eaf31b903e91e",
+            "after": "538a6f7c87b610a29cbd50d92f1cbe5d20a717b6df592480cb69c16b13768499"
+          },
+          {
+            "path": "docs/aac/SPECIFICATION.md",
+            "before": "cf0a2aa59874f3ecda5178ba9ec6ed928775dfe11e70bb91fc6056b11462bc6f",
+            "after": "e3e2877e8cdce81c76a2ae4972bda69affc12b62be0f129bd6436084e501143a"
+          },
+          {
+            "path": "docs/aac/START_HERE.md",
+            "before": "e7e280e9a63d193b84c1531cc2c6e136485e58e944f44bd0a6a1d2d531b3655a",
+            "after": "339679fc6939dc536eb4c20663ddd6cc10d5e4cd0c2574dbf18af2fecf9ce9f2"
+          }
+        ],
+        "reason": "Reviewed Phase 2.5 authority/schema/session/UI repair. Original record bytes and failed baseline remain preserved; current bindings require the repaired implementation and conformance tests.",
+        "verification": "verification/aac/phase25/results.json"
+      }
     }
   }
 }

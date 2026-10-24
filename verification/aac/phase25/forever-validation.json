@@ -1,0 +1,6 @@
+{
+  "valid": true,
+  "records": 28,
+  "validator": "independent pinned upstream JSON Schema and exact current source hashes",
+  "scope": "Structural and source binding; no full certification"
+}

@@ -1,0 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 resources:benchmark
+> node --expose-gc scripts/resource-atlas-benchmark.mjs
+
+{"rows":5,"overhead":{"control":"collector disabled; wrapper overhead remains","enabled":{"n":12,"meanMs":3.3889018749999806,"medianMs":3.385355124999961,"p95Ms":3.9369164999999953,"mean95CiMs":[3.2119855815699663,3.565818168429995],"uncertainty":"Normal approximation; small N, runtime scheduling and GC can dominate."},"disabled":{"n":12,"meanMs":2.781157197916677,"medianMs":2.7987789999999393,"p95Ms":3.03736200000003,"mean95CiMs":[2.681530968757362,2.8807834270759924],"uncertainty":"Normal approximation; small N, runtime scheduling and GC can dominate."},"absoluteMeanMs":0.6077446770833035,"relativePercent":21.852223151519656}}

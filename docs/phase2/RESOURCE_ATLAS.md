@@ -35,7 +35,7 @@ The gateway registry owns routing; `agent/resources/api.mjs` is its read-only ad
 
 ## Runtime integration
 
-`createFileEngine({store,adapters})` automatically creates `engine.resources`. `await engine.resources.exportEvidence()` returns a redacted bundle; save it locally and pass it to the existing gateway with `--resource-bundle`. This is distinct from the private file journal and from file content export. `resources.query(method,input)` uses the same read semantics in-process. `createResourceAtlas({store,enabled:false})` supplies an explicit comparison control; inject it through the engine's `resources` option. It does not authorize file execution.
+`createFileEngine({store,adapters})` automatically creates `engine.resources`, a frozen read-only facade. The owner collector stays private and Beta injects it explicitly. `await engine.resources.exportEvidence()` returns a redacted bundle; save it locally and pass it to the existing gateway with `--resource-bundle`. This is distinct from the private file journal and from file content export. `resources.query(method,input)` uses the same read semantics in-process. `createResourceAtlas({store,enabled:false})` supplies an explicit comparison control; inject it through the engine's `resources` option. It does not authorize file execution.
 
 Every canonical run starts a trace before reservation and finishes it on returned job outcomes or thrown validation/reservation failures. The normal job ID is the correlation ID. Duplicate idempotency requests retain their original job ID; the extra invocation's reservation trace has a separate ID and does not imply a second provider mutation. Provider proxies preserve authorization/capability checks and do not retry. Read buffers are counted until the engine invocation finishes. The current Beta uses text previews: no object URLs, thumbnails or image decoding exist to instrument. Metadata bytes are an estimated 128 bytes per visible row, not a heap measurement.
 
@@ -57,7 +57,7 @@ The 10,000 inventory is seeded directly; memory-adapter creates remain limited t
 
 The live four-bucket run in `verification/resources/live-lab.json` has 72 passed, 29 failed and 16 blocked assertions. The first bucket's early requests produced INVALID_PROVIDER_RESPONSE; dependent source-based checks then failed. This evidence does not establish the cause of those invalid responses, or prove those failures were caused by instrumentation. No blind write retry was introduced. Cleanup returned no failures and management-API inspection independently found all four exclusive run prefixes empty. The temporary Worker was deleted and a subsequent read confirmed absence. `live-evidence.json` contains actual R2 spans. Existing R2 atomic destructive-operation gates remain closed.
 
-Acceptance is blocked. Do not promote this branch to main as completed Phase 2.4. Preserve the failed live run, remaining measurement gaps and existing baseline failures. A successor must reproduce the invalid live responses with numeric HTTP status/body-length evidence, repair or classify them, extend missing workloads, rerun browser/live/schema/overhead/safety checks and only then consider the owner's requested merge. Never weaken source verification, four-bucket restrictions or uncertain-write recovery to obtain a green result.
+The Phase 2.4 implementation was merged to main before Phase 2.5. Its historical acceptance remains blocked; branch placement does not turn that failed run into a pass. Preserve the failed live run, remaining measurement gaps and existing baseline failures. A successor must reproduce the invalid live responses with numeric HTTP status/body-length evidence, repair or classify them, extend missing workloads, rerun browser/live/schema/overhead/safety checks and only then consider the owner's requested merge. Never weaken source verification, four-bucket restrictions or uncertain-write recovery to obtain a green result.
 
 The checked-in paired benchmark uses the uninstrumented coordinator at starting commit
 `c5017e2be5e6d4370ab522214b3187efeaca86ed`: 2.787ms enabled versus 2.593ms baseline,
@@ -73,3 +73,14 @@ RESOURCE_BASELINE_MODULE=/tmp/redown-resource-baseline.mjs npm run resources:ben
 Without `RESOURCE_BASELINE_MODULE`, the benchmark compares enabled collection with disabled
 collection while retaining wrapper overhead. Do not confuse that control with the full
 uninstrumented baseline. Durable-store and browser overhead are not yet quantified.
+
+## Phase 2.5 contract and export repair
+
+The runtime validator is compiled from the authoritative `agent/resources/evidence.schema.json` using Ajv 2020-12 and bundled for browsers. Rebuild with `node scripts/compile-resource-schema.mjs`; `--check` detects generated drift. Install Python `jsonschema[format]==4.26.0` for the independent agreement test. Required fields, nested unknown fields, formats, privacy labels and numeric boundaries are enforced at import and journal restoration. The one MiB UTF-8 import budget is an additional transport limit. Existing valid 1.0.0 producer evidence remains covered by regression tests.
+
+`node scripts/resource-trace-export.mjs EVIDENCE.json > trace.json` exports Chrome Trace Event JSON for compatible timeline viewers. Logical lanes carry operation IDs; no OS-thread or OTLP claim is made. Span starts are reconstructed from completion wall timestamps and measured durations, so clock adjustments/millisecond precision limit alignment. Unsupported CPU, Worker and layout/paint measurements remain unavailable. Phase 2.5 paired overhead is in `verification/aac/phase25/resource-benchmark/benchmark.json`; its disabled-collector control retains wrapper overhead.
+
+The Phase 2.5 fresh leased four-bucket subset passed 21 checks with no cleanup failures.
+`verification/aac/phase25/live.json` is bound to runtime source digests;
+`live-management-cleanup.json` records separate management reads and temporary Worker removal.
+This does not erase Phase 2.4's failed run or resolve broader real-provider durability acceptance.

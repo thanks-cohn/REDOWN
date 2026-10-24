@@ -1,0 +1,29 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.phase25.compatibility.files",
+  "kind": "compatibility",
+  "contractType": "API",
+  "boundary": "Owner-created embedded query or JSON-lines stdio; canonical File API 0.2.0 and Resource Atlas 1.0.0",
+  "version": "1.0.0",
+  "mustPreserve": [
+    "No public store/adapter/collector handles",
+    "Frozen read-only diagnostics return detached observations",
+    "Scope and canonical authorizer intersection with bounded responses and job ownership",
+    "Schema-compiled browser validation with independent negative controls",
+    "Explicit cancellation/reconciliation and no replay",
+    "Historical trial and live failure provenance"
+  ],
+  "migrationPolicy": "Reconstitute from documented contracts, source-bound graph and negative authority tests. Transport may be replaced without replacing the filesystem coordinator or granting new mutation authority.",
+  "validationReferences": [
+    "redown.aac.phase25.evidence.repairs"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner REDOWN Phase 2.5 implementation assignment, 2026-10-24",
+      "report": "verification/aac/phase25/results.json",
+      "historicalAudit": "verification/aac/baseline.json",
+      "reconstruction": "docs/aac/PHASE25.md",
+      "status": "Partial implementation; promotion blocked pending full certification and fresh browser/live verification"
+    }
+  }
+}

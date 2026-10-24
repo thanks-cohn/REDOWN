@@ -1,0 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 aac:certify
+> node scripts/aac-audit.mjs --certify
+
+{"aacVersion":"1.0.0","source":"d78165b4bd9b318f40d6f77bad1493cd4e0c8ba1","capabilities":468,"checks":{"passed":545,"failed":0,"blocked":0,"notTested":3},"safetyGate":"PASS","certification":"NOT_CERTIFIED","report":"verification/aac/latest.json","mode":"certify"}

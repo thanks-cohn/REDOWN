@@ -61,7 +61,19 @@
             "unavailable": {
               "type": "array",
               "items": {
-                "type": "string"
+                "enum": [
+                  "object-url-lifecycle-not-used-by-beta",
+                  "thumbnail-cache-not-implemented",
+                  "worker-cpu",
+                  "exclusive-journal-lock-wait",
+                  "worker-memory",
+                  "per-operation-heap-attribution",
+                  "cpu-percent",
+                  "process-memory",
+                  "external-memory",
+                  "array-buffer-memory",
+                  "js-heap"
+                ]
               }
             }
           },
@@ -265,7 +277,7 @@
           "additionalProperties": false
         },
         "scope": {
-          "type": "string"
+          "const": "whole runtime memory; counters cover explicitly instrumented owners only"
         }
       },
       "required": [
@@ -458,7 +470,19 @@
             "unavailable": {
               "type": "array",
               "items": {
-                "type": "string"
+                "enum": [
+                  "object-url-lifecycle-not-used-by-beta",
+                  "thumbnail-cache-not-implemented",
+                  "worker-cpu",
+                  "exclusive-journal-lock-wait",
+                  "worker-memory",
+                  "per-operation-heap-attribution",
+                  "cpu-percent",
+                  "process-memory",
+                  "external-memory",
+                  "array-buffer-memory",
+                  "js-heap"
+                ]
               }
             }
           },
@@ -520,7 +544,19 @@
                 "unavailable": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "enum": [
+                      "object-url-lifecycle-not-used-by-beta",
+                      "thumbnail-cache-not-implemented",
+                      "worker-cpu",
+                      "exclusive-journal-lock-wait",
+                      "worker-memory",
+                      "per-operation-heap-attribution",
+                      "cpu-percent",
+                      "process-memory",
+                      "external-memory",
+                      "array-buffer-memory",
+                      "js-heap"
+                    ]
                   }
                 }
               },
@@ -919,7 +955,19 @@
         "unavailable": {
           "type": "array",
           "items": {
-            "type": "string"
+            "enum": [
+              "object-url-lifecycle-not-used-by-beta",
+              "thumbnail-cache-not-implemented",
+              "worker-cpu",
+              "exclusive-journal-lock-wait",
+              "worker-memory",
+              "per-operation-heap-attribution",
+              "cpu-percent",
+              "process-memory",
+              "external-memory",
+              "array-buffer-memory",
+              "js-heap"
+            ]
           }
         }
       },
@@ -982,7 +1030,19 @@
             "unavailable": {
               "type": "array",
               "items": {
-                "type": "string"
+                "enum": [
+                  "object-url-lifecycle-not-used-by-beta",
+                  "thumbnail-cache-not-implemented",
+                  "worker-cpu",
+                  "exclusive-journal-lock-wait",
+                  "worker-memory",
+                  "per-operation-heap-attribution",
+                  "cpu-percent",
+                  "process-memory",
+                  "external-memory",
+                  "array-buffer-memory",
+                  "js-heap"
+                ]
               }
             }
           },
@@ -1186,7 +1246,7 @@
           "additionalProperties": false
         },
         "scope": {
-          "type": "string"
+          "const": "whole runtime memory; counters cover explicitly instrumented owners only"
         }
       },
       "required": [

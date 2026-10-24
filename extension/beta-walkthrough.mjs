@@ -322,7 +322,7 @@ export function installWalkthrough({
     minimized.hidden = true;
     clearAnchor();
     if (session) persist();
-    $("walkthrough-launch")?.focus();
+    if(enabled) $("walkthrough-launch")?.focus();
   }
   function resume() {
     if (!available() || !saved) return;

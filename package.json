@@ -34,15 +34,18 @@
     "file:deployment-plan": "node scripts/r2-lab/deployment-plan.mjs",
     "resources:test": "node --test tests/resource-atlas.test.mjs",
     "resources:benchmark": "node --expose-gc scripts/resource-atlas-benchmark.mjs",
-    "resources:schema": "python tests/resource-atlas-schema.py",
+    "resources:schema": "node scripts/compile-resource-schema.mjs --check && python tests/resource-atlas-schema.py && node --test tests/resource-schema-agreement.mjs",
     "aac:audit": "node scripts/aac-audit.mjs",
     "aac:certify": "node scripts/aac-audit.mjs --certify",
-    "aac:test": "node --test tests/aac.test.mjs",
+    "aac:test": "node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs",
     "aac:schema": "python tests/aac-schema.py",
     "aac:live": "node scripts/aac-live.mjs",
     "aac:browser": "node scripts/aac-browser.mjs"
   },
   "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "esbuild": "^0.27.3",
     "fake-indexeddb": "6.2.6",
     "jsdom": "^26.1.0",
     "wrangler": "^4.0.0"

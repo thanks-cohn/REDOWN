@@ -1,0 +1,27 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.phase25.evidence.repairs",
+  "kind": "evidence",
+  "type": "integration-test",
+  "source": "verification/aac/phase25/results.json",
+  "statementSupported": "Scoped authority/schema/session/UI repairs and bounded volume tests are executable; full certification remains blocked. Original audit, cold trial failures and live provider failures remain preserved.",
+  "confidence": 1,
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner REDOWN Phase 2.5 implementation assignment, 2026-10-24",
+      "report": "verification/aac/phase25/results.json",
+      "historicalAudit": "verification/aac/baseline.json",
+      "reconstruction": "docs/aac/PHASE25.md",
+      "status": "Partial implementation; promotion blocked pending full certification and fresh browser/live verification",
+      "evidence": [
+        "verification/aac/phase25/cold-trial-1.json",
+        "verification/aac/phase25/cold-trial-2.json",
+        "verification/aac/phase25/cold-trial-2-followup.json",
+        "verification/aac/phase25/volume.json",
+        "verification/aac/phase25/environment.json",
+        "verification/aac/phase25/resource-benchmark/benchmark.json"
+      ],
+      "actualModelTokens": null
+    }
+  }
+}

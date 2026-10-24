@@ -1,0 +1,60 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 file:verify
+> npm run file:unit && npm run file:schema && npm run file:preservation
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 file:unit
+> node --test tests/phase2-engine.test.mjs tests/universal-file-engine.test.mjs tests/r2-laboratory-transport.test.mjs tests/universal-file-discovery.test.mjs
+
+✔ contract rejects incompatible versions, ambiguous keys, destructive requests and self targets (2.183154ms)
+✔ cross-provider copy and move preserve contents and enforce destination conflicts (36.503816ms)
+✔ recursive directory copy refuses merge and never changes unrelated destination (7.434037ms)
+✔ same idempotency key is executed once across engine instances; different request is rejected (6.298903ms)
+✔ journal reopening retains exact transitions, receipt, identities and read-only diagnostics (3.377976ms)
+✔ list consumes every page and rejects a stale cursor after mutation (23.711009ms)
+✔ unknown routing never implies absence; no real provider is accepted (3.185476ms)
+✔ rename, folder, upload, search, delete keep exact identity and independent receipts (21.795393ms)
+✔ failed persistence cannot return a verified completion (1.480204ms)
+✔ worker scopes auth, lease, bucket and keys before provider access (16.369408ms)
+✔ real Worker handler preserves literal Unicode/percent keys and atomically refuses duplicate creates (6.556453ms)
+✔ Cloudflare-side ingestion pins URL/hash and refuses redirects without any destination write (5.13621ms)
+✔ R2 adapter preserves provider-delimited virtual folders for navigation (2.376236ms)
+✔ published operation examples validate and incomplete acceptance stays machine-visible (6.940752ms)
+✔ version negotiation, exact input shapes, binary and range validation fail closed (3.91078ms)
+✔ seeded identity fuzz preserves Unicode/case/whitespace and rejects traversal and UTF8 limits (9.691723ms)
+✔ arbitrary binary, empty bodies, MIME and ranged read use one coordinator (53.444276ms)
+✔ accepted write with lost reply is uncertain, deduplicated and never automatically replayed (5.222369ms)
+✔ wrong readback and changed source cannot trigger move source deletion (7.816202ms)
+✔ every HTTP failure family preserves source and records typed failure with no blind retries (21.496674ms)
+✔ parallel writers have exactly one winner; batch outcomes remain per-target (93.259277ms)
+✔ cancel before write, restart uncertainty and read-only inspection are durable (4.104373ms)
+✔ seeded stateful sequences match an independent content model (5408.675493ms)
+✔ providers lacking atomic conditional delete cannot mutate a move source (1.646524ms)
+✔ malformed provider metadata and partial recursive conflicts cannot fabricate full success (3.646452ms)
+✔ safe diagnostic exports retain evidence but omit names, bodies and authorization values (2.559772ms)
+✔ real adapters require explicit authorization and reconcile cannot bypass revocation (3.255772ms)
+✔ ranged reads reject truncated successful replies and preserve exact identity boundaries (1.807647ms)
+✔ independent durable journal clients reserve duplicate mutations once and retain recovery evidence (50.885791ms)
+✔ durable journal detects externally restored older state instead of continuing mutations (7.432259ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5815.366787
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 file:schema
+> python tests/universal-file-schema.py
+
+{"schemaFixtures": 45, "negativeControls": 5, "foreverRecords": 15, "state": "passed", "scope": "independent structure validation; not live behavior"}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 file:preservation
+> node scripts/r2-lab/preservation.mjs
+
+{"valid":true,"checkedSourceReferences":10,"scope":"actual pinned Forever Works reference API and source hashes; no migration or readiness approval"}

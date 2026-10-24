@@ -512,10 +512,15 @@
       "sourceRefs": [
         "extension/background.js"
       ],
-      "apiOperations": [],
+      "apiOperations": [
+        "chrome.runtime.openOptionsPage"
+      ],
       "declared": "production-boundary",
       "discovery": "source-pattern",
-      "notes": "Dynamic profile-dependent family; object-specific instances intentionally not enumerated."
+      "notes": "Presentation navigation to options; no filesystem operation or provider authority. Exact source-fragment registration/dispatch is tested; installed Chrome remains unverified.",
+      "testRefs": [
+        "tests/context-menu-agent.test.mjs"
+      ]
     },
     {
       "id": "aac.contextmenu.redown-mode-separator",
@@ -2654,6 +2659,17 @@
       "discovery": "source-pattern"
     },
     {
+      "id": "aac.export.extension-file-engine-resources.mjs.resourcereader",
+      "kind": "library-export",
+      "name": "resourceReader",
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs"
+      ],
+      "apiOperations": [],
+      "declared": "in-process-library",
+      "discovery": "source-pattern"
+    },
+    {
       "id": "aac.export.extension-file-engine-resources.mjs.validateresourcebundle",
       "kind": "library-export",
       "name": "validateResourceBundle",
@@ -2687,6 +2703,26 @@
       "discovery": "source-pattern"
     },
     {
+      "id": "aac.external.files",
+      "kind": "transport-route",
+      "name": "owner-scoped-files",
+      "sourceRefs": [
+        "agent/files/api.mjs",
+        "agent/files/cli.mjs",
+        "agent/files/session.schema.json"
+      ],
+      "apiOperations": [
+        "file.list",
+        "file.read",
+        "file.copy"
+      ],
+      "declared": "owner-scoped-stdio",
+      "discovery": "contract-and-runtime-tests",
+      "testRefs": [
+        "tests/file-agent-session.test.mjs"
+      ]
+    },
+    {
       "id": "aac.internal.engine._run",
       "kind": "engine-internal",
       "name": "_run",
@@ -2696,7 +2732,7 @@
       "apiOperations": [],
       "declared": "privileged-engine-handle",
       "discovery": "source-review",
-      "notes": "Object exposes implementation helper not advertised in describe().operations; must not be a restricted execution boundary."
+      "notes": "Historical helper removed from the public engine; retained identity for audit comparison. Canonical execution is now private."
     },
     {
       "id": "aac.internal.resources.adapter",
@@ -7114,7 +7150,7 @@
     },
     {
       "path": "extension/beta-explorer.mjs",
-      "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c"
+      "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
     },
     {
       "path": "extension/beta-walkthrough-steps.mjs",
@@ -7122,7 +7158,7 @@
     },
     {
       "path": "extension/beta-walkthrough.mjs",
-      "sha256": "7c67da8485b090fa7e5d997d0d9618c28bd4bc37e38f90d5967a0e2370f10010"
+      "sha256": "196a0533458f92165456cc047afabe1fdf3b14d6d85eee3f1c2fce365702aeb6"
     },
     {
       "path": "extension/cloudflare-api.js",
@@ -7234,15 +7270,23 @@
     },
     {
       "path": "extension/file-engine/engine.mjs",
-      "sha256": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67"
+      "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
     },
     {
       "path": "extension/file-engine/indexeddb-store.mjs",
       "sha256": "f6328a0020ee0fdc47dc14728df623e10d64c7cd5e90b23fbad6df2f1cdf848b"
     },
     {
+      "path": "extension/file-engine/resource-evidence-validator.mjs",
+      "sha256": "7313c89b101d8a11cc34ecfd862edc79c20d542f8106060b19376049ee5ef567"
+    },
+    {
+      "path": "extension/file-engine/resource-input-validators.mjs",
+      "sha256": "eb8530f2ec19398c14fc7973f3cc9a808c40664e58128fcbd748d2b5e0b39e37"
+    },
+    {
       "path": "extension/file-engine/resources.mjs",
-      "sha256": "39616f93c34d647a0e86e13d68cb3772569f3f570372b5e0e788196a1d5e5130"
+      "sha256": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
     },
     {
       "path": "extension/file-engine/simulation.mjs",
@@ -7250,7 +7294,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "cf101a7e857ee9e537a8cbbb0f8df1a042e9fc92bf97feb50e144e16fcf2bb78"
+      "sha256": "6f9f5b263e7e366f8abab0ebeab15f78d77b6c4eec2fd2d37f890d6da0cb87fc"
     },
     {
       "path": "agent/explorer/model.json",

@@ -1,3 +1,5 @@
+import * as inputValidators from './resource-input-validators.mjs';
+import validateEvidence from './resource-evidence-validator.mjs';
 // Resource Atlas 1.0: allowlisted measurements only. Never accept request metadata or locations.
 export const RESOURCE_VERSION='1.0.0';
 export const RESOURCE_METHODS=['describe','snapshot','listTraces','getTrace','getLatencyBreakdown','getMemoryProfile','getBottlenecks','explainSlowdown','compareRuns','exportEvidence'];
@@ -40,37 +42,14 @@ export function createResourceAtlas({store,enabled=true,maxTraces=64,maxSpans=96
 export const PHASES=['provider','network','network.decode','journal.read','journal.update','journal.lock','journal.queue','verification','ui.render','ui.preview','ui.input','startup','main-thread.longtask','persistence'];
 export const SOURCES=['extension/file-engine/engine.mjs','extension/file-engine/adapters/','extension/file-engine/adapters/r2-http.mjs','extension/beta-explorer.mjs','extension/file-engine/indexeddb-store.mjs'];
 export const KINDS=['transfer-buffer','metadata-cache','thumbnail-cache','preview','object-url','event-listener','queue','journal'];
-function validTrace(t){return t&&safeId(t.operationId)&&typeof t.operation==='string'&&/^[a-z]{1,24}$/.test(t.operation)&&typeof t.startedAt==='string'&&Number.isFinite(t.durationMs)&&t.durationMs>=0&&Array.isArray(t.spans)&&t.spans.length<=96&&t.spans.every(s=>PHASES.includes(s.phase)&&SOURCES.includes(s.source)&&Number.isFinite(s.durationMs)&&s.durationMs>=0);}
+function validTrace(t){return validateResourceBundle({resourceApiVersion:RESOURCE_VERSION,traces:[t]});}
 export function validateResourceBundle(bundle){
- if(!bundle||bundle.resourceApiVersion!==RESOURCE_VERSION||!Array.isArray(bundle.traces)||bundle.traces.length>64||JSON.stringify(bundle).length>1048576||!bundle.traces.every(validTrace))return false;
- // Reject unknown fields recursively, not just headers: an import must never echo credentials.
- const allowed=new Set(['resourceApiVersion','traces','snapshot','operationId','operation','startedAt','durationMs','state','spans','droppedSpans','memoryBefore','memoryAfter','resourcesBefore','resourcesAfter','error','phase','source','at','heapBytes','processBytes','externalBytes','arrayBufferBytes','provenance','unavailable','memory','resources','storage','storageFailures','active','dropped','limits','maxTraces','maxSpans','scope','count','bytes','httpStatus','transferBytes','throughputBps',...KINDS]);
- const walk=x=>!x||typeof x!=='object'?true:Array.isArray(x)?x.every(walk):Object.entries(x).every(([k,v])=>allowed.has(k)&&walk(v));
- const texts=new Set(['object-url-lifecycle-not-used-by-beta','thumbnail-cache-not-implemented','worker-cpu','exclusive-journal-lock-wait','node.process.memoryUsage','chromium.performance.memory','unavailable','worker-memory','per-operation-heap-attribution','cpu-percent','process-memory','external-memory','array-buffer-memory','js-heap','memory-only','restored','persisted','whole runtime memory; counters cover explicitly instrumented owners only']);
- const valueCheck=(x,key='')=>{
-  if(x===null)return true;
-  if(typeof x==='number')return Number.isFinite(x)&&x>=0;
-  if(typeof x==='boolean')return false;
-  if(typeof x==='string'){
-   if(key==='operationId')return safeId(x);
-   if(key==='operation')return /^(list|metadata|read|upload|ingest|mkdir|copy|move|rename|delete|startup|interaction|benchmark)$/.test(x);
-   if(key==='state')return ['running','completed','failed','uncertain','cancelled','partially_completed','blocked_authorization'].includes(x);
-   if(key==='error')return /^[A-Z_0-9]{1,64}$/.test(x);
-   if(key==='at'||key==='startedAt')return /^\d{4}-\d\d-\d\dT[0-9:.]+Z$/.test(x)&&Number.isFinite(Date.parse(x));
-   if(key==='phase')return PHASES.includes(x);
-   if(key==='source')return SOURCES.includes(x);
-   if(key==='resourceApiVersion')return x===RESOURCE_VERSION;
-   return texts.has(x);
-  }
-  if(Array.isArray(x))return x.every(v=>valueCheck(v,key));
-  return Object.entries(x).every(([k,v])=>valueCheck(v,k));
- };
- return walk(bundle)&&valueCheck(bundle);
+ try{return new TextEncoder().encode(JSON.stringify(bundle)).byteLength<=1048576&&validateEvidence(bundle);}catch{return false;}
 }
 export function queryResources(bundle,method,input={}){
  const result=(state,data,error)=>({resourceApiVersion:RESOURCE_VERSION,state,...(data?{data}:{}),...(error?{error:{code:error}}:{})});
  if(!RESOURCE_METHODS.includes(method))return result('failed',null,'UNSUPPORTED_OPERATION');
- if(!input||Array.isArray(input)||Object.keys(input).some(k=>!['operationId','before','after','limit','offset'].includes(k))||['limit','offset'].some(k=>input[k]!==undefined&&(!Number.isInteger(input[k])||input[k]<0||input[k]>10000)))return result('failed',null,'INVALID_INPUT');
+ if(!inputValidators[method](input))return result('failed',null,'INVALID_INPUT');
  if(method==='describe')return result('available',{operations:RESOURCE_METHODS,authorization:'Owner runtime collects locally; gateway imports explicit evidence read-only. No execution, credentials or remote access.',sourceRefs:SOURCES,phases:PHASES,counters:KINDS,errors:['INVALID_INPUT','INVALID_RESOURCE_BUNDLE','RESOURCE_TRACE_NOT_FOUND','RESOURCE_EVIDENCE_UNAVAILABLE'],limits:{maxTraces:64,maxSpans:96},semantics:'Nested provider/network spans overlap; never sum them as exclusive time. Memory is process-wide, not allocation attribution.'});
  if(!bundle)return result('unavailable',null,'RESOURCE_EVIDENCE_UNAVAILABLE');
  if(!validateResourceBundle(bundle))return result('failed',null,'INVALID_RESOURCE_BUNDLE');
@@ -92,4 +71,9 @@ export function queryResources(bundle,method,input={}){
  if(method==='getLatencyBreakdown')return result('available',breakdown(t));
  if(method==='getMemoryProfile')return result('available',{operationId:t.operationId,before:t.memoryBefore,after:t.memoryAfter,resourcesBefore:t.resourcesBefore,resourcesAfter:t.resourcesAfter,heapDeltaBytes:t.memoryAfter?.heapBytes!=null&&t.memoryBefore?.heapBytes!=null?t.memoryAfter.heapBytes-t.memoryBefore.heapBytes:null,interpretation:'Whole-runtime observations; GC and concurrent tasks confound individual deltas. Resource counters measure explicitly owned lifecycles.'});
  return result('available',{facts:breakdown(t),possibleCauses:bottlenecks(t),unavailable:['exclusive CPU time','server-side processing time','GC-normalized allocation attribution'],memory:queryResources(bundle,'getMemoryProfile',input).data});
+}
+
+// The collector is an owner capability. Public clients receive detached observations only.
+export function resourceReader(atlas){
+ return Object.freeze({ready:atlas.ready,query:(method,input)=>structuredClone(atlas.query(method,input)),snapshot:()=>structuredClone(atlas.snapshot()),exportEvidence:()=>atlas.exportEvidence()});
 }

@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "at": "2026-10-24T17:11:37.815Z",
+  "seed": 240025,
+  "scope": "Actual canonical upload/list/copy to durable simulated filesystem journal; no network, no real provider and no 100,000-file operational claim",
+  "budget": {
+    "objects": 128,
+    "copies": 16,
+    "objectBytes": 512,
+    "operations": 180,
+    "maxResponseBytes": 65536,
+    "maxRssGrowthBytes": 268435456
+  },
+  "operations": 150,
+  "created": 128,
+  "copied": 16,
+  "listed": 128,
+  "bytesUploaded": 65536,
+  "independentOracle": "Fresh journal file read, SHA-256 against separately generated deterministic bytes; shared simulated backing medium",
+  "durationMs": 22852.189417999998,
+  "operationMs": {
+    "median": 162.79694000000018,
+    "p95": 237.5924129999985,
+    "max": 251.39610399999947
+  },
+  "responseBytes": {
+    "max": 4102,
+    "total": 54544
+  },
+  "memory": {
+    "before": {
+      "rss": 39882752,
+      "heapTotal": 12374016,
+      "heapUsed": 8713296,
+      "external": 4130582,
+      "arrayBuffers": 275675
+    },
+    "after": {
+      "rss": 198909952,
+      "heapTotal": 183091200,
+      "heapUsed": 60534464,
+      "external": 13952284,
+      "arrayBuffers": 10064300
+    },
+    "rssGrowthBytes": 159027200,
+    "peak": "unavailable; endpoints only"
+  },
+  "traces": {
+    "retained": 64,
+    "dropped": 86,
+    "limit": 64
+  },
+  "actualModelTokens": null,
+  "blocked": [
+    "Real 100,000-object operational transfer",
+    "Unbounded streaming: existing object and journal limits unchanged",
+    "Installed browser and live R2 scale"
+  ]
+}

@@ -1,0 +1,115 @@
+[
+  {
+    "id": "AAC-P25-COLD-001",
+    "record": "verification/aac/phase25/cold-trial-1.json",
+    "profile": "cold with external scoped stdio",
+    "sampleSize": 1,
+    "loggedCommandCount": 11,
+    "measuredLoggedOutputBytes": 18387,
+    "actualModelTokens": null,
+    "humanIntervention": 0,
+    "tasks": {
+      "1": {
+        "name": "discover scoped capabilities",
+        "status": "PASS"
+      },
+      "2": {
+        "name": "browse Documents/ and locate Example.txt",
+        "status": "PASS"
+      },
+      "3": {
+        "name": "copy authorized simulation object",
+        "status": "PASS"
+      },
+      "4": {
+        "name": "client compare separate read bytes and independently compute SHA-256",
+        "status": "PASS"
+      },
+      "5": {
+        "name": "latency and memory metrics",
+        "status": "PASS"
+      },
+      "6": {
+        "name": "readonly stdio copy refused AUTHORIZATION_DENIED",
+        "status": "PASS"
+      },
+      "7": {
+        "name": "unsupported capability discovery",
+        "status": "PASS"
+      },
+      "8": {
+        "name": "locate context menu implementation/test",
+        "status": "PARTIAL"
+      },
+      "9": {
+        "name": "evaluate sample memory adapter and run relevant tests",
+        "status": "PASS"
+      }
+    },
+    "limitation": "Independent in-progress trial; exact task results, capture limits and errors remain in linked raw record. Continuation is not another cold sample."
+  },
+  {
+    "id": "AAC-P25-COLD-002",
+    "record": "verification/aac/phase25/cold-trial-2.json",
+    "profile": "cold with external scoped stdio",
+    "sampleSize": 1,
+    "loggedCommandCount": 43,
+    "measuredLoggedOutputBytes": 154261,
+    "actualModelTokens": null,
+    "humanIntervention": 0,
+    "tasks": {
+      "discovery": {
+        "status": "PASS",
+        "detail": "PASS: describe and AAC bounded discovery; listCapabilities 100 generated overly large 100-item response (tool display truncated), recorded full output locally."
+      },
+      "browse_locate": {
+        "status": "PASS",
+        "detail": "PASS: Documents listing located Example.txt and metadata returned 28 bytes."
+      },
+      "copy": {
+        "status": "PASS",
+        "detail": "PASS: separate source/destination reads, decoded byte equality and independent local SHA256 comparison."
+      },
+      "latency_memory": {
+        "status": "PASS",
+        "detail": "PASS: copy duration 2.157449ms; provider total 0.784985ms; heap delta 200080 bytes explicitly whole-runtime, no per-file attribution."
+      },
+      "timeout": {
+        "status": "PASS",
+        "detail": "PASS documented RESOURCE_ATLAS.md test reproduction; targeted timeout/journal test passed. Test asserts TIMEOUT provider span and >=100ms journal.update. No timeout injection exposed through stdio session."
+      },
+      "known_failure": {
+        "status": "PARTIAL",
+        "detail": "PARTIAL: documented AAC test command actually failed 1/7: Beta parity test with ui-folder-search-parent, ui-upload-rename-move-delete, ui-mkdir-cancel-error-recovery failures. Historical schema drift FAIL appears in getReproduction; exact schema drift was not independently exposed by passing scenario wrapper (allows PASS or FAIL), so not claimed reproduced."
+      },
+      "read_only": {
+        "status": "PASS",
+        "detail": "PASS: list,metadata,read session denied copy AUTHORIZATION_DENIED."
+      },
+      "unsupported": {
+        "status": "PASS",
+        "detail": [
+          "MCP",
+          "network execution service",
+          "global recovery",
+          "unscoped journal access",
+          "per-operation heap attribution",
+          "worker memory/CPU",
+          "R2 search/reverse sort",
+          "large streaming/multipart",
+          "automatic retry/resume",
+          "queue ownership leases"
+        ]
+      },
+      "context_menu": {
+        "status": "PARTIAL",
+        "detail": "Located redown-manage registration extension/background.js:2076 and click handler :2268 opens options. AAC graph correctly reports missing test edge. Related native Simple context menu test tests/menu-reorder.test.mjs:47 passed, but stubs addMenuControls and does not test redown-manage registration/dispatch. No direct specific test found."
+      },
+      "adapter_guidance": {
+        "status": "PARTIAL",
+        "detail": "START_HERE + UNIVERSAL_API_LAB explain authoritative coordinator, describe capability negotiation, assertIdentity, authorize(request), independent oracle and universal-file-engine test reference. Good architecture guidance, but adapter method interface/signatures not fully enumerated in those docs, requiring contract/source follow-up; no second real provider certified."
+      }
+    },
+    "limitation": "Independent in-progress trial; exact task results, capture limits and errors remain in linked raw record. Continuation is not another cold sample."
+  }
+]

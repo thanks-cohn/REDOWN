@@ -1,0 +1,396 @@
+{
+  "aacLiveVersion": "1.0.0",
+  "sourceCommit": "782c9c2b1f33ac0bdf8103abf3f4c65627b6c8fa",
+  "run": "0dbd6761-9cba-4864-9d41-0b1d10b485eb",
+  "worker": "redown-p2-lab-0dbd6761",
+  "prefix": "__redown_test__/0dbd6761-9cba-4864-9d41-0b1d10b485eb/",
+  "requests": 220,
+  "oracleBytes": 392,
+  "results": [
+    {
+      "id": "upload-read-test-1-new",
+      "capabilities": [
+        "aac.provider.r2-lab.upload",
+        "aac.provider.r2-lab.read",
+        "aac.provider.r2-lab.list"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "2a1c10a2-3f69-4a2c-a59f-0718debcf332",
+        "sha256": "469f4737093432e6c49a972aebc779008d93fcf67a6ce966c16b513fd29347f0",
+        "oracle": "direct R2 binding RPC; bypasses engine/adapter/journal but shares Worker transport"
+      }
+    },
+    {
+      "id": "upload-read-test-2-new",
+      "capabilities": [
+        "aac.provider.r2-lab.upload",
+        "aac.provider.r2-lab.read",
+        "aac.provider.r2-lab.list"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "1bd9700c-1863-49bf-8177-2eaad162afa9",
+        "sha256": "469f4737093432e6c49a972aebc779008d93fcf67a6ce966c16b513fd29347f0",
+        "oracle": "direct R2 binding RPC; bypasses engine/adapter/journal but shares Worker transport"
+      }
+    },
+    {
+      "id": "upload-read-test-3-new",
+      "capabilities": [
+        "aac.provider.r2-lab.upload",
+        "aac.provider.r2-lab.read",
+        "aac.provider.r2-lab.list"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "94e94cd1-28e6-4cf1-ae8b-552c93745c02",
+        "sha256": "469f4737093432e6c49a972aebc779008d93fcf67a6ce966c16b513fd29347f0",
+        "oracle": "direct R2 binding RPC; bypasses engine/adapter/journal but shares Worker transport"
+      }
+    },
+    {
+      "id": "upload-read-test-4-new",
+      "capabilities": [
+        "aac.provider.r2-lab.upload",
+        "aac.provider.r2-lab.read",
+        "aac.provider.r2-lab.list"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "4b1f2d67-811e-40bb-b487-0fadd593b4af",
+        "sha256": "469f4737093432e6c49a972aebc779008d93fcf67a6ce966c16b513fd29347f0",
+        "oracle": "direct R2 binding RPC; bypasses engine/adapter/journal but shares Worker transport"
+      }
+    },
+    {
+      "id": "copy-test-1-new-test-1-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "b8a7c9d6-e310-4c31-997a-d835ad29994d",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-1-new-test-2-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "73afeee3-5795-4bdd-8c9e-bfad901fe948",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-1-new-test-3-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "427e5ae1-bb9a-4f8b-8b77-67a70596ed0a",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-1-new-test-4-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "6f058b8d-c8d7-4d2f-a21e-caf960bb0558",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-2-new-test-1-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "2c99be7c-9d4b-408c-b6a4-4b1130ccadbd",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-2-new-test-2-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "613b8b19-025d-462f-9bb9-8d7efe611a7a",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-2-new-test-3-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "697ab148-b13b-4cb7-af3b-6c92fb4ed585",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-2-new-test-4-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "e4558587-5f6a-4a8d-bb2d-b57c684c2874",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-3-new-test-1-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "58c65a5b-967f-49d1-81a1-9deef3b9d2d1",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-3-new-test-2-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "a742293e-a88a-44d2-a9f8-c28bb9400266",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-3-new-test-3-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "a20f201b-c74e-4542-ad6f-4abebcf64076",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-3-new-test-4-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "8a6e7947-c0b7-48df-8ab3-3d24918313e1",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-4-new-test-1-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "dd30ad43-a7d1-4089-b101-5b30ccb30888",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-4-new-test-2-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "d23a90ed-7977-417e-b330-5786d479cab6",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-4-new-test-3-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "6bf2fc2f-4d22-4741-8278-b5dfbbaba16d",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "copy-test-4-new-test-4-new",
+      "capabilities": [
+        "aac.provider.r2-lab.copy"
+      ],
+      "status": "PASS",
+      "detail": {
+        "operationId": "f47c22cf-d161-4e45-b2a2-b9590453bab6",
+        "destinationVerified": true,
+        "sourcePreserved": true
+      }
+    },
+    {
+      "id": "destructive-operations-remain-blocked",
+      "capabilities": [
+        "aac.provider.r2-lab.move",
+        "aac.provider.r2-lab.rename",
+        "aac.provider.r2-lab.delete"
+      ],
+      "status": "PASS",
+      "detail": {
+        "guardTest": "PASS",
+        "operationAvailability": "UNSUPPORTED"
+      }
+    }
+  ],
+  "cleanup": [
+    {
+      "bucket": "test-1-new",
+      "keySuffix": "aac-original.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-2-new",
+      "keySuffix": "aac-original.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "keySuffix": "aac-original.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-4-new",
+      "keySuffix": "aac-original.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-1-new",
+      "keySuffix": "aac-copy-from-test-1-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-2-new",
+      "keySuffix": "aac-copy-from-test-1-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "keySuffix": "aac-copy-from-test-1-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-4-new",
+      "keySuffix": "aac-copy-from-test-1-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-1-new",
+      "keySuffix": "aac-copy-from-test-2-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-2-new",
+      "keySuffix": "aac-copy-from-test-2-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "keySuffix": "aac-copy-from-test-2-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-4-new",
+      "keySuffix": "aac-copy-from-test-2-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-1-new",
+      "keySuffix": "aac-copy-from-test-3-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-2-new",
+      "keySuffix": "aac-copy-from-test-3-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "keySuffix": "aac-copy-from-test-3-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-4-new",
+      "keySuffix": "aac-copy-from-test-3-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-1-new",
+      "keySuffix": "aac-copy-from-test-4-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-2-new",
+      "keySuffix": "aac-copy-from-test-4-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "keySuffix": "aac-copy-from-test-4-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-4-new",
+      "keySuffix": "aac-copy-from-test-4-new.bin",
+      "absent": true
+    },
+    {
+      "bucket": "test-1-new",
+      "prefixEmpty": true
+    },
+    {
+      "bucket": "test-2-new",
+      "prefixEmpty": true
+    },
+    {
+      "bucket": "test-3-new",
+      "prefixEmpty": true
+    },
+    {
+      "bucket": "test-4-new",
+      "prefixEmpty": true
+    }
+  ],
+  "passed": 21,
+  "failed": 0,
+  "blocked": 0,
+  "cleanupFailed": 0,
+  "scope": "Fresh leased four-bucket R2 observations, no production resources; cleanup assumes exclusive run prefix, no hostile replacement atomicity guarantee",
+  "managementCleanupVerification": "Requires separate management inspection and temporary Worker removal by authorized operator"
+}

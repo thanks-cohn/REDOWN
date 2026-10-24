@@ -1,0 +1,971 @@
+{
+  "scope": "Actual Beta controls only; unavailable requested surfaces remain explicit in latest.json",
+  "controls": [
+    {
+      "id": "aac.ui.beta-explorer.a-99be62f732dc",
+      "selector": null,
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.a-b0476152d5fc",
+      "selector": null,
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.activity-link",
+      "selector": "#activity-link",
+      "operations": [
+        "file.inspect"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.button-e118ff6cea08",
+      "selector": null,
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.copy",
+      "selector": "#copy",
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-copy-parity-and-oracle",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.cut",
+      "selector": "#cut",
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.delete",
+      "selector": "#delete",
+      "operations": [
+        "file.delete"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-mkdir-cancel-error-recovery",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.destination",
+      "selector": "#destination",
+      "operations": [
+        "file.copy",
+        "file.move"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.documents",
+      "selector": "#documents",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-folder-search-parent",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.home",
+      "selector": "#home",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-list-parity",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.inspect",
+      "selector": "#inspect",
+      "operations": [
+        "file.inspect"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.jobs",
+      "selector": "#jobs",
+      "operations": [
+        "file.inspect"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.mkdir",
+      "selector": "#mkdir",
+      "operations": [
+        "file.mkdir"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-mkdir-cancel-error-recovery",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.navigation",
+      "selector": "#navigation",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-list-parity",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.next",
+      "selector": "#next",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-real-pagination",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.paste",
+      "selector": "#paste",
+      "operations": [
+        "file.copy",
+        "file.move"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "beta-gate",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-copy-parity-and-oracle",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.prefix",
+      "selector": "#prefix",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-folder-search-parent",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.provider",
+      "selector": "#provider",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-list-parity",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-disable-restores-visible-focus",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.query",
+      "selector": "#query",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-folder-search-parent",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.read",
+      "selector": "#read",
+      "operations": [
+        "file.read"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-text-preview-is-data",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.refresh-jobs",
+      "selector": "#refresh-jobs",
+      "operations": [
+        "file.inspect"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.rename",
+      "selector": "#rename",
+      "operations": [
+        "file.rename"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-mkdir-cancel-error-recovery",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.show-activity",
+      "selector": "#show-activity",
+      "operations": [
+        "file.inspect"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.summary-bac6e224c41b",
+      "selector": null,
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.summary-c17d397d3520",
+      "selector": null,
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.template.open-folder",
+      "selector": null,
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.mjs"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-folder-search-parent",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.template.selection",
+      "selector": null,
+      "operations": [
+        "presentation-state"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.mjs"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.template.text-preview",
+      "selector": null,
+      "operations": [
+        "file.read"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.mjs"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-text-preview-is-data",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.up",
+      "selector": "#up",
+      "operations": [
+        "file.list"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-folder-search-parent",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.upload",
+      "selector": "#upload",
+      "operations": [
+        "file.upload"
+      ],
+      "classification": "canonical-operation-or-inspection",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "beta-gate",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        },
+        {
+          "id": "ui-upload-rename-move-delete",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.view-grid",
+      "selector": "#view-grid",
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.view-list",
+      "selector": "#view-list",
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "ui-views-and-job-inspection",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    },
+    {
+      "id": "aac.ui.beta-explorer.walkthrough-launch",
+      "selector": "#walkthrough-launch",
+      "operations": [],
+      "classification": "presentation-or-mapping-unestablished",
+      "authorization": [
+        "betaModeEnabled",
+        "canonical authorize(request) for file operations"
+      ],
+      "implementation": [
+        "extension/beta-explorer.html"
+      ],
+      "providers": [
+        "fake-r2",
+        "fake-drive",
+        "r2-lab (explicit owner lab injection only)"
+      ],
+      "results": "Canonical job and correlated Resource Atlas trace for operations; local state for presentation",
+      "tests": [
+        {
+          "id": "guide-keyboard-escape",
+          "status": "PASS",
+          "evidenceClass": "JSDOM-actual-Beta-and-IndexedDB"
+        }
+      ],
+      "forever": "FOREVER_WORKS/AAC/phase25.implementation.json",
+      "unsupported": "No sorting, context menu, download-to-disk, progress/cancel/recover UI or multi-selection is claimed by this entry"
+    }
+  ]
+}

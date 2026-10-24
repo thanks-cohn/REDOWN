@@ -75,6 +75,9 @@
         },
         "restricted": {
           "type": "object"
+        },
+        "readOnly": {
+          "type": "object"
         }
       },
       "required": [

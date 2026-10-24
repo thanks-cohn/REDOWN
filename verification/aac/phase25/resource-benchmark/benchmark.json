@@ -1,0 +1,153 @@
+{
+  "resourceBenchmarkVersion": "1.0.0",
+  "seed": 240024,
+  "at": "2026-10-24T17:09:18.836Z",
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "linux",
+    "arch": "x64",
+    "gc": true,
+    "clock": "performance.now",
+    "scope": "in-process simulated provider; no browser or live R2 inference"
+  },
+  "rows": [
+    {
+      "workload": "folder-navigation",
+      "count": 100,
+      "coldStartMs": 16.113006,
+      "warm": {
+        "n": 11,
+        "meanMs": 4.106970363636367,
+        "medianMs": 3.9145910000000015,
+        "p95Ms": 6.538224999999983,
+        "mean95CiMs": [
+          3.433225539625016,
+          4.780715187647718
+        ],
+        "uncertainty": "Normal approximation; small N, runtime scheduling and GC can dominate."
+      }
+    },
+    {
+      "workload": "folder-navigation",
+      "count": 1000,
+      "coldStartMs": 5.03537,
+      "warm": {
+        "n": 11,
+        "meanMs": 20.654541999999992,
+        "medianMs": 21.054835999999995,
+        "p95Ms": 31.744727999999952,
+        "mean95CiMs": [
+          16.17990418488244,
+          25.129179815117546
+        ],
+        "uncertainty": "Normal approximation; small N, runtime scheduling and GC can dominate."
+      }
+    },
+    {
+      "workload": "folder-navigation",
+      "count": 10000,
+      "coldStartMs": 21.108867000000032,
+      "warm": {
+        "n": 11,
+        "meanMs": 38.40747454545454,
+        "medianMs": 39.14378999999997,
+        "p95Ms": 48.15912800000001,
+        "mean95CiMs": [
+          34.36248180745984,
+          42.452467283449245
+        ],
+        "uncertainty": "Normal approximation; small N, runtime scheduling and GC can dominate."
+      }
+    },
+    {
+      "workload": "concurrent-downloads",
+      "concurrency": 4,
+      "count": 12,
+      "durationMs": 18.297680000000014
+    },
+    {
+      "workload": "intentional-retention-cleanup",
+      "detected": [
+        {
+          "kind": "preview",
+          "classification": "repeated-retained-resource-growth",
+          "samples": [
+            131072,
+            196608,
+            262144,
+            327680,
+            393216
+          ],
+          "possibleCause": "Instrumented owner retained increasing bytes across completed workloads; intentional caching remains possible."
+        }
+      ],
+      "after": {
+        "memory": {
+          "at": "2026-10-24T17:09:18.217Z",
+          "heapBytes": 13243168,
+          "processBytes": 143785984,
+          "externalBytes": 4439150,
+          "arrayBufferBytes": 146579,
+          "provenance": "node.process.memoryUsage",
+          "unavailable": [
+            "worker-memory",
+            "per-operation-heap-attribution",
+            "cpu-percent",
+            "object-url-lifecycle-not-used-by-beta",
+            "thumbnail-cache-not-implemented",
+            "worker-cpu",
+            "exclusive-journal-lock-wait"
+          ]
+        },
+        "resources": {
+          "preview": {
+            "count": 0,
+            "bytes": 0
+          }
+        },
+        "storage": "memory-only",
+        "storageFailures": 0,
+        "active": 0,
+        "dropped": 0,
+        "limits": {
+          "maxTraces": 64,
+          "maxSpans": 96
+        },
+        "scope": "whole runtime memory; counters cover explicitly instrumented owners only"
+      }
+    }
+  ],
+  "overhead": {
+    "control": "collector disabled; wrapper overhead remains",
+    "enabled": {
+      "n": 12,
+      "meanMs": 3.3889018749999806,
+      "medianMs": 3.385355124999961,
+      "p95Ms": 3.9369164999999953,
+      "mean95CiMs": [
+        3.2119855815699663,
+        3.565818168429995
+      ],
+      "uncertainty": "Normal approximation; small N, runtime scheduling and GC can dominate."
+    },
+    "disabled": {
+      "n": 12,
+      "meanMs": 2.781157197916677,
+      "medianMs": 2.7987789999999393,
+      "p95Ms": 3.03736200000003,
+      "mean95CiMs": [
+        2.681530968757362,
+        2.8807834270759924
+      ],
+      "uncertainty": "Normal approximation; small N, runtime scheduling and GC can dominate."
+    },
+    "absoluteMeanMs": 0.6077446770833035,
+    "relativePercent": 21.852223151519656
+  },
+  "limitations": [
+    "Synthetic in-memory journal; durable filesystem and browser overhead measured separately",
+    "10,000 fixture inventory is seeded directly; adapter create remains capped at 5,000",
+    "Default engine journal capped at 500 operations; not an unbounded soak",
+    "Heap observations are whole-process and not proof of leaks"
+  ]
+}

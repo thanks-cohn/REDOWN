@@ -1,0 +1,22 @@
+// Actual bounded creates and copies over a durable simulated journal; never cloud certification.
+import {mkdtemp,rm,readFile,mkdir,writeFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import {createHash} from 'node:crypto';
+import {fileStore} from './r2-lab/file-store.mjs';import {createFileEngine} from '../extension/file-engine/engine.mjs';import {memoryAdapter} from '../extension/file-engine/adapters/memory.mjs';
+const dir=await mkdtemp(join(tmpdir(),'redown-volume-')),path=join(dir,'journal.json'),seed=240025,budget={objects:128,copies:16,objectBytes:512,operations:180,maxResponseBytes:65536,maxRssGrowthBytes:256*1024*1024};
+const memoryBefore=process.memoryUsage(),started=performance.now(),durations=[],outputs=[];let operations=0;
+const id=(key,provider='fake-r2')=>({provider,account:'demo',container:'sandbox',key});
+const digest=b=>createHash('sha256').update(b).digest('hex');
+const fixture=index=>{let x=seed+index;return Buffer.from(Array.from({length:budget.objectBytes},()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return x&255;}));};
+try{
+ const store=fileStore(path),engine=createFileEngine({store,adapters:['fake-r2','fake-drive'].map(p=>memoryAdapter(store,p))});
+ const run=async(operation,args)=>{if(++operations>budget.operations)throw Error('OPERATION_BUDGET');const start=performance.now();const result=await engine.run({apiVersion:'0.2.0',operation,idempotencyKey:'volume-'+operations,...args});durations.push(performance.now()-start);if(result.state!=='completed')throw Error(result.error);const bytes=Buffer.byteLength(JSON.stringify(result.result));outputs.push(bytes);if(bytes>budget.maxResponseBytes)throw Error('RESPONSE_BUDGET');return result;};
+ for(let i=0;i<budget.objects;i++)await run('upload',{destination:id('Volume/'+String(i).padStart(4,'0')+'.bin'),bytesBase64:fixture(i).toString('base64')});
+ const seen=new Set();let cursor;do{const job=await run('list',{source:id('Volume/'),limit:25,...(cursor?{cursor}:{})});for(const o of job.result.objects){if(seen.has(o.key))throw Error('DUPLICATE_PAGE');seen.add(o.key);}cursor=job.result.cursor;}while(cursor);
+ if(seen.size!==budget.objects)throw Error('INCOMPLETE_LISTING');
+ for(let i=0;i<budget.copies;i++)await run('copy',{source:id('Volume/'+String(i).padStart(4,'0')+'.bin'),destination:id('Copied/'+String(i).padStart(4,'0')+'.bin','fake-drive')});
+ // Fresh OS file read bypasses coordinator, adapter, receipt and Resource Atlas results.
+ const fresh=JSON.parse(await readFile(path,'utf8'));let verified=0;for(let i=0;i<budget.copies;i++){const source=fresh.objects.find(o=>o.provider==='fake-r2'&&o.key==='Volume/'+String(i).padStart(4,'0')+'.bin'),dest=fresh.objects.find(o=>o.provider==='fake-drive'&&o.key==='Copied/'+String(i).padStart(4,'0')+'.bin');if(!source||!dest||digest(Buffer.from(source.bytesBase64,'base64'))!==digest(fixture(i))||digest(Buffer.from(dest.bytesBase64,'base64'))!==digest(fixture(i)))throw Error('INTEGRITY');verified++;}
+ const after=process.memoryUsage(),rssGrowth=after.rss-memoryBefore.rss;if(rssGrowth>budget.maxRssGrowthBytes)throw Error('MEMORY_BUDGET');
+ durations.sort((a,b)=>a-b);const evidence=await engine.resources.exportEvidence();
+ const report={version:'1.0.0',at:new Date().toISOString(),seed,scope:'Actual canonical upload/list/copy to durable simulated filesystem journal; no network, no real provider and no 100,000-file operational claim',budget,operations,created:budget.objects,copied:verified,listed:seen.size,bytesUploaded:budget.objects*budget.objectBytes,independentOracle:'Fresh journal file read, SHA-256 against separately generated deterministic bytes; shared simulated backing medium',durationMs:performance.now()-started,operationMs:{median:durations[Math.floor(durations.length/2)],p95:durations[Math.floor(durations.length*.95)],max:durations.at(-1)},responseBytes:{max:Math.max(...outputs),total:outputs.reduce((a,b)=>a+b,0)},memory:{before:memoryBefore,after,rssGrowthBytes:rssGrowth,peak:'unavailable; endpoints only'},traces:{retained:evidence.traces.length,dropped:evidence.snapshot.dropped,limit:64},actualModelTokens:null,blocked:['Real 100,000-object operational transfer','Unbounded streaming: existing object and journal limits unchanged','Installed browser and live R2 scale']};
+ await mkdir('verification/aac/phase25',{recursive:true});await writeFile('verification/aac/phase25/volume.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+}finally{await rm(dir,{recursive:true,force:true});}

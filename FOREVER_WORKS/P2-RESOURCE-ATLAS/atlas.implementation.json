@@ -42,11 +42,11 @@
       "sourceRefs": [
         {
           "path": "extension/file-engine/resources.mjs",
-          "sha256": "39616f93c34d647a0e86e13d68cb3772569f3f570372b5e0e788196a1d5e5130"
+          "sha256": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
         },
         {
           "path": "extension/file-engine/engine.mjs",
-          "sha256": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67"
+          "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
         },
         {
           "path": "extension/file-engine/adapters/r2-http.mjs",
@@ -58,11 +58,11 @@
         },
         {
           "path": "extension/beta-explorer.mjs",
-          "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c"
+          "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
         },
         {
           "path": "agent/resources/api.mjs",
-          "sha256": "29dac4dd35bf597dfbb03222e99cc9a0166be9a1aabd1375c70fed8c0501c2e7"
+          "sha256": "0e4a450b2aa1ad6b2774f7b41b4fed52ac34e53fdfca07a3ada40ab6606ca345"
         },
         {
           "path": "agent/resources/contracts.json",
@@ -70,7 +70,7 @@
         },
         {
           "path": "agent/resources/evidence.schema.json",
-          "sha256": "69de34e1efb3f29452ac8686b53a77b200f6721bc48991ea2f7f09e951817295"
+          "sha256": "ca3d176fc5c7a405f352ca09e251934ff113581a88545bb80568a27cf19784d0"
         },
         {
           "path": "tests/resource-atlas.test.mjs",
@@ -78,9 +78,41 @@
         },
         {
           "path": "scripts/resource-atlas-benchmark.mjs",
-          "sha256": "7ba9873d5d5ba92b7662470b0af5872989ea67201bfacce38da4597faab63ac8"
+          "sha256": "999eec3ebe8eaadbddae228711a1c2ff05bf26cde00ba018f766002f96da5432"
         }
-      ]
+      ],
+      "phase25SourceTransition": {
+        "originalRecord": "verification/aac/phase25/before/P2-RESOURCE-ATLAS-atlas.implementation.json",
+        "changes": [
+          {
+            "path": "extension/file-engine/resources.mjs",
+            "before": "39616f93c34d647a0e86e13d68cb3772569f3f570372b5e0e788196a1d5e5130",
+            "after": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
+          },
+          {
+            "path": "extension/file-engine/engine.mjs",
+            "before": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67",
+            "after": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
+          },
+          {
+            "path": "extension/beta-explorer.mjs",
+            "before": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c",
+            "after": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
+          },
+          {
+            "path": "agent/resources/evidence.schema.json",
+            "before": "69de34e1efb3f29452ac8686b53a77b200f6721bc48991ea2f7f09e951817295",
+            "after": "ca3d176fc5c7a405f352ca09e251934ff113581a88545bb80568a27cf19784d0"
+          },
+          {
+            "path": "scripts/resource-atlas-benchmark.mjs",
+            "before": "7ba9873d5d5ba92b7662470b0af5872989ea67201bfacce38da4597faab63ac8",
+            "after": "999eec3ebe8eaadbddae228711a1c2ff05bf26cde00ba018f766002f96da5432"
+          }
+        ],
+        "reason": "Reviewed Phase 2.5 authority/schema/session/UI repair. Original record bytes and failed baseline remain preserved; current bindings require the repaired implementation and conformance tests.",
+        "verification": "verification/aac/phase25/results.json"
+      }
     }
   }
 }

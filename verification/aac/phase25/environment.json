@@ -1,0 +1,23 @@
+{
+  "freshBrowser": {
+    "status": "BLOCKED",
+    "reason": "Playwright Chromium absent; installation download returned invalid/truncated archive",
+    "evidence": "verification/aac/phase25/browser-attempt.log"
+  },
+  "freshLiveR2": {
+    "status": "PASS",
+    "checks": 21,
+    "failed": 0,
+    "blocked": 0,
+    "cleanupFailed": 0,
+    "managementCleanup": "verification/aac/phase25/live-management-cleanup.json",
+    "scope": "Fresh leased four-bucket subset; earlier failed real-provider runs and broader acceptance remain unresolved"
+  },
+  "measurements": {
+    "workerCpu": "UNAVAILABLE",
+    "workerMemory": "UNAVAILABLE",
+    "browserInputDelay": "UNAVAILABLE",
+    "rendering": "Synchronous DOM handler timing only; no layout/paint metric"
+  },
+  "certification": "NOT_CERTIFIED"
+}

@@ -1,0 +1,17 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.phase25.invariant.capability-boundary",
+  "kind": "invariant",
+  "name": "Private owner state and explicit scoped execution",
+  "statement": "Public diagnostics cannot reveal mutable journals, collectors, credential-bearing adapters or runtime references. Sessions intersect operation and location grants with canonical authorization; job IDs and idempotency do not bypass revocation. Evidence must satisfy its published versioned schema. Preserve independent byte verification, uncertain outcomes, original failures and R2 destructive-operation gates.",
+  "severity": "critical",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner REDOWN Phase 2.5 implementation assignment, 2026-10-24",
+      "report": "verification/aac/phase25/results.json",
+      "historicalAudit": "verification/aac/baseline.json",
+      "reconstruction": "docs/aac/PHASE25.md",
+      "status": "Partial implementation; promotion blocked pending full certification and fresh browser/live verification"
+    }
+  }
+}

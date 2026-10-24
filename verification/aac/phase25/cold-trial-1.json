@@ -1,0 +1,511 @@
+{
+  "scope": "credential-free local ephemeral simulation; no cloud",
+  "human_interventions": 0,
+  "actual_model_tokens": null,
+  "model_token_note": "unavailable",
+  "invocations": [
+    {
+      "stdin": "{\"method\": \"describe\"}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"1.0.0\",\"fileApiVersion\":\"0.2.0\",\"transport\":\"JSON lines over owner-launched stdio or embedded query\",\"operations\":[\"list\",\"metadata\",\"read\",\"copy\"],\"locations\":[{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"\"},{\"provider\":\"fake-drive\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"\"}],\"methods\":[\"describe\",\"execute\",\"plan\",\"inspect\",\"evidence\",\"cancel\",\"reconcile\",\"resources\",\"jobs\"],\"requestSchema\":\"extension/file-engine/schema-0.2.json\",\"limits\":{\"listPage\":100,\"jobPage\":25,\"maxOperations\":32,\"remaining\":32,\"maxBytes\":2097152},\"authorization\":\"Intersection of owner session scope and coordinator authorizer; process possession is the stdio capability\",\"unsupported\":[\"network service\",\"MCP\",\"global recovery\",\"unscoped journal access\"],\"sourceRefs\":[\"agent/files/api.mjs\",\"extension/file-engine/engine.mjs\"],\"testRefs\":[\"tests/file-agent-session.test.mjs\"]}}\n",
+      "stdout_utf8_bytes": 952,
+      "elapsed_ms": 156.77052999944863
+    },
+    {
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"list\", \"idempotencyKey\": \"browse\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/\"}, \"limit\": 10}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"0.2.0\",\"id\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"request\":{\"apiVersion\":\"0.2.0\",\"operation\":\"list\",\"idempotencyKey\":\"browse\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/\"},\"limit\":10},\"executor\":\"canonical-coordinator\",\"state\":\"completed\",\"events\":[{\"sequence\":1,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"requested\",\"stage\":\"request\",\"at\":\"2026-10-24T17:07:11.709Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":2,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"validated\",\"stage\":\"validation\",\"at\":\"2026-10-24T17:07:11.709Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":3,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"planned\",\"stage\":\"planning\",\"at\":\"2026-10-24T17:07:11.709Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":4,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"queued\",\"stage\":\"queue\",\"at\":\"2026-10-24T17:07:11.709Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":5,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"executing\",\"stage\":\"provider\",\"at\":\"2026-10-24T17:07:11.709Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":6,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"verifying\",\"stage\":\"verification\",\"at\":\"2026-10-24T17:07:11.710Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":7,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"state\":\"completed\",\"stage\":\"result\",\"at\":\"2026-10-24T17:07:11.710Z\",\"component\":\"file-engine/engine.mjs\"}],\"receipt\":{\"level\":\"metadata-observed\",\"providerEvidence\":false,\"operationId\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/\"},\"destination\":null},\"checkpoints\":[],\"result\":{\"objects\":[{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\",\"revision\":1,\"size\":28,\"folder\":false,\"contentType\":\"text/plain\"}],\"cursor\":null,\"complete\":true}}}\n",
+      "stdout_utf8_bytes": 2043,
+      "elapsed_ms": 16.26547900013975
+    },
+    {
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"read\", \"idempotencyKey\": \"source-read\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/Example.txt\"}}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"0.2.0\",\"id\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"request\":{\"apiVersion\":\"0.2.0\",\"operation\":\"read\",\"idempotencyKey\":\"source-read\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"}},\"executor\":\"canonical-coordinator\",\"state\":\"completed\",\"events\":[{\"sequence\":1,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"requested\",\"stage\":\"request\",\"at\":\"2026-10-24T17:07:11.715Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":2,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"validated\",\"stage\":\"validation\",\"at\":\"2026-10-24T17:07:11.715Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":3,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"planned\",\"stage\":\"planning\",\"at\":\"2026-10-24T17:07:11.715Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":4,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"queued\",\"stage\":\"queue\",\"at\":\"2026-10-24T17:07:11.715Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":5,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"executing\",\"stage\":\"provider\",\"at\":\"2026-10-24T17:07:11.715Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":6,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"verifying\",\"stage\":\"verification\",\"at\":\"2026-10-24T17:07:11.716Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":7,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"state\":\"completed\",\"stage\":\"result\",\"at\":\"2026-10-24T17:07:11.716Z\",\"component\":\"file-engine/engine.mjs\"}],\"receipt\":{\"level\":\"content-sha256\",\"providerEvidence\":false,\"operationId\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":null},\"checkpoints\":[],\"result\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\",\"revision\":1,\"size\":28,\"folder\":false,\"contentType\":\"text/plain\",\"bytesBase64\":\"QSBuZXN0ZWQgc2ltdWxhdGVkIGRvY3VtZW50Lg==\",\"content\":\"A nested simulated document.\",\"sha256\":\"fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e\"}}}\n",
+      "stdout_utf8_bytes": 2186,
+      "elapsed_ms": 2.2987259999354137
+    },
+    {
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"copy\", \"idempotencyKey\": \"copy\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/Example.txt\"}, \"destination\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/trial-copy.txt\"}}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"0.2.0\",\"id\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"request\":{\"apiVersion\":\"0.2.0\",\"operation\":\"copy\",\"idempotencyKey\":\"copy\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\"}},\"executor\":\"canonical-coordinator\",\"state\":\"completed\",\"events\":[{\"sequence\":1,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"requested\",\"stage\":\"request\",\"at\":\"2026-10-24T17:07:11.717Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":2,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"validated\",\"stage\":\"validation\",\"at\":\"2026-10-24T17:07:11.717Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":3,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"planned\",\"stage\":\"planning\",\"at\":\"2026-10-24T17:07:11.717Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":4,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"queued\",\"stage\":\"queue\",\"at\":\"2026-10-24T17:07:11.717Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":5,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"executing\",\"stage\":\"provider\",\"at\":\"2026-10-24T17:07:11.717Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":6,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"verifying\",\"stage\":\"verification\",\"at\":\"2026-10-24T17:07:11.719Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":7,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"state\":\"completed\",\"stage\":\"result\",\"at\":\"2026-10-24T17:07:11.719Z\",\"component\":\"file-engine/engine.mjs\"}],\"receipt\":{\"level\":\"content-sha256\",\"providerEvidence\":false,\"operationId\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\"}},\"checkpoints\":[{\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\"},\"sourceRevision\":1,\"revision\":2,\"sha256\":\"fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e\",\"size\":28}],\"result\":{\"objects\":[{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\",\"size\":28,\"revision\":2,\"folder\":false}],\"sourceRetained\":true}}}\n",
+      "stdout_utf8_bytes": 2545,
+      "elapsed_ms": 2.7451900004962226
+    },
+    {
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"read\", \"idempotencyKey\": \"dest-read\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/trial-copy.txt\"}}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"0.2.0\",\"id\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"request\":{\"apiVersion\":\"0.2.0\",\"operation\":\"read\",\"idempotencyKey\":\"dest-read\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\"}},\"executor\":\"canonical-coordinator\",\"state\":\"completed\",\"events\":[{\"sequence\":1,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"requested\",\"stage\":\"request\",\"at\":\"2026-10-24T17:07:11.720Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":2,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"validated\",\"stage\":\"validation\",\"at\":\"2026-10-24T17:07:11.720Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":3,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"planned\",\"stage\":\"planning\",\"at\":\"2026-10-24T17:07:11.720Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":4,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"queued\",\"stage\":\"queue\",\"at\":\"2026-10-24T17:07:11.720Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":5,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"executing\",\"stage\":\"provider\",\"at\":\"2026-10-24T17:07:11.721Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":6,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"verifying\",\"stage\":\"verification\",\"at\":\"2026-10-24T17:07:11.721Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":7,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"state\":\"completed\",\"stage\":\"result\",\"at\":\"2026-10-24T17:07:11.721Z\",\"component\":\"file-engine/engine.mjs\"}],\"receipt\":{\"level\":\"content-sha256\",\"providerEvidence\":false,\"operationId\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\"},\"destination\":null},\"checkpoints\":[],\"result\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/trial-copy.txt\",\"revision\":2,\"size\":28,\"folder\":false,\"contentType\":\"text/plain\",\"bytesBase64\":\"QSBuZXN0ZWQgc2ltdWxhdGVkIGRvY3VtZW50Lg==\",\"content\":\"A nested simulated document.\",\"sha256\":\"fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e\"}}}\n",
+      "stdout_utf8_bytes": 2193,
+      "elapsed_ms": 1.9285079997644061
+    },
+    {
+      "stdin": "{\"method\": \"jobs\", \"input\": {\"limit\": 10}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"jobs\":[{\"id\":\"9ee195ce-9be3-4419-bbfb-b5c9027bdb6f\",\"operation\":\"list\",\"state\":\"completed\",\"error\":null},{\"id\":\"2cb1b19d-f18c-4b13-b64d-c70e8e898f3a\",\"operation\":\"read\",\"state\":\"completed\",\"error\":null},{\"id\":\"1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe\",\"operation\":\"copy\",\"state\":\"completed\",\"error\":null},{\"id\":\"359a18c4-6202-4adc-bc6f-d657e76b8c05\",\"operation\":\"read\",\"state\":\"completed\",\"error\":null}],\"total\":4,\"nextOffset\":null}}\n",
+      "stdout_utf8_bytes": 481,
+      "elapsed_ms": 1.0467790007169242
+    },
+    {
+      "command": [
+        "node",
+        "agent/files/cli.mjs",
+        "--simulation",
+        "--operations",
+        "list,metadata,read,copy"
+      ],
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"copy\", \"idempotencyKey\": \"diagnostic-copy\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/Example.txt\"}, \"destination\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/diagnostic.txt\"}}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"apiVersion\":\"0.2.0\",\"id\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"request\":{\"apiVersion\":\"0.2.0\",\"operation\":\"copy\",\"idempotencyKey\":\"diagnostic-copy\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/diagnostic.txt\"}},\"executor\":\"canonical-coordinator\",\"state\":\"completed\",\"events\":[{\"sequence\":1,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"requested\",\"stage\":\"request\",\"at\":\"2026-10-24T17:07:21.611Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":2,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"validated\",\"stage\":\"validation\",\"at\":\"2026-10-24T17:07:21.611Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":3,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"planned\",\"stage\":\"planning\",\"at\":\"2026-10-24T17:07:21.611Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":4,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"queued\",\"stage\":\"queue\",\"at\":\"2026-10-24T17:07:21.611Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":5,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"executing\",\"stage\":\"provider\",\"at\":\"2026-10-24T17:07:21.612Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":6,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"verifying\",\"stage\":\"verification\",\"at\":\"2026-10-24T17:07:21.613Z\",\"component\":\"file-engine/engine.mjs\"},{\"sequence\":7,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"state\":\"completed\",\"stage\":\"result\",\"at\":\"2026-10-24T17:07:21.613Z\",\"component\":\"file-engine/engine.mjs\"}],\"receipt\":{\"level\":\"content-sha256\",\"providerEvidence\":false,\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/diagnostic.txt\"}},\"checkpoints\":[{\"source\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/Example.txt\"},\"destination\":{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/diagnostic.txt\"},\"sourceRevision\":1,\"revision\":2,\"sha256\":\"fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e\",\"size\":28}],\"result\":{\"objects\":[{\"provider\":\"fake-r2\",\"account\":\"demo\",\"container\":\"sandbox\",\"key\":\"Documents/diagnostic.txt\",\"size\":28,\"revision\":2,\"folder\":false}],\"sourceRetained\":true}}}\n",
+      "stdout_utf8_bytes": 2556,
+      "elapsed_ms": 164.51626399975794
+    },
+    {
+      "command": [
+        "node",
+        "agent/files/cli.mjs",
+        "--simulation",
+        "--operations",
+        "list,metadata,read,copy"
+      ],
+      "stdin": "{\"method\": \"resources\", \"input\": {\"id\": \"13c98df5-0f27-4769-a0ed-c4d67fea9c98\", \"metric\": \"getLatencyBreakdown\"}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"resourceApiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"durationMs\":9.48635299999998,\"phases\":{\"journal.update\":{\"count\":9,\"totalMs\":0.5311110000000383,\"maxMs\":0.18963600000000724},\"journal.read\":{\"count\":2,\"totalMs\":0.09356999999999971,\"maxMs\":0.0680720000000008},\"provider\":{\"count\":5,\"totalMs\":0.7276359999999897,\"maxMs\":0.29674700000001053},\"verification\":{\"count\":2,\"totalMs\":0.30178500000002373,\"maxMs\":0.15413300000000163}},\"overlap\":true,\"truncated\":false}}}\n",
+      "stdout_utf8_bytes": 572,
+      "elapsed_ms": 1.177964999442338
+    },
+    {
+      "command": [
+        "node",
+        "agent/files/cli.mjs",
+        "--simulation",
+        "--operations",
+        "list,metadata,read,copy"
+      ],
+      "stdin": "{\"method\": \"resources\", \"input\": {\"id\": \"13c98df5-0f27-4769-a0ed-c4d67fea9c98\", \"metric\": \"getMemoryProfile\"}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"resourceApiVersion\":\"1.0.0\",\"state\":\"available\",\"data\":{\"operationId\":\"13c98df5-0f27-4769-a0ed-c4d67fea9c98\",\"before\":{\"at\":\"2026-10-24T17:07:21.604Z\",\"heapBytes\":13394696,\"processBytes\":58179584,\"externalBytes\":4147664,\"arrayBufferBytes\":278087,\"provenance\":\"node.process.memoryUsage\",\"unavailable\":[\"worker-memory\",\"per-operation-heap-attribution\",\"cpu-percent\",\"object-url-lifecycle-not-used-by-beta\",\"thumbnail-cache-not-implemented\",\"worker-cpu\",\"exclusive-journal-lock-wait\"]},\"after\":{\"at\":\"2026-10-24T17:07:21.613Z\",\"heapBytes\":13734688,\"processBytes\":59621376,\"externalBytes\":4148447,\"arrayBufferBytes\":278734,\"provenance\":\"node.process.memoryUsage\",\"unavailable\":[\"worker-memory\",\"per-operation-heap-attribution\",\"cpu-percent\",\"object-url-lifecycle-not-used-by-beta\",\"thumbnail-cache-not-implemented\",\"worker-cpu\",\"exclusive-journal-lock-wait\"]},\"resourcesBefore\":{},\"resourcesAfter\":{\"transfer-buffer\":{\"count\":0,\"bytes\":0}},\"heapDeltaBytes\":339992,\"interpretation\":\"Whole-runtime observations; GC and concurrent tasks confound individual deltas. Resource counters measure explicitly owned lifecycles.\"}}}\n",
+      "stdout_utf8_bytes": 1168,
+      "elapsed_ms": 0.668427000164229
+    },
+    {
+      "command": [
+        "node",
+        "agent/files/cli.mjs",
+        "--simulation",
+        "--operations",
+        "list,metadata,read"
+      ],
+      "stdin": "{\"method\": \"execute\", \"input\": {\"request\": {\"apiVersion\": \"0.2.0\", \"operation\": \"copy\", \"idempotencyKey\": \"diagnostic-copy\", \"source\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/Example.txt\"}, \"destination\": {\"provider\": \"fake-r2\", \"account\": \"demo\", \"container\": \"sandbox\", \"key\": \"Documents/diagnostic.txt\"}}}}",
+      "stdout": "{\"apiVersion\":\"1.0.0\",\"state\":\"failed\",\"error\":{\"code\":\"AUTHORIZATION_DENIED\"}}\n",
+      "stdout_utf8_bytes": 80,
+      "elapsed_ms": 177.34062999988964
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "tests/universal-file-engine.test.mjs",
+        "tests/get-url.test.mjs"
+      ],
+      "stdout": "\u2714 one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (99.101502ms)\n\u2714 all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (22.045841ms)\n\u2714 inactive endpoints have no visible URL rows; unsafe share URLs are rejected (11.226013ms)\n\u2714 empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (29.922225ms)\n\u2714 clipboard failure has structured error and no false Copied state or raw browser error (16.920803ms)\n\u2714 rapid switching and closed dialogs discard stale discovery and clipboard completion (15.474513ms)\n\u2714 keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (16.437852ms)\n\u2714 production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (18.523733ms)\n\u2714 context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (12.889159ms)\n\u2714 production stylesheet makes URL menu a visible fixed overlay above the context menu (239.152094ms)\n\u2714 anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (11.707158ms)\n\u2714 actual Get URL parent click keeps context menu visible and opens a copyable child menu (10.841672ms)\n\u2714 disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (13.60177ms)\n\u2714 public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (25.380578ms)\n\u2714 permission failures remain explained with no false success or leaked provider errors (8.842733ms)\n\u2714 switching files while enabling cannot reopen the old file or overwrite current choices (9.073712ms)\n\u2714 active custom URL is shown while disabled managed URLs and redundant activation remain hidden (7.923835ms)\n\u2714 version negotiation, exact input shapes, binary and range validation fail closed (2.358371ms)\n\u2714 seeded identity fuzz preserves Unicode/case/whitespace and rejects traversal and UTF8 limits (10.088635ms)\n\u2714 arbitrary binary, empty bodies, MIME and ranged read use one coordinator (57.405222ms)\n\u2714 accepted write with lost reply is uncertain, deduplicated and never automatically replayed (5.818527ms)\n\u2714 wrong readback and changed source cannot trigger move source deletion (7.510823ms)\n\u2714 every HTTP failure family preserves source and records typed failure with no blind retries (15.680719ms)\n\u2714 parallel writers have exactly one winner; batch outcomes remain per-target (71.692473ms)\n\u2714 cancel before write, restart uncertainty and read-only inspection are durable (3.689942ms)\n\u2714 seeded stateful sequences match an independent content model (5409.169323ms)\n\u2714 providers lacking atomic conditional delete cannot mutate a move source (4.220044ms)\n\u2714 malformed provider metadata and partial recursive conflicts cannot fabricate full success (4.79387ms)\n\u2714 safe diagnostic exports retain evidence but omit names, bodies and authorization values (3.662041ms)\n\u2714 real adapters require explicit authorization and reconcile cannot bypass revocation (5.349399ms)\n\u2714 ranged reads reject truncated successful replies and preserve exact identity boundaries (3.14465ms)\n\u2714 independent durable journal clients reserve duplicate mutations once and retain recovery evidence (73.379883ms)\n\u2714 durable journal detects externally restored older state instead of continuing mutations (8.422501ms)\n\u2139 tests 33\n\u2139 suites 0\n\u2139 pass 33\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 5799.021947\n",
+      "stderr": "",
+      "stdout_utf8_bytes": 3611,
+      "exit_code": 0,
+      "elapsed_ms": 5870.483615000012
+    }
+  ],
+  "process_command": "node agent/files/cli.mjs --simulation --operations list,metadata,read,copy",
+  "raw_read_results": {
+    "source": {
+      "apiVersion": "1.0.0",
+      "state": "available",
+      "data": {
+        "apiVersion": "0.2.0",
+        "id": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+        "request": {
+          "apiVersion": "0.2.0",
+          "operation": "read",
+          "idempotencyKey": "source-read",
+          "source": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/Example.txt"
+          }
+        },
+        "executor": "canonical-coordinator",
+        "state": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "requested",
+            "stage": "request",
+            "at": "2026-10-24T17:07:11.715Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 2,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "validated",
+            "stage": "validation",
+            "at": "2026-10-24T17:07:11.715Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 3,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "planned",
+            "stage": "planning",
+            "at": "2026-10-24T17:07:11.715Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 4,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "queued",
+            "stage": "queue",
+            "at": "2026-10-24T17:07:11.715Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 5,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "executing",
+            "stage": "provider",
+            "at": "2026-10-24T17:07:11.715Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 6,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "verifying",
+            "stage": "verification",
+            "at": "2026-10-24T17:07:11.716Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 7,
+            "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+            "state": "completed",
+            "stage": "result",
+            "at": "2026-10-24T17:07:11.716Z",
+            "component": "file-engine/engine.mjs"
+          }
+        ],
+        "receipt": {
+          "level": "content-sha256",
+          "providerEvidence": false,
+          "operationId": "2cb1b19d-f18c-4b13-b64d-c70e8e898f3a",
+          "source": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/Example.txt"
+          },
+          "destination": null
+        },
+        "checkpoints": [],
+        "result": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/Example.txt",
+          "revision": 1,
+          "size": 28,
+          "folder": false,
+          "contentType": "text/plain",
+          "bytesBase64": "QSBuZXN0ZWQgc2ltdWxhdGVkIGRvY3VtZW50Lg==",
+          "content": "A nested simulated document.",
+          "sha256": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e"
+        }
+      }
+    },
+    "destination": {
+      "apiVersion": "1.0.0",
+      "state": "available",
+      "data": {
+        "apiVersion": "0.2.0",
+        "id": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+        "request": {
+          "apiVersion": "0.2.0",
+          "operation": "read",
+          "idempotencyKey": "dest-read",
+          "source": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/trial-copy.txt"
+          }
+        },
+        "executor": "canonical-coordinator",
+        "state": "completed",
+        "events": [
+          {
+            "sequence": 1,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "requested",
+            "stage": "request",
+            "at": "2026-10-24T17:07:11.720Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 2,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "validated",
+            "stage": "validation",
+            "at": "2026-10-24T17:07:11.720Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 3,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "planned",
+            "stage": "planning",
+            "at": "2026-10-24T17:07:11.720Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 4,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "queued",
+            "stage": "queue",
+            "at": "2026-10-24T17:07:11.720Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 5,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "executing",
+            "stage": "provider",
+            "at": "2026-10-24T17:07:11.721Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 6,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "verifying",
+            "stage": "verification",
+            "at": "2026-10-24T17:07:11.721Z",
+            "component": "file-engine/engine.mjs"
+          },
+          {
+            "sequence": 7,
+            "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+            "state": "completed",
+            "stage": "result",
+            "at": "2026-10-24T17:07:11.721Z",
+            "component": "file-engine/engine.mjs"
+          }
+        ],
+        "receipt": {
+          "level": "content-sha256",
+          "providerEvidence": false,
+          "operationId": "359a18c4-6202-4adc-bc6f-d657e76b8c05",
+          "source": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/trial-copy.txt"
+          },
+          "destination": null
+        },
+        "checkpoints": [],
+        "result": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/trial-copy.txt",
+          "revision": 2,
+          "size": 28,
+          "folder": false,
+          "contentType": "text/plain",
+          "bytesBase64": "QSBuZXN0ZWQgc2ltdWxhdGVkIGRvY3VtZW50Lg==",
+          "content": "A nested simulated document.",
+          "sha256": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e"
+        }
+      }
+    }
+  },
+  "copy_response": {
+    "apiVersion": "1.0.0",
+    "state": "available",
+    "data": {
+      "apiVersion": "0.2.0",
+      "id": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+      "request": {
+        "apiVersion": "0.2.0",
+        "operation": "copy",
+        "idempotencyKey": "copy",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/Example.txt"
+        },
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/trial-copy.txt"
+        }
+      },
+      "executor": "canonical-coordinator",
+      "state": "completed",
+      "events": [
+        {
+          "sequence": 1,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "requested",
+          "stage": "request",
+          "at": "2026-10-24T17:07:11.717Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 2,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "validated",
+          "stage": "validation",
+          "at": "2026-10-24T17:07:11.717Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 3,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "planned",
+          "stage": "planning",
+          "at": "2026-10-24T17:07:11.717Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 4,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "queued",
+          "stage": "queue",
+          "at": "2026-10-24T17:07:11.717Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 5,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "executing",
+          "stage": "provider",
+          "at": "2026-10-24T17:07:11.717Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 6,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "verifying",
+          "stage": "verification",
+          "at": "2026-10-24T17:07:11.719Z",
+          "component": "file-engine/engine.mjs"
+        },
+        {
+          "sequence": 7,
+          "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+          "state": "completed",
+          "stage": "result",
+          "at": "2026-10-24T17:07:11.719Z",
+          "component": "file-engine/engine.mjs"
+        }
+      ],
+      "receipt": {
+        "level": "content-sha256",
+        "providerEvidence": false,
+        "operationId": "1ccdc2e9-0c86-46c7-a16f-e852fbc61ffe",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/Example.txt"
+        },
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Documents/trial-copy.txt"
+        }
+      },
+      "checkpoints": [
+        {
+          "source": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/Example.txt"
+          },
+          "destination": {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/trial-copy.txt"
+          },
+          "sourceRevision": 1,
+          "revision": 2,
+          "sha256": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e",
+          "size": 28
+        }
+      ],
+      "result": {
+        "objects": [
+          {
+            "provider": "fake-r2",
+            "account": "demo",
+            "container": "sandbox",
+            "key": "Documents/trial-copy.txt",
+            "size": 28,
+            "revision": 2,
+            "folder": false
+          }
+        ],
+        "sourceRetained": true
+      }
+    }
+  },
+  "verification": {
+    "equal": true,
+    "length": 28,
+    "sha256_source": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e",
+    "sha256_destination": "fc472d738e0ecf9ffb4052b2e822c0ef73683aea558176ccad6dba0d7c294c3e",
+    "boundary": "Independent client byte comparison and SHA-256 of separate reads through same engine/session; not independent backing-store oracle. No backing store accessed."
+  },
+  "initial_inspection_commands": [
+    "cat docs/aac/START_HERE.md",
+    "cat docs/aac/FILES.md",
+    "node agent/aac/cli.mjs describe",
+    "node agent/aac/cli.mjs listCapabilities --input '{\"limit\":10}'",
+    "node agent/diagnostics/cli.mjs getConnectorCapabilities",
+    "node agent/aac/cli.mjs listCapabilities --input '{\"query\":\"context\",\"limit\":20}'",
+    "node agent/aac/cli.mjs listCapabilities --input '{\"search\":\"context\",\"limit\":10}'",
+    "node agent/aac/cli.mjs getCapability --input '{\"id\":\"aac.requested.context-menu\"}'",
+    "node agent/aac/cli.mjs traverseGraph --input '{\"id\":\"aac.requested.context-menu\",\"direction\":\"forward\",\"depth\":2,\"limit\":15}'",
+    "rg -n 'sample|adapter|context' docs/phase2/UNIVERSAL_API_LAB.md",
+    "rg -n 'contextMenu|context.menu|sample.adapter|sampleAdapter' agent/aac docs extension/file-engine tests --glob '!*.json'",
+    "rg --files extension/file-engine | rg 'adapter|sample'",
+    "cat extension/file-engine/adapters/memory.mjs",
+    "rg -n 'contextmenu|contextMenu|showWorkspaceContext|showContextMenu' extension/options.js tests/get-url.test.mjs",
+    "rg -n 'adapter|atomic|capabil|authoriz|verification' tests/universal-file-engine.test.mjs"
+  ],
+  "errors": [
+    "Two listCapabilities attempts with undocumented query/search parameters returned INVALID_INPUT; corrected with known capability ID.",
+    "Initial session closed before diagnostics; new ephemeral copy/session used for resource metrics.",
+    "Broad maintenance rg output was truncated; narrowed follow-up."
+  ],
+  "completed": [
+    "discover scoped capabilities",
+    "browse Documents/ and locate Example.txt",
+    "copy authorized simulation object",
+    "client compare separate read bytes and independently compute SHA-256",
+    "latency and memory metrics",
+    "readonly stdio copy refused AUTHORIZATION_DENIED",
+    "unsupported capability discovery",
+    "locate context menu implementation/test",
+    "evaluate sample memory adapter and run relevant tests"
+  ],
+  "blocked_or_not_claimed": [
+    "independent backing-store oracle unavailable through scoped session; only same-engine readback verified",
+    "live/cloud/installed-browser execution outside scope",
+    "new real provider certification not established",
+    "per-operation heap attribution unavailable"
+  ],
+  "maintenance": {
+    "context_menu_source": "extension/options.js:1706,2774,2846; native background menu is separate legacy surface",
+    "context_menu_tests": "tests/get-url.test.mjs; native tests/menu-reorder.test.mjs and tests/nested-locations.test.mjs located but not run",
+    "graph_limitation": "aac.requested.context-menu graph links beta/readiness and generic tests node marked missing, not concrete production implementation test",
+    "sample_adapter": "extension/file-engine/adapters/memory.mjs: simulated exact-key demo/sandbox only, atomic create/conditional-delete capability, nonmultipart max 2 MiB. Useful simulation adapter; fake-drive name does not establish Drive semantics or real provider support."
+  },
+  "record_limitations": "File-session transcript exact UTF-8 byte sizes recorded; initial inspection stdout not retained in this JSON (visible in tool transcript); actual model token counts unavailable. Broad source search touched existing documentation verification logs but no pre-existing agent trial reports deliberately opened."
+}

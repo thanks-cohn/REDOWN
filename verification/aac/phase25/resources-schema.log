@@ -1,0 +1,18 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 resources:schema
+> node scripts/compile-resource-schema.mjs --check && python tests/resource-atlas-schema.py && node --test tests/resource-schema-agreement.mjs
+
+{"valid": true, "operations": 10, "negativeControls": 4, "traceCount": 12}
+{"contract":"urn:redown:resources:1.0.0:evidence","cases":78,"independentValidator":"Python jsonschema 4.26.0"}
+✔ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (399.208129ms)
+✔ direct resource queries enforce the same method-specific input contracts as the gateway (7.798106ms)
+✔ imported resource API returns detached snapshots and memory observations (4.166587ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 494.015868

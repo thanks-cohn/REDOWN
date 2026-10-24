@@ -1,0 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 aac:live
+> node scripts/aac-live.mjs
+
+{"passed":21,"failed":0,"blocked":0,"cleanupFailed":0,"path":"verification/aac/live.json"}

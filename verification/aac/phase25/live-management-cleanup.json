@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-24T17:26:50.921Z",
+  "scope": "Separate Cloudflare management API, independent of Worker/engine/adapter cleanup receipts",
+  "prefix": "__redown_test__/86584671-e829-4dde-bf5d-58e4e44eb8f0/",
+  "buckets": [
+    {
+      "bucket": "test-1-new",
+      "status": 200,
+      "objects": 0
+    },
+    {
+      "bucket": "test-2-new",
+      "status": 200,
+      "objects": 0
+    },
+    {
+      "bucket": "test-3-new",
+      "status": 200,
+      "objects": 0
+    },
+    {
+      "bucket": "test-4-new",
+      "status": 200,
+      "objects": 0
+    }
+  ],
+  "worker": "redown-p2-lab-86584671",
+  "workerAbsentBeforeDeployment": {
+    "httpStatus": 404,
+    "errorCode": 10007
+  },
+  "workerDelete": {
+    "success": true,
+    "status": 200
+  },
+  "workerAbsentAfterDeletion": {
+    "httpStatus": 404,
+    "errorCode": 10007,
+    "observation": "Error: Cloudflare API error: GET /accounts/40439992e793a00d8f33b19f898fa0c2/workers/scripts/redown-p2-lab-86584671 returned HTTP 404: 10007: This Worker does not exist on your account"
+  },
+  "accessPoliciesChanged": false,
+  "unrelatedResourcesMutated": false
+}

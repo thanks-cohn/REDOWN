@@ -196,3 +196,7 @@ Keep restricted clients on the gateway; never distribute an engine/adapter/store
 as read-only. Do not remove failing conformance findings to make the framework green.
 New source/runtime/blind/live evidence remains distinct from full certification.
 Fresh four-bucket and ordinary Chromium subsets pass, but do not erase older failures.
+
+## Phase 2.5 remediation branch
+
+Read `docs/aac/PHASE25.md` and `docs/aac/FILES.md`. Public engine diagnostics are now a frozen read-only facade; never restore collector/store/adapter exposure. Trusted Beta owns its collector explicitly. Scoped embedded/stdio sessions intersect owner grants with canonical authorization, and job access must respect revocation. Runtime evidence/input validators are generated from published schemas (`node scripts/compile-resource-schema.mjs --check`); independent format tests require `jsonschema[format]==4.26.0`. The authority and schema reproductions must PASS, while incomplete coverage still makes `aac:certify` fail. Historical live/browser records are not current proof. Preserve cold-trial errors and explicit source transitions in `verification/aac/phase25/`. Main promotion remains blocked until required acceptance gates actually pass.

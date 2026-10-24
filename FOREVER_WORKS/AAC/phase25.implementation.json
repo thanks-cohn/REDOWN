@@ -1,0 +1,141 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.aac.phase25.implementation.hardening",
+  "kind": "implementation",
+  "type": "library",
+  "technology": "Canonical ES-module coordinator; private Resource Atlas collector; Ajv standalone browser validators; bounded owner-launched JSON-lines session; JSDOM and durable simulated journal",
+  "version": "1.0.0",
+  "satisfiesCapabilities": [
+    "redown.aac.capability.audit"
+  ],
+  "constrainedByInvariants": [
+    "redown.aac.invariant.honest-evidence",
+    "redown.aac.phase25.invariant.capability-boundary"
+  ],
+  "compatibilityContracts": [
+    "redown.aac.phase25.compatibility.files"
+  ],
+  "sourceLocations": [
+    "extension/file-engine/engine.mjs",
+    "extension/file-engine/resources.mjs",
+    "extension/file-engine/resource-evidence-validator.mjs",
+    "extension/file-engine/resource-input-validators.mjs",
+    "extension/beta-explorer.mjs",
+    "extension/beta-walkthrough.mjs",
+    "agent/resources/evidence.schema.json",
+    "agent/resources/trace-event.mjs",
+    "agent/files/api.mjs",
+    "agent/files/cli.mjs",
+    "agent/files/session.schema.json",
+    "agent/aac/ui.mjs",
+    "agent/aac/context-menu.mjs",
+    "scripts/compile-resource-schema.mjs",
+    "scripts/aac-volume.mjs",
+    "tests/file-engine-authority.test.mjs",
+    "tests/file-agent-session.test.mjs",
+    "tests/resource-schema-agreement.mjs",
+    "tests/context-menu-agent.test.mjs",
+    "agent/resources/api.mjs"
+  ],
+  "replaceability": "Keep authority gates private and share the canonical coordinator. Rebuild generated validators from the published schemas; run differential and negative tests. Reproduce durable volume workload and cold trials, retaining their exact scope and failures. Never turn historical live observations or DOM fragments into current installed/provider proof.",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner REDOWN Phase 2.5 implementation assignment, 2026-10-24",
+      "report": "verification/aac/phase25/results.json",
+      "historicalAudit": "verification/aac/baseline.json",
+      "reconstruction": "docs/aac/PHASE25.md",
+      "status": "Partial implementation; promotion blocked pending full certification and fresh browser/live verification",
+      "sourceRefs": [
+        {
+          "path": "extension/file-engine/engine.mjs",
+          "sha256": "448e8e234694e942fb05909d7f75375a027d9367a05051bd8cbf9ffcd32fc286"
+        },
+        {
+          "path": "extension/file-engine/resources.mjs",
+          "sha256": "2850f8869bf504988fee55ee47f5b64469bd91120621ba593cdf6e14e02f6de7"
+        },
+        {
+          "path": "extension/file-engine/resource-evidence-validator.mjs",
+          "sha256": "7313c89b101d8a11cc34ecfd862edc79c20d542f8106060b19376049ee5ef567"
+        },
+        {
+          "path": "extension/file-engine/resource-input-validators.mjs",
+          "sha256": "eb8530f2ec19398c14fc7973f3cc9a808c40664e58128fcbd748d2b5e0b39e37"
+        },
+        {
+          "path": "extension/beta-explorer.mjs",
+          "sha256": "b5624c53434e9cfcf38d7075bceca8ea504953f2dbf91fff9d67d1d19c5abf8f"
+        },
+        {
+          "path": "extension/beta-walkthrough.mjs",
+          "sha256": "196a0533458f92165456cc047afabe1fdf3b14d6d85eee3f1c2fce365702aeb6"
+        },
+        {
+          "path": "agent/resources/evidence.schema.json",
+          "sha256": "ca3d176fc5c7a405f352ca09e251934ff113581a88545bb80568a27cf19784d0"
+        },
+        {
+          "path": "agent/resources/trace-event.mjs",
+          "sha256": "a9cbb8662d11b7106fda926d2f868404043f3cacba2436b6d5cc5d5d402572f0"
+        },
+        {
+          "path": "agent/files/api.mjs",
+          "sha256": "1cd18cd22723653c26b8f1154f0b9971139a983c4493bb9e84ef151f020dc959"
+        },
+        {
+          "path": "agent/files/cli.mjs",
+          "sha256": "609be40f3c98c7b1b239caedb3b6ac491757a948919e5f22c84c58c4312196e5"
+        },
+        {
+          "path": "agent/files/session.schema.json",
+          "sha256": "d742c5d771274ac5e0425a73d28e17b7daa72847a8f68474ed352b78217d89f2"
+        },
+        {
+          "path": "agent/aac/ui.mjs",
+          "sha256": "b5e731db853ab228149ffb9e3111559a34e64eac8d4ae75b657323a3581ac98a"
+        },
+        {
+          "path": "agent/aac/context-menu.mjs",
+          "sha256": "0495c5d2f05a84b62051a25243f9ca207797f61483bd1ce8e3a0f227acbbcf41"
+        },
+        {
+          "path": "scripts/compile-resource-schema.mjs",
+          "sha256": "cc282af1b1dbd5f11c15abbde25365c082c4502cca00f5c815903191b7b995c8"
+        },
+        {
+          "path": "scripts/aac-volume.mjs",
+          "sha256": "2e22ab90341a463b773ab8b50d7c24dc549e32322dc6d4022d55c88ee50a918e"
+        },
+        {
+          "path": "tests/file-engine-authority.test.mjs",
+          "sha256": "127392841d83b3838dbb5fe2fa83d4a66487eec251f1fcc20c732414a465e0e2"
+        },
+        {
+          "path": "tests/file-agent-session.test.mjs",
+          "sha256": "49f35a5b0837c54f5101ad6aab26d2e652f2b3e33c91399b26b08b17c822d3f4"
+        },
+        {
+          "path": "tests/resource-schema-agreement.mjs",
+          "sha256": "c15703bded4606153c22f0552440b50c9b46fc43644f6a6140f93ba6517d8ec7"
+        },
+        {
+          "path": "tests/context-menu-agent.test.mjs",
+          "sha256": "bcb8c932481dc03bad1b1a962f4a7b0ea15d5553587d4a8d613b212a42639560"
+        },
+        {
+          "path": "agent/resources/api.mjs",
+          "sha256": "0e4a450b2aa1ad6b2774f7b41b4fed52ac34e53fdfca07a3ada40ab6606ca345"
+        }
+      ],
+      "testIdentities": [
+        "privileged-handle-escape",
+        "resource-runtime-schema-drift",
+        "external-session-scope",
+        "context-menu-manage-dispatch",
+        "ui-disable-restores-visible-focus"
+      ],
+      "graph": "verification/aac/latest.json#graph",
+      "controlLedger": "verification/aac/phase25/beta-controls.json"
+    }
+  }
+}
