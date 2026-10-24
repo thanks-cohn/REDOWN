@@ -1,0 +1,44 @@
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "available",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "findings": [],
+    "qualifiedOverlaps": [
+      {
+        "name": "describe",
+        "operations": [
+          "diagnostics.describe",
+          "project.describe",
+          "debug.describe",
+          "semantic.describe",
+          "runtime.describe"
+        ]
+      },
+      {
+        "name": "listOperations",
+        "operations": [
+          "diagnostics.listOperations",
+          "project.listOperations"
+        ]
+      },
+      {
+        "name": "projectOverview",
+        "operations": [
+          "project.projectOverview",
+          "semantic.projectOverview"
+        ]
+      },
+      {
+        "name": "explainOperation",
+        "operations": [
+          "project.explainOperation",
+          "explorer.explainOperation"
+        ]
+      }
+    ],
+    "operationCount": 55,
+    "namespaceCount": 5,
+    "scope": "Registry coverage/version/ownership against native discovery; not runtime or semantic completeness"
+  }
+}

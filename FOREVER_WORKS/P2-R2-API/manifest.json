@@ -1,0 +1,36 @@
+{
+  "foreverVersion": "0.1",
+  "projectId": "redown-phase2-r2-api",
+  "records": {
+    "capabilities": [
+      "list.capability.json",
+      "metadata.capability.json",
+      "read.capability.json",
+      "upload.capability.json",
+      "ingest.capability.json",
+      "mkdir.capability.json",
+      "copy.capability.json",
+      "move.capability.json",
+      "rename.capability.json",
+      "delete.capability.json"
+    ],
+    "invariants": [
+      "isolation.json"
+    ],
+    "compatibility": [
+      "compatibility.json"
+    ],
+    "implementations": [
+      "engine.implementation.json"
+    ],
+    "evidence": [
+      "laboratory.evidence.json"
+    ]
+  },
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "partial; promotion requires explicit owner approval"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.p2.compatibility.beta",
+  "kind": "compatibility",
+  "contractType": "API",
+  "boundary": "Legacy Explorer, Beta 0.1 facade and canonical 0.2 engine",
+  "version": "1.0",
+  "mustPreserve": [
+    "Production Explorer and transfer history remain independent",
+    "Existing betaModeEnabled controls interface availability",
+    "Beta 0.1 request and response projections remain compatible",
+    "Read-only diagnostic inspection grants no cloud mutation privileges"
+  ],
+  "migrationPolicy": "No automatic promotion. Satisfy all authoritative Phase 2 gates, complete installed-browser and second-real-provider verification, documented rollback/recovery and explicit owner approval before retiring legacy.",
+  "validationReferences": [
+    "redown.p2.evidence.laboratory"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner-provided Phase 2 obligations in FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md; implementation evidence is agent-observed and limited. This companion is not an accepted replacement of the frozen project intent model.",
+      "readiness": "partial; promotion requires explicit owner approval"
+    }
+  }
+}

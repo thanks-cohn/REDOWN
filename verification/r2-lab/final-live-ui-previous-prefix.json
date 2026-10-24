@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "scope": "ordinary Chromium actual Beta UI to live R2 through a loopback authenticated lab proxy; not an installed extension",
+  "run": "e8a406b5-fb58-432c-bd27-7971b5c5db1d",
+  "passed": true,
+  "releaseReady": false,
+  "sourceHash": "5ecbac5bba75735093aa8bebaa970dbf400a3c0631985f7fce6b1452386a3bee",
+  "destinationHash": "5ecbac5bba75735093aa8bebaa970dbf400a3c0631985f7fce6b1452386a3bee",
+  "sourcePreserved": true,
+  "operationId": "1342df22-c4d2-41ed-8943-e35606216304",
+  "providerEvidence": true,
+  "forwardedRequests": 12,
+  "pageErrors": [],
+  "cleanup": [
+    {
+      "bucket": "test-1-new",
+      "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/ui/UI.txt",
+      "absent": true
+    },
+    {
+      "bucket": "test-3-new",
+      "key": "__redown_test__/e8a406b5-fb58-432c-bd27-7971b5c5db1d/ui/UI.txt",
+      "absent": true
+    }
+  ]
+}

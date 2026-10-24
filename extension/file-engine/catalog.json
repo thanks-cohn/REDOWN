@@ -1,0 +1,383 @@
+{
+  "fileApiVersion": "0.2.0",
+  "source": "extension/file-engine/engine.mjs",
+  "adapters": [
+    {
+      "id": "fake-r2",
+      "real": false
+    },
+    {
+      "id": "fake-drive",
+      "real": false,
+      "warning": "Does not prove Drive object-ID semantics"
+    },
+    {
+      "id": "r2-lab",
+      "real": true,
+      "scope": "four dedicated buckets and run prefix only",
+      "atomicConditionalDelete": false
+    }
+  ],
+  "operations": [
+    {
+      "id": "file.list",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "list",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": ""
+        }
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.metadata",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "metadata",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        }
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.read",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "read",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        }
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.upload",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "upload",
+        "idempotencyKey": "caller-generated-uuid",
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example.txt"
+        },
+        "content": "Example"
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.ingest",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "ingest",
+        "idempotencyKey": "caller-generated-uuid",
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example.txt"
+        },
+        "url": "https://example.invalid/pinned-test-fixture",
+        "expectedSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.mkdir",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "mkdir",
+        "idempotencyKey": "caller-generated-uuid",
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example/"
+        }
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.copy",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "copy",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        },
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example.txt"
+        }
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.move",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "move",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        },
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example.txt"
+        },
+        "confirmed": true
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.rename",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "rename",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        },
+        "destination": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Example.txt"
+        },
+        "confirmed": true
+      },
+      "sourceSymbol": "createFileEngine"
+    },
+    {
+      "id": "file.delete",
+      "method": "run",
+      "requestSchema": "extension/file-engine/schema-0.2.json#/$defs/request",
+      "example": {
+        "apiVersion": "0.2.0",
+        "operation": "delete",
+        "idempotencyKey": "caller-generated-uuid",
+        "source": {
+          "provider": "fake-r2",
+          "account": "demo",
+          "container": "sandbox",
+          "key": "Welcome.txt"
+        },
+        "confirmed": true
+      },
+      "sourceSymbol": "createFileEngine"
+    }
+  ],
+  "controls": [
+    "describe",
+    "inspect",
+    "plan",
+    "run",
+    "runBatch",
+    "cancel",
+    "recover",
+    "reconcile",
+    "exportEvidence"
+  ],
+  "uxMappings": [
+    {
+      "action": "navigation",
+      "operation": "list",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "pagination",
+      "operation": "list",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "search",
+      "operation": "list",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "sorting",
+      "operation": "list",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "selection",
+      "operation": "presentation-state",
+      "status": "presentation-only"
+    },
+    {
+      "action": "multiSelection",
+      "operation": "unsupported",
+      "status": "unsupported"
+    },
+    {
+      "action": "preview",
+      "operation": "read",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "download",
+      "operation": "read",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "upload",
+      "operation": "upload",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "copy",
+      "operation": "copy",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "cut",
+      "operation": "clipboard-intent",
+      "status": "presentation-only"
+    },
+    {
+      "action": "paste",
+      "operation": "copy|move",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "move",
+      "operation": "move",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "rename",
+      "operation": "rename",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "folderCreation",
+      "operation": "mkdir",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "delete",
+      "operation": "delete",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "batch",
+      "operation": "runBatch",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "progress",
+      "operation": "inspect",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "cancel",
+      "operation": "cancel",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "recovery",
+      "operation": "recover|reconcile",
+      "status": "implemented-with-provider-gates"
+    },
+    {
+      "action": "retry",
+      "operation": "unsupported",
+      "status": "unsupported"
+    },
+    {
+      "action": "contextMenu",
+      "operation": "legacy-only",
+      "status": "unsupported"
+    },
+    {
+      "action": "dragDrop",
+      "operation": "legacy-only",
+      "status": "unsupported"
+    }
+  ],
+  "examples": [
+    {
+      "apiVersion": "0.2.0",
+      "operation": "read",
+      "idempotencyKey": "example-read",
+      "source": {
+        "provider": "fake-r2",
+        "account": "demo",
+        "container": "sandbox",
+        "key": "Welcome.txt"
+      }
+    }
+  ],
+  "authorization": "authorize(request) plus adapter identity capabilities; live transport bearer is lab-scoped and not stored in records",
+  "verification": "actual destination read-back SHA-256, never an acknowledged write alone",
+  "errors": [
+    "CONFLICT",
+    "UNSUPPORTED_ATOMIC_DELETE",
+    "UNSUPPORTED_PROVIDER",
+    "AUTHORIZATION_DENIED",
+    "INVALID_IDENTITY",
+    "INVALID_BYTES",
+    "SIZE_LIMIT",
+    "NOT_FOUND_OR_INACCESSIBLE",
+    "SOURCE_CHANGED",
+    "DESTINATION_CHANGED",
+    "VERIFICATION_DISAGREEMENT",
+    "TRANSPORT_FAILURE",
+    "INTERRUPTED",
+    "CANCELLED"
+  ],
+  "recovery": "uncertain writes are inspected/reconciled, never auto-replayed",
+  "testCommands": {
+    "unit": "node --test tests/universal-file-engine.test.mjs",
+    "live": "REDOWN_ALLOW_LIVE_R2=1 node scripts/r2-lab/live.mjs",
+    "browser": "npm run beta:acceptance"
+  },
+  "releaseReady": false
+}

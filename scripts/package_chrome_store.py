@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'extension'
 FILES = (
     'beta-walkthrough.mjs', 'beta-walkthrough-steps.mjs', 'beta-explorer.html', 'beta-explorer.css', 'beta-explorer.mjs',
+    'file-engine/engine.mjs', 'file-engine/adapters/memory.mjs', 'file-engine/adapters/r2-http.mjs', 'file-engine/catalog.json', 'file-engine/readiness.json', 'file-engine/schema-0.2.json',
     'file-engine/acceptance.mjs', 'file-engine/schema.json', 'file-engine/contract.mjs', 'file-engine/simulation.mjs', 'file-engine/indexeddb-store.mjs',
     'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
     'hitomi-capture.js', 'menu-reorder.js', 'nested-locations.js',

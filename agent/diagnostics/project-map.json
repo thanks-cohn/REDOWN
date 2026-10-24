@@ -81,6 +81,15 @@
         "navigation"
       ],
       "boundary": "Count covers confirmed cloud saves/local upload observations and verified Explorer copies/moves; retained historical successes only, no reconstruction of discarded history, browser downloads or cross-device totals. Counter state owns no URLs or credentials."
+    },
+    {
+      "id": "universal-file-api",
+      "purpose": "Canonical file semantics shared by Beta, CLI, adapters and live lab",
+      "entry": "extension/file-engine/engine.mjs",
+      "adapter": "agent/explorer/cli.mjs",
+      "discovery": "getConnectorCapabilities",
+      "tests": [],
+      "boundary": "Read-only discovery; live operations require scoped lab authorization; release readiness remains blocked"
     }
   ]
 }

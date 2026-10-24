@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "releaseReady": false,
+  "sharedEngine": true,
+  "legacyProductionMigrated": false,
+  "realProviderCount": 1,
+  "liveSupportedCases": 96,
+  "liveFailedCases": 1,
+  "blocked": [
+    "R2 atomic conditional deletion: move/rename/delete intentionally gated",
+    "Second distinct real provider",
+    "Installed extension UI-to-live acceptance",
+    "Native filesystem and cross-computer transport",
+    "Multipart and streaming beyond 2 MiB",
+    "Keep-both/overwrite conflict policy",
+    "R2 search/reverse sort",
+    "Automatic safe write retries",
+    "Full queue scheduling and lease ownership",
+    "Unresolved journal lock failure in repeated live run; fresh-prefix rerun does not establish recovery safety",
+    "Binary/media UI and full context-menu/drag-drop/multi-selection parity"
+  ],
+  "coverage": "verification/r2-lab/coverage.json"
+}

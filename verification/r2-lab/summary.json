@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "releaseReady": false,
+  "offline": {
+    "passed": 406,
+    "failed": 10,
+    "sameFailuresAsStartingMain": true,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "failed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "live": {
+    "passed": 96,
+    "failed": 1,
+    "blocked": 20,
+    "evidence": "verification/r2-lab/live.json",
+    "previousPassingSubset": "verification/r2-lab/previous-live-pass.json"
+  },
+  "browser": {
+    "simulatedOrdinaryChromium": {
+      "passed": 34,
+      "failed": 0
+    },
+    "liveOrdinaryChromium": "verification/r2-lab/live-ui.json",
+    "installedExtension": "not-verified"
+  },
+  "cleanup": "verification/r2-lab/final-cleanup-and-teardown.json",
+  "risks": [
+    "Live journal lock/missing-state failures unresolved; monotonic journal guard only verified offline",
+    "R2 move/rename/delete unavailable without atomic conditional source deletion",
+    "No second distinct real provider; see full readiness blockers"
+  ],
+  "package": "Audit candidate includes imported modules; release remains blocked by existing license drift"
+}

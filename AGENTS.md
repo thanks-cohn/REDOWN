@@ -152,3 +152,21 @@ Get URL and shared status states: read [GET_URL_AND_STATUS.md](docs/explorer/GET
 Get URL enable follow-up: `cfPublicAddresses` remains read-only. The user-authorized `cfEnablePublicAccess` is a separate exact-options-sender/confirmed:true mutation of managed r2.dev access only, with independent settings read-back and fresh URL discovery. Preserve the inline whole-bucket confirmation, cancellation, stale UI protection and redacted diagnostic mapping. See GET_URL_AND_STATUS.md; no live public-access change was performed for implementation testing.
 
 Current issue triage: see docs/reliability/ISSUE_INVENTORY.md. `listIssues`, `getIssue` and `validateIssues` project existing reports through the same gateway. Review notes are source-hash-bound and cannot close browser/platform acceptance by assertion. Prefer native Node/Git/JSON Schema facilities; the syntax target list is scripts/syntax-targets.json.
+
+## Phase 2 universal engine and four-bucket laboratory
+
+Start with `docs/phase2/UNIVERSAL_API_LAB.md`, `extension/file-engine/catalog.json`,
+`readiness.json` and `verification/r2-lab/coverage.json`. The authoritative owner directive
+is `FOREVER_WORKS/FW-REDOWN-P2-R2-API-PARITY-20261023.md`; its additive companion in
+`FOREVER_WORKS/P2-R2-API/` uses the actual pinned upstream schemas. Do not modify frozen
+historical records to conceal drift. `npm run file:verify` is offline; `file:live` and
+`file:live-ui` require explicit lab authorization/config and intentionally fail acceptance
+when operations are blocked. Never deploy the lab payload onto an existing Worker.
+Only the four dedicated test buckets and run-scoped manifests are authorized for live
+mutation. Preserve failed attempts, independently verify cleanup, and remove only the
+newly created temporary Worker. R2 move/rename/delete are gated on atomic conditional
+deletion; manifest cleanup is a separate exclusive-prefix lab procedure. The production
+Explorer stays independent; Beta uses existing betaModeEnabled and requires explicit
+owner approval for promotion. No second real provider, installed-extension or universal
+readiness is established by current results. A repeated live attempt's journal-lock failure
+remains an explicit recovery risk even when a fresh-prefix rerun passes.
