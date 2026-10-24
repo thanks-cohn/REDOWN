@@ -1,0 +1,354 @@
+{
+  "acceptanceVersion": "1.0.0",
+  "readiness": {
+    "releaseReady": false,
+    "scope": "simulation foundation",
+    "requiredBeforeRelease": [
+      "real R2 adapter and authorized byte-integrity acceptance",
+      "second real provider with the same explorer contract",
+      "local filesystem adapter and permission model",
+      "binary upload/download and media preview",
+      "durable interrupted-job recovery and safe reconciliation",
+      "installed-extension security/accessibility/performance acceptance",
+      "published competitor workflow benchmarks"
+    ],
+    "future": [
+      "authorized cross-computer transport and device identity"
+    ]
+  },
+  "startedAt": "2026-10-23T23:51:48.796Z",
+  "finishedAt": "2026-10-23T23:51:48.824Z",
+  "scope": "isolated in-memory simulation; actual shared core, no browser UI, no installed extension or real provider",
+  "state": "passed",
+  "passed": 12,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "complete-pagination",
+      "state": "passed",
+      "evidence": {
+        "expectedObjects": 55,
+        "observedObjects": 55
+      },
+      "receipts": [
+        {
+          "id": "01a4dd84-5d68-448b-9314-e5216ebca10a",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "5850327e-5022-455d-9db0-8e81738da0a7",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "105b6542-a559-4595-a745-b08728109f28",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "b69e8ac3-a7f9-4ea7-a274-b8653fb279b5",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "b969fac9-a012-4145-8b6e-d6b74ff5286b",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "5ac2eea4-9307-445e-9d47-523bbbca35da",
+          "operation": "list",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "upload-content-readback",
+      "state": "passed",
+      "evidence": {
+        "algorithm": "SHA-256",
+        "expected": "f53028ed098fc8d6d2ac1803002543c506d9b66d865e9ba082602ecdb66178ad",
+        "actual": "f53028ed098fc8d6d2ac1803002543c506d9b66d865e9ba082602ecdb66178ad"
+      },
+      "receipts": [
+        {
+          "id": "92958599-38ac-4674-a8b7-c06a45072522",
+          "operation": "upload",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "d90f8b17-2bd4-4068-a497-9b8af5f32bee",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "cross-provider-copy-preserves-source",
+      "state": "passed",
+      "evidence": {
+        "sourceRetained": true,
+        "contentHash": "e768732c155626629c107c51abdba64f242d0cf4930307b52933ba73bfee588e"
+      },
+      "receipts": [
+        {
+          "id": "8ba2de67-b7b4-4e20-999b-330fccf4839e",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "fd31cfcc-be23-42cc-ab0b-f6b7e7aea2b0",
+          "operation": "copy",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "094c9ab6-c8aa-4b98-a180-aa622a21b3d1",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "ee40988e-024c-4a31-91db-a187e8fb88ed",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "verified-move",
+      "state": "passed",
+      "evidence": {
+        "destinationObserved": true,
+        "sourceRemoved": true
+      },
+      "receipts": [
+        {
+          "id": "f054d64e-2a3b-445f-8864-9f60515273d8",
+          "operation": "move",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "87499d6d-79f0-4631-8495-a0c60a79af17",
+          "operation": "metadata",
+          "state": "failed",
+          "verification": null,
+          "providerEvidence": false
+        },
+        {
+          "id": "cc081e69-a458-4f1f-9e15-7a8cb0879aed",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "conflict-retains-both",
+      "state": "passed",
+      "evidence": {
+        "allObjectsUnchanged": true
+      },
+      "receipts": [
+        {
+          "id": "40ea8a8b-9d39-404a-8266-314dc3f6e914",
+          "operation": "copy",
+          "state": "failed",
+          "verification": null,
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "recursive-copy",
+      "state": "passed",
+      "evidence": {
+        "childObserved": true,
+        "sourceRetained": true
+      },
+      "receipts": [
+        {
+          "id": "2d1bc3c4-fc56-4abe-854e-5bd5103ea18c",
+          "operation": "copy",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "548d838e-16d5-4b91-bdb4-5ec4f52ffda1",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "258bf820-a474-4520-a337-d31cbe6ada8b",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "rename-exact-target",
+      "state": "passed",
+      "evidence": {},
+      "receipts": [
+        {
+          "id": "22c3328f-f118-4953-a971-b5c08c830c64",
+          "operation": "rename",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "c6e7e878-9545-4964-abad-22c71bc6255e",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "4355a53a-41be-4551-bbeb-1b5e3028f0ab",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "delete-exact-target",
+      "state": "passed",
+      "evidence": {},
+      "receipts": [
+        {
+          "id": "909b8175-1013-47a0-b338-6dd655dc4394",
+          "operation": "delete",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        },
+        {
+          "id": "07c773a4-6421-4e49-b8da-65ab06d9b6e8",
+          "operation": "metadata",
+          "state": "failed",
+          "verification": null,
+          "providerEvidence": false
+        },
+        {
+          "id": "a4fa6f7c-bca2-46aa-8e26-a43b6dbf4da1",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "idempotency-across-coordinators",
+      "state": "passed",
+      "evidence": {
+        "sameOperationId": true
+      },
+      "receipts": []
+    },
+    {
+      "id": "reopen-journal",
+      "state": "passed",
+      "evidence": {
+        "events": 7,
+        "inspectionReadOnly": true
+      },
+      "receipts": [
+        {
+          "id": "1b445f6d-5fdc-47b8-8591-f8e927b84c35",
+          "operation": "read",
+          "state": "completed",
+          "verification": "simulated-content-equality",
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "routing-fails-closed",
+      "state": "passed",
+      "evidence": {
+        "realProviderBlocked": true
+      },
+      "receipts": [
+        {
+          "id": "1824d200-fc2e-49cf-a826-106b4b59943d",
+          "operation": "read",
+          "state": "failed",
+          "verification": null,
+          "providerEvidence": false
+        }
+      ]
+    },
+    {
+      "id": "destructive-confirmation",
+      "state": "passed",
+      "evidence": {
+        "confirmationRequired": true
+      },
+      "receipts": []
+    }
+  ],
+  "unverified": [
+    "installed extension",
+    "live R2",
+    "real Google Drive",
+    "local filesystem integration",
+    "binary upload/download",
+    "network fault recovery",
+    "cross-computer transport",
+    "competitor parity"
+  ],
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux"
+  },
+  "sourceCommit": "a242e1b5f9b8e0456cbee19b2ffe070cedf7e9dd",
+  "sourceFiles": [
+    {
+      "path": "extension/file-engine/contract.mjs",
+      "sha256": "d4c7701947531a336105815121009e65abed3c36e37193f5ac4701cbb89ef445"
+    },
+    {
+      "path": "extension/file-engine/simulation.mjs",
+      "sha256": "97f602a4ecd96800133503e17a6335ed6f7eb407b09f20c77bde9b3ca0911c7d"
+    },
+    {
+      "path": "extension/file-engine/acceptance.mjs",
+      "sha256": "ee764edb69e64525e14315e498c1e8046843e9641cca0124175ecb2dcd183a44"
+    }
+  ]
+}

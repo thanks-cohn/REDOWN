@@ -1340,3 +1340,223 @@ th {
 .workspace-label small {
   color: #797986;
 }
+/* Optional guide layer. No blocking backdrop: the underlying tools stay usable. */
+.walkthrough-launch {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d5d5dd;
+  border-radius: 7px;
+  background: var(--chrome);
+  color: #62626e;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.walkthrough-launch span {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #b8b8c4;
+  border-radius: 50%;
+  font-size: 10px;
+}
+.walkthrough-panel {
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  max-width: calc(100vw - 24px);
+  overflow: auto;
+  border: 1px solid #b7b7c2;
+  border-radius: 12px;
+  background: linear-gradient(140deg, #fff, #f6f6f8);
+  box-shadow:
+    0 15px 55px #16162235,
+    0 1px #fff inset;
+  padding: 18px;
+  color: #36363f;
+}
+.walkthrough-panel:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #970e21, #dc3d50, #d7d7e0);
+}
+.walkthrough-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #9696a0;
+}
+.walkthrough-top > div {
+  display: flex;
+  gap: 5px;
+}
+.walkthrough-top button {
+  border: 0;
+  background: transparent;
+  color: #7c7c88;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 4px;
+}
+.walkthrough-panel h2 {
+  font-size: 19px;
+  color: #2d2d36;
+  letter-spacing: -0.4px;
+  margin: 15px 0 10px;
+}
+.walkthrough-panel p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #747480;
+}
+.walkthrough-task {
+  padding: 12px;
+  background: #f7e9ed;
+  border: 1px solid #efd5dd;
+  border-radius: 7px;
+  margin: 14px 0;
+}
+.walkthrough-task strong {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #b02e44;
+}
+.walkthrough-task p {
+  margin: 5px 0 0;
+  color: #8c4857;
+}
+.walkthrough-panel button:not(.walkthrough-top button) {
+  border: 1px solid #d6d6df;
+  border-radius: 5px;
+  background: var(--chrome);
+  font-size: 10px;
+  color: #666674;
+  padding: 8px 10px;
+}
+.walkthrough-panel #walkthrough-next,
+.walkthrough-panel #walkthrough-full,
+.walkthrough-panel #walkthrough-continue {
+  background: linear-gradient(#c52b3f, #9e1326);
+  color: #fff;
+  border-color: #9c1227;
+}
+.walkthrough-panel #walkthrough-issue {
+  color: #b0263a;
+}
+.walkthrough-panel button:disabled {
+  opacity: 0.4;
+}
+.walkthrough-choices {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.walkthrough-panel label {
+  display: grid;
+  gap: 8px;
+  font-size: 10px;
+  color: #8c8c98;
+}
+.walkthrough-panel select {
+  width: 100%;
+  border: 1px solid #d6d6df;
+  border-radius: 5px;
+  padding: 8px;
+  background: #fff;
+  color: #60606e;
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.walkthrough-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid #e4e4eb;
+}
+.walkthrough-controls #walkthrough-next {
+  margin-left: auto;
+}
+.walkthrough-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.walkthrough-bottom {
+  border-top: 1px solid #e4e4eb;
+  margin-top: 15px;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.walkthrough-bottom span {
+  font-size: 9px;
+  color: #94949f;
+}
+.walkthrough-bottom button {
+  white-space: nowrap;
+}
+#walkthrough-evidence {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #8c6170;
+}
+.walkthrough-highlight {
+  outline: 2px solid #bd263e !important;
+  outline-offset: 5px !important;
+  box-shadow: 0 0 0 7px #c32d4420 !important;
+  scroll-margin: 40px;
+}
+.walkthrough-restore {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  background: linear-gradient(#c52b3f, #9e1326);
+  color: #fff;
+  border: 1px solid #8d1022;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  box-shadow: 0 5px 18px #48102030;
+}
+@media (max-width: 760px) {
+  .page-heading {
+    flex-wrap: wrap;
+  }
+  .page-heading > div {
+    width: 100%;
+  }
+  .walkthrough-launch {
+    margin-left: 0;
+  }
+  .page-heading > .upload {
+    margin-left: auto;
+  }
+  .walkthrough-panel {
+    padding: 15px;
+  }
+  .walkthrough-panel h2 {
+    font-size: 17px;
+  }
+  .walkthrough-panel p {
+    font-size: 11px;
+  }
+  .walkthrough-restore {
+    bottom: 12px;
+    right: 12px;
+  }
+}

@@ -21,3 +21,7 @@ No canonical accepted-intent entities were invented for this increment. Once run
 ## Chrome / crimson Beta presentation
 
 The owner-directed distinct silver/chrome/red/white/black design is recorded in `docs/phase2/CHROME_RED_DESIGN.md` with actual screenshots and ordinary-browser evidence. Preserve the local SVG symbol set, bundled font, responsive sidebar-to-controls layout, grid/list choice, selection/details hierarchy and reduced-motion policy. This is Beta presentation only; simulation and promotion boundaries remain unchanged.
+
+## Guidance and autonomous acceptance
+
+`docs/phase2/WALKTHROUGH_AND_ACCEPTANCE.md` documents the content-only 34-step guide, five-step introduction, page testing port, isolated twelve-case core suite, unattended 34-case browser workflow suite, report privacy and readiness gaps. Source: `extension/beta-walkthrough*.mjs`, `extension/file-engine/acceptance.mjs`, `scripts/beta-{core,walkthrough}-acceptance.mjs`. Tests: `tests/phase2-walkthrough.test.mjs` and existing engine/Beta tests. Preserve stable guide IDs and result semantics; human confirmations, observed UI actions, automated assertions and real-provider evidence are different authorities. These new records supplement the historical corpus and do not certify production or invent accepted canonical intent.

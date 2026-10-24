@@ -12,8 +12,8 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'extension'
 FILES = (
-    'beta-explorer.html', 'beta-explorer.css', 'beta-explorer.mjs',
-    'file-engine/schema.json', 'file-engine/contract.mjs', 'file-engine/simulation.mjs', 'file-engine/indexeddb-store.mjs',
+    'beta-walkthrough.mjs', 'beta-walkthrough-steps.mjs', 'beta-explorer.html', 'beta-explorer.css', 'beta-explorer.mjs',
+    'file-engine/acceptance.mjs', 'file-engine/schema.json', 'file-engine/contract.mjs', 'file-engine/simulation.mjs', 'file-engine/indexeddb-store.mjs',
     'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
     'hitomi-capture.js', 'menu-reorder.js', 'nested-locations.js',
     'nested-menu-editor.js', 'storage-signals.js', 'public-addresses.js', 'explorer-status.js', 'options.html', 'options.js', 'popup.html',

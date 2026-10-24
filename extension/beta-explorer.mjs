@@ -1,3 +1,4 @@
+import { installWalkthrough } from "./beta-walkthrough.mjs";
 import { API_VERSION } from "./file-engine/contract.mjs";
 import { createSimulationEngine } from "./file-engine/simulation.mjs";
 import { openBetaStore } from "./file-engine/indexeddb-store.mjs";
@@ -9,6 +10,38 @@ export function installBetaExplorer({
   prompt = globalThis.prompt,
 }) {
   const $ = (id) => document.getElementById(id);
+  const walkthrough = installWalkthrough({
+    document,
+    inspectOperation: async (id) => {
+      if (!engine) return { state: "unavailable" };
+      const job = await engine.inspect(id);
+      if (!job) return { state: "unavailable" };
+      return {
+        id: job.id,
+        operation: job.request.operation,
+        state: job.state,
+        executor: job.executor,
+        events: job.events,
+        error: job.error || null,
+        verification: job.receipt
+          ? {
+              level: job.receipt.level,
+              providerEvidence: job.receipt.providerEvidence,
+            }
+          : null,
+        source: job.request.source
+          ? { provider: job.request.source.provider, identity: "redacted" }
+          : null,
+        destination: job.request.destination
+          ? { provider: job.request.destination.provider, identity: "redacted" }
+          : null,
+      };
+    },
+  });
+  const guideEvent = (detail) =>
+    document.dispatchEvent(
+      new document.defaultView.CustomEvent("beta:guide-event", { detail }),
+    );
   let engine,
     store,
     opening,
@@ -58,12 +91,14 @@ export function installBetaExplorer({
     check.checked = true;
     $("preview").hidden = true;
     updateSelection();
+    guideEvent({ kind: "action", action: "selection" });
   }
   function showActivity() {
     const panel = $("activity");
     panel.open = true;
     panel.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
     $("jobs").focus();
+    guideEvent({ kind: "action", action: "activity" });
   }
   function message(text, state = "") {
     $("status").textContent = text;
@@ -86,6 +121,11 @@ export function installBetaExplorer({
       $("trace").textContent = "";
     }
     updateSelection();
+    document.dispatchEvent(
+      new document.defaultView.CustomEvent("beta:availability", {
+        detail: { enabled },
+      }),
+    );
   }
   async function initialize() {
     if (!opening)
@@ -102,12 +142,36 @@ export function installBetaExplorer({
   }
   async function run(operation, args = {}) {
     await allowed();
-    return engine.run({
+    const result = await engine.run({
       apiVersion: API_VERSION,
       operation,
       idempotencyKey: crypto.randomUUID(),
       ...args,
     });
+    guideEvent({
+      kind: "operation",
+      operation,
+      state: result.state,
+      operationId: result.id,
+      ...(result.error
+        ? {
+            code: /^[A-Z_]{1,64}$/.test(result.error)
+              ? result.error
+              : "UNCLASSIFIED",
+          }
+        : {}),
+      scope: args.source?.key ? "folder" : "root",
+      search: Boolean(args.query),
+      empty:
+        Array.isArray(result.result?.objects) &&
+        result.result.objects.length === 0,
+      crossProvider: Boolean(
+        args.source &&
+          args.destination &&
+          args.source.provider !== args.destination.provider,
+      ),
+    });
+    return result;
   }
   async function browse(append = false) {
     await allowed();
@@ -232,14 +296,26 @@ export function installBetaExplorer({
   $("provider").onchange = () => {
     clipboard = null;
     $("prefix").value = "";
-    safe(() => browse());
+    safe(async () => {
+      await browse();
+      guideEvent({ kind: "action", action: "provider" });
+    });
   };
-  $("next").onclick = () => safe(() => browse(true));
+  $("destination").onchange = () =>
+    guideEvent({ kind: "action", action: "destination" });
+  $("next").onclick = () =>
+    safe(async () => {
+      await browse(true);
+      guideEvent({ kind: "action", action: "next-page" });
+    });
   $("up").onclick = () => {
     const parts = $("prefix").value.replace(/\/$/, "").split("/");
     parts.pop();
     $("prefix").value = parts.length ? parts.join("/") + "/" : "";
-    safe(() => browse());
+    safe(async () => {
+      await browse();
+      guideEvent({ kind: "action", action: "up" });
+    });
   };
   $("copy").onclick = () =>
     safe(async () => {
@@ -247,6 +323,7 @@ export function installBetaExplorer({
       clipboard = { operation: "copy", source: requireSelection() };
       updateSelection();
       message("Simulated selection copied.");
+      guideEvent({ kind: "action", action: "copy" });
     });
   $("cut").onclick = () =>
     safe(async () => {
@@ -254,6 +331,7 @@ export function installBetaExplorer({
       clipboard = { operation: "move", source: requireSelection() };
       updateSelection();
       message("Simulated selection cut; source retained until paste.");
+      guideEvent({ kind: "action", action: "cut" });
     });
   $("paste").onclick = () =>
     safe(async () => {
@@ -349,6 +427,7 @@ export function installBetaExplorer({
     safe(async () => {
       await allowed();
       await refreshJobs();
+      guideEvent({ kind: "action", action: "refresh-jobs" });
     });
   $("inspect").onclick = () =>
     safe(async () => {
@@ -358,6 +437,7 @@ export function installBetaExplorer({
         null,
         2,
       );
+      guideEvent({ kind: "action", action: "inspect" });
     });
 
   $("home").onclick = () => {
@@ -376,7 +456,13 @@ export function installBetaExplorer({
       $("files").classList.toggle("file-list", mode === "list");
       for (const value of ["grid", "list"])
         $("view-" + value).setAttribute("aria-pressed", String(mode === value));
+      guideEvent({ kind: "action", action: "view-" + mode });
     };
+  document
+    .querySelector(".comparison summary")
+    .addEventListener("click", () =>
+      guideEvent({ kind: "action", action: "comparison" }),
+    );
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && changes.betaModeEnabled)
       safe(async () => {
@@ -396,6 +482,7 @@ export function installBetaExplorer({
       while (pending.size) await Promise.allSettled([...pending]);
     },
     close() {
+      walkthrough.destroy();
       store?.close();
     },
   };
