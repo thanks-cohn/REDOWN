@@ -170,3 +170,14 @@ Explorer stays independent; Beta uses existing betaModeEnabled and requires expl
 owner approval for promotion. No second real provider, installed-extension or universal
 readiness is established by current results. A repeated live attempt's journal-lock failure
 remains an explicit recovery risk even when a fresh-prefix rerun passes.
+
+## Resource Atlas Phase 2.4 (implementation branch; acceptance blocked)
+
+Read `docs/phase2/RESOURCE_ATLAS.md` and `FOREVER_WORKS/P2-RESOURCE-ATLAS/manifest.json`.
+The existing gateway exposes ten read-only `resources.*` methods. Start with
+`npm run diagnostics -- resources.describe`; import explicit measured evidence with
+`--resource-bundle verification/resources/evidence.json`. Run `npm run resources:test`,
+`npm run resources:benchmark` and `npm run resources:schema`. The live run recorded
+72 passed / 29 failed / 16 blocked assertions, with cleanup independently confirmed.
+Do not declare Phase 2.4 complete or merge this branch as verified acceptance. Preserve
+failed evidence, production Explorer isolation and all four-bucket safety restrictions.

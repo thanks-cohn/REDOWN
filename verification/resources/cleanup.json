@@ -1,0 +1,36 @@
+{
+  "run": "303461dd-54b8-4372-87bf-7dd93c15abc9",
+  "worker": "redown-p2-lab-303461dd",
+  "manifestCleanupFailed": 0,
+  "managementPrefixInspection": [
+    {
+      "bucket": "test-1-new",
+      "empty": true,
+      "status": 200
+    },
+    {
+      "bucket": "test-2-new",
+      "empty": true,
+      "status": 200
+    },
+    {
+      "bucket": "test-3-new",
+      "empty": true,
+      "status": 200
+    },
+    {
+      "bucket": "test-4-new",
+      "empty": true,
+      "status": 200
+    }
+  ],
+  "workerDeletion": {
+    "success": true,
+    "status": 200
+  },
+  "subsequentWorkerRead": {
+    "absent": true,
+    "status": 404
+  },
+  "scope": "Observed through separate Cloudflare management connector; no bucket deleted or production Worker modified"
+}

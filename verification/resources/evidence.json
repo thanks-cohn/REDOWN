@@ -1,0 +1,1438 @@
+{
+  "resourceApiVersion": "1.0.0",
+  "traces": [
+    {
+      "operationId": "74010207-0f4d-44b0-be13-9ed197404b14",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.503Z",
+      "durationMs": 22.182862999999998,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.504Z",
+          "durationMs": 0.06537900000000718,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.504Z",
+          "durationMs": 0.014642999999978201,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.504Z",
+          "durationMs": 0.010224999999991269,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.504Z",
+          "durationMs": 0.009734999999977845,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.511Z",
+          "durationMs": 7.586254999999994,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.511Z",
+          "durationMs": 0.01866800000004787,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.524Z",
+          "durationMs": 12.47846400000003,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.524Z",
+          "durationMs": 0.036675000000002456,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.525Z",
+          "durationMs": 0.8923159999999939,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.526Z",
+          "durationMs": 0.7766120000000001,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.503Z",
+        "heapBytes": 28692560,
+        "processBytes": 91009024,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.526Z",
+        "heapBytes": 25803352,
+        "processBytes": 94679040,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "5f30efbb-8d35-472b-89b8-a0bf76215416",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.526Z",
+      "durationMs": 26.385317000000043,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.526Z",
+          "durationMs": 0.03010600000004615,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.526Z",
+          "durationMs": 0.010686000000021068,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.526Z",
+          "durationMs": 0.010917000000006283,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.526Z",
+          "durationMs": 0.009584000000018023,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.536Z",
+          "durationMs": 9.575153999999998,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.536Z",
+          "durationMs": 0.03289000000000897,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.550Z",
+          "durationMs": 14.616964999999993,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.550Z",
+          "durationMs": 0.04531800000000885,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.551Z",
+          "durationMs": 0.8914949999999635,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.552Z",
+          "durationMs": 0.8105219999999917,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.526Z",
+        "heapBytes": 25817664,
+        "processBytes": 94679040,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.552Z",
+        "heapBytes": 25596368,
+        "processBytes": 96382976,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "78323422-c3e4-420b-9eea-d2ceea6ff294",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.552Z",
+      "durationMs": 29.05602200000004,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.553Z",
+          "durationMs": 0.03984000000002652,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.553Z",
+          "durationMs": 0.012799000000029537,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.554Z",
+          "durationMs": 0.009734999999977845,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.554Z",
+          "durationMs": 0.009694999999965148,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.563Z",
+          "durationMs": 9.509204999999952,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.563Z",
+          "durationMs": 0.023626000000035674,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.580Z",
+          "durationMs": 16.567803000000026,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.580Z",
+          "durationMs": 0.04138299999999617,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.581Z",
+          "durationMs": 0.898285000000044,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.582Z",
+          "durationMs": 0.9299929999999677,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.553Z",
+        "heapBytes": 25616888,
+        "processBytes": 96382976,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.582Z",
+        "heapBytes": 25404192,
+        "processBytes": 96645120,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "6982880e-50d2-4de0-9654-43ad93833529",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.582Z",
+      "durationMs": 35.638330999999994,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.582Z",
+          "durationMs": 0.031206999999994878,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.582Z",
+          "durationMs": 0.010917000000006283,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.582Z",
+          "durationMs": 0.009524999999996453,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.582Z",
+          "durationMs": 0.009483999999986281,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.593Z",
+          "durationMs": 11.292243999999982,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.593Z",
+          "durationMs": 0.027171000000009826,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.616Z",
+          "durationMs": 22.251085999999987,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.616Z",
+          "durationMs": 0.047362000000021,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.617Z",
+          "durationMs": 0.8123350000000187,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.617Z",
+          "durationMs": 0.8060049999999706,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.582Z",
+        "heapBytes": 25430936,
+        "processBytes": 96645120,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.617Z",
+        "heapBytes": 26014568,
+        "processBytes": 97431552,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "82f7bb5d-64ef-4290-a439-0dacbe87efaa",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.618Z",
+      "durationMs": 46.28028500000005,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.618Z",
+          "durationMs": 0.04690000000005057,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.618Z",
+          "durationMs": 0.018847999999991316,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.618Z",
+          "durationMs": 0.01634499999994432,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.618Z",
+          "durationMs": 0.015984000000003107,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.639Z",
+          "durationMs": 20.66003599999999,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.639Z",
+          "durationMs": 0.21719799999999623,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.661Z",
+          "durationMs": 22.22777100000002,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.662Z",
+          "durationMs": 0.04487800000003972,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.663Z",
+          "durationMs": 1.2483529999999519,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.664Z",
+          "durationMs": 1.1112759999999753,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.618Z",
+        "heapBytes": 26047216,
+        "processBytes": 97431552,
+        "externalBytes": 4125539,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.664Z",
+        "heapBytes": 40625992,
+        "processBytes": 103723008,
+        "externalBytes": 4136791,
+        "arrayBufferBytes": 245560,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "78347b58-e7b6-4577-9576-77d8a4964b30",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.664Z",
+      "durationMs": 36.86467099999993,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.668Z",
+          "durationMs": 0.17480399999999463,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.668Z",
+          "durationMs": 0.01972000000000662,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.668Z",
+          "durationMs": 0.014961999999968612,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.668Z",
+          "durationMs": 0.014802000000031512,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.680Z",
+          "durationMs": 12.074385000000007,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.680Z",
+          "durationMs": 0.02605900000003203,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.698Z",
+          "durationMs": 18.165913000000046,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.699Z",
+          "durationMs": 0.09923000000003412,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.700Z",
+          "durationMs": 1.5555570000000216,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.701Z",
+          "durationMs": 0.8346490000000131,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.664Z",
+        "heapBytes": 40665864,
+        "processBytes": 103723008,
+        "externalBytes": 4136791,
+        "arrayBufferBytes": 245560,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.701Z",
+        "heapBytes": 37222552,
+        "processBytes": 105467904,
+        "externalBytes": 4125490,
+        "arrayBufferBytes": 234355,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "623b0fa7-6a9c-44e5-9e1a-03d227c80d6d",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.701Z",
+      "durationMs": 42.38839299999995,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.702Z",
+          "durationMs": 0.03339000000005399,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.702Z",
+          "durationMs": 0.011487999999985732,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.702Z",
+          "durationMs": 0.010255999999913001,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.702Z",
+          "durationMs": 0.009343999999941843,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.720Z",
+          "durationMs": 18.126334000000043,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.720Z",
+          "durationMs": 0.03696500000000924,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.741Z",
+          "durationMs": 20.892156,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.741Z",
+          "durationMs": 0.05497299999990446,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.743Z",
+          "durationMs": 1.83830300000011,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.744Z",
+          "durationMs": 0.8990660000000616,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.701Z",
+        "heapBytes": 37268328,
+        "processBytes": 105467904,
+        "externalBytes": 4125490,
+        "arrayBufferBytes": 234355,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.744Z",
+        "heapBytes": 53252784,
+        "processBytes": 120672256,
+        "externalBytes": 4136742,
+        "arrayBufferBytes": 245575,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "a70e4d49-7cfa-4174-81fd-6c4e43bdbd5e",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.744Z",
+      "durationMs": 38.93941099999995,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.745Z",
+          "durationMs": 0.1084929999999531,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.745Z",
+          "durationMs": 0.10559900000009748,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.745Z",
+          "durationMs": 0.01094700000010107,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.745Z",
+          "durationMs": 0.009584000000018023,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.761Z",
+          "durationMs": 15.678581000000008,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.761Z",
+          "durationMs": 0.037086000000044805,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.780Z",
+          "durationMs": 18.879520999999954,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.780Z",
+          "durationMs": 0.05339100000003327,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.781Z",
+          "durationMs": 0.9935590000000047,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.783Z",
+          "durationMs": 1.8661550000000489,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.744Z",
+        "heapBytes": 53304464,
+        "processBytes": 120672256,
+        "externalBytes": 4136742,
+        "arrayBufferBytes": 245575,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.783Z",
+        "heapBytes": 39810928,
+        "processBytes": 122757120,
+        "externalBytes": 4125717,
+        "arrayBufferBytes": 234550,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "408d1fd6-278d-4056-b8ea-f47c4da97a6e",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.783Z",
+      "durationMs": 44.98910599999999,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.784Z",
+          "durationMs": 0.038237999999978456,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.784Z",
+          "durationMs": 0.013140000000021246,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.784Z",
+          "durationMs": 0.011016999999924337,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.784Z",
+          "durationMs": 0.010755999999901178,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.804Z",
+          "durationMs": 20.45550700000001,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.804Z",
+          "durationMs": 0.04763199999990775,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.825Z",
+          "durationMs": 20.671784000000002,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.825Z",
+          "durationMs": 0.050486000000091735,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.827Z",
+          "durationMs": 2.1669689999999946,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.828Z",
+          "durationMs": 0.8309740000000829,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.783Z",
+        "heapBytes": 39870216,
+        "processBytes": 122888192,
+        "externalBytes": 4125717,
+        "arrayBufferBytes": 234550,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.828Z",
+        "heapBytes": 24419664,
+        "processBytes": 140537856,
+        "externalBytes": 4136969,
+        "arrayBufferBytes": 223335,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "70416573-2c13-446a-9984-ae423a4a2424",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.828Z",
+      "durationMs": 40.951856999999904,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.829Z",
+          "durationMs": 0.03128700000002027,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.829Z",
+          "durationMs": 0.012228000000050088,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.829Z",
+          "durationMs": 0.010004999999978281,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.829Z",
+          "durationMs": 0.009434000000055676,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.849Z",
+          "durationMs": 19.878607999999986,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.849Z",
+          "durationMs": 0.04633000000001175,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.868Z",
+          "durationMs": 18.87874899999997,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.868Z",
+          "durationMs": 0.04166300000008505,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.869Z",
+          "durationMs": 0.8092209999999795,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.869Z",
+          "durationMs": 0.7933460000000423,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.828Z",
+        "heapBytes": 24485344,
+        "processBytes": 140537856,
+        "externalBytes": 4136969,
+        "arrayBufferBytes": 223335,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.869Z",
+        "heapBytes": 42609304,
+        "processBytes": 140800000,
+        "externalBytes": 4125754,
+        "arrayBufferBytes": 234555,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "0de39e27-7e5d-4870-8796-7302362b4339",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.870Z",
+      "durationMs": 41.28629699999999,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.870Z",
+          "durationMs": 0.03424100000006547,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.870Z",
+          "durationMs": 0.011077000000000226,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.870Z",
+          "durationMs": 0.01010499999995318,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.870Z",
+          "durationMs": 0.00959499999999025,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.887Z",
+          "durationMs": 17.282601,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.888Z",
+          "durationMs": 0.030175999999983105,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.909Z",
+          "durationMs": 21.75412199999994,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.909Z",
+          "durationMs": 0.058237999999960266,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.910Z",
+          "durationMs": 0.8446549999999888,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.911Z",
+          "durationMs": 0.8303419999999733,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.870Z",
+        "heapBytes": 42680888,
+        "processBytes": 140800000,
+        "externalBytes": 4125754,
+        "arrayBufferBytes": 234555,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.911Z",
+        "heapBytes": 33171432,
+        "processBytes": 143560704,
+        "externalBytes": 4125507,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    },
+    {
+      "operationId": "2b8d5437-0d62-4c72-a347-d773ab7dd5b4",
+      "operation": "list",
+      "startedAt": "2026-10-24T15:52:44.911Z",
+      "durationMs": 46.77620300000001,
+      "state": "completed",
+      "spans": [
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.912Z",
+          "durationMs": 0.03151700000000801,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.912Z",
+          "durationMs": 0.0120080000000371,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.912Z",
+          "durationMs": 0.010056000000076892,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.912Z",
+          "durationMs": 0.010094999999978427,
+          "error": null
+        },
+        {
+          "phase": "journal.read",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.932Z",
+          "durationMs": 19.743503000000032,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.932Z",
+          "durationMs": 0.04326499999990574,
+          "error": null
+        },
+        {
+          "phase": "provider",
+          "source": "extension/file-engine/adapters/",
+          "at": "2026-10-24T15:52:44.956Z",
+          "durationMs": 24.04745600000001,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.956Z",
+          "durationMs": 0.04690100000004804,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.957Z",
+          "durationMs": 0.8184649999999465,
+          "error": null
+        },
+        {
+          "phase": "journal.update",
+          "source": "extension/file-engine/engine.mjs",
+          "at": "2026-10-24T15:52:44.958Z",
+          "durationMs": 1.5098880000000463,
+          "error": null
+        }
+      ],
+      "droppedSpans": 0,
+      "memoryBefore": {
+        "at": "2026-10-24T15:52:44.911Z",
+        "heapBytes": 33248920,
+        "processBytes": 143560704,
+        "externalBytes": 4125507,
+        "arrayBufferBytes": 234340,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "memoryAfter": {
+        "at": "2026-10-24T15:52:44.958Z",
+        "heapBytes": 53147760,
+        "processBytes": 144347136,
+        "externalBytes": 4136759,
+        "arrayBufferBytes": 245560,
+        "provenance": "node.process.memoryUsage",
+        "unavailable": [
+          "worker-memory",
+          "per-operation-heap-attribution",
+          "cpu-percent",
+          "object-url-lifecycle-not-used-by-beta",
+          "thumbnail-cache-not-implemented",
+          "worker-cpu",
+          "exclusive-journal-lock-wait"
+        ]
+      },
+      "resourcesBefore": {},
+      "resourcesAfter": {},
+      "error": null
+    }
+  ],
+  "snapshot": {
+    "memory": {
+      "at": "2026-10-24T15:52:45.546Z",
+      "heapBytes": 40126472,
+      "processBytes": 144347136,
+      "externalBytes": 4116626,
+      "arrayBufferBytes": 224979,
+      "provenance": "node.process.memoryUsage",
+      "unavailable": [
+        "worker-memory",
+        "per-operation-heap-attribution",
+        "cpu-percent",
+        "object-url-lifecycle-not-used-by-beta",
+        "thumbnail-cache-not-implemented",
+        "worker-cpu",
+        "exclusive-journal-lock-wait"
+      ]
+    },
+    "resources": {},
+    "storage": "persisted",
+    "storageFailures": 0,
+    "active": 0,
+    "dropped": 0,
+    "limits": {
+      "maxTraces": 64,
+      "maxSpans": 96
+    },
+    "scope": "whole runtime memory; counters cover explicitly instrumented owners only"
+  }
+}

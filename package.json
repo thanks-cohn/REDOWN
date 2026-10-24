@@ -31,7 +31,10 @@
     "file:live": "node scripts/r2-lab/live.mjs",
     "file:live-ui": "node scripts/r2-lab/ui.mjs",
     "file:prepare": "node scripts/r2-lab/prepare.mjs",
-    "file:deployment-plan": "node scripts/r2-lab/deployment-plan.mjs"
+    "file:deployment-plan": "node scripts/r2-lab/deployment-plan.mjs",
+    "resources:test": "node --test tests/resource-atlas.test.mjs",
+    "resources:benchmark": "node --expose-gc scripts/resource-atlas-benchmark.mjs",
+    "resources:schema": "python tests/resource-atlas-schema.py"
   },
   "devDependencies": {
     "fake-indexeddb": "6.2.6",

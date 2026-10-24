@@ -1,0 +1,1205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:redown:resources:1.0.0:evidence",
+  "type": "object",
+  "properties": {
+    "resourceApiVersion": {
+      "const": "1.0.0"
+    },
+    "traces": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "$ref": "#/$defs/trace"
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "memory": {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "heapBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "processBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "externalBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "arrayBufferBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "provenance": {
+              "enum": [
+                "node.process.memoryUsage",
+                "chromium.performance.memory",
+                "unavailable"
+              ]
+            },
+            "unavailable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "at",
+            "heapBytes",
+            "processBytes",
+            "externalBytes",
+            "arrayBufferBytes",
+            "provenance",
+            "unavailable"
+          ],
+          "additionalProperties": false
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "transfer-buffer": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "metadata-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "thumbnail-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "preview": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "object-url": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "event-listener": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "queue": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "journal": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "storage": {
+          "enum": [
+            "memory-only",
+            "restored",
+            "persisted",
+            "unavailable"
+          ]
+        },
+        "storageFailures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "maxTraces": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxSpans": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "maxTraces",
+            "maxSpans"
+          ],
+          "additionalProperties": false
+        },
+        "scope": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "memory",
+        "resources",
+        "storage",
+        "storageFailures",
+        "active",
+        "dropped",
+        "limits",
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "resourceApiVersion",
+    "traces"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "trace": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9-]{1,128}$"
+        },
+        "operation": {
+          "enum": [
+            "list",
+            "metadata",
+            "read",
+            "upload",
+            "ingest",
+            "mkdir",
+            "copy",
+            "move",
+            "rename",
+            "delete",
+            "startup",
+            "interaction",
+            "benchmark"
+          ]
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "state": {
+          "enum": [
+            "running",
+            "completed",
+            "failed",
+            "uncertain",
+            "cancelled",
+            "partially_completed",
+            "blocked_authorization"
+          ]
+        },
+        "spans": {
+          "type": "array",
+          "maxItems": 96,
+          "items": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "enum": [
+                  "provider",
+                  "network",
+                  "network.decode",
+                  "journal.read",
+                  "journal.update",
+                  "journal.lock",
+                  "journal.queue",
+                  "verification",
+                  "ui.render",
+                  "ui.preview",
+                  "ui.input",
+                  "startup",
+                  "main-thread.longtask",
+                  "persistence"
+                ]
+              },
+              "source": {
+                "enum": [
+                  "extension/file-engine/engine.mjs",
+                  "extension/file-engine/adapters/",
+                  "extension/file-engine/adapters/r2-http.mjs",
+                  "extension/beta-explorer.mjs",
+                  "extension/file-engine/indexeddb-store.mjs"
+                ]
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "durationMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "error": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[A-Z_0-9]{1,64}$"
+                  }
+                ]
+              },
+              "httpStatus": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 599
+              },
+              "transferBytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "throughputBps": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "phase",
+              "source",
+              "at",
+              "durationMs",
+              "error"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "droppedSpans": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memoryBefore": {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "heapBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "processBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "externalBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "arrayBufferBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "provenance": {
+              "enum": [
+                "node.process.memoryUsage",
+                "chromium.performance.memory",
+                "unavailable"
+              ]
+            },
+            "unavailable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "at",
+            "heapBytes",
+            "processBytes",
+            "externalBytes",
+            "arrayBufferBytes",
+            "provenance",
+            "unavailable"
+          ],
+          "additionalProperties": false
+        },
+        "memoryAfter": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "heapBytes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "processBytes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "externalBytes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "arrayBufferBytes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "provenance": {
+                  "enum": [
+                    "node.process.memoryUsage",
+                    "chromium.performance.memory",
+                    "unavailable"
+                  ]
+                },
+                "unavailable": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "at",
+                "heapBytes",
+                "processBytes",
+                "externalBytes",
+                "arrayBufferBytes",
+                "provenance",
+                "unavailable"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resourcesBefore": {
+          "type": "object",
+          "properties": {
+            "transfer-buffer": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "metadata-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "thumbnail-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "preview": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "object-url": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "event-listener": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "queue": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "journal": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "resourcesAfter": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "transfer-buffer": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "metadata-cache": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "thumbnail-cache": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "preview": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "object-url": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "event-listener": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "queue": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                },
+                "journal": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "bytes"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[A-Z_0-9]{1,64}$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "operationId",
+        "operation",
+        "startedAt",
+        "durationMs",
+        "state",
+        "spans",
+        "droppedSpans",
+        "memoryBefore",
+        "memoryAfter",
+        "resourcesBefore",
+        "resourcesAfter"
+      ],
+      "additionalProperties": false
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "heapBytes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "processBytes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "externalBytes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "arrayBufferBytes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "provenance": {
+          "enum": [
+            "node.process.memoryUsage",
+            "chromium.performance.memory",
+            "unavailable"
+          ]
+        },
+        "unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "at",
+        "heapBytes",
+        "processBytes",
+        "externalBytes",
+        "arrayBufferBytes",
+        "provenance",
+        "unavailable"
+      ],
+      "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "memory": {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "heapBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "processBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "externalBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "arrayBufferBytes": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "provenance": {
+              "enum": [
+                "node.process.memoryUsage",
+                "chromium.performance.memory",
+                "unavailable"
+              ]
+            },
+            "unavailable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "at",
+            "heapBytes",
+            "processBytes",
+            "externalBytes",
+            "arrayBufferBytes",
+            "provenance",
+            "unavailable"
+          ],
+          "additionalProperties": false
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "transfer-buffer": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "metadata-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "thumbnail-cache": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "preview": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "object-url": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "event-listener": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "queue": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "journal": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "count",
+                "bytes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "storage": {
+          "enum": [
+            "memory-only",
+            "restored",
+            "persisted",
+            "unavailable"
+          ]
+        },
+        "storageFailures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "maxTraces": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxSpans": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "maxTraces",
+            "maxSpans"
+          ],
+          "additionalProperties": false
+        },
+        "scope": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "memory",
+        "resources",
+        "storage",
+        "storageFailures",
+        "active",
+        "dropped",
+        "limits",
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

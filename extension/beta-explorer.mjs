@@ -48,6 +48,8 @@ export function installBetaExplorer({
     document.dispatchEvent(
       new document.defaultView.CustomEvent("beta:guide-event", { detail }),
     );
+  let previewRelease,metadataRelease,listenerRelease,observer;
+  const startupAt=performance.now();
   let engine,
     store,
     opening,
@@ -91,6 +93,7 @@ export function installBetaExplorer({
       row.dataset.selected = String(row.dataset.key === selected?.key);
   }
   function selectObject(object, check) {
+    previewRelease?.();previewRelease=null;
     selected = object;
     check.checked = true;
     $("preview").hidden = true;
@@ -118,6 +121,7 @@ export function installBetaExplorer({
       ? (lab?"Beta Mode enabled · Authorized test laboratory":"Beta Mode enabled · Simulation foundation")
       : "Beta Explorer is hidden. Enable the existing Beta Mode in Dashboard settings. Saved simulation jobs are retained.";
     if (!enabled) {
+      previewRelease?.();previewRelease=null;$("preview").textContent="";
       generation++;
       clipboard = null;
       selected = null;
@@ -138,6 +142,7 @@ export function installBetaExplorer({
         engine = createSimulationEngine(store,{extraAdapters,...(lab?{authorize:request=>[request.source,request.destination].filter(Boolean).every(id=>id.provider==='r2-lab'?id.account==='lab'&&LAB_BUCKETS.includes(id.container)&&id.key.startsWith(lab.prefix):['fake-r2','fake-drive'].includes(id.provider))}:{})});
       });
     await opening;
+    if(!listenerRelease)listenerRelease=engine.resources.track('event-listener');
   }
   async function allowed() {
     await gate();
@@ -145,13 +150,16 @@ export function installBetaExplorer({
     await initialize();
   }
   async function run(operation, args = {}) {
+    const inputAt=performance.now();
     await allowed();
+    const traceId=await engine.resources.begin(operation);
+    engine.resources.record(traceId,"ui.input","extension/beta-explorer.mjs",inputAt);
     const result = await (args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?engine.runCanonical.bind(engine):engine.run.bind(engine))({
       apiVersion: args.source?.provider==='r2-lab'||args.destination?.provider==='r2-lab'?'0.2.0':API_VERSION,
       operation,
       idempotencyKey: crypto.randomUUID(),
       ...args,
-    });
+    },{traceId});
     guideEvent({
       kind: "operation",
       operation,
@@ -191,7 +199,9 @@ export function installBetaExplorer({
       message(result.error, "failed");
       return;
     }
+    const renderStart=performance.now();
     if (!append) {
+      metadataRelease?.();metadataRelease=null;
       $("files").replaceChildren();
       selected = null;
     }
@@ -245,6 +255,9 @@ export function installBetaExplorer({
         (result.result.complete ? "complete" : "more pages available"),
       "completed",
     );
+    metadataRelease?.();metadataRelease=engine.resources.track("metadata-cache",$("files").children.length*128);
+    engine.resources.record(result.id,"ui.render","extension/beta-explorer.mjs",renderStart);
+    await engine.resources.close();
     await refreshJobs();
   }
   async function refreshJobs() {
@@ -423,8 +436,12 @@ export function installBetaExplorer({
       const result = await run("read", { source });
       if (result.state !== "completed") throw Error(result.error);
       if (!enabled) return;
+      const previewStart=performance.now();previewRelease?.();
+      previewRelease=engine.resources.track("preview",new TextEncoder().encode(result.result.content).length);
       $("preview").textContent = result.result.content;
       $("preview").hidden = false;
+      engine.resources.record(result.id,"ui.preview","extension/beta-explorer.mjs",previewStart);
+      await engine.resources.close();
       await refreshJobs();
     });
   $("refresh-jobs").onclick = () =>
@@ -467,17 +484,21 @@ export function installBetaExplorer({
     .addEventListener("click", () =>
       guideEvent({ kind: "action", action: "comparison" }),
     );
-  chrome.storage.onChanged.addListener((changes, area) => {
+  const storageChanged=(changes, area) => {
     if (area === "local" && changes.betaModeEnabled)
       safe(async () => {
         await gate();
         if (enabled) await browse();
       });
-  });
+  };
+  chrome.storage.onChanged.addListener(storageChanged);
   safe(async () => {
     await gate();
     if (!enabled) return;
     await initialize();
+    const startup=await engine.resources.begin("startup");
+    engine.resources.record(startup,"startup","extension/beta-explorer.mjs",startupAt);
+    await engine.resources.finish(startup);
     await browse();
   });
 
@@ -485,7 +506,10 @@ export function installBetaExplorer({
     async settle() {
       while (pending.size) await Promise.allSettled([...pending]);
     },
+    resources:{query:(method,input)=>engine?.resources.query(method,input),exportEvidence:()=>engine?.resources.exportEvidence()},
     close() {
+      previewRelease?.();metadataRelease?.();listenerRelease?.();observer?.disconnect();
+      chrome.storage.onChanged.removeListener?.(storageChanged);
       walkthrough.destroy();
       store?.close();
     },

@@ -62,5 +62,10 @@
   "extension/file-engine/engine.mjs",
   "scripts/r2-lab/forever-records.mjs",
   "scripts/r2-lab/preservation.mjs",
-  "scripts/r2-lab/schema-fixtures.mjs"
+  "scripts/r2-lab/schema-fixtures.mjs",
+  "extension/file-engine/resources.mjs",
+  "agent/resources/api.mjs",
+  "scripts/resource-atlas-benchmark.mjs",
+  "scripts/resource-atlas-forever.mjs",
+  "tests/resource-atlas.test.mjs"
 ]

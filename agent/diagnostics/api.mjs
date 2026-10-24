@@ -9,11 +9,11 @@ import {createIssueInventory} from './issues.mjs';
 import {createAdapters} from './adapters.mjs';
 import {registry,operations,resolveOperation,validateStructure,validInput} from './registry.mjs';
 const read=path=>readFileSync(new URL('../../'+path,import.meta.url));
-export function createDiagnosticAPI({bundle,runtimeBundle}={}){
+export function createDiagnosticAPI({bundle,runtimeBundle,resourceBundle}={}){
  if(bundle&&Buffer.byteLength(JSON.stringify(bundle))>262144)throw Error('BUNDLE_TOO_LARGE');
  const catalog=registry();
  if(runtimeBundle&&Buffer.byteLength(JSON.stringify(runtimeBundle))>catalog.limits.runtimeBundleBytes)throw Error('BUNDLE_TOO_LARGE');
- const adapters=createAdapters({bundle,runtimeBundle});
+ const adapters=createAdapters({bundle,runtimeBundle,resourceBundle});
  const envelope=(state,data,error)=>{
   const result={diagnosticApiVersion:catalog.gatewayVersion,state,scope:'offline/read-only; repository knowledge and imported observations',...(data===undefined?{}:{data}),...(error?{error:{code:error}}:{})};
   return Buffer.byteLength(JSON.stringify(result))>catalog.limits.responseBytes?{diagnosticApiVersion:catalog.gatewayVersion,state:'failed',scope:result.scope,error:{code:'RESPONSE_TOO_LARGE'}}:structuredClone(result);
@@ -27,7 +27,7 @@ export function createDiagnosticAPI({bundle,runtimeBundle}={}){
    try{
     const result=adapters.get(owner).query(resolved.operation.name,input);
     const state=result.data?.valid===false?'failed':['available','partial','unavailable','failed'].includes(result.state)?result.state:result.error||result.state==='unsupported'?'failed':result.freshness?.status==='current'?'available':'partial';
-    const response=envelope(state,{namespace:owner,operation:resolved.operation.id,nativeVersion:catalog.namespaces.find(n=>n.id===owner).version,authority:resolved.operation.authority,result,evidenceBoundary:owner==='explorer'?(bundle?'Imported redacted observations; not authenticated live truth':'No runtime bundle supplied; project knowledge alone cannot diagnose a live failure'):owner==='runtime'?(runtimeBundle?'Imported passive events, re-sanitized; not a live session':'No runtime bundle supplied; passive runtime observations are unavailable'):'Repository records and source relationships; native provenance/freshness is preserved'});
+    const response=envelope(state,{namespace:owner,operation:resolved.operation.id,nativeVersion:catalog.namespaces.find(n=>n.id===owner).version,authority:resolved.operation.authority,result,evidenceBoundary:owner==='resources'?(resourceBundle?'Imported bounded resource measurements; unauthenticated, not a live session':'No resource evidence supplied; resources.describe documents collection and import'):owner==='explorer'?(bundle?'Imported redacted observations; not authenticated live truth':'No runtime bundle supplied; project knowledge alone cannot diagnose a live failure'):owner==='runtime'?(runtimeBundle?'Imported passive events, re-sanitized; not a live session':'No runtime bundle supplied; passive runtime observations are unavailable'):'Repository records and source relationships; native provenance/freshness is preserved'});
     if(Buffer.byteLength(JSON.stringify(response))>catalog.limits.responseBytes)return envelope('failed',undefined,'RESPONSE_TOO_LARGE');
     return response;
    }catch{return envelope('failed',undefined,'NAMESPACE_QUERY_FAILED');}
@@ -44,7 +44,7 @@ export function createDiagnosticAPI({bundle,runtimeBundle}={}){
    const owners=catalog.ownership.filter(item=>!input.subject||item.subject===input.subject);
    return owners.length?envelope('available',{owners,unimplemented:catalog.unimplemented}):envelope('unavailable',undefined,'UNKNOWN_SUBJECT');
   }
-  if(operation==='getStartGuide')return envelope('available',{steps:[['Discover APIs','diagnostics.describe',{}],['Check routing/ownership','diagnostics.validateRegistry',{}],['Locate subsystem','diagnostics.getProjectMap',{}],['Review current issues','diagnostics.listIssues',{}],['Check local evidence','diagnostics.getVerificationStatus',{}],['Inspect release blockers','diagnostics.getReleaseReadiness',{}],['Choose a smoke test','diagnostics.getTestPlan',{preset:'all'}]].map(([purpose,operation,input])=>({purpose,operation,input})),runtimeEvidence:'Import the matching reviewed bundle explicitly; discovery does not connect to a live extension',forever:'No accepted purpose model or certification is claimed'});
+  if(operation==='getStartGuide')return envelope('available',{steps:[['Discover APIs','diagnostics.describe',{}],['Inspect resource measurements','resources.describe',{}],['Check routing/ownership','diagnostics.validateRegistry',{}],['Locate subsystem','diagnostics.getProjectMap',{}],['Review current issues','diagnostics.listIssues',{}],['Check local evidence','diagnostics.getVerificationStatus',{}],['Inspect release blockers','diagnostics.getReleaseReadiness',{}],['Choose a smoke test','diagnostics.getTestPlan',{preset:'all'}]].map(([purpose,operation,input])=>({purpose,operation,input})),runtimeEvidence:'Import the matching reviewed bundle explicitly; discovery does not connect to a live extension',forever:'No accepted purpose model or certification is claimed'});
   if(operation==='validateRegistry'){
    const audit=validateStructure();
    for(const ns of catalog.namespaces){

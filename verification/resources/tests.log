@@ -1,0 +1,15 @@
+✔ actual engine correlation, bounded traces, supported memory, privacy and gateway methods (31.828295ms)
+✔ R2 adapter actual HTTP path is observable without leaking bearer or location (118.93055ms)
+✔ timeouts and journal contention remain classified failures and measured waits (952.676774ms)
+✔ restart retains finished and interrupted evidence without replay; bounded span storage (31.692412ms)
+✔ controlled repeated retention is detected, cleanup and unavailable heap are explicit (1.898605ms)
+✔ collector persistence failure never changes filesystem outcome (3.336234ms)
+✔ real file-journal lock contention produces bounded wait evidence without a filesystem mutation (1569.173022ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2816.770446

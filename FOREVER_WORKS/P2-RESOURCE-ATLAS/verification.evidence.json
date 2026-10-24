@@ -1,0 +1,45 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.resources.evidence.verification",
+  "kind": "evidence",
+  "type": "integration-test",
+  "source": "verification/resources/live-lab.json",
+  "statementSupported": "Actual R2 adapter activity is observable, but this run failed acceptance: 72 passed, 29 failed, 16 blocked. Cleanup independently confirmed. Offline controlled faults and ordinary Chromium evidence are separate.",
+  "confidence": 1,
+  "immutableReference": "sha256:69ab0645eee2daef576254ac38d09774c0379d898e9f81b66d2d0dc33944432b",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.4 implementation assignment, 2026-10-24; current-state agent measurements, not accepted replacement of frozen intent",
+      "status": "implementation present; acceptance blocked; do not merge as completed milestone",
+      "contract": "agent/resources/contracts.json",
+      "documentation": "docs/phase2/RESOURCE_ATLAS.md",
+      "limitations": [
+        "Live laboratory: 72 passed, 29 failed, 16 blocked",
+        "No installed extension or long-session certification",
+        "Whole-runtime heap; no GC-normalized leak proof",
+        "No layout/paint, worker CPU/heap or native input-delay attribution"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs",
+        "tests/resource-atlas-schema.py"
+      ],
+      "evidence": [
+        "verification/resources/tests.log",
+        "verification/resources/benchmark.json",
+        "verification/resources/browser-evidence.json",
+        "verification/resources/live-evidence.json",
+        "verification/resources/cleanup.json"
+      ],
+      "reproduction": "docs/phase2/RESOURCE_ATLAS.md",
+      "events": [
+        "journal.lock",
+        "journal.queue",
+        "provider",
+        "network",
+        "verification",
+        "ui.render",
+        "ui.preview"
+      ]
+    }
+  }
+}

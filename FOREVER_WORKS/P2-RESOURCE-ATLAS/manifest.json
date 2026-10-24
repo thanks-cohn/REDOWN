@@ -1,0 +1,35 @@
+{
+  "foreverVersion": "0.1",
+  "projectId": "redown-resource-atlas-phase24",
+  "records": {
+    "capabilities": [
+      "observe.capability.json"
+    ],
+    "invariants": [
+      "privacy.invariant.json"
+    ],
+    "compatibility": [
+      "api.compatibility.json"
+    ],
+    "implementations": [
+      "atlas.implementation.json"
+    ],
+    "evidence": [
+      "verification.evidence.json"
+    ]
+  },
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.4 implementation assignment, 2026-10-24; current-state agent measurements, not accepted replacement of frozen intent",
+      "status": "implementation present; acceptance blocked; do not merge as completed milestone",
+      "contract": "agent/resources/contracts.json",
+      "documentation": "docs/phase2/RESOURCE_ATLAS.md",
+      "limitations": [
+        "Live laboratory: 72 passed, 29 failed, 16 blocked",
+        "No installed extension or long-session certification",
+        "Whole-runtime heap; no GC-normalized leak proof",
+        "No layout/paint, worker CPU/heap or native input-delay attribution"
+      ]
+    }
+  }
+}

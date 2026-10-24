@@ -633,6 +633,94 @@
         }
       ],
       "excluded": []
+    },
+    {
+      "id": "resources",
+      "version": "1.0.0",
+      "versionField": "resourceApiVersion",
+      "discovery": "describe",
+      "authority": "Local measured observations or explicitly imported unauthenticated evidence; read-only",
+      "excluded": [],
+      "operations": [
+        {
+          "name": "describe",
+          "arguments": {}
+        },
+        {
+          "name": "snapshot",
+          "arguments": {}
+        },
+        {
+          "name": "listTraces",
+          "arguments": {
+            "offset": {
+              "type": "integer",
+              "required": false
+            },
+            "limit": {
+              "type": "integer",
+              "required": false
+            }
+          }
+        },
+        {
+          "name": "getTrace",
+          "arguments": {
+            "operationId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getLatencyBreakdown",
+          "arguments": {
+            "operationId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getMemoryProfile",
+          "arguments": {
+            "operationId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "getBottlenecks",
+          "arguments": {}
+        },
+        {
+          "name": "explainSlowdown",
+          "arguments": {
+            "operationId": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "compareRuns",
+          "arguments": {
+            "before": {
+              "type": "string",
+              "required": true
+            },
+            "after": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        {
+          "name": "exportEvidence",
+          "arguments": {}
+        }
+      ]
     }
   ],
   "aliases": {
@@ -740,6 +828,14 @@
       "related": [
         "diagnostics.getProjectMap",
         "explorer.explainOperation"
+      ]
+    },
+    {
+      "subject": "resource-performance-memory",
+      "owner": "resources.describe",
+      "related": [
+        "resources.getTrace",
+        "resources.getBottlenecks"
       ]
     }
   ],

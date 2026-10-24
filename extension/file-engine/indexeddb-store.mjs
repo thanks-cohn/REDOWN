@@ -11,15 +11,15 @@ export async function openBetaStore(indexedDB=globalThis.indexedDB) {
     request.onsuccess=()=>resolve(request.result);
   });
   db.onversionchange=()=>db.close();
-  const transaction=(write,fn)=>new Promise((resolve,reject)=>{
-    let output;
+  const transaction=(write,fn,context)=>new Promise((resolve,reject)=>{
+    let output;const started=performance.now();
     const tx=db.transaction('state',write?'readwrite':'readonly'),objects=tx.objectStore('state');
-    tx.oncomplete=()=>resolve(output);tx.onabort=()=>reject(fault('STORAGE_FAILED'));tx.onerror=()=>{};
+    tx.oncomplete=()=>{context?.resourceTrace?.atlas.record(context.resourceTrace.id,'persistence','extension/file-engine/indexeddb-store.mjs',started);resolve(output);};tx.onabort=()=>reject(fault('STORAGE_FAILED'));tx.onerror=()=>{};
     const request=objects.get('snapshot');
     request.onsuccess=()=>{
       try {const state=request.result||initialState();output=fn(state);if(output&&typeof output.then==='function')throw fault('ASYNC_TRANSACTION_FORBIDDEN');if(write)objects.put(state,'snapshot');}
       catch(error){tx.onabort=()=>reject(error);tx.abort();}
     };
   });
-  return {read:()=>transaction(false,state=>structuredClone(state)),update:fn=>transaction(true,fn),close:()=>db.close()};
+  return {read:context=>transaction(false,state=>structuredClone(state),context),update:(fn,context)=>transaction(true,fn,context),close:()=>db.close()};
 }

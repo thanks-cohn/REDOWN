@@ -1,0 +1,22 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.resources.invariant.privacy",
+  "kind": "invariant",
+  "name": "Bounded read-only resource evidence",
+  "statement": "Collect bounded allowlisted timings and resource observations without credentials, contents or sensitive locations. Imported read-only diagnostics confer no filesystem mutation rights. Preserve production Explorer isolation, four-bucket restrictions and uncertain-write safety.",
+  "severity": "critical",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.4 implementation assignment, 2026-10-24; current-state agent measurements, not accepted replacement of frozen intent",
+      "status": "implementation present; acceptance blocked; do not merge as completed milestone",
+      "contract": "agent/resources/contracts.json",
+      "documentation": "docs/phase2/RESOURCE_ATLAS.md",
+      "limitations": [
+        "Live laboratory: 72 passed, 29 failed, 16 blocked",
+        "No installed extension or long-session certification",
+        "Whole-runtime heap; no GC-normalized leak proof",
+        "No layout/paint, worker CPU/heap or native input-delay attribution"
+      ]
+    }
+  }
+}

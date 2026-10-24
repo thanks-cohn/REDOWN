@@ -1,0 +1,290 @@
+{
+  "resourceApiVersion": "1.0.0",
+  "operations": [
+    {
+      "id": "resources.describe",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {},
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.snapshot",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {},
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.listTraces",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {},
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.getTrace",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "operationId"
+        ],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {
+        "operationId": "example-operation"
+      },
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.getLatencyBreakdown",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "operationId"
+        ],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {
+        "operationId": "example-operation"
+      },
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.getMemoryProfile",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "operationId"
+        ],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {
+        "operationId": "example-operation"
+      },
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.getBottlenecks",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {},
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.explainSlowdown",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "operationId"
+        ],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {
+        "operationId": "example-operation"
+      },
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.compareRuns",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "before": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "after": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "before",
+          "after"
+        ],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {
+        "before": "example-before",
+        "after": "example-after"
+      },
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    },
+    {
+      "id": "resources.exportEvidence",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "authorization": "offline/read-only import or owner-local collector; grants no file execution",
+      "example": {},
+      "sourceRefs": [
+        "extension/file-engine/resources.mjs",
+        "agent/resources/api.mjs"
+      ],
+      "tests": [
+        "tests/resource-atlas.test.mjs"
+      ]
+    }
+  ],
+  "evidenceSchema": "agent/resources/evidence.schema.json",
+  "responseSchema": {
+    "type": "object",
+    "properties": {
+      "resourceApiVersion": {
+        "const": "1.0.0"
+      },
+      "state": {
+        "enum": [
+          "available",
+          "unavailable",
+          "failed",
+          "partial"
+        ]
+      },
+      "data": {
+        "type": "object"
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "resourceApiVersion",
+      "state"
+    ],
+    "additionalProperties": false
+  }
+}

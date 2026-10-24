@@ -499,6 +499,12 @@ try {
     layouts.push({ width, popupInViewport: true, noHorizontalOverflow: true });
     await page.locator("#walkthrough-close").click();
   }
+  const atlas=await page.evaluate(async()=>{const {controller}=await import('/beta-explorer.mjs');await controller.settle();return controller.resources.exportEvidence();});
+  assert.ok(atlas.traces.some(t=>t.spans.some(s=>s.phase==='ui.render')));
+  assert.ok(atlas.traces.some(t=>t.spans.some(s=>s.phase==='ui.preview')));
+  assert.ok(atlas.traces.some(t=>t.spans.some(s=>s.phase==='provider')));
+  await mkdir('verification/resources',{recursive:true});
+  await writeFile('verification/resources/browser-evidence.json',JSON.stringify(atlas,null,2)+'\n');
   const catalog = await page.evaluate(() => globalThis.RedownBetaQA.describe());
   assert.equal(results.length, catalog.steps.length);
   assert.deepEqual(errors, []);

@@ -1,0 +1,86 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.resources.implementation.atlas",
+  "kind": "implementation",
+  "type": "library",
+  "technology": "Portable ES modules, native performance/memory facilities, existing journal and diagnostics gateway",
+  "version": "1.0.0",
+  "satisfiesCapabilities": [
+    "redown.resources.capability.observe"
+  ],
+  "constrainedByInvariants": [
+    "redown.resources.invariant.privacy"
+  ],
+  "compatibilityContracts": [
+    "redown.resources.compatibility.api"
+  ],
+  "sourceLocations": [
+    "extension/file-engine/resources.mjs",
+    "extension/file-engine/engine.mjs",
+    "extension/file-engine/adapters/r2-http.mjs",
+    "extension/file-engine/indexeddb-store.mjs",
+    "extension/beta-explorer.mjs",
+    "agent/resources/api.mjs",
+    "agent/resources/contracts.json",
+    "agent/resources/evidence.schema.json",
+    "tests/resource-atlas.test.mjs",
+    "scripts/resource-atlas-benchmark.mjs"
+  ],
+  "replaceability": "Reconstruct from contracts, real coordinator hooks, lifecycle boundaries, negative privacy tests and recorded failed/live evidence. Preserve uncertainty and safety; no original-implementer knowledge is required.",
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.4 implementation assignment, 2026-10-24; current-state agent measurements, not accepted replacement of frozen intent",
+      "status": "implementation present; acceptance blocked; do not merge as completed milestone",
+      "contract": "agent/resources/contracts.json",
+      "documentation": "docs/phase2/RESOURCE_ATLAS.md",
+      "limitations": [
+        "Live laboratory: 72 passed, 29 failed, 16 blocked",
+        "No installed extension or long-session certification",
+        "Whole-runtime heap; no GC-normalized leak proof",
+        "No layout/paint, worker CPU/heap or native input-delay attribution"
+      ],
+      "sourceRefs": [
+        {
+          "path": "extension/file-engine/resources.mjs",
+          "sha256": "39616f93c34d647a0e86e13d68cb3772569f3f570372b5e0e788196a1d5e5130"
+        },
+        {
+          "path": "extension/file-engine/engine.mjs",
+          "sha256": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67"
+        },
+        {
+          "path": "extension/file-engine/adapters/r2-http.mjs",
+          "sha256": "2e790bbc4be6fc00544ff2c0e014287c0f6f25ee7f5ead9d4edefc823e204a91"
+        },
+        {
+          "path": "extension/file-engine/indexeddb-store.mjs",
+          "sha256": "f6328a0020ee0fdc47dc14728df623e10d64c7cd5e90b23fbad6df2f1cdf848b"
+        },
+        {
+          "path": "extension/beta-explorer.mjs",
+          "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c"
+        },
+        {
+          "path": "agent/resources/api.mjs",
+          "sha256": "29dac4dd35bf597dfbb03222e99cc9a0166be9a1aabd1375c70fed8c0501c2e7"
+        },
+        {
+          "path": "agent/resources/contracts.json",
+          "sha256": "56384772adc5854e25545408ad949c7837b7899ef866bd4c9053abcf574ce85b"
+        },
+        {
+          "path": "agent/resources/evidence.schema.json",
+          "sha256": "69de34e1efb3f29452ac8686b53a77b200f6721bc48991ea2f7f09e951817295"
+        },
+        {
+          "path": "tests/resource-atlas.test.mjs",
+          "sha256": "9593603b13f2b13a18a1f6543baec715e5015f7238b7a5fea3892b44c227ef55"
+        },
+        {
+          "path": "scripts/resource-atlas-benchmark.mjs",
+          "sha256": "7ba9873d5d5ba92b7662470b0af5872989ea67201bfacce38da4597faab63ac8"
+        }
+      ]
+    }
+  }
+}

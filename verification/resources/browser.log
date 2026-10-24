@@ -1,0 +1,413 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 beta:acceptance
+> node scripts/beta-walkthrough-acceptance.mjs
+
+{
+  "version": "1.0.0",
+  "sourceCommit": "c5017e2be5e6d4370ab522214b3187efeaca86ed",
+  "sourceFiles": [
+    {
+      "path": "extension/beta-explorer.html",
+      "sha256": "fb8b5ca9db3b69b89d7bcbedbb4c608bbffe6074d4c34f42219a78c57e4fe0fb"
+    },
+    {
+      "path": "extension/beta-explorer.css",
+      "sha256": "e41a3a0e66b00cbf3fb156797b98c6bbf992c2af5f4ede49235747bd2c895113"
+    },
+    {
+      "path": "extension/beta-explorer.mjs",
+      "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c"
+    },
+    {
+      "path": "extension/beta-walkthrough.mjs",
+      "sha256": "7c67da8485b090fa7e5d997d0d9618c28bd4bc37e38f90d5967a0e2370f10010"
+    },
+    {
+      "path": "extension/beta-walkthrough-steps.mjs",
+      "sha256": "d40050a5b572c846d27782b66c66540405667d66e3daa615267122ccc86b66f8"
+    },
+    {
+      "path": "extension/file-engine/simulation.mjs",
+      "sha256": "573b2a29ef2df1f192d3d22ecaa615f36334c998c73ad73bfb1289e34782bad5"
+    },
+    {
+      "path": "extension/file-engine/acceptance.mjs",
+      "sha256": "ee764edb69e64525e14315e498c1e8046843e9641cca0124175ecb2dcd183a44"
+    },
+    {
+      "path": "scripts/beta-walkthrough-acceptance.mjs",
+      "sha256": "4870d0e87183c311d2fd954ef3cfd0e0ca9721a59bab0fbf3747da9f4019e7cf"
+    }
+  ],
+  "readiness": {
+    "releaseReady": false,
+    "scope": "simulation foundation",
+    "requiredBeforeRelease": [
+      "real R2 adapter and authorized byte-integrity acceptance",
+      "second real provider with the same explorer contract",
+      "local filesystem adapter and permission model",
+      "binary upload/download and media preview",
+      "durable interrupted-job recovery and safe reconciliation",
+      "installed-extension security/accessibility/performance acceptance",
+      "published competitor workflow benchmarks"
+    ],
+    "future": [
+      "authorized cross-computer transport and device identity"
+    ]
+  },
+  "scope": "automated ordinary Chromium; fresh isolated profile, actual UI/shared engine/IndexedDB, mocked Chrome setting, no cloud/provider certification",
+  "browser": "153.0.8010.0",
+  "finishedAt": "2026-10-24T15:52:14.449Z",
+  "passed": 34,
+  "failed": 0,
+  "results": [
+    {
+      "stepId": "welcome",
+      "state": "passed",
+      "durationMs": 53,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "storage",
+      "state": "passed",
+      "durationMs": 53,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "navigation",
+      "state": "passed",
+      "durationMs": 116,
+      "evidence": {},
+      "operationIds": [
+        "109cd485-4dbe-4b9c-839b-15de8b2729aa",
+        "31dc8f48-292a-4c8a-8d2d-c684da7d8769"
+      ]
+    },
+    {
+      "stepId": "files",
+      "state": "passed",
+      "durationMs": 47,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "help",
+      "state": "passed",
+      "durationMs": 246,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "browse",
+      "state": "passed",
+      "durationMs": 69,
+      "evidence": {},
+      "operationIds": [
+        "f00ced3c-c399-4a84-93d5-b4cad72927e9"
+      ]
+    },
+    {
+      "stepId": "selection",
+      "state": "passed",
+      "durationMs": 47,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "details",
+      "state": "passed",
+      "durationMs": 47,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "preview",
+      "state": "passed",
+      "durationMs": 103,
+      "evidence": {},
+      "operationIds": [
+        "4b477f2c-ed7c-457a-b056-3cb8447b5720"
+      ]
+    },
+    {
+      "stepId": "grid",
+      "state": "passed",
+      "durationMs": 77,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "list",
+      "state": "passed",
+      "durationMs": 84,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "folder",
+      "state": "passed",
+      "durationMs": 104,
+      "evidence": {},
+      "operationIds": [
+        "5211439b-ec5a-4ee1-995f-f9cefbc3f518"
+      ]
+    },
+    {
+      "stepId": "parent",
+      "state": "passed",
+      "durationMs": 96,
+      "evidence": {},
+      "operationIds": [
+        "31b594f4-b454-48f6-b823-c374f8f1e585"
+      ]
+    },
+    {
+      "stepId": "search",
+      "state": "passed",
+      "durationMs": 67,
+      "evidence": {},
+      "operationIds": [
+        "5810db8c-4b7d-4f04-8bbf-1c465d83c069"
+      ]
+    },
+    {
+      "stepId": "empty",
+      "state": "passed",
+      "durationMs": 124,
+      "evidence": {},
+      "operationIds": [
+        "d221b484-55df-46ec-95b2-04b7f5e17df3",
+        "77e49981-fce9-4259-9a52-1ab44f00d39e"
+      ]
+    },
+    {
+      "stepId": "mkdir",
+      "state": "passed",
+      "durationMs": 140,
+      "evidence": {},
+      "operationIds": [
+        "5ededfe7-b31b-4aeb-8f55-b9d50b8156f9",
+        "b688fa2e-2da1-448c-a459-d45997bc4b76"
+      ]
+    },
+    {
+      "stepId": "upload",
+      "state": "passed",
+      "durationMs": 168,
+      "evidence": {
+        "algorithm": "SHA-256",
+        "expected": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7",
+        "observed": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "fc538b71-a7bf-4c26-9f5c-aeb18d84763a",
+        "f38de575-475d-407b-8e4f-a236898421d6",
+        "4665f4f4-497a-4d51-a6df-61897f8e25ba"
+      ]
+    },
+    {
+      "stepId": "copy",
+      "state": "passed",
+      "durationMs": 95,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "destination",
+      "state": "passed",
+      "durationMs": 45,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "paste",
+      "state": "passed",
+      "durationMs": 173,
+      "evidence": {
+        "sourceRetained": true,
+        "sourceHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7",
+        "destinationHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "b8dbf9ae-24df-4a1a-bcbe-9f069e8b8701",
+        "14549beb-b14e-4c91-bd9a-0a8fe3d96c80"
+      ]
+    },
+    {
+      "stepId": "switch",
+      "state": "passed",
+      "durationMs": 155,
+      "evidence": {},
+      "operationIds": [
+        "020ce99f-2e8a-4636-ae0e-c41b3d259a92",
+        "4a91995e-625d-4ff7-8090-d72abd0df42f"
+      ]
+    },
+    {
+      "stepId": "cut",
+      "state": "passed",
+      "durationMs": 84,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "move",
+      "state": "passed",
+      "durationMs": 177,
+      "evidence": {
+        "sourceRemoved": true,
+        "destinationHash": "934e8441bc41ce24f024e384ad97f1ff02c882844ed3b8419fac57615179ced7"
+      },
+      "operationIds": [
+        "ad495f00-20fa-4ae2-a90b-22106fbc0fb4",
+        "da3cf178-9f1f-4e0c-a59e-910c81689951"
+      ]
+    },
+    {
+      "stepId": "rename",
+      "state": "passed",
+      "durationMs": 320,
+      "evidence": {},
+      "operationIds": [
+        "62aa3108-87d6-4101-be14-97887cb7418e",
+        "806adeaf-fa3f-4318-8180-3e788661009d",
+        "9b53e2ba-0c23-48ca-a7df-7eca7ae25c1e",
+        "6e282e08-4770-48ce-baa2-877c0b3f04df"
+      ]
+    },
+    {
+      "stepId": "conflict",
+      "state": "passed",
+      "durationMs": 341,
+      "evidence": {
+        "expectedFailure": "CONFLICT",
+        "observedFailure": "CONFLICT",
+        "sourceUnchanged": true,
+        "destinationUnchanged": true
+      },
+      "operationIds": [
+        "a3fccdcf-910f-4aef-b87b-b64f7d0e9b81",
+        "5161a90a-28f3-4eb1-9ff3-c293aef562eb",
+        "4d305edb-666c-48ca-a4de-2caa69493e3f"
+      ]
+    },
+    {
+      "stepId": "delete",
+      "state": "passed",
+      "durationMs": 247,
+      "evidence": {
+        "cancelRetained": true,
+        "exactTargetRemoved": true,
+        "unrelatedRetained": true
+      },
+      "operationIds": [
+        "ed589e22-42cd-4a74-930c-f1f96ac009a9",
+        "b2304e19-545f-48ff-94d9-11a123068486"
+      ]
+    },
+    {
+      "stepId": "history",
+      "state": "passed",
+      "durationMs": 100,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "trace",
+      "state": "passed",
+      "durationMs": 80,
+      "evidence": {
+        "operationId": "b2304e19-545f-48ff-94d9-11a123068486",
+        "stages": 7
+      },
+      "operationIds": []
+    },
+    {
+      "stepId": "refresh-history",
+      "state": "passed",
+      "durationMs": 94,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "pagination",
+      "state": "passed",
+      "durationMs": 4165,
+      "evidence": {
+        "expected": 55,
+        "observed": 55
+      },
+      "operationIds": [
+        "3626ed41-a582-4b05-89f7-d17c0229c322",
+        "7e8e09da-9b2b-4ea6-81d0-76faa7a5f7c7"
+      ]
+    },
+    {
+      "stepId": "comparison",
+      "state": "passed",
+      "durationMs": 45,
+      "evidence": {},
+      "operationIds": []
+    },
+    {
+      "stepId": "reopen",
+      "state": "passed",
+      "durationMs": 468,
+      "evidence": {
+        "guideResumed": true,
+        "onlyListingAdded": true
+      },
+      "operationIds": [
+        "444f7aee-4bec-4e54-b516-18d265dae762"
+      ]
+    },
+    {
+      "stepId": "rollback",
+      "state": "passed",
+      "durationMs": 149,
+      "evidence": {},
+      "operationIds": [
+        "077b5e4d-e675-4221-9c3a-fdae7666e8a7"
+      ]
+    },
+    {
+      "stepId": "review",
+      "state": "passed",
+      "durationMs": 228,
+      "evidence": {
+        "exportParsed": true,
+        "isolatedCoreChecks": 12,
+        "userJournalUnchanged": true
+      },
+      "operationIds": []
+    }
+  ],
+  "layouts": [
+    {
+      "width": 1366,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 768,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 390,
+      "popupInViewport": true,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "pageErrors": [],
+  "unverified": [
+    "installed Chrome extension",
+    "live provider bindings and bytes",
+    "local filesystem bridge",
+    "cross-computer transport",
+    "competitor parity"
+  ]
+}

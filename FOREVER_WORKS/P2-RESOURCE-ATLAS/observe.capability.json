@@ -1,0 +1,29 @@
+{
+  "foreverVersion": "0.1",
+  "id": "redown.resources.capability.observe",
+  "kind": "capability",
+  "name": "Resource Atlas performance and memory inspection",
+  "statement": "Authorized cold agents can discover and inspect correlated real Beta/engine/provider/journal observations, reproduce controlled slowdowns and retention, compare samples and export bounded evidence, distinguishing facts from hypotheses and unavailable information.",
+  "status": "partial",
+  "criticality": "essential",
+  "relatedInvariants": [
+    "redown.resources.invariant.privacy"
+  ],
+  "relatedImplementations": [
+    "redown.resources.implementation.atlas"
+  ],
+  "extensions": {
+    "org.redown": {
+      "authority": "Owner Phase 2.4 implementation assignment, 2026-10-24; current-state agent measurements, not accepted replacement of frozen intent",
+      "status": "implementation present; acceptance blocked; do not merge as completed milestone",
+      "contract": "agent/resources/contracts.json",
+      "documentation": "docs/phase2/RESOURCE_ATLAS.md",
+      "limitations": [
+        "Live laboratory: 72 passed, 29 failed, 16 blocked",
+        "No installed extension or long-session certification",
+        "Whole-runtime heap; no GC-normalized leak proof",
+        "No layout/paint, worker CPU/heap or native input-delay attribution"
+      ]
+    }
+  }
+}

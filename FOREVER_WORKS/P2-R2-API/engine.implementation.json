@@ -42,12 +42,12 @@
       "sourceRefs": [
         {
           "path": "extension/file-engine/engine.mjs",
-          "sha256": "5324fef3c6c41d60a5fab4edb0d96a7f1eb7396c0a4303cab52536156d21b33c",
+          "sha256": "852f6a2c69b5b537191d47ce1b6a87fb90f08a96d22b91a2584b62656f2f4e67",
           "symbol": "createFileEngine"
         },
         {
           "path": "extension/file-engine/simulation.mjs",
-          "sha256": "aaf4ceea7d8b4e8a127090e20ce28bbec4a5e187abb0e809bb5f9ce4fb3ae1d0",
+          "sha256": "573b2a29ef2df1f192d3d22ecaa615f36334c998c73ad73bfb1289e34782bad5",
           "symbol": "see module exports"
         },
         {
@@ -57,12 +57,12 @@
         },
         {
           "path": "extension/file-engine/adapters/r2-http.mjs",
-          "sha256": "fb66ca0ebce0a29e566fd529f0f8039abfabfa91a622a754327639b308891ff7",
+          "sha256": "2e790bbc4be6fc00544ff2c0e014287c0f6f25ee7f5ead9d4edefc823e204a91",
           "symbol": "see module exports"
         },
         {
           "path": "extension/beta-explorer.mjs",
-          "sha256": "dbc0d539d77732151b93b03df019d28b4c254181529e0cd40c6db540aba4d309",
+          "sha256": "b01592d9114ee3ae5e5b1394b2bd74090c514191393c911a8afe17d080f7dd0c",
           "symbol": "see module exports"
         },
         {
@@ -82,7 +82,7 @@
         },
         {
           "path": "scripts/r2-lab/file-store.mjs",
-          "sha256": "01cdd46e6fda04b7fd7549073832722f87fb0e76e0c4fdd0e06108aeaba13865",
+          "sha256": "3c27a543abddcf6e9a979776590aa1615ef13f38583f53b8163eabce5015ccba",
           "symbol": "see module exports"
         }
       ],
