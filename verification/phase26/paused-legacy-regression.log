@@ -1,0 +1,27 @@
+✔ denied engine exposes no collector, store, adapters or implementation helper (8.089842ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (15.856537ms)
+✔ caller trace collision cannot rewrite an existing job (4.401478ms)
+✔ version negotiation, exact input shapes, binary and range validation fail closed (3.230575ms)
+✔ seeded identity fuzz preserves Unicode/case/whitespace and rejects traversal and UTF8 limits (6.76009ms)
+✔ arbitrary binary, empty bodies, MIME and ranged read use one coordinator (34.674564ms)
+✔ accepted write with lost reply is uncertain, deduplicated and never automatically replayed (4.020754ms)
+✔ wrong readback and changed source cannot trigger move source deletion (3.764989ms)
+✔ every HTTP failure family preserves source and records typed failure with no blind retries (14.599245ms)
+✔ parallel writers have exactly one winner; batch outcomes remain per-target (61.993367ms)
+✔ cancel before write, restart uncertainty and read-only inspection are durable (2.57603ms)
+✔ seeded stateful sequences match an independent content model (4650.368327ms)
+✔ providers lacking atomic conditional delete cannot mutate a move source (3.012238ms)
+✔ malformed provider metadata and partial recursive conflicts cannot fabricate full success (2.970955ms)
+✔ safe diagnostic exports retain evidence but omit names, bodies and authorization values (2.676141ms)
+✔ real adapters require explicit authorization and reconcile cannot bypass revocation (2.865916ms)
+✔ ranged reads reject truncated successful replies and preserve exact identity boundaries (1.781763ms)
+✔ independent durable journal clients reserve duplicate mutations once and retain recovery evidence (49.189972ms)
+✔ durable journal detects externally restored older state instead of continuing mutations (5.773687ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4942.962081
