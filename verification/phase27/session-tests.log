@@ -1,0 +1,14 @@
+✔ scoped sessions execute canonical operations, correlate evidence and expose no runtime handles (34.128429ms)
+✔ session scope intersects engine authority, prevents escapes and limits payloads (8.121635ms)
+✔ actual stdio process rejects malformed lines and executes within explicitly launched simulation (201.73051ms)
+✔ denied engine exposes no collector, store, adapters or implementation helper (8.840055ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (15.389481ms)
+✔ caller trace collision cannot rewrite an existing job (9.447937ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 482.16515

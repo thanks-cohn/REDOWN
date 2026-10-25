@@ -42,7 +42,8 @@
     "aac:live": "node scripts/aac-live.mjs",
     "aac:browser": "node scripts/aac-browser.mjs",
     "providers:test": "node scripts/phase26/compile-contracts.mjs --check && node --test tests/provider-*.test.mjs",
-    "python:test": "python -m unittest discover -s clients/python/tests -v"
+    "python:test": "python -m unittest discover -s clients/python/tests -v",
+    "lab:test": "node scripts/phase27/compile-session.mjs --check && node --test tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

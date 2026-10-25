@@ -51,3 +51,7 @@ An explicitly provisioned leased R2 Worker profile is:
 The owner supplies the leased bearer through that environment variable. The session never returns it. Only the existing four dedicated buckets and prefix are accepted. R2 move/rename/delete remain blocked without atomic revision-conditioned deletion. Conventional S3 credentials, Cloudflare API-token provisioning, OAuth renewal/revocation and general credential-profile management are unfinished interfaces, not supported credential substitutes. See [the implementation report](../../docs/phase26/IMPLEMENTATION.md).
 
 Run `PYTHONPATH=clients/python python -m unittest discover -s clients/python/tests -v` on POSIX, or install the package then `python -m unittest discover -s clients/python/tests -v` on any supported Python environment.
+
+## Extension connection (0.4.0)
+
+`ExtensionClient` and `redown --extension` use the authenticated extension after explicit approval, without cloud credentials. `python -m redown.lab gui` starts the desktop laboratory; `redown-lab conformance` writes JSON/Markdown evidence. Install/register the native helper first. See [Windows setup and exact limits](../../docs/phase27/README.md). Extension mode is currently read-only with 64 KiB reads; the older stdio mode retains its own capabilities and limits.

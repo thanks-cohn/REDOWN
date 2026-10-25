@@ -1,0 +1,9 @@
+Processing ./clients/python
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: redown-client
+  Building wheel for redown-client (pyproject.toml): started
+  Building wheel for redown-client (pyproject.toml): finished with status 'done'
+  Created wheel for redown-client: filename=redown_client-0.4.0-py3-none-any.whl size=13984 sha256=82cdb417cb9a19c63ddf3d36a3eeee638da0bb985b6c8232789e19a5b8acf92c
+  Stored in directory: /tmp/pip-ephem-wheel-cache-7p0_7h7c/wheels/a9/12/c9/712c26469c225cc3125b63e0ead8e3a2c52de7d6a63ee9f7e4
+Successfully built redown-client

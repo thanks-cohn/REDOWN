@@ -1,0 +1,182 @@
+{
+  "version": "1.0.0",
+  "baseline": "dc17dfa369a7247d1202e70048b078772b99b95d",
+  "branch": "feat/phase27-extension-python-lab",
+  "acceptance": "INCOMPLETE",
+  "implemented": [
+    "extension-owned approval and rejection",
+    "selected-bucket read scopes",
+    "five-minute revocable grants",
+    "authenticated loopback native relay",
+    "shared canonical scoped session",
+    "extension OAuth R2 read adapter",
+    "Python SDK/CLI/Tkinter laboratory",
+    "conformance JSON/Markdown export",
+    "Resource Atlas operation correlation"
+  ],
+  "unsupported": [
+    "extension-mode upload/copy/mkdir/move/rename/delete",
+    "direct-s3",
+    "range reads",
+    "durable reconnect recovery",
+    "non-default jurisdiction buckets",
+    "macOS registration"
+  ],
+  "untested": [
+    "Windows installer/ACL and Chrome native-host launch",
+    "desktop GUI visual behavior",
+    "installed Chrome extension execution"
+  ],
+  "liveCloudflare": {
+    "state": "blocked",
+    "operationsAttempted": 0,
+    "reason": "No accessible installed/authenticated REDOWN surface; cloud browser has no tabs and blocks chrome://extensions under URL policy. No workaround attempted."
+  },
+  "tests": {
+    "extensionNative": {
+      "passed": 8,
+      "failed": 0
+    },
+    "python": {
+      "passed": 10,
+      "failed": 0
+    },
+    "sessionAuthority": {
+      "passed": 6,
+      "failed": 0
+    },
+    "providerContracts": {
+      "passed": 15,
+      "failed": 0
+    },
+    "fullRegression": {
+      "passed": 454,
+      "failed": 9,
+      "state": "failed",
+      "classification": "Seven historical failures and two additional failures already recorded by Phase 2.6; no new final test failure."
+    },
+    "staticStages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "packageWheel": "built 0.4.0",
+    "pythonCompile": "passed"
+  },
+  "evidenceBoundary": "Native round trip uses actual Python/TCP/native frames/coordinator with injected provider fixture. Provider-configured receipts are not independent real Cloudflare evidence. Final focused tests also enforce evidence/Atlas ID agreement.",
+  "sourceHashes": [
+    {
+      "path": "agent/explorer/model.json",
+      "sha256": "32c48123329ccda77d7835b5251f6d25fab207ed48125082bbea9661e452011b"
+    },
+    {
+      "path": "agent/files/api.mjs",
+      "sha256": "b36bfaaf93a26a231ce3667a7d441dafac39f2ae5faf86a2a79a735140663930"
+    },
+    {
+      "path": "clients/python/pyproject.toml",
+      "sha256": "146e851b540c194cd0dc26380ac680e07b5067346bd5edfe0b7d17f198380c1d"
+    },
+    {
+      "path": "clients/python/redown/__init__.py",
+      "sha256": "011e919417b55eb3e64da17bee3ebb8f4fdc4cc9af147eb879a208916644c296"
+    },
+    {
+      "path": "clients/python/redown/cli.py",
+      "sha256": "8a034ccc20d5995c850f381d168ffef9f1d6208e03bc9011a816a2ec4f932811"
+    },
+    {
+      "path": "clients/python/redown/extension.py",
+      "sha256": "5056bc5eba9ad3d692abf1bd80fc28b17d937697f5c0d07be0808fd47a085885"
+    },
+    {
+      "path": "clients/python/redown/install_host.py",
+      "sha256": "0d45f4730127de736f2e1cee70aeb31a206285927d80903eedbdba2bc7da7ab0"
+    },
+    {
+      "path": "clients/python/redown/lab.py",
+      "sha256": "16fcbdef092f3e4578099b28f5df2af203a92e8adf9b022f7410f55fa20a0779"
+    },
+    {
+      "path": "clients/python/redown/native_host.py",
+      "sha256": "c6f78cc2d226c998872853ad65e054616451ee9442bc37ec7208d58e73b047a8"
+    },
+    {
+      "path": "clients/python/tests/test_extension_transport.py",
+      "sha256": "606712e733d275480a0c8baafe6a2a2e653226e6965a91ad0138b7d756f86a1a"
+    },
+    {
+      "path": "extension/file-engine/adapters/extension-r2.mjs",
+      "sha256": "a4ac5d9b0fbf3583ad06b4968b0b43fb51c29e057a5b1a98ab74dcd5e19d288e"
+    },
+    {
+      "path": "extension/file-engine/scoped-session.mjs",
+      "sha256": "540a82c524334a20818ba2757d9ed99ef0bda3345c5bb922b2e7a41b5d47a0f0"
+    },
+    {
+      "path": "extension/file-engine/session-validators.mjs",
+      "sha256": "5c7a65f12dc91ab7c0e5abce8f486ef37a8e0ae6ca2f06e17216f10b7cfce760"
+    },
+    {
+      "path": "extension/lab-session.mjs",
+      "sha256": "06390f1c7216c1038a28f0d8588821d30d40f6bd2fc6dd1a0fb0b6f0021e8c97"
+    },
+    {
+      "path": "extension/laboratory.css",
+      "sha256": "79d9b60c942142155376f37b5c8c157b5bcbf9921944841d43764ae18c3f52ff"
+    },
+    {
+      "path": "extension/laboratory.html",
+      "sha256": "e5959eac883d04d13759cdf988f2af2f987dc3d135507171fa810b667a935a18"
+    },
+    {
+      "path": "extension/laboratory.mjs",
+      "sha256": "bf449db50c6172b96cc5fc47fc0fefe468af7f54e032ba225fe5fba9a76595fb"
+    },
+    {
+      "path": "extension/manifest.json",
+      "sha256": "d497121e8536eb2f9c93fd62abc266e656ecd8d7b4bccbf1bf951a8c8057dc90"
+    },
+    {
+      "path": "extension/options.html",
+      "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+    },
+    {
+      "path": "package.json",
+      "sha256": "7e35d457148b78db9d856d32d95e382c417a2dd4bff070942afdf299110fa74b"
+    },
+    {
+      "path": "scripts/phase27/compile-session.mjs",
+      "sha256": "fd5603614e500a89d8d0fc2202c3f39333e3efe568ed36a1487e2450cac110e6"
+    },
+    {
+      "path": "scripts/syntax-targets.json",
+      "sha256": "bad88ea76c87587e882c11cdd20b2d668542b0905b163bbefb0ba8233b6a73e7"
+    },
+    {
+      "path": "tests/extension-lab-ui.test.mjs",
+      "sha256": "75d14599290ec4bdaa13e4e6bbc1a2e75c52be64cc373e8493be3a569cb10470"
+    },
+    {
+      "path": "tests/extension-laboratory.test.mjs",
+      "sha256": "71c4e45ee7366911727d1e4822d1599bb8f2b3924b02ddb954375812421104d2"
+    },
+    {
+      "path": "tests/extension-native-e2e.test.mjs",
+      "sha256": "b06e12eb8fce6f226154d2638fefef31c02aa51f5e95b3448c5302b914539102"
+    }
+  ]
+}

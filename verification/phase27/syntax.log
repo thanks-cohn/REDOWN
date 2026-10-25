@@ -1,0 +1,484 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 check
+> node scripts/check-syntax.mjs
+
+{
+  "state": "passed",
+  "results": [
+    {
+      "file": "extension/cloudflare-api.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/cloudflare-auth.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/background.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/nested-locations.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/nested-menu-editor.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/menu-reorder.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/settings-mascot.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/popup.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-expansion-benchmark.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-signals-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/explorer-operations-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/public-addresses.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/storage-signals.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/options.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "worker/src/index.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/runtime-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/search-session.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-destination-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/installed-chrome.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-bridge.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-ui.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-status.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-check.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-policy.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-reporter.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/adapters.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/registry.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/agent-gateway-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/check-syntax.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/issues.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/transfer-counter.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/odometer.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta-explorer.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/contract.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/simulation.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/indexeddb-store.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/phase2-schema-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta-walkthrough.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta-walkthrough-steps.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/acceptance.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/beta-walkthrough-acceptance.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/beta-core-acceptance.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/adapters/memory.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/adapters/r2-http.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/catalog.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/conformance.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/deployment-plan.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/file-store.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/live.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/prepare.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/schema.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/ui.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "worker/laboratory/index.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/engine.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/forever-records.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/preservation.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/r2-lab/schema-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/file-engine/resources.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/resources/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/resource-atlas-benchmark.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/resource-atlas-forever.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "tests/resource-atlas.test.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/aac/model.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/aac/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/aac/scenarios.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/aac/ui.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/aac/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/aac-audit.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/aac-live.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/aac-browser.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/aac-forever.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "tests/aac.test.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    }
+  ]
+}

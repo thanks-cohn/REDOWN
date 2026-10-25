@@ -1,0 +1,141 @@
+✔ safe diagnostic fixture: missing-source (9.682669ms)
+✔ safe diagnostic fixture: wrong-key (1.814189ms)
+✔ safe diagnostic fixture: wrong-binding (2.135083ms)
+✔ safe diagnostic fixture: expired-authorization (0.755861ms)
+✔ safe diagnostic fixture: worker-version (5.049574ms)
+✔ safe diagnostic fixture: unsupported-endpoint (0.79494ms)
+✔ safe diagnostic fixture: network-interruption (0.653727ms)
+✔ safe diagnostic fixture: source-read (0.841861ms)
+✔ safe diagnostic fixture: destination-write (0.865857ms)
+✔ safe diagnostic fixture: ambiguous-timeout (0.788761ms)
+✔ safe diagnostic fixture: conflict (0.595359ms)
+✔ safe diagnostic fixture: verification-failed (0.649611ms)
+✔ safe diagnostic fixture: interrupted-move (0.454296ms)
+✔ safe diagnostic fixture: stale-ui (0.575018ms)
+✔ safe diagnostic fixture: cross-account (0.705805ms)
+✔ safe diagnostic fixture: concurrent-source-change (0.473945ms)
+✔ safe diagnostic fixture: nested-key (0.711585ms)
+✔ operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces (1.277508ms)
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (45.677968ms)
+✔ actual reported404 case remains open and separates reports, repository and deployed evidence (2.469569ms)
+✔ all existing bug sections are indexed and native incidents retain separate provenance (49.231274ms)
+✔ source assessments never close browser-pending issues and stale evidence invalidates the assessment (0.466374ms)
+✔ inventory supports bounded filtering and stable pagination; unknown identifiers and filters fail explicitly (41.603496ms)
+✔ malformed inventory sources do not become a clean empty inventory; unsafe paths are rejected (0.479183ms)
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (14.131687ms)
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (252.727557ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (172.39188ms)
+✔ normal primary setup does not invoke the independent inset repair (63.629523ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (29.655436ms)
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.732907ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (54.824178ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (51.723807ms)
+✔ settings disclosure dismisses outside and Escape restores focus (24.703219ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (33.662746ms)
+✔ Beta and Debug are independent, persist separate keys, and do not mutate profiles (85.635289ms)
+✔ cached configuration stays amber until explicit verification, and failures allow retry (31.866004ms)
+✔ newer bucket loads win even across A-B-A account switches (27.224906ms)
+✔ persisted mode combinations restore independently, with Beta off when absent (96.046639ms)
+✔ a late repair cannot overwrite a newer bucket list or unlock its active operation (29.49223ms)
+✔ disabling Debug exits practice without moving focus into hidden diagnostics (22.860517ms)
+✔ primary bucket action opens Explorer at its root after setup; cached selection does not require redeployment (54.462411ms)
+✔ repair, failed setup, refreshed lists and newer Explorer interactions never redirect Explorer (123.831901ms)
+✔ missing inventory is refreshed before navigation and navigation failure does not mark a verified bucket broken (24.527394ms)
+✔ bucket navigation collapses expansion and focuses Explorer before measuring its top (59.535791ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 41
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1565.546769
+
+✖ failing tests:
+
+test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (45.677968ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-objects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-preview"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-menu"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-properties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-operation"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-status"'
+  +   }
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///workspace/scratch/5eec8d5829a8/REDOWN/tests/explorer-diagnostic-fixtures.test.mjs:18:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-objects"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-preview"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-menu"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-properties"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-operation"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-status"' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/issue-inventory.test.mjs:31:1
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (14.131687ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(menu)
+
+      at TestContext.<anonymous> (file:///workspace/scratch/5eec8d5829a8/REDOWN/tests/issue-inventory.test.mjs:32:182)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/options-debug-display.test.mjs:90:1
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.732907ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at TestContext.<anonymous> (file:///workspace/scratch/5eec8d5829a8/REDOWN/tests/options-debug-display.test.mjs:101:77)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

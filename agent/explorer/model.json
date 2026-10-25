@@ -1121,7 +1121,7 @@
         "symbol": "id=\"explorer\"",
         "line": 645,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1131,7 +1131,7 @@
         "symbol": "id=\"workspace-objects\"",
         "line": 664,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1141,7 +1141,7 @@
         "symbol": "id=\"workspace-preview\"",
         "line": 668,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1151,7 +1151,7 @@
         "symbol": "id=\"explorer-menu\"",
         "line": 674,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1161,7 +1161,7 @@
         "symbol": "id=\"explorer-properties\"",
         "line": 675,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1171,7 +1171,7 @@
         "symbol": "id=\"explorer-operation\"",
         "line": 672,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     },
     {
@@ -1181,7 +1181,7 @@
         "symbol": "id=\"explorer-status\"",
         "line": 665,
         "evidence": "source-anchor",
-        "sha256": "e9455b55c0266f72fcb6901e27203b89b940661bc56a7e6fc65adc66c6e4447e"
+        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
       }
     }
   ],

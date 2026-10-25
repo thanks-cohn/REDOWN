@@ -1,0 +1,15 @@
+test_denial_limits_and_cli (test_client.ClientTests.test_denial_limits_and_cli) ... ok
+test_identical_client_scenarios_across_adapters (test_client.ClientTests.test_identical_client_scenarios_across_adapters) ... ok
+test_timeout_closes_without_replay (test_client.ClientTests.test_timeout_closes_without_replay) ... ok
+test_new_adapter_uses_unchanged_sdk_with_duplicate_nonpath_names (test_client.ImmutableExtensionTests.test_new_adapter_uses_unchanged_sdk_with_duplicate_nonpath_names) ... ok
+test_malformed_and_oversized_provider_output (test_client.TransportSafetyTests.test_malformed_and_oversized_provider_output) ... ok
+test_timeout_also_bounds_a_blocked_large_input_write (test_client.TransportSafetyTests.test_timeout_also_bounds_a_blocked_large_input_write) ... ok
+test_authenticated_listener_and_explicit_pairing (test_extension_transport.NativeTransportTests.test_authenticated_listener_and_explicit_pairing) ... ok
+test_direct_mode_is_explicitly_unsupported (test_extension_transport.NativeTransportTests.test_direct_mode_is_explicitly_unsupported) ... ok
+test_disconnect_unblocks_pending_request (test_extension_transport.NativeTransportTests.test_disconnect_unblocks_pending_request) ... ok
+test_frames_fragmentation_and_budget (test_extension_transport.NativeTransportTests.test_frames_fragmentation_and_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.834s
+
+OK

@@ -77,5 +77,14 @@
   "scripts/aac-live.mjs",
   "scripts/aac-browser.mjs",
   "scripts/aac-forever.mjs",
-  "tests/aac.test.mjs"
+  "tests/aac.test.mjs",
+  "extension/file-engine/scoped-session.mjs",
+  "extension/file-engine/session-validators.mjs",
+  "extension/file-engine/adapters/extension-r2.mjs",
+  "extension/lab-session.mjs",
+  "extension/laboratory.mjs",
+  "scripts/phase27/compile-session.mjs",
+  "tests/extension-laboratory.test.mjs",
+  "tests/extension-lab-ui.test.mjs",
+  "tests/extension-native-e2e.test.mjs"
 ]
