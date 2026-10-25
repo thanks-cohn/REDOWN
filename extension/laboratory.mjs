@@ -41,7 +41,7 @@ $("discover").onclick = async () => {
     status("Discovery failed: connect/reconnect Cloudflare in Settings, or check account permissions.");
   }
 };
-$("connect").onclick = async () => {
+async function startConnection() {
   stop();
   const auth = (await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
   if (!auth?.sessionId || !auth.accessToken || auth.reconnectRequired) {
@@ -49,13 +49,19 @@ $("connect").onclick = async () => {
     return;
   }
   sessionId = auth.sessionId;
-  port = chrome.runtime.connectNative("com.redown.laboratory");
+  status("Starting local helper…");
+  try {
+    port = chrome.runtime.connectNative("com.redown.laboratory");
+  } catch (error) {
+    status("Could not start the local helper: " + String(error?.message || error).slice(0, 300) + ". Reload REDOWN after installing/registering the helper.");
+    return;
+  }
   const connectedPort = port;
   port.onDisconnect.addListener(() => {
     if (port !== connectedPort) return;
-    const error = chrome.runtime.lastError;
+    const error = chrome.runtime.lastError?.message;
     stop();
-    status(error ? "Native helper unavailable or disconnected. Install the helper, reload REDOWN and try again." : "Disconnected; grants revoked");
+    status(error ? "Local helper disconnected: " + error.slice(0, 300) + ". Check helper installation and the registered REDOWN extension ID, then reload REDOWN." : "Local helper disconnected; grants revoked. Click Start local connection to reconnect.");
   });
   port.onMessage.addListener(async (message) => {
     if (port !== connectedPort) return;
@@ -93,20 +99,24 @@ $("connect").onclick = async () => {
         reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REJECTED" } });
       };
       const approve = document.createElement("button");
-      approve.textContent = "Approve selected buckets for 5 minutes";
+      approve.textContent = "Approve selected buckets";
       approve.onclick = () => {
         const roots = [...$("buckets").querySelectorAll("input:checked")].map((c) => JSON.parse(c.dataset.root));
         if (!roots.length) {
           status("Select at least one bucket.");
           return;
         }
-        const grant2 = authorizeLab({ roots, request: RedownCloudflareApi.request, isCurrent: async () => {
+        const hours = Number($("grant-duration").value);
+        if (![1, 4, 8].includes(hours)) { status("Choose an approval duration of 1, 4 or 8 hours."); return; }
+        const grant2 = authorizeLab({ roots, ttl: hours * 3600000, request: RedownCloudflareApi.request, isCurrent: async () => {
           const a = (await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
           return a?.sessionId === sessionId && !!a.accessToken && !a.reconnectRequired;
         } });
         grants.set(message.client, grant2);
         pending.delete(message.client);
         approve.remove();
+        name.append(document.createTextNode(` — Connected; read access approved for ${hours} hour(s).`));
+        status("Python client connected and authorized. Keep this page open; revoke access here whenever needed.");
         reply({ apiVersion: "1.0.0", state: "available", data: { clientId: message.client, expiresAt: grant2.expires, mode: "extension" } });
       };
       row.append(approve, reject);
@@ -117,4 +127,8 @@ $("connect").onclick = async () => {
     const grant = grants.get(message.client);
     reply(grant ? await grant.query(message.method, message.input) : { apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REQUIRED" } });
   });
-};
+}
+$("connect").onclick = () => startConnection().catch(error => {
+  stop();
+  status("Local connection could not start: " + String(error?.message || error).slice(0, 300) + ". Reload REDOWN and reopen this Laboratory page.");
+});

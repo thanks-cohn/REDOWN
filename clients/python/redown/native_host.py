@@ -14,6 +14,7 @@ import uuid
 
 MAX_FRAME = 512 * 1024
 HOST_NAME = 'com.redown.laboratory'
+AUTHENTICATED_IDLE_TIMEOUT = 8 * 60 * 60
 
 def home():
     return Path.home() / '.redown-laboratory'
@@ -121,6 +122,9 @@ class Handler(socketserver.StreamRequestHandler):
                     paired = response.get('state') == 'available'
                     if not paired:
                         return
+                    # Keep authenticated idle sessions usable for the full owner-selected grant.
+                    # Provider authorization/expiry remains enforced by the extension on every query.
+                    self.connection.settimeout(AUTHENTICATED_IDLE_TIMEOUT)
                 if response.get('error', {}).get('code') in ('TIMEOUT_UNCERTAIN', 'EXTENSION_DISCONNECTED'):
                     return
         except (OSError, EOFError, ValueError, TypeError):
@@ -150,7 +154,7 @@ def main():
     server = Server(('127.0.0.1', 0), Handler)
     server.relay = relay
     endpoint = directory / 'connection.json'
-    record = {'version': 1, 'host': '127.0.0.1', 'port': server.server_address[1], 'key': relay.key, 'expiresAt': time.time() + 3600}
+    record = {'version': 1, 'host': '127.0.0.1', 'port': server.server_address[1], 'key': relay.key, 'expiresAt': time.time() + 24 * 3600}
     temporary = directory / ('connection-' + str(uuid.uuid4()) + '.tmp')
     fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with os.fdopen(fd, 'w') as out:

@@ -94,3 +94,18 @@ test("bounded reads, truncation, pagination and exact key encoding", async () =>
   const short = extensionR2Adapter({ roots: [root], request: async () => new Response("x", { headers: { etag: "r", "content-length": "2" } }) });
   await assert.rejects(short.read({ ...root, key: "x" }), { code: "TRUNCATED_READ" });
 });
+
+test('owner-selected grants default to an hour and cap at eight hours', async () => {
+  let time=0;
+  const f=fixture();
+  const g=authorizeLab({roots:[root],request:f.request,isCurrent:()=>true,clock:()=>time});
+  assert.equal(g.expires,3600000);
+  time=6*60000;
+  assert.equal((await g.query('describe')).state,'available');
+  const long=authorizeLab({roots:[root],request:f.request,isCurrent:()=>true,clock:()=>time,ttl:24*3600000});
+  assert.equal(long.expires-time,8*3600000);
+  time=g.expires;
+  assert.equal((await g.query('describe')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');
+  long.revoke();
+  assert.equal((await long.query('describe')).state,'failed');
+});

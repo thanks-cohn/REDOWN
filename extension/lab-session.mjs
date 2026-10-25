@@ -3,9 +3,9 @@ import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
 import { request02, request03, session } from "./file-engine/session-validators.mjs";
 import { extensionR2Adapter } from "./file-engine/adapters/extension-r2.mjs";
-function authorizeLab({ roots, request, isCurrent, ttl = 3e5, clock = Date.now }) {
+function authorizeLab({ roots, request, isCurrent, ttl = 36e5, clock = Date.now }) {
   if (!Array.isArray(roots) || !roots.length || roots.some((r) => r.provider !== "extension-r2" || r.key !== "")) throw fail("INVALID_SCOPE");
-  const expires = clock() + Math.min(Math.max(ttl, 1), 3e5);
+  const expires = clock() + Math.min(Math.max(ttl, 1), 288e5);
   let revoked = false;
   const active = async () => !revoked && clock() < expires && await isCurrent();
   const adapter = extensionR2Adapter({ request: async (...args) => {
@@ -30,7 +30,8 @@ function authorizeLab({ roots, request, isCurrent, ttl = 3e5, clock = Date.now }
     if (method === "describe" && response.data) {
       response.data.transport = "Chrome native messaging / authenticated loopback";
       response.data.limits.maxBytes = 65536;
-      response.data.authorization = "Explicit extension approval; read-only selected buckets; five minutes; revocable";
+      response.data.expiresAt = expires;
+      response.data.authorization = "Explicit extension approval; read-only selected buckets; user-selected duration (up to eight hours); revocable";
       response.data.unsupported = ["mutations", "direct-s3", "durable recovery"];
     }
     return response;

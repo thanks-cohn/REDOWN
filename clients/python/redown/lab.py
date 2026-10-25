@@ -7,6 +7,7 @@ from pathlib import Path
 import queue
 import tempfile
 import threading
+import time
 from .extension import ExtensionClient
 from .client import RedownError
 
@@ -90,20 +91,23 @@ def gui():
     from tkinter import ttk, filedialog
     window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('900x720')
     client = None; report = None; events = queue.Queue(); busy = False; roots = []
-    state = tk.StringVar(value='Disconnected')
-    ttk.Label(window, textvariable=state).pack(fill='x')
+    state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
+    ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
+    connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
+    ttk.Button(connection_bar, text='Connect to REDOWN extension', command=lambda: connect()).pack(side='left')
+    ttk.Label(window, text='Start the local connection in REDOWN, connect here, then approve the matching code in REDOWN.', wraplength=850).pack(fill='x', padx=8)
     buckets = tk.Listbox(window, selectmode='extended', height=6); buckets.pack(fill='x')
     ttk.Label(window, text='Methods and JSON input (selected buckets are available below)').pack()
     method = ttk.Combobox(window, values=['describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile']); method.set('describe'); method.pack(fill='x')
     inputs = tk.Text(window, height=7); inputs.insert('1.0', '{}'); inputs.pack(fill='x')
     output = tk.Text(window, height=18); output.pack(fill='both', expand=True)
-    def work(fn):
+    def work(fn, result_kind="result"):
         nonlocal busy
         if busy:
             state.set('An operation is already running'); return
         busy = True
         def run():
-            try: events.put(('result', fn()))
+            try: events.put((result_kind, fn()))
             except Exception as error: events.put(('error', error.code if isinstance(error, RedownError) else type(error).__name__))
             finally: events.put(('done', None))
         threading.Thread(target=run, daemon=True).start()
@@ -112,7 +116,7 @@ def gui():
             nonlocal client, roots
             if client: client.close()
             client = ExtensionClient(on_pairing=lambda code: events.put(('status', 'Approve code ' + code + ' in REDOWN')))
-            info = client.describe(); roots = info['locations']; events.put(('roots', roots)); return info
+            info = client.describe(); roots = info['locations']; events.put(('roots', roots)); events.put(('health', info)); return info
         work(run)
     def execute():
         selected = method.get(); payload = inputs.get('1.0', 'end').strip()
@@ -136,21 +140,38 @@ def gui():
         selected = buckets.curselection()
         if selected:
             method.set('execute'); inputs.delete('1.0', 'end'); inputs.insert('1.0', json.dumps({'request': {'apiVersion': '0.3.0', 'operation': 'list', 'source': roots[selected[0]], 'idempotencyKey': __import__('uuid').uuid4().hex, 'limit': 10}}, indent=2))
-    for text, action in [('Connect to extension', connect), ('List selected bucket', root_input), ('Execute method', execute), ('Run read-only conformance', tests), ('Export report', export)]:
+    for text, action in [('List selected bucket', root_input), ('Execute method', execute), ('Run read-only conformance', tests), ('Export report', export)]:
         ttk.Button(window, text=text, command=action).pack(side='left')
+    next_health = time.monotonic() + 30
     def poll():
-        nonlocal busy
+        nonlocal busy, next_health
         while not events.empty():
             kind, value = events.get()
             if kind == 'done': busy = False
             elif kind == 'status': state.set(value)
+            elif kind == 'health':
+                expires = value.get('expiresAt')
+                until = time.strftime('%H:%M', time.localtime(expires / 1000)) if expires else 'the approved expiry'
+                state.set('Connected and authorized until ' + until + '; select test buckets')
             elif kind == 'roots':
                 buckets.delete(0, 'end')
                 for root in value: buckets.insert('end', root['account'] + ' / ' + root['container'])
                 state.set('Authorized; select test buckets')
             else:
                 output.delete('1.0', 'end'); output.insert('1.0', json.dumps(value, indent=2));
-                if kind == 'error': state.set(value)
+                if kind == 'error':
+                    guidance = {
+                        'EXTENSION_UNAVAILABLE': 'Local helper unavailable. In REDOWN, keep Python Laboratory open and click Start local connection; check helper registration if it fails.',
+                        'EXTENSION_DISCONNECTED': 'REDOWN disconnected. Reopen its Laboratory page, start the local connection, then reconnect here.',
+                        'TIMEOUT_UNCERTAIN': 'Connection lost or timed out. Check the REDOWN Laboratory status, then reconnect here.',
+                        'AUTHORIZATION_REVOKED_OR_EXPIRED': 'Approval expired or was revoked. Click Connect to extension and approve a new session in REDOWN.',
+                        'PAIRING_REJECTED': 'Pairing was rejected in REDOWN. Reconnect when you are ready to approve it.'
+                    }
+                    state.set(value + ': ' + guidance.get(value, 'Check REDOWN Laboratory for connection details.'))
+        if time.monotonic() >= next_health:
+            next_health = time.monotonic() + 30
+            if client and not busy and not client._closed:
+                work(client.describe, result_kind='health')
         window.after(100, poll)
     def close():
         if client: client.close()

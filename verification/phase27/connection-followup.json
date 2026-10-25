@@ -1,0 +1,35 @@
+{
+  "version": "1.0.0",
+  "base": "4f412199d8c4934b669e755b3495fdb53c2c983e",
+  "changes": [
+    "Default one-hour approval with owner-selected four/eight-hour choices",
+    "Authenticated idle timeout corrected from 130 seconds to eight hours; extension still enforces grant expiry",
+    "Connect button moved to top of Python GUI",
+    "GUI 30-second health checks and approval expiry display",
+    "Actionable native-helper startup/disconnect errors"
+  ],
+  "verification": {
+    "extensionNativeTests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "pythonTests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "pythonCompile": "passed",
+    "modifiedJavaScriptSyntax": "passed",
+    "diffWhitespace": "passed"
+  },
+  "observations": {
+    "userReportedBrowser": "Local helper ready",
+    "userScreenshot": "Python GUI initial Disconnected screen; Connect button at bottom left",
+    "conclusion": "Helper startup is reported working. Screenshot alone does not demonstrate a failed pairing attempt. Ask user to click Connect in Python; no live R2 operation confirmed."
+  },
+  "boundaries": [
+    "No fresh real Cloudflare test",
+    "No Windows GUI visual verification after these changes",
+    "Original Phase 2.7 evidence and source hashes remain historical",
+    "Previously recorded full-suite failures are not claimed resolved"
+  ]
+}

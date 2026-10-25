@@ -7,7 +7,7 @@ import threading
 import unittest
 import redown.install_host
 from redown import connect
-from redown.native_host import Relay, Server, Handler, read_frame, write_frame, MAX_FRAME
+from redown.native_host import Relay, Server, Handler, read_frame, write_frame, MAX_FRAME, AUTHENTICATED_IDLE_TIMEOUT
 from redown.client import RedownError
 from redown.lab import conformance
 
@@ -46,6 +46,24 @@ class NativeTransportTests(unittest.TestCase):
                 self.assertEqual(read_frame(stream)['error']['code'], 'PAIRING_REJECTED'); stream.close()
         finally:
             relay.close(); server.shutdown(); server.server_close()
+
+    def test_authenticated_idle_timeout_matches_longest_grant(self):
+        from types import SimpleNamespace
+        relay = Relay(io.BytesIO())
+        relay.request = lambda *_: {'apiVersion': '1.0.0', 'state': 'available', 'data': {}}
+        incoming = io.BytesIO()
+        write_frame(incoming, {'key': relay.key})
+        write_frame(incoming, {'method': 'pair', 'input': {'name': 'idle-test'}})
+        incoming.seek(0)
+        class Connection:
+            timeouts = []
+            def makefile(self, *_): return incoming
+            def settimeout(self, timeout): self.timeouts.append(timeout)
+            def sendall(self, data): pass
+        connection = Connection()
+        Handler(connection, ('127.0.0.1', 12345), SimpleNamespace(relay=relay))
+        self.assertEqual(connection.timeouts, [5, 130, AUTHENTICATED_IDLE_TIMEOUT])
+        self.assertEqual(AUTHENTICATED_IDLE_TIMEOUT, 8 * 3600)
 
     def test_disconnect_unblocks_pending_request(self):
         relay = Relay(io.BytesIO()); result = queue.Queue()

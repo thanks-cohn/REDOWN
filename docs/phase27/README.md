@@ -30,10 +30,10 @@ This installs only a per-user native-host registration, launcher, and private di
 .\.venv\Scripts\python.exe -m redown.lab gui
 ```
 
-5. Click **Connect to extension**. Compare the connection code displayed by Python with REDOWN's request. Approve the selected buckets or reject it. Client names are self-declared, not verified application identities.
+5. Click **Connect to extension**. Compare the connection code displayed by Python with REDOWN's request. Choose a 1-hour (default), 4-hour or 8-hour approval, then approve the selected buckets or reject it. Client names are self-declared, not verified application identities.
 6. The app displays granted account/bucket identities and capabilities. Select test buckets, use **List selected bucket**, then **Execute method**. The JSON input supports all scoped-session methods; copy exact identities from results rather than reconstructing displayed names.
 7. Run read-only conformance and export JSON/Markdown reports. To include an object read, enter `{"source": EXACT_OBJECT_IDENTITY}` in the JSON input before running conformance. No arbitrary object is automatically chosen for reading.
-8. Use **Reject / revoke** beside a client, or **Revoke all clients and stop**. Grants expire after five minutes. Closing the laboratory tab or Python process disconnects that connection. Reconnect and approve a new session after expiry.
+8. Use **Reject / revoke** beside a client, or **Revoke all clients and stop**. Grants expire after your selected duration. Authenticated idle connections remain available during that grant; the Python GUI checks connection health every 30 seconds. Closing the laboratory tab or Python process disconnects that connection. Reconnect and approve a new session after expiry.
 
 A disconnected helper may leave a stale discovery file after a crash; Python reports unavailable rather than opening a cloud connection. Starting the helper again replaces it with a fresh random local credential. No manual token entry is needed.
 
@@ -62,6 +62,8 @@ Every filesystem operation runs through `createScopedSession` → `createFileEng
 
 ## Current limits and troubleshooting
 
+- The helper reports Chrome’s actual native-host startup/disconnection error in the Laboratory status. An installed Python package alone does not connect it: the browser page must start its local connection and explicitly approve the Python client.
+
 - This connection is **read-only**: list/pagination, metadata, bounded reads and verified local downloads. Upload/copy/mkdir/move/rename/delete are explicitly unsupported here. The existing separate leased-Worker adapter is not used as a substitute for extension authentication.
 - No deploy, Worker repair, public-policy change, bucket creation, remote deletion, arbitrary JavaScript, shell command or local filesystem path is exposed by the native relay.
 - `EXTENSION_UNAVAILABLE`: open REDOWN's laboratory, register the exact ID using the same installed Python environment, reload the extension, and start its local connection.
@@ -72,3 +74,9 @@ Every filesystem operation runs through `createScopedSession` → `createFileEng
 - Cancellation execution is unsupported for this read-only grant; denial is tested. Python CLI returns 0 for successful queries, 1 for unsuccessful jobs, 2 for transport/input errors. Conformance returns nonzero for failed/blocked execution, while unsupported/untested coverage stays explicit in the report.
 
 Linux Google Chrome registration is also implemented. macOS, other browser registration, Windows native-host launch and real Chrome/provider acceptance remain untested. To remove the Windows helper, stop the laboratory, delete `HKCU\Software\Google\Chrome\NativeMessagingHosts\com.redown.laboratory`, and remove the `.redown-laboratory` directory from your user profile.
+
+## Update to Python client 0.4.1
+
+Close the Python GUI, pull current main, then run `.\.venv\Scripts\python.exe -m pip install --upgrade ./clients/python`. Reload REDOWN and reopen its Laboratory page to restart the native host on the updated Python code. Select buckets and your approval duration, then start the local connection. Relaunch `python -m redown.lab gui` with the virtual-environment interpreter and click **Connect to REDOWN extension** at the top. Approve the matching code in the browser. “Local helper ready” means the browser is waiting for Python to initiate pairing; it does not mean Python is already connected.
+
+Focused follow-up checks: 9 extension/native tests and 11 Python tests pass. See `verification/phase27/connection-followup.json`. These changes do not establish live R2 acceptance or close previous regression failures.
