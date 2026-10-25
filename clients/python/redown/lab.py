@@ -94,10 +94,14 @@ def gui():
     state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
     ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
     connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
-    ttk.Button(connection_bar, text='Connect to REDOWN extension', command=lambda: connect()).pack(side='left')
+    tk.Button(connection_bar, text='1. CONNECT TO REDOWN', command=lambda: connect(), font=('Segoe UI', 12, 'bold'), bg='#7254c7', fg='white', activebackground='#5b3ca8', activeforeground='white', padx=20, pady=12, cursor='hand2', relief='raised').pack(fill='x')
     ttk.Label(window, text='Start the local connection in REDOWN, connect here, then approve the matching code in REDOWN.', wraplength=850).pack(fill='x', padx=8)
+    ttk.Label(window, text='2. Select your authorized test buckets', font=('Segoe UI', 11, 'bold')).pack(anchor='w', padx=8, pady=(10, 4))
     buckets = tk.Listbox(window, selectmode='extended', height=6); buckets.pack(fill='x')
-    ttk.Label(window, text='Methods and JSON input (selected buckets are available below)').pack()
+    actions = ttk.Frame(window); actions.pack(fill='x', padx=8, pady=8)
+    actions.columnconfigure((0, 1), weight=1)
+    ttk.Style(window).configure('Lab.Action.TButton', font=('Segoe UI', 11, 'bold'), padding=(14, 10))
+    ttk.Label(window, text='Advanced: session method and JSON input').pack()
     method = ttk.Combobox(window, values=['describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile']); method.set('describe'); method.pack(fill='x')
     inputs = tk.Text(window, height=7); inputs.insert('1.0', '{}'); inputs.pack(fill='x')
     output = tk.Text(window, height=18); output.pack(fill='both', expand=True)
@@ -138,10 +142,15 @@ def gui():
             if path: save_report(report, path); state.set('JSON and Markdown reports saved')
     def root_input():
         selected = buckets.curselection()
-        if selected:
-            method.set('execute'); inputs.delete('1.0', 'end'); inputs.insert('1.0', json.dumps({'request': {'apiVersion': '0.3.0', 'operation': 'list', 'source': roots[selected[0]], 'idempotencyKey': __import__('uuid').uuid4().hex, 'limit': 10}}, indent=2))
-    for text, action in [('List selected bucket', root_input), ('Execute method', execute), ('Run read-only conformance', tests), ('Export report', export)]:
-        ttk.Button(window, text=text, command=action).pack(side='left')
+        if not selected:
+            state.set('Select an authorized bucket in the list first.'); return
+        if busy:
+            state.set('An operation is already running'); return
+        payload = {'request': {'apiVersion': '0.3.0', 'operation': 'list', 'source': roots[selected[0]], 'idempotencyKey': __import__('uuid').uuid4().hex, 'limit': 10}}
+        method.set('execute'); inputs.delete('1.0', 'end'); inputs.insert('1.0', json.dumps(payload, indent=2))
+        work(lambda: client.query('execute', **payload))
+    for index, (text, action) in enumerate([('List selected bucket', root_input), ('Run read-only tests', tests), ('Execute JSON request', execute), ('Export test report', export)]):
+        ttk.Button(actions, text=text, command=action, style='Lab.Action.TButton').grid(row=index // 2, column=index % 2, sticky='ew', padx=4, pady=4)
     next_health = time.monotonic() + 30
     def poll():
         nonlocal busy, next_health

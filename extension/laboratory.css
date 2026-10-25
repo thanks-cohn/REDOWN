@@ -1,1 +1,3 @@
 body{font:16px system-ui;background:#111820;color:#edf4fa;margin:40px auto;max-width:850px;padding:20px}button{padding:10px;margin:8px;border-radius:6px;cursor:pointer}label{display:block;padding:8px}fieldset{border:1px solid #789}p{line-height:1.6}article{border:1px solid #789;padding:12px;margin:10px 0}
+
+#connect,.pair-approve{background:#7656cf;color:white;border:2px solid #a88beb;font-size:17px;font-weight:700;padding:14px 22px;min-height:48px}#connect:hover,.pair-approve:hover{background:#6241b9}button:focus-visible,select:focus-visible{outline:3px solid #d9c7ff;outline-offset:3px}select{padding:10px;font:inherit}h2{margin-top:28px}

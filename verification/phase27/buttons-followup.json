@@ -1,0 +1,27 @@
+{
+  "base": "e66fdcf1d29383132e798915aed72541d5d4dde6",
+  "clientVersion": "0.4.2",
+  "implemented": [
+    "Large purple Connect button at top of Python GUI",
+    "Large bucket/test/report action toolbar above advanced JSON",
+    "List selected bucket executes its authorized read-only list request",
+    "Numbered browser pairing steps and prominent Start/Approve actions"
+  ],
+  "grant": "Existing one-hour default and four/eight-hour options remain; fresh approval required after updating",
+  "tests": {
+    "extensionNative": {
+      "passed": 9,
+      "failed": 0
+    },
+    "python": {
+      "passed": 11,
+      "failed": 0
+    },
+    "pythonCompile": "passed",
+    "diffWhitespace": "passed"
+  },
+  "limitations": [
+    "No fresh Windows visual check",
+    "User describe output establishes pairing and scoped discovery, not real object read or mutation capability"
+  ]
+}

@@ -99,7 +99,8 @@ async function startConnection() {
         reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REJECTED" } });
       };
       const approve = document.createElement("button");
-      approve.textContent = "Approve selected buckets";
+      approve.textContent = "APPROVE PYTHON CONNECTION";
+      approve.className = "pair-approve";
       approve.onclick = () => {
         const roots = [...$("buckets").querySelectorAll("input:checked")].map((c) => JSON.parse(c.dataset.root));
         if (!roots.length) {

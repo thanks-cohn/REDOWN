@@ -28,7 +28,7 @@ test("extension page explicitly rejects, approves selected scope and revokes", a
     assert.equal(sent.at(-1).response.error.code, "PAIRING_REJECTED");
     await receive({ type: "request", client: "approved-client", id: "pair2", method: "pair", input: { name: "Python" } });
     $("grant-duration").value = "4";
-    [...$("clients").querySelectorAll("button")].find((b) => b.textContent.startsWith("Approve")).click();
+    [...$("clients").querySelectorAll("button")].find((b) => b.classList.contains("pair-approve")).click();
     assert.equal(sent.at(-1).response.state, "available");
     assert.ok(Math.abs(sent.at(-1).response.data.expiresAt - Date.now() - 4 * 3600000) < 2000);
     assert.match($("status").textContent, /connected and authorized/i);
