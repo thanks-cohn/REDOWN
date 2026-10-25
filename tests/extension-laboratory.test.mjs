@@ -120,3 +120,13 @@ test('OAuth renewal stays scoped, rate limited, redacted and cannot extend the g
   time=40*60000;assert.equal((await grant.query('renewAuthorization')).state,'available');assert.equal(calls,2);
   time=grant.expires;assert.equal((await grant.query('renewAuthorization')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');assert.equal(calls,2);assert.equal(f.calls.length,0);
 });
+
+test('oversized declared provider body is cancelled before consumption, unknown lengths remain bounded', async () => {
+  let consumed=0,cancelled=false;
+  const body={getReader(){consumed++;throw new Error('must not read');},async cancel(){cancelled=true;}};
+  const adapter=extensionR2Adapter({roots:[root], request:async()=>({ok:true,status:200,headers:new Headers({'content-length':'65537',etag:'r1'}),body})});
+  await assert.rejects(adapter.read({...root,key:'large.bin'}),{code:'SIZE_LIMIT'});
+  assert.equal(consumed,0); assert.equal(cancelled,true);
+  const malformed=extensionR2Adapter({roots:[root],request:async()=>({ok:true,status:200,headers:new Headers({'content-length':'NaN',etag:'r1'}),body})});
+  await assert.rejects(malformed.read({...root,key:'bad.bin'}),{code:'INVALID_PROVIDER_RESPONSE'});
+});

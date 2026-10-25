@@ -1,0 +1,24 @@
+
+> remote-asset-ingest@0.1.0 lab:test
+> node scripts/phase27/compile-session.mjs --check && node --test tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs && python tests/architecture-report-schema.py
+
+✔ extension page explicitly rejects, approves selected scope and revokes (183.385674ms)
+✔ canonical read, bytes, scoped evidence and Atlas correlation (94.725576ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.996417ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (2.499169ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (6.006841ms)
+✔ revoke during request suppresses late bytes and future evidence (31.517892ms)
+✔ bounded reads, truncation, pagination and exact key encoding (3.80129ms)
+✔ owner-selected grants default to an hour and cap at eight hours (1.271399ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.975092ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.984576ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (935.801569ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2122.09426
+{"state": "passed", "statuses": 6, "negativeControls": 4, "scope": "independent report schema, not live acceptance"}

@@ -101,3 +101,13 @@ git pull --ff-only
 .\.venv\Scripts\python.exe -m pip install --upgrade ./clients/python
 .\.venv\Scripts\python.exe -m redown.lab gui
 ```
+
+## One-click architecture laboratory
+
+The directory picker, deterministic selection preview, multi-bucket architecture
+runner, cancellation and exact COPY JSON REPORT / SAVE JSON / SAVE MARKDOWN are
+implemented. See [the Windows/CLI runbook](ONE_CLICK_RUNBOOK.md),
+[report schema](architecture-report.schema.json) and
+[implementation evidence](../../verification/phase27/architecture/README.md).
+This is a read-only implementation with explicit unsupported mutation coverage;
+complete end-to-end architecture acceptance remains incomplete.

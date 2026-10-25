@@ -58,6 +58,16 @@ function extensionR2Adapter({ request, roots }) {
       if (range) throw fail("PROVIDER_OPERATION_UNSUPPORTED");
       const r = await checked(object(i));
       if (!r) throw fail("NOT_FOUND_OR_INACCESSIBLE");
+      const declaredLength = r.headers.get("content-length");
+      if (declaredLength !== null && (!/^\d+$/.test(declaredLength) || !Number.isSafeInteger(Number(declaredLength)))) {
+        await r.body?.cancel();
+        throw fail("INVALID_PROVIDER_RESPONSE");
+      }
+      if (declaredLength !== null && Number(declaredLength) > EXTENSION_MAX_BYTES) {
+        await r.body?.cancel();
+        throw fail("SIZE_LIMIT");
+      }
+      if (!r.body) throw fail("INVALID_PROVIDER_RESPONSE");
       const reader = r.body.getReader();
       let size = 0;
       const chunks = [];

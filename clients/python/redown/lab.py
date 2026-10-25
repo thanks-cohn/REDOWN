@@ -10,6 +10,8 @@ import threading
 import time
 from .extension import ExtensionClient, RenewalSchedule
 from .client import RedownError
+from .inventory import inventory
+from .architecture import run as architecture_run, report_json, markdown, exit_code, copy_report, save_architecture_report, progress_text
 
 def conformance(client, root=None, source=None, expected_sha256=None):
     report = {'version': '1.0.0', 'mode': 'extension', 'evidenceBoundary': 'Actual connected session; only provider receipts can establish cloud execution', 'cases': []}
@@ -81,17 +83,18 @@ def conformance(client, root=None, source=None, expected_sha256=None):
 
 def save_report(report, path):
     path = Path(path)
-    path.with_suffix('.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+    path.with_suffix('.json').write_text(json.dumps(report, indent=2), encoding='utf-8', newline='\n')
     lines = ['# REDOWN extension laboratory', '', 'Acceptance: ' + report.get('acceptance', 'INCOMPLETE'), '', '| Check | State | Detail |', '| --- | --- | --- |']
     lines.extend('| ' + c['name'] + ' | ' + c['state'] + ' | ' + str(c.get('code', c.get('reason', c.get('operationId', '')))).replace('|', '/') + ' |' for c in report['cases'])
-    path.with_suffix('.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    path.with_suffix('.md').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
 
 def gui():
     import tkinter as tk
     from tkinter import ttk, filedialog
-    window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('900x720')
+    window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('1000x950')
     client = None; report = None; events = queue.Queue(); busy = False; roots = []
     renewal = RenewalSchedule(); renewal_supported = False
+    scan = None; stop = threading.Event()
     state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
     ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
     connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
@@ -103,10 +106,59 @@ def gui():
     oauth_status = tk.StringVar(value='OAuth renewal: waiting for a connection')
     ttk.Label(window, textvariable=oauth_status, wraplength=850).pack(fill='x', padx=8)
     ttk.Label(window, text='2. Select your authorized test buckets', font=('Segoe UI', 11, 'bold')).pack(anchor='w', padx=8, pady=(10, 4))
-    buckets = tk.Listbox(window, selectmode='extended', height=6); buckets.pack(fill='x')
+    buckets = tk.Listbox(window, selectmode='extended', exportselection=False, height=6); buckets.pack(fill='x')
     actions = ttk.Frame(window); actions.pack(fill='x', padx=8, pady=8)
     actions.columnconfigure((0, 1), weight=1)
     ttk.Style(window).configure('Lab.Action.TButton', font=('Segoe UI', 11, 'bold'), padding=(14, 10))
+    directory_bar = ttk.Frame(window); directory_bar.pack(fill='x', padx=8)
+    preview = tk.StringVar(value='Choose a directory; sources are never modified. Metadata in reports may be sensitive.')
+    ttk.Label(window, textvariable=preview, wraplength=950).pack(fill='x', padx=8)
+    limits_bar = ttk.Frame(window); limits_bar.pack(fill='x', padx=8)
+    limit_values = []
+    for label, default in [('Max entries', '100000'), ('Max file MiB', '1024'), ('Total hash MiB', '4096')]:
+        ttk.Label(limits_bar, text=label).pack(side='left')
+        value = tk.StringVar(value=default); limit_values.append(value)
+        ttk.Entry(limits_bar, textvariable=value, width=10).pack(side='left', padx=4)
+    ttk.Label(limits_bar, text='Up to 5 distinct files per extension; read transport currently 64 KiB.').pack(side='left')
+    def choose_directory():
+        nonlocal scan
+        if busy: return
+        path = filedialog.askdirectory()
+        if path:
+            stop.clear()
+            try:
+                entry_limit, file_mib, total_mib = [int(v.get()) for v in limit_values]
+                if min(entry_limit, file_mib, total_mib) < 1: raise ValueError()
+            except ValueError:
+                state.set('Scan limits must be positive integers.'); return
+            work(lambda: inventory(path, cancel=stop, max_files=entry_limit, max_file_bytes=file_mib*1024**2, max_total_bytes=total_mib*1024**2), result_kind='inventory')
+    def architecture_tests():
+        nonlocal report
+        selected = [roots[i] for i in buckets.curselection()]
+        if not scan or not selected:
+            state.set('Choose a directory and select authorized buckets first.'); return
+        stop.clear()
+        def run():
+            nonlocal report
+            report = architecture_run(client, scan, selected, cancel=stop,
+                checkpoint=lambda value: events.put(('architecture-checkpoint', json.loads(report_json(value)))),
+                progress=lambda row: events.put(('progress', row)))
+            return report
+        work(run, result_kind='architecture-report')
+    def copy_json():
+        if report is not None:
+            copy_report(window, report)
+            state.set('Exact JSON report copied; metadata may be sensitive.')
+    def save_exact(kind):
+        if report is None: return
+        path = filedialog.asksaveasfilename(defaultextension='.' + kind)
+        if path:
+            text = report_json(report) if kind == 'json' else markdown(report) if 'schemaVersion' in report else '# REDOWN conformance\n\n' + '\n'.join(c['name'] + ': ' + c['state'] for c in report['cases'])
+            Path(path).write_text(text, encoding='utf-8', newline='\n')
+    for label, callback in [('CHOOSE LOCAL DIRECTORY', choose_directory), ('RUN ARCHITECTURE TESTS', architecture_tests),
+                            ('CANCEL RUN / SCAN', stop.set), ('COPY JSON REPORT', copy_json),
+                            ('SAVE JSON', lambda: save_exact('json')), ('SAVE MARKDOWN', lambda: save_exact('md'))]:
+        ttk.Button(directory_bar, text=label, command=callback).pack(side='left', padx=2)
     ttk.Label(window, text='Advanced: session method and JSON input').pack()
     method = ttk.Combobox(window, values=['describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile']); method.set('describe'); method.pack(fill='x')
     inputs = tk.Text(window, height=7); inputs.insert('1.0', '{}'); inputs.pack(fill='x')
@@ -167,7 +219,13 @@ def gui():
     def export():
         if report:
             path = filedialog.asksaveasfilename(defaultextension='.json')
-            if path: save_report(report, path); state.set('JSON and Markdown reports saved')
+            if path:
+                if 'schemaVersion' in report:
+                    save_architecture_report(report, Path(path).with_suffix('.json'))
+                    save_architecture_report(report, Path(path).with_suffix('.md'), 'md')
+                else:
+                    save_report(report, path)
+                state.set('JSON and Markdown reports saved')
     def root_input():
         selected = buckets.curselection()
         if not selected:
@@ -181,10 +239,23 @@ def gui():
         ttk.Button(actions, text=text, command=action, style='Lab.Action.TButton').grid(row=index // 2, column=index % 2, sticky='ew', padx=4, pady=4)
     next_health = time.monotonic() + 30
     def poll():
-        nonlocal busy, next_health
+        nonlocal busy, next_health, scan, report
         while not events.empty():
             kind, value = events.get()
             if kind == 'done': busy = False
+            elif kind == 'inventory':
+                scan = value
+                preview.set(str(len(scan['selected'])) + ' selected, ' + str(scan['selectedBytes']) + ' bytes; ' + str(len(scan['exclusions'])) + ' exclusions; ' + json.dumps(scan['countsByExtension']))
+                output.delete('1.0', 'end'); output.insert('1.0', json.dumps(scan, indent=2))
+            elif kind == 'progress':
+                state.set(progress_text(value))
+                output.insert('end', json.dumps(value) + '\n'); output.see('end')
+            elif kind == 'architecture-checkpoint':
+                report = value
+            elif kind == 'architecture-report':
+                report = value
+                output.delete('1.0', 'end'); output.insert('1.0', report_json(report))
+                state.set('Architecture run INCOMPLETE: ' + json.dumps(report['coverage']))
             elif kind == 'reset':
                 buckets.delete(0, 'end')
                 oauth_status.set('OAuth renewal: waiting for a new approved connection')
@@ -234,13 +305,19 @@ def gui():
                 work(client.describe, result_kind='health')
         window.after(100, poll)
     def close():
+        stop.set()
         if client: client.close()
         window.destroy()
     window.protocol('WM_DELETE_WINDOW', close); poll(); window.mainloop()
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['gui', 'conformance'], nargs='?', default='gui')
+    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture'], nargs='?', default='gui')
+    parser.add_argument('--directory')
+    parser.add_argument('--offline', action='store_true', help='Scan/plan without connecting; cloud cases remain blocked')
+    parser.add_argument('--max-files', type=int, default=100000)
+    parser.add_argument('--max-file-bytes', type=int, default=1024**3)
+    parser.add_argument('--max-total-bytes', type=int, default=4*1024**3)
     parser.add_argument('--root', help='Authorized root as JSON')
     parser.add_argument('--source', help='Exact test object identity as JSON')
     parser.add_argument('--expected-sha256')
@@ -248,6 +325,31 @@ def main():
     args = parser.parse_args()
     if args.action == 'gui':
         gui(); return 0
+    if args.action in ('scan', 'architecture'):
+        if not args.directory: parser.error('--directory is required')
+        try:
+            scan = inventory(args.directory, max_files=args.max_files, max_file_bytes=args.max_file_bytes, max_total_bytes=args.max_total_bytes)
+            if args.action == 'scan':
+                Path(args.report).write_text(report_json(scan), encoding='utf-8', newline='\n')
+                print(report_json(scan), end=''); return 0 if scan['complete'] else 2
+            def persist(value):
+                # Checkpoint every completed case; previous file is replaced atomically.
+                target = Path(args.report)
+                temporary = target.with_suffix(target.suffix + '.tmp')
+                temporary.write_text(report_json(value), encoding='utf-8', newline='\n'); temporary.replace(target)
+            if args.offline:
+                report = architecture_run(None, scan, checkpoint=persist, evidence_tier='OFFLINE_NO_PROVIDER')
+            else:
+                import sys
+                try:
+                    with ExtensionClient(on_pairing=lambda code: print('Approve code ' + code + ' in REDOWN', file=sys.stderr)) as connected:
+                        report = architecture_run(connected, scan, [json.loads(args.root)] if args.root else None, checkpoint=persist)
+                except RedownError:
+                    report = architecture_run(None, scan, checkpoint=persist)
+            Path(args.report).with_suffix('.md').write_text(markdown(report), encoding='utf-8', newline='\n')
+            print(report_json(report), end=''); return exit_code(report)
+        except (OSError, ValueError) as error:
+            print(json.dumps({'status': 'INVALID', 'code': type(error).__name__})); return 4
     try:
         import sys
         with ExtensionClient(on_pairing=lambda code: print('Approve code ' + code + ' in REDOWN', file=sys.stderr)) as client:

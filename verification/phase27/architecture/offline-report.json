@@ -1,0 +1,1466 @@
+{
+  "schemaVersion": "1.0.0",
+  "runId": "bd2d7051-cdce-4f70-9fee-4995f28fe67d",
+  "startedAt": "2026-10-25T05:07:58.082405+00:00",
+  "acceptance": "INCOMPLETE",
+  "evidenceTier": "OFFLINE_NO_PROVIDER",
+  "inventory": {
+    "version": "1.0.0",
+    "limits": {
+      "perExtension": 5,
+      "maxEntries": 100000,
+      "maxFileBytes": 1073741824,
+      "maxTotalHashBytes": 4294967296
+    },
+    "complete": true,
+    "hashedFiles": 60,
+    "hashedBytes": 316343,
+    "selectedBytes": 316343,
+    "selected": [
+      {
+        "relpath": "sample-051.7z",
+        "extension": ".7z",
+        "originalExtension": ".7z",
+        "caseNormalized": false,
+        "bytes": 163,
+        "sha256": "87f5500b6da5e9f17e1b45e34913effa600d878bd477c0b0d10a960c35add85f",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-019.avif",
+        "extension": ".avif",
+        "originalExtension": ".avif",
+        "caseNormalized": false,
+        "bytes": 298,
+        "sha256": "12e3e3266f2885e89dee163366532fa9eda90fb3a4fb7c736308fdba11a6f52b",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-020.avif",
+        "extension": ".avif",
+        "originalExtension": ".avif",
+        "caseNormalized": false,
+        "bytes": 3077,
+        "sha256": "d4327b7ab11ed8f11d86978258fc04e5505bcfe511ca2c4efa4838c85d226fd2",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-021.bmp",
+        "extension": ".bmp",
+        "originalExtension": ".bmp",
+        "caseNormalized": false,
+        "bytes": 57,
+        "sha256": "fbb9eebb69ff802fc1301a5b4d5cb3762f366b076151c396f7e651221905ea36",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-022.bmp",
+        "extension": ".bmp",
+        "originalExtension": ".bmp",
+        "caseNormalized": false,
+        "bytes": 58,
+        "sha256": "436228099d535011a36681e14967e5489e3f6038b232fee5f6cda97ed8a6e1f0",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-031.csv",
+        "extension": ".csv",
+        "originalExtension": ".csv",
+        "caseNormalized": false,
+        "bytes": 337,
+        "sha256": "a54af6ccba8bb050623573aa70415d4032f10d18be21037334fa4df83e2e5f82",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-032.csv",
+        "extension": ".csv",
+        "originalExtension": ".csv",
+        "caseNormalized": false,
+        "bytes": 458,
+        "sha256": "0b1b8977b57b5b8a06016f6008bfb5c210494495af8313d31ebcadb9d3134a83",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-054.dds",
+        "extension": ".dds",
+        "originalExtension": ".dds",
+        "caseNormalized": false,
+        "bytes": 131,
+        "sha256": "c9ba9b95e9b1c59f809b973a899353b6b31d203657ebf58d0d031eaa2fd53440",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-025.docx",
+        "extension": ".docx",
+        "originalExtension": ".docx",
+        "caseNormalized": false,
+        "bytes": 1072,
+        "sha256": "643885533c39067727fb411c8e8167d071b695f905cc6c652da5ebd9de58ecac",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-026.docx",
+        "extension": ".docx",
+        "originalExtension": ".docx",
+        "caseNormalized": false,
+        "bytes": 1113,
+        "sha256": "3bbb21e239accfbfa89b9fadf4d333603373994251724472cff9f6192537a375",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-045.epub",
+        "extension": ".epub",
+        "originalExtension": ".epub",
+        "caseNormalized": false,
+        "bytes": 1381,
+        "sha256": "a5890ce7747202b54a8aaa21a2ae86330e957f9a330e2deac51326eaf2681917",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-044.flac",
+        "extension": ".flac",
+        "originalExtension": ".flac",
+        "caseNormalized": false,
+        "bytes": 8428,
+        "sha256": "cc40f9fb047bb80dd79699a2b9b42d3a71893d921cb6fedf07f38492f04e5aec",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-017.gif",
+        "extension": ".gif",
+        "originalExtension": ".gif",
+        "caseNormalized": false,
+        "bytes": 44,
+        "sha256": "7357284ef3ce2f16a3eb5e6f64ba9eeaded1487661b36ed6ac73476bce24a38e",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-018.gif",
+        "extension": ".gif",
+        "originalExtension": ".gif",
+        "caseNormalized": false,
+        "bytes": 44,
+        "sha256": "f5aa13350b34dd70abd96cf9ac6241815b47080a02f2faf89cc4cbea52a9023d",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-047.glb",
+        "extension": ".glb",
+        "originalExtension": ".glb",
+        "caseNormalized": false,
+        "bytes": 96,
+        "sha256": "d3ce2551b7871be8dd15f4f571b740580dc5c858d8bf82f6534de593fed2a910",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-041.heic",
+        "extension": ".heic",
+        "originalExtension": ".heic",
+        "caseNormalized": false,
+        "bytes": 656,
+        "sha256": "cf670bad6021268e85db1d9e2593a5be1aa7f2ee1e706af5e76ee7abf2a73ec6",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-042.heif",
+        "extension": ".heif",
+        "originalExtension": ".heif",
+        "caseNormalized": false,
+        "bytes": 209,
+        "sha256": "2320949852a2ca44aabedf8ff91678db17874c792e16eb1ed28d4197959fa3dd",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-005.jpeg",
+        "extension": ".jpeg",
+        "originalExtension": ".jpeg",
+        "caseNormalized": false,
+        "bytes": 734,
+        "sha256": "a8e344a77b38b16871b80d24dc19ba87e42f6c774ac0b29b63a93095705081cd",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-006.jpeg",
+        "extension": ".jpeg",
+        "originalExtension": ".jpeg",
+        "caseNormalized": false,
+        "bytes": 46918,
+        "sha256": "b6c5f8726c64cb9c9dabbbdfb7b5cacfc031fb03882b293512879d9266d44987",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-001.jpeg",
+        "extension": ".jpeg",
+        "originalExtension": ".jpeg",
+        "caseNormalized": false,
+        "bytes": 103698,
+        "sha256": "6d01a8a1c12647de49f029807cbf2052c2baae4e29ede73f83b90a50b1740ba6",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-001.jpg",
+        "extension": ".jpg",
+        "originalExtension": ".jpg",
+        "caseNormalized": false,
+        "bytes": 212,
+        "sha256": "0b283de7ed4b18f1830a6593e7b95471468cec47323804f7554eab2a346227ae",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-002.jpg",
+        "extension": ".jpg",
+        "originalExtension": ".jpg",
+        "caseNormalized": false,
+        "bytes": 391,
+        "sha256": "b804dcbb427310dff89aab32c45d0d9c7cb1d6fe10b7fb8dfc17450fb0fa2b81",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-003.jpg",
+        "extension": ".jpg",
+        "originalExtension": ".jpg",
+        "caseNormalized": false,
+        "bytes": 391,
+        "sha256": "31171c39645edfe37642ec8b71e0ec4af55e61aeb21976448fe0d433fbfd9eee",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-004.jpg",
+        "extension": ".jpg",
+        "originalExtension": ".jpg",
+        "caseNormalized": false,
+        "bytes": 563,
+        "sha256": "86c9b6174c73a5ac09820bde2d4b3cc56dd70b5b5da3432e4418b09e47816376",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-029.json",
+        "extension": ".json",
+        "originalExtension": ".json",
+        "caseNormalized": false,
+        "bytes": 376,
+        "sha256": "63413d6dccf72367fc4c04c2560999e7a40ea14cf226dcc995d238cf3d25533b",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-030.json",
+        "extension": ".json",
+        "originalExtension": ".json",
+        "caseNormalized": false,
+        "bytes": 491,
+        "sha256": "6d40c2358a7ea6c43699e48dc2c13cfaaafc53111296f725e21b81449ad4bbe7",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-035.mp3",
+        "extension": ".mp3",
+        "originalExtension": ".mp3",
+        "caseNormalized": false,
+        "bytes": 1024,
+        "sha256": "3927ed2177de3ad394c0d794ffcf886e1729d39202eaac76e36db619574fdd75",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-036.mp3",
+        "extension": ".mp3",
+        "originalExtension": ".mp3",
+        "caseNormalized": false,
+        "bytes": 2625,
+        "sha256": "7424b59f9c1ec2764501890e55587fcf7cf21297f0551ca2146091107a5cb325",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-039.mp4",
+        "extension": ".mp4",
+        "originalExtension": ".mp4",
+        "caseNormalized": false,
+        "bytes": 200,
+        "sha256": "d27a4e40da64fd0d111e0a4c75e084b9c860c45795144c9c92a6dc8269006b45",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-040.mp4",
+        "extension": ".mp4",
+        "originalExtension": ".mp4",
+        "caseNormalized": false,
+        "bytes": 1810,
+        "sha256": "86cfcd8a978cbe012600afc34fa6183942b57e6a39228199a9809ec6b238231c",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-048.obj",
+        "extension": ".obj",
+        "originalExtension": ".obj",
+        "caseNormalized": false,
+        "bytes": 47,
+        "sha256": "8d2afcca999825ab6b239a15f5d3d08d3badb87de4a772d7946a96842a2cde0e",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-011.pdf",
+        "extension": ".pdf",
+        "originalExtension": ".pdf",
+        "caseNormalized": false,
+        "bytes": 456,
+        "sha256": "2cce43b1bc86e84b31cbfb9b0ab780aa11a91450d1d1ca1e7e4e6086e7c96140",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-012.pdf",
+        "extension": ".pdf",
+        "originalExtension": ".pdf",
+        "caseNormalized": false,
+        "bytes": 543,
+        "sha256": "be665e40974379b6504635031a1babf96bfbad3c01d5fd52ffe007e08ac899e6",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-013.pdf",
+        "extension": ".pdf",
+        "originalExtension": ".pdf",
+        "caseNormalized": false,
+        "bytes": 1818,
+        "sha256": "48ad404dc3b5eafb820c5608fb7df0e51085079e522c2414d738c2453efbe89c",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-002.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 65,
+        "sha256": "d8ee2d43e7f1c50bc0685bbe9cfab24637562f6bf22730c982e68bd35fa08fa2",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-003.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 67,
+        "sha256": "312fcf54b0e3af1751ea4c73da0c02e41b426c6e209611768dcda91d609f7977",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-004.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 71,
+        "sha256": "614b03561852e53b60ad937a52fda8727ccc0a6457b5bdacd324f76838ef536a",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-005.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 73,
+        "sha256": "fccdc6f0aad8ce402c35d4c2fd75cf1e073eb1d916d9bf53656e234ef7e99aec",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-006.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 76,
+        "sha256": "08931cfa7dabdbf734778eabae106571a14a5c1783193211b06160817c492e5e",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-046.pptx",
+        "extension": ".pptx",
+        "originalExtension": ".pptx",
+        "caseNormalized": false,
+        "bytes": 4096,
+        "sha256": "9f911cad1eac5c2ee7f89189d4a82f228e02923e8bbacb596d15e4b2e763aa79",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-053.qoi",
+        "extension": ".qoi",
+        "originalExtension": ".qoi",
+        "caseNormalized": false,
+        "bytes": 15,
+        "sha256": "4c79d24fd9292c9a3471891d8291ff3ab1ad065bebf414619f0e62a5a1e9b0e3",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-049.stl",
+        "extension": ".stl",
+        "originalExtension": ".stl",
+        "caseNormalized": false,
+        "bytes": 134,
+        "sha256": "ec126f01ec93dc41a33798a86e8d517bb7722f651dba32938f3270e60387376c",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-033.svg",
+        "extension": ".svg",
+        "originalExtension": ".svg",
+        "caseNormalized": false,
+        "bytes": 26709,
+        "sha256": "94dbf16318ac83931c03b047fa4cda6257fba20111e9aca7ef677187bc47e839",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-034.svg",
+        "extension": ".svg",
+        "originalExtension": ".svg",
+        "caseNormalized": false,
+        "bytes": 52003,
+        "sha256": "955f2698f5e23b6718c877f460f7ec9ed0f3d91140de2d804b6b43f5283cd798",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-023.tif",
+        "extension": ".tif",
+        "originalExtension": ".tif",
+        "caseNormalized": false,
+        "bytes": 16,
+        "sha256": "b67cd44e3d5e297926f871978932000e9d17e1dedf42d32211bbcc19bec5a9a3",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-024.tif",
+        "extension": ".tif",
+        "originalExtension": ".tif",
+        "caseNormalized": false,
+        "bytes": 88,
+        "sha256": "caa9ece68f444da343c6a7fea2aa4ae770d03bb2a1bae49c289a220d3bdec39b",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-007.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 11,
+        "sha256": "9bc52ec71decb9f571a710faaf98781a061d4d6798aa92a0403bffc6d530c0d0",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-008.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 20,
+        "sha256": "d3ec7898401b57154fe1f44a53fff3e6866f361a2c72a698f5374b3cd9de69f9",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-009.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 25,
+        "sha256": "d85ff6cb0c9a9f0b2de3d0564b1641a75ecaf42355814556d18029f49cb0fb70",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-010.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 142,
+        "sha256": "e2f0c6b16c4970fdbc5078711cf36ca3695f19db2dcd0a3ae8c9570b6f5e5375",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-043.wav",
+        "extension": ".wav",
+        "originalExtension": ".wav",
+        "caseNormalized": false,
+        "bytes": 3884,
+        "sha256": "be314759f29249b0ad5fb0437fa099d9820da65efc055397ffc8a552325ae9b5",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-037.webm",
+        "extension": ".webm",
+        "originalExtension": ".webm",
+        "caseNormalized": false,
+        "bytes": 1902,
+        "sha256": "65cd916c52e2c798ae8d593900276d27c30172c320954a6b9122b556511d009d",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-038.webm",
+        "extension": ".webm",
+        "originalExtension": ".webm",
+        "caseNormalized": false,
+        "bytes": 39745,
+        "sha256": "3aa8ce924c469bfc6aa7d43697b5c00ed3a1fe167312d8258ca01ec335e630a6",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-014.webp",
+        "extension": ".webp",
+        "originalExtension": ".webp",
+        "caseNormalized": false,
+        "bytes": 228,
+        "sha256": "1155bdc21ee5c00af3bd1ca7d2bfd635b0f4407cb0f10f05dde3c9a2b45663c4",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-015.webp",
+        "extension": ".webp",
+        "originalExtension": ".webp",
+        "caseNormalized": false,
+        "bytes": 288,
+        "sha256": "bc8b6d64ca4e9280fd7075701da757f028c98b5d236c10aecce592515a6da870",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-016.webp",
+        "extension": ".webp",
+        "originalExtension": ".webp",
+        "caseNormalized": false,
+        "bytes": 302,
+        "sha256": "7cb99df70694a732d3442bdebf7737321650db271cfe31ecb83b374d633880dc",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-052.woff2",
+        "extension": ".woff2",
+        "originalExtension": ".woff2",
+        "caseNormalized": false,
+        "bytes": 348,
+        "sha256": "a38c917d82e52f805b708424de76af045609f5fe3ded2e4f7ee418acae144459",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-027.xlsx",
+        "extension": ".xlsx",
+        "originalExtension": ".xlsx",
+        "caseNormalized": false,
+        "bytes": 2967,
+        "sha256": "a76c4795876768b9f2191b9b7d079e3c7250972912f3e48e3334ed0590169f15",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-028.xlsx",
+        "extension": ".xlsx",
+        "originalExtension": ".xlsx",
+        "caseNormalized": false,
+        "bytes": 3030,
+        "sha256": "99e35606ced8985ded26a7203a821de9bdac77c3e75f51b55ef90d0fc06eaf60",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      },
+      {
+        "relpath": "sample-050.zip",
+        "extension": ".zip",
+        "originalExtension": ".zip",
+        "caseNormalized": false,
+        "bytes": 119,
+        "sha256": "44bab55a5e000d6e008852a41b5b9a27d67b9e47ab8d2a0deaed297a4e8c4d00",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0
+      }
+    ],
+    "countsByExtension": {
+      ".7z": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".avif": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".bmp": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".csv": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".dds": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".docx": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".epub": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".flac": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".gif": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".glb": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".heic": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".heif": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".jpeg": {
+        "eligible": 3,
+        "selected": 3
+      },
+      ".jpg": {
+        "eligible": 4,
+        "selected": 4
+      },
+      ".json": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".mp3": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".mp4": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".obj": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".pdf": {
+        "eligible": 3,
+        "selected": 3
+      },
+      ".png": {
+        "eligible": 5,
+        "selected": 5
+      },
+      ".pptx": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".qoi": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".stl": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".svg": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".tif": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".txt": {
+        "eligible": 4,
+        "selected": 4
+      },
+      ".wav": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".webm": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".webp": {
+        "eligible": 3,
+        "selected": 3
+      },
+      ".woff2": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".xlsx": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".zip": {
+        "eligible": 1,
+        "selected": 1
+      }
+    },
+    "exclusions": [],
+    "caseCollisions": [],
+    "mediaValidation": "NOT_TESTED: byte integrity does not establish format validity"
+  },
+  "privacy": "Relative paths, hashes and object metadata may be sensitive. Credentials and raw provider responses are excluded.",
+  "buckets": [],
+  "cases": [
+    {
+      "name": "connection-or-runner",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "EXTENSION_UNAVAILABLE"
+    },
+    {
+      "name": "list",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "pagination",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "metadata",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "missing-object",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "prefix-list",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "invalid-input",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "unauthorized-bucket",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-051.7z"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-019.avif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-020.avif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-021.bmp"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-022.bmp"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-031.csv"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-032.csv"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-054.dds"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-025.docx"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-026.docx"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-045.epub"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-044.flac"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-017.gif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-018.gif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-047.glb"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-041.heic"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-042.heif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-005.jpeg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-006.jpeg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-001.jpeg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-001.jpg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-002.jpg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-003.jpg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-004.jpg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-029.json"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-030.json"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-035.mp3"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-036.mp3"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-039.mp4"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-040.mp4"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-048.obj"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-011.pdf"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-012.pdf"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-013.pdf"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-002.png"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-003.png"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-004.png"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-005.png"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-006.png"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-046.pptx"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-053.qoi"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-049.stl"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-033.svg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-034.svg"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-023.tif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-024.tif"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-007.txt"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-008.txt"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-009.txt"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-010.txt"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-043.wav"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-037.webm"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-038.webm"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-014.webp"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-015.webp"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-016.webp"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-052.woff2"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-027.xlsx"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-028.xlsx"
+    },
+    {
+      "name": "source-readback",
+      "status": "BLOCKED",
+      "retries": 0,
+      "code": "DISCOVERY_OR_AUTHORIZATION_UNAVAILABLE",
+      "sample": "sample-050.zip"
+    },
+    {
+      "name": "upload",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "mkdir",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "copy",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "move",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "rename",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "delete",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "inter-bucket-transfer",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "versioning",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "idempotency",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "overwrite-preconditions",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "durable-recovery",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "range-read",
+      "status": "UNSUPPORTED",
+      "retries": 0,
+      "code": "NO_SAFE_APPROVED_BRIDGE_CAPABILITY"
+    },
+    {
+      "name": "revoked-grant",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    },
+    {
+      "name": "expired-grant",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    },
+    {
+      "name": "interrupted-connection",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    },
+    {
+      "name": "rate-limit",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    },
+    {
+      "name": "timeout",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    },
+    {
+      "name": "media-decode",
+      "status": "NOT_TESTED",
+      "retries": 0,
+      "code": "REQUIRES_SEPARATE_FAULT_OR_FORMAT_VALIDATION"
+    }
+  ],
+  "coverage": {
+    "BLOCKED": 68,
+    "UNSUPPORTED": 12,
+    "NOT_TESTED": 6
+  },
+  "cleanup": {
+    "state": "NOT_NEEDED",
+    "mutationsAttempted": false
+  },
+  "recovery": "No replay or durable cloud resume. Interrupted reads are indeterminate; start a new approved run.",
+  "finishedAt": "2026-10-25T05:07:58.186628+00:00"
+}

@@ -1,0 +1,27 @@
+
+> remote-asset-ingest@0.1.0 providers:test
+> node scripts/phase26/compile-contracts.mjs --check && node --test tests/provider-*.test.mjs
+
+✔ same Beta renders duplicate native names, navigates stable IDs, copies and reads without path interpretation (416.321655ms)
+✔ owner-bound Beta cannot escape its advertised path root even with a permissive owner authorizer (116.998265ms)
+✔ universal session baseline: object keys (107.95006ms)
+✔ universal session baseline: native IDs (49.207707ms)
+✔ native duplicate names remain distinct, ambiguous aliases fail, case-insensitive conflicts preserve bytes (15.898202ms)
+✔ native containment denies sibling scopes and checks authority again before writes (14.155875ms)
+✔ native stale pages and interrupted jobs never imply safe replay (6.649966ms)
+✔ native capabilities refuse rename before changing stable IDs, and malformed pagination is rejected (7.166801ms)
+✔ universal transfer rechecks per-child authority and preserves source after corrupt readback (8.189269ms)
+✔ account and container identity routes multiple instances without aliasing provider data (7.950221ms)
+✔ new immutable adapter inherits unchanged baseline, session, coordinator and Atlas (69.6603ms)
+✔ unchanged AAC discovery automatically inventories the newly registered adapter without credit for execution (987.303941ms)
+✔ adapter-only local reference extension inherits universal baseline and refuses symlinks (111.803758ms)
+✔ mandatory universal baseline runs real R2 adapter + Worker against offline binding (157.846468ms)
+✔ published provider and 0.3 job/request schemas agree with runtime envelopes (163.892869ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4526.061073

@@ -51,3 +51,20 @@ The remaining central acceptance step is to install/update this branch in an app
 ## Preservation and reproduction
 
 `FOREVER_WORKS/PHASE27.md` is an additive current-source supplement, not invented accepted intent or full AAC certification. New tests are included in CI and the portable syntax target list. `verification/phase27/` retains local command results, initial failures, final status and source hashes. The old production authentication and forwarding helper are unchanged.
+
+## One-click architecture implementation
+
+Current GUI adds a normal directory picker, visible configurable scan limits,
+selection preview, authorized multi-bucket run button, queued progress, cooperative
+cancel and exact JSON copy/save plus Markdown. Advanced requests and the original
+read-only conformance command are retained. New reusable Python modules inventory
+local sources and coordinate canonical read-only cases; there is no Python S3 client.
+The actual extension provider adapter now rejects oversized/invalid declared lengths
+before consuming a response body, retaining bounded unknown-length streaming.
+
+Reports have stable schema 1.0.0, six distinct uppercase statuses, hashed bucket/job
+identifiers, source hashes/relative paths, receipt/Atlas correlation, no mutation
+cleanup and overall INCOMPLETE. The CLI checkpoints each completed case atomically;
+GUI snapshots make partial results copyable. No session resume or replay is claimed.
+See [runbook](ONE_CLICK_RUNBOOK.md) for exact limitations and
+[verification](../../verification/phase27/architecture/README.md) for observed results.

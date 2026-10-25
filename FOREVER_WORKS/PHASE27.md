@@ -17,3 +17,30 @@ Verification, installation, failure states and reproducible commands: [Phase 2.7
 Owner requested longer sessions after the first Windows install. Current approval defaults to one hour with explicit four/eight-hour options; revocation and session-change boundaries remain. The initial five-minute descriptions above are historical. The authenticated host idle cutoff was incorrectly 130 seconds; it now permits eight hours of idle time, while the extension separately enforces each grant. Unauthenticated handshake timeout and per-request deadlines remain bounded. The Python GUI probes connection health every 30 seconds and displays expiry/actionable failure guidance. Chrome native-host errors are visible in the extension status. No installed-Windows/live-cloud success is inferred from these source fixes.
 
 OAuth follow-up: owner explicitly requested a renewal attempt every forty minutes while the Python GUI is connected. `RedownCloudflareApi.renewAuthorization` reuses existing token-lock/refresh handling; `authorizeLab` gates the additive auth-lifecycle method by the active grant and a forty-minute rate limit. This is separate from canonical filesystem execution. Credentials remain extension-only; expiry/scopes are not extended, and missing/rejected refresh tokens require user sign-in. Python's monotonic schedule skips burst replay after sleep and can be disabled in the GUI.
+
+## One-click architecture laboratory supplement
+
+Owner assignment: `docs/phase27/CODEX_ONE_CLICK_ARCHITECTURE_LAB_ASSIGNMENT.md`.
+Purpose: make scoped Universal API verification usable from any selected local
+folder, without per-file JSON, provider credentials in Python, unsafe writes or
+optimistic success. Implementations: `clients/python/redown/inventory.py`,
+`architecture.py`, `lab.py`; actual adapter bound:
+`extension/file-engine/adapters/extension-r2.mjs`. This additive supplement
+preserves the existing canonical model and accepted-intent boundary.
+
+Obligations implemented and locally tested: deterministic distinct-content
+selection up to five per normalized extension without an overall cap, source
+provenance/hash/size inventory, explicit exclusions and budgets, scoped read-only
+engine/receipt/Atlas correlation, independently reconstructed download hashes,
+partial-report export/copy, cancellation and nonzero incomplete CLI results.
+Evidence: `verification/phase27/architecture/`, Python architecture tests and
+native external-process regression (injected provider only).
+
+Deferred obligations remain open: approved conditional writes/streaming and
+non-overwrite proof; per-run mutation scopes; durable idempotency/recovery;
+separately approved audited cleanup; native/nonpath fixture mapping; actual
+Windows GUI/native messaging and authenticated Cloudflare verification; live
+revocation/timeout/rate limits, format decoding, and complete multi-provider
+architecture acceptance. No cloud mutations or policy changes were performed.
+Historical failures and original preservation records are unchanged. Offline
+passes and configured providerEvidence never establish live acceptance.

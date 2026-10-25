@@ -1,0 +1,63 @@
+
+> remote-asset-ingest@0.1.0 file:verify
+> npm run file:unit && npm run file:schema && npm run file:preservation
+
+
+> remote-asset-ingest@0.1.0 file:unit
+> node --test tests/phase2-engine.test.mjs tests/universal-file-engine.test.mjs tests/r2-laboratory-transport.test.mjs tests/universal-file-discovery.test.mjs
+
+✔ contract rejects incompatible versions, ambiguous keys, destructive requests and self targets (4.019777ms)
+✔ cross-provider copy and move preserve contents and enforce destination conflicts (75.927844ms)
+✔ recursive directory copy refuses merge and never changes unrelated destination (11.848317ms)
+✔ same idempotency key is executed once across engine instances; different request is rejected (7.783269ms)
+✔ journal reopening retains exact transitions, receipt, identities and read-only diagnostics (4.598382ms)
+✔ list consumes every page and rejects a stale cursor after mutation (19.84816ms)
+✔ unknown routing never implies absence; no real provider is accepted (4.771776ms)
+✔ rename, folder, upload, search, delete keep exact identity and independent receipts (25.395827ms)
+✔ failed persistence cannot return a verified completion (2.479047ms)
+✔ worker scopes auth, lease, bucket and keys before provider access (74.942243ms)
+✔ real Worker handler preserves literal Unicode/percent keys and atomically refuses duplicate creates (9.988934ms)
+✔ Cloudflare-side ingestion pins URL/hash and refuses redirects without any destination write (7.530957ms)
+✔ R2 adapter preserves provider-delimited virtual folders for navigation (2.714237ms)
+✔ published operation examples validate and incomplete acceptance stays machine-visible (11.266577ms)
+✔ version negotiation, exact input shapes, binary and range validation fail closed (7.22198ms)
+✔ seeded identity fuzz preserves Unicode/case/whitespace and rejects traversal and UTF8 limits (11.81522ms)
+✔ arbitrary binary, empty bodies, MIME and ranged read use one coordinator (58.151007ms)
+✔ accepted write with lost reply is uncertain, deduplicated and never automatically replayed (7.164306ms)
+✔ wrong readback and changed source cannot trigger move source deletion (4.014789ms)
+✔ every HTTP failure family preserves source and records typed failure with no blind retries (30.203231ms)
+✔ parallel writers have exactly one winner; batch outcomes remain per-target (97.864724ms)
+✔ cancel before write, restart uncertainty and read-only inspection are durable (4.620964ms)
+✔ seeded stateful sequences match an independent content model (8705.148648ms)
+✔ providers lacking atomic conditional delete cannot mutate a move source (18.85458ms)
+✔ malformed provider metadata and partial recursive conflicts cannot fabricate full success (10.722978ms)
+✔ safe diagnostic exports retain evidence but omit names, bodies and authorization values (6.044964ms)
+✔ real adapters require explicit authorization and reconcile cannot bypass revocation (6.232621ms)
+✔ ranged reads reject truncated successful replies and preserve exact identity boundaries (4.155218ms)
+✔ independent durable journal clients reserve duplicate mutations once and retain recovery evidence (53.739352ms)
+✔ durable journal detects externally restored older state instead of continuing mutations (6.28633ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9686.337677
+
+> remote-asset-ingest@0.1.0 file:schema
+> python tests/universal-file-schema.py
+
+{"schemaFixtures": 45, "negativeControls": 5, "foreverRecords": 15, "state": "passed", "scope": "independent structure validation; not live behavior"}
+
+> remote-asset-ingest@0.1.0 file:preservation
+> node scripts/r2-lab/preservation.mjs
+
+file:///workspace/REDOWN/scripts/r2-lab/preservation.mjs:7
+let checked=0;for(const paths of Object.values(manifest.records))for(const path of paths){const record=JSON.parse(await readFile(root+path));for(const ref of record.extensions?.['org.redown']?.sourceRefs||[]){const bytes=await readFile(new URL('../../'+ref.path,import.meta.url));if(createHash('sha256').update(bytes).digest('hex')!==ref.sha256)throw Error('SOURCE_DRIFT: '+ref.path);checked++;}}
+                                                                                                                                                                                                                                                                                                                                                               ^
+
+Error: SOURCE_DRIFT: extension/file-engine/engine.mjs
+    at file:///workspace/REDOWN/scripts/r2-lab/preservation.mjs:7:352
+
+Node.js v24.19.0

@@ -19,7 +19,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
   host.stderr.on("data", (x) => errors += x);
   const grants = /* @__PURE__ */ new Map();
   const bytes = new TextEncoder().encode("Native round trip fixture");
-  const request = async (url, options = {}) => url.includes("?") ? Response.json({ result: { objects: [{ key: "fixture.txt", size: bytes.length, etag: "r1" }] } }) : new Response(options.method === "HEAD" ? null : bytes, { headers: { etag: "r1", "content-length": String(bytes.length) } });
+  const request = async (url, options = {}) => url.includes("__redown_missing_") ? new Response(null, {status:404}) : url.includes("?") ? Response.json({ result: { objects: [{ key: "fixture.txt", size: bytes.length, etag: "r1" }] } }) : new Response(options.method === "HEAD" ? null : bytes, { headers: { etag: "r1", "content-length": String(bytes.length) } });
   const send = (value) => {
     const body = Buffer.from(JSON.stringify(value)), length = Buffer.alloc(4);
     length.writeUInt32LE(body.length);
@@ -70,6 +70,21 @@ test("Python external process traverses native relay, canonical engine and Atlas
     assert.ok(report.cases.find((c) => c.name === "file-read").evidence.verification.providerEvidence);
     assert.ok(!output.includes("Bearer"));
     assert.match(stderr, /Approve code/);
+    const samples = path.join(home, 'samples');
+    await mkdir(samples);
+    await writeFile(path.join(samples, 'fixture.txt'), bytes);
+    const architecturePath = path.join(home, 'architecture.json');
+    const architecture = spawn('python', ['-m', 'redown.lab', 'architecture', '--directory', samples, '--report', architecturePath], {env, stdio:['ignore','pipe','pipe']});
+    let architectureOutput = '';
+    architecture.stdout.on('data', x => architectureOutput += x);
+    architecture.stderr.resume();
+    assert.equal(await new Promise(r => architecture.on('exit', r)), 2, architectureOutput);
+    const result = JSON.parse(await readFile(architecturePath));
+    assert.equal(result.cases.find(c => c.name === 'source-readback')?.status, 'PASS', JSON.stringify(result));
+    assert.equal(result.cleanup.mutationsAttempted, false);
+    assert.equal(result.evidenceTier, 'UNVERIFIED_CONNECTION');
+    assert.ok(!architectureOutput.includes('"account": "account"'));
+
   } finally {
     host.stdin.end();
     await new Promise((r) => host.on("exit", r));

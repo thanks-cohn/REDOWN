@@ -1,0 +1,17 @@
+{
+  "FOREVER_WORKS/PHASE27.md": "d4b9c0cfc4663b7ffc8ae10a84002c4b5e7080854afd214df153461a53864177",
+  "clients/python/pyproject.toml": "1dd2c2460e7f53e2cc5630cc0fea2214776445e4b793d539981f1af6a6ec7c79",
+  "clients/python/redown/architecture.py": "a877abbf7c9a92050d8e75aca37f2341ebbd0d28f7e0e581474c0253217bc4ec",
+  "clients/python/redown/inventory.py": "af5502a0b72c62bdb6b05de83389bb595b6b7209af7450b3b51cbfabdab1df43",
+  "clients/python/redown/lab.py": "10f01c6133fafb300304c09a8e6fd11e7fcf4c675a6b49b0da4e9a9c7cde1734",
+  "clients/python/tests/test_architecture.py": "f21edf6a010f6698742c5946d4a49add7263341bd9ab8c06abca44d2725606b0",
+  "docs/phase27/IMPLEMENTATION.md": "b77801e40a17bed03d00ba4b844a1af2b31ed51b93d621d579505a21b1c7684c",
+  "docs/phase27/ONE_CLICK_RUNBOOK.md": "ed57ecaf359f5646d5952c2748380772be7fcf5867c32e7eeae53ba1df0562ad",
+  "docs/phase27/README.md": "9c798b692f623001c82ae82e4fcbd5a4cf74d98aec983d14a29d6e870f966eb6",
+  "docs/phase27/architecture-report.schema.json": "a7828f0a12b3d5114954e834f4fd36193c0257be042cedf5b939f529104822f3",
+  "extension/file-engine/adapters/extension-r2.mjs": "ac3f2da7238698cdf9a828ae224c4999f8f515e99b2a8a80b2f0d0cf802515e4",
+  "package.json": "f5420d5dfdb6911e7fbb6344c828d89ef8ec958a68eeb29dcbd07a6df7db4809",
+  "tests/architecture-report-schema.py": "58d99bf6c8488782893118792642cdbda50ee726e34a6e563085f361152d1665",
+  "tests/extension-laboratory.test.mjs": "2aec308a547bf93b18fd774a08c2e4b3e09dcb8319e2418a4ad32218c8e54521",
+  "tests/extension-native-e2e.test.mjs": "97d367f1ef7f1546cfece325d9dbd56165357eb7ef4ad2c21e86b1a9dc94fc30"
+}

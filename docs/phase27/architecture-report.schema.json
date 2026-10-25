@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.invalid/schemas/architecture-report-1.0.0.json",
+  "title": "REDOWN architecture laboratory report 1.0.0",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "startedAt", "acceptance", "evidenceTier", "inventory", "buckets", "cases", "coverage", "cleanup", "recovery"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "runId": {"type": "string", "format": "uuid"},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "finishedAt": {"type": "string", "format": "date-time"},
+    "acceptance": {"const": "INCOMPLETE"},
+    "evidenceTier": {"enum": ["UNVERIFIED_CONNECTION", "OFFLINE_NO_PROVIDER", "MOCKED_PROVIDER"]},
+    "inventory": {
+      "type": "object", "required": ["complete", "limits", "selected", "exclusions", "countsByExtension"],
+      "properties": {"selected": {"type": "array", "items": {
+        "type": "object", "required": ["relpath", "extension", "bytes", "sha256", "mediaValidation"],
+        "properties": {"relpath": {"type": "string"}, "extension": {"type": "string"}, "bytes": {"type": "integer", "minimum": 0}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "mediaValidation": {"const": "NOT_TESTED"}}
+      }}}
+    },
+    "buckets": {"type": "array", "items": {"type": "object", "required": ["id", "provider", "policy"], "properties": {"id": {"type": "string", "pattern": "^[a-f0-9]{24}$"}}}},
+    "cases": {"type": "array", "items": {
+      "type": "object", "required": ["name", "status", "retries"],
+      "properties": {
+        "name": {"type": "string"},
+        "status": {"enum": ["PASS", "FAIL", "BLOCKED", "UNSUPPORTED", "NOT_TESTED", "INDETERMINATE"]},
+        "retries": {"const": 0},
+        "requestId": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "elapsedMs": {"type": "integer", "minimum": 0}
+      }
+    }},
+    "coverage": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "cleanup": {"type": "object", "required": ["state", "mutationsAttempted"], "properties": {"state": {"const": "NOT_NEEDED"}, "mutationsAttempted": {"const": false}}},
+    "recovery": {"type": "string"}
+  }
+}
