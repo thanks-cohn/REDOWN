@@ -88,3 +88,16 @@ Client 0.4.2 makes Connect a large purple button at the top; bucket/test/report 
 The GUI's checked **Renew Cloudflare OAuth through REDOWN every 40 minutes while connected** option schedules a renewal request forty minutes after pairing and every forty minutes thereafter. You can disable it without revoking the read grant. The extension handles token rotation using the existing serialized refresh flow and returns only status/expiry. Renewal does not extend the separately approved Python grant, change account/bucket scopes, open sign-in automatically or access filesystem objects. An expired/revoked Python grant blocks renewal. Sleeping or busy apps perform one overdue check when they can run again, without replaying a backlog.
 
 If Cloudflare supplied no refresh token, the app reports automatic renewal unavailable; use **Reconnect Cloudflare** when needed. If the provider rejects the refresh grant, the app asks for reconnection. No credentials are returned to Python and failed refreshes are not immediately replayed. The SDK/CLI can explicitly invoke `renewAuthorization`; the extension rate-limits it to one attempt per grant per forty minutes. To use the new code, close the GUI, pull main, reinstall `./clients/python`, reload REDOWN, and establish a new approved connection.
+
+## Recovery after a Cloudflare logout
+
+The Python GUI has a REFRESH CONNECTION / NEW PAIRING button under Connect. First reconnect Cloudflare inside the REDOWN extension. If the REDOWN Laboratory helper is stale, stop and restart its local connection. Then press Refresh in Python and approve the new code in the browser. This drops the prior Python grant and clears stale bucket roots; it does not replay operations, bypass approval, or refresh provider OAuth itself. An unavailable browser/helper still requires restarting the extension-side local connection. The refresh workflow has not been certified by a live Windows run.
+
+Windows PowerShell, after closing the old GUI:
+
+```powershell
+cd "$env:USERPROFILE\Desktop\Extension\remote-download-2-cloudfare"
+git pull --ff-only
+.\.venv\Scripts\python.exe -m pip install --upgrade ./clients/python
+.\.venv\Scripts\python.exe -m redown.lab gui
+```
