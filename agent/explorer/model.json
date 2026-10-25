@@ -1119,9 +1119,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer\"",
-        "line": 645,
+        "line": 648,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1129,9 +1129,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"workspace-objects\"",
-        "line": 664,
+        "line": 667,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1139,9 +1139,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"workspace-preview\"",
-        "line": 668,
+        "line": 671,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1149,9 +1149,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-menu\"",
-        "line": 674,
+        "line": 677,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1159,9 +1159,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-properties\"",
-        "line": 675,
+        "line": 678,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1169,9 +1169,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-operation\"",
-        "line": 672,
+        "line": 675,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     },
     {
@@ -1179,9 +1179,9 @@
       "ref": {
         "path": "extension/options.html",
         "symbol": "id=\"explorer-status\"",
-        "line": 665,
+        "line": 668,
         "evidence": "source-anchor",
-        "sha256": "bd0230c182513e8779854508de56a637d7b9363dadaf6036525675035a871123"
+        "sha256": "3d48947e5a36c3f1c446088a00a3a151db4df766e0893043358d9e50e39e2c8d"
       }
     }
   ],
