@@ -180,6 +180,21 @@
     return id;
   }
 
-  globalThis.RedownCloudflareApi={request,preview,download,boundedFetch};
+  // Explicit local-client renewal reuses the existing serialized rotating-token flow.
+  // Return status only: OAuth credentials never leave the extension.
+  async function renewAuthorization(expectedSession) {
+    const {cloudflareAuth: current} = await chrome.storage.local.get('cloudflareAuth');
+    const fail = code => Object.assign(new Error(code), {code});
+    if (!expectedSession || current?.sessionId !== expectedSession || !current?.accessToken || current.reconnectRequired) throw fail('CLOUDFLARE_RECONNECT_REQUIRED');
+    if (!current.refreshToken) return {state:'renewal-unavailable', expiresAt:current.expiresAt || null};
+    try {
+      const renewed = await auth(current.accessToken, expectedSession);
+      return {state:'renewed', expiresAt:renewed.expiresAt || null};
+    } catch {
+      const {cloudflareAuth: latest} = await chrome.storage.local.get('cloudflareAuth');
+      throw fail(!latest?.accessToken || latest.sessionId !== expectedSession || latest.reconnectRequired ? 'CLOUDFLARE_RECONNECT_REQUIRED' : 'OAUTH_RENEWAL_FAILED');
+    }
+  }
+  globalThis.RedownCloudflareApi={request,preview,download,boundedFetch,renewAuthorization};
 })();
 

@@ -109,7 +109,7 @@ async function startConnection() {
         }
         const hours = Number($("grant-duration").value);
         if (![1, 4, 8].includes(hours)) { status("Choose an approval duration of 1, 4 or 8 hours."); return; }
-        const grant2 = authorizeLab({ roots, ttl: hours * 3600000, request: RedownCloudflareApi.request, isCurrent: async () => {
+        const grant2 = authorizeLab({ roots, ttl: hours * 3600000, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
           const a = (await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
           return a?.sessionId === sessionId && !!a.accessToken && !a.reconnectRequired;
         } });

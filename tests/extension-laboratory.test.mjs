@@ -109,3 +109,14 @@ test('owner-selected grants default to an hour and cap at eight hours', async ()
   long.revoke();
   assert.equal((await long.query('describe')).state,'failed');
 });
+
+test('OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant',async()=>{
+  let time=0,calls=0;const f=fixture();
+  const grant=authorizeLab({roots:[root],request:f.request,isCurrent:()=>true,clock:()=>time,renewAuthorization:async()=>{calls++;return {state:'renewed',expiresAt:9999999,accessToken:'NEVER_RETURN'};}});
+  assert.ok((await grant.query('describe')).data.methods.includes('renewAuthorization'));
+  assert.equal((await grant.query('renewAuthorization',{token:'bad'})).error.code,'INVALID_INPUT');
+  const result=await grant.query('renewAuthorization');assert.equal(result.data.state,'renewed');assert.ok(!JSON.stringify(result).includes('NEVER_RETURN'));assert.equal(calls,1);
+  assert.equal((await grant.query('renewAuthorization')).error.code,'OAUTH_RENEWAL_RATE_LIMITED');
+  time=40*60000;assert.equal((await grant.query('renewAuthorization')).state,'available');assert.equal(calls,2);
+  time=grant.expires;assert.equal((await grant.query('renewAuthorization')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');assert.equal(calls,2);assert.equal(f.calls.length,0);
+});

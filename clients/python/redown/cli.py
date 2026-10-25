@@ -12,7 +12,7 @@ def main():
     group.add_argument("--command", help="Owner command as a JSON string array")
     parser.add_argument("--cwd")
     parser.add_argument("--timeout", type=float, default=30, help="Stdio command timeout; extension pairing allows 120 seconds")
-    parser.add_argument("method", choices=["describe", "execute", "plan", "jobs", "inspect", "evidence", "resources", "cancel", "reconcile"])
+    parser.add_argument("method", choices=["describe", "execute", "plan", "jobs", "inspect", "evidence", "resources", "cancel", "reconcile", "renewAuthorization"])
     parser.add_argument("--input", default="{}", help="Session method input as JSON")
     args = parser.parse_args()
     try:

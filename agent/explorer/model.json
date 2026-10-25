@@ -298,7 +298,7 @@
           "symbol": "preview",
           "line": 126,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ],
       "tests": [
@@ -359,7 +359,7 @@
           "symbol": "download",
           "line": 143,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ],
       "tests": [
@@ -393,7 +393,7 @@
           "symbol": "request",
           "line": 1,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ],
       "tests": [
@@ -1560,7 +1560,7 @@
         "path": "extension/cloudflare-api.js",
         "symbol": "async function request(",
         "line": 46,
-        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1571,7 +1571,7 @@
         "path": "extension/cloudflare-api.js",
         "symbol": "async function auth(",
         "line": 10,
-        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1582,7 +1582,7 @@
         "path": "extension/cloudflare-api.js",
         "symbol": "async function preview(",
         "line": 126,
-        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1593,7 +1593,7 @@
         "path": "extension/cloudflare-api.js",
         "symbol": "async function download(",
         "line": 143,
-        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1854,7 +1854,7 @@
           "symbol": "preview",
           "line": 126,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ]
     },
@@ -1889,7 +1889,7 @@
           "symbol": "download",
           "line": 143,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ]
     },
@@ -1910,7 +1910,7 @@
           "symbol": "request",
           "line": 1,
           "evidence": "source-anchor",
-          "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
         }
       ]
     },

@@ -1,0 +1,36 @@
+{
+  "base": "b898af7b38f2a5d4411f50f1821ecebb067937db",
+  "clientVersion": "0.4.3",
+  "intervalSeconds": 2400,
+  "behavior": [
+    "GUI enabled by default while connected; owner can disable",
+    "Monotonic schedule resets on connection and completion; no burst after sleep",
+    "Extension-owned rotating-token refresh under existing token lock",
+    "No token disclosure or extension of client grant",
+    "Renewal denied after grant expiry/revocation; per-grant forty-minute rate limit",
+    "Missing refresh token returns unavailable without disrupting a still-valid login",
+    "Invalid refresh grant requires user reconnect; no automated login or immediate replay"
+  ],
+  "mascot": "Requested adjustment reverted; mascot code and positioning unchanged",
+  "tests": {
+    "cloudflareAuthFilesAndLogin": {
+      "passed": 34,
+      "failed": 0
+    },
+    "extensionNative": {
+      "passed": 10,
+      "failed": 0
+    },
+    "python": {
+      "passed": 12,
+      "failed": 0
+    },
+    "explorerCurrentReferences": {
+      "passed": 20,
+      "failed": 0
+    },
+    "pythonCompile": "passed",
+    "modifiedJavaScriptSyntax": "passed"
+  },
+  "evidenceBoundary": "Local provider/auth fixtures and fake-clock scheduling. No live Cloudflare refresh or Windows GUI acceptance claimed. Historical full-regression failures not claimed fixed."
+}

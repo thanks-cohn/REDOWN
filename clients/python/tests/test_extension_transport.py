@@ -7,11 +7,26 @@ import threading
 import unittest
 import redown.install_host
 from redown import connect
+from redown.extension import RenewalSchedule
 from redown.native_host import Relay, Server, Handler, read_frame, write_frame, MAX_FRAME, AUTHENTICATED_IDLE_TIMEOUT
 from redown.client import RedownError
 from redown.lab import conformance
 
 class NativeTransportTests(unittest.TestCase):
+    def test_forty_minute_schedule_uses_monotonic_time_without_burst_replay(self):
+        now = [0]
+        schedule = RenewalSchedule(clock=lambda: now[0])
+        now[0] = 2399
+        self.assertFalse(schedule.claim_due())
+        now[0] = 2400
+        self.assertTrue(schedule.claim_due())
+        self.assertFalse(schedule.claim_due())
+        now[0] = 20000
+        self.assertTrue(schedule.claim_due())
+        self.assertFalse(schedule.claim_due())
+        schedule.reset()
+        self.assertEqual(schedule.next_due, 22400)
+
     def test_direct_mode_is_explicitly_unsupported(self):
         with self.assertRaises(RedownError) as error:
             connect(mode="direct-s3")

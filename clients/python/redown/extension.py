@@ -63,3 +63,22 @@ class ExtensionClient(Client):
             self._socket.close()
         if getattr(self, '_stream', None):
             self._stream.close()
+
+
+class RenewalSchedule:
+    """Claim one renewal every forty minutes; delayed/sleeping apps never burst-replay."""
+    interval = 40 * 60
+
+    def __init__(self, clock=time.monotonic):
+        self.clock = clock
+        self.reset()
+
+    def reset(self):
+        self.next_due = self.clock() + self.interval
+
+    def claim_due(self):
+        now = self.clock()
+        if now < self.next_due:
+            return False
+        self.next_due = now + self.interval
+        return True

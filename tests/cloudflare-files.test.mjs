@@ -114,3 +114,22 @@ test('unusual-key download uses enabled public URL only following a denied authe
   assert.equal(h.calls[0].headers.length,0);
 });
 
+
+test('explicit renewal refreshes a valid token but returns only safe status',async()=>{
+  let calls=0;const h=harness(async(url)=>{assert.equal(url,'https://dash.cloudflare.com/oauth2/token');calls++;return Response.json({access_token:'PRIVATE_NEW_TOKEN',refresh_token:'PRIVATE_REFRESH_TOKEN',expires_in:3600});});
+  h.local.cloudflareAuth.sessionId='session';
+  const result=await h.api.renewAuthorization('session');
+  assert.equal(result.state,'renewed');assert.equal(calls,1);
+  assert.equal(h.local.cloudflareAuth.accessToken,'PRIVATE_NEW_TOKEN');
+  assert.deepEqual(Object.keys(result).sort(),['expiresAt','state']);
+  assert.ok(!JSON.stringify(result).includes('PRIVATE'));
+});
+test('missing refresh token reports unavailable without breaking a still-valid login',async()=>{
+  let calls=0;const h=harness(async()=>{calls++;throw Error();});h.local.cloudflareAuth.sessionId='session';delete h.local.cloudflareAuth.refreshToken;
+  const result=await h.api.renewAuthorization('session');assert.equal(result.state,'renewal-unavailable');assert.equal(calls,0);assert.ok(!h.local.cloudflareAuth.reconnectRequired);
+  await assert.rejects(h.api.renewAuthorization('other'),{code:'CLOUDFLARE_RECONNECT_REQUIRED'});
+});
+test('invalid refresh grant requests interactive reconnect without exposing provider errors',async()=>{
+  const h=harness(async()=>Response.json({error:'invalid_grant'},{status:400}));h.local.cloudflareAuth.sessionId='session';
+  await assert.rejects(h.api.renewAuthorization('session'),{code:'CLOUDFLARE_RECONNECT_REQUIRED'});assert.equal(h.local.cloudflareAuth.reconnectRequired,true);
+});

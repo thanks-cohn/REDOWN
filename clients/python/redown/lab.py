@@ -8,7 +8,7 @@ import queue
 import tempfile
 import threading
 import time
-from .extension import ExtensionClient
+from .extension import ExtensionClient, RenewalSchedule
 from .client import RedownError
 
 def conformance(client, root=None, source=None, expected_sha256=None):
@@ -91,11 +91,16 @@ def gui():
     from tkinter import ttk, filedialog
     window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('900x720')
     client = None; report = None; events = queue.Queue(); busy = False; roots = []
+    renewal = RenewalSchedule(); renewal_supported = False
     state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
     ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
     connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
     tk.Button(connection_bar, text='1. CONNECT TO REDOWN', command=lambda: connect(), font=('Segoe UI', 12, 'bold'), bg='#7254c7', fg='white', activebackground='#5b3ca8', activeforeground='white', padx=20, pady=12, cursor='hand2', relief='raised').pack(fill='x')
     ttk.Label(window, text='Start the local connection in REDOWN, connect here, then approve the matching code in REDOWN.', wraplength=850).pack(fill='x', padx=8)
+    auto_renew = tk.BooleanVar(value=True)
+    ttk.Checkbutton(window, text='Renew Cloudflare OAuth through REDOWN every 40 minutes while connected', variable=auto_renew, command=renewal.reset).pack(anchor='w', padx=8)
+    oauth_status = tk.StringVar(value='OAuth renewal: waiting for a connection')
+    ttk.Label(window, textvariable=oauth_status, wraplength=850).pack(fill='x', padx=8)
     ttk.Label(window, text='2. Select your authorized test buckets', font=('Segoe UI', 11, 'bold')).pack(anchor='w', padx=8, pady=(10, 4))
     buckets = tk.Listbox(window, selectmode='extended', height=6); buckets.pack(fill='x')
     actions = ttk.Frame(window); actions.pack(fill='x', padx=8, pady=8)
@@ -117,10 +122,10 @@ def gui():
         threading.Thread(target=run, daemon=True).start()
     def connect():
         def run():
-            nonlocal client, roots
+            nonlocal client, roots, renewal_supported
             if client: client.close()
             client = ExtensionClient(on_pairing=lambda code: events.put(('status', 'Approve code ' + code + ' in REDOWN')))
-            info = client.describe(); roots = info['locations']; events.put(('roots', roots)); events.put(('health', info)); return info
+            info = client.describe(); roots = info['locations']; renewal_supported = 'renewAuthorization' in info['methods']; renewal.reset(); events.put(('oauth-ready', renewal_supported)); events.put(('roots', roots)); events.put(('health', info)); return info
         work(run)
     def execute():
         selected = method.get(); payload = inputs.get('1.0', 'end').strip()
@@ -158,10 +163,20 @@ def gui():
             kind, value = events.get()
             if kind == 'done': busy = False
             elif kind == 'status': state.set(value)
+            elif kind == 'oauth-ready':
+                oauth_status.set('OAuth renewal scheduled every 40 minutes' if value else 'Update/reload REDOWN to enable scheduled OAuth renewal')
+            elif kind == 'renewal':
+                renewal.reset()
+                if value.get('state') == 'renewed':
+                    oauth_status.set('OAuth renewed through REDOWN at ' + time.strftime('%H:%M') + '; next attempt in 40 minutes')
+                else:
+                    oauth_status.set('Cloudflare did not provide a refresh token. Automatic renewal is unavailable; use Reconnect Cloudflare when needed.')
             elif kind == 'health':
                 expires = value.get('expiresAt')
                 until = time.strftime('%H:%M', time.localtime(expires / 1000)) if expires else 'the approved expiry'
                 state.set('Connected and authorized until ' + until + '; select test buckets')
+                if oauth_status.get() == 'OAuth renewal: waiting for a connection':
+                    oauth_status.set('OAuth renewal scheduled every 40 minutes' if renewal_supported else 'Update/reload REDOWN to enable scheduled OAuth renewal')
             elif kind == 'roots':
                 buckets.delete(0, 'end')
                 for root in value: buckets.insert('end', root['account'] + ' / ' + root['container'])
@@ -174,9 +189,17 @@ def gui():
                         'EXTENSION_DISCONNECTED': 'REDOWN disconnected. Reopen its Laboratory page, start the local connection, then reconnect here.',
                         'TIMEOUT_UNCERTAIN': 'Connection lost or timed out. Check the REDOWN Laboratory status, then reconnect here.',
                         'AUTHORIZATION_REVOKED_OR_EXPIRED': 'Approval expired or was revoked. Click Connect to extension and approve a new session in REDOWN.',
+                        'CLOUDFLARE_RECONNECT_REQUIRED': 'Reconnect Cloudflare in REDOWN; automatic renewal cannot complete without a new sign-in.',
+                        'OAUTH_RENEWAL_FAILED': 'OAuth renewal failed. Check REDOWN; no immediate retry or sign-in popup was triggered.',
                         'PAIRING_REJECTED': 'Pairing was rejected in REDOWN. Reconnect when you are ready to approve it.'
                     }
                     state.set(value + ': ' + guidance.get(value, 'Check REDOWN Laboratory for connection details.'))
+                    if value in ('CLOUDFLARE_RECONNECT_REQUIRED', 'OAUTH_RENEWAL_FAILED'):
+                        oauth_status.set(state.get())
+                    if value == 'AUTHORIZATION_REVOKED_OR_EXPIRED' and client:
+                        client.close()
+        if client and not busy and not client._closed and renewal_supported and auto_renew.get() and renewal.claim_due():
+            work(lambda: client.query('renewAuthorization'), result_kind='renewal')
         if time.monotonic() >= next_health:
             next_health = time.monotonic() + 30
             if client and not busy and not client._closed:
