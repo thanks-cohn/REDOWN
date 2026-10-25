@@ -96,6 +96,7 @@ def gui():
     ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
     connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
     tk.Button(connection_bar, text='1. CONNECT TO REDOWN', command=lambda: connect(), font=('Segoe UI', 12, 'bold'), bg='#7254c7', fg='white', activebackground='#5b3ca8', activeforeground='white', padx=20, pady=12, cursor='hand2', relief='raised').pack(fill='x')
+    ttk.Button(connection_bar, text='REFRESH CONNECTION / NEW PAIRING', command=lambda: connect(refresh=True)).pack(fill='x', pady=(6, 0))
     ttk.Label(window, text='Start the local connection in REDOWN, connect here, then approve the matching code in REDOWN.', wraplength=850).pack(fill='x', padx=8)
     auto_renew = tk.BooleanVar(value=True)
     ttk.Checkbutton(window, text='Renew Cloudflare OAuth through REDOWN every 40 minutes while connected', variable=auto_renew, command=renewal.reset).pack(anchor='w', padx=8)
@@ -120,12 +121,34 @@ def gui():
             except Exception as error: events.put(('error', error.code if isinstance(error, RedownError) else type(error).__name__))
             finally: events.put(('done', None))
         threading.Thread(target=run, daemon=True).start()
-    def connect():
+    def connect(refresh=False):
         def run():
-            nonlocal client, roots, renewal_supported
-            if client: client.close()
-            client = ExtensionClient(on_pairing=lambda code: events.put(('status', 'Approve code ' + code + ' in REDOWN')))
-            info = client.describe(); roots = info['locations']; renewal_supported = 'renewAuthorization' in info['methods']; renewal.reset(); events.put(('oauth-ready', renewal_supported)); events.put(('roots', roots)); events.put(('health', info)); return info
+            nonlocal client, roots, renewal_supported, report
+            # Never reuse an expired or revoked grant. A refresh is a new, explicitly
+            # approved session, not an OAuth token refresh or an operation replay.
+            old = client
+            client = None
+            roots = []
+            renewal_supported = False
+            report = None
+            renewal.reset()
+            if old: old.close()
+            events.put(('reset', None))
+            events.put(('status', 'Refreshing local discovery and requesting a new REDOWN pairing...' if refresh else 'Requesting a new REDOWN pairing...'))
+            fresh = ExtensionClient(on_pairing=lambda code: events.put(('status', 'Approve code ' + code + ' in REDOWN')))
+            try:
+                info = fresh.describe()
+            except Exception:
+                fresh.close()
+                raise
+            client = fresh
+            roots = info['locations']
+            renewal_supported = 'renewAuthorization' in info['methods']
+            renewal.reset()
+            events.put(('oauth-ready', renewal_supported))
+            events.put(('roots', roots))
+            events.put(('health', info))
+            return info
         work(run)
     def execute():
         selected = method.get(); payload = inputs.get('1.0', 'end').strip()
@@ -162,6 +185,9 @@ def gui():
         while not events.empty():
             kind, value = events.get()
             if kind == 'done': busy = False
+            elif kind == 'reset':
+                buckets.delete(0, 'end')
+                oauth_status.set('OAuth renewal: waiting for a new approved connection')
             elif kind == 'status': state.set(value)
             elif kind == 'oauth-ready':
                 oauth_status.set('OAuth renewal scheduled every 40 minutes' if value else 'Update/reload REDOWN to enable scheduled OAuth renewal')
@@ -191,9 +217,11 @@ def gui():
                         'AUTHORIZATION_REVOKED_OR_EXPIRED': 'Approval expired or was revoked. Click Connect to extension and approve a new session in REDOWN.',
                         'CLOUDFLARE_RECONNECT_REQUIRED': 'Reconnect Cloudflare in REDOWN; automatic renewal cannot complete without a new sign-in.',
                         'OAUTH_RENEWAL_FAILED': 'OAuth renewal failed. Check REDOWN; no immediate retry or sign-in popup was triggered.',
-                        'PAIRING_REJECTED': 'Pairing was rejected in REDOWN. Reconnect when you are ready to approve it.'
+                        'PAIRING_REJECTED': 'Pairing was rejected in REDOWN. Click REFRESH CONNECTION / NEW PAIRING and approve the new code.',
+                        'LOCAL_AUTH_DENIED': 'The local helper rejected an old credential. Restart the REDOWN Laboratory local connection, then click REFRESH CONNECTION / NEW PAIRING.',
+                        'SESSION_CLOSED': 'The old session is closed. Click REFRESH CONNECTION / NEW PAIRING after restarting the REDOWN Laboratory connection.'
                     }
-                    state.set(value + ': ' + guidance.get(value, 'Check REDOWN Laboratory for connection details.'))
+                    state.set(value + ': ' + guidance.get(value, 'If the extension was reauthenticated, restart its local connection and click REFRESH CONNECTION / NEW PAIRING.'))
                     if value in ('CLOUDFLARE_RECONNECT_REQUIRED', 'OAUTH_RENEWAL_FAILED'):
                         oauth_status.set(state.get())
                     if value == 'AUTHORIZATION_REVOKED_OR_EXPIRED' and client:
