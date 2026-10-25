@@ -15,3 +15,11 @@ Outputs are `corpus-files.json` (SHA-256, relative paths and download provenance
 Keep upstream license notices. Per-fixture redistribution rights must be reviewed before publishing a website pack; repository licensing alone is not proof for every sample. These are download candidates for later validation, not a certified valid corpus or a test of the current read-only Python bridge. This helper does not add cloud upload or larger-file support.
 
 Offline tests: `python -m unittest discover -s clients/python/tests -p test_fixture_collector.py -v` (3 passing tests). The test payloads are synthetic and do not prove format validity or live source availability. Tests cover byte-distinct counting, duplicate rejection, Git blob disagreement, visible gaps, repeat-run provenance, budget refusal and symlink refusal where the platform permits symlink creation.
+
+## Additional-source pass
+
+Add `--additional-sources` to search Assimp, ExoPlayer, GIMP, ImageMagick, NumPy, Arrow testing data, fontTools, Wireshark, XZ and FluidSynth instead of repeating the first eight pools. This remains best effort, not a guarantee of five files for every proprietary/obscure format. Two GitHub API reads per repository resolve the latest default-branch commit and its pinned tree; source failures (including HTTP status) remain in the report.
+
+The scanner now includes Pillow's `Tests/fonts` and other test fixture directories instead of only `Tests/images`. `.ts` candidates require repeated transport-stream synchronization bytes; TypeScript source fails that guard and is excluded from coverage without deleting the local file. This guard does not certify full transport decoding. `excludedExistingSamples` explains those exclusions. New source-pool bytes still require format and redistribution review.
+
+The collector now has four offline tests, including the ambiguous `.ts` extension and previously omitted font directory.

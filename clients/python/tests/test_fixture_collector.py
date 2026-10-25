@@ -48,6 +48,23 @@ class FixtureCollectorTests(unittest.TestCase):
             self.assertEqual(report['downloadedFiles'], 0)
             self.assertTrue(report['errors'])
 
+    def test_typescript_does_not_count_as_transport_stream_and_fonts_are_scanned(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); folder = setup(root)
+            (folder / 'files.json').write_text(json.dumps({'files': [{'type': 'ts'}, {'type':'woff2'}]}))
+            (folder / 'source.ts').write_bytes(b'export const value = 123;')
+            media = bytearray(188 * 3)
+            media[0] = media[188] = media[376] = 0x47
+            (folder / 'media.ts').write_bytes(media)
+            fonts = root / 'pillow/Pillow-main/Tests/fonts'
+            fonts.mkdir(parents=True)
+            (fonts / 'font.woff2').write_bytes(b'wOF2syntheticfixture')
+            known, manifest, excluded = collector.scan(root.resolve())
+            self.assertEqual(len(known['ts']), 1)
+            self.assertEqual(len(known['woff2']), 1)
+            self.assertEqual(excluded[0]['reason'], 'TS_TRANSPORT_SIGNATURE_NOT_CONFIRMED')
+            self.assertFalse(collector.format_guard('ts', b'export default {};'))
+
     def test_budget_and_symlink_output_fail_before_download(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); setup(root)
