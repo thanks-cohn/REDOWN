@@ -2,26 +2,22 @@
 
 **Assignment type:** Codex implementation and architecture stabilization, not feature expansion.
 **Repository:** thanks-cohn/REDOWN.
-**At assignment creation:** main `785a55546c09ecc45752cae32d3276c19c8fddd5`; unmerged `fix/evidence-first-write-diagnostics` at `ad5134f75e884de5a9754eb50d267238d5115920`. Recheck both on start.
-**Mandatory baseline:** retain connection-repair changes and diagnostics branch unless specific behavior is proven erroneous.
+**Updated branch baseline:** diagnostics and connection fixes merged into `main` by PR #38, merge commit `359185df6dd2b84a61d971e006e3b2effe563361`. Recheck latest `main` on start.
+**Mandatory baseline:** retain the connection-repair and diagnostic improvements already merged into main unless evidence proves a defect.
 **Owner mandate:** highest practical standards, provider independence, agent-native maintainability, clear responsibility boundaries, low conceptual overhead, honest real-world verification. Consolidate, don't create another overlapping platform.
 
-## IMPORTANT: UNMERGED BRANCHES AND HOW CODEX MUST START
+## CURRENT BRANCH STATE AND CODEX BOOTSTRAP
 
-**Verified repository state at assignment amendment:** `main` contains assignment documents but **does not contain the diagnostics implementation**. `fix/evidence-first-write-diagnostics` is unmerged at `ad5134f75e884de5a9754eb50d267238d5115920` and contains the diagnostics and connection repairs. At that point the feature branch was five commits ahead and three commits behind `main`; verify current refs before working.
+**Merge completed:** PR #38 integrated `fix/evidence-first-write-diagnostics` and its preserved connection-lifecycle repair into `main`, with merge commit `359185df6dd2b84a61d971e006e3b2effe563361`. The diagnostics implementation is now part of main. Confirm current HEAD, test status and local tree before work; do not continue from the obsolete unmerged-branch instructions.
 
-**Do not merge or cherry-pick the diagnostics implementation into `main` without explicit owner approval.** Since this assignment lives on `main`, while implementation must start from the diagnostics branch, Codex MUST retrieve the assignment from `origin/main` explicitly. Suggested safe workflow:
-
+Use the latest `origin/main` as the source of truth, then create a dedicated consolidation feature branch:
 ```sh
 git fetch origin
-git switch fix/evidence-first-write-diagnostics
-git pull --ff-only
+git switch main
+git pull --ff-only origin main
 git switch -c fix/foundation-consolidation
-mkdir -p docs/assignments
-git show origin/main:docs/assignments/REDOWN_FOUNDATION_CONSOLIDATION_AND_PROVIDER_NEUTRALITY.md > docs/assignments/REDOWN_FOUNDATION_CONSOLIDATION_AND_PROVIDER_NEUTRALITY.md
 ```
-
-Read this copied document before implementing and commit it on the new working branch so the full contract and mandatory handoff survive there. No automatic merge to main. If branch names/refs or the working tree differ, inspect status and adapt safely rather than overwriting existing work. The resulting consolidation branch should include preserved diagnostics code and this latest assignment text, while `main` stays unchanged except the explicitly requested assignment documentation.
+If the proposed branch name already exists or local changes are present, inspect and safely adapt without discarding work. Follow this assignment from that main-based branch. Do not automatically merge consolidation changes to main. Live R2 root cause and acceptance remain unproven even though source fixes are merged.
 
 ## Executive purpose
 
@@ -56,7 +52,7 @@ No new architecture layer, registry, telemetry store, database or diagnostics en
 ## Mandatory first action: read and compare rather than rewrite
 
 - Read `AGENTS.md`, all current phase 2.6–2.8 architecture and runbooks, `FOREVER_WORKS/bugs/FW-REDOWN-LIVE-R2-WRITE-PROVIDER-ERROR-20261025.md`, `docs/architecture/REDOWN_DIAGNOSTIC_STANDARD.md`, the last handoff, schema definitions, source, and actual test evidence.
-- Compare the diagnostic branch with main. Trace where the connection repair branch was integrated, confirm branch ancestry and unmerged status, and identify contract and test differences.
+- Verify merged PR #38 ancestry, ensure the connection repair and diagnostics remain intact on latest main, and identify contract/test issues without re-merging old branches.
 - Preserve the tagged read-only baseline, original live reports, immutable proof, previously passing behavior and outstanding 9 Node failures. Do not refresh historical evidence to silence failures.
 - Produce a compact **responsibility map before changing implementation**. For Universal API, adapter, scoped session, Resource Atlas, AAC, Forever Works, Python Lab and Doctor specify what each owns, reads, writes, must never duplicate, and who is the authoritative source of truth.
 - Produce a **coupling map**: Cloudflare Worker/bucket/REST/OAuth concepts versus truly provider-neutral interfaces. Find leaked provider assumptions, rank by real harm and fix only demonstrably harmful ones in this timebox.
@@ -123,7 +119,7 @@ Map the existing code to these owners, identify any violations, show exactly how
 3. CI/contract enforcement and cross-language schema agreement proof; results with historical regressions separated.
 4. **Mandatory permanent bug records** under `FOREVER_WORKS/bugs/`, including `FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md` and updates to relevant existing R2 write and connection incidents. Record the original symptoms, observed evidence, reproduced defects, cause versus hypothesis, architecture ownership/coupling violations, before/after repair, exact changed files and commits, regression tests, remaining risks and owner verification. Do not rewrite frozen historical evidence. Create separate bug files for distinct confirmed defects rather than burying them only in architecture notes. Every confirmed defect must link to its corrective commit and test, and each unresolved issue must have next decisive probe.
 5. `docs/phase28/CONSOLIDATED_OWNER_ACCEPTANCE.md` with Windows read-only Doctor and subsequent *separately approved* eight-byte write + independent hash-check procedure. No unrelated live cloud mutations.
-6. A concise follow-up decision: whether `fix/evidence-first-write-diagnostics` can be merged, which exact blockers remain, and what observation would close the write incident.
+6. A concise follow-up decision: whether the newly merged diagnostics foundation is consolidation-ready, which exact blockers remain, and what observation would close the write incident.
 
 ## Mandatory documentation workflow
 
@@ -133,7 +129,7 @@ Before changing code, create the Forever Works consolidation incident with initi
 
 Start a 30-minute best-effort timebox. Record elapsed start/end times accurately. At or before minute 25, **create, commit, and push** a durable handoff to `docs/assignments/handoffs/REDOWN_CONSOLIDATION_HANDOFF.md`: HEAD/branch status, tested changes, source-backed findings, completed/blocked tasks, exact tests/failures, root-cause certainty, pending owner actions, and a successor starter prompt. Do not sacrifice the handoff to finish refactoring. Minutes 25–30 are reserved for validating the delivered state, updating the bug documentation and handoff, and ensuring the branch is pushed. The handoff is the primary deliverable, not optional cleanup. By minute 30, prioritize a completed, committed and pushed handoff and factual delivery summary over starting additional tasks. If no precise timer is available, disclose the limitation; don't fabricate compliance. If interrupted or the budget is exhausted early, immediately save the handoff with all verified progress, remaining tasks, and successor instructions.
 
-Branch from the current diagnostic branch so its connection repair is preserved. Push tested commits to a dedicated consolidation branch. **Do not automatically merge**. Do not change Cloudflare infrastructure without explicit owner approval. Do not claim certification without live acceptance. If the timebox only permits an audit and one substantial fix, ship that tested work and evidence rather than layering another half-built subsystem.
+Branch from the latest main, which now contains the connection repair and diagnostic implementation from PR #38. Push tested commits to a dedicated consolidation branch. **Do not automatically merge**. Do not change Cloudflare infrastructure without explicit owner approval. Do not claim certification without live acceptance. If the timebox only permits an audit and one substantial fix, ship that tested work and evidence rather than layering another half-built subsystem.
 
 ## Final report format
 
