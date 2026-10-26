@@ -1,0 +1,28 @@
+{
+  "scope": "Local reference metadata failure path, real filesystem, no cloud; Atlas on/off includes shared journal costs, not isolated diagnostic attribution",
+  "rows": [
+    {
+      "atlasEnabled": false,
+      "operationsPerTrial": 64,
+      "durationsMs": [
+        94.13410099999999,
+        61.56097299999999,
+        57.77468999999999
+      ]
+    },
+    {
+      "atlasEnabled": true,
+      "operationsPerTrial": 64,
+      "durationsMs": [
+        249.105032,
+        230.31873899999994,
+        199.85775
+      ]
+    }
+  ],
+  "validation": {
+    "count": 10000,
+    "durationMs": 38.5457899999999
+  },
+  "performanceBudget": "No portable threshold asserted from one machine"
+}

@@ -1,0 +1,21 @@
+{
+  "agent/files/session.schema.json": "49d0415f5010d2e8aa3606c47bec5a21b45a944218c69df647c11cc041cc5ef9",
+  "clients/python/redown/adaptive.py": "f979dda15cecbf47c31ef8d435535e5394d054b4a06ac7098f0cefa9855df8b4",
+  "clients/python/redown/diagnostic.schema.json": "0b4ae324f42835cd0c3dafca55ec0299d8b0f00c75a026a39f42da0a491f6e49",
+  "clients/python/redown/diagnostics.py": "824e6de3186a2f8b51c79d516b4eea06f5ba79d14ca5965cf523be03a5774dc3",
+  "clients/python/tests/test_neutral_doctor.py": "80f4985e83baf49dcecdf8d34c6e728506cf1b86f61c40edf7674ea3ee89dd84",
+  "extension/file-engine/adapters/extension-r2.mjs": "661bfd2da6102c44d5b7e86753d5b924549222c8f447ddbf2e10954e434066ef",
+  "extension/file-engine/adapters/r2-diagnostics.mjs": "97a33d186f3a48b04be122013ec2c1799ea7755fb88690be1ab6e6ff0142f518",
+  "extension/file-engine/diagnostic-validator.mjs": "c41475b131f22e5f08505d234826d263c38b39a7b1faf22cab0bcbc56a34e17b",
+  "extension/file-engine/diagnostic.schema.json": "0b4ae324f42835cd0c3dafca55ec0299d8b0f00c75a026a39f42da0a491f6e49",
+  "extension/file-engine/diagnostics.mjs": "04c5728671118f043f7d4588bdffa4377e6c7d5fb8a0da05a244eaec2300181f",
+  "extension/file-engine/doctor-validator.mjs": "c9b63d9995533f507f12d83fa01ea9e2ec69c6323646e51323410def7b34a29c",
+  "extension/file-engine/scoped-session.mjs": "693f2b22a362ad5403394c79aaa0061c4ecb12655579f39f351f5735975225e0",
+  "extension/file-engine/session-validators.mjs": "169778da9ba42564d95edd0f629e72ae73b5e92867c987ffada9f3203f4a9805",
+  "extension/lab-session.mjs": "36b022aa93991d0ba76fd8fd414c11a3048100e40372921b0ec0413cfa405afb",
+  "extension/lab-worker.mjs": "dcb2f900012cfc47ba72614c0fe8fc6b834466cd381d2aefb95af0b0b2180f0f",
+  "package.json": "7e61abc8994abae4e515c51e887783968bd1bbd2131ef90a1547c5bde94a2156",
+  "scripts/benchmark-diagnostic-boundaries.mjs": "6c0c99ec600a4f5dd3beae4b618bf2be30581d0cc5a91433c8103d956e7413f6",
+  "scripts/compile-diagnostic-schema.mjs": "54d7bef7542306c396116d9027b85e547fc141cdbde2d251605de674f2933204",
+  "scripts/syntax-targets.json": "7ef4a957158ee99c02847fa3fedd79b66a4de5563d2a583c14fc6b9b8aabbbe5"
+}

@@ -94,5 +94,6 @@
   "tests/diagnostic-evidence.test.mjs",
   "extension/file-engine/adapters/r2-diagnostics.mjs",
   "tests/foundation-consolidation.test.mjs",
-  "tests/fixtures/provider-neutral-doctor.mjs"
+  "tests/fixtures/provider-neutral-doctor.mjs",
+  "scripts/benchmark-diagnostic-boundaries.mjs"
 ]

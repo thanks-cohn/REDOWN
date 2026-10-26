@@ -227,3 +227,15 @@ Preserve connection repair 7321381. Doctor defaults read-only; --smoke still req
 separate write approval. Do not deploy, repair Workers, alter policies, or merge
 without the owner's separate authorization. Run `npm run diagnostics:test` for
 redaction/provenance/completeness and fault tests; preserve inherited failure debt.
+
+## Foundation consolidation after merged PR #38
+
+PR #38 diagnostics and connection fixes are on main; do not remerge obsolete branches.
+Read docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md and the latest
+REDOWN_CONSOLIDATION_HANDOFF.md. The existing scoped facade owns optional Doctor
+routing; owner probes own provider-specific reads. Cloudflare body/cf-ray decoding
+belongs to adapters/r2-diagnostics.mjs, never generic diagnostics. Generate all schema
+artifacts with node scripts/compile-diagnostic-schema.mjs; --check includes Python.
+Run npm run diagnostics:test for differential/drift/scope/neutral-provider proof.
+No new production provider, live R2 cure, cloud authorization or merge follows.
+Windows owner verification: docs/phase28/CONSOLIDATED_OWNER_ACCEPTANCE.md.

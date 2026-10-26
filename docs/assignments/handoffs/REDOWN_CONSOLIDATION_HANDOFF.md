@@ -149,3 +149,34 @@ boundaries, connection fixes and nine inherited Node failures. Resolve only prov
 remaining defects; don't introduce another registry/engine or rewrite frozen proof.
 No automatic merge, cloud infrastructure changes or ambiguous write replays. Live R2
 causality remains UNPROVEN until owner-session evidence and independent bytes arrive.
+
+
+## Final five-minute verification delta — 2026-10-26T03:16:59.150081+00:00
+
+Verified handoff ca8cd36f7d3bef4688cea7eb291ea96606aa3f40 was pushed and confirmed at
+03:12:20 UTC, before the 03:13:09 deadline; initial handoff b882ee4 was already
+pushed at minute 6. The final five minutes added documentation links, the benchmark
+syntax target, and verified the delivered benchmark command, generated artifacts,
+syntax and the 31-contract gate. No new runtime behavior changed after f44cdc4.
+All 31 contracts still PASS; previously recorded full Node 496/9, Python 41 PASS +
+1 display SKIP, lab/native 40 PASS, providers/Atlas/AAC and schema results stand.
+No newly observed failure is concealed; release remains blocked by inherited debt.
+
+New source hashes for the delivered artifact set are final-source-hashes.json;
+initial source-hashes.json remains the earlier checkpoint, not silently rewritten.
+The delivered benchmark output is retained as benchmark-delivered.json. It is a
+fresh local timing sample, not evidence of live/cloud performance or an optimized SLA.
+
+Remote main advanced during the timebox to 3f6175c795ee244d39f0590c0a79acd0b1b23c3d.
+Inspection found ONLY a new 91-line offline-first proposal document; the mandatory
+consolidation assignment and runtime base did not change. It was not merged into
+this branch or treated as implementation authorization. The branch remains correctly
+based on the latest origin/main at task start (6767bfb). A successor should inspect
+that proposal separately, without expanding this stabilization patch into a new
+workspace/replay platform.
+
+PR #38 and connection repair ancestry rechecked; v0.4.4 read-only tag still peels to
+bea19528dbdad5827edaf305789b6b190841cfc4. Feature branch remains unmerged. No Cloudflare
+connector, cloud reads/writes, infrastructure repair/deployment, policies, secrets or
+release were used. All deliverables will be committed and pushed now; no asynchronous
+work is scheduled. Stop deadline remains 03:18:09 UTC.

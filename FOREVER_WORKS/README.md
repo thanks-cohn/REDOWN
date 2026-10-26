@@ -59,3 +59,12 @@ unproven live causality and the [diagnostic contract](../docs/architecture/REDOW
 It is an engineering preservation obligation, not accepted canonical intent or live
 closure. AAC's diagnostic-evidence-completeness scenario and native fault tests guard
 cause preservation. Do not rewrite frozen source hashes to make freshness pass.
+
+## Foundation ownership consolidation after PR #38
+
+[Consolidation incident](bugs/FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md) links
+three distinct confirmed repairs, immutable corrective commits and test evidence.
+The [ownership audit](../docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md)
+records necessary coexistence separately from competing logic. This is an additive
+engineering supplement; canonical accepted purpose and frozen historical evidence
+are not rewritten. The original live R2 write incident remains open and UNPROVEN.

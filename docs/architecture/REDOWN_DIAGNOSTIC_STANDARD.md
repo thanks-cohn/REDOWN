@@ -66,3 +66,25 @@ Memory retention inherits existing bounded native frames, the 16-job payload rin
 by stage count/envelope limits. Export is explicit and local; local reports include
 sensitive corpus metadata where the user selected it. Automatic report rotation and
 full fleet-wide retention policy are not implemented.
+
+## Consolidated ownership after PR #38
+
+The existing generator now owns JS diagnostic/Doctor validators, canonical codebook
+and packaged Python schema. Root event semantics are referenced for shallow causes;
+there is no second nested codebook. Run `node scripts/compile-diagnostic-schema.mjs`
+and `--check`; do not copy schemas manually. Independent language validators coexist
+only at runtime boundaries and agree on the exercised fault corpus.
+
+Core responseDiagnostic classifies neutral HTTP with caller-supplied sanitized
+metadata; R2 callers use adapters/r2-diagnostics.mjs for bounded native body/cf-ray
+parsing. Existing lab-worker.mjs is explicitly R2 support. The shared scoped facade
+owns optional read-only Doctor routing and result consistency; the adapter/owner
+composition owns actual probes. No new provider registry, evidence store or engine.
+
+Doctor health telemetry is a projection of its returned active-check snapshot,
+not an independent transfer receipt or journal. Atlas remains authoritative for
+canonical filesystem-operation observations, and evidence joins by operationId.
+A future Atlas health-span contract could absorb probe timing if it preserves this
+distinction and privacy; silently calling a health PASS a verified transfer is forbidden.
+The [consolidation audit](REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md) contains exact
+coexistence rationale, measured overhead, remaining limitations and migration triggers.
