@@ -1,0 +1,9 @@
+Exit: 1
+file:///tmp/redown-baseline-_al7roo7/scripts/r2-lab/preservation.mjs:7
+let checked=0;for(const paths of Object.values(manifest.records))for(const path of paths){const record=JSON.parse(await readFile(root+path));for(const ref of record.extensions?.['org.redown']?.sourceRefs||[]){const bytes=await readFile(new URL('../../'+ref.path,import.meta.url));if(createHash('sha256').update(bytes).digest('hex')!==ref.sha256)throw Error('SOURCE_DRIFT: '+ref.path);checked++;}}
+                                                                                                                                                                                                                                                                                                                                                               ^
+
+Error: SOURCE_DRIFT: extension/file-engine/engine.mjs
+    at file:///tmp/redown-baseline-_al7roo7/scripts/r2-lab/preservation.mjs:7:352
+
+Node.js v24.22.1

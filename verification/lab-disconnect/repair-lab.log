@@ -1,0 +1,15 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 lab:test
+> node scripts/phase27/compile-session.mjs --check && node --test tests/phase28-laboratory.test.mjs tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs && python tests/architecture-report-schema.py
+
+✔ extension page explicitly rejects, approves selected scope and revokes (99.009781ms)
+✔ canonical read, bytes, scoped evidence and Atlas correlation (44.548529ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.910519ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (1.626228ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (2.533692ms)
+✔ revoke during request suppresses late bytes and future evidence (21.720264ms)
+✔ bounded reads, truncation, pagination and exact key encoding (1.780837ms)
+✔ owner-selected grants default to an hour and cap at eight hours (0.838241ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.828086ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.60777ms)

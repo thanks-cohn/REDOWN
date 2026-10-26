@@ -38,15 +38,21 @@ class ExtensionClient(Client):
             try:
                 write_frame(self._stream, {'method': method, 'input': inputs})
                 result = read_frame(self._stream)
-            except (OSError, EOFError, ValueError):
+            except socket.timeout:
                 self.close()
-                raise RedownError('TIMEOUT_UNCERTAIN') from None
+                raise RedownError('PAIRING_TIMEOUT' if method == 'pair' else 'TIMEOUT_UNCERTAIN') from None
+            except (OSError, EOFError):
+                self.close()
+                raise RedownError('EXTENSION_DISCONNECTED') from None
+            except ValueError:
+                self.close()
+                raise RedownError('INVALID_RESPONSE') from None
             if result.get('apiVersion') != '1.0.0':
                 self.close()
                 raise RedownError('INCOMPATIBLE_RESPONSE')
             if result.get('state') == 'failed':
                 code = result.get('error', {}).get('code', 'SESSION_ERROR')
-                if code in ('TIMEOUT_UNCERTAIN', 'EXTENSION_DISCONNECTED'):
+                if code in ('PAIRING_TIMEOUT', 'PAIRING_REJECTED', 'TIMEOUT_UNCERTAIN', 'EXTENSION_DISCONNECTED'):
                     self.close()
                 raise RedownError(code)
             if result.get('state') != 'available' or 'data' not in result:

@@ -11,7 +11,7 @@ import time
 from .extension import ExtensionClient, RenewalSchedule
 from .client import RedownError
 from .inventory import inventory
-from .adaptive import profile as resource_profile, run as adaptive_run, plan as adaptive_plan, persist as adaptive_persist
+from .adaptive import profile as resource_profile, run as adaptive_run, plan as adaptive_plan, persist as adaptive_persist, CONNECTION_RECOVERY
 from .architecture import run as architecture_run, report_json, markdown, exit_code, copy_report, save_architecture_report, progress_text
 
 def conformance(client, root=None, source=None, expected_sha256=None):
@@ -92,8 +92,12 @@ def save_report(report, path):
 def gui():
     import tkinter as tk
     from tkinter import ttk, filedialog
-    window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('1000x950')
+    from .gui_layout import scrollable_content
+    root_window = tk.Tk(); root_window.title('REDOWN Python Laboratory')
+    root_window.geometry(f'{min(1000, root_window.winfo_screenwidth()-80)}x{min(850, root_window.winfo_screenheight()-100)}')
+    window = scrollable_content(root_window)
     client = None; report = None; events = queue.Queue(); busy = False; roots = []
+    last_connection_error = None
     renewal = RenewalSchedule(); renewal_supported = False
     scan = None; stop = threading.Event(); active_report_path = None
     state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
@@ -181,7 +185,8 @@ def gui():
         def checkpoint(value):
             adaptive_persist(value,target)
             events.put(('adaptive-checkpoint',{k:value[k] for k in ('completedCases','remainingCases','verifiedFiles','verifiedBytes','coverage','estimatedRemainingSeconds','currentOperation','bytesPerSecond','ramObservation','cpuSeconds')}))
-        work(lambda: adaptive_run(client,scan,depth=chosen_depth,resources=settings,roots=selected or None,cancel=stop,checkpoint=checkpoint),result_kind='adaptive-report')
+        connected = client if client and not client._closed else None
+        work(lambda: adaptive_run(connected,scan,depth=chosen_depth,resources=settings,roots=selected or None,cancel=stop,checkpoint=checkpoint,connection_error=last_connection_error if not connected else None),result_kind='adaptive-report')
     def latest_report():
         if active_report_path and active_report_path.exists():
             return json.loads(active_report_path.read_text(encoding='utf-8'))
@@ -203,10 +208,14 @@ def gui():
                             ('SAVE JSON', lambda: save_exact('json')), ('SAVE MARKDOWN', lambda: save_exact('md'))]:
         ttk.Button(directory_bar, text=label, command=callback).pack(side='left', padx=2)
     tk.Button(window,text='RUN COMPLETE LABORATORY',command=complete_tests,font=('Segoe UI',12,'bold'),bg='#7254c7',fg='white',padx=12,pady=10).pack(fill='x',padx=8,pady=6)
-    ttk.Label(window, text='Advanced: session method and JSON input').pack()
+    ttk.Label(window, text='Advanced API controls: session method and JSON input').pack()
     method = ttk.Combobox(window, values=['describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile']); method.set('describe'); method.pack(fill='x')
     inputs = tk.Text(window, height=7); inputs.insert('1.0', '{}'); inputs.pack(fill='x')
-    output = tk.Text(window, height=18); output.pack(fill='both', expand=True)
+    ttk.Label(window, text='Results and diagnostics').pack(anchor='w', padx=8)
+    output_frame = ttk.Frame(window); output_frame.pack(fill='both', expand=True)
+    output = tk.Text(output_frame, height=18, wrap='word'); output.pack(side='left', fill='both', expand=True)
+    output_scroll = ttk.Scrollbar(output_frame, orient='vertical', command=output.yview)
+    output_scroll.pack(side='right', fill='y'); output.configure(yscrollcommand=output_scroll.set)
     def work(fn, result_kind="result"):
         nonlocal busy
         if busy:
@@ -286,7 +295,7 @@ def gui():
         ttk.Button(actions, text=text, command=action, style='Lab.Action.TButton').grid(row=index // 2, column=index % 2, sticky='ew', padx=4, pady=4)
     next_health = time.monotonic() + 30
     def poll():
-        nonlocal busy, next_health, scan, report
+        nonlocal busy, next_health, scan, report, last_connection_error
         while not events.empty():
             kind, value = events.get()
             if kind == 'done': busy = False
@@ -320,6 +329,7 @@ def gui():
                 else:
                     oauth_status.set('Cloudflare did not provide a refresh token. Automatic renewal is unavailable; use Reconnect Cloudflare when needed.')
             elif kind == 'health':
+                last_connection_error = None
                 expires = value.get('expiresAt')
                 until = time.strftime('%H:%M', time.localtime(expires / 1000)) if expires else 'the approved expiry'
                 state.set('Connected and authorized until ' + until + '; select test buckets')
@@ -332,6 +342,8 @@ def gui():
             else:
                 output.delete('1.0', 'end'); output.insert('1.0', json.dumps(value, indent=2));
                 if kind == 'error':
+                    if value in CONNECTION_RECOVERY or value in ('LOCAL_AUTH_DENIED','SESSION_CLOSED','TIMEOUT_UNCERTAIN'):
+                        last_connection_error = value
                     guidance = {
                         'EXTENSION_UNAVAILABLE': 'Local helper unavailable. In REDOWN, keep Python Laboratory open and click Start local connection; check helper registration if it fails.',
                         'EXTENSION_DISCONNECTED': 'REDOWN disconnected. Reopen its Laboratory page, start the local connection, then reconnect here.',
@@ -343,6 +355,7 @@ def gui():
                         'LOCAL_AUTH_DENIED': 'The local helper rejected an old credential. Restart the REDOWN Laboratory local connection, then click REFRESH CONNECTION / NEW PAIRING.',
                         'SESSION_CLOSED': 'The old session is closed. Click REFRESH CONNECTION / NEW PAIRING after restarting the REDOWN Laboratory connection.'
                     }
+                    guidance.update(CONNECTION_RECOVERY)
                     state.set(value + ': ' + guidance.get(value, 'If the extension was reauthenticated, restart its local connection and click REFRESH CONNECTION / NEW PAIRING.'))
                     if value in ('CLOUDFLARE_RECONNECT_REQUIRED', 'OAUTH_RENEWAL_FAILED'):
                         oauth_status.set(state.get())
@@ -358,8 +371,8 @@ def gui():
     def close():
         stop.set()
         if client: client.close()
-        window.destroy()
-    window.protocol('WM_DELETE_WINDOW', close); poll(); window.mainloop()
+        root_window.destroy()
+    root_window.protocol('WM_DELETE_WINDOW', close); poll(); root_window.mainloop()
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -389,13 +402,15 @@ def main():
         if args.offline: report=adaptive_run(None,scan,depth=args.depth,resources=settings,checkpoint=checkpoint)
         else:
             import sys
+            connection_started=time.monotonic()
             try:
                 with ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr)) as connected:
                     report=adaptive_run(connected,scan,depth=args.depth,resources=settings,roots=[json.loads(args.root)] if args.root else None,checkpoint=checkpoint)
             except RedownError as error:
-                report=adaptive_run(None,scan,depth=args.depth,resources=settings)
-                report['connectionError']=error.code;checkpoint(report)
-        print(json.dumps({'acceptance':report['acceptance'],'coverage':report['coverage'],'report':args.report}))
+                report=adaptive_run(None,scan,depth=args.depth,resources=settings,connection_error=error.code,checkpoint=checkpoint)
+            report['connectionAndRunSeconds']=time.monotonic()-connection_started
+            checkpoint(report)
+        print(json.dumps({'acceptance':report['acceptance'],'coverage':report['coverage'],'connectionError':report.get('connectionError'),'dispatchedOperations':report['dispatchedOperations'],'recovery':report.get('primaryFailure',{}).get('recovery'),'report':args.report}))
         return 1 if any(r['status'] in ('FAIL','INDETERMINATE') for r in report['results']) else 2
     if args.action in ('scan', 'architecture'):
         if not args.directory: parser.error('--directory is required')

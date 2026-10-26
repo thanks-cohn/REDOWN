@@ -14,6 +14,19 @@ from .client import RedownError
 
 PROFILES = {'Low RAM':(32,1,16384), 'Balanced':(128,2,65536), 'Maximum':(512,4,1048576)}
 
+CONNECTION_RECOVERY = {
+    'EXTENSION_UNAVAILABLE': 'Open REDOWN Python Laboratory, start its local connection, then request a new pairing. Check native-host registration for the installed extension ID.',
+    'EXTENSION_DISCONNECTED': 'Keep the REDOWN Laboratory tab open. Check its helper status and Chrome native-host error, restart its local connection, then approve a NEW Python pairing.',
+    'PAIRING_TIMEOUT': 'Run/connect again and approve the NEW matching code in REDOWN within 120 seconds. Each CLI invocation requires its own approval.',
+    'PAIRING_REJECTED': 'Start a new pairing only when ready to approve its matching code and selected scope in REDOWN.',
+    'AUTHORIZATION_REVOKED_OR_EXPIRED': 'Obtain a new explicit approval with the required buckets. OAuth renewal does not extend the Python grant.',
+    'SESSION_EXPIRED': 'Reconnect Cloudflare in REDOWN and request a new approved Python connection.',
+}
+
+def connection_failure(code):
+    return dict(status='BLOCKED', code=code, phase='session-establishment',
+                recovery=CONNECTION_RECOVERY.get(code, 'Check REDOWN Laboratory status and obtain a new explicit pairing; never replay uncertain writes.'))
+
 def profile(name='Balanced', memory_mib=128, concurrency=2, buffer_bytes=65536):
     if name in PROFILES: memory_mib,concurrency,buffer_bytes=PROFILES[name]
     elif name != 'Custom': raise ValueError('Unknown resource profile')
@@ -64,7 +77,7 @@ def persist(report,path):
     lines += ['', '## Configuration, inventory, plan, evidence and limitations', '', '```json',json.dumps(report,indent=2,ensure_ascii=True),'```','']
     md=path.with_suffix('.md'); tmp=md.with_suffix('.md.tmp');tmp.write_text('\n'.join(lines),encoding='utf-8');tmp.replace(md)
 
-def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkpoint=None,progress=None):
+def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkpoint=None,progress=None,connection_error=None):
     started=time.monotonic(); cpu=time.process_time()
     commit='UNKNOWN'; dirty=None
     for candidate in (Path(__file__).resolve().parents[3],Path.cwd()):
@@ -74,20 +87,24 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             dirty=bool(subprocess.check_output(['git','-C',str(candidate),'status','--porcelain','--untracked-files=no'],stderr=subprocess.DEVNULL,text=True,timeout=2).strip())
             break
         except (OSError,subprocess.SubprocessError): pass
-    report=dict(schemaVersion='2.8.0',clientVersion='0.5.0',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
+    report=dict(schemaVersion='2.8.0',clientVersion='0.5.1',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
                 runId=str(uuid.uuid4()),cleanup={'status':'NOT_TESTED','reason':'No deletion authorized or attempted. Inspect retained unique namespace; conditional delete unavailable.'},
                 selectedRoots=roots,
                 evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True)
-    info={}; connection_error=None
+    info={}
     if client:
         try: info=client.describe()
         except RedownError as e: connection_error=e.code
-    else: connection_error='EXTENSION_UNAVAILABLE'
+    else: connection_error=connection_error or 'EXTENSION_UNAVAILABLE'
     report['providerCapabilities']=info
     report['plan']=plan(scan,depth,resources,info)
     locations=roots or info.get('locations',[])
     # Never use caller-supplied unapproved roots, even when disconnected.
-    if any(r not in info.get('locations',[]) for r in locations): connection_error='AUTHORIZATION_DENIED'
+    if not connection_error and any(r not in info.get('locations',[]) for r in locations): connection_error='AUTHORIZATION_DENIED'
+    if connection_error:
+        report['connectionError']=connection_error
+        report['primaryFailure']=connection_failure(connection_error)
+        locations=[]
     root=locations[0] if locations else None
     report['destinationRoot']=root
     report['untestedRoots']=locations[1:]  # This bounded runner uses the first chosen bucket only.
@@ -98,6 +115,8 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
         report['cpuSeconds']=time.process_time()-cpu
         report['coverage']=dict(Counter(r['status'] for r in report['results']))
         report['completedCases']=len(report['results']); report['remainingCases']=len(report['plan']['cases'])-len(report['results'])
+        report['dispatchedOperations']=sum(bool(r.get('dispatched')) for r in report['results'])
+        report['notAttemptedOperations']=sum(not r.get('dispatched',False) for r in report['results'])
         elapsed=report['elapsedSeconds']; transferred=sum(r.get('verifiedBytes',0) for r in report['results'])
         report['verifiedBytes']=transferred
         report['verifiedFiles']=len({r['file'] for r in report['results'] if r['operation']=='read' and r['status']=='PASS'})
@@ -114,19 +133,20 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
     save()
     by_path={r['relpath']:r for r in scan['selected']}; destinations={}; uploads={}; halted=False
     for case in report['plan']['cases']:
-        result={**case,'status':'NOT_TESTED'}; begin=time.monotonic(); mutation_started=False
+        result={**case,'status':'NOT_TESTED','dispatched':False}; begin=time.monotonic(); mutation_started=False
         report['currentOperation']=case; save()
         if cancel and cancel.is_set():
             report['cancelled']=True; halted=True
         try:
             if halted: result['error']='CANCELLED_OR_PRIOR_UNCERTAINTY'
-            elif connection_error: result.update(status='BLOCKED',error=connection_error)
+            elif connection_error: result.update(status='BLOCKED',blockedBy='connection',reason='Session was not established; operation not dispatched')
             elif not info.get('writeEnabled'): result.update(status='BLOCKED',error='SEPARATE_WRITE_APPROVAL_REQUIRED')
             elif not root: result.update(status='BLOCKED',error='SELECT_AUTHORIZED_LAB_BUCKET')
             else:
                 op=case['operation']; rel=case['file']; row=by_path.get(rel)
                 dest=destinations.setdefault(rel,{**root,'key':root['key']+report['runId']+'/uploads/'+(rel or 'directory/')})
-                if op=='list': job=client.execute(op,source=root,limit=10)
+                if op=='list':
+                    result['dispatched']=True; job=client.execute(op,source=root,limit=10)
                 elif op=='upload':
                     source=Path(scan['root'])/rel
                     if source.is_symlink() or not source.resolve().is_relative_to(Path(scan['root'])): raise RedownError('LOCAL_SOURCE_CHANGED')
@@ -140,21 +160,23 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                         data=b''.join(chunks)
                     if len(data)!=row['bytes'] or hashlib.sha256(data).hexdigest()!=row['sha256']: raise RedownError('LOCAL_SOURCE_CHANGED')
                     mutation_started=True
+                    result['dispatched']=True
                     job=client.execute(op,destination=dest,bytesBase64=base64.b64encode(data).decode('ascii'),idempotency_key=report['runId']+'-'+str(len(report['results'])))
                     uploads[rel]=job.get('state')=='completed'
                 elif op=='mkdir':
-                    mutation_started=True; job=client.execute(op,destination=dest)
+                    mutation_started=True; result['dispatched']=True; job=client.execute(op,destination=dest)
                 elif not uploads.get(rel): result.update(status='BLOCKED',error='UPLOAD_NOT_VERIFIED'); job=None
                 elif op=='copy':
-                    mutation_started=True; job=client.execute(op,source=dest,destination={**dest,'key':root['key']+report['runId']+'/copies/'+rel})
+                    mutation_started=True; result['dispatched']=True; job=client.execute(op,source=dest,destination={**dest,'key':root['key']+report['runId']+'/copies/'+rel})
                 elif op=='read':
                     with tempfile.TemporaryDirectory(prefix='redown-readback-') as directory:
                         target=Path(directory)/'readback.bin'
-                        job=client.download(dest,target)
+                        result['dispatched']=True; job=client.download(dest,target)
                         with target.open('rb') as readback:
                             result['diskReadbackSha256']=hashlib.file_digest(readback,'sha256').hexdigest() if hasattr(hashlib,'file_digest') else hashlib.sha256(readback.read(65537)).hexdigest()
                         if result['diskReadbackSha256']!=row['sha256']: raise RedownError('VERIFICATION_DISAGREEMENT')
-                else: job=client.execute(op,source=dest)
+                else:
+                    result['dispatched']=True; job=client.execute(op,source=dest)
                 if job:
                     result.update(operationId=job['id'],jobState=job['state'])
                     if job['state']!='completed':
