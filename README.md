@@ -29,6 +29,11 @@ For remote transfers, REDOWN uses a Cloudflare Worker to send data to R2 without
 
 **Note:** Keep the settings page open until local uploads finish. An interrupted upload session does not currently resume after closing or reloading that page.
 
+## Current development roadmap and test evidence
+
+- [Latest milestone map: release sequencing and next acceptance gates](docs/roadmap/LATEST-RELEASE-MILESTONES.md)
+- [Owner-observed R2 Quick baseline: 926/926 planned cases passed, full-corpus acceptance incomplete](docs/laboratory/QUICK-R2-OWNER-BASELINE-2026-10-26.md)
+
 ## Agent Operability Benchmark (AOB) — founding proposal
 
 **How effectively can unfamiliar, authorized AI agents discover, operate, verify, diagnose, recover and maintain software without undocumented human knowledge?**
