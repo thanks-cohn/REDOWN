@@ -1,5 +1,6 @@
+import {r2ResponseDiagnostic as responseDiagnostic} from '../extension/file-engine/adapters/r2-diagnostics.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';
-import {diagnostic,validDiagnostic,completeness,otlpTrace,responseDiagnostic,goldenSignals} from '../extension/file-engine/diagnostics.mjs';
+import {diagnostic,validDiagnostic,completeness,otlpTrace,goldenSignals} from '../extension/file-engine/diagnostics.mjs';
 import {extensionR2Adapter} from '../extension/file-engine/adapters/extension-r2.mjs';
 import {authorizeLab} from '../extension/lab-session.mjs';
 import {laboratoryCreate,laboratoryDoctor} from '../extension/lab-worker.mjs';

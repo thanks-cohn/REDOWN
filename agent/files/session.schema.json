@@ -13,7 +13,8 @@
         "cancel",
         "reconcile",
         "resources",
-        "jobs"
+        "jobs",
+        "doctor"
       ]
     },
     "input": {
@@ -50,6 +51,25 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 100
+        },
+        "rootIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "operation": {
+          "enum": [
+            "list",
+            "metadata",
+            "read",
+            "upload",
+            "ingest",
+            "mkdir",
+            "copy",
+            "move",
+            "rename",
+            "delete"
+          ]
         }
       },
       "additionalProperties": false

@@ -1,6 +1,7 @@
 // Trusted extension transport. No secrets, URLs, keys or provider messages leave this module.
 import { fail } from './file-engine/engine.mjs';
-import {responseDiagnostic,errorWithDiagnostic,diagnosticFrom,traceContext,otlpTrace,goldenSignals} from './file-engine/diagnostics.mjs';
+import {r2ResponseDiagnostic as responseDiagnostic} from './file-engine/adapters/r2-diagnostics.mjs';
+import {errorWithDiagnostic,diagnosticFrom,traceContext,otlpTrace,goldenSignals} from './file-engine/diagnostics.mjs';
 async function configured({getProfiles},identity){
  const profile=(await getProfiles()).find(p=>p.type==='cloudflare-r2'&&p.accountId===identity.account&&p.bucketName===identity.container);
  if(!profile?.token||!profile.workerUrl)throw fail('LAB_WORKER_NOT_CONFIGURED');
@@ -43,7 +44,8 @@ export function laboratoryCreate(deps){
  };
 }
 export function laboratoryDoctor(deps){
- return async(identity,{isActive=async()=>true}={})=>{
+ return async(identity,{isActive=async()=>true,operation='upload'}={})=>{
+  if(!['upload','mkdir','read','copy','metadata','list'].includes(operation))return {schemaVersion:'redown.doctor.v1',provider:'extension-r2',status:'UNSUPPORTED',code:'PROVIDER_OPERATION_UNSUPPORTED',readOnly:true,mutationPhase:'NOT_SUBMITTED',steps:[{stage:'validation',status:'UNSUPPORTED'}],capabilities:null,missingEvidence:[],liveWriteAcceptance:'NOT_TESTED'};
   const context=traceContext();const steps=[];let capabilities=null;
   const original=deps;deps={...original,request:(path,o={})=>original.request(path,{...o,timeoutMs:4000,signal:AbortSignal.timeout(4000)}),fetcher:(url,o={})=>original.fetcher(url,{...o,timeoutMs:4000,signal:AbortSignal.timeout(4000)})};
   // Read-only probe uses a never-created random object, not any owner fixture.

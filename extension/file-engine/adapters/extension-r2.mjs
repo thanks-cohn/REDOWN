@@ -1,5 +1,6 @@
 // Trusted extension adapter: all OAuth handling stays in RedownCloudflareApi.request.
-import { responseDiagnostic, errorWithDiagnostic, traceContext } from "../diagnostics.mjs";
+import {r2ResponseDiagnostic as responseDiagnostic} from "./r2-diagnostics.mjs";
+import { errorWithDiagnostic, traceContext } from "../diagnostics.mjs";
 import { fail, fileIdentity } from "../engine.mjs";
 import { providerDescription } from "../provider-contract.mjs";
 const EXTENSION_MAX_BYTES = 65536;

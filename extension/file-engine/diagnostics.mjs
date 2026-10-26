@@ -23,13 +23,10 @@ export function diagnostic(code,{component='coordinator',stage='execution',opera
 }
 export function validDiagnostic(d){return !!d && validateDiagnostic(d) && JSON.stringify(d).length<=16384;}
 export function errorWithDiagnostic(code,details){const d=diagnostic(code,details);return Object.assign(Error(d.code),{code:d.code,diagnostic:d});}
-export async function responseDiagnostic(response,{stage,method='GET',mutationPhase='NOT_SUBMITTED',provider='extension-r2',context}={}){
- // Responses may contain private paths/messages. Only numeric native codes are retained.
- let nativeCode=null;const reader=response.body?.getReader();let bytes=0,chunks=[];
- if(reader)try{while(bytes<8192){const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>8192)break;chunks.push(value);}
- if(bytes<=8192){const data=new Uint8Array(bytes);let n=0;for(const c of chunks){data.set(c,n);n+=c.length;}try{const body=JSON.parse(new TextDecoder().decode(data));nativeCode=body.errors?.[0]?.code;}catch{}}}finally{await reader.cancel().catch(()=>{});}
+export async function responseDiagnostic(response,{stage,method='GET',mutationPhase='NOT_SUBMITTED',provider='unknown',nativeCode=null,requestId=null,context}={}){
+ // Neutral HTTP classification. Native decoding/redaction belongs to each adapter.
  const code=({400:'PROVIDER_BAD_REQUEST',401:'SESSION_EXPIRED',403:'PROVIDER_PERMISSION_DENIED',404:'PROVIDER_NOT_FOUND',405:'PROVIDER_METHOD_UNSUPPORTED',409:'CONFLICT',429:'RATE_LIMITED'})[response.status]||(response.status>=500?'PROVIDER_SERVICE_ERROR':'INVALID_PROVIDER_RESPONSE');
- return errorWithDiagnostic(code,{component:'provider-adapter',stage,provider,method,mutationPhase,httpStatus:response.status,nativeCode,requestId:response.headers?.get('cf-ray'),context});
+ return errorWithDiagnostic(code,{component:'provider-adapter',stage,provider,method,mutationPhase,httpStatus:response.status,nativeCode,requestId,context});
 }
 export function diagnosticFrom(error,details={}){
  if(error?.diagnostic && !validDiagnostic(error.diagnostic))return diagnostic('DIAGNOSTICS_LOST',details);

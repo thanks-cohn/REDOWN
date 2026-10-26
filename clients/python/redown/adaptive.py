@@ -87,7 +87,7 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             dirty=bool(subprocess.check_output(['git','-C',str(candidate),'status','--porcelain','--untracked-files=no'],stderr=subprocess.DEVNULL,text=True,timeout=2).strip())
             break
         except (OSError,subprocess.SubprocessError): pass
-    report=dict(schemaVersion='2.8.0',clientVersion='0.5.2',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
+    report=dict(schemaVersion='2.8.0',clientVersion='0.5.3',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
                 runId=str(uuid.uuid4()),cleanup={'status':'NOT_TESTED','reason':'No deletion authorized or attempted. Inspect retained unique namespace; conditional delete unavailable.'},
                 selectedRoots=roots,
                 evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True)

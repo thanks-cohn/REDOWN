@@ -6,17 +6,29 @@ from datetime import datetime
 from uuid import UUID
 SCHEMA=json.loads(Path(__file__).with_name('diagnostic.schema.json').read_text(encoding='utf-8'))
 def valid(value,schema=None):
-    schema=schema or SCHEMA
-    if '$ref' in schema:return valid(value,SCHEMA['$defs']['cause'])
-    if 'anyOf' in schema:return any(valid(value,s) for s in schema['anyOf'])
+    # Evaluate only the constructs used by the canonical diagnostic contract.
+    # Differential tests compare this dependency-free boundary with JS + jsonschema.
+    schema=SCHEMA if schema is None else schema
+    if '$ref' in schema:
+        target=SCHEMA
+        for part in schema['$ref'].removeprefix('#').split('/')[1:]:
+            target=target[part.replace('~1','/').replace('~0','~')]
+        if not valid(value,target):return False
+    if 'anyOf' in schema and not any(valid(value,s) for s in schema['anyOf']):return False
     if 'const' in schema and value!=schema['const']:return False
     if 'enum' in schema and value not in schema['enum']:return False
     kind=schema.get('type')
     if kind=='null':return value is None
-    if kind=='object':
-        if not isinstance(value,dict) or set(value)!=set(schema['required']):return False
-        return all(valid(v,schema['properties'][k]) for k,v in value.items())
-    if kind=='array':return isinstance(value,list) and len(value)<=schema['maxItems'] and all(valid(v,schema.get('items',{})) for v in value)
+    if kind=='object' and not isinstance(value,dict):return False
+    if isinstance(value,dict):
+        properties=schema.get('properties',{})
+        if not set(schema.get('required',[])).issubset(value):return False
+        if schema.get('additionalProperties') is False and any(k not in properties for k in value):return False
+        if not all(valid(value[k],s) for k,s in properties.items() if k in value):return False
+    if kind=='array' and not isinstance(value,list):return False
+    if isinstance(value,list):
+        if len(value)>schema.get('maxItems',len(value)):return False
+        if 'items' in schema and not all(valid(v,schema['items']) for v in value):return False
     if kind=='integer':return type(value) is int and schema['minimum']<=value<=schema['maximum']
     if kind=='string':
         if not isinstance(value,str):return False

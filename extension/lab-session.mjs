@@ -1,4 +1,3 @@
-import {diagnosticFrom} from './file-engine/diagnostics.mjs';
 // One revocable, selected-bucket session per approved external connection.
 import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
@@ -39,7 +38,7 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
     return fn(state);
   } };
   const engine = createFileEngine({ store, adapters: [adapter], authorize: async (r) => await active() && operations.includes(r.operation) && [r.source, r.destination].filter(Boolean).every(inside) });
-  const facade = createScopedSession({ engine, scope: { operations, locations, maxOperations: write ? 100000 : 100 }, validateRequests: [request02, request03], validateSession: session });
+  const facade = createScopedSession({ engine, probe: typeof doctorProvider==='function' ? (root,{operation})=>doctorProvider(root,{operation,isActive:active}) : undefined, scope: { operations, locations, maxOperations: write ? 100000 : 100 }, validateRequests: [request02, request03], validateSession: session });
   return Object.freeze({ expires, revoke() {
     revoked = true;
   }, async query(method, input = {}) {
@@ -57,13 +56,6 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
         return {apiVersion:'1.0.0',state:'failed',error:{code:error?.code==='CLOUDFLARE_RECONNECT_REQUIRED'?'CLOUDFLARE_RECONNECT_REQUIRED':'OAUTH_RENEWAL_FAILED'}};
       }
     }
-    if (method === 'doctor') {
-      if (!input || typeof input!=='object' || Array.isArray(input) || Object.keys(input).some(k=>!['rootIndex','operation'].includes(k)) || !Number.isInteger(input.rootIndex??0) || (input.rootIndex??0)<0 || (input.rootIndex??0)>=locations.length || !['upload','mkdir','read','copy','metadata','list'].includes(input.operation||'upload')) return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
-      if (typeof doctorProvider!=='function') return {apiVersion:'1.0.0',state:'failed',error:{code:'PROVIDER_OPERATION_UNSUPPORTED'}};
-      let data;try{data=await doctorProvider(locations[input.rootIndex??0],{isActive:active});}catch(error){return {apiVersion:'1.0.0',state:'failed',error:{code:error.code||'DIAGNOSTICS_LOST',diagnostic:diagnosticFrom(error,{component:'doctor',stage:'doctor'})}};}
-      if (!await active()) return {apiVersion:'1.0.0',state:'failed',error:{code:'AUTHORIZATION_REVOKED_OR_EXPIRED'}};
-      return {apiVersion:'1.0.0',state:'available',data};
-    }
     const response = await facade.query(method, input);
     if (!await active()) return { apiVersion: "1.0.0", state: "failed", error: { code: "AUTHORIZATION_REVOKED_OR_EXPIRED" } };
     if (method === "describe" && response.data) {
@@ -71,7 +63,6 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
         response.data.methods.push('renewAuthorization');
         response.data.oauthRenewal = {intervalSeconds:2400,credentials:'extension-only'};
       }
-      if (typeof doctorProvider==='function') response.data.methods.push('doctor');
       response.data.transport = "Chrome native messaging / authenticated loopback";
       response.data.limits.maxBytes = 65536;
       response.data.expiresAt = expires;

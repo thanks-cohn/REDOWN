@@ -91,5 +91,8 @@
   "tests/phase28-laboratory.test.mjs",
   "extension/file-engine/diagnostics.mjs",
   "scripts/compile-diagnostic-schema.mjs",
-  "tests/diagnostic-evidence.test.mjs"
+  "tests/diagnostic-evidence.test.mjs",
+  "extension/file-engine/adapters/r2-diagnostics.mjs",
+  "tests/foundation-consolidation.test.mjs",
+  "tests/fixtures/provider-neutral-doctor.mjs"
 ]
