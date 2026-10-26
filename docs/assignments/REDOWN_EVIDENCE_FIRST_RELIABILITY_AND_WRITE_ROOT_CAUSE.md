@@ -5,6 +5,29 @@
 **Starting point:** latest `main` (`d768294b64cf323d5ef7183f408dadd06e095a7f` at assignment creation); also inspect `fix/python-lab-connection-lifecycle` (`7321381031e901d3e843182bfd283fc9c48bf10c`) and preserve its corrections.
 **Owner's objective:** exemplary engineering foundations for an agent-native, provider-independent universal filesystem. Highest available practical standards, verified rather than asserted. Solve the current live write failure and make future failures explainable by the software itself.
 
+## IX. STRICT 30-MINUTE EXECUTION BUDGET AND MINUTE-25 HANDOFF (MANDATORY)
+
+**Owner-imposed timebox: 30 elapsed minutes from the start of Codex execution.** Record the actual start time (UTC) and deadline in the work log. This is an execution budget, not permission to claim completion without proof, and no agent should imply it can continue working after its session ends.
+
+**At or before elapsed minute 25:** save and commit a detailed, durable handoff to `docs/assignments/handoffs/REDOWN_RELIABILITY_WRITE_HANDOFF.md` (create directory as needed). Push it and any tested work to the assigned branch if authorized. The handoff MUST be written even if the investigation is still inconclusive, tests are red or dependencies are inaccessible. Do not defer this until the final response.
+
+The minute-25 handoff must contain:
+- Start time, elapsed time at handoff, remaining budget, branch, HEAD SHA, worktree status, and all pushed/unpushed changes.
+- Exact observed facts and preserved live owner error evidence; tested vs hypothesized root causes; decisive missing evidence and the next probe needed.
+- Files changed, design decisions, test commands with actual results, regressions, security impacts, and deployment/access blockers.
+- Which tasks are COMPLETE, PARTIAL, BLOCKED, NOT_STARTED, or NOT_TESTED; no optimistic claims.
+- Exact next commands and safe continuation sequence, including Windows owner-run Doctor and smoke-test commands if implemented.
+- Warnings on ambiguous writes, idempotency, authorization and cloud mutation; reference related report and verification paths.
+- A short, ready-to-use **successor Codex starter prompt** that points to this handoff and asks to continue without repeating work.
+
+**Minutes 25–30:** use the remaining time solely for finishing the highest-value safe fix, verifying, documenting any delta since the handoff, committing and pushing. Update the handoff if outcomes change; otherwise append a dated final delta note. Prioritize root cause and working diagnostics over expanding breadth.
+
+**By minute 30:** stop initiating new work; provide the owner a concise factual summary, branch/commit, links, unverified claims explicitly marked, and copy-paste Windows commands. Do not claim asynchronous continuation or promise delayed work.
+
+If the agent has no reliable elapsed-time clock, it must use the best available session/runtime time evidence; state limitations instead of pretending precise timing. If execution is interrupted early or the time limit arrives unexpectedly, write/push the handoff immediately with current verified state. If the environment cannot write to GitHub, save the handoff in the working tree and report its location and unpushed status.
+
+**Delivery priority inside the timebox:** (1) forensic evidence and causal isolation, (2) surgical write-path repair if proven, (3) diagnostic propagation and Doctor, (4) fault-injection/regression gates, (5) supporting documentation. Preserve partial tested results honestly; do not introduce risky last-minute refactors or deploy to Cloudflare without explicit permission.
+
 ## NON-NEGOTIABLE EXECUTION ORDER
 
 **P0: Forensic investigation of the actual write failure.** Do not expand to 2 MiB, implement new providers, or redesign the GUI first.
