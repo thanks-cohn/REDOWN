@@ -96,3 +96,18 @@ connection-error/dispatched counts and scrollable GUI. No automatic merge to mai
 Rollback: reinstall 0.5.1 from that preserved branch for read-only use; do not revive
 unsafe retries or treat rollback as cloud remediation. All cloud changes require
 separate explicit owner authorization. See the handoff for final commit IDs/results.
+
+
+## Consolidation successor after PR #38
+
+PR #38 merged diagnostics and connection repair into main. New consolidation branch
+fix/foundation-consolidation starts from 6767bfb; source commit `f44cdc408744a17848d7a66bde24ab241434327a` preserves
+those corrections. Doctor's generic routing is now owned once by the scoped facade;
+R2 native HTTP parsing stays behind adapters/r2-diagnostics. Schema distributions
+are generated from one canonical source. Existing native round-trip/lifecycle tests
+pass, alongside independent local filesystem Doctor proof. Original observations above
+remain unchanged. This does NOT prove the original live R2 cause or Windows acceptance.
+
+Next owner commands are in docs/phase28/CONSOLIDATED_OWNER_ACCEPTANCE.md; no automatic
+Worker repair, infrastructure change or ambiguous write replay is permitted. See
+FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md and the audit for all dispositions.

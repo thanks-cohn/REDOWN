@@ -1,0 +1,53 @@
+
+> remote-asset-ingest@0.1.0 lab:test
+> node scripts/phase27/compile-session.mjs --check && node --test tests/diagnostic-evidence.test.mjs tests/phase28-laboratory.test.mjs tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs && python tests/architecture-report-schema.py
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.281702ms)
+✔ native HTTP 400 survives without provider message or secret (20.385884ms)
+✔ native HTTP 401 survives without provider message or secret (0.576836ms)
+✔ native HTTP 403 survives without provider message or secret (0.361766ms)
+✔ native HTTP 404 survives without provider message or secret (0.337531ms)
+✔ native HTTP 405 survives without provider message or secret (3.682785ms)
+✔ native HTTP 409 survives without provider message or secret (0.30312ms)
+✔ native HTTP 429 survives without provider message or secret (0.402517ms)
+✔ native HTTP 500 survives without provider message or secret (0.480793ms)
+✔ native HTTP 503 survives without provider message or secret (0.448125ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.334311ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (29.154105ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.004238ms)
+✔ Doctor isolates profile before submission (0.559611ms)
+✔ Doctor isolates host before submission (0.482146ms)
+✔ Doctor isolates binding before submission (0.612399ms)
+✔ Doctor isolates jurisdiction before submission (0.516997ms)
+✔ Doctor isolates capability before submission (1.078751ms)
+✔ Doctor isolates non-json before submission (0.912615ms)
+✔ Doctor isolates network before submission (0.622033ms)
+✔ Doctor isolates timeout before submission (0.555775ms)
+✔ generic coordinator preserves drive-fixture diagnostics (3.620273ms)
+✔ generic coordinator preserves local-fixture diagnostics (2.579358ms)
+✔ generic coordinator preserves s3-fixture diagnostics (3.156235ms)
+✔ published Doctor schema accepts actual probe output and rejects secret fields (72.870562ms)
+✔ extension page explicitly rejects, approves selected scope and revokes (118.229696ms)
+✔ canonical read, bytes, scoped evidence and Atlas correlation (59.694182ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.69408ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (1.717178ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (4.225161ms)
+✔ revoke during request suppresses late bytes and future evidence (21.714675ms)
+✔ bounded reads, truncation, pagination and exact key encoding (1.700133ms)
+✔ owner-selected grants default to an hour and cap at eight hours (0.890662ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.702111ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.516276ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (1024.38548ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (67.838407ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (4.191501ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (4412.016356ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.458254ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6423.827031
+{"state": "passed", "statuses": 6, "negativeControls": 4, "scope": "independent report schema, not live acceptance"}

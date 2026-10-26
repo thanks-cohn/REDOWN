@@ -33,3 +33,8 @@ The R2 support module preserves its own unsupported-operation handling without
 forcing R2 operation rules into core. Original native/extension lifecycle tests pass.
 
 Corrective source commit: recorded by the following documentation update after commit creation.
+
+Corrective commit: [`f44cdc408744a17848d7a66bde24ab241434327a`](https://github.com/thanks-cohn/REDOWN/commit/f44cdc408744a17848d7a66bde24ab241434327a).
+Proof: [contract tests](../../tests/foundation-consolidation.test.mjs),
+[verification](../../verification/consolidation/README.md), and
+[audit](../../docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md).

@@ -63,3 +63,76 @@ an explicit versioned contract extension; this is not a promise of limitless par
 PENDING. Track exact patches, tests, overhead measurements and inherited failures
 here and in `verification/consolidation/`. Initial records predate source edits:
 [incident](../../FOREVER_WORKS/bugs/FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md).
+
+## After implementation — confirmed decisions
+
+Corrective source commit: `f44cdc4` (full immutable link is in each distinct bug record).
+
+- C1: implemented. Root diagnostic event semantics are authoritative once; shallow
+  causes reference the root with zero nested causes. The existing generator now
+  owns diagnostic JS, codebook, Doctor JS and Python distribution. Tests corrupt
+  each artifact and require drift failure. JS/Python/independent jsonschema agree
+  on cause nesting, unknown fields, trace IDs, numeric types, Unicode/native-code
+  digit semantics and privacy mutations. No new schema or protocol version.
+- C2: implemented. `adapters/r2-diagnostics.mjs` owns Cloudflare body/cf-ray parsing.
+  Core only classifies HTTP and accepts already sanitized caller-native metadata;
+  default provider is unknown. Existing R2 fault tests preserve their exact evidence.
+- C3: implemented. `createScopedSession({probe})` optionally owns one Doctor route.
+  It validates selector/input, coordinator authority before AND after the callback,
+  existing execution budget and published Doctor output. Required failed/untested
+  steps cannot accompany PASS; malformed diagnostics and mutation claims are rejected.
+  R2 lab composition only injects its active provider probe and retains OAuth,
+  namespace and four-bucket write authorization. R2-specific unsupported health
+  operations remain inside R2 support. No callback means no advertised Doctor.
+- Fake neutral-reference and the EXISTING local-reference adapter use this hook;
+  actual filesystem bytes remain unchanged. The real Python Client over stdio runs
+  that same local Doctor without extension, Worker, OAuth or cloud tokens. Optional
+  smoke is still denied without separate write approval. No production provider was
+  invented or registered merely to make a portability claim.
+
+The existing R2 `lab-worker.mjs` remains physically where deployed imports expect it;
+it is explicitly R2 support, not generic Doctor orchestration. The new 14-line native
+parser support module is a boundary extraction, not a framework. The independent
+local fixture owns no production provider state; only the existing adapter operates
+on its owner-exclusive temporary directory. Node and Python validation remain
+separate deployments of one contract, with differential tests preventing drift.
+
+## Measurement, inherited debt and limits
+
+The benchmark uses actual local-reference filesystem metadata failures (64 operations,
+three trials) and 10,000 envelope validations. Atlas on/off includes journal/cloning
+and collector costs; it does NOT isolate diagnostic-only overhead. Raw before, loaded
+after and isolated-after runs are retained. Before medians: 63.85 ms with Atlas off,
+228.01 ms with Atlas on, 38.50 ms for 10k validations. Isolated-after medians:
+65.83 ms / 220.51 ms / 40.37 ms respectively. A concurrently loaded run was slower
+and is not erased. No significant speedup, cross-machine performance guarantee,
+new retention buffer or arbitrary CI timing budget is claimed. Existing hard limits
+(16 KiB envelope, 3 flat causes, 64 Atlas traces, bounded native frames and job ring)
+remain the enforceable resource bounds. Optimize only with representative evidence.
+
+Nine inherited Node failure categories are outside this consolidation:
+
+| Category | Exact scope | Disposition / next action |
+| --- | --- | --- |
+| Frozen source evidence | 2 agent catalog, 2 debug, 2 semantic tests | Preserve immutable snapshots; separately version a replacement/freshness migration |
+| Removed UI feature | Nested drag-handle expectation | Owner-approved UI/test expectation decision, not schema/Doctor work |
+| Issue disposition | Partly-addressed label assertion | Reconcile issue inventory with current source under its own owner |
+| Provisioning sequencing | Destination-editor refresh mock | Isolate current setup/message contract under its own UI test |
+
+The existing reliability ratchet recognizes seven as known and still labels two
+historically reproduced failures new. Preserve that failed release state; do not
+relabel it as certification. Forever Works frozen source freshness is separate,
+also failing; its preservation evaluator passes. Exact logs are retained.
+
+Remaining risks/deferred work: C4/C6 legacy operation and Explorer orchestration;
+numeric-only native code representation and legacy LAB_WORKER code compatibility;
+partial OTLP/clock/Worker instrumentation; dependency-free Python validator is a
+bounded current-contract implementation, not a general JSON Schema engine; no
+fleet report rotation; installed Windows/live R2 acceptance. New semantics beyond
+ordinary existing operations may require a versioned contract extension. None of
+these gaps justifies another engine, generic provider registry or telemetry store.
+
+Decision: consolidation-ready as a bounded source foundation with the stated
+contract gates, NOT universally certified or live-write accepted. The owner Doctor
+response and independent byte readback are still the only route to closing the
+historical write incident. Larger transfers remain deferred.

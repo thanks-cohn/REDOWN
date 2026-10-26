@@ -28,3 +28,8 @@ requires neither CF headers nor native JSON layout. Actual original Windows/R2
 causality remains UNPROVEN. No cloud request was sent for this consolidation.
 
 Corrective source commit: recorded by the following documentation update after commit creation.
+
+Corrective commit: [`f44cdc408744a17848d7a66bde24ab241434327a`](https://github.com/thanks-cohn/REDOWN/commit/f44cdc408744a17848d7a66bde24ab241434327a).
+Proof: [contract tests](../../tests/foundation-consolidation.test.mjs),
+[verification](../../verification/consolidation/README.md), and
+[audit](../../docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md).

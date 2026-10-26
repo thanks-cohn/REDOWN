@@ -1,0 +1,23 @@
+Defaulting to user installation because normal site-packages is not writeable
+Processing ./clients/python
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: redown-client
+  Building wheel for redown-client (pyproject.toml): started
+  Building wheel for redown-client (pyproject.toml): finished with status 'done'
+  Created wheel for redown-client: filename=redown_client-0.5.3-py3-none-any.whl size=39636 sha256=7ba527d9859dfd506c3d83c9f23595a907d00148da562c3a900b6860ba1c70d9
+  Stored in directory: /tmp/pip-ephem-wheel-cache-bjzd97ah/wheels/69/00/fb/92000f2102447438dafa9a68a59673f91d71e352c55567309c
+Successfully built redown-client
+Installing collected packages: redown-client
+  Attempting uninstall: redown-client
+    Found existing installation: redown-client 0.5.2
+    Uninstalling redown-client-0.5.2:
+      Successfully uninstalled redown-client-0.5.2
+Successfully installed redown-client-0.5.3
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip

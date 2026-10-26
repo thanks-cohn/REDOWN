@@ -112,3 +112,18 @@ For independent reruns, install npm dependencies (`npm ci --cache /workspace/.np
 Follow [CONNECTION_RECOVERY.md](../../docs/phase28/CONNECTION_RECOVERY.md) for exact Windows branch installation and eight-byte CLI test. Keep browser Laboratory open, approve the CLI's new matching code within 120 seconds, and retain JSON/Markdown plus independent dashboard-downloaded SHA-256. Inspect native error/status before restarting if it disconnects again. Compare the report's `connectionAndRunSeconds` with pairing and browser events. Never replay an uncertain write; use a new explicitly approved namespace after inspecting retained objects.
 
 Remaining risk: original native termination has no correlated real-platform evidence; GUI focus/scroll geometry needs actual Windows scaling verification; frozen-source regression debt remains; bounded transport still has its existing 64 KiB ceiling and serialized requests. No automatic merge or release is performed. Work is on `fix/python-lab-connection-lifecycle`, based on the recorded baseline; use the branch's Git history for the repair commit (a commit cannot contain its own SHA).
+
+
+## Consolidation successor after PR #38
+
+PR #38 merged diagnostics and connection repair into main. New consolidation branch
+fix/foundation-consolidation starts from 6767bfb; source commit `f44cdc408744a17848d7a66bde24ab241434327a` preserves
+those corrections. Doctor's generic routing is now owned once by the scoped facade;
+R2 native HTTP parsing stays behind adapters/r2-diagnostics. Schema distributions
+are generated from one canonical source. Existing native round-trip/lifecycle tests
+pass, alongside independent local filesystem Doctor proof. Original observations above
+remain unchanged. This does NOT prove the original live R2 cause or Windows acceptance.
+
+Next owner commands are in docs/phase28/CONSOLIDATED_OWNER_ACCEPTANCE.md; no automatic
+Worker repair, infrastructure change or ambiguous write replay is permitted. See
+FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md and the audit for all dispositions.

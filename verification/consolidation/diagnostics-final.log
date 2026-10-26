@@ -1,0 +1,43 @@
+
+> remote-asset-ingest@0.1.0 diagnostics:test
+> node scripts/compile-diagnostic-schema.mjs --check && node --test tests/diagnostic-evidence.test.mjs tests/foundation-consolidation.test.mjs
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (26.002488ms)
+✔ native HTTP 400 survives without provider message or secret (22.615283ms)
+✔ native HTTP 401 survives without provider message or secret (0.536375ms)
+✔ native HTTP 403 survives without provider message or secret (0.555884ms)
+✔ native HTTP 404 survives without provider message or secret (0.416598ms)
+✔ native HTTP 405 survives without provider message or secret (3.773805ms)
+✔ native HTTP 409 survives without provider message or secret (0.329559ms)
+✔ native HTTP 429 survives without provider message or secret (0.522004ms)
+✔ native HTTP 500 survives without provider message or secret (0.493862ms)
+✔ native HTTP 503 survives without provider message or secret (0.604666ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.853268ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (34.202406ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.341864ms)
+✔ Doctor isolates profile before submission (0.576755ms)
+✔ Doctor isolates host before submission (0.495094ms)
+✔ Doctor isolates binding before submission (0.680549ms)
+✔ Doctor isolates jurisdiction before submission (0.494894ms)
+✔ Doctor isolates capability before submission (2.106032ms)
+✔ Doctor isolates non-json before submission (1.641924ms)
+✔ Doctor isolates network before submission (1.124528ms)
+✔ Doctor isolates timeout before submission (0.757733ms)
+✔ generic coordinator preserves drive-fixture diagnostics (20.520593ms)
+✔ generic coordinator preserves local-fixture diagnostics (3.415343ms)
+✔ generic coordinator preserves s3-fixture diagnostics (3.658744ms)
+✔ published Doctor schema accepts actual probe output and rejects secret fields (119.705396ms)
+✔ one generator owns JS/Python schema artifacts and detects every stale distribution (534.556851ms)
+✔ JS, packaged Python and independent JSON Schema agree on causal/privacy mutations (153.777961ms)
+✔ shared HTTP diagnostics do not decode Cloudflare headers/body or require R2 (21.258356ms)
+✔ provider-neutral fake Doctor uses the same facade and cannot bypass authorization (7.144542ms)
+✔ independent real local filesystem Doctor needs no Worker, bucket, OAuth or core edits (17.64591ms)
+✔ R2-only unsupported health operations remain behind the provider boundary (2.639783ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1304.167583
