@@ -12,6 +12,30 @@ Stabilize REDOWN's Universal File API, provider adapters, Resource Atlas, AAC, F
 
 The previous diagnostic branch fixed two **source-backed** defects: HEAD-based metadata preflight on an R2 OAuth route whose documented API uses GET/PUT/DELETE; and flattening of provider errors into PROVIDER_ERROR without safe HTTP/native evidence. Both write and directory-marker creation hit a common destination-stat preflight. These repairs and fault tests are valuable. **The original Windows/R2 live failure is still UNPROVEN** because the original response was lost. Do not retroactively label it fixed or solved.
 
+## Architectural rule: one owner per responsibility, justified coexistence
+
+**Mandatory principle: single authoritative ownership, no unreasoned collisions.** Audit every subsystem for overlapping responsibilities, duplicate state, duplicated error semantics, redundant orchestration, parallel registries, parallel evidence stores, or incompatible interpretations of the same API contract. Prefer **one canonical subsystem/source of truth for each concern** and let other components consume its interfaces rather than reconstruct or shadow it.
+
+Do **not** interpret simplification as indiscriminately deleting modules, schemas, projections, tests or safety layers. Multiple systems may coexist when they fulfill genuinely distinct duties, provide necessary isolation or runtime/language boundaries, or independently verify claims. For every justified coexistence, document:
+- Each component's single owned responsibility and explicit non-responsibilities;
+- The reason coexistence is necessary instead of consolidation (including reliability/security/portability tradeoffs);
+- Data ownership, authoritative source, interface/API and direction of dependency;
+- Whether retained duplication is generated representation, read-only projection, independent verification, or actual competing logic;
+- Failure modes, synchronization/versioning rules, compatibility and tests that prevent collision;
+- What would warrant future consolidation and why change now would be riskier or worse.
+
+Use an **ownership matrix and collision register** with dispositions `KEEP_DISTINCT_WITH_RATIONALE`, `CONSOLIDATE`, `GENERATE_FROM_CANONICAL`, `DEFER_WITH_RISK` or `REMOVE_WITH_PROOF`. No unexplained overlapping owner, and no merging unlike concerns solely to reduce module count. Include actual code references, decisions and test evidence in the architecture audit and Forever Works bug documentation.
+
+### Provider boundary rule: Cloudflare is an adapter, not the platform
+
+Treat Cloudflare R2 as the first concrete provider implementation, not the universal platform's permanent architecture. All Cloudflare-specific runtime semantics must be owned by the **R2 adapter and clearly separated R2-specific support modules**: R2 REST/S3 semantics, R2-specific identities and errors, Worker conditional-create implementation, Worker deployment/settings/binding inspection, Cloudflare token/OAuth integration and bucket policy.
+
+The universal API, generic coordinator/journal, canonical error envelope, Resource Atlas, AAC, Python SDK and generic Doctor **must not require R2 buckets, Cloudflare Workers, Cloudflare token formats, Cloudflare route shapes or Cloudflare-only capabilities**. They may accept neutral capabilities, identity and authorization abstractions implemented by adapters. A provider-specific Doctor probe belongs behind the adapter; generic Doctor aggregates its declared/observed results. Cloudflare-specific provisioning may properly remain a separate R2 infrastructure component rather than being crammed into the read/write adapter, as long as ownership and boundaries are documented and tested.
+
+Before moving code, produce a **Cloudflare extraction inventory**: each Cloudflare-related module/function; current owner; proposed R2 adapter/support owner; shared dependencies; migration difficulty; safety impact; decision `MOVE`, `KEEP_BEHIND_BOUNDARY`, `ADAPT_INTERFACE` or `DEFER_WITH_RATIONALE`. Do not assume every file mentioning Cloudflare should physically relocate. Move only what is proved necessary and can be tested within the timebox. Favor adapter-only future provider additions and an independent no-Cloudflare fixture/contract test. Explicitly verify adding a future provider ordinarily cannot require editing the core Universal API, coordinator, Atlas, AAC, Python SDK or generic Doctor.
+
+No new architecture layer, registry, telemetry store, database or diagnostics engine may be added unless a documented gap cannot be addressed by an existing owner. Any exception requires an architecture decision record, alternative analysis, tests and migration/rollback plan.
+
 ## Mandatory first action: read and compare rather than rewrite
 
 - Read `AGENTS.md`, all current phase 2.6–2.8 architecture and runbooks, `FOREVER_WORKS/bugs/FW-REDOWN-LIVE-R2-WRITE-PROVIDER-ERROR-20261025.md`, `docs/architecture/REDOWN_DIAGNOSTIC_STANDARD.md`, the last handoff, schema definitions, source, and actual test evidence.
@@ -77,7 +101,7 @@ Map the existing code to these owners, identify any violations, show exactly how
 
 ## Deliverables
 
-1. `docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md`: before/after responsibility map, Cloudflare coupling map, overlap/duplication inventory with evidence, categorized debts and decisions KEEP/CONSOLIDATE/DEFER/REMOVE.
+1. `docs/architecture/REDOWN_FOUNDATION_CONSOLIDATION_AUDIT.md`: before/after responsibility and ownership matrix, explicit collision register, documented reasons for any coexisting subsystems, Cloudflare extraction inventory and coupling map, duplication inventory with evidence, and categorized decisions KEEP_DISTINCT_WITH_RATIONALE/CONSOLIDATE/GENERATE_FROM_CANONICAL/DEFER_WITH_RISK/REMOVE_WITH_PROOF.
 2. Tested minimal source changes for confirmed issues, including contract test(s), no speculative refactor.
 3. CI/contract enforcement and cross-language schema agreement proof; results with historical regressions separated.
 4. **Mandatory permanent bug records** under `FOREVER_WORKS/bugs/`, including `FW-REDOWN-FOUNDATION-CONSOLIDATION-20261025.md` and updates to relevant existing R2 write and connection incidents. Record the original symptoms, observed evidence, reproduced defects, cause versus hypothesis, architecture ownership/coupling violations, before/after repair, exact changed files and commits, regression tests, remaining risks and owner verification. Do not rewrite frozen historical evidence. Create separate bug files for distinct confirmed defects rather than burying them only in architecture notes. Every confirmed defect must link to its corrective commit and test, and each unresolved issue must have next decisive probe.
