@@ -1,7 +1,11 @@
-body{font:16px system-ui;background:#111820;color:#edf4fa;margin:40px auto;max-width:850px;padding:20px}button{padding:10px;margin:8px;border-radius:6px;cursor:pointer}label{display:block;padding:8px}fieldset{border:1px solid #789}p{line-height:1.6}article{border:1px solid #789;padding:12px;margin:10px 0}
+body{font:16px system-ui;background:#111820;color:#edf4fa;margin:40px auto;max-width:1320px;padding:20px}button{padding:10px;margin:8px;border-radius:6px;cursor:pointer}label{display:block;padding:8px}fieldset{border:1px solid #789}p{line-height:1.6}article{border:1px solid #789;padding:12px;margin:10px 0}
 
 #connect,.pair-approve{background:#7656cf;color:white;border:2px solid #a88beb;font-size:17px;font-weight:700;padding:14px 22px;min-height:48px}#connect:hover,.pair-approve:hover{background:#6241b9}button:focus-visible,select:focus-visible{outline:3px solid #d9c7ff;outline-offset:3px}select{padding:10px;font:inherit}h2{margin-top:28px}
 
-#connection-overview{position:sticky;top:0;z-index:10;background:#1c2733;border:2px solid #a88beb;border-radius:10px;padding:14px;max-height:52vh;overflow-y:auto;box-shadow:0 8px 25px #0009}
+#connection-overview{position:sticky;top:16px;align-self:start;min-width:0;background:#1c2733;border:2px solid #a88beb;border-radius:10px;padding:14px;max-height:calc(100vh - 52px);overflow-y:auto;box-shadow:0 8px 25px #0009}
 #connection-overview h2{margin-top:12px}#connection-overview #status{margin:7px 0}#connection-state{display:block;font-size:18px}#clients article{background:#263348;border-color:#baa5fa}#pending-hint{color:#c2d5e7}
 #connection-events{max-height:150px;overflow-y:auto;font-size:13px;line-height:1.6;padding-left:24px}#connection-overview summary{cursor:pointer}
+
+#lab-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(295px,360px);gap:24px;align-items:start}
+#lab-content{min-width:0}#buckets{min-width:0}#connection-overview{overflow-wrap:anywhere;box-sizing:border-box}#connection-overview button{max-width:100%;white-space:normal}
+@media(max-width:900px){body{margin:12px auto;padding:12px}#lab-layout{display:flex;flex-direction:column}#connection-overview{position:static;order:-1;width:100%;max-height:none;box-shadow:none}#lab-content{width:100%}}
