@@ -1,9 +1,28 @@
 // Extension-owned approval surface; native clients cannot approve their own requests.
 import { laboratoryCreate, laboratoryDoctor } from "./lab-worker.mjs";
 import { authorizeLab } from "./lab-session.mjs";
-const $ = (id) => document.getElementById(id), status = (text) => {
+const $ = (id) => document.getElementById(id);
+const eventHistory = [];
+function recordEvent(message) {
+  eventHistory.unshift({ time: new Date().toLocaleTimeString(), message });
+  eventHistory.length = Math.min(eventHistory.length, 30);
+  const events = $("connection-events");
+  if (events) events.replaceChildren(...eventHistory.map(({ time, message }) => {
+    const item = document.createElement("li");
+    item.textContent = time + " · " + message;
+    return item;
+  }));
+}
+function status(text) {
   $("status").textContent = text;
-};
+  recordEvent(text);
+}
+function showPairingState(text) {
+  $("connection-state").textContent = text;
+  $("pending-hint").textContent = pending.size
+    ? pending.size + " pending request(s). Compare the code with CMD before approving."
+    : "No Python approval pending. A new request appears here, above the bucket list.";
+}
 let port = null, sessionId = null;
 const grants = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
 const PAIRING_TIMEOUT_MS = 120000;
@@ -13,6 +32,7 @@ function removePending(client) {
   clearTimeout(entry.timer);
   entry.row.remove();
   pending.delete(client);
+  showPairingState(port ? "Local helper: ready" : "Local helper: disconnected");
 }
 function stop() {
   for (const g of grants.values()) g.revoke();
@@ -23,6 +43,7 @@ function stop() {
   port = null;
   previousPort?.disconnect();
   status("Disconnected; all grants revoked");
+  showPairingState("Local helper: disconnected");
 }
 $("revoke").onclick = stop;
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -59,6 +80,7 @@ async function startConnection() {
   }
   sessionId = auth.sessionId;
   status("Starting local helper…");
+  showPairingState("Local helper: starting");
   try {
     port = chrome.runtime.connectNative("com.redown.laboratory");
   } catch (error) {
@@ -76,6 +98,7 @@ async function startConnection() {
     if (port !== connectedPort) return;
     if (message.type === "ready") {
       status("Local helper ready. Start Python; approve its matching connection code here.");
+      showPairingState("Local helper: ready");
       return;
     }
     if (message.type === "closed") {
@@ -83,6 +106,8 @@ async function startConnection() {
       grants.delete(message.client);
       removePending(message.client);
       document.getElementById(`client-${message.client}`)?.remove();
+      status("Python client " + message.client + " closed; pairing/approval entry removed.");
+      showPairingState("Local helper: ready");
       return;
     }
     if (message.type !== "request" || typeof message.id !== "string" || typeof message.client !== "string") return;
@@ -108,7 +133,7 @@ async function startConnection() {
         if (!pending.has(message.client)) return;
         removePending(message.client);
         reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_TIMEOUT" } });
-        status("Pairing timed out without approval. Start a new Python connection and approve its new matching code within 120 seconds.");
+        status("Pairing " + message.client + " timed out after 120 seconds without approval.");
       };
       const reject = document.createElement("button");
       reject.textContent = "Reject / revoke";
@@ -119,6 +144,8 @@ async function startConnection() {
         removePending(message.client);
         row.remove();
         if (wasPending) reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REJECTED" } });
+        status("Python client " + message.client + (wasPending ? " pairing rejected." : " grant revoked."));
+        showPairingState("Local helper: ready");
       };
       const approve = document.createElement("button");
       approve.textContent = "APPROVE PYTHON CONNECTION";
@@ -148,13 +175,15 @@ async function startConnection() {
         pending.delete(message.client);
         approve.remove();
         name.append(document.createTextNode(` — Connected; ${write ? "conditional write in a unique laboratory namespace (no deletion)" : "read access"} approved for ${hours} hour(s).`));
-        status("Python client connected and authorized. Keep this page open; revoke access here whenever needed.");
+        status("Python client " + message.client + " approved and connected. The approval button disappearing after your click is expected.");
+        showPairingState("Local helper: connected to Python");
         reply({ apiVersion: "1.0.0", state: "available", data: { clientId: message.client, expiresAt: grant2.expires, mode: "extension" } });
       };
       row.append(approve, reject);
       pending.set(message.client, { row, timer: setTimeout(expire, PAIRING_TIMEOUT_MS) });
       $("clients").append(row);
       status(`Python approval requested. Compare code ${message.client} and approve within 120 seconds. Keep this Laboratory tab open.`);
+      showPairingState("Python approval pending");
       row.scrollIntoView?.({ block: "nearest" });
       approve.focus();
       return;
