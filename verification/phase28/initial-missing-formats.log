@@ -34,9 +34,9 @@
 test at tests/resource-schema-agreement.mjs:8:1
 ✖ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (410.706919ms)
   AssertionError [ERR_ASSERTION]: independent invalid date
-  
+
   true !== false
-  
+
       at file:///workspace/REDOWN/tests/resource-schema-agreement.mjs:33:92
       at Array.forEach (<anonymous>)
       at TestContext.<anonymous> (file:///workspace/REDOWN/tests/resource-schema-agreement.mjs:33:8)

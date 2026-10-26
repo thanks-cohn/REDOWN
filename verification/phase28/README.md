@@ -46,3 +46,5 @@ package/npm dependencies and the required `jsonschema[format]==4.26.0` extras re
 them. The exact selected runtime source hashes are in report.json. Code revisions
 are source-bound there; the eventual published Git SHA is provided in the delivery
 response because a commit cannot embed its own hash.
+
+Committed logs normalize trailing whitespace only; original command output remains in work/phase28 during this session.
