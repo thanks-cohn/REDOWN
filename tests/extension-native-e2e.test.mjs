@@ -6,6 +6,7 @@ import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import {laboratoryDoctor} from "../extension/lab-worker.mjs";
 import { authorizeLab } from "../extension/lab-session.mjs";
 const root = { provider: "extension-r2", account: "account", container: "test-1-new", key: "" };
 test("Python external process traverses native relay, canonical engine and Atlas", { timeout: 2e4 }, async () => {
@@ -19,11 +20,12 @@ test("Python external process traverses native relay, canonical engine and Atlas
   host.stderr.on("data", (x) => errors += x);
   const grants = /* @__PURE__ */ new Map();
   const bytes = new TextEncoder().encode("Native round trip fixture");
-  let writeMode=false; const written=new Map();
+  let writeMode=false, failureMode=false; const written=new Map();
   const request = async (url, options = {}) => {
     const key=url.split('/objects/')[1]?.split('/').map(decodeURIComponent).join('/');
+    if(failureMode && new URL('https://fixture'+url).searchParams.get('per_page')==='1')return Response.json({errors:[{code:10021,message:'DO_NOT_EXPORT_SECRET /private/key'}]},{status:400,headers:{'cf-ray':'0123456789abcdef-ORD'}});
     if(writeMode){
-      if(url.includes('?'))return Response.json({result:{objects:[]}});
+      if(url.includes('?')){const prefix=new URL('https://fixture'+url).searchParams.get('prefix')||'';const rows=[...written].filter(([k])=>k.startsWith(prefix)).sort(([a],[b])=>a.localeCompare(b)).slice(0,1).map(([key,b])=>({key,size:b.length,etag:'written-revision'}));return Response.json({result:rows});}
       const bytes=written.get(key);return bytes ? new Response(options.method==='HEAD'?null:bytes,{headers:{etag:'written-revision','content-length':String(bytes.length)}}) : new Response(null,{status:404});
     }
     return url.includes("__redown_missing_") ? new Response(null, {status:404}) : url.includes("?") ? Response.json({ result: { objects: [{ key: "fixture.txt", size: bytes.length, etag: "r1" }] } }) : new Response(options.method === "HEAD" ? null : bytes, { headers: { etag: "r1", "content-length": String(bytes.length) } });
@@ -45,7 +47,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
     if (m.type !== "request") return;
     let response;
     if (m.method === "pair") {
-      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, createObject:async(i,b)=>{
+      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, doctorProvider:laboratoryDoctor({request,getProfiles:async()=>[],fetcher:async()=>{throw Error('No cloud');}}), createObject:async(i,b)=>{
         if(written.has(i.key))throw Object.assign(Error(),{code:'CONFLICT'});written.set(i.key,b.slice());
       }, isCurrent: () => true }));
       response = { apiVersion: "1.0.0", state: "available", data: { clientId: m.client } };
@@ -105,6 +107,18 @@ test("Python external process traverses native relay, canonical engine and Atlas
     assert.ok(evidence.results.find(r=>r.operation==='read').diskReadbackSha256);
     assert.equal(evidence.cleanup.status,'NOT_TESTED');
     assert.ok(!JSON.stringify(evidence).includes('Bearer'));
+    failureMode=true;
+    const failurePath=path.join(home,'native-provider-error.json');
+    const failure=spawn('python',['-m','redown.lab','complete','--directory',samples,'--depth','Comprehensive','--report',failurePath],{env,stdio:['ignore','pipe','pipe']});failure.stdout.resume();failure.stderr.resume();
+    assert.equal(await new Promise(r=>failure.on('exit',r)),1);
+    const failed=JSON.parse(await readFile(failurePath));const original=failed.results.find(r=>r.operation==='upload');
+    assert.equal(original.error,'PROVIDER_BAD_REQUEST');assert.equal(original.diagnostic.nativeCode,'10021');assert.equal(original.diagnostic.mutationPhase,'NOT_SUBMITTED');assert.equal(original.evidence.diagnostic.httpStatus,400);assert.ok(!JSON.stringify(failed).includes('DO_NOT_EXPORT_SECRET'));
+    assert.ok(!(await readFile(failurePath.replace('.json','.md'),'utf8')).includes('/private/key'));
+    const doctorPath=path.join(home,'doctor.json');
+    const doctor=spawn('python',['-m','redown.lab','doctor','--report',doctorPath],{env,stdio:['ignore','pipe','pipe']});doctor.stdout.resume();doctor.stderr.resume();
+    const doctorCode=await new Promise(r=>doctor.on('exit',r));
+    const doctorReport=JSON.parse(await readFile(doctorPath));assert.equal(doctorCode,1,JSON.stringify(doctorReport));assert.equal(doctorReport.readOnly,true);assert.equal(doctorReport.mutationPhase,'NOT_SUBMITTED');assert.ok(doctorReport.steps.some(s=>s.diagnostic?.code==='LAB_WORKER_NOT_CONFIGURED'));
+
 
   } finally {
     host.stdin.end();

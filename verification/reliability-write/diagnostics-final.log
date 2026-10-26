@@ -1,0 +1,36 @@
+
+> remote-asset-ingest@0.1.0 diagnostics:test
+> node scripts/compile-diagnostic-schema.mjs --check && node --test tests/diagnostic-evidence.test.mjs
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.526742ms)
+✔ native HTTP 400 survives without provider message or secret (18.250324ms)
+✔ native HTTP 401 survives without provider message or secret (0.434494ms)
+✔ native HTTP 403 survives without provider message or secret (0.388036ms)
+✔ native HTTP 404 survives without provider message or secret (0.33761ms)
+✔ native HTTP 405 survives without provider message or secret (0.322168ms)
+✔ native HTTP 409 survives without provider message or secret (0.323601ms)
+✔ native HTTP 429 survives without provider message or secret (0.362147ms)
+✔ native HTTP 500 survives without provider message or secret (0.394446ms)
+✔ native HTTP 503 survives without provider message or secret (0.428786ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.313839ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (28.564223ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (2.774025ms)
+✔ Doctor isolates profile before submission (0.51965ms)
+✔ Doctor isolates host before submission (0.378852ms)
+✔ Doctor isolates binding before submission (0.609484ms)
+✔ Doctor isolates jurisdiction before submission (0.481094ms)
+✔ Doctor isolates capability before submission (0.488034ms)
+✔ Doctor isolates non-json before submission (0.697304ms)
+✔ Doctor isolates network before submission (0.608733ms)
+✔ Doctor isolates timeout before submission (0.449968ms)
+✔ generic coordinator preserves drive-fixture diagnostics (3.437159ms)
+✔ generic coordinator preserves local-fixture diagnostics (2.494521ms)
+✔ generic coordinator preserves s3-fixture diagnostics (2.901414ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 143.694449

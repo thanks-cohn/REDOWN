@@ -1,3 +1,4 @@
+import {diagnosticFrom} from './diagnostics.mjs';
 // One scoped authorization facade shared by Node and the extension. Never expose engine handles.
 import { validateLocator } from "./provider-contract.mjs";
 import { FILE_API_VERSION, METHODS, validate, fileIdentity, fail } from "./engine.mjs";
@@ -75,7 +76,7 @@ function createScopedSession({ engine, scope, validateRequests, validateSession 
       }
       return { apiVersion: "1.0.0", state: "available", data: structuredClone(data) };
     } catch (error) {
-      return { apiVersion: "1.0.0", state: "failed", error: { code: /^[A-Z_0-9]{1,64}$/.test(error?.code || "") ? error.code : "INVALID_INPUT" } };
+      return { apiVersion: "1.0.0", state: "failed", error: { code: /^[A-Z_0-9]{1,64}$/.test(error?.code || "") ? error.code : "INVALID_INPUT", diagnostic: diagnosticFrom(error,{component:"session",stage:"validation"}) } };
     }
   };
   return Object.freeze({ query });

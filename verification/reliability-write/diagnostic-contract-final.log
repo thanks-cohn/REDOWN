@@ -1,0 +1,32 @@
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.784976ms)
+✔ native HTTP 400 survives without provider message or secret (18.924066ms)
+✔ native HTTP 401 survives without provider message or secret (0.472451ms)
+✔ native HTTP 403 survives without provider message or secret (0.372733ms)
+✔ native HTTP 404 survives without provider message or secret (0.409768ms)
+✔ native HTTP 405 survives without provider message or secret (0.334306ms)
+✔ native HTTP 409 survives without provider message or secret (0.305683ms)
+✔ native HTTP 429 survives without provider message or secret (0.358953ms)
+✔ native HTTP 500 survives without provider message or secret (0.361226ms)
+✔ native HTTP 503 survives without provider message or secret (0.455696ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.371555ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (33.412229ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.246897ms)
+✔ Doctor isolates profile before submission (0.598648ms)
+✔ Doctor isolates host before submission (0.35067ms)
+✔ Doctor isolates binding before submission (0.702732ms)
+✔ Doctor isolates jurisdiction before submission (0.48547ms)
+✔ Doctor isolates capability before submission (0.57287ms)
+✔ Doctor isolates non-json before submission (0.665266ms)
+✔ Doctor isolates network before submission (0.60657ms)
+✔ Doctor isolates timeout before submission (0.492621ms)
+✔ generic coordinator preserves drive-fixture diagnostics (4.22592ms)
+✔ generic coordinator preserves local-fixture diagnostics (2.829397ms)
+✔ generic coordinator preserves s3-fixture diagnostics (2.98557ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 150.54939

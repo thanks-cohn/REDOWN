@@ -216,3 +216,14 @@ checks, provision automatically, expose credentials or enable deletion as cleanu
 resource budgets remain explicit limits. Large-file streaming and Windows/live
 acceptance remain unverified. Preserve the v0.4.4 tag and read-only fallback. Run
 `npm run lab:test`, `npm run python:test`, provider/Atlas/AAC checks and regressions.
+
+## Evidence-first write reliability (feature branch, no automatic merge)
+
+Read `docs/architecture/REDOWN_DIAGNOSTIC_STANDARD.md`,
+`docs/phase28/DOCTOR_RUNBOOK.md`, and the mandatory handoff under
+`docs/assignments/handoffs/REDOWN_RELIABILITY_WRITE_HANDOFF.md`.
+The live owner failure remains UNPROVEN until authorized extension Doctor evidence.
+Preserve connection repair 7321381. Doctor defaults read-only; --smoke still requires
+separate write approval. Do not deploy, repair Workers, alter policies, or merge
+without the owner's separate authorization. Run `npm run diagnostics:test` for
+redaction/provenance/completeness and fault tests; preserve inherited failure debt.

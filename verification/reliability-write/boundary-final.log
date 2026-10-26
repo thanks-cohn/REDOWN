@@ -1,0 +1,33 @@
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (7.813466ms)
+✔ native HTTP 400 survives without provider message or secret (21.90379ms)
+✔ native HTTP 401 survives without provider message or secret (0.52653ms)
+✔ native HTTP 403 survives without provider message or secret (0.559901ms)
+✔ native HTTP 404 survives without provider message or secret (0.414224ms)
+✔ native HTTP 405 survives without provider message or secret (0.936228ms)
+✔ native HTTP 409 survives without provider message or secret (1.342171ms)
+✔ native HTTP 429 survives without provider message or secret (0.572979ms)
+✔ native HTTP 500 survives without provider message or secret (0.596755ms)
+✔ native HTTP 503 survives without provider message or secret (0.788098ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.741082ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (39.038549ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.773375ms)
+✔ Doctor isolates profile before submission (0.681049ms)
+✔ Doctor isolates host before submission (0.502095ms)
+✔ Doctor isolates binding before submission (0.860336ms)
+✔ Doctor isolates jurisdiction before submission (0.68803ms)
+✔ Doctor isolates capability before submission (0.986523ms)
+✔ Doctor isolates non-json before submission (1.123126ms)
+✔ Doctor isolates network before submission (0.719627ms)
+✔ Doctor isolates timeout before submission (0.731685ms)
+✔ generic coordinator preserves drive-fixture diagnostics (6.348344ms)
+✔ generic coordinator preserves local-fixture diagnostics (3.818242ms)
+✔ generic coordinator preserves s3-fixture diagnostics (3.760416ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (1087.587796ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1335.920918

@@ -376,7 +376,9 @@ def gui():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture', 'complete'], nargs='?', default='gui')
+    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture', 'complete', 'doctor'], nargs='?', default='gui')
+    parser.add_argument('--operation',choices=['upload','mkdir','read','copy','metadata','list'],default='upload')
+    parser.add_argument('--smoke',action='store_true',help='Explicitly request fresh eight-byte write after Doctor; extension write approval still required')
     parser.add_argument('--directory')
     parser.add_argument('--depth',choices=['Quick','Comprehensive','Stress'],default='Quick')
     parser.add_argument('--profile',choices=['Low RAM','Balanced','Maximum','Custom'],default='Balanced')
@@ -394,6 +396,15 @@ def main():
     args = parser.parse_args()
     if args.action == 'gui':
         gui(); return 0
+    if args.action == 'doctor':
+        from .doctor import run as doctor_run, save as doctor_save, EXIT
+        import sys
+        try:
+            with ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr)) as connected:
+                report=doctor_run(connected,operation=args.operation,smoke=args.smoke)
+        except RedownError as error:
+            report={'schemaVersion':'redown.doctor.v1','status':'BLOCKED','readOnly':True,'code':error.code,'diagnostic':error.diagnostic,'steps':[],'liveWriteAcceptance':'NOT_TESTED'}
+        doctor_save(report,args.report); print(json.dumps(report,indent=2)); return EXIT[report['status']]
     if args.action == 'complete':
         if not args.directory: parser.error('--directory is required')
         settings=resource_profile(args.profile,args.memory_mib,args.concurrency,args.buffer_bytes)

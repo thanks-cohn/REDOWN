@@ -1,0 +1,31 @@
+
+> remote-asset-ingest@0.1.0 aac:test
+> node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs
+
+✔ source inventory has stable unique IDs and includes hidden templates, events, routes and each current HTML control (876.004707ms)
+✔ graph traverses the same edges in reverse, references only real nodes and never promotes inferred UI mappings (5.405294ms)
+✔ coverage excludes untested and partial from successful numerator and failures cannot be averaged away (0.72874ms)
+✔ real coordinator tasks enforce repaired authority and schema boundaries (1034.036865ms)
+✔ actual Beta DOM, engine and IndexedDB show gate enforcement, parity and guide keyboard behavior (1695.156039ms)
+✔ read-only gateway discovers AAC with bounded pages; refuses mutation, path injection and arbitrary comparison files (50.30272ms)
+✔ machine report is explicit about safety veto and every check/capability/evidence edge is traceable (19.828624ms)
+✔ redown-manage registers a real control and dispatches to options without invoking storage execution (5.208416ms)
+✔ scoped sessions execute canonical operations, correlate evidence and expose no runtime handles (31.517834ms)
+✔ session scope intersects engine authority, prevents escapes and limits payloads (8.104543ms)
+✔ actual stdio process rejects malformed lines and executes within explicitly launched simulation (173.769763ms)
+✔ denied engine exposes no collector, store, adapters or implementation helper (8.831571ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (17.024214ms)
+✔ caller trace collision cannot rewrite an existing job (2.565466ms)
+{"contract":"urn:redown:resources:1.0.0:evidence","cases":78,"independentValidator":"Python jsonschema 4.26.0"}
+✔ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (402.808995ms)
+✔ direct resource queries enforce the same method-specific input contracts as the gateway (4.217176ms)
+✔ imported resource API returns detached snapshots and memory observations (3.881177ms)
+✔ Trace Event export preserves measured duration and correlation without inventing CPU or threads (9.630747ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5508.523917

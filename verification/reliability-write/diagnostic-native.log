@@ -1,0 +1,50 @@
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.525856ms)
+✔ native HTTP 400 survives without provider message or secret (18.945852ms)
+✔ native HTTP 401 survives without provider message or secret (0.496877ms)
+✔ native HTTP 403 survives without provider message or secret (0.40499ms)
+✔ native HTTP 404 survives without provider message or secret (0.360164ms)
+✔ native HTTP 405 survives without provider message or secret (0.320385ms)
+✔ native HTTP 409 survives without provider message or secret (0.296559ms)
+✔ native HTTP 429 survives without provider message or secret (0.401515ms)
+✔ native HTTP 500 survives without provider message or secret (0.4182ms)
+✔ native HTTP 503 survives without provider message or secret (0.642673ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.658249ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (28.634978ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (2.881152ms)
+✔ Doctor isolates profile before submission (0.594591ms)
+✔ Doctor isolates host before submission (0.370639ms)
+✔ Doctor isolates binding before submission (0.610826ms)
+✔ Doctor isolates jurisdiction before submission (0.586911ms)
+✔ Doctor isolates capability before submission (0.581892ms)
+✔ Doctor isolates non-json before submission (0.650014ms)
+✔ Doctor isolates network before submission (0.544787ms)
+✔ Doctor isolates timeout before submission (0.488685ms)
+✖ Python external process traverses native relay, canonical engine and Atlas (1016.606418ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 21
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1206.183383
+
+✖ failing tests:
+
+test at tests/extension-native-e2e.test.mjs:12:1
+✖ Python external process traverses native relay, canonical engine and Atlas (1016.606418ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  2 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/extension-native-e2e.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

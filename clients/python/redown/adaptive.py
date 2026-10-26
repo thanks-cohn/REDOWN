@@ -87,7 +87,7 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             dirty=bool(subprocess.check_output(['git','-C',str(candidate),'status','--porcelain','--untracked-files=no'],stderr=subprocess.DEVNULL,text=True,timeout=2).strip())
             break
         except (OSError,subprocess.SubprocessError): pass
-    report=dict(schemaVersion='2.8.0',clientVersion='0.5.1',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
+    report=dict(schemaVersion='2.8.0',clientVersion='0.5.2',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
                 runId=str(uuid.uuid4()),cleanup={'status':'NOT_TESTED','reason':'No deletion authorized or attempted. Inspect retained unique namespace; conditional delete unavailable.'},
                 selectedRoots=roots,
                 evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True)
@@ -179,6 +179,7 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                     result['dispatched']=True; job=client.execute(op,source=dest)
                 if job:
                     result.update(operationId=job['id'],jobState=job['state'])
+                    if job.get('diagnostic'): result['diagnostic']=job['diagnostic']
                     if job['state']!='completed':
                         result.update(status='INDETERMINATE' if job['state'] in ('uncertain','partially_completed') else 'BLOCKED' if job.get('error','').startswith(('LAB_','PROVIDER_PERMISSION','OPERATION_BUDGET','CAPACITY')) else 'FAIL',error=job.get('error'))
                         if job['state'] in ('uncertain','partially_completed'): halted=True
@@ -194,6 +195,7 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                     if result['evidence'].get('id')!=job['id'] or result['resourceAtlas'].get('state')!='available' or result['resourceAtlas'].get('data',{}).get('operationId')!=job['id']:
                         raise RedownError('ATLAS_CORRELATION_MISMATCH')
         except (RedownError,OSError,ValueError,KeyError) as error:
+            if isinstance(error,RedownError) and error.diagnostic: result['diagnostic']=error.diagnostic
             code=error.code if isinstance(error,RedownError) else type(error).__name__
             uncertain=code in ('TIMEOUT_UNCERTAIN','WRITE_UNCERTAIN','SESSION_CLOSED') or mutation_started and code in ('AUTHORIZATION_REVOKED_OR_EXPIRED','EXTENSION_DISCONNECTED','SESSION_UNAVAILABLE','SESSION_EXPIRED')
             result.update(status='INDETERMINATE' if uncertain else 'BLOCKED' if code in ('OPERATION_BUDGET','CAPACITY','AUTHORIZATION_REVOKED_OR_EXPIRED','SESSION_EXPIRED','EXTENSION_UNAVAILABLE') else 'FAIL',error=code)

@@ -14,8 +14,13 @@ from typing import Any, Sequence
 
 MAX_LINE = 3 * 1024 * 1024
 
+from .diagnostics import check_payload
+
 class RedownError(RuntimeError):
-    def __init__(self, code: str):
+    def __init__(self, code: str, diagnostic=None):
+        try: check_payload({"diagnostic":diagnostic})
+        except ValueError: code="DIAGNOSTICS_LOST"; diagnostic=None
+        self.diagnostic = diagnostic
         self.code = code
         super().__init__(code)
 
@@ -87,7 +92,7 @@ class Client:
                 self.close()
                 raise RedownError("INCOMPATIBLE_RESPONSE")
             if response.get("state") == "failed":
-                raise RedownError(response.get("error", {}).get("code", "SESSION_ERROR"))
+                raise RedownError(response.get("error", {}).get("code", "SESSION_ERROR"), response.get("error", {}).get("diagnostic"))
             if response.get("state") != "available" or "data" not in response:
                 raise RedownError("INVALID_RESPONSE")
             return response["data"]
@@ -98,7 +103,9 @@ class Client:
     def execute(self, operation: str, *, idempotency_key: str | None = None, **arguments: Any) -> dict:
         request = {"apiVersion": "0.3.0", "operation": operation,
                    "idempotencyKey": idempotency_key or str(uuid.uuid4()), **arguments}
-        return self.query("execute", request=request)
+        result=self.query("execute", request=request)
+        try: return check_payload(result)
+        except ValueError: raise RedownError("DIAGNOSTICS_LOST") from None
 
     def upload(self, path: str | Path, destination: dict, **options: Any) -> dict:
         with open(path, "rb") as source:
@@ -111,7 +118,7 @@ class Client:
     def download(self, source: dict, path: str | Path) -> dict:
         job = self.execute("read", source=source)
         if job.get("state") != "completed":
-            raise RedownError(job.get("error", "READ_FAILED"))
+            raise RedownError(job.get("error", "READ_FAILED"), job.get("diagnostic"))
         result = job["result"]
         try:
             data = base64.b64decode(result["bytesBase64"], validate=True)

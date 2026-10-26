@@ -1,9 +1,10 @@
+import {diagnosticFrom} from './file-engine/diagnostics.mjs';
 // One revocable, selected-bucket session per approved external connection.
 import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
 import { request02, request03, session } from "./file-engine/session-validators.mjs";
 import { extensionR2Adapter } from "./file-engine/adapters/extension-r2.mjs";
-function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", write = false, createObject, ttl = 36e5, clock = Date.now }) {
+function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now }) {
   if (!Array.isArray(roots) || !roots.length || roots.some((r) => r.provider !== "extension-r2" || r.key !== "")) throw fail("INVALID_SCOPE");
   if (write && (typeof createObject !== "function" || roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container)))) throw fail("LAB_BUCKET_REQUIRED");
   const writePrefix = write ? "__redown_test__/" + crypto.randomUUID() + "/" : null;
@@ -13,9 +14,9 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
   const expires = clock() + Math.min(Math.max(ttl, 1), 288e5);
   let revoked = false, nextRenewal = 0;
   const active = async () => !revoked && clock() < expires && await isCurrent();
-  const adapter = extensionR2Adapter({ createObject: write ? async (i, bytes) => {
+  const adapter = extensionR2Adapter({ createObject: write ? async (i, bytes, context = {}) => {
     if (!await active() || !inside(i)) throw fail("AUTHORIZATION_DENIED");
-    await createObject(i, bytes, {isActive: active});
+    await createObject(i, bytes, {isActive: active, traceparent:context.traceparent});
     if (!await active()) throw fail("AUTHORIZATION_DENIED");
   } : undefined, request: async (...args) => {
     if (!await active()) throw fail("AUTHORIZATION_DENIED");
@@ -56,6 +57,13 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
         return {apiVersion:'1.0.0',state:'failed',error:{code:error?.code==='CLOUDFLARE_RECONNECT_REQUIRED'?'CLOUDFLARE_RECONNECT_REQUIRED':'OAUTH_RENEWAL_FAILED'}};
       }
     }
+    if (method === 'doctor') {
+      if (!input || typeof input!=='object' || Array.isArray(input) || Object.keys(input).some(k=>!['rootIndex','operation'].includes(k)) || !Number.isInteger(input.rootIndex??0) || (input.rootIndex??0)<0 || (input.rootIndex??0)>=locations.length || !['upload','mkdir','read','copy','metadata','list'].includes(input.operation||'upload')) return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
+      if (typeof doctorProvider!=='function') return {apiVersion:'1.0.0',state:'failed',error:{code:'PROVIDER_OPERATION_UNSUPPORTED'}};
+      let data;try{data=await doctorProvider(locations[input.rootIndex??0],{isActive:active});}catch(error){return {apiVersion:'1.0.0',state:'failed',error:{code:error.code||'DIAGNOSTICS_LOST',diagnostic:diagnosticFrom(error,{component:'doctor',stage:'doctor'})}};}
+      if (!await active()) return {apiVersion:'1.0.0',state:'failed',error:{code:'AUTHORIZATION_REVOKED_OR_EXPIRED'}};
+      return {apiVersion:'1.0.0',state:'available',data};
+    }
     const response = await facade.query(method, input);
     if (!await active()) return { apiVersion: "1.0.0", state: "failed", error: { code: "AUTHORIZATION_REVOKED_OR_EXPIRED" } };
     if (method === "describe" && response.data) {
@@ -63,6 +71,7 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
         response.data.methods.push('renewAuthorization');
         response.data.oauthRenewal = {intervalSeconds:2400,credentials:'extension-only'};
       }
+      if (typeof doctorProvider==='function') response.data.methods.push('doctor');
       response.data.transport = "Chrome native messaging / authenticated loopback";
       response.data.limits.maxBytes = 65536;
       response.data.expiresAt = expires;

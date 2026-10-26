@@ -4,6 +4,7 @@ import socket
 import threading
 import time
 from .client import Client, RedownError
+from .diagnostics import check_payload
 from .native_host import home, read_frame, write_frame
 
 class ExtensionClient(Client):
@@ -54,10 +55,11 @@ class ExtensionClient(Client):
                 code = result.get('error', {}).get('code', 'SESSION_ERROR')
                 if code in ('PAIRING_TIMEOUT', 'PAIRING_REJECTED', 'TIMEOUT_UNCERTAIN', 'EXTENSION_DISCONNECTED'):
                     self.close()
-                raise RedownError(code)
+                raise RedownError(code, result.get('error',{}).get('diagnostic'))
             if result.get('state') != 'available' or 'data' not in result:
                 raise RedownError('INVALID_RESPONSE')
-            return result['data']
+            try: return check_payload(result['data'])
+            except ValueError: raise RedownError('DIAGNOSTICS_LOST') from None
 
     def close(self):
         self._closed = True
