@@ -96,3 +96,18 @@ connection-error/dispatched counts and scrollable GUI. No automatic merge to mai
 Rollback: reinstall 0.5.1 from that preserved branch for read-only use; do not revive
 unsafe retries or treat rollback as cloud remediation. All cloud changes require
 separate explicit owner authorization. See the handoff for final commit IDs/results.
+
+
+## 2026-10-26: Confirmed live diagnostics and scoped deployed-Worker repair
+
+**Owner's authenticated, read-only Doctor report:** Legacy R2 Object API HEAD returned **405 PROVIDER_METHOD_UNSUPPORTED** during object.stat. Documented metadata GET returned **200 PASS**. Worker settings and subdomain checks passed, but worker.capabilities returned **LAB_WORKER_UPDATE_REQUIRED** before write submission (mutationPhase NOT_SUBMITTED). These prove two real environmental incompatibilities. The historical original upload's exact failure status remains unrecoverable because the old reports discarded it.
+
+**Cloudflare control-plane inspection:** Account's dedicated script \`redown-test-1-new-404399\` had \`STORAGE\` bound to \`test-1-new\`; the existing deployed script contained neither \`labConditionalCreate\` advertisement nor \`lab-create\` handler. The script otherwise contained REDOWN's existing routes and shared authentication. No unrelated Worker was selected.
+
+**Authorized action taken:** Using the Cloudflare connection, requested a *content-only* update to the specific existing script \`redown-test-1-new-404399\`, adding the authenticated read-only \`capabilities\` response and a bounded 65,536-byte \`lab-create\` handler that uses R2 \`STORAGE.put\` with \`onlyIf: {etagDoesNotMatch:"*"}\`, limits keys to \`__redown_test__/\`, and distinguishes conflict from uncertain failure. Original source was retained within the patched deployment; no R2 object was uploaded or deleted. A first multipart request failed with Cloudflare error 10021 (missing metadata). A corrected request including module metadata returned **HTTP 200, success=true**, old script length 44,294 chars and updated 45,768 chars.
+
+**Post-update read-only verification:** Worker settings GET returned HTTP 200, with \`STORAGE\` still bound to \`test-1-new\` and the original four binding names present. A follow-up source-content inspection through the connector was blocked by access/safety validation; do not claim this particular check passed. Owner's authenticated Doctor and separately approved eight-byte smoke test **have not yet been rerun**; live write acceptance remains **NOT_TESTED**.
+
+**Security and maintenance follow-up:** The patched Worker must be reviewed and synchronized into REDOWN's deterministic, versioned, tested Worker deployment/repair pipeline. Ad hoc content updates are not a viable permanent owner workflow. Add a configuration snapshot/diff, exact-target approval, provider/adapter-local recipe, rollback and a read-only post-deploy capability proof. This is a continuation of this same write incident, not an unrelated defect. Preserve all original error evidence.
+
+**Next decisive step:** Owner reruns \`python -m redown.lab doctor --operation upload --report .\redown-doctor.json\` using approved extension connection. If required checks PASS, run separately approved \`--smoke\` in an isolated new namespace; verify R2 bytes and SHA-256 independently. A returned 200 on the deployment API is not proof of successful file creation.
