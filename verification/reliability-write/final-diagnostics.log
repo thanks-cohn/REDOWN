@@ -1,0 +1,37 @@
+
+> remote-asset-ingest@0.1.0 diagnostics:test
+> node scripts/compile-diagnostic-schema.mjs --check && node --test tests/diagnostic-evidence.test.mjs
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.472879ms)
+✔ native HTTP 400 survives without provider message or secret (20.663479ms)
+✔ native HTTP 401 survives without provider message or secret (0.574479ms)
+✔ native HTTP 403 survives without provider message or secret (0.409813ms)
+✔ native HTTP 404 survives without provider message or secret (0.44144ms)
+✔ native HTTP 405 survives without provider message or secret (0.370815ms)
+✔ native HTTP 409 survives without provider message or secret (0.325066ms)
+✔ native HTTP 429 survives without provider message or secret (0.463964ms)
+✔ native HTTP 500 survives without provider message or secret (0.600889ms)
+✔ native HTTP 503 survives without provider message or secret (0.718494ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.475106ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (37.112767ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (7.367062ms)
+✔ Doctor isolates profile before submission (0.693808ms)
+✔ Doctor isolates host before submission (0.4679ms)
+✔ Doctor isolates binding before submission (0.618265ms)
+✔ Doctor isolates jurisdiction before submission (0.605075ms)
+✔ Doctor isolates capability before submission (0.642781ms)
+✔ Doctor isolates non-json before submission (0.818674ms)
+✔ Doctor isolates network before submission (0.690432ms)
+✔ Doctor isolates timeout before submission (0.537594ms)
+✔ generic coordinator preserves drive-fixture diagnostics (3.409819ms)
+✔ generic coordinator preserves local-fixture diagnostics (1.954973ms)
+✔ generic coordinator preserves s3-fixture diagnostics (3.040647ms)
+✔ published Doctor schema accepts actual probe output and rejects secret fields (88.959788ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 246.482958

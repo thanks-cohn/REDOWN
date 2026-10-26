@@ -55,3 +55,9 @@ for(const provider of ['drive-fixture','local-fixture','s3-fixture'])test(`gener
  const job=await engine.run({apiVersion:'0.3.0',operation:'metadata',source:{provider,account:'fixture',container:'fixture',key:'hidden'},idempotencyKey:crypto.randomUUID()});
  assert.equal(job.diagnostic.provider,provider);assert.equal(job.diagnostic.nativeCode,'10000');assert.equal(job.diagnostic.mutationPhase,'NOT_SUBMITTED');assert.equal((await engine.exportEvidence(job.id)).diagnostic.operationId,job.id);
 });
+
+test('published Doctor schema accepts actual probe output and rejects secret fields',async()=>{
+ const {default:Ajv}=await import('ajv/dist/2020.js');const {default:formats}=await import('ajv-formats');const {readFileSync}=await import('node:fs');
+ const ajv=new Ajv({strict:false});formats(ajv);const validate=ajv.compile(JSON.parse(readFileSync('extension/file-engine/doctor.schema.json')));
+ const report=await laboratoryDoctor(deps())(root);assert.ok(validate(report),JSON.stringify(validate.errors));assert.equal(validate({...report,authorization:'Bearer SECRET'}),false);
+});

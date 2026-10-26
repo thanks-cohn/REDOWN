@@ -318,3 +318,34 @@ No deletes, no ambiguous write replay. Exit codes 0 PASS, 1 FAIL, 2 BLOCKED,
 > failures. Do not merge, deploy, alter infrastructure/policies or replay uncertain
 > writes without separate authorization. Complete remaining OTel/diagnostic gaps
 > under fault tests and keep all unverified live claims explicit.
+
+
+## Final delta — 2026-10-26T02:28:27.885377+00:00
+
+**Timebox failure recorded explicitly:** handoff 5f659a31443f98eaae2f2af0a4f0bad500551598
+was committed at 02:24:10 UTC (15 seconds past the required 02:23:55 deadline),
+and its remote push was confirmed by 02:24:15 (20 seconds late). The prepared
+timestamp above is accurate. This does NOT satisfy the strict minute-25 requirement;
+no timestamp was backdated. The owner was informed immediately.
+
+Minutes 25–30 were used only for verification and the final Doctor schema guard.
+No further runtime changes followed implementation commit 70a3064. A permanent
+Doctor schema positive/secret-extra-field negative test was added to
+`tests/diagnostic-evidence.test.mjs`, covering the previously inline schema check.
+
+Final actual results: diagnostics 25/25 PASS; extension/native lab 40/40 PASS;
+Python 40 PASS, 1 desktop-display SKIP, 0 FAIL; full Node **490 PASS / same 9 FAIL**.
+Provider contracts 15/15, Atlas 7/7, resource schema 3/3, AAC 18/18 and AAC schema
+PASS. Existing Forever Works preservation passes; frozen source freshness still
+FAILS and was not hidden or refreshed. Package 0.5.2 installs with the packaged
+schema. Unavailable Doctor produces BLOCKED/EXTENSION_UNAVAILABLE JSON/Markdown.
+Source hash verification and connection-repair ancestry checks pass. Final exact
+logs and machine summary: `verification/reliability-write/final-summary.json` and
+`final-*.log`. The complete original failure remains in the incident.
+
+The actual live root cause remains UNPROVEN; actual Windows/Chrome smoke and
+pre-existing hello bucket.txt byte preservation remain NOT_TESTED. OTLP export is an
+incremental local interoperability adapter, not complete OTel instrumentation.
+No cloud deployment/repair/policy mutation/write/delete, release or main merge was
+performed. Main remains 785a55546c09ecc45752cae32d3276c19c8fddd5. No asynchronous
+continuation is scheduled. The successor must start from owner Doctor evidence.

@@ -1,0 +1,5 @@
+
+> remote-asset-ingest@0.1.0 aac:schema
+> python tests/aac-schema.py
+
+{"aacSchemaVersion": "1.0.0", "contractValidators": 2, "positiveReports": 1, "negativeControls": 4, "valid": true}
