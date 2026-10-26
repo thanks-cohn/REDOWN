@@ -9,3 +9,6 @@ body{font:16px system-ui;background:#111820;color:#edf4fa;margin:40px auto;max-w
 #lab-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(295px,360px);gap:24px;align-items:start}
 #lab-content{min-width:0}#buckets{min-width:0}#connection-overview{overflow-wrap:anywhere;box-sizing:border-box}#connection-overview button{max-width:100%;white-space:normal}
 @media(max-width:900px){body{margin:12px auto;padding:12px}#lab-layout{display:flex;flex-direction:column}#connection-overview{position:static;order:-1;width:100%;max-height:none;box-shadow:none}#lab-content{width:100%}}
+
+#results-output{box-sizing:border-box;max-height:240px;min-height:105px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#101821;color:#dce7f6;border:1px solid #71849a;border-radius:7px;padding:10px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+.results-help{font-size:12px;color:#c2d5e7}#copy-results{margin-left:0}#copy-results-status{font-size:13px;color:#c2d5e7}
