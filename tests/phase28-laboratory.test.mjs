@@ -6,6 +6,7 @@ const root={provider:'extension-r2',account:'a',container:'test-1-new',key:''};
 function fixture(){
  const objects=new Map();let puts=0;
  return {objects,get puts(){return puts;},createObject:async(i,b)=>{puts++;if(objects.has(i.key))throw Object.assign(Error(),{code:'CONFLICT'});objects.set(i.key,b.slice());},request:async(path,options={})=>{
+  if(path.includes('?')){const prefix=new URL('https://fixture'+path).searchParams.get('prefix')||'';const entries=[...objects].filter(([k])=>k.startsWith(prefix)).sort(([a],[b])=>a.localeCompare(b)).slice(0,1).map(([key,b])=>({key,size:b.length,etag:'revision-'+b.length}));return Response.json({result:entries});}
   const key=path.split('/objects/')[1]?.split('/').map(decodeURIComponent).join('/');
   if(!objects.has(key))return new Response(null,{status:404});
   const b=objects.get(key);return new Response(options.method==='HEAD'?null:b,{headers:{etag:'revision-'+b.length,'content-length':String(b.length)}});

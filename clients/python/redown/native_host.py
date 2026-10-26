@@ -15,6 +15,7 @@ import uuid
 MAX_FRAME = 512 * 1024
 HOST_NAME = 'com.redown.laboratory'
 AUTHENTICATED_IDLE_TIMEOUT = 8 * 60 * 60
+PAIRING_TIMEOUT = 120
 
 def home():
     return Path.home() / '.redown-laboratory'
@@ -65,16 +66,20 @@ class Relay:
             write_frame(self.output, value)
 
     def request(self, client, method, inputs):
-        if method not in ('pair', 'describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile', 'renewAuthorization') or not isinstance(inputs, dict):
+        if method not in ('pair', 'describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile', 'renewAuthorization', 'doctor') or not isinstance(inputs, dict):
             return failure('INVALID_INPUT')
         request_id, response = str(uuid.uuid4()), queue.Queue(maxsize=1)
         with self.pending_lock:
+            if not self.alive:
+                return failure('EXTENSION_DISCONNECTED')
             self.pending[request_id] = response
         try:
             self.send({'type': 'request', 'client': client, 'id': request_id, 'method': method, 'input': inputs})
-            return response.get(timeout=120 if method == 'pair' else 35)
+            return response.get(timeout=PAIRING_TIMEOUT if method == 'pair' else 35)
         except queue.Empty:
-            return failure('TIMEOUT_UNCERTAIN')
+            return failure('PAIRING_TIMEOUT' if method == 'pair' else 'TIMEOUT_UNCERTAIN')
+        except (OSError, ValueError):
+            return failure('EXTENSION_DISCONNECTED')
         finally:
             with self.pending_lock:
                 self.pending.pop(request_id, None)
@@ -86,8 +91,8 @@ class Relay:
                 target.put_nowait(message.get('response', failure('INVALID_RESPONSE')))
 
     def close(self):
-        self.alive = False
         with self.pending_lock:
+            self.alive = False
             for target in self.pending.values():
                 if target.empty():
                     target.put_nowait(failure('EXTENSION_DISCONNECTED'))
@@ -165,8 +170,8 @@ def main():
     try:
         while True:
             relay.receive(read_frame(sys.stdin.buffer))
-    except (EOFError, OSError, ValueError, TypeError):
-        pass
+    except (EOFError, OSError, ValueError, TypeError) as error:
+        print('REDOWN native channel closed: ' + type(error).__name__, file=sys.stderr)
     finally:
         relay.close()
         server.shutdown()

@@ -1,0 +1,49 @@
+
+> remote-asset-ingest@0.1.0 lab:test
+> node scripts/phase27/compile-session.mjs --check && node --test tests/diagnostic-evidence.test.mjs tests/phase28-laboratory.test.mjs tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs && python tests/architecture-report-schema.py
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (9.080843ms)
+✔ native HTTP 400 survives without provider message or secret (32.401521ms)
+✔ native HTTP 401 survives without provider message or secret (0.647449ms)
+✔ native HTTP 403 survives without provider message or secret (0.781658ms)
+✔ native HTTP 404 survives without provider message or secret (0.534302ms)
+✔ native HTTP 405 survives without provider message or secret (0.741648ms)
+✔ native HTTP 409 survives without provider message or secret (0.522074ms)
+✔ native HTTP 429 survives without provider message or secret (0.554111ms)
+✔ native HTTP 500 survives without provider message or secret (0.564266ms)
+✔ native HTTP 503 survives without provider message or secret (0.589554ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.808319ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (42.416748ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.69866ms)
+✔ Doctor isolates profile before submission (0.977518ms)
+✔ Doctor isolates host before submission (0.460692ms)
+✔ Doctor isolates binding before submission (0.890189ms)
+✔ Doctor isolates jurisdiction before submission (0.626047ms)
+✔ Doctor isolates capability before submission (0.830881ms)
+✔ Doctor isolates non-json before submission (0.995896ms)
+✔ Doctor isolates network before submission (0.703863ms)
+✔ Doctor isolates timeout before submission (0.659898ms)
+✔ extension page explicitly rejects, approves selected scope and revokes (120.452299ms)
+✔ canonical read, bytes, scoped evidence and Atlas correlation (72.766805ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.786866ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (2.373877ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (5.404256ms)
+✔ revoke during request suppresses late bytes and future evidence (22.464741ms)
+✔ bounded reads, truncation, pagination and exact key encoding (1.89655ms)
+✔ owner-selected grants default to an hour and cap at eight hours (1.1548ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.650374ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.529143ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (1111.199207ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (80.976848ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (6.967451ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (6203.809588ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.087487ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8432.96966
+{"state": "passed", "statuses": 6, "negativeControls": 4, "scope": "independent report schema, not live acceptance"}

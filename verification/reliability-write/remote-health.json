@@ -1,0 +1,5 @@
+{
+  "source": "Separate GET health",
+  "status": "UNOBSERVABLE",
+  "exceptionType": "HTTPError"
+}

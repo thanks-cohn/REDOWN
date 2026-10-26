@@ -1,0 +1,33 @@
+
+> remote-asset-ingest@0.1.0 diagnostics:test
+> node scripts/compile-diagnostic-schema.mjs --check && node --test tests/diagnostic-evidence.test.mjs
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (7.044216ms)
+✔ native HTTP 400 survives without provider message or secret (18.867084ms)
+✔ native HTTP 401 survives without provider message or secret (0.522017ms)
+✔ native HTTP 403 survives without provider message or secret (0.404512ms)
+✔ native HTTP 404 survives without provider message or secret (0.341398ms)
+✔ native HTTP 405 survives without provider message or secret (0.446565ms)
+✔ native HTTP 409 survives without provider message or secret (0.317713ms)
+✔ native HTTP 429 survives without provider message or secret (0.343482ms)
+✔ native HTTP 500 survives without provider message or secret (0.398152ms)
+✔ native HTTP 503 survives without provider message or secret (0.614114ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.442678ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (29.567431ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (2.860988ms)
+✔ Doctor isolates profile before submission (0.557109ms)
+✔ Doctor isolates host before submission (0.384613ms)
+✔ Doctor isolates binding before submission (0.565121ms)
+✔ Doctor isolates jurisdiction before submission (0.498001ms)
+✔ Doctor isolates capability before submission (0.814422ms)
+✔ Doctor isolates non-json before submission (0.629467ms)
+✔ Doctor isolates network before submission (0.627044ms)
+✔ Doctor isolates timeout before submission (0.448858ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 140.658132

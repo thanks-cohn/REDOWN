@@ -1,0 +1,28 @@
+✖ Python external process traverses native relay, canonical engine and Atlas (982.768914ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1050.790698
+
+✖ failing tests:
+
+test at tests/extension-native-e2e.test.mjs:12:1
+✖ Python external process traverses native relay, canonical engine and Atlas (982.768914ms)
+  AssertionError [ERR_ASSERTION]: {"schemaVersion":"redown.doctor.v1","status":"BLOCKED","readOnly":true,"steps":[],"liveWriteAcceptance":"NOT_TESTED","missingEvidence":["Authorized existing extension session and actual provider response"],"code":"INVALID_INPUT","diagnostic":null}
+
+  2 !== 1
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/extension-native-e2e.test.mjs:120:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,10 @@
+{
+  "extension/file-engine/diagnostics.mjs": "4af88a79849b2c703e50b1b3c76c1742667443c1c494da1b47d8497ba9d916a9",
+  "extension/file-engine/diagnostic.schema.json": "8f64307dd759d1bab04c7950287f116d82a78482df85914a826bf57a4bf16626",
+  "extension/file-engine/adapters/extension-r2.mjs": "778324179a6662519b757f5a5f2be4fdb0f494e2591c09faf64b971a2670067e",
+  "extension/file-engine/engine.mjs": "dfd3131210967cfabf91f7dca4654b830aed91c5cde6a6b9fcdcc4c14cbd1ef1",
+  "extension/lab-session.mjs": "07ebb9e992e7cf352b6aa69168c1b856e6456daa09f1b3f24b9ae05c9a6e9481",
+  "extension/lab-worker.mjs": "705ec33ad5e3b698d777ef84ca511e108c6e1a8a7b69c8348255d9f2e3f0dd0e",
+  "clients/python/redown/doctor.py": "c02924d6834b5b071ac087c290319a16557d621549e84b27cf27933c44312690",
+  "clients/python/redown/diagnostics.py": "9ac2d962b7ddb08e87ffe2ac7c194163fbbb3af30767bf9066dd44bcf333db47"
+}

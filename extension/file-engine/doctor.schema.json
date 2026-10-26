@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:redown:doctor:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "readOnly",
+    "steps",
+    "liveWriteAcceptance"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "redown.doctor.v1"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "INDETERMINATE",
+        "UNSUPPORTED"
+      ]
+    },
+    "readOnly": {
+      "type": "boolean"
+    },
+    "steps": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "status"
+        ],
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED",
+              "UNSUPPORTED",
+              "NOT_TESTED",
+              "INDETERMINATE"
+            ]
+          },
+          "method": {
+            "enum": [
+              "HEAD",
+              "GET",
+              "POST"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 599
+          },
+          "observation": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "durationMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "diagnostic": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "liveWriteAcceptance": {
+      "enum": [
+        "NOT_TESTED",
+        "OWNER_REVIEW_REQUIRED"
+      ]
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "traceId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "mutationPhase": {
+      "enum": [
+        "NOT_SUBMITTED",
+        "SUBMITTED_REJECTED",
+        "ACKNOWLEDGED_UNVERIFIED",
+        "VERIFIED",
+        "INDETERMINATE"
+      ]
+    },
+    "capabilities": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "missingEvidence": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "maxLength": 256
+      }
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "diagnostic": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "telemetry": {
+      "type": "object"
+    },
+    "smoke": {
+      "type": "object"
+    }
+  }
+}

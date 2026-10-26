@@ -50,3 +50,12 @@ and future gamification remain distinct from demonstrated current behavior.
 ## Phase 2 Beta successor — separate current-source supplement
 
 [PHASE_2_BETA.md](PHASE_2_BETA.md) records the owner-mandated Beta-first release boundary, the isolated simulation foundation, actual source/test paths, recovery policy and requirements for retiring legacy. The checkpoint corpus and its recorded behavior remain historical evidence; no live provider or promotion claim follows from the supplement.
+
+## Evidence-first write diagnostics supplement
+
+The additive [live-write incident](bugs/FW-REDOWN-LIVE-R2-WRITE-PROVIDER-ERROR-20261025.md)
+preserves the owner's original failing evidence and records source-level repairs,
+unproven live causality and the [diagnostic contract](../docs/architecture/REDOWN_DIAGNOSTIC_STANDARD.md).
+It is an engineering preservation obligation, not accepted canonical intent or live
+closure. AAC's diagnostic-evidence-completeness scenario and native fault tests guard
+cause preservation. Do not rewrite frozen source hashes to make freshness pass.

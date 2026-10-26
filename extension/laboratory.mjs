@@ -1,15 +1,23 @@
 // Extension-owned approval surface; native clients cannot approve their own requests.
-import { laboratoryCreate } from "./lab-worker.mjs";
+import { laboratoryCreate, laboratoryDoctor } from "./lab-worker.mjs";
 import { authorizeLab } from "./lab-session.mjs";
 const $ = (id) => document.getElementById(id), status = (text) => {
   $("status").textContent = text;
 };
 let port = null, sessionId = null;
 const grants = /* @__PURE__ */ new Map(), pending = /* @__PURE__ */ new Map();
+const PAIRING_TIMEOUT_MS = 120000;
+function removePending(client) {
+  const entry = pending.get(client);
+  if (!entry) return;
+  clearTimeout(entry.timer);
+  entry.row.remove();
+  pending.delete(client);
+}
 function stop() {
   for (const g of grants.values()) g.revoke();
   grants.clear();
-  pending.clear();
+  for (const client of pending.keys()) removePending(client);
   $("clients").replaceChildren();
   const previousPort = port;
   port = null;
@@ -73,8 +81,8 @@ async function startConnection() {
     if (message.type === "closed") {
       grants.get(message.client)?.revoke();
       grants.delete(message.client);
-      pending.get(message.client)?.remove();
-      pending.delete(message.client);
+      removePending(message.client);
+      document.getElementById(`client-${message.client}`)?.remove();
       return;
     }
     if (message.type !== "request" || typeof message.id !== "string" || typeof message.client !== "string") return;
@@ -83,26 +91,41 @@ async function startConnection() {
       if (port === connectedPort) port.postMessage({ id: message.id, response });
     };
     if (message.method === "pair") {
+      if (pending.has(message.client) || grants.has(message.client)) {
+        reply({ apiVersion: "1.0.0", state: "failed", error: { code: "ALREADY_PAIRED" } });
+        return;
+      }
       if (pending.size + grants.size >= 8) {
         reply({ apiVersion: "1.0.0", state: "failed", error: { code: "CLIENT_LIMIT" } });
         return;
       }
       const row = document.createElement("article"), name = document.createElement("p");
-      name.textContent = `Client: ${String(message.input?.name || "Unnamed").slice(0, 80)}. Code: ${message.client}`;
+      row.id = `client-${message.client}`;
+      const deadline = Date.now() + PAIRING_TIMEOUT_MS;
+      name.textContent = `Client: ${String(message.input?.name || "Unnamed").slice(0, 80)}. Code: ${message.client}. Approve within 120 seconds; this CLI needs its own approval even if the GUI is connected.`;
       row.append(name);
+      const expire = () => {
+        if (!pending.has(message.client)) return;
+        removePending(message.client);
+        reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_TIMEOUT" } });
+        status("Pairing timed out without approval. Start a new Python connection and approve its new matching code within 120 seconds.");
+      };
       const reject = document.createElement("button");
       reject.textContent = "Reject / revoke";
       reject.onclick = () => {
         grants.get(message.client)?.revoke();
         grants.delete(message.client);
-        pending.delete(message.client);
+        const wasPending = pending.has(message.client);
+        removePending(message.client);
         row.remove();
-        reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REJECTED" } });
+        if (wasPending) reply({ apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REJECTED" } });
       };
       const approve = document.createElement("button");
       approve.textContent = "APPROVE PYTHON CONNECTION";
       approve.className = "pair-approve";
       approve.onclick = () => {
+        if (port !== connectedPort || !pending.has(message.client)) return;
+        if (Date.now() >= deadline) { expire(); return; }
         const roots = [...$("buckets").querySelectorAll("input:checked")].map((c) => JSON.parse(c.dataset.root));
         if (!roots.length) {
           status("Select at least one bucket.");
@@ -112,11 +135,13 @@ async function startConnection() {
         if (![1, 4, 8].includes(hours)) { status("Choose an approval duration of 1, 4 or 8 hours."); return; }
         const write = $("write-approval").checked;
         if (write && roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container))) { status("Write approval is restricted to test-1-new through test-4-new. Uncheck other buckets or use read-only approval."); return; }
-        const grant2 = authorizeLab({ roots, write, extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
+        const dependencies={request:RedownCloudflareApi.request,getProfiles:async()=> (await chrome.storage.local.get('profiles')).profiles||[],fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)};
+        const grant2 = authorizeLab({ roots, write, doctorProvider:laboratoryDoctor(dependencies), extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
           const a = (await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
           return a?.sessionId === sessionId && !!a.accessToken && !a.reconnectRequired;
         } });
         grants.set(message.client, grant2);
+        clearTimeout(pending.get(message.client).timer);
         pending.delete(message.client);
         approve.remove();
         name.append(document.createTextNode(` — Connected; ${write ? "conditional write in a unique laboratory namespace (no deletion)" : "read access"} approved for ${hours} hour(s).`));
@@ -124,8 +149,11 @@ async function startConnection() {
         reply({ apiVersion: "1.0.0", state: "available", data: { clientId: message.client, expiresAt: grant2.expires, mode: "extension" } });
       };
       row.append(approve, reject);
-      pending.set(message.client, row);
+      pending.set(message.client, { row, timer: setTimeout(expire, PAIRING_TIMEOUT_MS) });
       $("clients").append(row);
+      status(`Python approval requested. Compare code ${message.client} and approve within 120 seconds. Keep this Laboratory tab open.`);
+      row.scrollIntoView?.({ block: "nearest" });
+      approve.focus();
       return;
     }
     const grant = grants.get(message.client);

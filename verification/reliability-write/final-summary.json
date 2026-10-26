@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-10-26T02:28:27.885377+00:00",
+  "branch": "fix/evidence-first-write-diagnostics",
+  "implementationCommit": "70a30646e9214f74b6876032f14a63469f8feb78",
+  "mandatoryHandoffCommit": "5f659a31443f98eaae2f2af0a4f0bad500551598",
+  "handoffDeadline": "2026-10-26T02:23:55Z",
+  "handoffCommittedAt": "2026-10-26T02:24:10Z",
+  "handoffPushConfirmedBy": "2026-10-26T02:24:15Z",
+  "deadlineMiss": "Committed 15 seconds late; push confirmed 20 seconds late. No timestamp was backdated.",
+  "tests": {
+    "diagnostics": {
+      "pass": 25,
+      "fail": 0
+    },
+    "labNative": {
+      "pass": 40,
+      "fail": 0
+    },
+    "python": {
+      "pass": 40,
+      "skip": 1,
+      "fail": 0
+    },
+    "fullNode": {
+      "pass": 490,
+      "fail": 9
+    },
+    "providers": {
+      "pass": 15,
+      "fail": 0
+    },
+    "resources": {
+      "pass": 7,
+      "fail": 0
+    },
+    "resourceSchema": {
+      "pass": 3,
+      "fail": 0
+    },
+    "aac": {
+      "pass": 18,
+      "fail": 0
+    },
+    "aacSchema": "PASS",
+    "preservation": "PASS",
+    "foreverFreshness": "FAIL; frozen source drift retained, not masked"
+  },
+  "rootCause": "Original live cause UNPROVEN; undocumented HEAD dependency and loss of native error provenance repaired and fault-tested.",
+  "liveWrite": "NOT_TESTED",
+  "cloudMutationPerformed": false,
+  "merged": false,
+  "connectionRepairPreserved": true,
+  "scope": "OTLP/W3C interoperability foundation, not full OTel SDK compliance",
+  "ownerRunbook": "docs/phase28/DOCTOR_RUNBOOK.md"
+}

@@ -1,0 +1,28 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 providers:test
+> node scripts/phase26/compile-contracts.mjs --check && node --test tests/provider-*.test.mjs
+
+✔ same Beta renders duplicate native names, navigates stable IDs, copies and reads without path interpretation (277.665986ms)
+✔ owner-bound Beta cannot escape its advertised path root even with a permissive owner authorizer (59.618989ms)
+✔ universal session baseline: object keys (81.61972ms)
+✔ universal session baseline: native IDs (30.772378ms)
+✔ native duplicate names remain distinct, ambiguous aliases fail, case-insensitive conflicts preserve bytes (10.432622ms)
+✔ native containment denies sibling scopes and checks authority again before writes (5.361602ms)
+✔ native stale pages and interrupted jobs never imply safe replay (4.830024ms)
+✔ native capabilities refuse rename before changing stable IDs, and malformed pagination is rejected (3.543889ms)
+✔ universal transfer rechecks per-child authority and preserves source after corrupt readback (5.416613ms)
+✔ account and container identity routes multiple instances without aliasing provider data (9.755509ms)
+✔ new immutable adapter inherits unchanged baseline, session, coordinator and Atlas (61.89178ms)
+✔ unchanged AAC discovery automatically inventories the newly registered adapter without credit for execution (562.799858ms)
+✔ adapter-only local reference extension inherits universal baseline and refuses symlinks (111.541858ms)
+✔ mandatory universal baseline runs real R2 adapter + Worker against offline binding (109.418103ms)
+✔ published provider and 0.3 job/request schemas agree with runtime envelopes (123.331441ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 905.899751

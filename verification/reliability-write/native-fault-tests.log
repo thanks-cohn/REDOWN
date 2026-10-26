@@ -1,0 +1,564 @@
+✖ Python external process traverses native relay, canonical engine and Atlas (588.359312ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 659.44496
+
+✖ failing tests:
+
+test at tests/extension-native-e2e.test.mjs:12:1
+✖ Python external process traverses native relay, canonical engine and Atlas (588.359312ms)
+  AssertionError [ERR_ASSERTION]: Approve code 2a2d3306-a53f-4b25-bfa4-95d2e0e1176a in REDOWN
+  {
+    "version": "1.0.0",
+    "mode": "extension",
+    "evidenceBoundary": "Actual connected session; only provider receipts can establish cloud execution",
+    "cases": [
+      {
+        "name": "capability-negotiation",
+        "state": "passed",
+        "fileApiVersion": "0.2.0",
+        "operations": [
+          "list",
+          "metadata",
+          "read"
+        ]
+      },
+      {
+        "name": "listing",
+        "state": "passed",
+        "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+        "evidence": {
+          "fileApiVersion": "0.3.0",
+          "id": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+          "operation": "list",
+          "executor": "canonical-coordinator",
+          "state": "completed",
+          "source": {
+            "provider": "extension-r2",
+            "fingerprint": "5d136d38c49cea15e4370b9e0849fbf5185b7c11e3dae08238556f88ab4d25f7"
+          },
+          "destination": null,
+          "events": [
+            {
+              "sequence": 1,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "requested",
+              "stage": "request",
+              "at": "2026-10-26T02:11:44.141Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 2,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "validated",
+              "stage": "validation",
+              "at": "2026-10-26T02:11:44.141Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 3,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "planned",
+              "stage": "planning",
+              "at": "2026-10-26T02:11:44.142Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 4,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "queued",
+              "stage": "queue",
+              "at": "2026-10-26T02:11:44.142Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 5,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "executing",
+              "stage": "provider",
+              "at": "2026-10-26T02:11:44.142Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 6,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "verifying",
+              "stage": "verification",
+              "at": "2026-10-26T02:11:44.163Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 7,
+              "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+              "state": "completed",
+              "stage": "result",
+              "at": "2026-10-26T02:11:44.163Z",
+              "component": "file-engine/engine.mjs"
+            }
+          ],
+          "verification": {
+            "level": "metadata-observed",
+            "providerEvidence": true
+          },
+          "error": null,
+          "checkpoints": [],
+          "recovery": null
+        },
+        "resourceAtlas": {
+          "resourceApiVersion": "1.0.0",
+          "state": "available",
+          "data": {
+            "operationId": "d4eb36ae-3bf6-4ca1-b577-8dfdb427eb9e",
+            "durationMs": 30.21086199999999,
+            "phases": {
+              "journal.update": {
+                "count": 8,
+                "totalMs": 0.627899000000042,
+                "maxMs": 0.3046410000000037
+              },
+              "journal.read": {
+                "count": 1,
+                "totalMs": 0.07181599999998411,
+                "maxMs": 0.07181599999998411
+              },
+              "provider": {
+                "count": 1,
+                "totalMs": 19.60439100000002,
+                "maxMs": 19.60439100000002
+              }
+            },
+            "overlap": true,
+            "truncated": false
+          }
+        }
+      },
+      {
+        "name": "pagination",
+        "state": "untested",
+        "reason": "Selected prefix fits one page"
+      },
+      {
+        "name": "metadata",
+        "state": "passed",
+        "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+        "evidence": {
+          "fileApiVersion": "0.3.0",
+          "id": "5fb2afa5-df33-499a-a214-98d35c099f75",
+          "operation": "metadata",
+          "executor": "canonical-coordinator",
+          "state": "completed",
+          "source": {
+            "provider": "extension-r2",
+            "fingerprint": "5b72de6b9c46ccc479c6509bc2ae235e9383454bf8ae8522653c5275c197be5c"
+          },
+          "destination": null,
+          "events": [
+            {
+              "sequence": 1,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "requested",
+              "stage": "request",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 2,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "validated",
+              "stage": "validation",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 3,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "planned",
+              "stage": "planning",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 4,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "queued",
+              "stage": "queue",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 5,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "executing",
+              "stage": "provider",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 6,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "verifying",
+              "stage": "verification",
+              "at": "2026-10-26T02:11:44.173Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 7,
+              "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+              "state": "completed",
+              "stage": "result",
+              "at": "2026-10-26T02:11:44.174Z",
+              "component": "file-engine/engine.mjs"
+            }
+          ],
+          "verification": {
+            "level": "metadata-observed",
+            "providerEvidence": true
+          },
+          "error": null,
+          "checkpoints": [],
+          "recovery": null
+        },
+        "resourceAtlas": {
+          "resourceApiVersion": "1.0.0",
+          "state": "available",
+          "data": {
+            "operationId": "5fb2afa5-df33-499a-a214-98d35c099f75",
+            "durationMs": 1.4283159999999953,
+            "phases": {
+              "journal.update": {
+                "count": 8,
+                "totalMs": 0.2716220000000078,
+                "maxMs": 0.0664690000000121
+              },
+              "journal.read": {
+                "count": 1,
+                "totalMs": 0.09099499999999239,
+                "maxMs": 0.09099499999999239
+              },
+              "provider": {
+                "count": 1,
+                "totalMs": 0.42823400000000333,
+                "maxMs": 0.42823400000000333
+              }
+            },
+            "overlap": true,
+            "truncated": false
+          }
+        }
+      },
+      {
+        "name": "file-read",
+        "state": "passed",
+        "sha256": "846662c6210a39ef095313543041a1c02fd81e547a0f431f4d0a39ee5059f9ec",
+        "size": 25,
+        "independentExpectedHash": false,
+        "operationId": "a172397c-4042-4832-b13b-679a04870101",
+        "evidence": {
+          "fileApiVersion": "0.3.0",
+          "id": "a172397c-4042-4832-b13b-679a04870101",
+          "operation": "read",
+          "executor": "canonical-coordinator",
+          "state": "completed",
+          "source": {
+            "provider": "extension-r2",
+            "fingerprint": "5b72de6b9c46ccc479c6509bc2ae235e9383454bf8ae8522653c5275c197be5c"
+          },
+          "destination": null,
+          "events": [
+            {
+              "sequence": 1,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "requested",
+              "stage": "request",
+              "at": "2026-10-26T02:11:44.178Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 2,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "validated",
+              "stage": "validation",
+              "at": "2026-10-26T02:11:44.178Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 3,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "planned",
+              "stage": "planning",
+              "at": "2026-10-26T02:11:44.178Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 4,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "queued",
+              "stage": "queue",
+              "at": "2026-10-26T02:11:44.178Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 5,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "executing",
+              "stage": "provider",
+              "at": "2026-10-26T02:11:44.178Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 6,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "verifying",
+              "stage": "verification",
+              "at": "2026-10-26T02:11:44.180Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 7,
+              "operationId": "a172397c-4042-4832-b13b-679a04870101",
+              "state": "completed",
+              "stage": "result",
+              "at": "2026-10-26T02:11:44.180Z",
+              "component": "file-engine/engine.mjs"
+            }
+          ],
+          "verification": {
+            "level": "content-sha256",
+            "providerEvidence": true
+          },
+          "error": null,
+          "checkpoints": [],
+          "recovery": null
+        },
+        "resourceAtlas": {
+          "resourceApiVersion": "1.0.0",
+          "state": "available",
+          "data": {
+            "operationId": "a172397c-4042-4832-b13b-679a04870101",
+            "durationMs": 2.501004999999992,
+            "phases": {
+              "journal.update": {
+                "count": 8,
+                "totalMs": 0.22258099999999104,
+                "maxMs": 0.06701900000001615
+              },
+              "journal.read": {
+                "count": 1,
+                "totalMs": 0.09429900000000657,
+                "maxMs": 0.09429900000000657
+              },
+              "provider": {
+                "count": 1,
+                "totalMs": 1.1661780000000022,
+                "maxMs": 1.1661780000000022
+              }
+            },
+            "overlap": true,
+            "truncated": false
+          }
+        }
+      },
+      {
+        "name": "download-readback",
+        "state": "passed",
+        "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+        "evidence": {
+          "fileApiVersion": "0.3.0",
+          "id": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+          "operation": "read",
+          "executor": "canonical-coordinator",
+          "state": "completed",
+          "source": {
+            "provider": "extension-r2",
+            "fingerprint": "5b72de6b9c46ccc479c6509bc2ae235e9383454bf8ae8522653c5275c197be5c"
+          },
+          "destination": null,
+          "events": [
+            {
+              "sequence": 1,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "requested",
+              "stage": "request",
+              "at": "2026-10-26T02:11:44.185Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 2,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "validated",
+              "stage": "validation",
+              "at": "2026-10-26T02:11:44.185Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 3,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "planned",
+              "stage": "planning",
+              "at": "2026-10-26T02:11:44.185Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 4,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "queued",
+              "stage": "queue",
+              "at": "2026-10-26T02:11:44.185Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 5,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "executing",
+              "stage": "provider",
+              "at": "2026-10-26T02:11:44.186Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 6,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "verifying",
+              "stage": "verification",
+              "at": "2026-10-26T02:11:44.186Z",
+              "component": "file-engine/engine.mjs"
+            },
+            {
+              "sequence": 7,
+              "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+              "state": "completed",
+              "stage": "result",
+              "at": "2026-10-26T02:11:44.186Z",
+              "component": "file-engine/engine.mjs"
+            }
+          ],
+          "verification": {
+            "level": "content-sha256",
+            "providerEvidence": true
+          },
+          "error": null,
+          "checkpoints": [],
+          "recovery": null
+        },
+        "resourceAtlas": {
+          "resourceApiVersion": "1.0.0",
+          "state": "available",
+          "data": {
+            "operationId": "0e75971f-83ff-448f-b86b-d19e1cb80fec",
+            "durationMs": 1.6281419999999969,
+            "phases": {
+              "journal.update": {
+                "count": 8,
+                "totalMs": 0.1711130000000196,
+                "maxMs": 0.042032000000006065
+              },
+              "journal.read": {
+                "count": 1,
+                "totalMs": 0.11406900000000064,
+                "maxMs": 0.11406900000000064
+              },
+              "provider": {
+                "count": 1,
+                "totalMs": 0.5435249999999883,
+                "maxMs": 0.5435249999999883
+              }
+            },
+            "overlap": true,
+            "truncated": false
+          }
+        }
+      },
+      {
+        "name": "invalid-input",
+        "state": "failed",
+        "code": "DIAGNOSTICS_LOST"
+      },
+      {
+        "name": "authorization-denial",
+        "state": "passed",
+        "code": "AUTHORIZATION_DENIED"
+      },
+      {
+        "name": "cancellation-denial",
+        "state": "passed",
+        "code": "AUTHORIZATION_DENIED"
+      },
+      {
+        "name": "upload",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "copy",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "move",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "rename",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "mkdir",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "delete",
+        "state": "unsupported",
+        "reason": "Selected grant/provider does not authorize this mutation"
+      },
+      {
+        "name": "pairing-rejection",
+        "state": "untested",
+        "reason": "Requires separate security fixture or interactive test; this run does not award credit"
+      },
+      {
+        "name": "revocation",
+        "state": "untested",
+        "reason": "Requires separate security fixture or interactive test; this run does not award credit"
+      },
+      {
+        "name": "session-expiration",
+        "state": "untested",
+        "reason": "Requires separate security fixture or interactive test; this run does not award credit"
+      },
+      {
+        "name": "interruption-recovery",
+        "state": "untested",
+        "reason": "Requires separate security fixture or interactive test; this run does not award credit"
+      },
+      {
+        "name": "backward-compatibility",
+        "state": "untested",
+        "reason": "Requires separate security fixture or interactive test; this run does not award credit"
+      }
+    ],
+    "acceptance": "INCOMPLETE",
+    "failed": 1
+  }
+  <frozen runpy>:128: RuntimeWarning: 'redown.native_host' found in sys.modules after import of package 'redown', but prior to execution of 'redown.native_host'; this may result in unpredictable behaviour
+
+
+  1 !== 0
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/extension-native-e2e.test.mjs:78:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,36 @@
+
+> remote-asset-ingest@0.1.0 diagnostics:test
+> node scripts/compile-diagnostic-schema.mjs --check && node --test tests/diagnostic-evidence.test.mjs
+
+✔ diagnostic schema, privacy negative controls, OTLP context and completeness invariants (6.753299ms)
+✔ native HTTP 400 survives without provider message or secret (22.572188ms)
+✔ native HTTP 401 survives without provider message or secret (0.650415ms)
+✔ native HTTP 403 survives without provider message or secret (0.470948ms)
+✔ native HTTP 404 survives without provider message or secret (0.403358ms)
+✔ native HTTP 405 survives without provider message or secret (0.383619ms)
+✔ native HTTP 409 survives without provider message or secret (3.696114ms)
+✔ native HTTP 429 survives without provider message or secret (0.401926ms)
+✔ native HTTP 500 survives without provider message or secret (0.517899ms)
+✔ native HTTP 503 survives without provider message or secret (0.618648ms)
+✔ proven old HEAD failure is avoided with documented exact-prefix metadata, no object write/read body (1.649177ms)
+✔ first existence failure preserves native provenance through coordinator, evidence and Atlas (31.285744ms)
+✔ Doctor read-only stages isolate old HEAD, Worker capability and lost acknowledgement without mutation (3.340486ms)
+✔ Doctor isolates profile before submission (0.606229ms)
+✔ Doctor isolates host before submission (0.430028ms)
+✔ Doctor isolates binding before submission (0.782711ms)
+✔ Doctor isolates jurisdiction before submission (0.87642ms)
+✔ Doctor isolates capability before submission (0.954827ms)
+✔ Doctor isolates non-json before submission (1.371715ms)
+✔ Doctor isolates network before submission (0.864032ms)
+✔ Doctor isolates timeout before submission (0.593981ms)
+✔ generic coordinator preserves drive-fixture diagnostics (4.625502ms)
+✔ generic coordinator preserves local-fixture diagnostics (3.406133ms)
+✔ generic coordinator preserves s3-fixture diagnostics (3.307356ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 165.31875

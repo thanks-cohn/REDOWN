@@ -88,5 +88,8 @@
   "tests/extension-lab-ui.test.mjs",
   "tests/extension-native-e2e.test.mjs",
   "extension/lab-worker.mjs",
-  "tests/phase28-laboratory.test.mjs"
+  "tests/phase28-laboratory.test.mjs",
+  "extension/file-engine/diagnostics.mjs",
+  "scripts/compile-diagnostic-schema.mjs",
+  "tests/diagnostic-evidence.test.mjs"
 ]

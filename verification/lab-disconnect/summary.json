@@ -1,0 +1,52 @@
+{
+  "baseCommit": "d768294b64cf323d5ef7183f408dadd06e095a7f",
+  "branch": "fix/python-lab-connection-lifecycle",
+  "clientVersion": "0.5.1",
+  "acceptance": "INCOMPLETE",
+  "liveWindowsChromeR2": "NOT_TESTED",
+  "python": {
+    "run": 37,
+    "passed": 36,
+    "failed": 0,
+    "skipped": 1,
+    "log": "verified-python.log"
+  },
+  "nodeBaseline": {
+    "run": 474,
+    "passed": 465,
+    "failed": 9
+  },
+  "nodeRepair": {
+    "run": 474,
+    "passed": 465,
+    "failed": 9,
+    "newFailures": 0
+  },
+  "lab": {
+    "passed": 15,
+    "failed": 0,
+    "architectureReportSchema": "PASS"
+  },
+  "providers": {
+    "passed": 15,
+    "failed": 0
+  },
+  "resourceAtlas": {
+    "passed": 7,
+    "failed": 0
+  },
+  "aac": {
+    "passed": 18,
+    "failed": 0
+  },
+  "universalFile": {
+    "passed": 30,
+    "schema": "PASS",
+    "preservation": "FAIL: baseline source drift"
+  },
+  "foreverPreservation": "PASS",
+  "foreverSourceValidation": "FAIL: baseline source drift",
+  "originalDisconnectCause": "UNPROVEN",
+  "security": "No reconnect, write replay, credential exposure or scope expansion",
+  "gui": "Source repair; display geometry test skipped"
+}

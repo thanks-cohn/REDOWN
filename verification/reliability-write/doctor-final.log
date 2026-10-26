@@ -1,0 +1,9 @@
+test_explicit_smoke_cannot_report_read_only_or_not_submitted_after_verification (test_doctor.DoctorTests.test_explicit_smoke_cannot_report_read_only_or_not_submitted_after_verification) ... ok
+test_invalid_diagnostics_never_reach_reports (test_doctor.DoctorTests.test_invalid_diagnostics_never_reach_reports) ... ok
+test_shared_schema_is_exactly_the_published_contract (test_doctor.DoctorTests.test_shared_schema_is_exactly_the_published_contract) ... ok
+test_unavailable_old_extension_and_separate_write_approval (test_doctor.DoctorTests.test_unavailable_old_extension_and_separate_write_approval) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK

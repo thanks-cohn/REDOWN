@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "redown.doctor.v1",
+  "status": "BLOCKED",
+  "readOnly": true,
+  "code": "EXTENSION_UNAVAILABLE",
+  "diagnostic": null,
+  "steps": [],
+  "liveWriteAcceptance": "NOT_TESTED"
+}

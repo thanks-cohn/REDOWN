@@ -1,0 +1,32 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 aac:test
+> node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs
+
+✔ source inventory has stable unique IDs and includes hidden templates, events, routes and each current HTML control (382.733985ms)
+✔ graph traverses the same edges in reverse, references only real nodes and never promotes inferred UI mappings (5.34171ms)
+✔ coverage excludes untested and partial from successful numerator and failures cannot be averaged away (0.85733ms)
+✔ real coordinator tasks enforce repaired authority and schema boundaries (603.387099ms)
+✔ actual Beta DOM, engine and IndexedDB show gate enforcement, parity and guide keyboard behavior (1203.07203ms)
+✔ read-only gateway discovers AAC with bounded pages; refuses mutation, path injection and arbitrary comparison files (30.925491ms)
+✔ machine report is explicit about safety veto and every check/capability/evidence edge is traceable (17.64073ms)
+✔ redown-manage registers a real control and dispatches to options without invoking storage execution (6.997475ms)
+✔ scoped sessions execute canonical operations, correlate evidence and expose no runtime handles (49.468605ms)
+✔ session scope intersects engine authority, prevents escapes and limits payloads (10.709217ms)
+✔ actual stdio process rejects malformed lines and executes within explicitly launched simulation (234.922791ms)
+✔ denied engine exposes no collector, store, adapters or implementation helper (11.811679ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (30.754929ms)
+✔ caller trace collision cannot rewrite an existing job (4.005477ms)
+{"contract":"urn:redown:resources:1.0.0:evidence","cases":78,"independentValidator":"Python jsonschema 4.26.0"}
+✔ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (449.763819ms)
+✔ direct resource queries enforce the same method-specific input contracts as the gateway (10.691711ms)
+✔ imported resource API returns detached snapshots and memory observations (3.888638ms)
+✔ Trace Event export preserves measured duration and correlation without inventing CPU or threads (14.707033ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2819.327914

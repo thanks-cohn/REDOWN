@@ -1,0 +1,22 @@
+✔ canonical read, bytes, scoped evidence and Atlas correlation (58.033071ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.969679ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (2.862355ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (5.678642ms)
+✔ revoke during request suppresses late bytes and future evidence (22.796353ms)
+✔ bounded reads, truncation, pagination and exact key encoding (2.013267ms)
+✔ owner-selected grants default to an hour and cap at eight hours (0.90327ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.592859ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.479952ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (786.470617ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (71.40461ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (5.900141ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (5028.894588ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.180288ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6193.243882

@@ -1,0 +1,13 @@
+✔ extension page explicitly rejects, approves selected scope and revokes (115.276591ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (66.029085ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (5.134325ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (4102.040161ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.266042ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4690.406332

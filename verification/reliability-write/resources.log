@@ -1,0 +1,19 @@
+
+> remote-asset-ingest@0.1.0 resources:test
+> node --test tests/resource-atlas.test.mjs
+
+✔ actual engine correlation, bounded traces, supported memory, privacy and gateway methods (44.279495ms)
+✔ R2 adapter actual HTTP path is observable without leaking bearer or location (147.262872ms)
+✔ timeouts and journal contention remain classified failures and measured waits (952.416083ms)
+✔ restart retains finished and interrupted evidence without replay; bounded span storage (17.684289ms)
+✔ controlled repeated retention is detected, cleanup and unavailable heap are explicit (1.251366ms)
+✔ collector persistence failure never changes filesystem outcome (2.146815ms)
+✔ real file-journal lock contention produces bounded wait evidence without a filesystem mutation (1557.536936ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2827.04061

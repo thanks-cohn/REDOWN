@@ -357,6 +357,10 @@
         },
         "cancelRequested": {
           "type": "boolean"
+        },
+        "diagnostic": {
+          "type": "object",
+          "description": "Optional redown.diagnostic.v1; independently validated by diagnostic.schema.json"
         }
       }
     },
