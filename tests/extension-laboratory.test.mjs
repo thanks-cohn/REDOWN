@@ -35,7 +35,7 @@ test("revocation, expiration and Cloudflare session change fail closed", async (
   let time = 0, current = true;
   const f = fixture(), g = authorizeLab({ roots: [root], request: f.request, isCurrent: () => current, clock: () => time, ttl: 10 });
   time = 10;
-  assert.equal((await g.query("describe")).error.code, "AUTHORIZATION_REVOKED_OR_EXPIRED");
+  assert.equal((await g.query("describe")).error.code, "LOCAL_SESSION_EXPIRED");
   const a = authorizeLab({ roots: [root], request: f.request, isCurrent: () => current });
   current = false;
   assert.equal((await a.query("describe")).state, "failed");
@@ -74,7 +74,7 @@ test("revoke during request suppresses late bytes and future evidence", async ()
   await new Promise((r) => setTimeout(r, 20));
   g.revoke();
   release();
-  assert.equal((await running).error.code, "AUTHORIZATION_REVOKED_OR_EXPIRED");
+  assert.equal((await running).error.code, "AUTHORIZATION_REVOKED");
 });
 test("bounded reads, truncation, pagination and exact key encoding", async () => {
   let path;
@@ -105,7 +105,7 @@ test('owner-selected grants default to an hour and cap at eight hours', async ()
   const long=authorizeLab({roots:[root],request:f.request,isCurrent:()=>true,clock:()=>time,ttl:24*3600000});
   assert.equal(long.expires-time,8*3600000);
   time=g.expires;
-  assert.equal((await g.query('describe')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');
+  assert.equal((await g.query('describe')).error.code,'LOCAL_SESSION_EXPIRED');
   long.revoke();
   assert.equal((await long.query('describe')).state,'failed');
 });
@@ -118,7 +118,7 @@ test('OAuth renewal stays scoped, rate limited, redacted and cannot extend the g
   const result=await grant.query('renewAuthorization');assert.equal(result.data.state,'renewed');assert.ok(!JSON.stringify(result).includes('NEVER_RETURN'));assert.equal(calls,1);
   assert.equal((await grant.query('renewAuthorization')).error.code,'OAUTH_RENEWAL_RATE_LIMITED');
   time=40*60000;assert.equal((await grant.query('renewAuthorization')).state,'available');assert.equal(calls,2);
-  time=grant.expires;assert.equal((await grant.query('renewAuthorization')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');assert.equal(calls,2);assert.equal(f.calls.length,0);
+  time=grant.expires;assert.equal((await grant.query('renewAuthorization')).error.code,'LOCAL_SESSION_EXPIRED');assert.equal(calls,2);assert.equal(f.calls.length,0);
 });
 
 test('oversized declared provider body is cancelled before consumption, unknown lengths remain bounded', async () => {

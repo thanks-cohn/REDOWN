@@ -1,0 +1,82 @@
+✔ safe diagnostic fixture: missing-source (17.176703ms)
+✔ safe diagnostic fixture: wrong-key (2.499344ms)
+✔ safe diagnostic fixture: wrong-binding (5.460736ms)
+✔ safe diagnostic fixture: expired-authorization (1.192766ms)
+✔ safe diagnostic fixture: worker-version (1.133325ms)
+✔ safe diagnostic fixture: unsupported-endpoint (0.904829ms)
+✔ safe diagnostic fixture: network-interruption (0.84563ms)
+✔ safe diagnostic fixture: source-read (1.28154ms)
+✔ safe diagnostic fixture: destination-write (0.840502ms)
+✔ safe diagnostic fixture: ambiguous-timeout (1.914163ms)
+✔ safe diagnostic fixture: conflict (0.741733ms)
+✔ safe diagnostic fixture: verification-failed (0.740622ms)
+✔ safe diagnostic fixture: interrupted-move (0.620309ms)
+✔ safe diagnostic fixture: stale-ui (0.730186ms)
+✔ safe diagnostic fixture: cross-account (1.55881ms)
+✔ safe diagnostic fixture: concurrent-source-change (0.547739ms)
+✔ safe diagnostic fixture: nested-key (1.057611ms)
+✔ operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces (1.313738ms)
+✔ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (216.399889ms)
+✔ actual reported404 case remains open and separates reports, repository and deployed evidence (7.633776ms)
+✔ all existing bug sections are indexed and native incidents retain separate provenance (52.376643ms)
+✔ source assessments never close browser-pending issues and stale evidence invalidates the assessment (0.408499ms)
+✔ inventory supports bounded filtering and stable pagination; unknown identifiers and filters fail explicitly (66.834655ms)
+✔ malformed inventory sources do not become a clean empty inventory; unsafe paths are rejected (0.71391ms)
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (21.773095ms)
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (380.727535ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (211.251259ms)
+✔ normal primary setup does not invoke the independent inset repair (83.994041ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (36.217952ms)
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.880777ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (95.970507ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (65.927196ms)
+✔ settings disclosure dismisses outside and Escape restores focus (32.32915ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (50.543944ms)
+✔ Beta and Debug are independent, persist separate keys, and do not mutate profiles (120.254688ms)
+✔ cached configuration stays amber until explicit verification, and failures allow retry (46.985873ms)
+✔ newer bucket loads win even across A-B-A account switches (33.300401ms)
+✔ persisted mode combinations restore independently, with Beta off when absent (112.040037ms)
+✔ a late repair cannot overwrite a newer bucket list or unlock its active operation (29.819581ms)
+✔ disabling Debug exits practice without moving focus into hidden diagnostics (26.474548ms)
+✔ primary bucket action opens Explorer at its root after setup; cached selection does not require redeployment (58.212472ms)
+✔ repair, failed setup, refreshed lists and newer Explorer interactions never redirect Explorer (121.248297ms)
+✔ missing inventory is refreshed before navigation and navigation failure does not mark a verified bucket broken (21.834262ms)
+✔ bucket navigation collapses expansion and focuses Explorer before measuring its top (60.819664ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 42
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2010.736275
+
+✖ failing tests:
+
+test at tests/issue-inventory.test.mjs:31:1
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (21.773095ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(menu)
+
+      at TestContext.<anonymous> (file:///workspace/scratch/7a768acbe714/REDOWN/tests/issue-inventory.test.mjs:32:182)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/options-debug-display.test.mjs:90:1
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.880777ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'ok')
+      at TestContext.<anonymous> (file:///workspace/scratch/7a768acbe714/REDOWN/tests/options-debug-display.test.mjs:101:77)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

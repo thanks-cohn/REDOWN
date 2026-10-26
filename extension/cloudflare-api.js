@@ -7,16 +7,17 @@
       ...(fetchOptions.signal ? [fetchOptions.signal] : []), AbortSignal.timeout(timeoutMs)
     ])});
   }
+  const authError = (code, message) => Object.assign(new Error(message), {code});
   async function auth(rejectedToken, expectedSession) {
     return navigator.locks.request("redown-cloudflare-token", async () => {
       let {cloudflareAuth: current} = await chrome.storage.local.get("cloudflareAuth");
-      if (expectedSession !== undefined && current?.sessionId !== expectedSession) throw new Error("Cloudflare connection changed. Refresh this view before trying again.");
-      if (!current?.accessToken) throw new Error("Connect Cloudflare first.");
-      if(current.reconnectRequired)throw new Error("Cloudflare authorization needs renewal. Click Reconnect Cloudflare; disconnecting is not required.");
+      if (expectedSession !== undefined && current?.sessionId !== expectedSession) throw authError("PROVIDER_SESSION_CHANGED", "Cloudflare connection changed. Refresh this view before trying again.");
+      if (!current?.accessToken) throw authError("PROVIDER_SESSION_UNAVAILABLE", "Connect Cloudflare first.");
+      if(current.reconnectRequired)throw authError(current.authFailureCode || "OAUTH_REFRESH_REJECTED", "Cloudflare authorization needs renewal. Click Reconnect Cloudflare; disconnecting is not required.");
       if (current.accessToken !== rejectedToken && (!current.expiresAt || Date.now() < current.expiresAt - 60000)) return current;
       if (!current.refreshToken){
-        await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true}});
-        throw new Error("Cloudflare session expired without a refresh token. Click Reconnect Cloudflare; disconnecting is not required.");
+        await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true,authFailureCode:"OAUTH_REFRESH_UNAVAILABLE"}});
+        throw authError("OAUTH_REFRESH_UNAVAILABLE", "Cloudflare session expired without a refresh token. Click Reconnect Cloudflare; disconnecting is not required.");
       }
       const response = await boundedFetch("https://dash.cloudflare.com/oauth2/token", {
         method:"POST", headers:{"content-type":"application/x-www-form-urlencoded"},
@@ -25,12 +26,12 @@
       const body = await response.json().catch(()=>({}));
       if (!response.ok || !body.access_token){
         if(body.error==='invalid_grant'){
-          await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true}});
-          throw new Error("Cloudflare authorization needs renewal. Click Reconnect Cloudflare; disconnecting is not required.");
+          await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true,authFailureCode:"OAUTH_REFRESH_REJECTED"}});
+          throw authError("OAUTH_REFRESH_REJECTED", "Cloudflare authorization needs renewal. Click Reconnect Cloudflare; disconnecting is not required.");
         }
-        throw new Error("Cloudflare access could not be renewed right now. Retry; your saved connection has been retained.");
+        throw authError("OAUTH_REFRESH_FAILED", "Cloudflare access could not be renewed right now. Retry; your saved connection has been retained.");
       }
-      current = {...current,reconnectRequired:false,accessToken:body.access_token,refreshToken:body.refresh_token || current.refreshToken,
+      current = {...current,reconnectRequired:false,authFailureCode:null,accessToken:body.access_token,refreshToken:body.refresh_token || current.refreshToken,
         expiresAt:body.expires_in ? Date.now()+Number(body.expires_in)*1000 : null};
       await chrome.storage.local.set({cloudflareAuth:current});
       return current;
@@ -51,7 +52,7 @@
     const read=["GET","HEAD"].includes(String(options.method||"GET").toUpperCase());
     const unchanged=async()=>{
       const {cloudflareAuth:current}=await chrome.storage.local.get("cloudflareAuth");
-      if(!current?.accessToken || current.sessionId!==sessionId)throw new Error("Cloudflare connection changed. Refresh this view before trying again.");
+      if(!current?.accessToken || current.sessionId!==sessionId)throw authError("PROVIDER_SESSION_CHANGED", "Cloudflare connection changed. Refresh this view before trying again.");
     };
     const run = async current => {
       await unchanged();
@@ -62,11 +63,15 @@
     };
     try {
       let response = await run(token);
-      if (await authenticationRejected(response) && token.refreshToken) {
-        await response.body?.cancel();
+      if (await authenticationRejected(response)) {
+        // Renew credentials, but never replay a mutation in the API transport.
+        // The coordinator owns write disposition and reconciliation.
         await unchanged();
         token = await auth(token.accessToken,sessionId);
-        response = await run(token);
+        if (read) {
+          await response.body?.cancel();
+          response = await run(token);
+        }
       }
       // One retry for safe reads only. Long Retry-After values are returned to
       // the caller unchanged rather than keeping an MV3 message alive.
@@ -190,7 +195,8 @@
     try {
       const renewed = await auth(current.accessToken, expectedSession);
       return {state:'renewed', expiresAt:renewed.expiresAt || null};
-    } catch {
+    } catch (error) {
+      if (error.code) throw error;
       const {cloudflareAuth: latest} = await chrome.storage.local.get('cloudflareAuth');
       throw fail(!latest?.accessToken || latest.sessionId !== expectedSession || latest.reconnectRequired ? 'CLOUDFLARE_RECONNECT_REQUIRED' : 'OAUTH_RENEWAL_FAILED');
     }

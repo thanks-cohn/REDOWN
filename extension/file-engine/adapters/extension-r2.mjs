@@ -12,7 +12,7 @@ function extensionR2Adapter({ request, roots, createObject }) {
       r = await request(path, { ...options, redirect: "error" });
     } catch (error) {
       if (error?.diagnostic) throw error;
-      throw errorWithDiagnostic(error?.name === "TimeoutError" ? "TIMEOUT" : "NETWORK_FAILURE",{component:"provider-adapter",stage,method:options.method || "GET"});
+      throw errorWithDiagnostic(["PROVIDER_SESSION_CHANGED","PROVIDER_SESSION_UNAVAILABLE","OAUTH_REFRESH_UNAVAILABLE","OAUTH_REFRESH_REJECTED","OAUTH_REFRESH_FAILED"].includes(error?.code) ? error.code : error?.name === "TimeoutError" ? "TIMEOUT" : "NETWORK_FAILURE",{component:"provider-adapter",stage,method:options.method || "GET"});
     }
     if (r.status === 404) return null;
     if (!r.ok) {

@@ -321,3 +321,10 @@ test('destination folder pages preserve parent prefix, immediate children and co
  const result=await new Promise(resolve=>listener({type:'cfDestinationFolders',accountId:'a',bucketName:'b',prefix:'parent/'},{},resolve));
  assert.equal(result.ok,true);assert.equal(result.cursor,'next');assert.deepEqual(Array.from(result.folders,f=>f.prefix),['parent/another/','parent/sub/']);
 });
+
+test('ordinary dashboard navigation cannot replace extension OAuth credentials',async()=>{
+ const h=harness();h.local.cloudflareAuth={sessionId:'existing',accessToken:'private',expiresAt:Date.now()+3600000};
+ for(const listener of h.chrome.webNavigation.onBeforeNavigate.listeners)await listener({tabId:999,frameId:0,url:'https://dash.cloudflare.com/login'});
+ assert.equal(h.local.cloudflareAuth.sessionId,'existing');
+ assert.equal(h.calls.filter(c=>String(c[0]).includes('/oauth2/token')).length,0);
+});

@@ -1,0 +1,28 @@
+✔ private WEBP preview reads nested keys without a Worker or background messaging (20.746036ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (1.42671ms)
+✔ concurrent expired requests refresh rotating credentials once (2.780088ms)
+✔ 401 refresh retries a private read and denied reads report failure (4.64414ms)
+✔ oversized preview stops without allocating an object URL (2.718676ms)
+✔ preview failure replaces spinner and download rejection ends progress (2.900762ms)
+✔ download reports delayed Chrome interruption and removes its listener (1.288291ms)
+✔ download exposes interruption occurring before onChanged registration (1.416785ms)
+✔ download completion is reported and an interruption racing the initial lookup cannot become success (1.994129ms)
+✔ 403 management read falls back to explicitly enabled public R2 domain for unusual keys (12.252613ms)
+✔ 403 does not fall back for private R2 buckets (2.778626ms)
+✔ unusual-key download uses enabled public URL only following a denied authenticated probe (2.100319ms)
+✔ explicit renewal refreshes a valid token but returns only safe status (1.510456ms)
+✔ missing refresh token reports unavailable without breaking a still-valid login (1.086284ms)
+✔ invalid refresh grant requests interactive reconnect without exposing provider errors (1.347821ms)
+✔ simulated expiry rotates once across concurrent requests and retains lab authorization (21.51516ms)
+✔ missing refresh credential and rejected grant have precise codes and no mutation (3.780633ms)
+✔ transient refresh failure retains credentials without claiming revocation (4.249103ms)
+✔ 401 renews but does not replay a mutation; permission denial does not refresh (13.597494ms)
+✔ explicit local revoke, local expiry and provider replacement remain distinct (2.776894ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 203.454066

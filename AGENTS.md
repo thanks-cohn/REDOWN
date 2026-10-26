@@ -227,3 +227,12 @@ Preserve connection repair 7321381. Doctor defaults read-only; --smoke still req
 separate write approval. Do not deploy, repair Workers, alter policies, or merge
 without the owner's separate authorization. Run `npm run diagnostics:test` for
 redaction/provenance/completeness and fault tests; preserve inherited failure debt.
+
+## Laboratory authentication and restart reconciliation
+
+Read `FOREVER_WORKS/bugs/FW-REDOWN-LAB-AUTH-RECOVERY-20261026.md` before changing
+Laboratory auth/recovery. Python 0.5.4 repairs the first-checkpoint GUI contract,
+separates local grant/refresh failure codes, persists pre-dispatch intent, and adds
+read-only `redown.lab reconcile`. New write approvals still mint fresh namespaces;
+never extend scope to replay an uncertain write. Original dashboard incident cause
+and Windows/live acceptance remain unproven. See `verification/lab-auth-recovery/RESULTS.md`.

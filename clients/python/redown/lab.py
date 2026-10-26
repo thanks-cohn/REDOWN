@@ -1,4 +1,5 @@
 """Small desktop laboratory and evidence-producing, read-only conformance runner."""
+from .contracts import checkpoint_view, describe_response
 import argparse
 import base64
 import hashlib
@@ -184,7 +185,7 @@ def gui():
         chosen_depth=depth.get()
         def checkpoint(value):
             adaptive_persist(value,target)
-            events.put(('adaptive-checkpoint',{k:value[k] for k in ('completedCases','remainingCases','verifiedFiles','verifiedBytes','coverage','estimatedRemainingSeconds','currentOperation','bytesPerSecond','ramObservation','cpuSeconds')}))
+            events.put(('adaptive-checkpoint',checkpoint_view(value)))
         connected = client if client and not client._closed else None
         work(lambda: adaptive_run(connected,scan,depth=chosen_depth,resources=settings,roots=selected or None,cancel=stop,checkpoint=checkpoint,connection_error=last_connection_error if not connected else None),result_kind='adaptive-report')
     def latest_report():
@@ -223,7 +224,9 @@ def gui():
         busy = True
         def run():
             try: events.put((result_kind, fn()))
-            except Exception as error: events.put(('error', error.code if isinstance(error, RedownError) else type(error).__name__))
+            except Exception as error:
+                if getattr(error, 'contract', None): events.put(('contract-error', error.contract))
+                else: events.put(('error', error.code if isinstance(error, RedownError) else 'UNEXPECTED_LOCAL_FAILURE'))
             finally: events.put(('done', None))
         threading.Thread(target=run, daemon=True).start()
     def connect(refresh=False):
@@ -242,7 +245,7 @@ def gui():
             events.put(('status', 'Refreshing local discovery and requesting a new REDOWN pairing...' if refresh else 'Requesting a new REDOWN pairing...'))
             fresh = ExtensionClient(on_pairing=lambda code: events.put(('status', 'Approve code ' + code + ' in REDOWN')))
             try:
-                info = fresh.describe()
+                info = describe_response(fresh.describe())
             except Exception:
                 fresh.close()
                 raise
@@ -341,6 +344,8 @@ def gui():
                 state.set('Authorized; select test buckets')
             else:
                 output.delete('1.0', 'end'); output.insert('1.0', json.dumps(value, indent=2));
+                if kind == 'contract-error':
+                    state.set(value['code'] + ': ' + value['component'] + ' missing ' + value['missingField'] + '. ' + value['recommendedAction'])
                 if kind == 'error':
                     if value in CONNECTION_RECOVERY or value in ('LOCAL_AUTH_DENIED','SESSION_CLOSED','TIMEOUT_UNCERTAIN'):
                         last_connection_error = value
@@ -376,7 +381,7 @@ def gui():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture', 'complete', 'doctor'], nargs='?', default='gui')
+    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture', 'complete', 'doctor', 'reconcile'], nargs='?', default='gui')
     parser.add_argument('--operation',choices=['upload','mkdir','read','copy','metadata','list'],default='upload')
     parser.add_argument('--smoke',action='store_true',help='Explicitly request fresh eight-byte write after Doctor; extension write approval still required')
     parser.add_argument('--directory')
@@ -392,10 +397,25 @@ def main():
     parser.add_argument('--root', help='Authorized root as JSON')
     parser.add_argument('--source', help='Exact test object identity as JSON')
     parser.add_argument('--expected-sha256')
+    parser.add_argument('--from-report', help='Saved interrupted Adaptive Laboratory JSON; reconciliation only')
     parser.add_argument('--report', default='redown-lab-report.json')
     args = parser.parse_args()
     if args.action == 'gui':
         gui(); return 0
+    if args.action == 'reconcile':
+        from .recovery import reconcile
+        import sys
+        if not args.from_report: parser.error('--from-report is required')
+        if Path(args.from_report).resolve()==Path(args.report).resolve(): parser.error('Choose a separate --report to preserve original evidence')
+        previous=json.loads(Path(args.from_report).read_text(encoding='utf-8'))
+        try:
+            with ExtensionClient(on_pairing=lambda code: print('Approve READ-ONLY code '+code+' in REDOWN',file=sys.stderr)) as connected:
+                report=reconcile(connected,previous,checkpoint=lambda r: adaptive_persist(r,args.report))
+            adaptive_persist(report,args.report)
+            print(json.dumps(report['reconciliation'],indent=2))
+            return 0 if all(r['status']=='CONFIRMED' for r in report['reconciliation']['results']) else 2
+        except RedownError as error:
+            print(json.dumps({'code':error.code,'action':'Obtain a read-only bucket grant covering the saved namespace; never replay uncertain writes.'})); return 2
     if args.action == 'doctor':
         from .doctor import run as doctor_run, save as doctor_save, EXIT
         import sys

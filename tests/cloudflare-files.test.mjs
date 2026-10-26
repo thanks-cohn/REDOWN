@@ -131,5 +131,5 @@ test('missing refresh token reports unavailable without breaking a still-valid l
 });
 test('invalid refresh grant requests interactive reconnect without exposing provider errors',async()=>{
   const h=harness(async()=>Response.json({error:'invalid_grant'},{status:400}));h.local.cloudflareAuth.sessionId='session';
-  await assert.rejects(h.api.renewAuthorization('session'),{code:'CLOUDFLARE_RECONNECT_REQUIRED'});assert.equal(h.local.cloudflareAuth.reconnectRequired,true);
+  await assert.rejects(h.api.renewAuthorization('session'),{code:'OAUTH_REFRESH_REJECTED'});assert.equal(h.local.cloudflareAuth.reconnectRequired,true);
 });

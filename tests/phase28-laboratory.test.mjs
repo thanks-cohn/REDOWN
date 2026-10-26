@@ -25,7 +25,7 @@ test('write approval confines all operations to an extension-minted namespace an
  const copy=(await grant.query('execute',req('copy',{source:dest,destination:{...dest,key:dest.key+'.copy'}}))).data;assert.equal(copy.state,'completed');assert.equal(f.objects.size,2);
  const mkdir=(await grant.query('execute',req('mkdir',{destination:{...dest,key:info.writePrefix+'nested/'}}))).data;assert.equal(mkdir.state,'completed');
  for(const operation of ['delete','move','rename'])assert.equal((await grant.query('execute',req(operation,{source:dest,...(operation==='delete'?{}:{destination:{...dest,key:dest.key+'.new'}}),confirmed:true}))).error.code,'AUTHORIZATION_DENIED');
- grant.revoke();assert.equal((await grant.query('describe')).error.code,'AUTHORIZATION_REVOKED_OR_EXPIRED');
+ grant.revoke();assert.equal((await grant.query('describe')).error.code,'AUTHORIZATION_REVOKED');
  assert.throws(()=>authorizeLab({roots:[{...root,container:'unrelated'}],write:true,...f,isCurrent:()=>true}),{code:'LAB_BUCKET_REQUIRED'});
 });
 test('ambiguous writes are not retried, and old Worker capabilities block before upload',async()=>{

@@ -3,6 +3,7 @@ import base64
 from collections import Counter
 import hashlib
 import json
+import os
 from pathlib import Path
 import platform
 import shutil
@@ -11,10 +12,20 @@ import tempfile
 import time
 import uuid
 from .client import RedownError
+from .contracts import require_fields
 
 PROFILES = {'Low RAM':(32,1,16384), 'Balanced':(128,2,65536), 'Maximum':(512,4,1048576)}
 
 CONNECTION_RECOVERY = {
+    'LOCAL_SESSION_EXPIRED': 'The Python approval duration ended. Approve a new pairing; provider renewal cannot extend it.',
+    'AUTHORIZATION_REVOKED': 'The local grant was explicitly revoked. Obtain a new explicit approval before continuing.',
+    'PROVIDER_SESSION_CHANGED': 'REDOWN credentials were replaced. Approve a new pairing to verify account and scope.',
+    'PROVIDER_SESSION_UNAVAILABLE': 'Connect Cloudflare in REDOWN, then approve a new pairing.',
+    'OAUTH_REFRESH_UNAVAILABLE': 'Cloudflare supplied no refresh credential. Reconnect Cloudflare, then approve a new pairing.',
+    'OAUTH_REFRESH_REJECTED': 'Cloudflare rejected the refresh grant. Revocation versus grant expiry is unproven. Reconnect and approve a new pairing.',
+    'OAUTH_REFRESH_FAILED': 'Renewal failed without proof of revocation. Check connectivity/provider status; preserve the checkpoint.',
+    'PROVIDER_PERMISSION_DENIED': 'Provider denied access. Check bucket/object permissions; renewal cannot grant permissions.',
+
     'EXTENSION_UNAVAILABLE': 'Open REDOWN Python Laboratory, start its local connection, then request a new pairing. Check native-host registration for the installed extension ID.',
     'EXTENSION_DISCONNECTED': 'Keep the REDOWN Laboratory tab open. Check its helper status and Chrome native-host error, restart its local connection, then approve a NEW Python pairing.',
     'PAIRING_TIMEOUT': 'Run/connect again and approve the NEW matching code in REDOWN within 120 seconds. Each CLI invocation requires its own approval.',
@@ -70,7 +81,9 @@ def plan(scan, depth='Quick', resources=None, info=None):
 def persist(report,path):
     path=Path(path); path.parent.mkdir(parents=True,exist_ok=True)
     temporary=path.with_suffix(path.suffix+'.tmp')
-    temporary.write_text(json.dumps(report,indent=2,ensure_ascii=True)+'\n',encoding='utf-8'); temporary.replace(path)
+    with temporary.open('w',encoding='utf-8') as output:
+        output.write(json.dumps(report,indent=2,ensure_ascii=True)+'\n'); output.flush(); os.fsync(output.fileno())
+    temporary.replace(path)
     lines=['# REDOWN Adaptive Laboratory','', 'Acceptance: '+report['acceptance'],'', '| Operation | File | State | Error |','| --- | --- | --- | --- |']
     def cell(value): return str(value or '').replace('|','/').replace('\n',' ').replace('\r',' ')
     lines += ['| '+' | '.join(cell(c.get(k)) for k in ('operation','file','status','error'))+' |' for c in report['results']]
@@ -87,10 +100,10 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             dirty=bool(subprocess.check_output(['git','-C',str(candidate),'status','--porcelain','--untracked-files=no'],stderr=subprocess.DEVNULL,text=True,timeout=2).strip())
             break
         except (OSError,subprocess.SubprocessError): pass
-    report=dict(schemaVersion='2.8.0',clientVersion='0.5.2',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
+    report=dict(schemaVersion='2.8.0',clientVersion='0.5.4',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
                 runId=str(uuid.uuid4()),cleanup={'status':'NOT_TESTED','reason':'No deletion authorized or attempted. Inspect retained unique namespace; conditional delete unavailable.'},
                 selectedRoots=roots,
-                evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True)
+                evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True,currentOperation=None,pendingOperation=None)
     info={}
     if client:
         try: info=client.describe()
@@ -109,12 +122,14 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
     report['destinationRoot']=root
     report['untestedRoots']=locations[1:]  # This bounded runner uses the first chosen bucket only.
     report['unsupported']=[{'operation':op,'status':'UNSUPPORTED','reason':'No safe atomic conditional deletion' if op in ('move','rename','delete') else 'Not implemented in bounded native transport'} for op in ['move','rename','delete','streaming','multipart','durable recovery']]
-    report['retryRecovery']={'automaticWriteRetries':0,'resume':'UNSUPPORTED','policy':'Halt after ambiguity; new grant/run for further testing; never replay uncertain writes'}
+    report['retryRecovery']={'automaticWriteRetries':0,'resume':'READ_ONLY_RECONCILIATION','policy':'Persist intent before mutations; halt on interruption; reconcile saved destinations with a new read grant. Mutation continuation requires a fresh namespace.'}
     def save():
         report['elapsedSeconds']=time.monotonic()-started
         report['cpuSeconds']=time.process_time()-cpu
         report['coverage']=dict(Counter(r['status'] for r in report['results']))
         report['completedCases']=len(report['results']); report['remainingCases']=len(report['plan']['cases'])-len(report['results'])
+        report['successfulOperations']=sum(r['status']=='PASS' for r in report['results'])
+        report['verifiedUploads']=sum(r['operation']=='upload' and r['status']=='PASS' for r in report['results'])
         report['dispatchedOperations']=sum(bool(r.get('dispatched')) for r in report['results'])
         report['notAttemptedOperations']=sum(not r.get('dispatched',False) for r in report['results'])
         elapsed=report['elapsedSeconds']; transferred=sum(r.get('verifiedBytes',0) for r in report['results'])
@@ -160,14 +175,18 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                         data=b''.join(chunks)
                     if len(data)!=row['bytes'] or hashlib.sha256(data).hexdigest()!=row['sha256']: raise RedownError('LOCAL_SOURCE_CHANGED')
                     mutation_started=True
+                    report['pendingOperation']={**case,'destination':dest,'sha256':row['sha256'],'status':'INDETERMINATE'}; save()
                     result['dispatched']=True
                     job=client.execute(op,destination=dest,bytesBase64=base64.b64encode(data).decode('ascii'),idempotency_key=report['runId']+'-'+str(len(report['results'])))
                     uploads[rel]=job.get('state')=='completed'
                 elif op=='mkdir':
-                    mutation_started=True; result['dispatched']=True; job=client.execute(op,destination=dest)
+                    mutation_started=True; report['pendingOperation']={**case,'destination':dest,'status':'INDETERMINATE'}; save()
+                    result['dispatched']=True; job=client.execute(op,destination=dest)
                 elif not uploads.get(rel): result.update(status='BLOCKED',error='UPLOAD_NOT_VERIFIED'); job=None
                 elif op=='copy':
-                    mutation_started=True; result['dispatched']=True; job=client.execute(op,source=dest,destination={**dest,'key':root['key']+report['runId']+'/copies/'+rel})
+                    mutation_started=True; copy_dest={**dest,'key':root['key']+report['runId']+'/copies/'+rel}
+                    report['pendingOperation']={**case,'destination':copy_dest,'sha256':row['sha256'],'status':'INDETERMINATE'}; save()
+                    result['dispatched']=True; job=client.execute(op,source=dest,destination=copy_dest)
                 elif op=='read':
                     with tempfile.TemporaryDirectory(prefix='redown-readback-') as directory:
                         target=Path(directory)/'readback.bin'
@@ -178,11 +197,12 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                 else:
                     result['dispatched']=True; job=client.execute(op,source=dest)
                 if job:
+                    require_fields(job, ('id','state'), 'adaptive.execute')
                     result.update(operationId=job['id'],jobState=job['state'])
                     if job.get('diagnostic'): result['diagnostic']=job['diagnostic']
                     if job['state']!='completed':
-                        result.update(status='INDETERMINATE' if job['state'] in ('uncertain','partially_completed') else 'BLOCKED' if job.get('error','').startswith(('LAB_','PROVIDER_PERMISSION','OPERATION_BUDGET','CAPACITY')) else 'FAIL',error=job.get('error'))
-                        if job['state'] in ('uncertain','partially_completed'): halted=True
+                        result.update(status='INDETERMINATE' if job['state'] in ('uncertain','partially_completed') else 'BLOCKED' if job.get('error') in CONNECTION_RECOVERY or job.get('error','').startswith(('LAB_','PROVIDER_PERMISSION','OPERATION_BUDGET','CAPACITY')) else 'FAIL',error=job.get('error'))
+                        if job['state'] in ('uncertain','partially_completed') or job.get('error') in CONNECTION_RECOVERY or job.get('error') in ('NETWORK_FAILURE','TIMEOUT','SESSION_UNAVAILABLE'): halted=True
                     else:
                         if op=='read':
                             data=base64.b64decode(job['result']['bytesBase64'],validate=True)
@@ -196,13 +216,18 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                         raise RedownError('ATLAS_CORRELATION_MISMATCH')
         except (RedownError,OSError,ValueError,KeyError) as error:
             if isinstance(error,RedownError) and error.diagnostic: result['diagnostic']=error.diagnostic
+            if getattr(error,'contract',None): result['responseContract']=error.contract
             code=error.code if isinstance(error,RedownError) else type(error).__name__
-            uncertain=code in ('TIMEOUT_UNCERTAIN','WRITE_UNCERTAIN','SESSION_CLOSED') or mutation_started and code in ('AUTHORIZATION_REVOKED_OR_EXPIRED','EXTENSION_DISCONNECTED','SESSION_UNAVAILABLE','SESSION_EXPIRED')
-            result.update(status='INDETERMINATE' if uncertain else 'BLOCKED' if code in ('OPERATION_BUDGET','CAPACITY','AUTHORIZATION_REVOKED_OR_EXPIRED','SESSION_EXPIRED','EXTENSION_UNAVAILABLE') else 'FAIL',error=code)
-            if result['status']=='INDETERMINATE': halted=True
+            # Any exception after mutation dispatch requires reconciliation, including malformed replies.
+            uncertain=(mutation_started and result['dispatched']) or code in ('TIMEOUT_UNCERTAIN','WRITE_UNCERTAIN','SESSION_CLOSED')
+            result.update(status='INDETERMINATE' if uncertain else 'BLOCKED' if code in CONNECTION_RECOVERY or code in ('OPERATION_BUDGET','CAPACITY','AUTHORIZATION_REVOKED_OR_EXPIRED','SESSION_EXPIRED','EXTENSION_UNAVAILABLE') else 'FAIL',error=code)
+            if result['status']=='INDETERMINATE' or code in CONNECTION_RECOVERY or code in ('SESSION_CLOSED','SESSION_UNAVAILABLE','NETWORK_FAILURE','TIMEOUT','OAUTH_RENEWAL_FAILED'): halted=True
+            result['recovery']=CONNECTION_RECOVERY.get(code,'Preserve checkpoint; reconcile uncertain objects read-only before any continuation.')
         result['seconds']=time.monotonic()-begin
         result['endToEndPayloadBytesPerSecond']=case['bytes']/result['seconds'] if result['status']=='PASS' and case['operation'] in ('upload','read','copy') and result['seconds'] else None
         result['reproduction']='Select the same source and profiles; use a NEW approved namespace. Never replay an uncertain write.'
-        report['results'].append(result); save()
+        if report.get('pendingOperation'):
+            result['destination']=report['pendingOperation']['destination']
+        report['results'].append(result); report['pendingOperation']=None; save()
     report['currentOperation']=None; save()
     return report

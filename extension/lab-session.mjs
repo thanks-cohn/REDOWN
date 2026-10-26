@@ -4,7 +4,7 @@ import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
 import { request02, request03, session } from "./file-engine/session-validators.mjs";
 import { extensionR2Adapter } from "./file-engine/adapters/extension-r2.mjs";
-function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now }) {
+function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now, authorizationStatus }) {
   if (!Array.isArray(roots) || !roots.length || roots.some((r) => r.provider !== "extension-r2" || r.key !== "")) throw fail("INVALID_SCOPE");
   if (write && (typeof createObject !== "function" || roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container)))) throw fail("LAB_BUCKET_REQUIRED");
   const writePrefix = write ? "__redown_test__/" + crypto.randomUUID() + "/" : null;
@@ -13,7 +13,13 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
   const inside = i => locations.some(s => s.account===i.account && s.container===i.container && s.provider===i.provider && i.key.startsWith(s.key));
   const expires = clock() + Math.min(Math.max(ttl, 1), 288e5);
   let revoked = false, nextRenewal = 0;
-  const active = async () => !revoked && clock() < expires && await isCurrent();
+  const inactiveCode = async () => revoked ? 'AUTHORIZATION_REVOKED' : clock() >= expires ? 'LOCAL_SESSION_EXPIRED' :
+    typeof authorizationStatus === 'function' ? await authorizationStatus() : !await isCurrent() ? 'PROVIDER_SESSION_CHANGED' : null;
+  const active = async () => !await inactiveCode();
+  const unavailable = async () => {
+    const code = await inactiveCode() || 'AUTHORIZATION_DENIED';
+    return {apiVersion:'1.0.0',state:'failed',error:{code,diagnostic:diagnosticFrom(fail(code),{component:'session',stage:'connection'})}};
+  };
   const adapter = extensionR2Adapter({ createObject: write ? async (i, bytes, context = {}) => {
     if (!await active() || !inside(i)) throw fail("AUTHORIZATION_DENIED");
     await createObject(i, bytes, {isActive: active, traceparent:context.traceparent});
@@ -43,29 +49,29 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
   return Object.freeze({ expires, revoke() {
     revoked = true;
   }, async query(method, input = {}) {
-    if (!await active()) return { apiVersion: "1.0.0", state: "failed", error: { code: "AUTHORIZATION_REVOKED_OR_EXPIRED" } };
+    if (!await active()) return await unavailable();
     if (method === 'renewAuthorization' && typeof renewAuthorization === 'function') {
       if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).length) return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
       if (clock() < nextRenewal) return {apiVersion:'1.0.0',state:'failed',error:{code:'OAUTH_RENEWAL_RATE_LIMITED'}};
       nextRenewal = clock() + 40 * 60000;
       try {
         const result = await renewAuthorization();
-        if (!await active()) return {apiVersion:'1.0.0',state:'failed',error:{code:'AUTHORIZATION_REVOKED_OR_EXPIRED'}};
+        if (!await active()) return await unavailable();
         if (!['renewed','renewal-unavailable'].includes(result?.state)) throw fail('OAUTH_RENEWAL_FAILED');
         return {apiVersion:'1.0.0',state:'available',data:{state:result.state,expiresAt:Number.isFinite(result.expiresAt)?result.expiresAt:null}};
       } catch (error) {
-        return {apiVersion:'1.0.0',state:'failed',error:{code:error?.code==='CLOUDFLARE_RECONNECT_REQUIRED'?'CLOUDFLARE_RECONNECT_REQUIRED':'OAUTH_RENEWAL_FAILED'}};
+        return {apiVersion:'1.0.0',state:'failed',error:{code:['CLOUDFLARE_RECONNECT_REQUIRED','OAUTH_REFRESH_REJECTED','OAUTH_REFRESH_UNAVAILABLE','OAUTH_REFRESH_FAILED'].includes(error?.code)?error.code:'OAUTH_RENEWAL_FAILED'}};
       }
     }
     if (method === 'doctor') {
       if (!input || typeof input!=='object' || Array.isArray(input) || Object.keys(input).some(k=>!['rootIndex','operation'].includes(k)) || !Number.isInteger(input.rootIndex??0) || (input.rootIndex??0)<0 || (input.rootIndex??0)>=locations.length || !['upload','mkdir','read','copy','metadata','list'].includes(input.operation||'upload')) return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
       if (typeof doctorProvider!=='function') return {apiVersion:'1.0.0',state:'failed',error:{code:'PROVIDER_OPERATION_UNSUPPORTED'}};
       let data;try{data=await doctorProvider(locations[input.rootIndex??0],{isActive:active});}catch(error){return {apiVersion:'1.0.0',state:'failed',error:{code:error.code||'DIAGNOSTICS_LOST',diagnostic:diagnosticFrom(error,{component:'doctor',stage:'doctor'})}};}
-      if (!await active()) return {apiVersion:'1.0.0',state:'failed',error:{code:'AUTHORIZATION_REVOKED_OR_EXPIRED'}};
+      if (!await active()) return await unavailable();
       return {apiVersion:'1.0.0',state:'available',data};
     }
     const response = await facade.query(method, input);
-    if (!await active()) return { apiVersion: "1.0.0", state: "failed", error: { code: "AUTHORIZATION_REVOKED_OR_EXPIRED" } };
+    if (!await active()) return await unavailable();
     if (method === "describe" && response.data) {
       if (typeof renewAuthorization === 'function') {
         response.data.methods.push('renewAuthorization');

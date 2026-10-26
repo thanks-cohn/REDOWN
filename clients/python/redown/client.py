@@ -119,7 +119,9 @@ class Client:
         job = self.execute("read", source=source)
         if job.get("state") != "completed":
             raise RedownError(job.get("error", "READ_FAILED"), job.get("diagnostic"))
-        result = job["result"]
+        from .contracts import require_fields
+        require_fields(job, ('result',), 'download.execute')
+        result = require_fields(job['result'], ('bytesBase64','sha256'), 'download.result')
         try:
             data = base64.b64decode(result["bytesBase64"], validate=True)
         except (ValueError, KeyError):

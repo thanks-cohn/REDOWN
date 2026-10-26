@@ -296,9 +296,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "preview",
-          "line": 126,
+          "line": 131,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ],
       "tests": [
@@ -345,7 +345,7 @@
       "name": "download",
       "entryPoint": "explorerDownload",
       "message": null,
-      "pathway": "GET /objects/{encoded-key} → Chrome Downloads",
+      "pathway": "GET /objects/{encoded-key} \u2192 Chrome Downloads",
       "sourceRefs": [
         {
           "path": "extension/options.js",
@@ -357,9 +357,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "download",
-          "line": 143,
+          "line": 148,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ],
       "tests": [
@@ -391,9 +391,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "request",
-          "line": 1,
+          "line": 47,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ],
       "tests": [
@@ -413,7 +413,7 @@
       "name": "copy",
       "entryPoint": "pasteExplorer",
       "message": "cfTransferObjects",
-      "pathway": "Worker POST transferBatch → source GET /object → R2.put → R2.head",
+      "pathway": "Worker POST transferBatch \u2192 source GET /object \u2192 R2.put \u2192 R2.head",
       "sourceRefs": [
         {
           "path": "extension/options.js",
@@ -470,7 +470,7 @@
       "name": "move",
       "entryPoint": "pasteExplorer",
       "message": "cfTransferObjects",
-      "pathway": "verified copy → source/destination checks → deleteKeys",
+      "pathway": "verified copy \u2192 source/destination checks \u2192 deleteKeys",
       "sourceRefs": [
         {
           "path": "extension/options.js",
@@ -568,7 +568,7 @@
       "name": "delete",
       "entryPoint": "deleteSelection",
       "message": "cfDeleteObjects",
-      "pathway": "confirmed selection → deleteKeys → R2.head",
+      "pathway": "confirmed selection \u2192 deleteKeys \u2192 R2.head",
       "sourceRefs": [
         {
           "path": "extension/options.js",
@@ -609,7 +609,7 @@
       "name": "folder.create",
       "entryPoint": "beginNewFolder",
       "message": "cfCreateFolder",
-      "pathway": "ensurePrefixes → conditional .redown marker",
+      "pathway": "ensurePrefixes \u2192 conditional .redown marker",
       "sourceRefs": [
         {
           "path": "extension/options.js",
@@ -689,7 +689,7 @@
     },
     {
       "name": "public.urls",
-      "entryPoint": "copyItemUrl → RedownPublicAddresses.popover",
+      "entryPoint": "copyItemUrl \u2192 RedownPublicAddresses.popover",
       "message": "cfPublicAddresses/cfEnablePublicAccess",
       "pathway": "read-only address discovery; separately confirmed bucket-wide r2.dev enable with read-back",
       "sourceRefs": [
@@ -1559,8 +1559,8 @@
       "ref": {
         "path": "extension/cloudflare-api.js",
         "symbol": "async function request(",
-        "line": 46,
-        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
+        "line": 47,
+        "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1570,8 +1570,8 @@
       "ref": {
         "path": "extension/cloudflare-api.js",
         "symbol": "async function auth(",
-        "line": 10,
-        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
+        "line": 11,
+        "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1581,8 +1581,8 @@
       "ref": {
         "path": "extension/cloudflare-api.js",
         "symbol": "async function preview(",
-        "line": 126,
-        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
+        "line": 131,
+        "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1592,8 +1592,8 @@
       "ref": {
         "path": "extension/cloudflare-api.js",
         "symbol": "async function download(",
-        "line": 143,
-        "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5",
+        "line": 148,
+        "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5",
         "evidence": "source-anchor"
       },
       "evidence": "source-anchor; not runtime proof"
@@ -1852,9 +1852,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "preview",
-          "line": 126,
+          "line": 131,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ]
     },
@@ -1887,9 +1887,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "download",
-          "line": 143,
+          "line": 148,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ]
     },
@@ -1908,9 +1908,9 @@
         {
           "path": "extension/cloudflare-api.js",
           "symbol": "request",
-          "line": 1,
+          "line": 47,
           "evidence": "source-anchor",
-          "sha256": "f9ae038719c1a9b27cfa74283cbabeb14a08b9e6fc3d9e0bcbf83004d09dc3b5"
+          "sha256": "7e89a3968837e26ce91440d3bb6c702d85431ffb2d189c1ec2ede9764932c3a5"
         }
       ]
     },
@@ -2217,7 +2217,7 @@
     },
     {
       "from": "operation:public.urls",
-      "to": "copyItemUrl → RedownPublicAddresses.popover",
+      "to": "copyItemUrl \u2192 RedownPublicAddresses.popover",
       "evidence": "source-anchor",
       "sourceRefs": [
         {
