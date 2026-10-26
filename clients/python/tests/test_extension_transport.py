@@ -5,6 +5,8 @@ import socket
 import struct
 import threading
 import unittest
+import tempfile
+from pathlib import Path
 import redown.install_host
 from redown import connect
 from redown.extension import RenewalSchedule
@@ -86,5 +88,23 @@ class NativeTransportTests(unittest.TestCase):
         while not relay.pending: pass
         relay.close(); thread.join(timeout=1)
         self.assertEqual(result.get()['error']['code'], 'EXTENSION_DISCONNECTED')
+
+
+class WindowsRegistrationContracts(unittest.TestCase):
+    def test_windows_registration_uses_exact_origin_and_quoted_interpreter(self):
+        from contextlib import nullcontext
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        import redown.install_host as installer
+        with tempfile.TemporaryDirectory() as d:
+            folder=Path(d)/'helper with spaces'
+            values=[]
+            registry=SimpleNamespace(HKEY_CURRENT_USER=1,REG_SZ=1,CreateKey=lambda *a:nullcontext('key'),SetValueEx=lambda *a:values.append(a))
+            with patch.object(installer,'home',return_value=folder),patch.object(installer.os,'name','nt'),patch.object(installer.sys,'argv',['install','--extension-id','a'*32]),patch.object(installer.sys,'executable',r'C:\Program Files\Python\python.exe'),patch.dict('sys.modules',winreg=registry),patch.object(installer.subprocess,'check_output',return_value='"user","S-1-5-21-123"'),patch.object(installer.subprocess,'run'):
+                self.assertEqual(installer.main(),0)
+            manifest=json.loads((folder/'com.redown.laboratory.json').read_text())
+            self.assertEqual(manifest['allowed_origins'],['chrome-extension://'+'a'*32+'/'])
+            self.assertIn('"C:\\Program Files\\Python\\python.exe" -m redown.native_host %*',(folder/'native-host.cmd').read_text())
+            self.assertTrue(values)
 
 if __name__ == '__main__': unittest.main()

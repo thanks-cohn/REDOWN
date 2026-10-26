@@ -1,0 +1,53 @@
+
+> remote-asset-ingest@0.1.0 aac:test
+> node --test tests/aac.test.mjs tests/file-engine-authority.test.mjs tests/file-agent-session.test.mjs tests/resource-schema-agreement.mjs tests/resource-trace-export.test.mjs tests/context-menu-agent.test.mjs
+
+✔ source inventory has stable unique IDs and includes hidden templates, events, routes and each current HTML control (933.722488ms)
+✔ graph traverses the same edges in reverse, references only real nodes and never promotes inferred UI mappings (5.998187ms)
+✔ coverage excludes untested and partial from successful numerator and failures cannot be averaged away (0.498489ms)
+✔ real coordinator tasks enforce repaired authority and schema boundaries (1107.898788ms)
+✔ actual Beta DOM, engine and IndexedDB show gate enforcement, parity and guide keyboard behavior (2584.905949ms)
+✔ read-only gateway discovers AAC with bounded pages; refuses mutation, path injection and arbitrary comparison files (79.323084ms)
+✔ machine report is explicit about safety veto and every check/capability/evidence edge is traceable (29.66546ms)
+✔ redown-manage registers a real control and dispatches to options without invoking storage execution (5.77113ms)
+✔ scoped sessions execute canonical operations, correlate evidence and expose no runtime handles (52.613457ms)
+✔ session scope intersects engine authority, prevents escapes and limits payloads (28.901913ms)
+✔ actual stdio process rejects malformed lines and executes within explicitly launched simulation (313.095655ms)
+✔ denied engine exposes no collector, store, adapters or implementation helper (11.634953ms)
+✔ job inspection, cancellation, recovery, duplicate receipt and reconcile obey revocation (19.002785ms)
+✔ caller trace collision cannot rewrite an existing job (2.949715ms)
+✖ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (410.706919ms)
+✔ direct resource queries enforce the same method-specific input contracts as the gateway (6.097996ms)
+✔ imported resource API returns detached snapshots and memory observations (3.851763ms)
+✔ Trace Event export preserves measured duration and correlation without inventing CPU or threads (17.369883ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 17
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7201.978961
+
+✖ failing tests:
+
+test at tests/resource-schema-agreement.mjs:8:1
+✖ published evidence contract and compiled runtime agree on recursive required fields, types, boundaries and legacy evidence (410.706919ms)
+  AssertionError [ERR_ASSERTION]: independent invalid date
+  
+  true !== false
+  
+      at file:///workspace/REDOWN/tests/resource-schema-agreement.mjs:33:92
+      at Array.forEach (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/resource-schema-agreement.mjs:33:8)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

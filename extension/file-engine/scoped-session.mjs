@@ -7,7 +7,7 @@ function createScopedSession({ engine, scope, validateRequests, validateSession 
   const policy = structuredClone(scope);
   for (const location of policy.locations) location.locator ? validateLocator(location) : fileIdentity(location, { root: true });
   const budget = policy.maxOperations ?? 32;
-  if (!Number.isInteger(budget) || budget < 1 || budget > 100) throw fail("INVALID_SCOPE");
+  if (!Number.isInteger(budget) || budget < 1 || budget > 100000) throw fail("INVALID_SCOPE");
   const owned = /* @__PURE__ */ new Set();
   let executions = 0;
   const locationAllowed = async (id) => {

@@ -1,0 +1,130 @@
+{
+  "phase": "2.8",
+  "scope": "Bounded authenticated-write milestone; incomplete overall acceptance",
+  "baseCommit": "bea19528dbdad5827edaf305789b6b190841cfc4",
+  "baselineTag": "v0.4.4-python-lab-readonly",
+  "tests": {
+    "python": {
+      "pass": 31,
+      "fail": 0
+    },
+    "extensionNativeLab": {
+      "pass": 15,
+      "fail": 0
+    },
+    "providerContracts": {
+      "pass": 15,
+      "fail": 0
+    },
+    "authorizationOAuth": {
+      "pass": 30,
+      "fail": 0
+    },
+    "resourceAtlas": {
+      "pass": 7,
+      "fail": 0
+    },
+    "resourceSchema": {
+      "pass": 3,
+      "fail": 0
+    },
+    "aac": {
+      "pass": 18,
+      "fail": 0
+    },
+    "aacSchema": "PASS",
+    "fullRegression": {
+      "pass": 465,
+      "fail": 9
+    },
+    "untouchedBaseRegression": {
+      "pass": 460,
+      "fail": 9
+    },
+    "reliabilityStages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "retainedFailures": [
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links"
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready"
+    }
+  ],
+  "newRegressionFailuresComparedWithUntouchedBase": [],
+  "reliabilityState": "FAILED: historical baseline debt, including two pre-existing failures not yet classified by the ratchet",
+  "packageInstall": "PASS redown-client 0.5.0",
+  "wheelBuild": "PASS",
+  "windowsRegistration": "PASS mocked Windows API/path/launcher contract, not actual Windows launch",
+  "guiStartup": "BLOCKED: tkinter imports (Tk 9.0) but no DISPLAY; TclError no display name and no $DISPLAY environment variable",
+  "nativeIntegration": "PASS real Linux Python processes, authenticated loopback, native frames, canonical engine and injected provider; not live R2",
+  "offlineReports": "PASS JSON and Markdown with 185 BLOCKED cases (Comprehensive)",
+  "unavailableExtensionReports": "PASS JSON and Markdown with 104 BLOCKED cases (Quick)",
+  "liveR2": "NOT_TESTED; no local authenticated REDOWN/native Chrome session",
+  "deployed": "NO",
+  "automaticCloudWritesDuringVerification": 0,
+  "baselineTagModified": false,
+  "initialFailures": "Missing installed package/jsdom and JSON Schema format extras were corrected. Initial failed logs retained. No assertions were weakened.",
+  "review": "Self-review and focused negative tests; not independent human review or certification",
+  "sourceSha256": {
+    "extension/lab-session.mjs": "30e963229e339c34168d008acb337468f42b59f6cd88cee5f40accaa9d57c8f3",
+    "extension/lab-worker.mjs": "0a13fafa929611823cf3f143f08585ee86113ee60f66e72da99cff0470a2a5fb",
+    "extension/laboratory.mjs": "bd10cebc1c85f033a8a5d864962583efa68baf68c125d388904dab6c082f56bc",
+    "extension/laboratory.html": "85cbd71c1bed227b7929a6b599f679a1dbe3994d1bd671ed347e0678cefb0a66",
+    "extension/background.js": "5a8dd3d36672ec9ad6e2bbb16c5b08aa902fc1fac339edc5c4739b7d4ed5b6bd",
+    "extension/file-engine/adapters/extension-r2.mjs": "78f3dd01b1d45786ebc1345c7168aa496729921d86f57114480d394cb0b0e49f",
+    "extension/file-engine/scoped-session.mjs": "7c47f1e6a5d387129c08b0c7ac95160c12a8cb37d36d0bfbfb154e89646450a8",
+    "extension/file-engine/engine.mjs": "5fdade1a0fa65d15d3c8249f0037b3769dbfd372cc2abc4ace7230025a3fcd84",
+    "clients/python/redown/adaptive.py": "e59e05cee54f2af92021211d5f3f4803db7f755912fa046086df2b54143c3b6d",
+    "clients/python/redown/inventory.py": "ebe9fed9950e89cda7326d377db97d5b1e2c735e0d9183e465d1652cbf505ec9",
+    "clients/python/redown/lab.py": "b421d2b178b95f7c632f74fe81daab57edb311034420e56ebfd6ce8cc0f61a79",
+    "clients/python/pyproject.toml": "fee94fb7115f0e04f03874c88a52f675b17c4418129a6b9a345197ce2c618e42"
+  }
+}

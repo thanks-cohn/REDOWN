@@ -359,3 +359,16 @@ test('remote ingest exact-folder capability preserves Unicode, reserved characte
   assert.equal(r.ok,true,r.error);assert.equal(r.key,folder+'/photo.png');assert.ok(await bucket.head(folder+'/photo.png'));assert.equal(bucket.objects.size,1);
  }finally{globalThis.fetch=originalFetch;}
 });
+
+test('laboratory exact creation is bounded, conditional, empty-safe and prefix restricted',async()=>{
+  const {default:worker}=await workerModule(); const storage=new MemoryBucket();
+  const env={STORAGE:storage};
+  const key='__redown_test__/12345678-1234-1234-1234-123456789abc/nested/Unicode #.bin';
+  const create=(key,body)=>worker.fetch(new Request('https://bucket.workers.dev/',{method:'POST',headers:{authorization:'Bearer test-secret','x-redown-action':'lab-create','x-redown-key':encodeURIComponent(key)},body}),env);
+  const first=await create(key,text('original'));assert.equal(first.status,200);assert.equal((await first.json()).key,key);
+  const conflict=await create(key,text('replacement'));assert.equal(conflict.status,409);assert.equal(new TextDecoder().decode(storage.objects.get(key).bytes),'original');
+  const empty=await create(key+'.empty',new Uint8Array());assert.equal(empty.status,200);assert.equal(storage.objects.get(key+'.empty').size,0);
+  assert.equal((await create('unrelated/object',text('unsafe'))).status,403);
+  assert.equal((await create(key+'.large',new Uint8Array(65537))).status,413);
+  assert.equal(storage.objects.has(key+'.large'),false);
+});

@@ -1,0 +1,13 @@
+test_authenticated_idle_timeout_matches_longest_grant (test_extension_transport.NativeTransportTests.test_authenticated_idle_timeout_matches_longest_grant) ... ok
+test_authenticated_listener_and_explicit_pairing (test_extension_transport.NativeTransportTests.test_authenticated_listener_and_explicit_pairing) ... ok
+test_direct_mode_is_explicitly_unsupported (test_extension_transport.NativeTransportTests.test_direct_mode_is_explicitly_unsupported) ... ok
+test_disconnect_unblocks_pending_request (test_extension_transport.NativeTransportTests.test_disconnect_unblocks_pending_request) ... ok
+test_forty_minute_schedule_uses_monotonic_time_without_burst_replay (test_extension_transport.NativeTransportTests.test_forty_minute_schedule_uses_monotonic_time_without_burst_replay) ... ok
+test_frames_fragmentation_and_budget (test_extension_transport.NativeTransportTests.test_frames_fragmentation_and_budget) ... ok
+test_windows_registration_uses_exact_origin_and_quoted_interpreter (test_extension_transport.WindowsRegistrationContracts.test_windows_registration_uses_exact_origin_and_quoted_interpreter) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.529s
+
+OK
+Registered REDOWN helper for this user. Reload REDOWN and open Python Laboratory.

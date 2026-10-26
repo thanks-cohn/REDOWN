@@ -1,4 +1,5 @@
 // Extension-owned approval surface; native clients cannot approve their own requests.
+import { laboratoryCreate } from "./lab-worker.mjs";
 import { authorizeLab } from "./lab-session.mjs";
 const $ = (id) => document.getElementById(id), status = (text) => {
   $("status").textContent = text;
@@ -109,14 +110,16 @@ async function startConnection() {
         }
         const hours = Number($("grant-duration").value);
         if (![1, 4, 8].includes(hours)) { status("Choose an approval duration of 1, 4 or 8 hours."); return; }
-        const grant2 = authorizeLab({ roots, ttl: hours * 3600000, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
+        const write = $("write-approval").checked;
+        if (write && roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container))) { status("Write approval is restricted to test-1-new through test-4-new. Uncheck other buckets or use read-only approval."); return; }
+        const grant2 = authorizeLab({ roots, write, extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
           const a = (await chrome.storage.local.get("cloudflareAuth")).cloudflareAuth;
           return a?.sessionId === sessionId && !!a.accessToken && !a.reconnectRequired;
         } });
         grants.set(message.client, grant2);
         pending.delete(message.client);
         approve.remove();
-        name.append(document.createTextNode(` — Connected; read access approved for ${hours} hour(s).`));
+        name.append(document.createTextNode(` — Connected; ${write ? "conditional write in a unique laboratory namespace (no deletion)" : "read access"} approved for ${hours} hour(s).`));
         status("Python client connected and authorized. Keep this page open; revoke access here whenever needed.");
         reply({ apiVersion: "1.0.0", state: "available", data: { clientId: message.client, expiresAt: grant2.expires, mode: "extension" } });
       };

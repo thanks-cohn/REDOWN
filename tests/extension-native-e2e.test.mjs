@@ -7,7 +7,7 @@ import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { authorizeLab } from "../extension/lab-session.mjs";
-const root = { provider: "extension-r2", account: "account", container: "bucket", key: "" };
+const root = { provider: "extension-r2", account: "account", container: "test-1-new", key: "" };
 test("Python external process traverses native relay, canonical engine and Atlas", { timeout: 2e4 }, async () => {
   const home = await mkdtemp(path.join(tmpdir(), "redown-native-")), directory = path.join(home, ".redown-laboratory");
   await mkdir(directory);
@@ -19,7 +19,15 @@ test("Python external process traverses native relay, canonical engine and Atlas
   host.stderr.on("data", (x) => errors += x);
   const grants = /* @__PURE__ */ new Map();
   const bytes = new TextEncoder().encode("Native round trip fixture");
-  const request = async (url, options = {}) => url.includes("__redown_missing_") ? new Response(null, {status:404}) : url.includes("?") ? Response.json({ result: { objects: [{ key: "fixture.txt", size: bytes.length, etag: "r1" }] } }) : new Response(options.method === "HEAD" ? null : bytes, { headers: { etag: "r1", "content-length": String(bytes.length) } });
+  let writeMode=false; const written=new Map();
+  const request = async (url, options = {}) => {
+    const key=url.split('/objects/')[1]?.split('/').map(decodeURIComponent).join('/');
+    if(writeMode){
+      if(url.includes('?'))return Response.json({result:{objects:[]}});
+      const bytes=written.get(key);return bytes ? new Response(options.method==='HEAD'?null:bytes,{headers:{etag:'written-revision','content-length':String(bytes.length)}}) : new Response(null,{status:404});
+    }
+    return url.includes("__redown_missing_") ? new Response(null, {status:404}) : url.includes("?") ? Response.json({ result: { objects: [{ key: "fixture.txt", size: bytes.length, etag: "r1" }] } }) : new Response(options.method === "HEAD" ? null : bytes, { headers: { etag: "r1", "content-length": String(bytes.length) } });
+  };
   const send = (value) => {
     const body = Buffer.from(JSON.stringify(value)), length = Buffer.alloc(4);
     length.writeUInt32LE(body.length);
@@ -37,7 +45,9 @@ test("Python external process traverses native relay, canonical engine and Atlas
     if (m.type !== "request") return;
     let response;
     if (m.method === "pair") {
-      grants.set(m.client, authorizeLab({ roots: [root], request, isCurrent: () => true }));
+      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, createObject:async(i,b)=>{
+        if(written.has(i.key))throw Object.assign(Error(),{code:'CONFLICT'});written.set(i.key,b.slice());
+      }, isCurrent: () => true }));
       response = { apiVersion: "1.0.0", state: "available", data: { clientId: m.client } };
     } else response = await grants.get(m.client).query(m.method, m.input);
     send({ id: m.id, response });
@@ -84,6 +94,17 @@ test("Python external process traverses native relay, canonical engine and Atlas
     assert.equal(result.cleanup.mutationsAttempted, false);
     assert.equal(result.evidenceTier, 'UNVERIFIED_CONNECTION');
     assert.ok(!architectureOutput.includes('"account": "account"'));
+    writeMode=true;
+    const adaptivePath=path.join(home,'adaptive.json');
+    const adaptive=spawn('python',['-m','redown.lab','complete','--directory',samples,'--depth','Comprehensive','--report',adaptivePath],{env,stdio:['ignore','pipe','pipe']});
+    let adaptiveOutput='';adaptive.stdout.on('data',x=>adaptiveOutput+=x);adaptive.stderr.resume();
+    assert.equal(await new Promise(r=>adaptive.on('exit',r)),2,adaptiveOutput+errors);
+    const evidence=JSON.parse(await readFile(adaptivePath));
+    assert.equal(evidence.coverage.PASS,evidence.plan.plannedOperations,JSON.stringify(evidence));
+    assert.equal(evidence.verifiedFiles,1);assert.ok(written.size>=2);
+    assert.ok(evidence.results.find(r=>r.operation==='read').diskReadbackSha256);
+    assert.equal(evidence.cleanup.status,'NOT_TESTED');
+    assert.ok(!JSON.stringify(evidence).includes('Bearer'));
 
   } finally {
     host.stdin.end();

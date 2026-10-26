@@ -1,0 +1,28 @@
+
+> remote-asset-ingest@0.1.0 lab:test
+> node scripts/phase27/compile-session.mjs --check && node --test tests/phase28-laboratory.test.mjs tests/extension-laboratory.test.mjs tests/extension-lab-ui.test.mjs tests/extension-native-e2e.test.mjs && python tests/architecture-report-schema.py
+
+✔ extension page explicitly rejects, approves selected scope and revokes (107.489182ms)
+✔ canonical read, bytes, scoped evidence and Atlas correlation (62.759479ms)
+✔ revocation, expiration and Cloudflare session change fail closed (0.811438ms)
+✔ authorization rejects cross bucket/account, mutation, unknown methods and inputs (1.634362ms)
+✔ provider permission denial is classified, no retry/Worker provisioning (5.907071ms)
+✔ revoke during request suppresses late bytes and future evidence (21.621619ms)
+✔ bounded reads, truncation, pagination and exact key encoding (1.573793ms)
+✔ owner-selected grants default to an hour and cap at eight hours (0.879879ms)
+✔ OAuth renewal stays scoped, rate limited, redacted and cannot extend the grant (0.66356ms)
+✔ oversized declared provider body is cancelled before consumption, unknown lengths remain bounded (0.604573ms)
+✔ Python external process traverses native relay, canonical engine and Atlas (779.206607ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (61.929193ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (5.422405ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (4753.953242ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.031339ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6396.043179
+{"state": "passed", "statuses": 6, "negativeControls": 4, "scope": "independent report schema, not live acceptance"}

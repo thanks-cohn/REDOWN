@@ -204,3 +204,15 @@ Read `docs/aac/PHASE25.md` and `docs/aac/FILES.md`. Public engine diagnostics ar
 ## Phase 2.7 extension-authenticated Python laboratory
 
 Read `docs/phase27/README.md` and `IMPLEMENTATION.md`. `npm run lab:test` checks static browser-safe session validators, extension approval/security behavior, and a real Python/native framing round trip with a provider fixture. `python -m redown.lab gui` and `redown --extension` require registered native messaging and an approved authenticated extension. Reuse `scoped-session.mjs`; do not distribute engine/adapter handles or cloud credentials. This connection currently grants selected-bucket read operations only (64 KiB objects, owner-selected 1/4/8-hour grants). Mutation primitives, durable reconnect, Windows/native Chrome and live R2 acceptance remain unsupported/blocked/untested as recorded. No separate leased Worker can substitute for extension acceptance.
+
+## Phase 2.8 bounded write laboratory
+
+Read `docs/phase28/README.md` and `IMPLEMENTATION.md`. Python 0.5.0 adds the
+RUN COMPLETE LABORATORY path. Separate unchecked write approval is restricted to
+four lab buckets and extension-generated namespaces. Existing Worker conditional
+create plus OAuth readback avoids unsafe REST PUT; never remove capability/settings
+checks, provision automatically, expose credentials or enable deletion as cleanup.
+64 KiB objects, serialized network transport, limited Stress mode and target-only
+resource budgets remain explicit limits. Large-file streaming and Windows/live
+acceptance remain unverified. Preserve the v0.4.4 tag and read-only fallback. Run
+`npm run lab:test`, `npm run python:test`, provider/Atlas/AAC checks and regressions.

@@ -1,0 +1,16 @@
+Processing ./clients/python
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: redown-client
+  Building wheel for redown-client (pyproject.toml): started
+  Building wheel for redown-client (pyproject.toml): finished with status 'done'
+  Created wheel for redown-client: filename=redown_client-0.5.0-py3-none-any.whl size=31907 sha256=52b6883fb25587ab1d7b10c23c35a14fa2756e109218e90e12549f1419635bfb
+  Stored in directory: /tmp/pip-ephem-wheel-cache-mvr7_8zl/wheels/69/00/fb/92000f2102447438dafa9a68a59673f91d71e352c55567309c
+Successfully built redown-client
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip

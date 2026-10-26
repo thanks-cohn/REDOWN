@@ -440,6 +440,21 @@ export default {
     if (request.method !== "POST") return Response.json({ ok:false, error:"Method not allowed" }, { status:405 });
     if (!authorized) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
     try {
+      // Exact laboratory creation uses the existing authenticated STORAGE engine.
+      // Never fall through to ingest or expose unconditional overwrite/delete.
+      if (request.headers.get("x-redown-action") === "lab-create") {
+        const key = decodeURIComponent(request.headers.get("x-redown-key") || "");
+        exactObjectKey(key);
+        if (!/^__redown_test__\\/[a-f0-9-]{36}\\/.+/.test(key)) return Response.json({ok:false,code:"SCOPE_DENIED"},{status:403});
+        const reader = request.body?.getReader();
+        const chunks=[]; let size=0;
+        if(reader) try { while(true) { const {done,value}=await reader.read(); if(done)break; size+=value.length; if(size>65536)return Response.json({ok:false,code:"SIZE_LIMIT"},{status:413}); chunks.push(value); } } finally { await reader.cancel(); }
+        const bytes=new Uint8Array(size); let offset=0;
+        for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
+        const created=await env.STORAGE.put(key,bytes,{onlyIf:new Headers({"If-None-Match":"*"}),httpMetadata:{contentType:"application/octet-stream",cacheControl:"no-store"}});
+        if(!created)return Response.json({ok:false,code:"CONFLICT"},{status:409});
+        return Response.json({ok:true,key,size,etag:created.etag});
+      }
       if (request.headers.get("x-redown-action") === "upload-local") {
         const rawFilename = request.headers.get("x-redown-filename") || "upload";
         let requestedFilename = rawFilename;
@@ -587,7 +602,7 @@ export default {
         diagnostic?.event("source.cleanup","confirmed");
         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,labConditionalCreate:true,labMaxBytes:65536,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "probeSource") {
         const base=new URL(String(body.sourceWorkerUrl||""));
         if(base.protocol!=="https:"||base.username||base.password||base.pathname!=="/"||base.search||base.hash||!base.hostname.endsWith(".workers.dev")||!body.sourceToken)throw new Error("Choose a configured workers.dev source");

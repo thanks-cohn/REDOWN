@@ -38,6 +38,17 @@ test("extension page explicitly rejects, approves selected scope and revokes", a
     [...$("clients").querySelectorAll("button")].find((b) => b.textContent.startsWith("Reject")).click();
     await receive({ type: "request", client: "approved-client", id: "after-revoke", method: "describe", input: {} });
     assert.equal(sent.at(-1).response.error.code, "PAIRING_REQUIRED");
+    await receive({ type:'request',client:'write-client',id:'write-pair',method:'pair',input:{name:'Python write'} });
+    $('write-approval').checked=true;
+    [...$('clients').querySelectorAll('button')].find(b=>b.classList.contains('pair-approve')).click();
+    assert.match($('status').textContent,/restricted to test-1-new/);
+    const choice=$('buckets').querySelector('input');
+    choice.dataset.root=JSON.stringify({provider:'extension-r2',account:'account',container:'test-1-new',key:''});
+    [...$('clients').querySelectorAll('button')].find(b=>b.classList.contains('pair-approve')).click();
+    await receive({type:'request',client:'write-client',id:'write-info',method:'describe',input:{}});
+    assert.equal(sent.at(-1).response.data.writeEnabled,true);
+    assert.match(sent.at(-1).response.data.locations[0].key,/^__redown_test__\//);
+    assert.ok(!sent.at(-1).response.data.operations.includes('delete'));
     chrome.runtime.lastError = {message: "Specified native messaging host not found."};
     disconnect();
     assert.match($("status").textContent, /Specified native messaging host not found/);

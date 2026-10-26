@@ -11,6 +11,7 @@ import time
 from .extension import ExtensionClient, RenewalSchedule
 from .client import RedownError
 from .inventory import inventory
+from .adaptive import profile as resource_profile, run as adaptive_run, plan as adaptive_plan, persist as adaptive_persist
 from .architecture import run as architecture_run, report_json, markdown, exit_code, copy_report, save_architecture_report, progress_text
 
 def conformance(client, root=None, source=None, expected_sha256=None):
@@ -69,7 +70,7 @@ def conformance(client, root=None, source=None, expected_sha256=None):
                 expected = {'invalid-input': 'INVALID_INPUT', 'authorization-denial': 'AUTHORIZATION_DENIED', 'cancellation-denial': 'AUTHORIZATION_DENIED'}[name]
                 record(name, 'passed' if error.code == expected else 'failed', code=error.code)
         for operation in ['upload', 'copy', 'move', 'rename', 'mkdir', 'delete']:
-            record(operation, 'unsupported', reason='Extension OAuth adapter does not advertise safe mutation primitives')
+            record(operation, 'untested' if operation in info['operations'] else 'unsupported', reason='Use RUN COMPLETE LABORATORY for separately approved writes' if operation in info['operations'] else 'Selected grant/provider does not authorize this mutation')
         for name in ['pairing-rejection', 'revocation', 'session-expiration', 'interruption-recovery', 'backward-compatibility']:
             record(name, 'untested', reason='Requires separate security fixture or interactive test; this run does not award credit')
     except (RedownError, ValueError, KeyError) as error:
@@ -94,7 +95,7 @@ def gui():
     window = tk.Tk(); window.title('REDOWN Python Laboratory'); window.geometry('1000x950')
     client = None; report = None; events = queue.Queue(); busy = False; roots = []
     renewal = RenewalSchedule(); renewal_supported = False
-    scan = None; stop = threading.Event()
+    scan = None; stop = threading.Event(); active_report_path = None
     state = tk.StringVar(value='Not connected. Start the local connection in REDOWN, then click Connect to extension.')
     ttk.Label(window, textvariable=state, wraplength=850, justify='left').pack(fill='x', padx=8, pady=6)
     connection_bar = ttk.Frame(window); connection_bar.pack(fill='x', padx=8, pady=6)
@@ -119,7 +120,25 @@ def gui():
         ttk.Label(limits_bar, text=label).pack(side='left')
         value = tk.StringVar(value=default); limit_values.append(value)
         ttk.Entry(limits_bar, textvariable=value, width=10).pack(side='left', padx=4)
-    ttk.Label(limits_bar, text='Up to 5 distinct files per extension; read transport currently 64 KiB.').pack(side='left')
+    ttk.Label(limits_bar, text='All files inventoried within these explicit limits; cloud files limited to 64 KiB.').pack(side='left')
+    profile_bar=ttk.Frame(window); profile_bar.pack(fill='x',padx=8)
+    depth=tk.StringVar(value='Quick'); resource=tk.StringVar(value='Balanced')
+    for label,value,choices in [('Test depth',depth,['Quick','Comprehensive','Stress']),('Resources',resource,['Low RAM','Balanced','Maximum','Custom'])]:
+        ttk.Label(profile_bar,text=label).pack(side='left')
+        ttk.Combobox(profile_bar,textvariable=value,values=choices,state='readonly',width=16).pack(side='left')
+    custom=[]
+    custom_bar=ttk.Frame(window); custom_bar.pack(fill='x',padx=8)
+    for label,default in [('Memory target MiB','128'),('Concurrency','2'),('Buffer bytes','65536')]:
+        ttk.Label(custom_bar,text=label).pack(side='left'); value=tk.StringVar(value=default);custom.append(value)
+        ttk.Entry(custom_bar,textvariable=value,width=8).pack(side='left')
+    ttk.Label(window,text='Memory is a target. Native requests are serialized (effective network concurrency 1). Stress adds repeat reads; interruption/pressure tests remain untested.',wraplength=950).pack(fill='x',padx=8)
+    def resources(): return resource_profile(resource.get(),*[int(v.get()) for v in custom])
+    def preflight():
+        if not scan: state.set('Choose a local directory first.'); return
+        try: value=adaptive_plan(scan,depth.get(),resources())
+        except ValueError as error: state.set(str(error)); return
+        output.delete('1.0','end');output.insert('1.0',json.dumps(value,indent=2))
+        state.set('Preflight: '+str(value['selectedFiles'])+' files; '+str(value['plannedOperations'])+' operations; '+str(value['estimatedTransferBytes'])+' estimated wire bytes. Review exclusions, disk, costs and required permissions below.')
     def choose_directory():
         nonlocal scan
         if busy: return
@@ -131,7 +150,9 @@ def gui():
                 if min(entry_limit, file_mib, total_mib) < 1: raise ValueError()
             except ValueError:
                 state.set('Scan limits must be positive integers.'); return
-            work(lambda: inventory(path, cancel=stop, max_files=entry_limit, max_file_bytes=file_mib*1024**2, max_total_bytes=total_mib*1024**2), result_kind='inventory')
+            try: settings=resources()
+            except ValueError as error: state.set(str(error)); return
+            work(lambda: inventory(path, per_extension=None, buffer_bytes=settings['bufferBytes'], cancel=stop, max_files=entry_limit, max_file_bytes=file_mib*1024**2, max_total_bytes=total_mib*1024**2), result_kind='inventory')
     def architecture_tests():
         nonlocal report
         selected = [roots[i] for i in buckets.curselection()]
@@ -145,20 +166,43 @@ def gui():
                 progress=lambda row: events.put(('progress', row)))
             return report
         work(run, result_kind='architecture-report')
+    def complete_tests():
+        nonlocal report, active_report_path
+        if not scan: state.set('Choose a directory and review Preflight first.'); return
+        selected=[roots[i] for i in buckets.curselection()]
+        if len(selected)>1: state.set('Select exactly one bucket for this laboratory run.'); return
+        if client and not selected: state.set('Select one authorized bucket.'); return
+        try: settings=resources()
+        except ValueError as error: state.set(str(error)); return
+        stop.clear()
+        target=Path('redown-lab-runs') / (time.strftime('%Y%m%d-%H%M%S')+'-'+__import__('uuid').uuid4().hex[:8]+'.json')
+        active_report_path=target
+        chosen_depth=depth.get()
+        def checkpoint(value):
+            adaptive_persist(value,target)
+            events.put(('adaptive-checkpoint',{k:value[k] for k in ('completedCases','remainingCases','verifiedFiles','verifiedBytes','coverage','estimatedRemainingSeconds','currentOperation','bytesPerSecond','ramObservation','cpuSeconds')}))
+        work(lambda: adaptive_run(client,scan,depth=chosen_depth,resources=settings,roots=selected or None,cancel=stop,checkpoint=checkpoint),result_kind='adaptive-report')
+    def latest_report():
+        if active_report_path and active_report_path.exists():
+            return json.loads(active_report_path.read_text(encoding='utf-8'))
+        return report
     def copy_json():
+        report=latest_report()
         if report is not None:
             copy_report(window, report)
             state.set('Exact JSON report copied; metadata may be sensitive.')
     def save_exact(kind):
+        report=latest_report()
         if report is None: return
         path = filedialog.asksaveasfilename(defaultextension='.' + kind)
         if path:
-            text = report_json(report) if kind == 'json' else markdown(report) if 'schemaVersion' in report else '# REDOWN conformance\n\n' + '\n'.join(c['name'] + ': ' + c['state'] for c in report['cases'])
+            text = report_json(report) if kind == 'json' else '# REDOWN adaptive laboratory\n\n```json\n'+report_json(report)+'```\n' if report.get('schemaVersion')=='2.8.0' else markdown(report) if 'schemaVersion' in report else '# REDOWN conformance\n\n' + '\n'.join(c['name'] + ': ' + c['state'] for c in report['cases'])
             Path(path).write_text(text, encoding='utf-8', newline='\n')
-    for label, callback in [('CHOOSE LOCAL DIRECTORY', choose_directory), ('RUN ARCHITECTURE TESTS', architecture_tests),
+    for label, callback in [('CHOOSE LOCAL DIRECTORY', choose_directory), ('PREFLIGHT', preflight),
                             ('CANCEL RUN / SCAN', stop.set), ('COPY JSON REPORT', copy_json),
                             ('SAVE JSON', lambda: save_exact('json')), ('SAVE MARKDOWN', lambda: save_exact('md'))]:
         ttk.Button(directory_bar, text=label, command=callback).pack(side='left', padx=2)
+    tk.Button(window,text='RUN COMPLETE LABORATORY',command=complete_tests,font=('Segoe UI',12,'bold'),bg='#7254c7',fg='white',padx=12,pady=10).pack(fill='x',padx=8,pady=6)
     ttk.Label(window, text='Advanced: session method and JSON input').pack()
     method = ttk.Combobox(window, values=['describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile']); method.set('describe'); method.pack(fill='x')
     inputs = tk.Text(window, height=7); inputs.insert('1.0', '{}'); inputs.pack(fill='x')
@@ -217,10 +261,13 @@ def gui():
             return report
         work(run)
     def export():
+        report=latest_report()
         if report:
             path = filedialog.asksaveasfilename(defaultextension='.json')
             if path:
-                if 'schemaVersion' in report:
+                if report.get('schemaVersion')=='2.8.0':
+                    adaptive_persist(report,Path(path).with_suffix('.json'))
+                elif 'schemaVersion' in report:
                     save_architecture_report(report, Path(path).with_suffix('.json'))
                     save_architecture_report(report, Path(path).with_suffix('.md'), 'md')
                 else:
@@ -246,10 +293,14 @@ def gui():
             elif kind == 'inventory':
                 scan = value
                 preview.set(str(len(scan['selected'])) + ' selected, ' + str(scan['selectedBytes']) + ' bytes; ' + str(len(scan['exclusions'])) + ' exclusions; ' + json.dumps(scan['countsByExtension']))
-                output.delete('1.0', 'end'); output.insert('1.0', json.dumps(scan, indent=2))
+                preflight()
             elif kind == 'progress':
                 state.set(progress_text(value))
                 output.insert('end', json.dumps(value) + '\n'); output.see('end')
+            elif kind in ('adaptive-checkpoint','adaptive-report'):
+                if kind=='adaptive-report': report=value
+                state.set(str(value.get('currentOperation') or 'Finished')+'; completed '+str(value['completedCases'])+'; remaining '+str(value['remainingCases'])+'; verified '+str(value['verifiedFiles'])+' files / '+str(value['verifiedBytes'])+' bytes; '+str(round(value.get('bytesPerSecond') or 0))+' verified B/s; CPU '+str(round(value.get('cpuSeconds',0),2))+'s; '+json.dumps(value['coverage'])+'; ETA '+str(round(value['estimatedRemainingSeconds'] or 0))+'s. Checkpoints: redown-lab-runs/')
+                if kind=='adaptive-report': output.delete('1.0','end');output.insert('1.0',json.dumps(value,indent=2))
             elif kind == 'architecture-checkpoint':
                 report = value
             elif kind == 'architecture-report':
@@ -312,8 +363,13 @@ def gui():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture'], nargs='?', default='gui')
+    parser.add_argument('action', choices=['gui', 'conformance', 'scan', 'architecture', 'complete'], nargs='?', default='gui')
     parser.add_argument('--directory')
+    parser.add_argument('--depth',choices=['Quick','Comprehensive','Stress'],default='Quick')
+    parser.add_argument('--profile',choices=['Low RAM','Balanced','Maximum','Custom'],default='Balanced')
+    parser.add_argument('--memory-mib',type=int,default=128)
+    parser.add_argument('--concurrency',type=int,default=2)
+    parser.add_argument('--buffer-bytes',type=int,default=65536)
     parser.add_argument('--offline', action='store_true', help='Scan/plan without connecting; cloud cases remain blocked')
     parser.add_argument('--max-files', type=int, default=100000)
     parser.add_argument('--max-file-bytes', type=int, default=1024**3)
@@ -325,6 +381,22 @@ def main():
     args = parser.parse_args()
     if args.action == 'gui':
         gui(); return 0
+    if args.action == 'complete':
+        if not args.directory: parser.error('--directory is required')
+        settings=resource_profile(args.profile,args.memory_mib,args.concurrency,args.buffer_bytes)
+        scan=inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes)
+        checkpoint=lambda r: adaptive_persist(r,args.report)
+        if args.offline: report=adaptive_run(None,scan,depth=args.depth,resources=settings,checkpoint=checkpoint)
+        else:
+            import sys
+            try:
+                with ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr)) as connected:
+                    report=adaptive_run(connected,scan,depth=args.depth,resources=settings,roots=[json.loads(args.root)] if args.root else None,checkpoint=checkpoint)
+            except RedownError as error:
+                report=adaptive_run(None,scan,depth=args.depth,resources=settings)
+                report['connectionError']=error.code;checkpoint(report)
+        print(json.dumps({'acceptance':report['acceptance'],'coverage':report['coverage'],'report':args.report}))
+        return 1 if any(r['status'] in ('FAIL','INDETERMINATE') for r in report['results']) else 2
     if args.action in ('scan', 'architecture'):
         if not args.directory: parser.error('--directory is required')
         try:

@@ -1,0 +1,38 @@
+✔ click creates a visible window before network navigation; repeated clicks focus it (28.953401ms)
+✔ successful callback exchanges PKCE and verifies access before saving token (5.407682ms)
+✔ callback resumes after service worker restart from session state (5.060838ms)
+✔ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (2.107957ms)
+✔ state mismatch fails without token exchange and allows a fresh retry (2.614899ms)
+✔ denied consent and missing authorization code fail cleanly (3.320616ms)
+✔ closed popup releases attempt and stale window is replaced on next click (2.390246ms)
+✔ expired attempt clears secrets, closes popup, and permits retry (1.980709ms)
+✔ failed API verification never stores an access token (2.278029ms)
+✔ duplicate navigation events exchange a code only once (2.422644ms)
+✔ verification network stall aborts and releases the attempt (2.198391ms)
+✔ popup creation errors are returned instead of leaving an in-flight lock (2.044903ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (5.403336ms)
+✔ settings and worker observing the same callback exchange the code once across contexts (2.745092ms)
+✔ two settings contexts share one visible sign-in window (1.780301ms)
+✔ Worker deployments cannot overlap and a failed deployment releases the lock (1.344174ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (1.470041ms)
+✔ runtime adapter gates actual background messages by settings sender and Debug Mode without network (2.979029ms)
+✔ destination folder pages preserve parent prefix, immediate children and continuation (8.890619ms)
+✔ Cloudflare 403 authentication error refreshes once and retries the read (25.995914ms)
+✔ permission-denied 403 does not renew credentials or repeat the request (1.17968ms)
+✔ expired credentials shared by settings and worker rotate once under the shared lock (1.744017ms)
+✔ invalid refresh grant preserves connection and requests reconnect without disconnect (1.818508ms)
+✔ transient renewal failure retains credentials and can recover on the next refresh (2.336246ms)
+✔ login token storage shares the refresh lock and clears reconnect state (0.890882ms)
+✔ extension page explicitly rejects, approves selected scope and revokes (90.434611ms)
+✔ write approval confines all operations to an extension-minted namespace and preserves idempotency (60.890085ms)
+✔ ambiguous writes are not retried, and old Worker capabilities block before upload (5.409795ms)
+✔ rolling session keeps writes usable beyond 500 operations without replaying evicted history (4216.604904ms)
+✔ revocation during Worker preflight prevents mutation; wrong binding never reaches Worker (1.333078ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4948.81496

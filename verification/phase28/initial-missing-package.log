@@ -1,0 +1,76 @@
+
+> remote-asset-ingest@0.1.0 python:test
+> python -m unittest discover -s clients/python/tests -v
+
+test_architecture (unittest.loader._FailedTest.test_architecture) ... ERROR
+test_client (unittest.loader._FailedTest.test_client) ... ERROR
+test_extension_transport (unittest.loader._FailedTest.test_extension_transport) ... ERROR
+test_budget_and_symlink_output_fail_before_download (test_fixture_collector.FixtureCollectorTests.test_budget_and_symlink_output_fail_before_download) ... ok
+test_distinct_hashes_not_copies_and_provenance_survives_resume (test_fixture_collector.FixtureCollectorTests.test_distinct_hashes_not_copies_and_provenance_survives_resume) ... Looking for missing samples in fixture/repo ...
+  .png: 2/2
+
+Added 1 distinct files. Formats still short: 0
+Coverage report: /tmp/tmphowlz9q0/corpus-coverage.json
+Checksum/source manifest: /tmp/tmphowlz9q0/corpus-files.json
+
+Added 0 distinct files. Formats still short: 0
+Coverage report: /tmp/tmphowlz9q0/corpus-coverage.json
+Checksum/source manifest: /tmp/tmphowlz9q0/corpus-files.json
+ok
+test_gaps_stay_visible_and_wrong_git_blob_is_rejected (test_fixture_collector.FixtureCollectorTests.test_gaps_stay_visible_and_wrong_git_blob_is_rejected) ... Looking for missing samples in fixture/repo ...
+
+Added 0 distinct files. Formats still short: 1
+Coverage report: /tmp/tmpuzwrh3un/corpus-coverage.json
+Checksum/source manifest: /tmp/tmpuzwrh3un/corpus-files.json
+ok
+test_typescript_does_not_count_as_transport_stream_and_fonts_are_scanned (test_fixture_collector.FixtureCollectorTests.test_typescript_does_not_count_as_transport_stream_and_fonts_are_scanned) ... ok
+
+======================================================================
+ERROR: test_architecture (unittest.loader._FailedTest.test_architecture)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_architecture
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/REDOWN/clients/python/tests/test_architecture.py", line 8, in <module>
+    from redown.inventory import inventory
+ModuleNotFoundError: No module named 'redown'
+
+
+======================================================================
+ERROR: test_client (unittest.loader._FailedTest.test_client)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_client
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/REDOWN/clients/python/tests/test_client.py", line 9, in <module>
+    from redown import Client, RedownError
+ModuleNotFoundError: No module named 'redown'
+
+
+======================================================================
+ERROR: test_extension_transport (unittest.loader._FailedTest.test_extension_transport)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_extension_transport
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/REDOWN/clients/python/tests/test_extension_transport.py", line 8, in <module>
+    import redown.install_host
+ModuleNotFoundError: No module named 'redown'
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.007s
+
+FAILED (errors=3)

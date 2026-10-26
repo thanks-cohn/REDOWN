@@ -2,7 +2,7 @@
 import { fail, fileIdentity } from "../engine.mjs";
 import { providerDescription } from "../provider-contract.mjs";
 const EXTENSION_MAX_BYTES = 65536;
-function extensionR2Adapter({ request, roots }) {
+function extensionR2Adapter({ request, roots, createObject }) {
   const base = (i) => `/accounts/${encodeURIComponent(i.account)}/r2/buckets/${encodeURIComponent(i.container)}/objects`;
   const object = (i) => base(i) + "/" + i.key.split("/").map(encodeURIComponent).join("/");
   const checked = async (path, options) => {
@@ -25,7 +25,7 @@ function extensionR2Adapter({ request, roots }) {
   };
   const adapter = {
     id: "extension-r2",
-    capabilities: { realProvider: true, identity: "exact-key", atomicCreate: false, atomicConditionalDelete: false, maxBytes: EXTENSION_MAX_BYTES },
+    capabilities: { realProvider: true, identity: "exact-key", atomicCreate: typeof createObject === "function", atomicConditionalDelete: false, maxBytes: EXTENSION_MAX_BYTES },
     assertIdentity(i) {
       fileIdentity(i, { root: true });
       if (i.provider !== "extension-r2" || !roots.some((r) => r.account === i.account && r.container === i.container)) throw fail("SCOPE_DENIED");
@@ -92,8 +92,14 @@ function extensionR2Adapter({ request, roots }) {
       if (declared !== null && Number(declared) !== size) throw fail("TRUNCATED_READ");
       return { bytes, metadata: metadata(i, size, r.headers.get("etag"), r.headers.get("content-type")) };
     },
-    async create() {
-      throw fail("PROVIDER_OPERATION_UNSUPPORTED");
+    async create(i, bytes) {
+      adapter.assertIdentity(i);
+      if (!createObject) throw fail("PROVIDER_OPERATION_UNSUPPORTED");
+      if (bytes.length > EXTENSION_MAX_BYTES) throw fail("SIZE_LIMIT");
+      await createObject(i, bytes);
+      const fresh = await adapter.stat(i);
+      if (!fresh || fresh.size !== bytes.length) throw fail("VERIFICATION_DISAGREEMENT");
+      return fresh;
     },
     async delete() {
       throw fail("UNSUPPORTED_ATOMIC_DELETE");
@@ -103,7 +109,7 @@ function extensionR2Adapter({ request, roots }) {
   manifest.authentication = ["extension-oauth"];
   manifest.features.rangeReads = false;
   manifest.features.recursiveListing = true;
-  for (const op of ["upload", "copy", "mkdir", "move", "rename", "delete", "ingest"]) manifest.operations[op] = "unsupported";
+  for (const op of (createObject ? ["move", "rename", "delete", "ingest"] : ["upload", "copy", "mkdir", "move", "rename", "delete", "ingest"])) manifest.operations[op] = "unsupported";
   adapter.manifest = manifest;
   return adapter;
 }

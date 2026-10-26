@@ -111,3 +111,10 @@ implemented. See [the Windows/CLI runbook](ONE_CLICK_RUNBOOK.md),
 [implementation evidence](../../verification/phase27/architecture/README.md).
 This is a read-only implementation with explicit unsupported mutation coverage;
 complete end-to-end architecture acceptance remains incomplete.
+
+## Phase 2.8 successor
+
+[The bounded write laboratory](../phase28/README.md) adds separate, revocable write
+approval and RUN COMPLETE LABORATORY in Python 0.5.0. This page describes the
+preserved read-only baseline; new mutation limits and Windows setup are documented
+in the successor runbook. Existing read-only commands remain supported.
