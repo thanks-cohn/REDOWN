@@ -3,6 +3,35 @@ import { laboratoryCreate, laboratoryDoctor } from "./lab-worker.mjs";
 import { authorizeLab } from "./lab-session.mjs";
 const $ = (id) => document.getElementById(id);
 const eventHistory = [];
+const operationResults = [];
+function addOperationResult(client, method, response) {
+  // Keep a redacted summary only. Never copy provider payloads, object paths or credentials.
+  const result = {
+    time: new Date().toISOString(),
+    client: String(client).slice(0, 80),
+    operation: String(method).slice(0, 64),
+    status: response?.state === "available" ? "PASS" : "FAIL"
+  };
+  if (result.status === "FAIL") result.code = String(response?.error?.code || "UNKNOWN_ERROR").slice(0, 100);
+  operationResults.push(result);
+  if (operationResults.length > 100) operationResults.shift();
+  const output = $("results-output");
+  output.textContent = operationResults.map(entry =>
+    entry.time + " | " + entry.operation + " | " + entry.status +
+    (entry.code ? " | " + entry.code : "")
+  ).join("\n");
+  output.scrollTop = output.scrollHeight;
+  $("copy-results").disabled = false;
+}
+$("copy-results").onclick = async () => {
+  const text = JSON.stringify({ format: "redown.lab.extension-results.v1", note: "Extension-side summaries only; not the full Python Laboratory report.", results: operationResults }, null, 2);
+  try {
+    await navigator.clipboard.writeText(text);
+    $("copy-results-status").textContent = "Copied";
+  } catch {
+    $("copy-results-status").textContent = "Copy failed. Select the results text and copy manually.";
+  }
+};
 function recordEvent(message) {
   eventHistory.unshift({ time: new Date().toLocaleTimeString(), message });
   eventHistory.length = Math.min(eventHistory.length, 30);
@@ -189,7 +218,14 @@ async function startConnection() {
       return;
     }
     const grant = grants.get(message.client);
-    reply(grant ? await grant.query(message.method, message.input) : { apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REQUIRED" } });
+    let result;
+    try {
+      result = grant ? await grant.query(message.method, message.input) : { apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REQUIRED" } };
+    } catch {
+      result = { apiVersion: "1.0.0", state: "failed", error: { code: "OPERATION_FAILED" } };
+    }
+    addOperationResult(message.client, message.method, result);
+    reply(result);
   });
 }
 $("connect").onclick = () => startConnection().catch(error => {
