@@ -12,13 +12,26 @@ function addOperationResult(client, method, response) {
     operation: String(method).slice(0, 64),
     status: response?.state === "available" ? "PASS" : "FAIL"
   };
-  if (result.status === "FAIL") result.code = String(response?.error?.code || "UNKNOWN_ERROR").slice(0, 100);
+  // These are transport/operation response codes, not proof of independent file verification.
+  const successCodes = {
+    describe: ["DESCRIPTION_RECEIVED", "Extension returned a successful description response; individual capabilities are not independently verified here."],
+    doctor: ["DOCTOR_RESPONSE_RECEIVED", "Extension returned its Doctor response; internal checks require the full Doctor report."],
+    renewAuthorization: ["AUTH_RENEWAL_RESPONSE_RECEIVED", "Renewal request returned successfully; inspect the returned renewal state separately."],
+    execute: ["EXECUTION_RESPONSE_RECEIVED", "Execution request returned successfully; this alone does not prove uploads or readback integrity."],
+    evidence: ["EVIDENCE_RESPONSE_RECEIVED", "Evidence request returned successfully; proof must be inspected before claiming verification."]
+  };
+  if (result.status === "PASS") {
+    [result.code, result.meaning] = successCodes[method] || ["OPERATION_RESPONSE_RECEIVED", "Extension returned an available response; completion and verification are not inferred."];
+  } else {
+    result.code = String(response?.error?.code || "UNKNOWN_ERROR").slice(0, 100);
+    result.meaning = "The extension rejected or could not complete this operation.";
+  }
   operationResults.push(result);
   if (operationResults.length > 100) operationResults.shift();
   const output = $("results-output");
   output.textContent = operationResults.map(entry =>
     entry.time + " | " + entry.operation + " | " + entry.status +
-    (entry.code ? " | " + entry.code : "")
+    (entry.code ? " | " + entry.code : "") + (entry.meaning ? " | " + entry.meaning : "")
   ).join("\n");
   output.scrollTop = output.scrollHeight;
   $("copy-results").disabled = false;
