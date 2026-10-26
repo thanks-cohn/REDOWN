@@ -1,5 +1,9 @@
 # Phase 2.8 — bounded authenticated write laboratory
 
+Python 0.5.1 connection/desktop follow-up: [install, pairing recovery and exact
+eight-byte retest](CONNECTION_RECOVERY.md). Original Windows disconnect remains
+open pending local retest; the repair is delivered on its dedicated branch.
+
 This usable subset adds conditional small-file upload, separate OAuth byte readback,
 local verified download, metadata, listing, copy and directory markers through the
 existing extension → scoped session → canonical coordinator → provider adapter.

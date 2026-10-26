@@ -1,0 +1,59 @@
+test_changed_source_and_uncertainty_preserve_results (test_adaptive.AdaptiveTests.test_changed_source_and_uncertainty_preserve_results) ... ok
+test_comprehensive_has_no_sampling_cap_and_explicit_large_file_exclusion (test_adaptive.AdaptiveTests.test_comprehensive_has_no_sampling_cap_and_explicit_large_file_exclusion) ... ok
+test_offline_reports_and_cancellation (test_adaptive.AdaptiveTests.test_offline_reports_and_cancellation) ... ok
+test_profiles_and_stress_are_honest (test_adaptive.AdaptiveTests.test_profiles_and_stress_are_honest) ... ok
+test_cancel_prevents_following_dispatch_including_negatives (test_architecture.ArchitectureTests.test_cancel_prevents_following_dispatch_including_negatives) ... ok
+test_case_collision_zero_bytes_and_scan_limit (test_architecture.ArchitectureTests.test_case_collision_zero_bytes_and_scan_limit) ... ok
+test_copy_save_and_cli_parity (test_architecture.ArchitectureTests.test_copy_save_and_cli_parity) ... ok
+test_limits_empty_cancel_and_offline_report (test_architecture.ArchitectureTests.test_limits_empty_cancel_and_offline_report) ... ok
+test_mismatched_evidence_and_uncertain_transport_never_pass (test_architecture.ArchitectureTests.test_mismatched_evidence_and_uncertain_transport_never_pass) ... ok
+test_nested_targets_duplicates_links_and_diversity (test_architecture.ArchitectureTests.test_nested_targets_duplicates_links_and_diversity) ... ok
+test_no_overall_sixty_file_cap (test_architecture.ArchitectureTests.test_no_overall_sixty_file_cap) ... ok
+test_progress_without_sample_is_safe_for_gui_callback (test_architecture.ArchitectureTests.test_progress_without_sample_is_safe_for_gui_callback) ... ok
+test_real_pack (test_architecture.ArchitectureTests.test_real_pack) ... ok
+test_symlink_outside_root_never_hashed (test_architecture.ArchitectureTests.test_symlink_outside_root_never_hashed) ... ok
+test_denial_limits_and_cli (test_client.ClientTests.test_denial_limits_and_cli) ... ok
+test_identical_client_scenarios_across_adapters (test_client.ClientTests.test_identical_client_scenarios_across_adapters) ... ok
+test_timeout_closes_without_replay (test_client.ClientTests.test_timeout_closes_without_replay) ... ok
+test_new_adapter_uses_unchanged_sdk_with_duplicate_nonpath_names (test_client.ImmutableExtensionTests.test_new_adapter_uses_unchanged_sdk_with_duplicate_nonpath_names) ... ok
+test_malformed_and_oversized_provider_output (test_client.TransportSafetyTests.test_malformed_and_oversized_provider_output) ... ok
+test_timeout_also_bounds_a_blocked_large_input_write (test_client.TransportSafetyTests.test_timeout_also_bounds_a_blocked_large_input_write) ... ok
+test_cli_keeps_original_error_in_both_reports (test_connection_lifecycle.ConnectionLifecycleTests.test_cli_keeps_original_error_in_both_reports) ... ok
+test_failed_connection_preserves_plan_and_primary_error_without_dispatch (test_connection_lifecycle.ConnectionLifecycleTests.test_failed_connection_preserves_plan_and_primary_error_without_dispatch) ... ok
+test_host_output_failure_is_transport_loss (test_connection_lifecycle.ConnectionLifecycleTests.test_host_output_failure_is_transport_loss) ... ok
+test_pending_timeout_differs_from_uncertain_operation_and_closed_relay (test_connection_lifecycle.ConnectionLifecycleTests.test_pending_timeout_differs_from_uncertain_operation_and_closed_relay) ... ok
+test_real_loopback_concurrent_approval_rejection_and_native_disconnect (test_connection_lifecycle.ConnectionLifecycleTests.test_real_loopback_concurrent_approval_rejection_and_native_disconnect) ... ok
+test_authenticated_idle_timeout_matches_longest_grant (test_extension_transport.NativeTransportTests.test_authenticated_idle_timeout_matches_longest_grant) ... ok
+test_authenticated_listener_and_explicit_pairing (test_extension_transport.NativeTransportTests.test_authenticated_listener_and_explicit_pairing) ... ok
+test_direct_mode_is_explicitly_unsupported (test_extension_transport.NativeTransportTests.test_direct_mode_is_explicitly_unsupported) ... ok
+test_disconnect_unblocks_pending_request (test_extension_transport.NativeTransportTests.test_disconnect_unblocks_pending_request) ... ok
+test_forty_minute_schedule_uses_monotonic_time_without_burst_replay (test_extension_transport.NativeTransportTests.test_forty_minute_schedule_uses_monotonic_time_without_burst_replay) ... ok
+test_frames_fragmentation_and_budget (test_extension_transport.NativeTransportTests.test_frames_fragmentation_and_budget) ... ok
+test_windows_registration_uses_exact_origin_and_quoted_interpreter (test_extension_transport.WindowsRegistrationContracts.test_windows_registration_uses_exact_origin_and_quoted_interpreter) ... ok
+test_budget_and_symlink_output_fail_before_download (test_fixture_collector.FixtureCollectorTests.test_budget_and_symlink_output_fail_before_download) ... ok
+test_distinct_hashes_not_copies_and_provenance_survives_resume (test_fixture_collector.FixtureCollectorTests.test_distinct_hashes_not_copies_and_provenance_survives_resume) ... {"acceptance": "INCOMPLETE", "coverage": {"BLOCKED": 6}, "connectionError": "EXTENSION_DISCONNECTED", "dispatchedOperations": 0, "recovery": "Keep the REDOWN Laboratory tab open. Check its helper status and Chrome native-host error, restart its local connection, then approve a NEW Python pairing.", "report": "/tmp/tmp61bpeqso/report.json"}
+Registered REDOWN helper for this user. Reload REDOWN and open Python Laboratory.
+Looking for missing samples in fixture/repo ...
+  .png: 2/2
+
+Added 1 distinct files. Formats still short: 0
+Coverage report: /tmp/tmpo7nejrva/corpus-coverage.json
+Checksum/source manifest: /tmp/tmpo7nejrva/corpus-files.json
+
+Added 0 distinct files. Formats still short: 0
+Coverage report: /tmp/tmpo7nejrva/corpus-coverage.json
+Checksum/source manifest: /tmp/tmpo7nejrva/corpus-files.json
+ok
+test_gaps_stay_visible_and_wrong_git_blob_is_rejected (test_fixture_collector.FixtureCollectorTests.test_gaps_stay_visible_and_wrong_git_blob_is_rejected) ... Looking for missing samples in fixture/repo ...
+
+Added 0 distinct files. Formats still short: 1
+Coverage report: /tmp/tmpyhxddmg2/corpus-coverage.json
+Checksum/source manifest: /tmp/tmpyhxddmg2/corpus-files.json
+ok
+test_typescript_does_not_count_as_transport_stream_and_fonts_are_scanned (test_fixture_collector.FixtureCollectorTests.test_typescript_does_not_count_as_transport_stream_and_fonts_are_scanned) ... ok
+test_all_controls_reachable_at_laptop_size_and_scaled_text (test_gui_layout.GuiLayoutTests.test_all_controls_reachable_at_laptop_size_and_scaled_text) ... skipped 'Desktop display unavailable: no display name and no $DISPLAY environment variable'
+
+----------------------------------------------------------------------
+Ran 37 tests in 5.230s
+
+OK (skipped=1)
