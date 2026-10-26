@@ -66,7 +66,7 @@ class Relay:
             write_frame(self.output, value)
 
     def request(self, client, method, inputs):
-        if method not in ('pair', 'describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile', 'renewAuthorization', 'doctor') or not isinstance(inputs, dict):
+        if method not in ('pair', 'describe', 'execute', 'plan', 'jobs', 'inspect', 'evidence', 'resources', 'cancel', 'reconcile', 'renewAuthorization', 'doctor', 'labReport') or not isinstance(inputs, dict):
             return failure('INVALID_INPUT')
         request_id, response = str(uuid.uuid4()), queue.Queue(maxsize=1)
         with self.pending_lock:

@@ -1,10 +1,11 @@
+import {projectLabSummary} from './lab-report.mjs';
 import {diagnosticFrom} from './file-engine/diagnostics.mjs';
 // One revocable, selected-bucket session per approved external connection.
 import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
 import { request02, request03, session } from "./file-engine/session-validators.mjs";
 import { extensionR2Adapter } from "./file-engine/adapters/extension-r2.mjs";
-function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now, authorizationStatus }) {
+function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now, authorizationStatus, onLabReport, onLabProgress }) {
   if (!Array.isArray(roots) || !roots.length || roots.some((r) => r.provider !== "extension-r2" || r.key !== "")) throw fail("INVALID_SCOPE");
   if (write && (typeof createObject !== "function" || roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container)))) throw fail("LAB_BUCKET_REQUIRED");
   const writePrefix = write ? "__redown_test__/" + crypto.randomUUID() + "/" : null;
@@ -46,10 +47,25 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
   } };
   const engine = createFileEngine({ store, adapters: [adapter], authorize: async (r) => await active() && operations.includes(r.operation) && [r.source, r.destination].filter(Boolean).every(inside) });
   const facade = createScopedSession({ engine, scope: { operations, locations, maxOperations: write ? 100000 : 100 }, validateRequests: [request02, request03], validateSession: session });
+  const observedRuns = new Map();
   return Object.freeze({ expires, revoke() {
     revoked = true;
   }, async query(method, input = {}) {
     if (!await active()) return await unavailable();
+    if (method === 'labReport') {
+      try {
+        if(input && Object.keys(input).join()==='progress' && typeof onLabProgress==='function') {
+          const p=input.progress;
+          if(!p || Object.keys(p).sort().join()!=='completed,stage' || !['Inventorying files','Hashing local files','Checking authorization','Checking provider capabilities','Preparing test plan','Recording evidence'].includes(p.stage) || !Number.isSafeInteger(p.completed) || p.completed<0) throw Error('INVALID_LAB_REPORT');
+          onLabProgress({stage:p.stage,bucket:locations[0].container,hashedFiles:p.completed});
+          return {apiVersion:'1.0.0',state:'available',data:{received:true}};
+        }
+        if (!input || Object.keys(input).join()!=='summary' || typeof onLabReport!=='function') throw Error('INVALID_LAB_REPORT');
+        const data=projectLabSummary(input.summary,locations,{...observedRuns.get(input.summary?.runId),scopeAuthorized:write});
+        onLabReport(data);
+        return {apiVersion:'1.0.0',state:'available',data:{received:true}};
+      } catch(error) { return {apiVersion:'1.0.0',state:'failed',error:{code:error.message==='UNATTESTED_LAB_VERIFICATION'?error.message:'INVALID_LAB_REPORT'}}; }
+    }
     if (method === 'renewAuthorization' && typeof renewAuthorization === 'function') {
       if (!input || typeof input !== 'object' || Array.isArray(input) || Object.keys(input).length) return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
       if (clock() < nextRenewal) return {apiVersion:'1.0.0',state:'failed',error:{code:'OAUTH_RENEWAL_RATE_LIMITED'}};
@@ -72,7 +88,29 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
     }
     const response = await facade.query(method, input);
     if (!await active()) return await unavailable();
+    if (method==='execute' && response.state==='available' && response.data?.state==='completed') {
+      const r=input.request, identity=r?.destination||r?.source;
+      const prefix=locations.find(l=>identity && l.container===identity.container && l.account===identity.account && identity.key.startsWith(l.key));
+      const runId=prefix ? identity.key.slice(prefix.key.length).split('/')[0] : '';
+      if (/^[a-f0-9-]{36}$/.test(runId) && (observedRuns.has(runId)||observedRuns.size<8)) {
+        const counters=observedRuns.get(runId)||{uploads:0,reads:0,metadata:0,uploadBytes:0,readBytes:0,providerEvidence:false,ids:new Set()};
+        // The facade returned this canonical job; reuse its receipt without another
+        // evidence export/HMAC pass or provider request.
+        const e={state:'available',data:{...response.data,verification:response.data.receipt}};
+        if(e.state==='available' && e.data?.state==='completed' && !counters.ids.has(e.data.id)) {
+          // Bounded by the existing 100,000-operation grant. No payloads retained here.
+          counters.ids.add(e.data.id);
+          const level=e.data.verification?.level;
+          if(r.operation==='upload' && level==='content-sha256' && e.data.checkpoints?.length) {counters.uploads++;counters.uploadBytes+=e.data.checkpoints.reduce((n,c)=>n+c.size,0);}
+          if(r.operation==='read' && level==='content-sha256') {counters.reads++;counters.readBytes+=response.data.result.size;}
+          if(r.operation==='metadata' && level==='metadata-observed') counters.metadata++;
+          counters.providerEvidence ||= e.data.verification?.providerEvidence===true;
+          observedRuns.set(runId,counters);
+        }
+      }
+    }
     if (method === "describe" && response.data) {
+      if(typeof onLabReport==='function') response.data.methods.push('labReport');
       if (typeof renewAuthorization === 'function') {
         response.data.methods.push('renewAuthorization');
         response.data.oauthRenewal = {intervalSeconds:2400,credentials:'extension-only'};

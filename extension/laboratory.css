@@ -12,3 +12,9 @@ body{font:16px system-ui;background:#111820;color:#edf4fa;margin:40px auto;max-w
 
 #results-output{box-sizing:border-box;max-height:240px;min-height:105px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#101821;color:#dce7f6;border:1px solid #71849a;border-radius:7px;padding:10px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
 .results-help{font-size:12px;color:#c2d5e7}#copy-results{margin-left:0}#copy-results-status{font-size:13px;color:#c2d5e7}
+
+#lab-progress{position:sticky;top:-14px;background:#1c2733;padding:10px 0;font-weight:700;z-index:1}
+#lab-progress.indeterminate::after{content:'...';display:inline-block;animation:lab-dots 1.2s steps(4,end) infinite;overflow:hidden;vertical-align:bottom;width:1.2em}
+@keyframes lab-dots{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){#lab-progress.indeterminate::after{animation:none}}
+#lab-summary{font-size:13px}#lab-summary p{margin:7px 0}

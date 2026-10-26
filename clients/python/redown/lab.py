@@ -1,4 +1,5 @@
 """Small desktop laboratory and evidence-producing, read-only conformance runner."""
+from .lab_results import publish_progress
 from .contracts import checkpoint_view, describe_response
 import argparse
 import base64
@@ -157,7 +158,7 @@ def gui():
                 state.set('Scan limits must be positive integers.'); return
             try: settings=resources()
             except ValueError as error: state.set(str(error)); return
-            work(lambda: inventory(path, per_extension=None, buffer_bytes=settings['bufferBytes'], cancel=stop, max_files=entry_limit, max_file_bytes=file_mib*1024**2, max_total_bytes=total_mib*1024**2), result_kind='inventory')
+            work(lambda: inventory(path, progress=lambda p: publish_progress(client,**p), per_extension=None, buffer_bytes=settings['bufferBytes'], cancel=stop, max_files=entry_limit, max_file_bytes=file_mib*1024**2, max_total_bytes=total_mib*1024**2), result_kind='inventory')
     def architecture_tests():
         nonlocal report
         selected = [roots[i] for i in buckets.curselection()]
@@ -428,20 +429,24 @@ def main():
     if args.action == 'complete':
         if not args.directory: parser.error('--directory is required')
         settings=resource_profile(args.profile,args.memory_mib,args.concurrency,args.buffer_bytes)
-        scan=inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes)
+        def scan_files(connected=None):
+            publish_progress(connected,'Inventorying files')
+            return inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes,progress=lambda p: publish_progress(connected,**p))
         checkpoint=lambda r: adaptive_persist(r,args.report)
-        if args.offline: report=adaptive_run(None,scan,depth=args.depth,resources=settings,checkpoint=checkpoint)
+        if args.offline: report=adaptive_run(None,scan_files(),depth=args.depth,resources=settings,checkpoint=checkpoint)
         else:
             import sys
             connection_started=time.monotonic()
+            scan=None
             try:
                 with ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr)) as connected:
+                    scan=scan_files(connected)
                     report=adaptive_run(connected,scan,depth=args.depth,resources=settings,roots=[json.loads(args.root)] if args.root else None,checkpoint=checkpoint)
             except RedownError as error:
-                report=adaptive_run(None,scan,depth=args.depth,resources=settings,connection_error=error.code,checkpoint=checkpoint)
+                report=adaptive_run(None,scan if scan is not None else scan_files(),depth=args.depth,resources=settings,connection_error=error.code,checkpoint=checkpoint)
             report['connectionAndRunSeconds']=time.monotonic()-connection_started
             checkpoint(report)
-        print(json.dumps({'acceptance':report['acceptance'],'coverage':report['coverage'],'connectionError':report.get('connectionError'),'dispatchedOperations':report['dispatchedOperations'],'recovery':report.get('primaryFailure',{}).get('recovery'),'report':args.report}))
+        print(json.dumps({'acceptance':report['acceptance'],'coverage':report['coverage'],'connectionError':report.get('connectionError'),'dispatchedOperations':report['dispatchedOperations'],'recovery':report.get('primaryFailure',{}).get('recovery'),'report':args.report,'resultCodes':[c['code']+' '+c['name'] for c in report['labSummary']['codes']],'nextAction':report['labSummary']['nextAction']}))
         return 1 if any(r['status'] in ('FAIL','INDETERMINATE') for r in report['results']) else 2
     if args.action in ('scan', 'architecture'):
         if not args.directory: parser.error('--directory is required')

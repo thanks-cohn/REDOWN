@@ -20,6 +20,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
   host.stderr.on("data", (x) => errors += x);
   const grants = /* @__PURE__ */ new Map();
   const bytes = new TextEncoder().encode("Native round trip fixture");
+  const summaries=[];
   let writeMode=false, failureMode=false; const written=new Map();
   const request = async (url, options = {}) => {
     const key=url.split('/objects/')[1]?.split('/').map(decodeURIComponent).join('/');
@@ -47,7 +48,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
     if (m.type !== "request") return;
     let response;
     if (m.method === "pair") {
-      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, doctorProvider:laboratoryDoctor({request,getProfiles:async()=>[],fetcher:async()=>{throw Error('No cloud');}}), createObject:async(i,b)=>{
+      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, onLabReport:r=>summaries.push(r), onLabProgress:()=>{}, doctorProvider:laboratoryDoctor({request,getProfiles:async()=>[],fetcher:async()=>{throw Error('No cloud');}}), createObject:async(i,b)=>{
         if(written.has(i.key))throw Object.assign(Error(),{code:'CONFLICT'});written.set(i.key,b.slice());
       }, isCurrent: () => true }));
       response = { apiVersion: "1.0.0", state: "available", data: { clientId: m.client } };
@@ -103,6 +104,11 @@ test("Python external process traverses native relay, canonical engine and Atlas
     assert.equal(await new Promise(r=>adaptive.on('exit',r)),2,adaptiveOutput+errors);
     const evidence=JSON.parse(await readFile(adaptivePath));
     assert.equal(evidence.coverage.PASS,evidence.plan.plannedOperations,JSON.stringify(evidence));
+    assert.ok(summaries.length,JSON.stringify({summary:evidence.labSummary,error:evidence.reportingError}));
+    assert.equal(summaries.at(-1).finished,true);
+    assert.equal(summaries.at(-1).verifiedUploads,1);
+    assert.equal(summaries.at(-1).independentEvidence.uploads,1);
+    assert.equal(summaries.at(-1).acceptance,'INCOMPLETE');
     assert.equal(evidence.verifiedFiles,1);assert.ok(written.size>=2);
     assert.ok(evidence.results.find(r=>r.operation==='read').diskReadbackSha256);
     assert.equal(evidence.cleanup.status,'NOT_TESTED');

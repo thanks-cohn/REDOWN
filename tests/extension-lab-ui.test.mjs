@@ -35,6 +35,21 @@ test("extension page explicitly rejects, approves selected scope and revokes", a
     await receive({ type: "request", client: "approved-client", id: "describe", method: "describe", input: {} });
     assert.equal(sent.at(-1).response.data.locations[0].container, "bucket");
     assert.ok(!JSON.stringify(sent).includes(auth.accessToken));
+    const report={format:'redown.lab.summary.v1',runId:'11111111-1111-4111-8111-111111111111',acceptance:'INCOMPLETE',stage:'Performing preflight',bucket:'bucket',finished:false,blocked:false,completedCases:0,totalCases:5,counts:{PASS:0,FAIL:0,BLOCKED:0,INDETERMINATE:0,NOT_TESTED:0},verifiedUploads:0,verifiedReads:0,verifiedBytes:0,excludedFiles:0,exclusions:{},codes:[],problem:auth.accessToken,nextAction:auth.accessToken,provenance:auth.accessToken};
+    await receive({type:'request',client:'approved-client',id:'report',method:'labReport',input:{summary:report}});
+    assert.equal(sent.at(-1).response.state,'available');
+    assert.match($('lab-summary').textContent,/Acceptance: INCOMPLETE/);
+    assert.ok($('lab-progress').classList.contains('indeterminate'));
+    assert.ok(!$('lab-summary').textContent.includes(auth.accessToken));
+    const navigatorDescriptor=Object.getOwnPropertyDescriptor(globalThis,'navigator');
+    let copied;
+    Object.defineProperty(globalThis,'navigator',{configurable:true,value:{clipboard:{writeText:async text=>copied=text}}});
+    try {await $('copy-results').onclick();} finally {
+      if(navigatorDescriptor) Object.defineProperty(globalThis,'navigator',navigatorDescriptor); else delete globalThis.navigator;
+    }
+    assert.equal(JSON.parse(copied).laboratory[0].acceptance,'INCOMPLETE');
+    assert.ok(!copied.includes(auth.accessToken));
+
     [...$("clients").querySelectorAll("button")].find((b) => b.textContent.startsWith("Reject")).click();
     await receive({ type: "request", client: "approved-client", id: "after-revoke", method: "describe", input: {} });
     assert.equal(sent.at(-1).response.error.code, "PAIRING_REQUIRED");

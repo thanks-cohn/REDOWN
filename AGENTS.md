@@ -236,3 +236,13 @@ separates local grant/refresh failure codes, persists pre-dispatch intent, and a
 read-only `redown.lab reconcile`. New write approvals still mint fresh namespaces;
 never extend scope to replay an uncertain write. Original dashboard incident cause
 and Windows/live acceptance remain unproven. See `verification/lab-auth-recovery/RESULTS.md`.
+
+## Laboratory results v1
+
+Read `docs/phase28/RESULT_CODES.md`, `RESULT_CODES_CMD.md` and
+`verification/lab-result-codes/RESULTS.md`. Python 0.5.5 adds optional native
+`labReport`, ten stable summary codes and grouped failure analysis. Reuse the
+canonical diagnostic/engine evidence contracts; do not interpret response receipt as
+file verification. Metadata currently verifies size only. Quick samples small files;
+Comprehensive covers all eligible small files; >65,536-byte files remain excluded.
+No live Windows/R2 or full release acceptance is established by local fixtures.

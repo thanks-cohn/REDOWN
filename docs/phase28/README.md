@@ -144,3 +144,10 @@ Use `redown.lab architecture` or `conformance` for preserved read-only workflows
 
 Reports contain sensitive local paths, names and provider metadata; store them
 privately. They contain no file bytes, OAuth tokens or Worker secrets.
+
+## Permanent results and extension progress
+
+Python 0.5.5 adds the [evidence-gated result code contract](RESULT_CODES.md),
+bounded reporting through the existing approved native session and sticky Results
+summary. Use the [Windows CMD runbook](RESULT_CODES_CMD.md) for the existing corpus.
+The 64 KiB restriction and incomplete acceptance remain explicit.

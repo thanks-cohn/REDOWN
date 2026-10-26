@@ -4,14 +4,48 @@ import { authorizeLab } from "./lab-session.mjs";
 const $ = (id) => document.getElementById(id);
 const eventHistory = [];
 const operationResults = [];
+const labReports = new Map();
+function paintLabReport(data) {
+  labReports.set(data.runId, data);
+  if(labReports.size>8) labReports.delete(labReports.keys().next().value);
+  const summary=$('lab-summary');
+  summary.replaceChildren();
+  for(const text of [
+    `Acceptance: ${data.acceptance} · ${data.finished?'Run stopped/finalized':'Run active'}`,
+    `Passed ${data.counts.PASS} · Failed ${data.counts.FAIL} · Blocked ${data.counts.BLOCKED} · Indeterminate ${data.counts.INDETERMINATE} · Untested ${data.counts.NOT_TESTED}`,
+    `Verified uploads ${data.verifiedUploads} · reads ${data.verifiedReads} · bytes ${data.verifiedBytes}`,
+    `Excluded files ${data.excludedFiles}: ${Object.entries(data.exclusions).map(([k,v])=>`${k} ${v}`).join(', ')||'none'}`,
+    data.problem, data.nextAction, data.provenance,
+    ...(data.findings||[]).map(f=>`${f.outcome}: ${f.operation} · ${f.code} · ${f.count} cases · ${f.evidenceRefs.join(", ")}`),
+    data.omittedFindingGroups?`${data.omittedFindingGroups} additional finding groups are in the saved Python report.`:null,
+    ...data.codes.map(c=>`${c.code} ${c.name} · ${c.outcome} (${c.certainty}): ${c.explanation} ${JSON.stringify(c.measurements)}`)
+  ].filter(Boolean)) {
+    const p=document.createElement('p'); p.textContent=text; summary.append(p);
+  }
+  paintProgress(data);
+  $('copy-results').disabled=false;
+}
+function paintProgress(data) {
+  const node=$('lab-progress');
+  const determinate=data.stage!=='Performing preflight' && data.totalCases>0;
+  node.classList.toggle('indeterminate',!data.finished && !determinate);
+  node.textContent=`${data.stage} in ${data.bucket||'selected bucket'}${determinate?' · '+Math.floor(100*data.completedCases/data.totalCases)+'%':''}${data.blocked?' · BLOCKED':''}`;
+  if(Number.isSafeInteger(data.hashedFiles)) node.textContent+=` · ${data.hashedFiles} files hashed`;
+  if(data.totalCases>0) node.textContent+=` · ${data.completedCases}/${data.totalCases} cases · ${data.verifiedBytes||0} verified bytes`;
+  if(data.finished) node.textContent+=` · Finalized; acceptance ${data.acceptance}`;
+}
 function addOperationResult(client, method, response) {
   // Keep a redacted summary only. Never copy provider payloads, object paths or credentials.
   const result = {
     time: new Date().toISOString(),
     client: String(client).slice(0, 80),
     operation: String(method).slice(0, 64),
-    status: response?.state === "available" ? "PASS" : "FAIL"
+    status: response?.state === "available" ? "RESPONSE_RECEIVED" : "FAIL"
   };
+  const jobState=response?.data?.state;
+  if(method==='execute' && ['failed','blocked_authorization','uncertain','partially_completed','cancelled'].includes(jobState)) {
+    result.status=['uncertain','partially_completed'].includes(jobState)?'INDETERMINATE':jobState==='blocked_authorization'?'BLOCKED':'FAIL';
+  }
   // These are transport/operation response codes, not proof of independent file verification.
   const successCodes = {
     describe: ["DESCRIPTION_RECEIVED", "Extension returned a successful description response; individual capabilities are not independently verified here."],
@@ -20,10 +54,10 @@ function addOperationResult(client, method, response) {
     execute: ["EXECUTION_RESPONSE_RECEIVED", "Execution request returned successfully; this alone does not prove uploads or readback integrity."],
     evidence: ["EVIDENCE_RESPONSE_RECEIVED", "Evidence request returned successfully; proof must be inspected before claiming verification."]
   };
-  if (result.status === "PASS") {
+  if (result.status === "RESPONSE_RECEIVED") {
     [result.code, result.meaning] = successCodes[method] || ["OPERATION_RESPONSE_RECEIVED", "Extension returned an available response; completion and verification are not inferred."];
   } else {
-    result.code = String(response?.error?.code || "UNKNOWN_ERROR").slice(0, 100);
+    result.code = String(response?.error?.code || response?.data?.error || "UNKNOWN_ERROR").slice(0, 100);
     result.meaning = "The extension rejected or could not complete this operation.";
   }
   operationResults.push(result);
@@ -37,7 +71,7 @@ function addOperationResult(client, method, response) {
   $("copy-results").disabled = false;
 }
 $("copy-results").onclick = async () => {
-  const text = JSON.stringify({ format: "redown.lab.extension-results.v1", note: "Extension-side summaries only; not the full Python Laboratory report.", results: operationResults }, null, 2);
+  const text = JSON.stringify({ format: "redown.lab.extension-results.v1", note: "Approved Python summaries preserve Python acceptance. Independent coordinator counters are separate; transport success is not file verification.", laboratory: [...labReports.values()], results: operationResults }, null, 2);
   try {
     await navigator.clipboard.writeText(text);
     $("copy-results-status").textContent = "Copied";
@@ -77,6 +111,8 @@ function removePending(client) {
   showPairingState(port ? "Local helper: ready" : "Local helper: disconnected");
 }
 function stop() {
+  $('lab-progress').classList.remove('indeterminate');
+  $('lab-progress').textContent='Connection closed; displayed results are the last received report.';
   for (const g of grants.values()) g.revoke();
   grants.clear();
   for (const client of pending.keys()) removePending(client);
@@ -205,7 +241,7 @@ async function startConnection() {
         const write = $("write-approval").checked;
         if (write && roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container))) { status("Write approval is restricted to test-1-new through test-4-new. Uncheck other buckets or use read-only approval."); return; }
         const dependencies={request:RedownCloudflareApi.request,getProfiles:async()=> (await chrome.storage.local.get('profiles')).profiles||[],fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)};
-        const grant2 = authorizeLab({ roots, write, doctorProvider:laboratoryDoctor(dependencies), extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, authorizationStatus: async () => {
+        const grant2 = authorizeLab({ roots, write, doctorProvider:laboratoryDoctor(dependencies), extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", onLabReport: paintLabReport, onLabProgress: paintProgress, createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, authorizationStatus: async () => {
           const a = (await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
           return !a?.accessToken ? 'PROVIDER_SESSION_UNAVAILABLE' : a.sessionId !== sessionId ? 'PROVIDER_SESSION_CHANGED' : a.reconnectRequired ? a.authFailureCode || 'OAUTH_REFRESH_REJECTED' : null;
         }, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {
@@ -217,7 +253,7 @@ async function startConnection() {
         pending.delete(message.client);
         approve.remove();
         name.append(document.createTextNode(` — Connected; ${write ? "conditional write in a unique laboratory namespace (no deletion)" : "read access"} approved for ${hours} hour(s).`));
-        status("Python client " + message.client + " approved and connected. The approval button disappearing after your click is expected.");
+        status("Python client " + message.client + " connected and authorized. The approval button disappearing after your click is expected.");
         showPairingState("Local helper: connected to Python");
         reply({ apiVersion: "1.0.0", state: "available", data: { clientId: message.client, expiresAt: grant2.expires, mode: "extension" } });
       };
@@ -232,12 +268,21 @@ async function startConnection() {
     }
     const grant = grants.get(message.client);
     let result;
+    if(grant && ['describe','doctor'].includes(message.method)) paintProgress({stage:'Performing preflight',bucket:[...$('buckets').querySelectorAll('input:checked')].map(c=>JSON.parse(c.dataset.root).container).join(', ')});
     try {
       result = grant ? await grant.query(message.method, message.input) : { apiVersion: "1.0.0", state: "failed", error: { code: "PAIRING_REQUIRED" } };
     } catch {
       result = { apiVersion: "1.0.0", state: "failed", error: { code: "OPERATION_FAILED" } };
     }
-    addOperationResult(message.client, message.method, result);
+    if(['describe','doctor'].includes(message.method)) {
+      $('lab-progress').classList.remove('indeterminate');
+      $('lab-progress').textContent=result.state==='available'?'Preflight response received; waiting for Python progress.':'Preflight blocked; inspect the operation diagnostic.';
+    }
+    if(result.state==='failed' || ['uncertain','partially_completed','blocked_authorization'].includes(result.data?.state)) {
+      $('lab-progress').classList.remove('indeterminate');
+      $('lab-progress').textContent='Laboratory BLOCKED or interrupted; preserve the Python checkpoint and review the operation diagnostic. Last received report may be incomplete.';
+    }
+    if(message.method!=='labReport' || result.state!=='available') addOperationResult(message.client, message.method, result);
     reply(result);
   });
 }

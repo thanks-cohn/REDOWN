@@ -59,3 +59,10 @@ unproven live causality and the [diagnostic contract](../docs/architecture/REDOW
 It is an engineering preservation obligation, not accepted canonical intent or live
 closure. AAC's diagnostic-evidence-completeness scenario and native fault tests guard
 cause preservation. Do not rewrite frozen source hashes to make freshness pass.
+
+## Adaptive Laboratory result projection
+
+[Result-code preservation record](bugs/FW-REDOWN-LAB-RESULT-CODES-20261026.md)
+links the ten stable Laboratory summary codes, same-session verification evidence,
+lightweight progress, safe copy contract and exact Windows CMD reproduction.
+Local/native fixture success remains separate from installed/live acceptance.

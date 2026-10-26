@@ -2,11 +2,12 @@
 import hashlib
 import os
 import stat
+import time
 from pathlib import Path
 
 
 def inventory(directory, *, per_extension=5, max_files=100000, max_file_bytes=1024**3,
-              max_total_bytes=4*1024**3, cancel=None, buffer_bytes=1024*1024):
+              max_total_bytes=4*1024**3, cancel=None, buffer_bytes=1024*1024, progress=None):
     if (per_extension is not None and not 1 <= per_extension <= 5) or min(max_files, max_file_bytes, max_total_bytes, buffer_bytes) < 1:
         raise ValueError('Invalid scan limits')
     root = Path(directory).resolve(strict=True)
@@ -14,6 +15,7 @@ def inventory(directory, *, per_extension=5, max_files=100000, max_file_bytes=10
         raise ValueError('Choose a directory')
     files, exclusions, groups = [], [], {}
     total = 0
+    last_update=0.0
     stopped = False
     entries = 0
     discovered_files = 0; discovered_bytes = 0
@@ -82,6 +84,8 @@ def inventory(directory, *, per_extension=5, max_files=100000, max_file_bytes=10
                 if per_extension is None:
                     known = [(b'\x89PNG\r\n\x1a\n','png'),(b'\xff\xd8\xff','jpeg'),(b'GIF8','gif'),(b'%PDF-','pdf'),(b'PK\x03\x04','zip'),(b'\x1f\x8b','gzip'),(b'RIFF','riff')]
                     row.update(formatHint=next((name for magic,name in known if signature.startswith(magic)), 'unknown'), unicodeName=not rel.isascii(), unusualName=any(c in rel for c in ' #?%'), streamingCandidate=count>65536, multipartCandidate=count>=64*1024**2)
+                if progress and time.monotonic()-last_update>=1:
+                    progress({'stage':'Hashing local files','completed':len(files)+1}); last_update=time.monotonic()
                 files.append(row); groups.setdefault(row['extension'], []).append(row)
             except OSError:
                 exclude(rel, 'UNREADABLE_OR_CHANGED')

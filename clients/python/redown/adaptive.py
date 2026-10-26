@@ -13,6 +13,7 @@ import time
 import uuid
 from .client import RedownError
 from .contracts import require_fields
+from .lab_results import summarize
 
 PROFILES = {'Low RAM':(32,1,16384), 'Balanced':(128,2,65536), 'Maximum':(512,4,1048576)}
 
@@ -84,10 +85,22 @@ def persist(report,path):
     with temporary.open('w',encoding='utf-8') as output:
         output.write(json.dumps(report,indent=2,ensure_ascii=True)+'\n'); output.flush(); os.fsync(output.fileno())
     temporary.replace(path)
+    if report.get('schemaVersion')=='2.8.0' and not report.get('finished'): return
     lines=['# REDOWN Adaptive Laboratory','', 'Acceptance: '+report['acceptance'],'', '| Operation | File | State | Error |','| --- | --- | --- | --- |']
+    summary=report.get('labSummary')
+    if summary:
+        lines=lines[:3]+['', 'Cases: '+json.dumps(summary['counts']),
+            f"Verified uploads: {summary['verifiedUploads']}; reads: {summary['verifiedReads']}; bytes: {summary['verifiedBytes']}.",
+            'Excluded files: '+str(summary['excludedFiles'])+'; '+json.dumps(summary['exclusions']),
+            '', summary.get('problem') or '', summary.get('nextAction') or '', '']+[
+            f"- {c['code']} {c['name']} ({c['outcome']}, {c['certainty']}): {c['explanation']} {json.dumps(c['measurements'])}" for c in summary['codes']]+[
+            '', '## Findings', '']+[
+            f"- {f['outcome']}: {f['operation']} / {f['code']}: {f['count']} cases. Evidence: {', '.join(f['evidenceRefs'])}" for f in report.get('failureAnalysis',[])]+[
+            '', '<details><summary>Full operation evidence</summary>', '', '| Operation | File | State | Error |','| --- | --- | --- | --- |']
     def cell(value): return str(value or '').replace('|','/').replace('\n',' ').replace('\r',' ')
     lines += ['| '+' | '.join(cell(c.get(k)) for k in ('operation','file','status','error'))+' |' for c in report['results']]
     lines += ['', '## Configuration, inventory, plan, evidence and limitations', '', '```json',json.dumps(report,indent=2,ensure_ascii=True),'```','']
+    if summary: lines+=['</details>', '']
     md=path.with_suffix('.md'); tmp=md.with_suffix('.md.tmp');tmp.write_text('\n'.join(lines),encoding='utf-8');tmp.replace(md)
 
 def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkpoint=None,progress=None,connection_error=None):
@@ -100,7 +113,7 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             dirty=bool(subprocess.check_output(['git','-C',str(candidate),'status','--porcelain','--untracked-files=no'],stderr=subprocess.DEVNULL,text=True,timeout=2).strip())
             break
         except (OSError,subprocess.SubprocessError): pass
-    report=dict(schemaVersion='2.8.0',clientVersion='0.5.4',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
+    report=dict(schemaVersion='2.8.0',clientVersion='0.5.5',commit=commit,repositoryDirty=dirty,platform=platform.platform(),acceptance='INCOMPLETE',inventory=scan,results=[],providerCapabilities=None,
                 runId=str(uuid.uuid4()),cleanup={'status':'NOT_TESTED','reason':'No deletion authorized or attempted. Inspect retained unique namespace; conditional delete unavailable.'},
                 selectedRoots=roots,
                 evidenceBoundary='Actual connected session if available; injected providers are not live R2 proof',sourcePreserved=True,currentOperation=None,pendingOperation=None)
@@ -123,16 +136,20 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
     report['untestedRoots']=locations[1:]  # This bounded runner uses the first chosen bucket only.
     report['unsupported']=[{'operation':op,'status':'UNSUPPORTED','reason':'No safe atomic conditional deletion' if op in ('move','rename','delete') else 'Not implemented in bounded native transport'} for op in ['move','rename','delete','streaming','multipart','durable recovery']]
     report['retryRecovery']={'automaticWriteRetries':0,'resume':'READ_ONLY_RECONCILIATION','policy':'Persist intent before mutations; halt on interruption; reconcile saved destinations with a new read grant. Mutation continuation requires a fresh namespace.'}
+    report['scopeAuthorized']=bool(root and info.get('writeEnabled') and not connection_error)
+    reporting=bool(client and 'labReport' in info.get('methods',[]))
+    last_publish=0.0
     def save():
+        nonlocal last_publish, reporting
         report['elapsedSeconds']=time.monotonic()-started
         report['cpuSeconds']=time.process_time()-cpu
         report['coverage']=dict(Counter(r['status'] for r in report['results']))
         report['completedCases']=len(report['results']); report['remainingCases']=len(report['plan']['cases'])-len(report['results'])
         report['successfulOperations']=sum(r['status']=='PASS' for r in report['results'])
-        report['verifiedUploads']=sum(r['operation']=='upload' and r['status']=='PASS' for r in report['results'])
+        report['verifiedUploads']=sum(bool(r.get('uploadVerified')) and r['status']=='PASS' for r in report['results'])
         report['dispatchedOperations']=sum(bool(r.get('dispatched')) for r in report['results'])
         report['notAttemptedOperations']=sum(not r.get('dispatched',False) for r in report['results'])
-        elapsed=report['elapsedSeconds']; transferred=sum(r.get('verifiedBytes',0) for r in report['results'])
+        elapsed=report['elapsedSeconds']; transferred=sum(r.get('verifiedBytes',0) for r in report['results'] if r.get('readVerified') and r['status']=='PASS')
         report['verifiedBytes']=transferred
         report['verifiedFiles']=len({r['file'] for r in report['results'] if r['operation']=='read' and r['status']=='PASS'})
         report['bytesPerSecond']=transferred/elapsed if elapsed else None
@@ -143,7 +160,15 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
             report['ramObservation']={'status':'PASS','peakProcessBytes':peak*(1 if platform.system()=='Darwin' else 1024),'scope':'Python process peak RSS; includes inventory/report overhead, excludes extension/Chrome'}
         except ImportError:
             report['ramObservation']={'status':'NOT_TESTED','reason':'Process RSS measurement unavailable on this platform'}
+        report['labSummary']=summarize(report)
         if checkpoint: checkpoint(report)
+        if reporting and (report.get('finished') or time.monotonic()-last_publish>=1):
+            last_publish=time.monotonic()
+            try: client.query('labReport', summary=report['labSummary'])
+            except RedownError as error:
+                report['reportingError']=error.code
+                reporting=False  # Reporting never retries or changes mutation outcomes.
+                if checkpoint: checkpoint(report)
         if progress: progress(report)
     save()
     by_path={r['relpath']:r for r in scan['selected']}; destinations={}; uploads={}; halted=False
@@ -208,10 +233,19 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                             data=base64.b64decode(job['result']['bytesBase64'],validate=True)
                             digest=hashlib.sha256(data).hexdigest()
                             if digest!=row['sha256'] or len(data)!=row['bytes']: raise RedownError('VERIFICATION_DISAGREEMENT')
-                            result.update(sha256=digest,verifiedBytes=len(data),independentIntegrity='Python source SHA-256 vs OAuth readback; creation used Worker STORAGE')
+                            result.update(readVerified=True,sha256=digest,verifiedBytes=len(data),independentIntegrity='Python source SHA-256 vs OAuth readback; creation used Worker STORAGE')
+                        if op=='metadata':
+                            if job.get('result',{}).get('size')!=row['bytes']: raise RedownError('VERIFICATION_DISAGREEMENT')
+                            result['metadataVerified']=True
                         result['status']='PASS'
                     result['evidence']=client.query('evidence',id=job['id'])
                     result['resourceAtlas']=client.query('resources',id=job['id'],metric='getLatencyBreakdown')
+                    if op=='upload' and result['status']=='PASS':
+                        evidence=result['evidence']
+                        matches=[c for c in evidence.get('checkpoints',[]) if c.get('sha256')==row['sha256'] and c.get('size')==row['bytes']]
+                        if evidence.get('state')!='completed' or evidence.get('verification',{}).get('level')!='content-sha256' or not matches:
+                            raise RedownError('DIAGNOSTICS_LOST')
+                        result['uploadVerified']=True
                     if result['evidence'].get('id')!=job['id'] or result['resourceAtlas'].get('state')!='available' or result['resourceAtlas'].get('data',{}).get('operationId')!=job['id']:
                         raise RedownError('ATLAS_CORRELATION_MISMATCH')
         except (RedownError,OSError,ValueError,KeyError) as error:
@@ -229,5 +263,5 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
         if report.get('pendingOperation'):
             result['destination']=report['pendingOperation']['destination']
         report['results'].append(result); report['pendingOperation']=None; save()
-    report['currentOperation']=None; save()
+    report['currentOperation']=None; report['finished']=True; save()
     return report

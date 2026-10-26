@@ -19,10 +19,15 @@ class ProviderFixture:
         if operation=='upload':self.objects[dest]=base64.b64decode(args['bytesBase64'])
         if operation=='copy':self.objects[dest]=self.objects[source]
         if operation=='mkdir':self.objects[dest]=b''
+        if operation=='metadata': result={'size':len(self.objects[source])}
         if operation=='read':
             data=self.objects[source];result=dict(bytesBase64=base64.b64encode(data).decode(),sha256=hashlib.sha256(data).hexdigest())
         return dict(id=str(len(self.calls)),state='completed',result=result)
-    def query(self,method,**args):return {'id':args['id'],'state':'available','data':{'operationId':args['id']}}
+    def query(self,method,**args):
+        if method=='evidence':
+            data=list(self.objects.values())[-1] if self.objects else b''
+            return {'id':args['id'],'state':'completed','verification':{'level':'content-sha256','providerEvidence':False},'checkpoints':[{'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)}]}
+        return {'id':args['id'],'state':'available','data':{'operationId':args['id']}}
 
 class AdaptiveTests(unittest.TestCase):
     def test_comprehensive_has_no_sampling_cap_and_explicit_large_file_exclusion(self):
