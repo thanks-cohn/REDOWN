@@ -6,6 +6,23 @@
 **Mandatory baseline:** retain connection-repair changes and diagnostics branch unless specific behavior is proven erroneous.
 **Owner mandate:** highest practical standards, provider independence, agent-native maintainability, clear responsibility boundaries, low conceptual overhead, honest real-world verification. Consolidate, don't create another overlapping platform.
 
+## IMPORTANT: UNMERGED BRANCHES AND HOW CODEX MUST START
+
+**Verified repository state at assignment amendment:** `main` contains assignment documents but **does not contain the diagnostics implementation**. `fix/evidence-first-write-diagnostics` is unmerged at `ad5134f75e884de5a9754eb50d267238d5115920` and contains the diagnostics and connection repairs. At that point the feature branch was five commits ahead and three commits behind `main`; verify current refs before working.
+
+**Do not merge or cherry-pick the diagnostics implementation into `main` without explicit owner approval.** Since this assignment lives on `main`, while implementation must start from the diagnostics branch, Codex MUST retrieve the assignment from `origin/main` explicitly. Suggested safe workflow:
+
+```sh
+git fetch origin
+git switch fix/evidence-first-write-diagnostics
+git pull --ff-only
+git switch -c fix/foundation-consolidation
+mkdir -p docs/assignments
+git show origin/main:docs/assignments/REDOWN_FOUNDATION_CONSOLIDATION_AND_PROVIDER_NEUTRALITY.md > docs/assignments/REDOWN_FOUNDATION_CONSOLIDATION_AND_PROVIDER_NEUTRALITY.md
+```
+
+Read this copied document before implementing and commit it on the new working branch so the full contract and mandatory handoff survive there. No automatic merge to main. If branch names/refs or the working tree differ, inspect status and adapt safely rather than overwriting existing work. The resulting consolidation branch should include preserved diagnostics code and this latest assignment text, while `main` stays unchanged except the explicitly requested assignment documentation.
+
 ## Executive purpose
 
 Stabilize REDOWN's Universal File API, provider adapters, Resource Atlas, AAC, Forever Works, Python Laboratory and newly added diagnostics as **one coherent system**. Avoid premature large-file/multipart work, new providers and GUI expansion. Resolve contradictions, prevent duplicated responsibilities, harden contracts and produce a small, testable consolidation patch.
