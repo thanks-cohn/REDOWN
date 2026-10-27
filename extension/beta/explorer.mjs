@@ -1,8 +1,10 @@
+import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
-const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
+let testIt=null;
+const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter({observe:(context,event)=>testIt?.observer.transport(context,event)}),{guard:(...args)=>testIt?.observer.guard(...args),start:(...args)=>testIt?.observer.start(...args),result:(...args)=>testIt?.observer.result(...args)});
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
 let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0;
@@ -56,7 +58,7 @@ function render(){
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
-  controls();syncSideSelection();
+  controls();syncSideSelection();testIt?.visible();
 }
 function guideAction(action){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{action}}));}
 function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
@@ -416,5 +418,7 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
   await run(async signal=>{const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}});outcome(result);$('archive-status').textContent=$('status').textContent;for(let i=0;i<result.results.length;i++)if(result.results[i].state==='completed'){const check=[...document.querySelectorAll('#archive-files input')].find(c=>c.value===entries[i]);if(check)check.checked=false;}});
   $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
 };
-installTour({document,storage:chrome.storage.local});
+const tour=installTour({document,storage:chrome.storage.local});
+function testSnapshot(){return {current:context(),items:items.map(e=>({...e})),rows:[...document.querySelectorAll('#files .file')].map(row=>items.find(e=>e.key===row.dataset.key)).filter(Boolean),selected:[...selected],anchor,focusKey:document.activeElement?.closest?.('.file')?.dataset.key,listingState,filter:$('filter').value,sort:$('sort').value,grid:$('files').classList.contains('grid'),menuHidden:$('context').hidden,menuActions:[...$('context').querySelectorAll('button')].map(b=>Object.keys(actions).find(id=>$(id)?.textContent===b.textContent)||'refresh')};}
+void installTestIt({document,storage:chrome.storage.local,api,snapshot:testSnapshot,tour,version:chrome.runtime?.getManifest?.().version||'unknown'}).then(value=>{testIt=value;}).catch(error=>{const control=$('test-it');control.disabled=true;control.title='Test It could not load: '+error.message;});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

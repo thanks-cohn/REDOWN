@@ -1,0 +1,18 @@
+✔ master loads exactly 60 unique ordered definitions and packaged copy cannot drift (9.406003ms)
+✔ complete versioned export retains all 60 untouched records with no invented timings or passes (5.721916ms)
+✔ a Next/Skip or provider success cannot earn PASSED without observed action and independent checks (1.054558ms)
+✔ monotonic intervals preserve ordering, use null for unavailable phases, and never use UTC subtraction (1.632929ms)
+✔ direct real adapter transport retains HTTP 400, Cloudflare 10023 and diagnostic text (9.977013ms)
+✔ background messages are IPC evidence, with no fabricated HTTP or provider response (2.792561ms)
+✔ network rejection captures actual failure without a made-up HTTP status (0.886675ms)
+✔ strict mutation gate prevents dispatch for every mutating API, including unsafe preparation (0.62444ms)
+✔ redaction excludes private identities, nested credentials, signed URLs and secret-bearing messages (0.445901ms)
+✔ pass state survives serialization while unobserved dependent exercises stay NOT_TESTED (1.688492ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 157.882636

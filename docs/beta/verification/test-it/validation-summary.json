@@ -1,0 +1,67 @@
+{
+  "starting_commit": "f617d034168f88c6a15c0d5f24fc14c62aac7502",
+  "evidence": "LOCAL_ONLY",
+  "baseline": {
+    "total": 445,
+    "passed": 435,
+    "failed": 10,
+    "failure_names": [
+      "offline discovery advertises only implemented operations and distinct versions",
+      "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "real discovery, case, history, filters and validation are deterministic and honest",
+      "original case and proposal Markdown bytes are retained from pinned upstream",
+      "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "successful provisioning refreshes destination editors and inventory before reporting ready",
+      "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "full finite public coverage inventory resolves strata and all canonical case links"
+    ]
+  },
+  "current": {
+    "total": 462,
+    "passed": 452,
+    "failed": 10,
+    "failure_names": [
+      "offline discovery advertises only implemented operations and distinct versions",
+      "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "real discovery, case, history, filters and validation are deterministic and honest",
+      "original case and proposal Markdown bytes are retained from pinned upstream",
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "full finite public coverage inventory resolves strata and all canonical case links",
+      "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "successful provisioning refreshes destination editors and inventory before reporting ready"
+    ]
+  },
+  "new_failures_relative_to_start": [],
+  "reliability_stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "focused": {
+    "passed": 87,
+    "failed": 0
+  },
+  "post_latency_model_test": {
+    "passed": 10,
+    "failed": 0
+  },
+  "installed_chrome": "NOT_VERIFIED",
+  "live_r2": "NOT_VERIFIED"
+}

@@ -1,5 +1,5 @@
 // Small presentation/navigation primitive. Signals indicate GUI actions, not test evidence.
-export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{}}){
+export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},label='Take the Tour',onShow=()=>{},beforeAdvance=()=>true,onBack=()=>{},canAdvance=()=>false}){
   const win=doc.defaultView;let index=0,card=null,highlight=null,previousFocus=null,observer=null,frame=0,completed=false;
   const $=selector=>card.querySelector(selector);
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
@@ -45,16 +45,16 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{}}){
     $('[data-guide-status]').textContent=step.action?'Try this in the Explorer, or choose Skip.':'';
     $('[data-guide-back]').disabled=index===0;$('[data-guide-skip]').hidden=!step.action;
     $('[data-guide-next]').textContent=index===steps.length-1?'Finish':'Next';$('[data-guide-next]').disabled=Boolean(step.action);
-    position();highlight?.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});position();$('[data-guide-exit]').focus({preventScroll:true});
+    onShow({card,index});position();highlight?.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});position();$('[data-guide-exit]').focus({preventScroll:true});
   }
-  function advance(){if(index===steps.length-1)stop(true);else{index++;show();}}
-  function start(){
-    if(card)stop();index=0;previousFocus=doc.activeElement;
-    card=doc.createElement('section');card.className='guide-card';card.setAttribute('role','region');card.setAttribute('aria-label','Take the Tour');
+  function advance(skipped=false){if(beforeAdvance({index,skipped})===false)return;if(index===steps.length-1)stop(true);else{index++;show();}}
+  function start(startIndex=0){
+    if(card)stop();index=Math.max(0,Math.min(steps.length-1,startIndex));previousFocus=doc.activeElement;
+    card=doc.createElement('section');card.className='guide-card';card.setAttribute('role','region');card.setAttribute('aria-label',label);
     card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
-    doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-skip]').onclick=advance;$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
+    doc.body.append(card);$('[data-guide-exit]').setAttribute('aria-label','Exit '+label);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;onBack(index);show();}};$('[data-guide-skip]').onclick=()=>advance(true);$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed||canAdvance(index))advance();};
     win.addEventListener('resize',schedule);doc.addEventListener('scroll',schedule,true);doc.addEventListener('redown:gui',signal);doc.addEventListener('keydown',keydown,true);win.addEventListener('pagehide',exit);
     observer=new win.MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden']});show();
   }
-  return {start,stop,get active(){return Boolean(card);}};
+  return {start,stop,refresh:()=>{if(card)onShow({card,index});},get active(){return Boolean(card);}};
 }

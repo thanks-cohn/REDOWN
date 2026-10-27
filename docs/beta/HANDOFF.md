@@ -1,3 +1,69 @@
+# Test It partial-runtime handoff, October 27, 2026
+
+Branch: **beta-explorer**. Base/specification: `f617d034168f88c6a15c0d5f24fc14c62aac7502`.
+The delivery SHA is in the final response. Main and Legacy source were not modified.
+
+**BUILT: coherent read-only subset. LOCALLY VERIFIED: JSDOM and in-memory provider fixtures. Installed Chrome and live Cloudflare R2: NOT VERIFIED. This is not the complete 60-exercise runtime.**
+
+## Delivered behavior
+
+- **☰ → Test It** uses the existing Tour guide's cards, positioning, highlights, accessible controls and X teardown. Take the Tour remains independent; starting either closes the other guide.
+- The authoritative 60-definition matrix is unchanged. Its byte-identical packaged copy is checked against drift. Results are separate from definitions.
+- All 60 records always export, including NOT_TESTED exercises never reached. Unsupported visited steps are BLOCKED. Explicit skips retain disposition `SKIPPED` and a sanitized reason while using NOT_TESTED rather than inventing a master-schema status.
+- Back, gated Next, reasoned Skip, Pause/Resume, X, partial export, completed export and reload resumption are implemented. Pause retains the write gate; X releases it. No unrelated transfer is cancelled. Interrupted monotonic milestones reset on a new document while previous attempt evidence is retained.
+- Direct listing/stat HTTP dispatch, headers, parsed response, status, provider error codes, sanitized diagnostics and network failures are instrumented. Background replies are explicitly **IPC**, with HTTP status null. They never impersonate provider responses.
+- Navigation independently performs a fresh no-store provider listing, checks exact location, and compares returned keys against actual loaded Explorer rows. Local checks compare actual rendered DOM state after GUI actions. Next alone cannot pass a test.
+- `performance.now()` and UTC milestones record action, request, visible DOM observation and verification. Missing timings are null. Local-only steps have no fictitious network timing. Request-to-processed and body-processing intervals are distinct; throughput is null because no Test It transfers are enabled.
+- Export projects diagnostic fields rather than serializing arbitrary payloads. Account/bucket/object identifiers, tokens, URLs, profiles and file contents are excluded. Raw snapshots remain in memory only.
+
+## Exact coverage
+
+| Capability | Implemented | Locally exercised | Live verified |
+|---|---:|---:|---:|
+| Executable exercise verifiers | 20 | 20 | 0 |
+| GUI event capture | 20 | 20, synthetic events through actual GUI handlers | 0 |
+| Direct HTTP response capture | 7 navigation exercises | 7, provider fixtures | 0 |
+| Independent state verifiers | 20 | 19 pass; 1 correctly detects existing GUI failure | 0 |
+| Latency instrumentation | 20 | 20; network milestones only for navigation | 0 |
+| Remaining unimplemented exercise verifiers | 40 | explicitly BLOCKED when visited | 0 |
+
+Executable IDs: **S01-001, S01-009 through S01-015, S01-017 through S01-028**.
+
+S01-027 correctly fails when a prior file selection causes the empty-area context menu to retain file-specific commands. The real product behavior was not changed to make the test green. Every other implemented verifier passes the corresponding local fixture. A green code test for this failure detector is not a passed product exercise.
+
+## Safety and implementation gaps
+
+This build does **not** implement disposable-scope approval, fixture hashing/inventory, fixture ownership transactions, cloud mutation exercises, mutation readback/SHA-256, disk download verification, media rendering acceptance, clipboard lifecycle, archives, cleanup verification or future sessions. Those exercises remain blocked instead of simulated. There are no Test It-created cloud objects to clean up.
+
+All universal-API cloud writes, including provisioning and extraction, are blocked before dispatch while Test It is active or paused. Public URL popover access is also blocked because it can enable public access outside this API. Exit with X to resume ordinary Explorer operations. Previously running operations are not cancelled, adopted as test-owned, or claimed verified.
+
+Transport limitations: only direct listing/stat HTTP is instrumented; background provider subrequests and internal HTTP retry attempts are unavailable. IPC final responses/errors preserve application evidence but cannot meet raw-provider proof. No Cloudflare internal execution time is inferred. T4 is DOM observation on an animation frame, not a physical-paint measurement. Session resumption does not reconstruct private first-bucket identity; dependent comparisons are blocked rather than guessing.
+
+Next work: implement explicit approved account/bucket/prefix plus fixture ownership and hashes; then add bounded independent mutation verification before enabling any mutation exercises. Add rendered preview, download disk readback and background per-request evidence without modifying Legacy. Complete owner-approved installed Chrome/live-R2 acceptance separately.
+
+## Verification
+
+- Focused `node --test tests/test-it.test.mjs tests/beta-explorer.test.mjs`: **87 pass, 0 fail**. Final latency-model check: **10 pass, 0 fail**.
+- Full regression through `npm run reliability:check`: **462 total, 452 pass, 10 fail**.
+- Fresh checkout of the starting commit: **445 total, 435 pass, the same 10 failures**. Failure names were compared; no new failure names relative to that base. The reliability classifier calls three of these “new” relative to its older seven-failure ledger; all three also fail in the fresh starting checkout.
+- Syntax, API registry and issue inventory pass. Architecture freshness fails on the starting checkout and current branch. Frozen historical hashes were not refreshed.
+- Draft 2020-12 JSON Schema validates the sample, all 60 unique IDs and allowed status/version values. Validator: jsonschema 4.26.0, installed only in temporary tooling.
+- Existing Tour, previews, listing, uploads, downloads, Worker and transfer fixture tests remain in the full suite. No installed Chrome, native disk readback, real credentials, live R2 mutation, deployment or release certification was attempted.
+
+Evidence: [validation summary](verification/test-it/validation-summary.json), [focused log](verification/test-it/focused.log), [baseline log](verification/test-it/baseline.log), [reliability log](verification/test-it/reliability.log), [sample export](verification/test-it/sample-fixture-results.json), [results schema](test-it-results.schema.json).
+
+The sample export contains **explicitly labeled local JSDOM/in-memory provider evidence**, with actual measured fixture timings. It is not a fabricated live session. It shows menu startup and one independently checked bucket listing; remaining records retain their actual untouched/blocked statuses.
+
+## Files
+
+Runtime: `extension/beta/test-it.mjs`, `test-session.mjs`, packaged `test-matrix.json`; integration in `explorer.mjs` and `explorer.html`; optional guide hooks in `guided-interaction.mjs`; passive API/transport hooks in `file-api.mjs` and `r2-adapter.mjs`; internal instrumentation option forwarding in `configuration.mjs`.
+
+Validation: `tests/test-it.test.mjs`, expanded actual-GUI harness/tests in `tests/beta-explorer.test.mjs`, `scripts/syntax-targets.json`, `docs/beta/test-it-results.schema.json`, and `docs/beta/verification/test-it/*`.
+
+---
+
+# Previous handoff (historical; current coverage is above)
+
 # Take the Tour handoff, October 27, 2026
 
 Branch: **beta-explorer**. Starting commit: `080881a166a8cd7c347be41795c57c2ebd22d6f2`.

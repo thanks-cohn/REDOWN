@@ -5,10 +5,19 @@ export function previewType(objectKey){
   const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',pdf:'application/pdf',txt:'text/plain',json:'text/plain',md:'text/plain',csv:'text/plain'};
   return types[ext]||(['markdown','xml','html','htm','js','mjs','ts','tsx','jsx','css','yaml','yml','py','rs','go','java','c','cpp','h','sh','bat','ps1','log'].includes(ext)?'text/plain':ext==='svg'?'image/svg+xml':null);
 }
-export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi}={}) {
+export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi,observe=()=>{}}={}) {
+  const stamp=()=>({monotonic_ms:performance.now(),utc:new Date().toISOString()});
+  const emit=(context,event)=>{try{observe(context,event);}catch{/* Passive evidence only. */}};
+  async function observedRequest(path,init={},options={}){
+    const request_id=crypto.randomUUID(),start=stamp(),context=options.evidenceContext;
+    emit(context,{kind:'http-dispatch',request_id,method:init.method||'GET',endpoint:path,...start});
+    try{const response=await http.request(path,init);emit(context,{kind:'http-headers',request_id,http_status:response.status,...stamp()});return {response,request_id};}
+    catch(error){emit(context,{kind:'http-error',request_id,error:error.message,cancelled:error.name==='AbortError',timeout:error.name==='TimeoutError',...stamp()});throw error;}
+  }
   async function message(type,input={},options={}) {
     options.signal?.throwIfAborted();
     let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision','cfExtractArchive'].includes(type);
+    const request_id=crypto.randomUUID();emit(options.evidenceContext,{kind:'ipc-dispatch',request_id,message_type:type,...stamp()});
     try {
       const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input,...(['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfArchiveEntries','cfExtractArchive'].includes(type)?{betaNoProvision:true}:{})});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
       const result=await Promise.race([transport,new Promise((_,reject)=>{
@@ -17,9 +26,10 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         options.signal?.addEventListener('abort',abort,{once:true});
         if(options.signal?.aborted)abort();
       })]);
+      emit(options.evidenceContext,{kind:'ipc-response',request_id,response:result,...stamp()});
       if(!result?.ok)throw Object.assign(Error(result?.error || 'Cloudflare did not confirm this request.'),{code:result?.code || result?.diagnosticError?.code,uncertain:writes&&(/did not confirm|may have|not confirmed|timed out|fetch failed|failed to fetch|network/i.test(result?.error||'')||/EXPLORER_(REQUEST_TIMEOUT|RESULT_UNCONFIRMED|NETWORK_ERROR)/.test(result?.diagnosticError?.code||result?.code||''))});
       return result;
-    } finally {clearTimeout(timer);options.signal?.removeEventListener('abort',abort);}
+    } catch(error){emit(options.evidenceContext,{kind:'ipc-error',request_id,error:error.message,cancelled:error.name==='AbortError',timeout:/^No final response/.test(error.message),...stamp()});throw error;} finally {clearTimeout(timer);options.signal?.removeEventListener('abort',abort);}
   }
 
   const base=l=>`/accounts/${encodeURIComponent(l.accountId)}/r2/buckets/${encodeURIComponent(l.bucketName)}/objects`;
@@ -28,8 +38,9 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     if(p)query.set('prefix',p);
     if(cursor)query.set('cursor',cursor);
     if(delimiter)query.set('delimiter',delimiter);
-    const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
+    const {response,request_id}=await observedRequest(base(l)+'?'+query,{signal:options.signal,cache:'no-store',timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs},options);
     const body=await response.json().catch(()=>null);
+    emit(options.evidenceContext,{kind:'http-body',request_id,response:body,...stamp()});
     if(!response.ok || body?.success===false){
       // Like Legacy listObjectsPage, retain the provider's diagnostic rather
       // than replacing e.g. 10023 with a generic HTTP 400 message.

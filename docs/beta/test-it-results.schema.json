@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.invalid/schemas/guided-testing-results-v1",
+  "title": "REDOWN Test It results v1",
+  "type": "object",
+  "required": ["schema", "schema_version", "redown_version", "session_id", "started_at", "environment", "master", "records", "coverage", "state", "known_limitations", "outstanding_test_objects", "cleanup_results"],
+  "properties": {
+    "schema": {"const": "redown.guided-testing.results.v1"},
+    "schema_version": {"const": "1.0.0"},
+    "session_id": {"type": "string", "pattern": "^S01-"},
+    "records": {
+      "type": "array", "minItems": 60, "maxItems": 60,
+      "items": {
+        "type": "object",
+        "required": ["exercise_id", "session_id", "definition_version", "feature", "interaction", "expected", "observed", "status", "reason", "disposition", "evidence_origin", "evidence", "ui_events", "operations", "requests", "timing", "verification", "latency_ms", "unavailable_measurements", "timestamp"],
+        "properties": {
+          "exercise_id": {"type": "string", "pattern": "^S01-(?:00[1-9]|0[1-5][0-9]|060)$"},
+          "status": {"enum": ["NOT_TESTED", "PASSED", "FAILED", "BLOCKED", "UNCERTAIN"]},
+          "disposition": {"enum": [null, "SKIPPED"]},
+          "requests": {"type": "array", "items": {"type": "object", "required": ["request_id", "operation_id", "kind", "http_status", "response_redacted"], "properties": {"kind": {"enum": ["http", "background_ipc"]}, "http_status": {"type": ["integer", "null"]}}}},
+          "latency_ms": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+          "verification": {"type": "object", "required": ["independently_verified", "source"], "properties": {"independently_verified": {"type": "boolean"}, "source": {"type": ["string", "null"]}}}
+        },
+        "allOf": [{"if": {"properties": {"status": {"const": "PASSED"}}}, "then": {"properties": {"observed": {"properties": {"gui_event_detected": {"const": true}}}, "verification": {"properties": {"independently_verified": {"const": true}, "source": {"type": "string", "minLength": 1}}}}}}]
+      }
+    },
+    "known_limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}

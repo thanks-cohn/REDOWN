@@ -1,3 +1,4 @@
+import {installTestIt} from '../extension/beta/test-it.mjs';
 import {installTour} from '../extension/beta/tour.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,6 +9,7 @@ import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
 import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
+const requireMatrix=await readFile(new URL('../docs/beta/REDOWN-COMPREHENSIVE-INTERACTION-TEST-MATRIX.json',import.meta.url),'utf8');
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const source={accountId:'fixture-account',bucketName:'disposable-fixture',prefix:''};
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -54,7 +56,7 @@ async function fixture(){
     for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag});}
     return Response.json({success:true,result:{objects,delimited:[...delimited]}});
   },async download(s,k,n,onState){assert.ok(stored.has(k));onState({state:'complete'});return 123;}};
-  const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
+  let evidenceObserver=()=>{};const adapter=createR2Adapter({send,http,observe:(...args)=>evidenceObserver(...args)});return {setEvidenceObserver(fn){evidenceObserver=fn;this.evidenceObserve=fn;},api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
 }
 test('Beta launcher is separate; original Explorer and context-menu pipeline stay in place',async()=>{
   const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),dom=new JSDOM(html);assert.match(dom.window.document.querySelector('#beta-explorer').textContent,/Beta Explorer/);assert.ok(dom.window.document.querySelector('#dashboard'));dom.window.close();
@@ -110,12 +112,12 @@ test('upload read-back detects corruption before touching the final destination'
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
 async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null}={}){
-  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
+  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({observe:(...args)=>f.evidenceObserve?.(...args),send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.installTestIt=async options=>{const installed=await installTestIt({...options,matrix:JSON.parse(requireMatrix)});f.testIt=installed;f.setEvidenceObserver(installed.observer.transport);return installed;};w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
@@ -566,4 +568,79 @@ test('tour completion and Escape clean up without cancelling active preview; no 
 test('disconnected tour, missing files, narrow viewport and unavailable interactions always allow Skip and X',async()=>{
   const f=await uiFixture({autoOpen:false,sendOverride:async m=>m.type==='cfAccounts'?{ok:false,error:'Connect Cloudflare first.'}:{ok:true,profiles:[]}});try{const {d,w}=f;Object.defineProperty(w,'innerWidth',{value:360,configurable:true});Object.defineProperty(w,'innerHeight',{value:640,configurable:true});tourMenu(f);tourNext(f,3);assert.match(d.querySelector('[data-guide-text]').textContent,/No buckets/);assert.equal(d.querySelector('[data-guide-next]').disabled,true);assert.equal(d.querySelector('[data-guide-skip]').hidden,false);tourNext(f,11);assert.equal(d.querySelector('[data-guide-next]').textContent,'Finish');const card=d.querySelector('.guide-card');assert.ok(parseFloat(card.style.left)>=10);assert.ok(parseFloat(card.style.top)>=10);card.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);assert.equal(d.querySelector('#connect').disabled,false);
   }finally{f.dom.window.close();}
+});
+
+test('Test It starts in the real Explorer, preserves all 60 results, resumes, and X removes every guide highlight',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card[aria-label="Test It"]'));
+    assert.equal(f.testIt.model.current().status,'PASSED');assert.equal(f.testIt.model.exportData().records.length,60);
+    d.querySelector('[data-guide-next]').click();assert.equal(f.testIt.model.session.index,1);assert.equal(f.testIt.model.current().status,'BLOCKED');
+    d.querySelector('[data-test-pause]').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true);d.querySelector('[data-test-pause]').click();
+    d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelector('.guide-card'),null);assert.equal(d.querySelectorAll('.guide-highlight').length,0);
+    d.querySelector('#test-it').click();assert.equal(f.testIt.model.session.index,1);assert.equal(f.testIt.model.session.records[0].status,'PASSED');
+    d.querySelector('[data-guide-exit]').click();d.querySelector('#take-tour').click();assert.ok(d.querySelector('.guide-card[aria-label="Take the Tour"]'));
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+test('Test It correlates an actual bucket GUI click to real adapter HTTP and fresh independent list verification',async()=>{
+  const f=await uiFixture(),{d,settle}=f;
+  try{
+    d.querySelector('#test-it').click();for(let i=0;i<8;i++)d.querySelector('[data-guide-next]').click();assert.equal(f.testIt.model.session.index,8);
+    d.querySelector('#buckets button').click();await settle(()=>f.testIt.model.current().status==='PASSED');const r=f.testIt.model.current();
+    assert.ok(r.ui_events.some(e=>e.type==='click'));assert.ok(r.requests.some(q=>q.kind==='http'&&q.http_status===200));assert.ok(r.requests.some(q=>q.verification&&q.outcome_confirmed));assert.equal(r.verification.independently_verified,true);assert.ok(r.latency_ms.action_to_verified_result>=0);
+    if(process.env.REDOWN_TEST_SAMPLE){const sample=f.testIt.model.exportData();sample.environment.execution='LOCAL_JSDOM_AND_IN_MEMORY_R2_FIXTURE';sample.known_limitations.unshift('This sample contains fixture HTTP responses and synthetic GUI events, never live Cloudflare evidence.');for(const item of sample.records)if(item.evidence_origin!=='NOT_OBSERVED')item.evidence_origin='LOCAL_JSDOM_FIXTURE';await (await import('node:fs/promises')).writeFile(process.env.REDOWN_TEST_SAMPLE,JSON.stringify(sample,null,2)+'\n');}
+    const json=JSON.stringify(f.testIt.model.exportData());assert.ok(!json.includes('fixture-account'));assert.ok(!json.includes('root.txt'));assert.ok(!json.includes('fixture-secret'));
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+test('Test It blocks actual Explorer mutations even during Pause, and explicit skip reasons never produce passes',async()=>{
+  const f=await uiFixture(),{d,settle}=f;
+  try{
+    d.querySelector('#test-it').click();d.querySelector('[data-test-pause]').click();d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='must-not-create';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes('Test It blocks cloud writes')&&!d.querySelector('#mkdir').disabled);
+    assert.ok(!f.messages.some(m=>m.type==='cfCreateFolder'));assert.ok(!f.stored.has('must-not-create/.redown'));
+    d.querySelector('[data-test-pause]').click();d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();assert.equal(f.testIt.model.session.index,1);d.querySelector('[data-test-reason]').value='No verifier in this build';d.querySelector('[data-guide-skip]').click();assert.equal(f.testIt.model.session.records[1].status,'NOT_TESTED');assert.equal(f.testIt.model.session.records[1].disposition,'SKIPPED');
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+test('Test It local view verification needs both actual view transitions, and empty-area menu exposes the existing selected-action gap',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    f.testIt.model.session.index=20;d.querySelector('#test-it').click();d.querySelector('#view').click();await new Promise(r=>setTimeout(r,30));assert.notEqual(f.testIt.model.current().status,'PASSED');d.querySelector('#view').click();await settle(()=>f.testIt.model.current().status==='PASSED');
+    d.querySelector('[data-guide-exit]').click();d.querySelector('[data-key="root.txt"]').click();f.testIt.model.session.index=26;d.querySelector('#test-it').click();d.querySelector('#dropzone').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,clientX:400,clientY:300}));await settle(()=>f.testIt.model.current().status==='FAILED');assert.equal(f.testIt.model.current().verification.checks.only_location_actions,false);
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+
+test('Test It verifies filter, each comparator, modifier selection, arrow focus and menu dismissal from actual GUI handlers',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    await f.bucket.put('another.txt','a');await f.bucket.put('z-last.txt','longer');d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="z-last.txt"]'));
+    const start=n=>{f.testIt.guide.stop();f.testIt.model.session.index=n-1;d.querySelector('#test-it').click();};
+    const pass=()=>settle(()=>f.testIt.model.current().status==='PASSED');
+    start(17);d.querySelector('#filter').value='txt';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));await pass();d.querySelector('#filter').value='';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));
+    for(const [n,value]of [[18,'name'],[19,'name-desc'],[20,'size']]){start(n);d.querySelector('#sort').value=value;d.querySelector('#sort').dispatchEvent(new w.Event('change',{bubbles:true}));await pass();}
+    start(22);d.querySelector('[data-key="root.txt"]').click();await pass();
+    start(23);d.querySelector('[data-key="another.txt"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));await pass();
+    f.testIt.guide.stop();d.querySelector('[data-key="another.txt"]').click();start(24);d.querySelector('[data-key="z-last.txt"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,shiftKey:true}));await pass();
+    f.testIt.guide.stop();d.querySelector('[data-key="root.txt"]').focus();start(25);d.querySelector('[data-key="root.txt"]').focus();d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));await pass();
+    start(26);d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));await pass();
+    start(28);d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await pass();
+    for(const n of [17,18,19,20,22,23,24,25,26,28]){const r=f.testIt.model.session.records[n-1];assert.equal(r.status,'PASSED');assert.ok(r.ui_events.length);assert.equal(r.verification.source,'independent_dom_snapshot');}
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+
+test('Test It verifies all seven navigation exercises against fresh distinct-bucket provider fixtures',async()=>{
+  const f=await uiFixture({autoOpen:false,sendOverride:twoBuckets,httpOverride:http=>({...http,request:async path=>bucketResponse(path)})}),{d,w,settle}=f;
+  try{
+    f.testIt.model.session.index=8;d.querySelector('#test-it').click();const pass=()=>settle(()=>f.testIt.model.current().status==='PASSED'),next=()=>d.querySelector('[data-guide-next]').click();
+    d.querySelector('[data-bucket="1234"]').click();await pass();next();d.querySelector('[data-bucket="12345"]').click();await pass();next();d.querySelector('[data-bucket="1234"]').click();await pass();next();d.querySelector('#refresh').click();await pass();next();d.querySelector('[data-key="Folder/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await pass();next();d.querySelector('#refresh').click();await pass();next();d.querySelector('#crumbs button').click();await pass();
+    for(let i=8;i<15;i++){const r=f.testIt.model.session.records[i];assert.equal(r.status,'PASSED',r.exercise_id);assert.ok(r.requests.some(q=>q.verification&&q.http_status===200));assert.ok(r.ui_events.length);assert.equal(r.verification.independently_verified,true);}
+  }finally{f.testIt?.destroy();f.dom.window.close();}
+});
+
+test('Test It reload restores only persisted evidence and resets interrupted monotonic milestones',async()=>{
+  const f=await uiFixture(),{d,settle}=f;let reloaded;
+  try{
+    d.querySelector('#test-it').click();d.querySelector('[data-guide-next]').click();const id=f.testIt.model.session.session_id;
+    f.testIt.model.session.index=16;f.testIt.model.action({type:'input',is_trusted:false});f.testIt.guide.stop();await settle(()=>f.storage.betaExplorerTestItV1?.index===16);
+    reloaded=await installTestIt({document:d,api:f.api,snapshot:()=>({}),storage:{get:async k=>({[k]:f.storage[k]}),set:async values=>Object.assign(f.storage,values)},matrix:JSON.parse(requireMatrix)});
+    assert.equal(reloaded.model.session.session_id,id);assert.equal(reloaded.model.session.records[0].status,'PASSED');assert.equal(reloaded.model.session.records[16].status,'UNCERTAIN');assert.equal(reloaded.model.session.records[16].timing.action,null);assert.ok(reloaded.model.session.records[16].evidence.some(e=>e.kind==='interrupted-document'));assert.equal(reloaded.model.session.records[39].status,'NOT_TESTED');
+  }finally{reloaded?.destroy();f.testIt?.destroy();f.dom.window.close();}
 });

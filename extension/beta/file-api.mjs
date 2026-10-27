@@ -13,7 +13,7 @@ export function name(value) {
 }
 export function entry(value) { return {key:key(value.key),folder:value.folder===true,displayName:value.displayName}; }
 const methods=['connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry'];
-export function createFileApi(adapter) {
+export function createFileApi(adapter,observer={}) {
   let preferences={};
   const api={version:1,capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),
     getPreferences(){return {...preferences};},
@@ -21,18 +21,22 @@ export function createFileApi(adapter) {
     setPreferences(value={}){if(!adapter.configuration)throw Error('This adapter has no runtime preferences.');preferences=adapter.configuration.validate(value);return {...preferences};},
     async run(operation,input={},options={}) {
     const id=crypto.randomUUID();
+    let evidenceContext;
     if(!methods.includes(operation)||typeof adapter[operation]!=='function')return {id,state:'failed',error:'This operation is not implemented.'};
     try {
+      observer.guard?.(operation,input);
+      try{evidenceContext=observer.start?.({id,operation,input,options});}catch{/* Evidence must not alter application operations. */}
+      options={...options,evidenceContext};
       options=adapter.configuration?adapter.configuration.resolve(operation,preferences,options):options;
       const onProgress=options.onProgress;options={...options,onProgress:event=>{try{onProgress?.(event);}catch{/* Presentation cannot change a provider outcome. */}}};
       options.signal?.throwIfAborted();options.onProgress({id,operation,phase:'started'});
       const data=await adapter[operation](input,options);
       const partial=Boolean(data?.errors?.length || data?.conflicts?.length || data?.partialMove);
       const state=data?.state || (partial?'partial':'completed');
-      options.onProgress?.({id,operation,phase:state});return {id,state,data};
+      options.onProgress?.({id,operation,phase:state});const result={id,state,data};try{observer.result?.(evidenceContext,result);}catch{}return result;
     } catch(error) {
       // Unknown writes must be reconciled, never automatically replayed.
-      return {id,state:error.uncertain?'uncertain':error.name==='AbortError'?'cancelled':'failed',error:error.message || 'Operation failed.',code:error.code,recoveryKey:error.recoveryKey};
+      const result={id,state:error.uncertain?'uncertain':error.name==='AbortError'?'cancelled':'failed',error:error.message || 'Operation failed.',code:error.code,recoveryKey:error.recoveryKey};try{observer.result?.(evidenceContext,result);}catch{}return result;
     }
   },async batch(operation,items,options={}) {
     const concurrency=options.batchConcurrency??preferences.batchConcurrency??adapter.configuration?.defaults.batchConcurrency??1;

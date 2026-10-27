@@ -1,0 +1,3118 @@
+{
+  "schema": "redown.guided-testing.results.v1",
+  "schema_version": "1.0.0",
+  "redown_version": "unknown",
+  "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+  "started_at": "2026-10-27T12:23:09.952Z",
+  "updated_at": "2026-10-27T12:23:10.025Z",
+  "environment": {
+    "user_agent": "Node.js/24",
+    "timing_origin": "actual performance.now instrumentation; browser document lifetime",
+    "execution": "LOCAL_JSDOM_AND_IN_MEMORY_R2_FIXTURE"
+  },
+  "master": {
+    "schema": "redown.guided-testing.master.v1",
+    "version": "1.0.0",
+    "commit": "f617d034168f88c6a15c0d5f24fc14c62aac7502",
+    "path": "docs/beta/REDOWN-COMPREHENSIVE-INTERACTION-TEST-MATRIX.json"
+  },
+  "index": 8,
+  "paused": false,
+  "state": {
+    "mutations_enabled": false,
+    "approved_scope": null,
+    "manifest": [],
+    "cleanup": "No Test It writes are enabled; no test-owned objects created."
+  },
+  "records": [
+    {
+      "exercise_id": "S01-001",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open Test It panel",
+      "interaction": "menu",
+      "expected": {
+        "description": "Test panel opens without leaving Explorer",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": true,
+        "provider_operation_detected": false
+      },
+      "status": "PASSED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "LOCAL_JSDOM_FIXTURE",
+      "evidence": [],
+      "ui_events": [
+        {
+          "type": "click",
+          "target": "test-it",
+          "monotonic_ms": 16580.252559,
+          "utc": "2026-10-27T12:23:09.970Z"
+        }
+      ],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": {
+          "monotonic_ms": 16580.244236,
+          "utc": "2026-10-27T12:23:09.970Z"
+        },
+        "visible": {
+          "monotonic_ms": 16580.257065,
+          "utc": "2026-10-27T12:23:09.970Z"
+        },
+        "verified": {
+          "monotonic_ms": 16580.26699,
+          "utc": "2026-10-27T12:23:09.970Z"
+        },
+        "verification_start": null
+      },
+      "verification": {
+        "checks": {
+          "guide_open": true,
+          "real_explorer_present": true
+        },
+        "independently_verified": true,
+        "source": "independent_dom_snapshot"
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": 0.012829000002966495,
+        "action_to_verified_result": 0.022754000001441455,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": "2026-10-27T12:23:09.970Z"
+    },
+    {
+      "exercise_id": "S01-002",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Review scope and consent",
+      "interaction": "panel",
+      "expected": {
+        "description": "No writes before explicit disposable scope approval",
+        "verification_method": "consent_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-003",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Choose disposable namespace",
+      "interaction": "panel",
+      "expected": {
+        "description": "Approved bucket/prefix is recorded and isolated",
+        "verification_method": "scope_guard"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-004",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Inventory fixture files",
+      "interaction": "panel",
+      "expected": {
+        "description": "Required type and size fixtures identified without uploading yet",
+        "verification_method": "fixture_manifest"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-005",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Inspect connection state",
+      "interaction": "sidebar",
+      "expected": {
+        "description": "Connected or disconnected status matches session",
+        "verification_method": "auth_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-006",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open Cloudflare connection",
+      "interaction": "button",
+      "expected": {
+        "description": "Existing login workflow starts without credentials in log",
+        "verification_method": "auth_event"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-007",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Select authorized account",
+      "interaction": "selector",
+      "expected": {
+        "description": "Bucket list belongs to chosen account",
+        "verification_method": "account_id"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-008",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Discover available buckets",
+      "interaction": "sidebar",
+      "expected": {
+        "description": "Accessible bucket names listed without provisioning",
+        "verification_method": "bucket_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "BLOCKED",
+      "reason": "This exercise has no complete evidence verifier in this build. Mutations, fixture scope, media rendering and dependent fixture workflows remain unimplemented.",
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-009",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open first bucket",
+      "interaction": "sidebar_click",
+      "expected": {
+        "description": "Real listing matches chosen bucket",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": true,
+        "provider_operation_detected": true
+      },
+      "status": "PASSED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "LOCAL_JSDOM_FIXTURE",
+      "evidence": [],
+      "ui_events": [
+        {
+          "type": "click",
+          "is_trusted": false,
+          "key": null,
+          "ctrl": false,
+          "shift": false,
+          "monotonic_ms": 16612.255879,
+          "utc": "2026-10-27T12:23:10.002Z"
+        }
+      ],
+      "operations": [
+        {
+          "operation_id": "2e9c2633-19f6-416c-964f-7228ebc9ab0c",
+          "operation": "list",
+          "verification": false,
+          "started": {
+            "monotonic_ms": 16615.919778,
+            "utc": "2026-10-27T12:23:10.006Z"
+          },
+          "state": "completed",
+          "finished": {
+            "monotonic_ms": 16619.017003,
+            "utc": "2026-10-27T12:23:10.009Z"
+          },
+          "error": null,
+          "code": null,
+          "elapsed_ms": 3.0972250000013446
+        },
+        {
+          "operation_id": "d5217b16-a1be-4e9b-81b1-76dd2bf407b0",
+          "operation": "list",
+          "verification": true,
+          "started": {
+            "monotonic_ms": 16630.269275,
+            "utc": "2026-10-27T12:23:10.020Z"
+          },
+          "state": "completed",
+          "finished": {
+            "monotonic_ms": 16634.239875,
+            "utc": "2026-10-27T12:23:10.024Z"
+          },
+          "error": null,
+          "code": null,
+          "elapsed_ms": 3.970600000000559
+        }
+      ],
+      "requests": [
+        {
+          "request_id": "311223d4-db4f-47e5-8ef6-a9e4b7d870c3",
+          "operation_id": "2e9c2633-19f6-416c-964f-7228ebc9ab0c",
+          "exercise_id": "S01-009",
+          "kind": "http",
+          "method": "GET",
+          "endpoint_redacted": "/accounts/[private]/r2/buckets/[private]/objects",
+          "message_type": null,
+          "dispatch": {
+            "monotonic_ms": 16616.013519,
+            "utc": "2026-10-27T12:23:10.006Z"
+          },
+          "headers": {
+            "monotonic_ms": 16617.326717,
+            "utc": "2026-10-27T12:23:10.007Z"
+          },
+          "processed": {
+            "monotonic_ms": 16618.139501,
+            "utc": "2026-10-27T12:23:10.008Z"
+          },
+          "http_status": 200,
+          "provider_code": null,
+          "provider_error_codes": [],
+          "duration_ms": 2.125982000001386,
+          "response_redacted": {
+            "success": true,
+            "object_count": 1,
+            "folder_count": 1,
+            "omitted_fields": "Private identifiers, object names, credentials and payloads are excluded."
+          },
+          "error": null,
+          "cancelled": false,
+          "timeout": false,
+          "retry_attempt": null,
+          "transferred_bytes": null,
+          "outcome_confirmed": true,
+          "verification": false
+        },
+        {
+          "request_id": "0d8f86b8-1194-4269-afde-4de09f7d17a1",
+          "operation_id": "d5217b16-a1be-4e9b-81b1-76dd2bf407b0",
+          "exercise_id": "S01-009",
+          "kind": "http",
+          "method": "GET",
+          "endpoint_redacted": "/accounts/[private]/r2/buckets/[private]/objects",
+          "message_type": null,
+          "dispatch": {
+            "monotonic_ms": 16630.348835,
+            "utc": "2026-10-27T12:23:10.020Z"
+          },
+          "headers": {
+            "monotonic_ms": 16632.776781,
+            "utc": "2026-10-27T12:23:10.022Z"
+          },
+          "processed": {
+            "monotonic_ms": 16633.696937,
+            "utc": "2026-10-27T12:23:10.023Z"
+          },
+          "http_status": 200,
+          "provider_code": null,
+          "provider_error_codes": [],
+          "duration_ms": 3.348101999999926,
+          "response_redacted": {
+            "success": true,
+            "object_count": 1,
+            "folder_count": 1,
+            "omitted_fields": "Private identifiers, object names, credentials and payloads are excluded."
+          },
+          "error": null,
+          "cancelled": false,
+          "timeout": false,
+          "retry_attempt": null,
+          "transferred_bytes": null,
+          "outcome_confirmed": true,
+          "verification": true
+        }
+      ],
+      "timing": {
+        "action": {
+          "monotonic_ms": 16612.234888,
+          "utc": "2026-10-27T12:23:10.002Z"
+        },
+        "visible": {
+          "monotonic_ms": 16630.066239,
+          "utc": "2026-10-27T12:23:10.020Z"
+        },
+        "verified": {
+          "monotonic_ms": 16634.751916,
+          "utc": "2026-10-27T12:23:10.024Z"
+        },
+        "verification_start": {
+          "monotonic_ms": 16630.127922,
+          "utc": "2026-10-27T12:23:10.020Z"
+        }
+      },
+      "verification": {
+        "checks": {
+          "expected_location": true,
+          "fresh_provider_query": true,
+          "fresh_list_success": true,
+          "same_context": true,
+          "displayed_objects_match": true
+        },
+        "independently_verified": true,
+        "source": "fresh_provider_list_and_dom"
+      },
+      "latency_ms": {
+        "action_to_dispatch": 3.7786310000010417,
+        "request_to_response": 1.3131979999998293,
+        "response_processing": 0.8127840000015567,
+        "action_to_visible_result": 17.831351000000723,
+        "action_to_verified_result": 22.51702800000203,
+        "verification_request": 4.623994000001403,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": "2026-10-27T12:23:10.002Z"
+    },
+    {
+      "exercise_id": "S01-010",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open second bucket",
+      "interaction": "sidebar_click",
+      "expected": {
+        "description": "Different bucket context and objects shown",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-011",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Return to first bucket",
+      "interaction": "sidebar_click",
+      "expected": {
+        "description": "First bucket restored without stale second-bucket items",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-012",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Refresh current bucket",
+      "interaction": "toolbar",
+      "expected": {
+        "description": "Same bucket listing reloads, path unchanged",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-013",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open nested folder",
+      "interaction": "double_click",
+      "expected": {
+        "description": "Breadcrumb and prefix update correctly",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-014",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Refresh nested folder",
+      "interaction": "toolbar",
+      "expected": {
+        "description": "Folder path preserved and current items reloaded",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-015",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Return through breadcrumb",
+      "interaction": "breadcrumb",
+      "expected": {
+        "description": "Parent folder displays correct contents",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-016",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Navigate back then forward",
+      "interaction": "navigation_controls",
+      "expected": {
+        "description": "History returns to expected locations if controls supported",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-017",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Filter file listing",
+      "interaction": "search",
+      "expected": {
+        "description": "Only matching loaded files shown; remote state unchanged",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-018",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Sort names ascending",
+      "interaction": "sort",
+      "expected": {
+        "description": "Visible names follow ascending order",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-019",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Sort names descending",
+      "interaction": "sort",
+      "expected": {
+        "description": "Visible names follow descending order",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-020",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Sort by size or newest",
+      "interaction": "sort",
+      "expected": {
+        "description": "Displayed order follows selected comparator",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-021",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Switch list to grid and back",
+      "interaction": "view_button",
+      "expected": {
+        "description": "Both views show same entries",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-022",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Single-click file",
+      "interaction": "left_click",
+      "expected": {
+        "description": "Exactly chosen file selected",
+        "verification_method": "selection_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-023",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Control-click multiple files",
+      "interaction": "ctrl_click",
+      "expected": {
+        "description": "Multiple specified items selected",
+        "verification_method": "selection_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-024",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Shift-click range",
+      "interaction": "shift_click",
+      "expected": {
+        "description": "Contiguous visual range selected",
+        "verification_method": "selection_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-025",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Navigate selection by arrow keys",
+      "interaction": "keyboard",
+      "expected": {
+        "description": "File focus/selection follows supported key behavior",
+        "verification_method": "selection_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-026",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Right-click selected file",
+      "interaction": "context_menu",
+      "expected": {
+        "description": "Applicable safe actions visible",
+        "verification_method": "menu_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-027",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Right-click empty file area",
+      "interaction": "context_menu",
+      "expected": {
+        "description": "Context menu offers location actions only",
+        "verification_method": "menu_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-028",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Dismiss context menu",
+      "interaction": "escape_or_outside_click",
+      "expected": {
+        "description": "Menu closes without operation",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-029",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Open Window Preview",
+      "interaction": "toolbar_or_context",
+      "expected": {
+        "description": "Selected supported file preview renders",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-030",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Navigate Window Preview backward/forward",
+      "interaction": "arrow_keys",
+      "expected": {
+        "description": "Adjacent supported file previews in display order",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-031",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Enter image-only Lightbox",
+      "interaction": "lightbox_button",
+      "expected": {
+        "description": "Only image and dark backdrop shown",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-032",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Exit Lightbox then Window Preview",
+      "interaction": "escape_twice",
+      "expected": {
+        "description": "First Escape returns to window; second closes it",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-033",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Switch to Side Preview",
+      "interaction": "preview_mode_selector",
+      "expected": {
+        "description": "Side pane opens while file list stays interactive",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-034",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Update Side Preview by selection",
+      "interaction": "left_click",
+      "expected": {
+        "description": "Pane updates to newly selected file",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-035",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Resize Side Preview divider",
+      "interaction": "drag",
+      "expected": {
+        "description": "Pane width changes within usable bounds",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-036",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Minimize and reopen Side Preview",
+      "interaction": "pane_buttons",
+      "expected": {
+        "description": "Pane collapses then reopens via Preview",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-037",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Expand and restore Side Preview",
+      "interaction": "pane_buttons",
+      "expected": {
+        "description": "Expanded pane restores prior dimensions",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-038",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Close Side Preview and reopen",
+      "interaction": "pane_buttons",
+      "expected": {
+        "description": "File list recovers space; pane reopens",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-039",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Preview non-image type",
+      "interaction": "preview",
+      "expected": {
+        "description": "Supported text PDF audio or video renders or explicit unsupported state",
+        "verification_method": "preview_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-040",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Create disposable folder",
+      "interaction": "new_folder",
+      "expected": {
+        "description": "Folder exists under approved test prefix",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-041",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Upload small image fixture",
+      "interaction": "upload_button",
+      "expected": {
+        "description": "Uploaded bytes match local source",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-042",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Upload text fixture via file picker",
+      "interaction": "upload_button",
+      "expected": {
+        "description": "Text file exists and checksum matches",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-043",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Upload nested folder via drop",
+      "interaction": "drag_drop",
+      "expected": {
+        "description": "Relative paths and bytes preserved",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-044",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Refresh after upload",
+      "interaction": "toolbar",
+      "expected": {
+        "description": "New files listed with correct metadata",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-045",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Copy image via context menu",
+      "interaction": "context_menu",
+      "expected": {
+        "description": "Clipboard set to copy without deleting source",
+        "verification_method": "clipboard_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-046",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Paste copied image into test folder",
+      "interaction": "toolbar_or_keyboard",
+      "expected": {
+        "description": "Destination exists and source remains; checksums match",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-047",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Rename copied image via F2",
+      "interaction": "keyboard",
+      "expected": {
+        "description": "New key exists; previous copy name absent; bytes same",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-048",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Duplicate renamed image",
+      "interaction": "toolbar_or_context",
+      "expected": {
+        "description": "Second independent object exists; bytes same",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-049",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Cut duplicated image with Ctrl+X",
+      "interaction": "keyboard",
+      "expected": {
+        "description": "Move intent recorded; source not yet deleted",
+        "verification_method": "clipboard_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-050",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Paste cut image to different test folder",
+      "interaction": "keyboard",
+      "expected": {
+        "description": "Destination bytes match; old key absent after confirmed move",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-051",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Drag-drop disposable image into folder",
+      "interaction": "drag_drop",
+      "expected": {
+        "description": "Move or copy semantics match keyboard modifiers and destination state",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-052",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Use Move To dialog on disposable text",
+      "interaction": "move_to_dialog",
+      "expected": {
+        "description": "Object relocated as requested without data loss",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-053",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Use Copy To dialog across approved buckets",
+      "interaction": "copy_to_dialog",
+      "expected": {
+        "description": "Target copy verified; original remains",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-054",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Download disposable image",
+      "interaction": "download",
+      "expected": {
+        "description": "Downloaded disk bytes independently match manifest",
+        "verification_method": "disk_sha256"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-055",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Inspect ZIP or CBZ fixture",
+      "interaction": "archive_action",
+      "expected": {
+        "description": "Entry list matches known archive manifest",
+        "verification_method": "archive_manifest"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-056",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Extract one archive entry to disposable folder",
+      "interaction": "archive_action",
+      "expected": {
+        "description": "Only selected entry appears with verified content",
+        "verification_method": "sha256_readback"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-057",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Inspect public URL availability",
+      "interaction": "get_url",
+      "expected": {
+        "description": "Address shown only when authorized and available; no secret exported",
+        "verification_method": "url_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-058",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Delete one confirmed disposable duplicate",
+      "interaction": "delete_dialog",
+      "expected": {
+        "description": "Target absent after deletion, unrelated objects present",
+        "verification_method": "provider_list"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-059",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Try unsupported preview and recover",
+      "interaction": "preview",
+      "expected": {
+        "description": "Explanation shown; browsing still functional",
+        "verification_method": "ui_state"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    },
+    {
+      "exercise_id": "S01-060",
+      "session_id": "S01-03f79269-f954-4b74-8115-68d066949cb8",
+      "definition_version": "1.0.0",
+      "feature": "Verify disposable cleanup and export",
+      "interaction": "test_panel",
+      "expected": {
+        "description": "All test-created objects accounted for; export includes exact outcomes",
+        "verification_method": "session_json"
+      },
+      "observed": {
+        "gui_event_detected": false,
+        "provider_operation_detected": false
+      },
+      "status": "NOT_TESTED",
+      "reason": null,
+      "disposition": null,
+      "evidence_origin": "NOT_OBSERVED",
+      "evidence": [],
+      "ui_events": [],
+      "operations": [],
+      "requests": [],
+      "timing": {
+        "action": null,
+        "visible": null,
+        "verified": null,
+        "verification_start": null
+      },
+      "verification": {
+        "independently_verified": false,
+        "source": null
+      },
+      "latency_ms": {
+        "action_to_dispatch": null,
+        "request_to_response": null,
+        "response_processing": null,
+        "action_to_visible_result": null,
+        "action_to_verified_result": null,
+        "verification_request": null,
+        "overall_transfer": null,
+        "throughput_mib_s": null
+      },
+      "unavailable_measurements": [
+        "Missing milestones are null; HTTP round trip includes transport and provider delays; internal server duration is unavailable."
+      ],
+      "timestamp": null
+    }
+  ],
+  "known_limitations": [
+    "This sample contains fixture HTTP responses and synthetic GUI events, never live Cloudflare evidence.",
+    "Partial runtime: supported exercise IDs are listed in coverage.",
+    "Cloud mutations are disabled during Test It, including Pause, until X exits.",
+    "Background IPC responses are application evidence, not raw provider HTTP responses.",
+    "Direct HTTP capture currently covers listing/stat paths only; internal retries are unavailable.",
+    "Previously running operations are not cancelled or attributed to Test It.",
+    "No disk SHA-256, mutation readback, archive manifest, rendered-media or live-provider acceptance is claimed.",
+    "Visible-result timing records DOM state observed on an animation frame, not physical display scanout.",
+    "Cross-document elapsed times are never calculated."
+  ],
+  "coverage": {
+    "counts": {
+      "PASSED": 2,
+      "BLOCKED": 7,
+      "NOT_TESTED": 51
+    },
+    "executable_ids": [
+      "S01-001",
+      "S01-009",
+      "S01-010",
+      "S01-011",
+      "S01-012",
+      "S01-013",
+      "S01-014",
+      "S01-015",
+      "S01-017",
+      "S01-018",
+      "S01-019",
+      "S01-020",
+      "S01-021",
+      "S01-022",
+      "S01-023",
+      "S01-024",
+      "S01-025",
+      "S01-026",
+      "S01-027",
+      "S01-028"
+    ],
+    "implemented_count": 20,
+    "passed": [
+      "S01-001",
+      "S01-009"
+    ],
+    "untested_variations": [
+      "action_method",
+      "file_type",
+      "file_size",
+      "file_count",
+      "extension_case",
+      "filename_ascii_unicode_special",
+      "path_depth",
+      "same_cross_bucket",
+      "permission_state",
+      "network_state",
+      "destination_conflict",
+      "sort_filter_view",
+      "preview_mode",
+      "viewport",
+      "cancellation",
+      "interruption",
+      "pagination"
+    ],
+    "unimplemented_ids": [
+      "S01-002",
+      "S01-003",
+      "S01-004",
+      "S01-005",
+      "S01-006",
+      "S01-007",
+      "S01-008",
+      "S01-016",
+      "S01-029",
+      "S01-030",
+      "S01-031",
+      "S01-032",
+      "S01-033",
+      "S01-034",
+      "S01-035",
+      "S01-036",
+      "S01-037",
+      "S01-038",
+      "S01-039",
+      "S01-040",
+      "S01-041",
+      "S01-042",
+      "S01-043",
+      "S01-044",
+      "S01-045",
+      "S01-046",
+      "S01-047",
+      "S01-048",
+      "S01-049",
+      "S01-050",
+      "S01-051",
+      "S01-052",
+      "S01-053",
+      "S01-054",
+      "S01-055",
+      "S01-056",
+      "S01-057",
+      "S01-058",
+      "S01-059",
+      "S01-060"
+    ]
+  },
+  "cleanup_results": "No Test It writes are enabled; no test-owned objects created.",
+  "outstanding_test_objects": []
+}

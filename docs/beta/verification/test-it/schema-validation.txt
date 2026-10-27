@@ -1,0 +1,1 @@
+PASS: JSON Schema Draft 2020-12 schema validation and sample validation; exactly 60 unique ordered IDs. jsonschema 4.26.0. Sample is explicitly JSDOM/in-memory fixture evidence, not live provider proof.
