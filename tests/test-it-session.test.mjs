@@ -16,7 +16,7 @@ function fixture(saved){
     rename:async({source,entry,newName})=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName}),
     delete:async({entries})=>{calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
   async function transfer(op,{entries,destination,source,newName,conflict}){calls.push(op);const results=[];for(const e of entries){const o=objects.get(e.key);let key=destination.prefix+(newName||e.key.split('/').pop());if(key===e.key&&conflict==='keep')key=destination.prefix+e.key.split('/').pop().replace(/(\.[^.]*)?$/,' (copy)$1');if(objects.has(key)){results.push({sourceKey:e.key,destinationKey:key,status:'conflict'});continue;}put(key,o.bytes);const d=objects.get(key);results.push({sourceKey:e.key,destinationKey:key,sourceEtag:o.etag,sourceVersion:o.version,destinationEtag:d.etag,destinationVersion:d.version,size:d.size,verified:true,status:'copied'});if(op==='move')objects.delete(e.key);}if(loseReply)throw Object.assign(Error('Lost response'),{uncertain:true});return {completed:results.filter(r=>r.status==='copied').length,results};}
-  const api=createFileApi(adapter),storage={set:async value=>{if(storageFail)throw Error('Storage unavailable');storage.saved=structuredClone(value.betaExplorerTestIt);}},session=createPracticeSession({api,storage,saved,approve:async()=>true,onEvidence:e=>events.push(e)});api.setPolicy(session);session.active=true;
+  const api=createFileApi(adapter),storage={set:async value=>{if(storageFail)throw Error('Storage unavailable');storage.saved=structuredClone(value.betaExplorerTestIt);storage.ownership=structuredClone(value.betaExplorerTestItOwnership);}},session=createPracticeSession({api,storage,saved,approve:async()=>true,onEvidence:e=>events.push(e)});api.setPolicy(session);session.active=true;
   const copy=(key='original.txt',prefix='practice/')=>api.run('copy',{source,destination:{...source,prefix},entries:[{key}],conflict:'skip'});
   return {objects,put,api,session,events,calls,storage,copy,set storageFail(v){storageFail=v;},set loseReply(v){loseReply=v;}};
 }
@@ -42,3 +42,26 @@ test('storage failure prevents dispatch and session resume preserves copy identi
 test('unrelated operation classes and folder recursion are blocked during practice',async()=>{const f=fixture();assert.equal((await f.api.run('upload',{})).state,'failed');assert.equal((await f.api.run('delete',{source,entries:[{key:'practice/',folder:true}]})).state,'failed');assert.deepEqual(f.calls,[]);});
 
 test('real adapter without atomic ownership support blocks all destructive practice operations',async()=>{const api=createFileApi({move:async()=>{throw Error('Must not dispatch');},rename:async()=>{throw Error('Must not dispatch');},delete:async()=>{throw Error('Must not dispatch');}}),session=createPracticeSession({api,storage:{set:async()=>{}},approve:async()=>true});api.setPolicy(session);session.active=true;for(const operation of ['move','rename','delete']){const r=await api.run(operation,{source,destination:source,entries:[{key:'x'}],entry:{key:'x'},newName:'y'});assert.equal(r.state,'failed');assert.match(r.error,/ownership/);}});
+
+test('restart replaces results and session ID, preserves ownership, and never mutates remote files',async()=>{
+ const f=fixture();await f.copy();const oldId=f.session.state.id,ownedId=f.session.state.objects[0].id;
+ f.session.state.index=42;f.session.state.records=[{exerciseId:1,verdict:'PASSED'}];await f.session.save();
+ const before=structuredClone([...f.objects]),calls=[...f.calls];await f.session.restart();
+ assert.notEqual(f.session.state.id,oldId);assert.equal(f.session.state.index,0);assert.deepEqual(f.storage.saved.records,[]);
+ assert.equal(f.session.owned(source,'practice/original.txt').id,ownedId);assert.equal(f.storage.ownership.objects[0].id,ownedId);assert.deepEqual([...f.objects],before);assert.deepEqual(f.calls,calls);
+});
+test('restart retains uncertain operations and old results when reconciliation cannot prove safety',async()=>{
+ const f=fixture();f.session.state.records=[{exerciseId:1,verdict:'PASSED'}];f.loseReply=true;await f.copy();const oldId=f.session.state.id;
+ await assert.rejects(f.session.restart(),/review/);assert.equal(f.session.state.id,oldId);assert.ok(f.session.state.pending);assert.equal(f.storage.saved.records[0].verdict,'PASSED');assert.deepEqual(f.calls,['copy']);
+});
+test('restart storage failure keeps current session and results',async()=>{
+ const f=fixture();const oldId=f.session.state.id;f.session.state.records=[{exerciseId:1}];f.storageFail=true;
+ await assert.rejects(f.session.restart(),/Storage/);assert.equal(f.session.state.id,oldId);assert.equal(f.session.state.records.length,1);
+});
+
+test('restart refuses an operation still in flight without resetting results',async()=>{
+ const f=fixture();let finish;const oldId=f.session.state.id;
+ const running=f.session.run('list',{}, {},()=>new Promise(resolve=>{finish=resolve;}));
+ assert.equal(f.session.busy,true);await assert.rejects(f.session.restart(),/current file operation/);assert.equal(f.session.state.id,oldId);
+ finish({entries:[]});await running;assert.equal(f.session.busy,false);await f.session.restart();assert.notEqual(f.session.state.id,oldId);
+});
