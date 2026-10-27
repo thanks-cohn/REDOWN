@@ -3,7 +3,7 @@ export function installTestItTools(doc){
   const button=doc.getElementById('test-it-tools-button'),menu=doc.getElementById('test-it-tools-menu'),wrap=button.parentElement;
   const items=()=>[...menu.querySelectorAll('button:not(:disabled)')];
   function close(restore=false){menu.hidden=true;button.setAttribute('aria-expanded','false');if(restore)button.focus();}
-  function open(last=false){menu.hidden=false;button.setAttribute('aria-expanded','true');const list=items();(last?list.at(-1):list[0])?.focus();}
+  function open(last=false){menu.hidden=false;doc.dispatchEvent(new doc.defaultView.CustomEvent('redown:gui',{detail:{action:'test-it-tools-open'}}));button.setAttribute('aria-expanded','true');const list=items();(last?list.at(-1):list[0])?.focus();}
   button.addEventListener('click',()=>menu.hidden?open():close(true));
   button.addEventListener('keydown',event=>{if(['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();event.stopPropagation();open(event.key==='ArrowUp');}});
   menu.addEventListener('click',event=>{if(event.target.closest('button'))close(menu.contains(doc.activeElement));});
