@@ -1,11 +1,16 @@
 import {providerDefaults,validatePreferences,resolveOptions} from './configuration.mjs';
 import {location,key,prefix,name,entry} from './file-api.mjs';
+export function previewType(objectKey){
+  const ext=objectKey.split('.').pop().toLowerCase();
+  const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',pdf:'application/pdf',txt:'text/plain',json:'text/plain',md:'text/plain',csv:'text/plain'};
+  return types[ext]||(['markdown','xml','html','htm','js','mjs','ts','tsx','jsx','css','yaml','yml','py','rs','go','java','c','cpp','h','sh','bat','ps1','log'].includes(ext)?'text/plain':ext==='svg'?'image/svg+xml':null);
+}
 export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi}={}) {
   async function message(type,input={},options={}) {
     options.signal?.throwIfAborted();
     let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision','cfExtractArchive'].includes(type);
     try {
-      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
+      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input,...(['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfArchiveEntries','cfExtractArchive'].includes(type)?{betaNoProvision:true}:{})});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
       const result=await Promise.race([transport,new Promise((_,reject)=>{
         timer=setTimeout(()=>reject(Object.assign(Error(writes?'No final response. Refresh both locations before retrying; the operation may have changed files.':'No final response. Refresh and try the read again.'),{uncertain:writes&&dispatched})),options.messageTimeoutMs??providerDefaults.messageTimeoutMs);
         abort=()=>reject(Object.assign(new Error(writes&&dispatched?'Cancellation requested after dispatch. The cloud operation may still complete; inspect before retrying.':'Operation cancelled.'),{name:'AbortError',uncertain:writes&&dispatched}));
@@ -22,7 +27,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     const l=location(target),query=new URLSearchParams({per_page:'1000',prefix:p,cursor,delimiter});
     const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
     const body=await response.json().catch(()=>null);
-    if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Error('Cloudflare could not list this folder. Refresh to inspect its current state.');
+    if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Object.assign(Error(response.status===401?'Cloudflare session expired (401). Reconnect Cloudflare.':response.status===403?'Cloudflare denied access to this folder (403). Check account authorization.':'Cloudflare could not list this folder (HTTP '+response.status+'). Refresh to inspect its current state.'),{code:'HTTP_'+response.status});
     const result=body.result,info=body.result_info || {};
     const objects=Array.isArray(result)?result:result.objects;
     const next=result?.cursor || info.cursor || '';
@@ -86,6 +91,17 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
   }
   return {
     configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
+    async connectionStatus({source},options={}){
+      const l=location(source),result=await message('profiles',{},options);
+      const profile=(result.profiles||[]).find(p=>p.type==='cloudflare-r2'&&p.accountId===l.accountId&&(p.bucketName||p.defaultBucketName)===l.bucketName);
+      if(!profile?.workerUrl||!profile?.token||!(profile.workerVersion>=5))return {ready:false,reason:'This bucket can be browsed, but file changes need its REDOWN Worker. Use Set up right-click destination.'};
+      const response=await http.boundedFetch(profile.workerUrl,{timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs,signal:options.signal,method:'POST',cache:'no-store',headers:{authorization:'Bearer '+profile.token,'content-type':'application/json','cache-control':'no-cache'},body:JSON.stringify({action:'capabilities'})});
+      const capabilities=await response.json().catch(()=>({}));
+      if(response.status===401||response.status===403)return {ready:false,reason:'The bucket Worker rejected its saved authorization. Explicit destination setup is required.'};
+      if(!response.ok)throw Error('Bucket Worker connection failed (HTTP '+response.status+'). Refresh before attempting changes.');
+      const ready=capabilities.ok===true&&capabilities.workerVersion>=5&&capabilities.safeTransfers===true&&capabilities.storageBound===true;
+      return {ready,reason:ready?'Bucket Worker is ready for safe file operations.':'Bucket Worker configuration needs an explicit update. Use Set up right-click destination.'};
+    },
     connect:(_,o)=>message('cfConnect',{},o),disconnect:(_,o)=>message('cfDisconnect',{},o),
     accounts:(_,o)=>message('cfAccounts',{},o),buckets:({accountId},o)=>message('cfBuckets',{accountId},o),
     archiveEntries:({source,key:k},o)=>message('cfArchiveEntries',{...location(source),key:key(k)},o),
@@ -107,7 +123,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         if(slash>=0){const folder=l.prefix+relative.slice(0,slash+1);entries.set(folder,{key:folder,folder:true,displayName:relative.slice(0,slash)});}
         else entries.set(k,{...object,key:k,folder:false,displayName:relative});
       }
-      return {entries:[...entries.values()],cursor:p.cursor};
+      return {entries:[...entries.values()],cursor:p.cursor,folderExists:!l.prefix||p.objects.length>0||p.delimited.length>0};
     },stat,
     async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)},o);},
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
@@ -145,9 +161,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     },
     async preview({source,entry:e},options={}) {
       if(e.folder)throw Error('Choose a file to preview.');
-      const ext=e.key.split('.').pop().toLowerCase();
-      const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',pdf:'application/pdf',txt:'text/plain',json:'text/plain',md:'text/plain',csv:'text/plain'};
-      const type=types[ext]||(['markdown','xml','html','htm','js','mjs','ts','tsx','jsx','css','yaml','yml','py','rs','go','java','c','cpp','h','sh','bat','ps1','log'].includes(ext)?'text/plain':ext==='svg'?'image/svg+xml':null);if(!type)throw Error('Inline preview is unavailable for this file type. Use Download.');
+      const type=previewType(e.key);if(!type)throw Error('Inline preview is unavailable for this file type. Use Download.');
       const signal=AbortSignal.any([AbortSignal.timeout(options.requestTimeoutMs??providerDefaults.requestTimeoutMs),...(options.signal?[options.signal]:[])]);
       const response=await http.request(base(location(source))+'/'+key(e.key).split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
       if(!response.ok||!response.body){await response.body?.cancel();throw Error('Cloudflare could not read this preview.');}

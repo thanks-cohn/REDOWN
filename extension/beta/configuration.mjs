@@ -7,7 +7,7 @@ export const providerDefaults=Object.freeze({
 });
 const message=['messageTimeoutMs'];
 export const operationOptions=Object.freeze({
-  archiveEntries:message,extractArchiveEntry:message,profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
+  connectionStatus:['messageTimeoutMs','requestTimeoutMs'],archiveEntries:message,extractArchiveEntry:message,profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
   list:['requestTimeoutMs'],stat:['requestTimeoutMs'],mkdir:message,copy:message,move:message,rename:message,delete:message,
   remoteIngest:message,publicUrls:message,
   preview:['requestTimeoutMs','previewMaxBytes','textPreviewMaxBytes'],download:[],

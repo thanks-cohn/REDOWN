@@ -1,29 +1,36 @@
 import {createFileApi,prefix,name} from './file-api.mjs';
-import {createR2Adapter} from './r2-adapter.mjs';
+import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
-let savedProfiles=[],previewUrl='',previewItem=null;
+let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0;
+const bucketCache=new Map();
+const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
+function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
+function failure(error){const message=error.message||'Request failed.';const state=/connect cloudflare|session changed|connect.*first/i.test(message)?'disconnected':/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');render();}
+async function rememberLocation(target){lastLocation={...target};try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
 function status(text){$('status').textContent=text;}
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=handler;return b;}
 function controls(){
-  for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','refresh','filter','path'])$(id).disabled=busy || (!current&&!['accounts','profiles'].includes(id));
-  $('back').disabled=busy||historyIndex<1;$('forward').disabled=busy||historyIndex>=history.length-1;$('up').disabled=busy||!current?.prefix;
-  for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=busy||!selected.size;
-  for(const id of ['rename','properties','get-url'])$(id).disabled=busy||selected.size!==1;
-  $('archive').disabled=busy||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
-  $('preview').disabled=busy||selected.size!==1||chosen()[0]?.folder;
-  $('prepare').disabled=busy||!current;$('create-bucket').disabled=busy||!$('accounts').value;
-  $('download').disabled=busy||!selected.size||chosen().some(e=>e.folder);
-  $('paste').disabled=busy||!clipboard||!current;
-  $('connect').disabled=busy;$('disconnect').disabled=busy;
+  const locked=busy||listingState==='loading';
+  for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','filter','path'])$(id).disabled=locked || (!current&&!['accounts','profiles'].includes(id));
+  $('refresh').disabled=locked;
+  $('back').disabled=locked||historyIndex<1;$('forward').disabled=locked||historyIndex>=history.length-1;$('up').disabled=locked||!current?.prefix;
+  for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=locked||!selected.size;
+  for(const id of ['rename','properties','get-url'])$(id).disabled=locked||selected.size!==1;
+  $('archive').disabled=locked||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
+  $('preview').disabled=locked||selected.size!==1||chosen()[0]?.folder||!previewType(chosen()[0]?.key||'');
+  $('prepare').disabled=locked||!current;$('create-bucket').disabled=locked||!$('accounts').value;
+  $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
+  $('paste').disabled=locked||!clipboard||!current;
+  $('connect').disabled=locked;$('disconnect').disabled=locked;
   $('selection').textContent=selected.size?selected.size+' selected · '+bytes(chosen().filter(e=>!e.folder).reduce((n,e)=>n+Number(e.size||0),0)):items.length+' items'+(cursor?' · more available':'');
-  $('more').hidden=!cursor;$('more').disabled=busy;
+  $('more').hidden=!cursor;$('more').disabled=locked;
   $('cancel').hidden=!busy;
-  document.querySelectorAll('#buckets button').forEach(b=>b.disabled=busy);
+  document.querySelectorAll('#buckets button').forEach(b=>b.disabled=locked);
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
 function render(){
@@ -40,11 +47,11 @@ function render(){
       else {selected=new Set([item.key]);anchor=index;}
       paintSelection();
     };
-    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():actions.preview());}}};
+    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():previewType(item.key)?actions.preview():actions.download());}}};
     row.oncontextmenu=event=>{event.preventDefault();if(busy)return;if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}showMenu(event.clientX,event.clientY);};
     return row;
   }));
-  $('empty').hidden=shown.length>0;$('empty').textContent=!current?'Connect Cloudflare and choose a bucket.':shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
+  $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
   controls();
@@ -64,21 +71,29 @@ async function request(operation,input,options={}) {
 }
 async function listing(add=false){
   if(!current)return;const ticket=++epoch,target=context();
-  const result=await request('list',{source:target,cursor:add?cursor:''});if(ticket!==epoch)return;
+  connectionState('loading','Loading R2 files…');render();
+  let result;try{result=await request('list',{source:target,cursor:add?cursor:''},{signal:controller?.signal});}catch(error){if(ticket!==epoch)return;throw error;}if(ticket!==epoch)return;
+  connectionState('ready');
   items=add?[...new Map([...items,...result.data.entries].map(e=>[e.key,e])).values()]:result.data.entries;cursor=result.data.cursor;
-  selected=new Set([...selected].filter(k=>items.some(e=>e.key===k)));render();
+  selected=new Set([...selected].filter(k=>items.some(e=>e.key===k)));render();return result.data;
 }
-async function navigate(target,record=true){
+async function navigate(target,record=true,restore=false){
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   document.querySelectorAll('#buckets button').forEach(b=>b.toggleAttribute('aria-current',b.dataset.bucket===current.bucketName));render();
-  try{await listing();status('Folder refreshed.');}catch(e){status(e.message);}
+  try{const result=await listing();if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');}}catch(e){failure(e);}
 }
-async function run(task,{refresh=true}={}) {
+async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
-  try{await task(controller.signal);if(refresh&&current){try{await listing();}catch(error){status($('status').textContent+' Folder refresh failed: '+error.message);}}}
-  catch(e){status(e.message||'Operation failed. Refresh before retrying.');}
+  try{if(checkWorker&&current)await ensureWorker(context(),controller.signal);controller.signal.throwIfAborted();await task(controller.signal);if(refresh&&current){const outcomeText=$('status').textContent;try{await listing();status(outcomeText);}catch(error){failure(Error(outcomeText+' Folder refresh failed: '+error.message));}}}
+  catch(e){status(e.message||'Operation failed. Refresh before retrying.');$('refresh').classList.add('attention');}
   finally{busy=false;controller=null;$('progress').hidden=true;controls();}
+}
+async function ensureWorker(source,signal){
+  const result=await request('connectionStatus',{source},{signal});
+  if(result.data.ready)return;
+  $('refresh').classList.add('attention');
+  throw Error(result.data.reason+' No file changes were sent.');
 }
 function outcome(result){
   const list=result.results || [result],bad=list.filter(r=>r.state!=='completed'&&r.state!=='started');
@@ -112,7 +127,7 @@ const actions={
   async paste(destination=context(),clip=clipboard){
     if(busy||!clip||!destination)return;const conflict=clip.conflict||$('conflict').value;
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
-    await run(async signal=>{const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
+    await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
   },
   async rename(){const e=chosen()[0],source=context();if(!e||busy)return;const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)})));},
   async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress})));},
@@ -143,12 +158,12 @@ async function droppedFiles(event,target=context()){
   });
 }
 $('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip).catch(e=>status(e.message));}else void droppedFiles(event);};
-$('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>listing(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
+$('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>refreshConnection(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';};
 $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
-function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir'].map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
+function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir','refresh'].filter(id=>!$(id).disabled).map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
@@ -167,18 +182,53 @@ document.addEventListener('keydown',event=>{
   else if(event.key==='Enter'&&event.target.closest?.('.file')){event.preventDefault();event.target.closest?.('.file').ondblclick();}
   else if(event.key===' '&&event.target.closest?.('.file')){event.preventDefault();event.target.closest?.('.file').click();}
 });
-async function loadBuckets(){
-  epoch++;items=[];selected.clear();current=null;clipboard=null;history=[];historyIndex=-1;cursor='';$('buckets').replaceChildren();render();const accountId=$('accounts').value;if(!accountId)return;
-  const ticket=epoch,result=await request('buckets',{accountId});if(ticket!==epoch)return;
-  const buckets=result.data.buckets||[];
-  $('buckets').replaceChildren(...buckets.map(bucket=>{const b=button('▱  '+bucket.name,()=>navigate({accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''}));b.dataset.bucket=bucket.name;return b;}));
-  status(buckets.length?'Choose a bucket to explore.':'No authorized buckets found.');
+function paintBuckets(accountId){
+  const buckets=bucketCache.get(accountId)||[];
+  $('buckets').replaceChildren(...buckets.map(bucket=>{const target={accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};const b=button('▱  '+bucket.name,()=>navigate(target));b.dataset.bucket=bucket.name;b.toggleAttribute('aria-current',sameBucket(current,target));return b;}));
+  controls();
 }
-async function loadAccounts(){const result=await request('accounts',{});accounts=result.data.accounts||[];$('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));await loadBuckets();await loadProfiles();}
-$('accounts').onchange=()=>loadBuckets().catch(e=>status(e.message));
+async function loadBuckets(){
+  const accountId=$('accounts').value;if(!accountId)return;
+  const ticket=++discoveryEpoch;
+  connectionState('loading','Discovering R2 buckets…');
+  try{const result=await request('buckets',{accountId});if(ticket!==discoveryEpoch)return;
+    bucketCache.set(accountId,result.data.buckets||[]);paintBuckets(accountId);
+    current=null;items=[];selected.clear();cursor='';clipboard=null;history=[];historyIndex=-1;epoch++;
+    const buckets=bucketCache.get(accountId),saved=lastLocation?.accountId===accountId&&buckets.some(b=>b.name===lastLocation.bucketName)?lastLocation:null;
+    if(saved||buckets.length===1)await navigate(saved||{accountId,bucketName:buckets[0].name,prefix:''},true,Boolean(saved));
+    else{connectionState(buckets.length?'choose':'empty-buckets',buckets.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets in this account.');render();}
+  }catch(e){if(ticket===discoveryEpoch)failure(e);}
+}
+async function loadAccounts(preferred=current||lastLocation){
+  const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
+  try{
+    const result=await request('accounts',{});if(ticket!==discoveryEpoch)return;
+    accounts=result.data.accounts||[];
+    const discoveries=await Promise.allSettled(accounts.map(async a=>({id:a.id,buckets:(await request('buckets',{accountId:a.id})).data.buckets||[]})));
+    if(ticket!==discoveryEpoch)return;bucketCache.clear();const errors=[];
+    discoveries.forEach((r,i)=>{if(r.status==='fulfilled')bucketCache.set(r.value.id,r.value.buckets);else errors.push((accounts[i].name||accounts[i].id)+': '+r.reason.message);});
+    $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=(a.name||a.id)+(bucketCache.has(a.id)?'':' · unavailable');return o;}));
+    const all=accounts.flatMap(a=>(bucketCache.get(a.id)||[]).map(b=>({accountId:a.id,accountName:a.name||'',bucketName:b.name,prefix:''})));
+    const restored=all.find(b=>sameBucket(b,preferred));
+    let restoredPrefix='';try{restoredPrefix=prefix(preferred?.prefix||'');}catch{}
+    const target=restored?{...restored,prefix:restoredPrefix}:all.length===1?all[0]:null;
+    const accountId=target?.accountId||all[0]?.accountId||accounts[0]?.id||'';
+    $('accounts').value=accountId;paintBuckets(accountId);
+    if(target){if(busy){current={...target};const result=await listing();if(result?.folderExists===false&&target.prefix){current.prefix='';await listing();}await rememberLocation(current);}else await navigate(target,true,Boolean(restored));}
+    else{current=null;items=[];cursor='';selected.clear();connectionState(all.length?'choose':errors.length?'failed':'empty-buckets',all.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets were found.');render();}
+    if(errors.length){if(!all.length)failure(Error(errors.join(' ')));$('refresh').classList.add('attention');status('Some accounts could not be discovered. '+errors.join(' ')+' Use Refresh to retry or Connect Cloudflare to renew authorization.');}
+    try{await loadProfiles();}catch(e){status('Files discovery finished; saved destinations unavailable: '+e.message);}
+  }catch(e){if(ticket===discoveryEpoch)failure(e);}
+}
+async function refreshConnection(){
+  const target=context()||lastLocation;
+  await loadAccounts(target);
+  if(current&&listingState==='ready'){try{const result=await request('connectionStatus',{source:context()});if(!result.data.ready){$('refresh').classList.add('attention');status('Live R2 files refreshed. '+result.data.reason);}else status('Live R2 contents, discovery and Worker readiness refreshed.');}catch(e){$('refresh').classList.add('attention');status('R2 listing succeeded. Worker readiness check failed: '+e.message+' No repair was attempted.');}}
+}
+$('accounts').onchange=()=>loadBuckets().catch(failure);
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
-$('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];clipboard=null;accounts=[];$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
+$('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();connectionState('disconnected');$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -187,8 +237,8 @@ async function loadProfiles(){
   $('profiles').replaceChildren(placeholder,...savedProfiles.map((p,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=(p.name||p.bucketName)+' /'+p.prefix;return o;}));
 }
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
-$('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadBuckets();status('Bucket created. Choose it to browse or set up right-click destinations.');},{refresh:false});};
-$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');});};
+$('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
+$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');},{checkWorker:false});};
 $('transfer-history').onclick=()=>run(async()=>{const result=await request('transferHistory',{});await dialog('Recent transfers',{input:false,details:JSON.stringify(result.data.history,null,2),confirm:'Close',description:'Original transfer history. Local Beta uploads and copies are not included.'});},{refresh:false});
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
@@ -244,4 +294,4 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
   await run(async signal=>{const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}});outcome(result);$('archive-status').textContent=$('status').textContent;for(let i=0;i<result.results.length;i++)if(result.results[i].state==='completed'){const check=[...document.querySelectorAll('#archive-files input')].find(c=>c.value===entries[i]);if(check)check.checked=false;}});
   $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
 };
-render();void loadAccounts().catch(e=>status(e.message));
+render();void (async()=>{try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

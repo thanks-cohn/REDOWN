@@ -145,3 +145,6 @@ h2{font-size:22px}
 #archive-files input{width:auto;margin:0;accent-color:var(--accent)}
 #archive-prefix{width:100%}
 #dropzone:has(#files.grid) .list-heading{display:none}
+
+#refresh.attention{box-shadow:0 0 0 2px #b42318;color:#b42318;background:#fff1ef}
+#dropzone[data-state=loading]{opacity:.7}

@@ -1534,11 +1534,13 @@ async function workerAcceptsProfile(profile,explorerTrace) {
     throw new Error(error?.message||"Bucket connection check failed. Retry Refresh; no repair was attempted.");
   }
 }
-async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false, explorerTrace = null) {
+// Beta opts out of implicit infrastructure changes; Legacy retains its existing defaults.
+async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false, explorerTrace = null, noProvision = false) {
   globalThis.redownExplorerBridge?.event(explorerTrace?.operationId,"worker.check","started");
   let profiles = await getProfiles();
   let profile = profiles.find(p => p.type === "cloudflare-r2" && p.accountId === accountId && p.bucketName === bucketName);
-  if (!forceRepair && profile?.workerVersion >= 5 && await workerAcceptsProfile(profile,explorerTrace)) return profile;
+  if (!forceRepair && profile?.workerVersion >= 5 && await workerAcceptsProfile(profile,explorerTrace)) return noProvision?{...profile,betaNoRepair:true}:profile;
+  if(noProvision)throw new Error("Bucket Worker needs explicit setup. Use Set up right-click destination in Beta; no infrastructure was changed.");
 
   return provisionCloudflareProfile({
     accountId,
@@ -1579,7 +1581,7 @@ async function callBucketWorker(profile, body, allowRepair = true) {
   }
   let active=profile;
   let {response,result}=await run(active);
-  if(allowRepair&&response.status===401){
+  if(allowRepair&&!profile.betaNoRepair&&response.status===401){
     active=await preparedProfile(active.accountId,active.bucketName,active.accountName,true);
     ({response,result}=await run(active));
   }
@@ -1691,9 +1693,9 @@ async function transferExplorerObjects(message) {
   if (!source.accountId || !source.bucketName || !destination.accountId || !destination.bucketName) throw new Error("Choose source and destination buckets");
   const expanded = await expandExplorerEntries(source.accountId, source.bucketName, message.entries || []);
   if (!expanded.length) throw new Error("The selected items no longer contain any files");
-  const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName,false,message.explorerTrace);
+  const sourceProfile = await preparedProfile(source.accountId, source.bucketName, source.accountName,false,message.explorerTrace,message.betaNoProvision===true);
   const destinationProfile = source.accountId === destination.accountId && source.bucketName === destination.bucketName
-    ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName,false,message.explorerTrace);
+    ? sourceProfile : await preparedProfile(destination.accountId, destination.bucketName, destination.accountName,false,message.explorerTrace,message.betaNoProvision===true);
   if(sourceProfile!==destinationProfile)await Promise.all([[sourceProfile,"source"],[destinationProfile,"destination"]].map(([profile,role])=>assertExplorerTransferSettings(profile,message.explorerTrace,role)));
   const roots = new Map((message.entries || []).filter(entry=>entry.folder).map(entry => [cleanExplorerPrefix(entry.key), entry]));
   const folderTargets=new Map(),folderConflicts=[],reserved=new Set();
@@ -1779,7 +1781,7 @@ async function transferExplorerObjects(message) {
 async function deleteExplorerObjects(message) {
   const source = message.source || {};
   const expanded = await expandExplorerEntries(source.accountId, source.bucketName, message.entries || []);
-  const profile = await preparedProfile(source.accountId, source.bucketName, source.accountName);
+  const profile = await preparedProfile(source.accountId, source.bucketName, source.accountName,false,message.explorerTrace,message.betaNoProvision===true);
   let completed = 0; const errors = [];
   for (let index = 0; index < expanded.length; index += 100) {
     try { const keys=expanded.slice(index,index+100).map(x => x.key); const receipt=await callBucketWorker(profile,{action:"deleteKeys",keys,explorerTrace:message.explorerTrace});if(!Array.isArray(receipt.deleted)||receipt.deleted.length!==keys.length||keys.some(key=>!receipt.deleted.includes(key)))throw new Error("Deletion was not confirmed. Refresh before retrying.");completed+=keys.length; }
@@ -1794,11 +1796,11 @@ async function renameExplorerEntry(message) {
   const oldName = entry.displayName || key.replace(/\/$/, "").split("/").pop();
   if (name === oldName) return { total:0, completed:0, errors:[] };
   const parent = key.replace(/\/$/, "").split("/").slice(0,-1).join("/");
-  return transferExplorerObjects({ operation:"move", source:message.source, destination:{...message.source,prefix:parent}, entries:[entry], conflict:"skip", renameTo:name,explorerTrace:message.explorerTrace });
+  return transferExplorerObjects({ operation:"move", source:message.source, destination:{...message.source,prefix:parent}, entries:[entry], conflict:"skip", renameTo:name,explorerTrace:message.explorerTrace,betaNoProvision:message.betaNoProvision });
 }
 async function createExplorerFolder(message) {
   const prefix = cleanExplorerPrefix(message.prefix) + cleanExplorerName(message.name);
-  const profile = await preparedProfile(message.accountId, message.bucketName, message.accountName);
+  const profile = await preparedProfile(message.accountId, message.bucketName, message.accountName,false,message.explorerTrace,message.betaNoProvision===true);
   await callBucketWorker(profile, { action:"ensurePrefixes", prefixes:[prefix],explorerTrace:message.explorerTrace });
   return { key:`${prefix}/` };
 }
@@ -1878,11 +1880,11 @@ async function ensureGitHubWorkflow(profile) {
   });
   if (!create.ok) throw new Error(`Could not install GitHub ingest workflow (${create.status})`);
 }
-async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, receipt = null) {
+async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, receipt = null, noProvision = false) {
   const prepared = await preparedProfile(
     profile.accountId,
     profile.bucketName,
-    profile.accountName
+    profile.accountName,false,null,noProvision
   );
   const folder = cleanExplorerPrefix(prefix || "").replace(/\/$/, "");
   // Older Workers normalize these paths. Refuse before writing unless exact paths
@@ -2488,7 +2490,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         try {
           if(Object.hasOwn(message,"prefix")&&typeof message.prefix!=="string")throw new Error("Choose a valid destination folder.");
           const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
-            ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined)
+            ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,null,message.betaNoProvision===true)
             : await ingest(profile, sourceUrl, category, message.filename || undefined);
           await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
           return sendResponse({ ok:true, location });
@@ -2569,7 +2571,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"createReadUrl",key,ttl:message.ttl || 900})) });
       }
       if (message?.type === "cfArchiveEntries") {
-        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
+        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName,false,message.explorerTrace,message.betaNoProvision===true);
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"listArchive",key:message.key})) });
       }
       if (message?.type === "cfArchiveEntryUrl") {
@@ -2577,7 +2579,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"createArchiveEntryReadUrl",key:message.key,entry:message.entry,contentType:message.contentType})) });
       }
       if (message?.type === "cfExtractArchive") {
-        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
+        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName,false,message.explorerTrace,message.betaNoProvision===true);
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"extractArchiveEntries",key:message.key,entries:message.entries,destinationPrefix:message.destinationPrefix || ""})) });
       }
       if (message?.type === "cfTransferArchive") {

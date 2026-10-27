@@ -5,7 +5,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
-import {createR2Adapter} from '../extension/beta/r2-adapter.mjs';
+import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const source={accountId:'fixture-account',bucketName:'disposable-fixture',prefix:''};
@@ -31,7 +31,7 @@ async function fixture(){
   vm.runInContext(extract('async function explorerDirectoryExists(','function objectKeyFromLocation('),context);
   context.listObjectsPage=async(a,b,p='',cursor='')=>({objects:[...stored.values()].filter(o=>o.key.startsWith(p)).map(({key,size,etag,httpMetadata})=>({key,size,etag,httpMetadata})),cursor:'',truncated:false});
   const send=async m=>{messages.push(m);try{switch(m.type){
-    case 'profiles':return {ok:true,profiles:[{id:'fixture-profile',type:'cloudflare-r2',name:'Saved fixture',...source,defaultPrefix:'Photos/',token:'must-not-leak',workerUrl:'https://secret.fixture'}]};
+    case 'profiles':return {ok:true,profiles:[{id:'fixture-profile',type:'cloudflare-r2',name:'Saved fixture',...source,defaultPrefix:'Photos/',token:profile.token,workerUrl:profile.workerUrl,workerVersion:6}]};
     case 'transferHistory':return {ok:true,transferHistory:[{ok:true,location:'fixture.txt'}]};
     case 'cfPublicAddresses':return {ok:true,accountId:source.accountId,bucketName:source.bucketName,addresses:[{label:'R2 domain',base:'https://fixture.r2.dev',state:'configured'}]};
     case 'cfCreateBucket':return {ok:true,bucket:{name:m.name}};
@@ -47,7 +47,7 @@ async function fixture(){
     case 'ingest':return {ok:true,location:'https://fixture.invalid/remote-result'};
     default:throw Error('Unexpected message '+m.type);
   }}catch(e){return {ok:false,error:e.message};}};
-  const http={async request(path,options={}){requests.push({path,options});if(options.method==='PUT'){if(cancelled)throw Error('Disconnected');const k=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/');await bucket.put(k,options.body,{httpMetadata:{contentType:options.headers['content-type']}});return Response.json({success:true,result:{key:k}});}
+  const http={async boundedFetch(url,options){assert.equal(url,profile.workerUrl);assert.equal(JSON.parse(options.body).action,'capabilities');return worker.fetch(new Request(url,options),{STORAGE:bucket});},async request(path,options={}){requests.push({path,options});if(options.method==='PUT'){if(cancelled)throw Error('Disconnected');const k=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/');await bucket.put(k,options.body,{httpMetadata:{contentType:options.headers['content-type']}});return Response.json({success:true,result:{key:k}});}
     if(path.includes('/objects/')){const k=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/'),o=stored.get(k);return o?new Response(new Blob([o.bytes]).stream()):new Response(null,{status:404});}
     const u=new URL('https://fixture.invalid'+path),p=u.searchParams.get('prefix')||'',delimiter=u.searchParams.get('delimiter'),delimited=new Set(),objects=[];
     for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag});}
@@ -108,22 +108,22 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture(){
-  const f=await fixture();await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');
+async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true}={}){
+  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));w.chrome={storage:{onChanged:{addListener(){}}}};
+  }:value]));const storage={betaExplorerLocation:saved};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   w.eval(ui.replace(/^import .*;\n/gm,''));
-  const settle=async fn=>{for(let i=0;i<80;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
-  await settle(()=>w.document.querySelector('#buckets button'));w.document.querySelector('#buckets button').click();await settle(()=>w.document.querySelector('[data-key="root.txt"]'));
+  const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
+  await settle(()=>w.document.querySelector('#buckets button'));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
   return {...f,dom,w,d:w.document,settle};
 }
 test('actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API',async()=>{
@@ -246,7 +246,7 @@ test('archive dialog and destination chooser route actual extraction and copy th
 test('verification deadline and inactivity overrides interrupt stalled read-back without replay or final commit',async()=>{
   for(const mode of ['idle','deadline']){
     let puts=0,commits=0,cancelled=false;
-    const http={async request(path,options={}){
+    const http={async boundedFetch(url,options){assert.equal(url,profile.workerUrl);assert.equal(JSON.parse(options.body).action,'capabilities');return worker.fetch(new Request(url,options),{STORAGE:bucket});},async request(path,options={}){
       if(options.method==='PUT'){puts++;return Response.json({success:true});}
       if(path.includes('/objects/'))return new Response(new ReadableStream({cancel(){cancelled=true;}}));
       const p=new URL('https://fixture'+path).searchParams.get('prefix');return Response.json({success:true,result:{objects:p.startsWith('.redown-beta-uploads/')?[{key:p,size:1}]:[]}});
@@ -289,5 +289,61 @@ test('dropping a directory on Beta uploads nested file bytes through the univers
     const directory={name:'Dropped',isDirectory:true,createReader(){return {readEntries(resolve){resolve(read?[]:[{name:file.name,isFile:true,file:resolve=>resolve(file)}]);read=true;}};}};
     const event=new w.Event('drop',{bubbles:true,cancelable:true});Object.defineProperty(event,'dataTransfer',{value:{items:[{kind:'file',webkitGetAsEntry:()=>directory}],files:[]}});d.querySelector('#dropzone').dispatchEvent(event);
     await settle(()=>f.stored.has('Dropped/雪.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Dropped/雪.txt').bytes.toString(),'dropped bytes');assert.ok(f.requests.some(r=>r.options.method==='PUT'));
+  }finally{f.dom.window.close();}
+});
+
+
+test('startup automatically opens the sole bucket and persists folder navigation without provisioning',async()=>{
+  const f=await uiFixture();try{assert.ok(f.d.querySelector('[data-key="root.txt"]'));assert.equal(f.storage.betaExplorerLocation.bucketName,source.bucketName);f.d.querySelector('[data-key="Photos/"]').dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await f.settle(()=>f.storage.betaExplorerLocation.prefix==='Photos/');assert.ok(!f.messages.some(m=>m.type==='cfProvision'));}finally{f.dom.window.close();}
+});
+test('startup restores an accessible saved bucket and folder',async()=>{
+  const f=await uiFixture({saved:{...source,prefix:'Photos/'},autoOpen:false});try{await f.settle(()=>f.d.querySelector('[data-key="Photos/one.jpg"]'));assert.equal(f.d.querySelector('#heading').textContent,source.bucketName);assert.ok(!f.d.querySelector('[data-key="root.txt"]'));}finally{f.dom.window.close();}
+});
+test('multiple accounts are discovered and a sole bucket in the second account opens automatically',async()=>{
+  const f=await uiFixture({sendOverride:async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:'empty',name:'Empty'}, {id:source.accountId,name:'Fixture'}]}:m.type==='cfBuckets'?{ok:true,buckets:m.accountId==='empty'?[]:[{name:source.bucketName}]}:{ok:true,profiles:[]}});try{assert.equal(f.d.querySelector('#accounts').value,source.accountId);assert.ok(f.d.querySelector('[data-key="root.txt"]'));}finally{f.dom.window.close();}
+});
+test('multiple buckets present an immediate choice and Refresh works with no selected bucket',async()=>{
+  let discoveries=0;const f=await uiFixture({autoOpen:false,sendOverride:async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?(discoveries++,{ok:true,buckets:[{name:source.bucketName},{name:'second-bucket'}]}):{ok:true,profiles:[]}});try{assert.equal(f.d.querySelectorAll('#buckets button').length,2);assert.match(f.d.querySelector('#empty').textContent,/Choose a bucket/);assert.equal(f.d.querySelector('#refresh').disabled,false);f.d.querySelector('#refresh').click();await f.settle(()=>discoveries===2&&!f.d.querySelector('#refresh').disabled);f.d.querySelector('#buckets button').click();await f.settle(()=>f.d.querySelector('[data-key="root.txt"]'));}finally{f.dom.window.close();}
+});
+test('authorization listing errors remain distinct from empty folders and Refresh recovers',async()=>{
+  let denied=true;const f=await uiFixture({autoOpen:false,httpOverride:http=>({...http,request:async(...args)=>denied?Response.json({success:false},{status:403}):http.request(...args)})});try{await f.settle(()=>f.d.querySelector('#dropzone').dataset.state==='unauthorized');assert.match(f.d.querySelector('#empty').textContent,/authorization/);assert.ok(f.d.querySelector('#refresh').classList.contains('attention'));denied=false;f.d.querySelector('#refresh').click();await f.settle(()=>f.d.querySelector('[data-key="root.txt"]')&&!f.d.querySelector('#refresh').disabled);assert.equal(f.d.querySelector('#dropzone').dataset.state,'ready');}finally{f.dom.window.close();}
+});
+test('missing Worker setup blocks a GUI mutation before any write and Refresh never provisions',async()=>{
+  const f=await uiFixture({sendOverride:async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:source.bucketName}]}:{ok:true,profiles:[]}});try{f.d.querySelector('[data-key="root.txt"]').click();f.d.querySelector('#duplicate').click();await f.settle(()=>/No file changes were sent/.test(f.d.querySelector('#status').textContent));assert.ok(!f.stored.has('root (copy).txt'));assert.ok(!f.messages.some(m=>['cfProvision','cfTransferObjects'].includes(m.type)));f.d.querySelector('#refresh').click();await f.settle(()=>/Set up right-click destination/.test(f.d.querySelector('#status').textContent)&&!f.d.querySelector('#refresh').disabled);assert.ok(f.d.querySelector('#refresh').classList.contains('attention'));}finally{f.dom.window.close();}
+});
+
+
+test('a removed saved folder falls back to the live bucket root',async()=>{const f=await uiFixture({saved:{...source,prefix:'removed/'}});try{await f.settle(()=>f.storage.betaExplorerLocation.prefix==='');assert.ok(f.d.querySelector('[data-key="root.txt"]'));}finally{f.dom.window.close();}});
+test('Beta refuses missing Worker provisioning while legacy preparation keeps its default behavior',async()=>{
+  const start=background.indexOf('async function preparedProfile('),end=background.indexOf('async function callBucketWorker(',start);let deployments=0;
+  const context=vm.createContext({getProfiles:async()=>[],workerAcceptsProfile:async()=>false,provisionCloudflareProfile:async()=>{deployments++;return {legacy:true};}});
+  vm.runInContext(background.slice(start,end),context);
+  await assert.rejects(context.preparedProfile('a','b','',false,null,true),/explicit setup/);assert.equal(deployments,0);
+  assert.equal((await context.preparedProfile('a','b')).legacy,true);assert.equal(deployments,1);
+});
+test('Beta 401 Worker response is not repaired or replayed after readiness changes',async()=>{
+  let calls=0,repairs=0;const context=vm.createContext({RedownCloudflareApi:{boundedFetch:async()=>{calls++;return Response.json({ok:false,error:'Unauthorized'},{status:401});}},preparedProfile:async()=>{repairs++;return {};}});
+  const start=background.indexOf('async function callBucketWorker('),end=background.indexOf('async function expandExplorerEntries(',start);vm.runInContext(background.slice(start,end),context);
+  await assert.rejects(context.callBucketWorker({workerUrl:'https://fixture.invalid',token:'fixture',betaNoRepair:true},{action:'transferBatch'}),/401/);assert.equal(calls,1);assert.equal(repairs,0);
+});
+
+
+test('unsupported formats do not advertise inline Preview in the context menu',async()=>{const f=await uiFixture();try{await f.bucket.put('program.exe','bytes');f.d.querySelector('#refresh').click();await f.settle(()=>f.d.querySelector('[data-key="program.exe"]')&&!f.d.querySelector('#refresh').disabled);const row=f.d.querySelector('[data-key="program.exe"]');row.dispatchEvent(new f.w.MouseEvent('contextmenu',{bubbles:true}));assert.ok(![...f.d.querySelectorAll('#context button')].some(b=>b.textContent==='Preview'));assert.ok([...f.d.querySelectorAll('#context button')].some(b=>b.textContent==='Download'));}finally{f.dom.window.close();}});
+
+
+test('GUI upload, independent fixture SHA-256, rename, copy, nested move, download and deletion reconcile the file list',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    const bytes=Buffer.alloc(51*1024*1024,0x6d),file=new File([bytes],'disposable-51MiB.bin');file.arrayBuffer=()=>{throw Error('UI must forward the File without buffering it');};
+    Object.defineProperty(d.querySelector('#picker'),'files',{configurable:true,value:[file]});d.querySelector('#picker').dispatchEvent(new w.Event('change'));
+    await settle(()=>d.querySelector('[data-key="disposable-51MiB.bin"]')&&!d.querySelector('#upload').disabled);
+    assert.equal(hash(f.stored.get(file.name).bytes),hash(bytes));
+    d.querySelector('[data-key="disposable-51MiB.bin"]').click();d.querySelector('#rename').click();d.querySelector('#dialog-input').value='renamed.bin';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="renamed.bin"]')&&!d.querySelector('#upload').disabled);
+    d.querySelector('[data-key="renamed.bin"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="renamed (copy).bin"]')&&!d.querySelector('#upload').disabled);
+    d.querySelector('[data-key="renamed (copy).bin"]').click();d.querySelector('#cut').click();d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/renamed (copy).bin"]')&&!d.querySelector('#upload').disabled);
+    assert.equal(hash(f.stored.get('Photos/renamed (copy).bin').bytes),hash(bytes));assert.ok(!f.stored.has('renamed (copy).bin'));
+    d.querySelector('[data-key="Photos/renamed (copy).bin"]').click();d.querySelector('#download').click();await settle(()=>/Chrome reports download complete/.test(d.querySelector('#status').textContent)&&!d.querySelector('#upload').disabled);
+    d.querySelector('#delete').click();d.querySelector('#dialog-confirm').click();await settle(()=>!f.stored.has('Photos/renamed (copy).bin')&&!d.querySelector('#upload').disabled);assert.ok(!d.querySelector('[data-key="Photos/renamed (copy).bin"]'));assert.equal(hash(f.stored.get('renamed.bin').bytes),hash(bytes));
+    assert.ok(f.messages.filter(m=>['cfTransferObjects','cfRenameEntry','cfDeleteObjects'].includes(m.type)).every(m=>m.betaNoProvision===true));
   }finally{f.dom.window.close();}
 });
