@@ -25,11 +25,11 @@ class RedownError(RuntimeError):
         super().__init__(code)
 
 class Client:
-    def __init__(self, command: Sequence[str], *, cwd: str | None = None, timeout: float = 30):
+    def __init__(self, command: Sequence[str], *, cwd: str | None = None, timeout: float = 30, env: dict | None = None):
         if not command or isinstance(command, str) or timeout <= 0:
             raise ValueError("Explicit command and positive timeout required")
         self.timeout = timeout
-        self._process = subprocess.Popen(list(command), cwd=cwd, stdin=subprocess.PIPE,
+        self._process = subprocess.Popen(list(command), cwd=cwd, env=env, stdin=subprocess.PIPE,
                                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, bufsize=0)
         self._output = io.BufferedReader(self._process.stdout)
         self._lock = threading.Lock()

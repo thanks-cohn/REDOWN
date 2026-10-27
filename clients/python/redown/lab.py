@@ -386,21 +386,27 @@ def main():
     parser.add_argument('--operation',choices=['upload','mkdir','read','copy','metadata','list'],default='upload')
     parser.add_argument('--smoke',action='store_true',help='Explicitly request fresh eight-byte write after Doctor; extension write approval still required')
     parser.add_argument('--directory')
+    parser.add_argument('--owner-config', help='Explicit expiring standalone universal-engine owner scope JSON; complete action only')
+    parser.add_argument('--journal', help='New durable standalone engine journal path')
     parser.add_argument('--depth',choices=['Quick','Comprehensive','Stress'],default='Quick')
     parser.add_argument('--profile',choices=['Low RAM','Balanced','Maximum','Custom'],default='Balanced')
     parser.add_argument('--memory-mib',type=int,default=128)
     parser.add_argument('--concurrency',type=int,default=2)
     parser.add_argument('--buffer-bytes',type=int,default=65536)
-    parser.add_argument('--offline', action='store_true', help='Scan/plan without connecting; cloud cases remain blocked')
+    parser.add_argument('--offline', action='store_true', help='Scan/plan without connecting; cloud cases remain NOT_TESTED')
     parser.add_argument('--max-files', type=int, default=100000)
     parser.add_argument('--max-file-bytes', type=int, default=1024**3)
     parser.add_argument('--max-total-bytes', type=int, default=4*1024**3)
     parser.add_argument('--root', help='Authorized root as JSON')
     parser.add_argument('--source', help='Exact test object identity as JSON')
     parser.add_argument('--expected-sha256')
+    parser.add_argument('--manifest', help='Relative SHA-256 JSON manifest path; defaults to manifest.json when present')
+    parser.add_argument('--artifact', action='append', default=[], help='Exact relative non-payload artifact path, repeatable; never exempted by pattern')
     parser.add_argument('--from-report', help='Saved interrupted Adaptive Laboratory JSON; reconciliation only')
     parser.add_argument('--report', default='redown-lab-report.json')
     args = parser.parse_args()
+    if args.owner_config and (args.action != 'complete' or args.offline or not args.journal):
+        parser.error('--owner-config requires online complete and --journal')
     if args.action == 'gui':
         gui(); return 0
     if args.action == 'reconcile':
@@ -428,11 +434,26 @@ def main():
         doctor_save(report,args.report); print(json.dumps(report,indent=2)); return EXIT[report['status']]
     if args.action == 'complete':
         if not args.directory: parser.error('--directory is required')
+        if Path(args.report).resolve().is_relative_to(Path(args.directory).resolve()):
+            parser.error('Save --report outside the source corpus to preserve input files')
         settings=resource_profile(args.profile,args.memory_mib,args.concurrency,args.buffer_bytes)
         def scan_files(connected=None):
-            publish_progress(connected,'Inventorying files')
-            return inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes,progress=lambda p: publish_progress(connected,**p))
-        checkpoint=lambda r: adaptive_persist(r,args.report)
+            import sys
+            def scan_progress(stage, completed=0):
+                print(json.dumps(dict(stage=stage, completed=completed)), file=sys.stderr, flush=True)
+                publish_progress(connected, stage, completed)
+            scan_progress('Inventorying files')
+            scan = inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes,progress=lambda p: scan_progress(**p))
+            from .manifest import compare
+            scan['manifestVerification'] = compare(scan, args.manifest or 'manifest.json', args.artifact, required=bool(args.manifest))
+            return scan
+        last_progress = [0.0]
+        def checkpoint(r):
+            adaptive_persist(r,args.report)
+            if r.get('finished') or time.monotonic() - last_progress[0] >= 1:
+                import sys
+                last_progress[0] = time.monotonic()
+                print(json.dumps({k:r.get(k) for k in ('currentOperation','completedCases','remainingCases','verifiedFiles','verifiedBytes','elapsedSeconds','bytesPerSecond','ramObservation','coverage')}, ensure_ascii=True), file=sys.stderr, flush=True)
         if args.offline:
             # Local-only execution must never instantiate the extension or claim a
             # provider authorization failure. Cloud operations remain NOT_TESTED.
@@ -443,12 +464,13 @@ def main():
                 'mode': 'OFFLINE_LOCAL_ONLY',
                 'acceptance': 'INCOMPLETE',
                 'localInventory': {
-                    'status': 'PASS' if scan['complete'] and not scan['exclusions'] else 'INCOMPLETE',
+                    'status': 'FAIL' if scan['manifestVerification']['status'] == 'FAIL' else 'PASS' if scan['complete'] and not scan['exclusions'] and scan['manifestVerification']['status'] in ('PASS', 'NOT_TESTED') else 'INCOMPLETE',
                     'hashedFiles': scan['hashedFiles'],
                     'hashedBytes': scan['hashedBytes'],
                     'exclusions': scan['exclusions'],
                     'sha256': 'COMPUTED_PER_FILE',
-                    'manifestComparison': 'NOT_TESTED',
+                    'manifestComparison': scan['manifestVerification']['status'],
+                    'manifestVerification': scan['manifestVerification'],
                 },
                 'inventory': scan,
                 'plan': planned,
@@ -463,6 +485,8 @@ def main():
             temporary = target.with_suffix(target.suffix + '.tmp')
             temporary.write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
             temporary.replace(target)
+            summary = ['# REDOWN offline CMD Laboratory', '', 'Cloud acceptance: INCOMPLETE; no cloud operations dispatched.', '', 'Local inventory: ' + report['localInventory']['status'], 'Hashed files: ' + str(scan['hashedFiles']) + '; bytes: ' + str(scan['hashedBytes']), 'Manifest comparison: ' + scan['manifestVerification']['status'], '', '```json', json.dumps(scan['manifestVerification'], indent=2, ensure_ascii=True), '```', '']
+            target.with_suffix('.md').write_text('\n'.join(summary), encoding='utf-8')
             print(json.dumps({
                 'mode': report['mode'],
                 'localInventory': report['localInventory'],
@@ -473,15 +497,20 @@ def main():
                 'report': args.report,
                 'nextAction': report['nextAction'],
             }))
-            return 0 if report['localInventory']['status'] == 'PASS' else 2
+            return 1 if report['localInventory']['status'] == 'FAIL' else 0 if report['localInventory']['status'] == 'PASS' else 2
         else:
             import sys
             connection_started=time.monotonic()
             scan=None
             try:
-                with ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr)) as connected:
+                if args.owner_config:
+                    from .standalone import StandaloneClient
+                    session = StandaloneClient(args.owner_config, args.journal)
+                else:
+                    session = ExtensionClient(on_pairing=lambda code: print('Approve code '+code+' in REDOWN',file=sys.stderr))
+                with session as connected:
                     scan=scan_files(connected)
-                    report=adaptive_run(connected,scan,depth=args.depth,resources=settings,roots=[json.loads(args.root)] if args.root else None,checkpoint=checkpoint)
+                    report=adaptive_run(connected if scan['manifestVerification']['status'] not in ('FAIL', 'INCOMPLETE') else None,scan,connection_error='LOCAL_MANIFEST_NOT_VERIFIED' if scan['manifestVerification']['status'] in ('FAIL', 'INCOMPLETE') else None,depth=args.depth,resources=settings,roots=[json.loads(args.root)] if args.root else None,checkpoint=checkpoint)
             except RedownError as error:
                 report=adaptive_run(None,scan if scan is not None else scan_files(),depth=args.depth,resources=settings,connection_error=error.code,checkpoint=checkpoint)
             report['connectionAndRunSeconds']=time.monotonic()-connection_started
