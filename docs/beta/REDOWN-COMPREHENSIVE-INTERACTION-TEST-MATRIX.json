@@ -1,0 +1,3660 @@
+{
+  "schema": "redown.guided-testing.master.v1",
+  "version": "1.0.0",
+  "created_on": "2026-10-27",
+  "repository": "thanks-cohn/REDOWN",
+  "branch": "beta-explorer",
+  "purpose": "Source-defined, stateful guided interaction coverage contract; S01 is an ordered 60-exercise high-value initial pass, not an assertion of feature completeness or live verification.",
+  "status": "SPECIFICATION_ONLY_NOT_IMPLEMENTED",
+  "separation": {
+    "take_the_tour": "optional instructional product walkthrough",
+    "test_it": "future user-driven verification using the shared instructional UI and real recorded evidence"
+  },
+  "session_plan": {
+    "session_id": "S01",
+    "name": "Core end-to-end Explorer acceptance",
+    "action_count": 60,
+    "progression": [
+      "setup_and_consent",
+      "auth_and_buckets",
+      "navigation_and_views",
+      "selection_and_menus",
+      "window_and_side_preview",
+      "disposable_fixture_creation",
+      "upload_and_clipboard",
+      "copy_move_download_archives",
+      "cleanup_and_export"
+    ],
+    "non_repetition_rule": "No exact exercise+variation repeat within a session; later sessions deliberately cover untested dimensions.",
+    "branching": "Advance only after verified pass or explicit documented skip/block; failed prerequisite blocks dependent step or routes to safe recovery.",
+    "resume": "Persist nonsecret session progress, not simulated passes."
+  },
+  "coverage_scope": {
+    "formats": [
+      "txt",
+      "json",
+      "jpg",
+      "png",
+      "webp",
+      "gif",
+      "pdf",
+      "mp4",
+      "webm",
+      "mp3",
+      "wav",
+      "zip",
+      "cbz",
+      "binary",
+      "unsupported_or_corrupt"
+    ],
+    "size_classes": {
+      "tiny": {
+        "min_bytes": 0,
+        "max_bytes": 1024
+      },
+      "small": {
+        "min_bytes": 1025,
+        "max_bytes": 65536
+      },
+      "medium": {
+        "min_bytes": 65537,
+        "max_bytes": 10485760
+      },
+      "large": {
+        "min_bytes": 10485761,
+        "max_bytes": 209715200
+      },
+      "oversize": {
+        "min_bytes": 209715201,
+        "max_bytes": null
+      }
+    },
+    "dimensions": [
+      "action_method",
+      "file_type",
+      "file_size",
+      "file_count",
+      "extension_case",
+      "filename_ascii_unicode_special",
+      "path_depth",
+      "same_cross_bucket",
+      "permission_state",
+      "network_state",
+      "destination_conflict",
+      "sort_filter_view",
+      "preview_mode",
+      "viewport",
+      "cancellation",
+      "interruption",
+      "pagination"
+    ],
+    "future_sessions": [
+      {
+        "id": "S02",
+        "focus": "Alternate invocation paths, keyboard and context menus, mixed formats, small/medium/large files and multi-item operations"
+      },
+      {
+        "id": "S03",
+        "focus": "Boundary sizes, special filenames, nesting, conflicts, pagination, malformed files and permissions"
+      },
+      {
+        "id": "S04",
+        "focus": "Network failures, retry/cancellation, uncertain writes, resume, independent transfer verification and TRUE REMOTE"
+      },
+      {
+        "id": "S05_PLUS",
+        "focus": "Remaining gaps derived from measured uncovered feature-by-variation pairs, not arbitrary repetitions"
+      }
+    ],
+    "discovery_rule": "Derive actual supported controls and missing variants from living Legacy/Beta ledger; mark unsupported rather than claim coverage."
+  },
+  "result_schema": {
+    "allowed_status": [
+      "PASSED",
+      "FAILED",
+      "BLOCKED",
+      "NOT_TESTED",
+      "UNCERTAIN"
+    ],
+    "mandatory": [
+      "session_id",
+      "exercise_id",
+      "definition_version",
+      "expected",
+      "observed",
+      "status",
+      "evidence",
+      "timestamp"
+    ],
+    "optional_when_measured": [
+      "provider_code",
+      "correlation_id",
+      "elapsed_ms",
+      "bytes",
+      "memory_bytes",
+      "sha256_expected",
+      "sha256_actual",
+      "verification_source"
+    ],
+    "absent_metric": "null with explicit reason; never fabricate",
+    "verdict_rule": "Next/Skip/user report alone never earns PASSED; require observed target event and method-appropriate independent confirmation."
+  },
+  "safety_and_privacy": {
+    "allow_production_writes": false,
+    "approved_disposable_prefix_required_for_mutations": true,
+    "preflight_requirements": [
+      "explicit_owner_consent",
+      "known bucket+prefix",
+      "manifested fixtures",
+      "read/write permissions as required",
+      "reversible operation plan",
+      "protection against writes outside prefix"
+    ],
+    "delete_policy": "Only delete items created within confirmed disposable test scope; verify manifest before and after.",
+    "secrets": "Never export tokens, secrets, signed URLs or unredacted private object paths.",
+    "network_and_disk_evidence": "Mark unavailable when not measured; simulated backend is not live R2 verification."
+  },
+  "exercises": [
+    {
+      "id": "S01-001",
+      "order": 1,
+      "section": "session",
+      "title": "Open Test It panel",
+      "instruction": "In the real Beta Explorer, open Test It panel using menu. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "menu",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "test_panel_open"
+      ],
+      "expected": {
+        "description": "Test panel opens without leaving Explorer",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-002"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "resume",
+        "consent",
+        "export"
+      ]
+    },
+    {
+      "id": "S01-002",
+      "order": 2,
+      "section": "session",
+      "title": "Review scope and consent",
+      "instruction": "In the real Beta Explorer, review scope and consent using panel. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "panel",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "test_panel_open"
+      ],
+      "expected": {
+        "description": "No writes before explicit disposable scope approval",
+        "verification_method": "consent_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-003"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "resume",
+        "consent",
+        "export"
+      ]
+    },
+    {
+      "id": "S01-003",
+      "order": 3,
+      "section": "session",
+      "title": "Choose disposable namespace",
+      "instruction": "In the real Beta Explorer, choose disposable namespace using panel. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "panel",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "test_panel_open"
+      ],
+      "expected": {
+        "description": "Approved bucket/prefix is recorded and isolated",
+        "verification_method": "scope_guard"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-004"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "resume",
+        "consent",
+        "export"
+      ]
+    },
+    {
+      "id": "S01-004",
+      "order": 4,
+      "section": "session",
+      "title": "Inventory fixture files",
+      "instruction": "In the real Beta Explorer, inventory fixture files using panel. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "panel",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "test_panel_open"
+      ],
+      "expected": {
+        "description": "Required type and size fixtures identified without uploading yet",
+        "verification_method": "fixture_manifest"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-005"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "resume",
+        "consent",
+        "export"
+      ]
+    },
+    {
+      "id": "S01-005",
+      "order": 5,
+      "section": "auth",
+      "title": "Inspect connection state",
+      "instruction": "In the real Beta Explorer, inspect connection state using sidebar. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sidebar",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Connected or disconnected status matches session",
+        "verification_method": "auth_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-006"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "connected_vs_expired",
+        "permissions"
+      ]
+    },
+    {
+      "id": "S01-006",
+      "order": 6,
+      "section": "auth",
+      "title": "Open Cloudflare connection",
+      "instruction": "In the real Beta Explorer, open Cloudflare connection using button. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "button",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Existing login workflow starts without credentials in log",
+        "verification_method": "auth_event"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-007"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "connected_vs_expired",
+        "permissions"
+      ]
+    },
+    {
+      "id": "S01-007",
+      "order": 7,
+      "section": "auth",
+      "title": "Select authorized account",
+      "instruction": "In the real Beta Explorer, select authorized account using selector. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "selector",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Bucket list belongs to chosen account",
+        "verification_method": "account_id"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-008"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "connected_vs_expired",
+        "permissions"
+      ]
+    },
+    {
+      "id": "S01-008",
+      "order": 8,
+      "section": "navigation",
+      "title": "Discover available buckets",
+      "instruction": "In the real Beta Explorer, discover available buckets using sidebar. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sidebar",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Accessible bucket names listed without provisioning",
+        "verification_method": "bucket_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-009"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-009",
+      "order": 9,
+      "section": "navigation",
+      "title": "Open first bucket",
+      "instruction": "In the real Beta Explorer, open first bucket using sidebar click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sidebar_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Real listing matches chosen bucket",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-010"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-010",
+      "order": 10,
+      "section": "navigation",
+      "title": "Open second bucket",
+      "instruction": "In the real Beta Explorer, open second bucket using sidebar click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sidebar_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Different bucket context and objects shown",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-011"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-011",
+      "order": 11,
+      "section": "navigation",
+      "title": "Return to first bucket",
+      "instruction": "In the real Beta Explorer, return to first bucket using sidebar click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sidebar_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "First bucket restored without stale second-bucket items",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-012"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-012",
+      "order": 12,
+      "section": "navigation",
+      "title": "Refresh current bucket",
+      "instruction": "In the real Beta Explorer, refresh current bucket using toolbar. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Same bucket listing reloads, path unchanged",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-013"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-013",
+      "order": 13,
+      "section": "navigation",
+      "title": "Open nested folder",
+      "instruction": "In the real Beta Explorer, open nested folder using double click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "double_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Breadcrumb and prefix update correctly",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-014"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-014",
+      "order": 14,
+      "section": "navigation",
+      "title": "Refresh nested folder",
+      "instruction": "In the real Beta Explorer, refresh nested folder using toolbar. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Folder path preserved and current items reloaded",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-015"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-015",
+      "order": 15,
+      "section": "navigation",
+      "title": "Return through breadcrumb",
+      "instruction": "In the real Beta Explorer, return through breadcrumb using breadcrumb. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "breadcrumb",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Parent folder displays correct contents",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-016"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-016",
+      "order": 16,
+      "section": "navigation",
+      "title": "Navigate back then forward",
+      "instruction": "In the real Beta Explorer, navigate back then forward using navigation controls. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "navigation_controls",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "History returns to expected locations if controls supported",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-017"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-017",
+      "order": 17,
+      "section": "navigation",
+      "title": "Filter file listing",
+      "instruction": "In the real Beta Explorer, filter file listing using search. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "search",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Only matching loaded files shown; remote state unchanged",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-018"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-018",
+      "order": 18,
+      "section": "navigation",
+      "title": "Sort names ascending",
+      "instruction": "In the real Beta Explorer, sort names ascending using sort. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sort",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Visible names follow ascending order",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-019"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-019",
+      "order": 19,
+      "section": "navigation",
+      "title": "Sort names descending",
+      "instruction": "In the real Beta Explorer, sort names descending using sort. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sort",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Visible names follow descending order",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-020"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-020",
+      "order": 20,
+      "section": "navigation",
+      "title": "Sort by size or newest",
+      "instruction": "In the real Beta Explorer, sort by size or newest using sort. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "sort",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Displayed order follows selected comparator",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-021"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-021",
+      "order": 21,
+      "section": "navigation",
+      "title": "Switch list to grid and back",
+      "instruction": "In the real Beta Explorer, switch list to grid and back using view button. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "view_button",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Both views show same entries",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-022"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "bucket_count",
+        "folder_depth",
+        "empty_vs_populated",
+        "list_page_boundary",
+        "network_latency"
+      ]
+    },
+    {
+      "id": "S01-022",
+      "order": 22,
+      "section": "selection",
+      "title": "Single-click file",
+      "instruction": "In the real Beta Explorer, single-click file using left click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "left_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Exactly chosen file selected",
+        "verification_method": "selection_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-023"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "item_count",
+        "sort_order",
+        "filter_active",
+        "folder_vs_file"
+      ]
+    },
+    {
+      "id": "S01-023",
+      "order": 23,
+      "section": "selection",
+      "title": "Control-click multiple files",
+      "instruction": "In the real Beta Explorer, control-click multiple files using ctrl click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "ctrl_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Multiple specified items selected",
+        "verification_method": "selection_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-024"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "item_count",
+        "sort_order",
+        "filter_active",
+        "folder_vs_file"
+      ]
+    },
+    {
+      "id": "S01-024",
+      "order": 24,
+      "section": "selection",
+      "title": "Shift-click range",
+      "instruction": "In the real Beta Explorer, shift-click range using shift click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "shift_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Contiguous visual range selected",
+        "verification_method": "selection_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-025"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "item_count",
+        "sort_order",
+        "filter_active",
+        "folder_vs_file"
+      ]
+    },
+    {
+      "id": "S01-025",
+      "order": 25,
+      "section": "selection",
+      "title": "Navigate selection by arrow keys",
+      "instruction": "In the real Beta Explorer, navigate selection by arrow keys using keyboard. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "keyboard",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "File focus/selection follows supported key behavior",
+        "verification_method": "selection_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-026"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "item_count",
+        "sort_order",
+        "filter_active",
+        "folder_vs_file"
+      ]
+    },
+    {
+      "id": "S01-026",
+      "order": 26,
+      "section": "menus",
+      "title": "Right-click selected file",
+      "instruction": "In the real Beta Explorer, right-click selected file using context menu. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "context_menu",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Applicable safe actions visible",
+        "verification_method": "menu_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-027"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_vs_folder",
+        "selection_count",
+        "action_availability"
+      ]
+    },
+    {
+      "id": "S01-027",
+      "order": 27,
+      "section": "menus",
+      "title": "Right-click empty file area",
+      "instruction": "In the real Beta Explorer, right-click empty file area using context menu. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "context_menu",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Context menu offers location actions only",
+        "verification_method": "menu_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-028"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_vs_folder",
+        "selection_count",
+        "action_availability"
+      ]
+    },
+    {
+      "id": "S01-028",
+      "order": 28,
+      "section": "menus",
+      "title": "Dismiss context menu",
+      "instruction": "In the real Beta Explorer, dismiss context menu using escape or outside click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "escape_or_outside_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Menu closes without operation",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-029"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_vs_folder",
+        "selection_count",
+        "action_availability"
+      ]
+    },
+    {
+      "id": "S01-029",
+      "order": 29,
+      "section": "preview",
+      "title": "Open Window Preview",
+      "instruction": "In the real Beta Explorer, open Window Preview using toolbar or context. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar_or_context",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Selected supported file preview renders",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-030"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-030",
+      "order": 30,
+      "section": "preview",
+      "title": "Navigate Window Preview backward/forward",
+      "instruction": "In the real Beta Explorer, navigate Window Preview backward/forward using arrow keys. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "arrow_keys",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Adjacent supported file previews in display order",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-031"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-031",
+      "order": 31,
+      "section": "preview",
+      "title": "Enter image-only Lightbox",
+      "instruction": "In the real Beta Explorer, enter image-only Lightbox using lightbox button. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "lightbox_button",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Only image and dark backdrop shown",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-032"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-032",
+      "order": 32,
+      "section": "preview",
+      "title": "Exit Lightbox then Window Preview",
+      "instruction": "In the real Beta Explorer, exit Lightbox then Window Preview using escape twice. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "escape_twice",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "First Escape returns to window; second closes it",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-033"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-033",
+      "order": 33,
+      "section": "preview",
+      "title": "Switch to Side Preview",
+      "instruction": "In the real Beta Explorer, switch to Side Preview using preview mode selector. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "preview_mode_selector",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Side pane opens while file list stays interactive",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-034"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-034",
+      "order": 34,
+      "section": "preview",
+      "title": "Update Side Preview by selection",
+      "instruction": "In the real Beta Explorer, update Side Preview by selection using left click. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "left_click",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Pane updates to newly selected file",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-035"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-035",
+      "order": 35,
+      "section": "preview",
+      "title": "Resize Side Preview divider",
+      "instruction": "In the real Beta Explorer, resize Side Preview divider using drag. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "drag",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Pane width changes within usable bounds",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-036"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-036",
+      "order": 36,
+      "section": "preview",
+      "title": "Minimize and reopen Side Preview",
+      "instruction": "In the real Beta Explorer, minimize and reopen Side Preview using pane buttons. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "pane_buttons",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Pane collapses then reopens via Preview",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-037"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-037",
+      "order": 37,
+      "section": "preview",
+      "title": "Expand and restore Side Preview",
+      "instruction": "In the real Beta Explorer, expand and restore Side Preview using pane buttons. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "pane_buttons",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Expanded pane restores prior dimensions",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-038"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-038",
+      "order": 38,
+      "section": "preview",
+      "title": "Close Side Preview and reopen",
+      "instruction": "In the real Beta Explorer, close Side Preview and reopen using pane buttons. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "pane_buttons",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "File list recovers space; pane reopens",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-039"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-039",
+      "order": 39,
+      "section": "preview",
+      "title": "Preview non-image type",
+      "instruction": "In the real Beta Explorer, preview non-image type using preview. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "preview",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "connected_or_explicitly_skippable",
+        "real_beta_explorer"
+      ],
+      "expected": {
+        "description": "Supported text PDF audio or video renders or explicit unsupported state",
+        "verification_method": "preview_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": false,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-040"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_format",
+        "image_dimensions",
+        "file_size",
+        "rapid_navigation",
+        "viewport_width",
+        "corruption"
+      ]
+    },
+    {
+      "id": "S01-040",
+      "order": 40,
+      "section": "upload",
+      "title": "Create disposable folder",
+      "instruction": "In the real Beta Explorer, create disposable folder using new folder. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "new_folder",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Folder exists under approved test prefix",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-041"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "file_format",
+        "nested_depth",
+        "unicode_name",
+        "duplicate_name"
+      ]
+    },
+    {
+      "id": "S01-041",
+      "order": 41,
+      "section": "upload",
+      "title": "Upload small image fixture",
+      "instruction": "In the real Beta Explorer, upload small image fixture using upload button. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "upload_button",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Uploaded bytes match local source",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-042"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "file_format",
+        "nested_depth",
+        "unicode_name",
+        "duplicate_name"
+      ]
+    },
+    {
+      "id": "S01-042",
+      "order": 42,
+      "section": "upload",
+      "title": "Upload text fixture via file picker",
+      "instruction": "In the real Beta Explorer, upload text fixture via file picker using upload button. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "upload_button",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Text file exists and checksum matches",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-043"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "file_format",
+        "nested_depth",
+        "unicode_name",
+        "duplicate_name"
+      ]
+    },
+    {
+      "id": "S01-043",
+      "order": 43,
+      "section": "upload",
+      "title": "Upload nested folder via drop",
+      "instruction": "In the real Beta Explorer, upload nested folder via drop using drag drop. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "drag_drop",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Relative paths and bytes preserved",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-044"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "file_format",
+        "nested_depth",
+        "unicode_name",
+        "duplicate_name"
+      ]
+    },
+    {
+      "id": "S01-044",
+      "order": 44,
+      "section": "upload",
+      "title": "Refresh after upload",
+      "instruction": "In the real Beta Explorer, refresh after upload using toolbar. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "New files listed with correct metadata",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-045"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "file_format",
+        "nested_depth",
+        "unicode_name",
+        "duplicate_name"
+      ]
+    },
+    {
+      "id": "S01-045",
+      "order": 45,
+      "section": "clipboard",
+      "title": "Copy image via context menu",
+      "instruction": "In the real Beta Explorer, copy image via context menu using context menu. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "context_menu",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Clipboard set to copy without deleting source",
+        "verification_method": "clipboard_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-046"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "same_bucket_vs_cross_bucket",
+        "single_vs_multi",
+        "conflict_policy"
+      ]
+    },
+    {
+      "id": "S01-046",
+      "order": 46,
+      "section": "clipboard",
+      "title": "Paste copied image into test folder",
+      "instruction": "In the real Beta Explorer, paste copied image into test folder using toolbar or keyboard. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar_or_keyboard",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Destination exists and source remains; checksums match",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-047"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "same_bucket_vs_cross_bucket",
+        "single_vs_multi",
+        "conflict_policy"
+      ]
+    },
+    {
+      "id": "S01-047",
+      "order": 47,
+      "section": "files",
+      "title": "Rename copied image via F2",
+      "instruction": "In the real Beta Explorer, rename copied image via F2 using keyboard. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "keyboard",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "New key exists; previous copy name absent; bytes same",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-048"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-048",
+      "order": 48,
+      "section": "files",
+      "title": "Duplicate renamed image",
+      "instruction": "In the real Beta Explorer, duplicate renamed image using toolbar or context. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "toolbar_or_context",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Second independent object exists; bytes same",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-049"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-049",
+      "order": 49,
+      "section": "clipboard",
+      "title": "Cut duplicated image with Ctrl+X",
+      "instruction": "In the real Beta Explorer, cut duplicated image with Ctrl+X using keyboard. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "keyboard",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Move intent recorded; source not yet deleted",
+        "verification_method": "clipboard_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-050"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "same_bucket_vs_cross_bucket",
+        "single_vs_multi",
+        "conflict_policy"
+      ]
+    },
+    {
+      "id": "S01-050",
+      "order": 50,
+      "section": "clipboard",
+      "title": "Paste cut image to different test folder",
+      "instruction": "In the real Beta Explorer, paste cut image to different test folder using keyboard. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "keyboard",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Destination bytes match; old key absent after confirmed move",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-051"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "same_bucket_vs_cross_bucket",
+        "single_vs_multi",
+        "conflict_policy"
+      ]
+    },
+    {
+      "id": "S01-051",
+      "order": 51,
+      "section": "files",
+      "title": "Drag-drop disposable image into folder",
+      "instruction": "In the real Beta Explorer, drag-drop disposable image into folder using drag drop. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "drag_drop",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Move or copy semantics match keyboard modifiers and destination state",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-052"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-052",
+      "order": 52,
+      "section": "files",
+      "title": "Use Move To dialog on disposable text",
+      "instruction": "In the real Beta Explorer, use Move To dialog on disposable text using move to dialog. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "move_to_dialog",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Object relocated as requested without data loss",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": true,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-053"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-053",
+      "order": 53,
+      "section": "files",
+      "title": "Use Copy To dialog across approved buckets",
+      "instruction": "In the real Beta Explorer, use Copy To dialog across approved buckets using copy to dialog. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "copy_to_dialog",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Target copy verified; original remains",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": true,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-054"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-054",
+      "order": 54,
+      "section": "files",
+      "title": "Download disposable image",
+      "instruction": "In the real Beta Explorer, download disposable image using download. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "download",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Downloaded disk bytes independently match manifest",
+        "verification_method": "disk_sha256"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-055"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-055",
+      "order": 55,
+      "section": "archive",
+      "title": "Inspect ZIP or CBZ fixture",
+      "instruction": "In the real Beta Explorer, inspect ZIP or CBZ fixture using archive action. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "archive_action",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Entry list matches known archive manifest",
+        "verification_method": "archive_manifest"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-056"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "zip_vs_cbz",
+        "entry_size",
+        "nested_entry",
+        "corrupt_archive"
+      ]
+    },
+    {
+      "id": "S01-056",
+      "order": 56,
+      "section": "archive",
+      "title": "Extract one archive entry to disposable folder",
+      "instruction": "In the real Beta Explorer, extract one archive entry to disposable folder using archive action. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "archive_action",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Only selected entry appears with verified content",
+        "verification_method": "sha256_readback"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-057"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "zip_vs_cbz",
+        "entry_size",
+        "nested_entry",
+        "corrupt_archive"
+      ]
+    },
+    {
+      "id": "S01-057",
+      "order": 57,
+      "section": "urls",
+      "title": "Inspect public URL availability",
+      "instruction": "In the real Beta Explorer, inspect public URL availability using get url. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "get_url",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Address shown only when authorized and available; no secret exported",
+        "verification_method": "url_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-058"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "public_vs_private",
+        "address_availability"
+      ]
+    },
+    {
+      "id": "S01-058",
+      "order": 58,
+      "section": "files",
+      "title": "Delete one confirmed disposable duplicate",
+      "instruction": "In the real Beta Explorer, delete one confirmed disposable duplicate using delete dialog. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "delete_dialog",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Target absent after deletion, unrelated objects present",
+        "verification_method": "provider_list"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": true,
+        "requires_disposable_scope": true,
+        "require_confirmation": true,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-059"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "file_size",
+        "unicode_name",
+        "destination_conflict",
+        "same_vs_cross_bucket",
+        "operation_path"
+      ]
+    },
+    {
+      "id": "S01-059",
+      "order": 59,
+      "section": "recovery",
+      "title": "Try unsupported preview and recover",
+      "instruction": "In the real Beta Explorer, try unsupported preview and recover using preview. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "preview",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "Explanation shown; browsing still functional",
+        "verification_method": "ui_state"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [
+        "S01-060"
+      ],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "unsupported_type",
+        "network_loss",
+        "unauthorized"
+      ]
+    },
+    {
+      "id": "S01-060",
+      "order": 60,
+      "section": "session",
+      "title": "Verify disposable cleanup and export",
+      "instruction": "In the real Beta Explorer, verify disposable cleanup and export using test panel. Follow any provided disposable-fixture instruction and observe the result.",
+      "interaction": {
+        "method": "test_panel",
+        "actual_ui_required": true,
+        "auto_advance_on_verified_event": true
+      },
+      "prerequisites": [
+        "approved_disposable_scope",
+        "required_fixture_available"
+      ],
+      "expected": {
+        "description": "All test-created objects accounted for; export includes exact outcomes",
+        "verification_method": "session_json"
+      },
+      "observed_evidence": {
+        "gui_event": null,
+        "operation": null,
+        "correlation_id": null,
+        "provider_code": null,
+        "provider_response_redacted": null,
+        "started_at": null,
+        "finished_at": null,
+        "duration_ms": null,
+        "bytes": null,
+        "sha256_expected": null,
+        "sha256_observed": null,
+        "verification_source": null
+      },
+      "result": {
+        "status": "NOT_TESTED",
+        "reason": null,
+        "confidence": "unverified"
+      },
+      "safety": {
+        "mutation": false,
+        "requires_disposable_scope": true,
+        "require_confirmation": false,
+        "never_touch_unapproved_objects": true
+      },
+      "next_on_pass": [],
+      "next_on_fail": [
+        "capture_failure",
+        "safe_recovery_or_skip"
+      ],
+      "variation_dimensions": [
+        "resume",
+        "consent",
+        "export"
+      ]
+    }
+  ]
+}
