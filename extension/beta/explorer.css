@@ -180,3 +180,13 @@ h2{font-size:22px}
 @container(max-width:620px){.list-heading,.file{grid-template-columns:minmax(0,1fr) 70px;gap:8px;padding:14px}.file-date,.list-heading span:last-child{display:none}#files.grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));padding:12px;gap:10px}}
 @media(max-width:1150px){#file-workspace.with-preview{grid-template-columns:minmax(0,1fr);height:auto;gap:12px}#preview-divider{display:none}#file-workspace.with-preview #dropzone{max-height:50dvh}#side-preview{height:440px}#file-workspace.preview-expanded #side-preview{height:calc(100dvh - 32px)}#file-workspace.preview-minimized{grid-template-columns:minmax(0,1fr);height:auto}#side-preview.minimized{height:auto}#side-preview .preview-header{flex-direction:row}#side-preview .preview-controls{justify-content:flex-end}}
 @media(max-width:650px){#side-preview .preview-header{flex-direction:column}.preview-header{gap:10px}.preview-header h2{font-size:18px}#side-preview{height:420px}#files.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
+
+/* Presentation only: retain the shared image and its URL without another read. */
+#preview-lightbox{width:36px;height:36px;padding:0;flex:none}
+#preview-dialog.image-lightbox{position:fixed;inset:0;margin:0;width:100vw;max-width:none;height:100dvh;max-height:none;padding:0;border:0;border-radius:0;background:#080808;box-shadow:none;overflow:hidden;outline:none}
+#preview-dialog.image-lightbox::backdrop{background:#080808}
+.image-lightbox #preview-viewer{width:100%;height:100%;padding:0}
+.image-lightbox .preview-header,.image-lightbox .preview-footer{display:none}
+#preview-dialog.image-lightbox #preview-content{width:100%;height:100%;min-height:0;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;overflow:hidden;font-size:0}
+#preview-dialog.image-lightbox #preview-content>:not(img){display:none}
+#preview-dialog.image-lightbox #preview-content img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;flex-shrink:1}

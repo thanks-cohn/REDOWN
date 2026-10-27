@@ -1,3 +1,30 @@
+# Window navigation and image lightbox, October 27, 2026
+
+Branch: **beta-explorer**. Starting commit: `ee63a0904a0eaec3dcf4becf9d40f04c6cd66c0c`.
+The delivery commit includes this handoff; its SHA is supplied in the delivery response.
+
+**Implemented and locally tested with fixtures. Browser rendering, installed Chrome and live R2 remain UNVERIFIED.**
+
+- Window Left/Right and existing Previous/Next follow the visible sort/filter, skip folders and unsupported formats, and stop at boundaries. Opening focuses the dialog, so arrows work immediately. Editable/media controls retain their keys; underlying Explorer shortcuts stay behind the modal and resume after closing.
+- A square **Open image lightbox** button sits immediately left of X, hidden for non-images and Side Preview, disabled while an image is unavailable.
+- Lightbox uses the same dialog, image node and object URL. Its viewport-sized dark presentation hides the header, metadata, controls and borders. Intrinsic image sizing with viewport maxima preserves aspect ratio, avoids unnecessary small-image enlargement and fits without cropping or ordinary scrollbars. No Fullscreen permission or additional read is needed to enter/exit.
+- Lightbox arrows traverse images only. First Escape or backdrop click returns to ordinary Window Preview with the current image; second Escape closes. Image clicks do not exit. Native dialog cancellation is handled separately. Loading stays dark; a failed/corrupt image returns to the ordinary error view.
+- Existing cancellation/generation checks, bounded reads, media unloading and URL cleanup remain shared. Rapid navigation invalidates old reads and revokes late URLs. Bucket/account/folder/session changes invalidate the same preview. Side mode persistence, resize, minimize, expand, selection updates and formats remain intact.
+
+Changed files: `extension/beta/explorer.html`, `extension/beta/explorer.css`, `extension/beta/explorer.mjs`, `tests/beta-explorer.test.mjs`, `docs/beta/HANDOFF.md`. Main, Legacy, authentication and the universal API were not modified.
+
+## Verification
+
+- Focused Beta/auth/API/copy regressions: **99 passed, 0 failed**, including **65 Beta tests**. Three added interaction regressions cover ordering/filter/boundaries/editable controls/focus, lightbox node/URL reuse and exits, and rapid delayed responses/abort/URL cleanup. Existing dual-mode and file-operation regressions pass.
+- Full `npm test`: **440 tests, 430 passed, 10 failed**. Clean starting-commit archive using the same dependencies: **437 tests, 427 passed, 10 failed**. Failure names match the existing ten recorded below; no assertions or frozen hashes were relaxed.
+- Syntax, registry validation and issue inventory pass. `npm run reliability:check` remains failed for existing architecture freshness and baseline failures.
+- Playwright launch attempted: **BLOCKED**, Chromium executable absent. No desktop/narrow rendering, landscape/portrait/small/wide image decoding, native Chrome focus/keyboard behavior, PDF/codec playback or installed-extension claims are made from jsdom fixtures.
+- Live Cloudflare R2: **NOT TESTED**. No cloud mutation, provisioning, deployment or release promotion.
+
+Remaining acceptance: run the requested image shapes and desktop/narrow layouts in installed Chrome against authorized R2 files; verify actual decoding, backdrop hit targets, two-level Escape and immediate keyboard focus. Embedded PDF viewers can own keyboard events inside their document; native browser handling still needs acceptance. Navigation covers currently loaded, filtered entries, without fetching more pages. Earlier handoffs below are historical.
+
+---
+
 # Dual-mode Preview handoff, October 27, 2026
 
 Branch: **beta-explorer**. Starting commit: `f6f4713d0adeb837ce83773d4f9388f33a26e9a7`.

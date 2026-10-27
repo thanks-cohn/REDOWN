@@ -139,9 +139,9 @@
 </div>
 </form>
 </dialog>
-<dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title">
+<dialog id="preview-dialog" class="preview-dialog" tabindex="-1" aria-labelledby="preview-title">
 <div id="preview-viewer">
-<div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><div class="preview-controls"><select id="preview-mode-inline" aria-label="Change preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select><button id="preview-minimize" aria-label="Minimize preview" title="Minimize preview" hidden>−</button><button id="preview-expand" aria-label="Expand preview" title="Expand preview" hidden>⤢</button><button id="preview-close" aria-label="Close preview" title="Close preview">✕</button></div></div>
+<div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><div class="preview-controls"><select id="preview-mode-inline" aria-label="Change preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select><button id="preview-minimize" aria-label="Minimize preview" title="Minimize preview" hidden>−</button><button id="preview-expand" aria-label="Expand preview" title="Expand preview" hidden>⤢</button><button id="preview-lightbox" aria-label="Open image lightbox" title="Open image lightbox" hidden disabled>⤢</button><button id="preview-close" aria-label="Close preview" title="Close preview">✕</button></div></div>
 <div id="preview-content" aria-live="polite"></div>
 <div class="preview-footer"><button id="preview-previous" aria-label="Previous file">← Previous</button><span id="preview-info"></span><button id="preview-next" aria-label="Next file">Next →</button></div>
 </div>
