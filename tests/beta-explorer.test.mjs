@@ -108,8 +108,8 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true}={}){
-  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');
+async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null}={}){
+  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
@@ -309,7 +309,7 @@ test('authorization listing errors remain distinct from empty folders and Refres
   let denied=true;const f=await uiFixture({autoOpen:false,httpOverride:http=>({...http,request:async(...args)=>denied?Response.json({success:false},{status:403}):http.request(...args)})});try{await f.settle(()=>f.d.querySelector('#dropzone').dataset.state==='unauthorized');assert.match(f.d.querySelector('#empty').textContent,/authorization/);assert.ok(f.d.querySelector('#refresh').classList.contains('attention'));denied=false;f.d.querySelector('#refresh').click();await f.settle(()=>f.d.querySelector('[data-key="root.txt"]')&&!f.d.querySelector('#refresh').disabled);assert.equal(f.d.querySelector('#dropzone').dataset.state,'ready');}finally{f.dom.window.close();}
 });
 test('missing Worker setup blocks a GUI mutation before any write and Refresh never provisions',async()=>{
-  const f=await uiFixture({sendOverride:async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:source.bucketName}]}:{ok:true,profiles:[]}});try{f.d.querySelector('[data-key="root.txt"]').click();f.d.querySelector('#duplicate').click();await f.settle(()=>/No file changes were sent/.test(f.d.querySelector('#status').textContent));assert.ok(!f.stored.has('root (copy).txt'));assert.ok(!f.messages.some(m=>['cfProvision','cfTransferObjects'].includes(m.type)));f.d.querySelector('#refresh').click();await f.settle(()=>/Set up right-click destination/.test(f.d.querySelector('#status').textContent)&&!f.d.querySelector('#refresh').disabled);assert.ok(f.d.querySelector('#refresh').classList.contains('attention'));}finally{f.dom.window.close();}
+  const f=await uiFixture({sendOverride:async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:source.bucketName}]}:{ok:true,profiles:[]}});try{f.d.querySelector('[data-key="root.txt"]').click();f.d.querySelector('#duplicate').click();await f.settle(()=>/No file changes were sent/.test(f.d.querySelector('#status').textContent));assert.ok(!f.stored.has('root (copy).txt'));assert.ok(!f.messages.some(m=>['cfProvision','cfTransferObjects'].includes(m.type)));f.d.querySelector('#refresh').click();await f.settle(()=>/Live R2 contents refreshed/.test(f.d.querySelector('#status').textContent)&&!f.d.querySelector('#refresh').disabled);assert.equal(f.d.querySelector('#refresh').classList.contains('attention'),false);}finally{f.dom.window.close();}
 });
 
 
@@ -346,4 +346,72 @@ test('GUI upload, independent fixture SHA-256, rename, copy, nested move, downlo
     d.querySelector('#delete').click();d.querySelector('#dialog-confirm').click();await settle(()=>!f.stored.has('Photos/renamed (copy).bin')&&!d.querySelector('#upload').disabled);assert.ok(!d.querySelector('[data-key="Photos/renamed (copy).bin"]'));assert.equal(hash(f.stored.get('renamed.bin').bytes),hash(bytes));
     assert.ok(f.messages.filter(m=>['cfTransferObjects','cfRenameEntry','cfDeleteObjects'].includes(m.type)).every(m=>m.betaNoProvision===true));
   }finally{f.dom.window.close();}
+});
+
+
+// Bucket navigation regressions use distinct REST data for each bucket, rather
+// than the historical single-bucket store shared by the operation fixtures.
+const twoBuckets=async m=>m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:'1234'},{name:'12345'}]}:{ok:true,profiles:[]};
+function bucketResponse(path){
+  const url=new URL('https://fixture'+path),bucket=url.pathname.split('/buckets/')[1].split('/')[0],p=url.searchParams.get('prefix')||'';
+  return Response.json({success:true,result:[{key:p+bucket+'.txt',size:bucket==='1234'?4:5}],result_info:{delimited:p?[]:['Folder/']}});
+}
+test('sidebar A/B/A, folder Refresh, history, selection and context Download keep the exact bucket',async()=>{
+  let discoveries=0;const paths=[],downloads=[];
+  const f=await uiFixture({autoOpen:false,adapterSetup:adapter=>{adapter.download=async input=>{downloads.push(input);return {downloadState:'complete'};};},sendOverride:async m=>{if(m.type==='cfBuckets')discoveries++;return twoBuckets(m);},httpOverride:http=>({...http,request:async path=>{paths.push(path);return bucketResponse(path);}})});
+  const {d,w,settle}=f;const click=b=>d.querySelector(`[data-bucket="${b}"]`).click();
+  try{
+    for(const b of ['1234','12345','1234']){click(b);await settle(()=>d.querySelector(`[data-key="${b}.txt"]`));assert.equal(d.querySelectorAll('.file:not(.folder)').length,1);assert.equal(d.querySelector('#heading').textContent,b);assert.equal(d.querySelector('[aria-current]').dataset.bucket,b);}
+    d.querySelector('[data-key="Folder/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Folder/1234.txt"]'));
+    d.querySelector('[data-key="Folder/1234.txt"]').click();const before=paths.length;d.querySelector('#refresh').click();await settle(()=>paths.length>before&&!d.querySelector('#refresh').disabled);
+    assert.equal(discoveries,1);assert.equal(f.storage.betaExplorerLocation.prefix,'Folder/');assert.equal(new URL('https://fixture'+paths.at(-1)).searchParams.get('prefix'),'Folder/');assert.equal(d.querySelector('[data-key="Folder/1234.txt"]').getAttribute('aria-selected'),'true');assert.equal(d.querySelector('#refresh').classList.contains('attention'),false);
+    d.querySelector('[data-key="Folder/1234.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Download').click();await settle(()=>downloads.length===1&&!d.querySelector('#download').disabled);assert.equal(downloads[0].source.bucketName,'1234');assert.equal(downloads[0].entry.key,'Folder/1234.txt');
+    d.querySelector('#back').click();await settle(()=>d.querySelector('[data-key="1234.txt"]'));d.querySelector('#back').click();await settle(()=>d.querySelector('[data-key="12345.txt"]'));assert.equal(d.querySelector('[aria-current]').dataset.bucket,'12345');
+    assert.ok(!f.messages.some(m=>m.type==='cfProvision'));
+  }finally{f.dom.window.close();}
+});
+test('slow bucket success and failure cannot overwrite a newer bucket or its saved location',async()=>{
+  for(const rejectOld of [false,true]){
+    let release;const f=await uiFixture({autoOpen:false,sendOverride:twoBuckets,httpOverride:http=>({...http,request:path=>path.includes('/1234/')?new Promise((resolve,reject)=>{release=()=>rejectOld?reject(Error('old network failure')):resolve(bucketResponse(path));}):Promise.resolve(bucketResponse(path))})});
+    try{const {d,settle}=f;d.querySelector('[data-bucket="1234"]').click();await settle(()=>release);assert.equal(d.querySelector('[data-bucket="12345"]').disabled,false);d.querySelector('[data-bucket="12345"]').click();await settle(()=>d.querySelector('[data-key="12345.txt"]'));release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#heading').textContent,'12345');assert.ok(!d.querySelector('[data-key="1234.txt"]'));assert.equal(f.storage.betaExplorerLocation.bucketName,'12345');assert.equal(d.querySelector('#dropzone').dataset.state,'ready');}finally{f.dom.window.close();}
+  }
+});
+test('genuine empty bucket and network/400/403 failures stay distinct and retry in place',async()=>{
+  for(const mode of ['empty','network','bad-cursor','denied']){
+    let recover=false;const f=await uiFixture({autoOpen:false,httpOverride:http=>({...http,request:async path=>{
+      if(recover)return http.request(path);
+      if(mode==='empty')return Response.json({success:true,result:[],result_info:{}});
+      if(mode==='network')throw Error('Failed to fetch');
+      return Response.json({success:false,errors:[{code:mode==='bad-cursor'?10023:10000,message:mode==='bad-cursor'?'Continuation token is not valid.':'Permission denied'}]},{status:mode==='bad-cursor'?400:403});
+    }})});
+    try{const {d,settle}=f;assert.equal(d.querySelector('#dropzone').dataset.state,mode==='empty'?'ready':mode==='denied'?'unauthorized':'failed');if(mode==='empty')assert.match(d.querySelector('#empty').textContent,/empty/);if(mode==='bad-cursor')assert.match(d.querySelector('#status').textContent,/10023: Continuation token is not valid/);recover=true;d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="root.txt"]')&&!d.querySelector('#refresh').disabled);assert.equal(f.storage.betaExplorerLocation.bucketName,source.bucketName);assert.equal(d.querySelector('#refresh').classList.contains('attention'),false);}finally{f.dom.window.close();}
+  }
+});
+test('Legacy listing envelopes retain folders, metadata and opaque continuation tokens',async()=>{
+  for(const shape of ['array','nested','top-level']){
+    const paths=[];const token='opaque+/= token';const adapter=createR2Adapter({http:{request:async path=>{
+      paths.push(path);const next=paths.length===1?token:'';const objects=[{key:paths.length===1?'first.txt':'second.txt',size:7,uploaded:'2026-10-27'}],delimited=['Photos/'];
+      return Response.json(shape==='array'?{success:true,result:objects,result_info:{cursor:next,delimited}}:shape==='nested'?{success:true,result:{objects,delimited,cursor:next}}:{objects,delimited,cursor:next});
+    }}}),api=createFileApi(adapter);
+    const a=await api.run('list',{source});assert.equal(a.state,'completed');assert.equal(a.data.cursor,token);assert.ok(a.data.entries.some(e=>e.folder&&e.key==='Photos/'));assert.equal(a.data.entries.find(e=>e.key==='first.txt').size,7);assert.equal(new URL('https://fixture'+paths[0]).searchParams.has('cursor'),false);assert.equal(new URL('https://fixture'+paths[0]).searchParams.get('per_page'),'1000');
+    const b=await api.run('list',{source,cursor:a.data.cursor});assert.equal(b.state,'completed');assert.equal(b.data.cursor,'');assert.equal(new URL('https://fixture'+paths[1]).searchParams.get('cursor'),token);
+  }
+});
+test('provider errors retain HTTP/code detail with secret and URL redaction',async()=>{
+  const api=createFileApi(createR2Adapter({http:{request:async()=>Response.json({success:false,errors:[{code:10023,message:'Continuation token is not valid. Bearer private-token access_token=private-value https://private.invalid/?token=secret'}]},{status:400})}}));
+  const r=await api.run('list',{source});assert.equal(r.state,'failed');assert.equal(r.code,'HTTP_400');assert.match(r.error,/10023: Continuation token is not valid/);assert.doesNotMatch(r.error,/private-token|private-value|private.invalid/);
+});
+
+test('Refresh updates metadata and prunes deleted selections without account rediscovery',async()=>{
+  let size=7,deleted=false,discoveries=0;
+  const f=await uiFixture({autoOpen:false,sendOverride:async m=>{if(m.type==='cfBuckets')discoveries++;return m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:source.bucketName}]}:{ok:true,profiles:[]};},httpOverride:http=>({...http,request:async()=>Response.json({success:true,result:[...(!deleted?[{key:'metadata.txt',size}]:[])]})})});
+  try{const {d,settle}=f;d.querySelector('[data-key="metadata.txt"]').click();size=400;d.querySelector('#refresh').click();await settle(()=>d.querySelector('.file-size')?.textContent==='400 B'&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('.file').getAttribute('aria-selected'),'true');deleted=true;d.querySelector('#refresh').click();await settle(()=>!d.querySelector('#refresh').disabled&&!d.querySelector('.file'));assert.equal(d.querySelector('#delete').disabled,true);assert.equal(discoveries,1);}finally{f.dom.window.close();}
+});
+test('expired listing credentials show authorization detail and connection recovery can retry discovery',async()=>{
+  let expired=true,discoveries=0;const f=await uiFixture({autoOpen:false,sendOverride:async m=>{if(m.type==='cfBuckets')discoveries++;return m.type==='cfAccounts'?{ok:true,accounts:[{id:source.accountId}]}:m.type==='cfBuckets'?{ok:true,buckets:[{name:source.bucketName}]}:{ok:true,profiles:[]};},httpOverride:http=>({...http,request:async path=>expired?Response.json({success:false,errors:[{code:10000,message:'Authentication error'}]},{status:401}):http.request(path)})});
+  try{const {d,settle}=f;assert.equal(d.querySelector('#dropzone').dataset.state,'unauthorized');assert.match(d.querySelector('#status').textContent,/401.*10000: Authentication error/);d.querySelector('#refresh').click();await settle(()=>discoveries===2&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('#dropzone').dataset.state,'unauthorized');expired=false;d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="root.txt"]')&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('#refresh').classList.contains('attention'),false);}finally{f.dom.window.close();}
+});
+test('session invalidation clears the old bucket and ignores its delayed response',async()=>{
+  let release;const f=await uiFixture({autoOpen:false,sendOverride:twoBuckets,httpOverride:http=>({...http,request:path=>new Promise(resolve=>{release=()=>resolve(bucketResponse(path));})})});
+  try{const {d,settle}=f;d.querySelector('[data-bucket="1234"]').click();await settle(()=>release);f.authChanged({cloudflareAuth:{oldValue:{sessionId:'old',accessToken:'fixture'},newValue:null}},'local');release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#dropzone').dataset.state,'disconnected');assert.equal(d.querySelectorAll('.file').length,0);assert.equal(d.querySelectorAll('#buckets button').length,0);assert.equal(d.querySelector('#refresh').classList.contains('attention'),true);}finally{f.dom.window.close();}
 });

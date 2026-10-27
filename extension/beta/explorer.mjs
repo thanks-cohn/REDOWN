@@ -8,16 +8,17 @@ let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',
 const bucketCache=new Map();
 const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
 function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
-function failure(error){const message=error.message||'Request failed.';const state=/connect cloudflare|session changed|connect.*first/i.test(message)?'disconnected':/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');render();}
+function failure(error){const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');render();}
 async function rememberLocation(target){lastLocation={...target};try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
 function status(text){$('status').textContent=text;}
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=handler;return b;}
 function controls(){
-  const locked=busy||listingState==='loading';
+  const loading=listingState==='loading',locked=busy||loading||Boolean(current&&listingState!=='ready');
   for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','filter','path'])$(id).disabled=locked || (!current&&!['accounts','profiles'].includes(id));
-  $('refresh').disabled=locked;
+  $('refresh').disabled=busy||loading;
+  $('accounts').disabled=busy;
   $('back').disabled=locked||historyIndex<1;$('forward').disabled=locked||historyIndex>=history.length-1;$('up').disabled=locked||!current?.prefix;
   for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=locked||!selected.size;
   for(const id of ['rename','properties','get-url'])$(id).disabled=locked||selected.size!==1;
@@ -26,11 +27,11 @@ function controls(){
   $('prepare').disabled=locked||!current;$('create-bucket').disabled=locked||!$('accounts').value;
   $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=locked||!clipboard||!current;
-  $('connect').disabled=locked;$('disconnect').disabled=locked;
+  $('connect').disabled=busy;$('disconnect').disabled=busy;
   $('selection').textContent=selected.size?selected.size+' selected · '+bytes(chosen().filter(e=>!e.folder).reduce((n,e)=>n+Number(e.size||0),0)):items.length+' items'+(cursor?' · more available':'');
   $('more').hidden=!cursor;$('more').disabled=locked;
   $('cancel').hidden=!busy;
-  document.querySelectorAll('#buckets button').forEach(b=>b.disabled=locked);
+  document.querySelectorAll('#buckets button').forEach(b=>b.disabled=busy);
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
 function render(){
@@ -38,17 +39,17 @@ function render(){
     const row=document.createElement('div');row.className='file'+(item.folder?' folder':'');row.dataset.key=item.key;row.setAttribute('role','option');row.setAttribute('aria-selected',String(selected.has(item.key)));row.tabIndex=0;
     const title=document.createElement('span');title.className='file-name';const icon=document.createElement('span');icon.className='icon';icon.setAttribute('aria-hidden','true');icon.textContent=item.folder?'▰':(item.displayName.split('.').length>1?item.displayName.split('.').pop().slice(0,4).toUpperCase():'FILE');const text=document.createElement('span');text.className='name';text.textContent=item.displayName;title.append(icon,text);
     const size=document.createElement('span');size.className='file-size';size.textContent=item.folder?'Folder':bytes(item.size);const date=document.createElement('span');date.className='file-date';const d=new Date(item.uploaded||item.last_modified||item.lastModified||'');date.textContent=Number.isNaN(d.getTime())?'—':d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});row.append(title,size,date);
-    row.draggable=true;row.ondragstart=event=>{if(busy){event.preventDefault();return;}if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}dragState={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};event.dataTransfer.setData('application/x-redown-beta','selection');event.dataTransfer.effectAllowed='copyMove';};row.ondragend=()=>{dragState=null;row.classList.remove('drop-target');};
-    if(item.folder){row.ondragover=event=>{event.preventDefault();event.stopPropagation();if(!busy){row.classList.add('drop-target');event.dataTransfer.dropEffect=dragState?(event.ctrlKey||event.metaKey?'copy':'move'):'copy';}};row.ondragleave=()=>row.classList.remove('drop-target');row.ondrop=event=>{event.preventDefault();event.stopPropagation();row.classList.remove('drop-target');if(busy)return;const target={...context(),prefix:item.key};if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(target,clip).catch(e=>status(e.message));}else void droppedFiles(event,target);};}
+    row.draggable=true;row.ondragstart=event=>{if(busy||listingState!=='ready'){event.preventDefault();return;}if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}dragState={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};event.dataTransfer.setData('application/x-redown-beta','selection');event.dataTransfer.effectAllowed='copyMove';};row.ondragend=()=>{dragState=null;row.classList.remove('drop-target');};
+    if(item.folder){row.ondragover=event=>{event.preventDefault();event.stopPropagation();if(!busy&&listingState==='ready'){row.classList.add('drop-target');event.dataTransfer.dropEffect=dragState?(event.ctrlKey||event.metaKey?'copy':'move'):'copy';}};row.ondragleave=()=>row.classList.remove('drop-target');row.ondrop=event=>{event.preventDefault();event.stopPropagation();row.classList.remove('drop-target');if(busy||listingState!=='ready')return;const target={...context(),prefix:item.key};if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(target,clip).catch(e=>status(e.message));}else void droppedFiles(event,target);};}
     row.onclick=event=>{
-      if(busy)return;
+      if(busy||listingState!=='ready')return;
       if(event.shiftKey&&anchor>=0){if(!event.ctrlKey&&!event.metaKey)selected.clear();for(const e of shown.slice(Math.min(anchor,index),Math.max(anchor,index)+1))selected.add(e.key);}
       else if(event.ctrlKey||event.metaKey){selected.has(item.key)?selected.delete(item.key):selected.add(item.key);anchor=index;}
       else {selected=new Set([item.key]);anchor=index;}
       paintSelection();
     };
-    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():previewType(item.key)?actions.preview():actions.download());}}};
-    row.oncontextmenu=event=>{event.preventDefault();if(busy)return;if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}showMenu(event.clientX,event.clientY);};
+    row.ondblclick=()=>{if(!busy&&listingState==='ready'){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():previewType(item.key)?actions.preview():actions.download());}}};
+    row.oncontextmenu=event=>{event.preventDefault();if(busy||listingState!=='ready')return;if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}showMenu(event.clientX,event.clientY);};
     return row;
   }));
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
@@ -67,7 +68,7 @@ function progress(event){
 }
 async function request(operation,input,options={}) {
   const result=await api.run(operation,input,{onProgress:progress,...options});
-  if(['failed','uncertain','cancelled'].includes(result.state))throw Object.assign(Error(result.error),{result});return result;
+  if(['failed','uncertain','cancelled'].includes(result.state))throw Object.assign(Error(result.error),{result,code:result.code});return result;
 }
 async function listing(add=false){
   if(!current)return;const ticket=++epoch,target=context();
@@ -80,8 +81,8 @@ async function listing(add=false){
 async function navigate(target,record=true,restore=false){
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
-  document.querySelectorAll('#buckets button').forEach(b=>b.toggleAttribute('aria-current',b.dataset.bucket===current.bucketName));render();
-  try{const result=await listing();if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');}}catch(e){failure(e);}
+  $('accounts').value=next.accountId;paintBuckets(next.accountId);render();
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');}}catch(e){failure(e);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -138,7 +139,7 @@ const actions={
 };
 for(const [id,action] of Object.entries(actions))$(id).onclick=()=>{Promise.resolve(action()).catch(e=>status(e.message));};
 async function upload(files,source=context()){
-if(!source||busy||!files.length)return;
+if(!source||busy||listingState!=='ready'||!files.length)return;
   const conflict=$('conflict').value;
   if(conflict==='replace'&&!await dialog('Replace matching uploaded files?',{input:false,description:'Existing destination files with matching names may be overwritten.',confirm:'Replace'}))return;
   await run(async signal=>{const inputs=files.map(value=>{const file=value.file||value;return {source,file,key:source.prefix+(value.relativePath||file.webkitRelativePath||file.name),conflict};});outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));});
@@ -147,7 +148,7 @@ $('upload').onclick=()=>$('picker').click();$('upload-folder').onclick=()=>$('fo
 for(const id of ['picker','folder-picker'])$(id).onchange=()=>{const files=Array.from($(id).files);$(id).value='';void upload(files).catch(e=>status(e.message));};
 $('dropzone').ondragover=event=>{event.preventDefault();if(current&&!busy)$('dropzone').classList.add('drag');};$('dropzone').ondragleave=()=>$('dropzone').classList.remove('drag');
 async function droppedFiles(event,target=context()){
-  if(!target||busy)return;
+  if(!target||busy||listingState!=='ready')return;
   // Capture handles during the drop event, before the browser protects its data store.
   const entries=[...event.dataTransfer.items].map(item=>{const entry=item.webkitGetAsEntry?.(),file=entry?null:item.getAsFile?.();return {kind:item.kind,webkitGetAsEntry:()=>entry,getAsFile:()=>file};}),fallback=[...event.dataTransfer.files];
   const conflict=$('conflict').value;
@@ -157,7 +158,7 @@ async function droppedFiles(event,target=context()){
     const inputs=files.map(({file,relativePath})=>({source:target,file,key:target.prefix+relativePath,conflict}));outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));
   });
 }
-$('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip).catch(e=>status(e.message));}else void droppedFiles(event);};
+$('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(listingState!=='ready')return;if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip).catch(e=>status(e.message));}else void droppedFiles(event);};
 $('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>refreshConnection(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
@@ -189,8 +190,8 @@ function paintBuckets(accountId){
 }
 async function loadBuckets(){
   const accountId=$('accounts').value;if(!accountId)return;
-  const ticket=++discoveryEpoch;
-  connectionState('loading','Discovering R2 buckets…');
+  const ticket=++discoveryEpoch;epoch++;current=null;items=[];selected.clear();cursor='';
+  $('buckets').replaceChildren();connectionState('loading','Discovering R2 buckets…');render();
   try{const result=await request('buckets',{accountId});if(ticket!==discoveryEpoch)return;
     bucketCache.set(accountId,result.data.buckets||[]);paintBuckets(accountId);
     current=null;items=[];selected.clear();cursor='';clipboard=null;history=[];historyIndex=-1;epoch++;
@@ -221,9 +222,18 @@ async function loadAccounts(preferred=current||lastLocation){
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function refreshConnection(){
-  const target=context()||lastLocation;
-  await loadAccounts(target);
-  if(current&&listingState==='ready'){try{const result=await request('connectionStatus',{source:context()});if(!result.data.ready){$('refresh').classList.add('attention');status('Live R2 files refreshed. '+result.data.reason);}else status('Live R2 contents, discovery and Worker readiness refreshed.');}catch(e){$('refresh').classList.add('attention');status('R2 listing succeeded. Worker readiness check failed: '+e.message+' No repair was attempted.');}}
+  if(!current){await loadAccounts(lastLocation);return;}
+  const target=context();
+  try{
+    const result=await listing();
+    if(!result)return;
+    await rememberLocation(target);
+    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);
+  }catch(error){
+    failure(error);
+    // Discovery is recovery, not a prerequisite for ordinary folder refresh.
+    if(['HTTP_401','HTTP_404'].includes(error.code))await loadAccounts(target);
+  }
 }
 $('accounts').onchange=()=>loadBuckets().catch(failure);
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});

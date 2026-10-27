@@ -30,13 +30,26 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     if(delimiter)query.set('delimiter',delimiter);
     const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
     const body=await response.json().catch(()=>null);
-    if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Object.assign(Error(response.status===401?'Cloudflare session expired (401). Reconnect Cloudflare.':response.status===403?'Cloudflare denied access to this folder (403). Check account authorization.':'Cloudflare could not list this folder (HTTP '+response.status+'). Refresh to inspect its current state.'),{code:'HTTP_'+response.status});
-    const result=body.result,info=body.result_info || {};
-    const objects=Array.isArray(result)?result:result.objects;
+    if(!response.ok || body?.success===false){
+      // Like Legacy listObjectsPage, retain the provider's diagnostic rather
+      // than replacing e.g. 10023 with a generic HTTP 400 message.
+      const details=(Array.isArray(body?.errors)?body.errors:[]).map(error=>{
+        const code=String(error.code||'').replace(/[^0-9A-Za-z_-]/g,'').slice(0,40);
+        const message=String(error.message||'').replace(/Bearer\s+\S+/gi,'Bearer [redacted]').replace(/https?:\/\/\S+/gi,'[URL]').replace(/((?:access_token|refresh_token|authorization|token|secret)\s*[=:]\s*)\S+/gi,'$1[redacted]').slice(0,240);
+        return [code,message].filter(Boolean).join(': ');
+      }).join('; ');
+      const guidance=response.status===401?'Cloudflare session expired. Reconnect Cloudflare.':response.status===403?'Cloudflare denied access. Check account authorization.':response.status===404?'This bucket may no longer exist. Refresh connection discovery.':'Retry Refresh; no files were changed.';
+      throw Object.assign(Error(`Cloudflare could not list this folder (HTTP ${response.status}). ${details} ${guidance}`),{code:'HTTP_'+response.status});
+    }
+    // Legacy accepts both REST envelopes and the top-level objects shape.
+    const result=body?.result ?? body,info=body?.result_info || {};
+    const objects=Array.isArray(result)?result:result?.objects;
+    if(!Array.isArray(objects))throw Error('Cloudflare returned an unreadable listing. Retry Refresh; no files were changed.');
     const next=result?.cursor || info.cursor || '';
+    if(typeof next!=='string')throw Error('Cloudflare returned an invalid continuation token. Retry Refresh.');
     const truncated=Boolean(result?.truncated ?? info.is_truncated);
     if(cursor && cursor===next || truncated&&!next)throw Error('Cloudflare returned an incomplete page. Refresh before changing files.');
-    return {objects,delimited:result?.delimited || info.delimited || [],cursor:next};
+    return {objects,delimited:Array.isArray(result?.delimited)?result.delimited:Array.isArray(info.delimited)?info.delimited:[],cursor:next};
   }
   async function stat({source,key:k},options={}) {
     const exact=key(k);let cursor='';const seen=new Set();let pages=0;

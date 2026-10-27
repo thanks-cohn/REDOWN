@@ -1,3 +1,65 @@
+# Bucket navigation and Refresh handoff, October 27, 2026
+
+Branch: **beta-explorer**. Starting commit: `266a391bf4be6ea82b007bbe87632042272a59df`.
+The delivery commit contains this handoff; obtain its exact SHA with `git rev-parse HEAD` or the delivery response.
+
+**BUILT and LOCALLY TESTED. Installed-Chrome/live-R2 acceptance remains UNVERIFIED.**
+This update supersedes the Refresh behavior described in the historical handoff below.
+Legacy remains the unchanged default, and main was not modified.
+
+## Exact files changed
+
+- `extension/beta/explorer.mjs`: bucket/account navigation state, stale-response protection, same-location Refresh, error classification and stale-list interaction guards.
+- `extension/beta/r2-adapter.mjs`: Legacy-compatible response envelopes, provider error details/redaction and continuation-token validation.
+- `tests/beta-explorer.test.mjs`: eight additional regression tests and updated Refresh expectations; a small fixture hook captures API download routing.
+- `docs/beta/HANDOFF.md`: this delivery record.
+
+## Fixes and Legacy comparison
+
+The empty-cursor correction `266a391` is the starting HEAD and remains present: the first request omits `cursor`; subsequent pages preserve opaque returned tokens. The existing 1,000-object page size and pagination workflow were not changed.
+
+Legacy `background.js:listObjectsPage` conditionally includes prefix/cursor/delimiter, accepts array/nested/top-level object envelopes and reads folders/cursors from result or result_info. Beta now follows that parsing behavior, including top-level objects it previously rejected. Provider failures now retain HTTP status plus Cloudflare code/message, so 10023 is visible rather than hidden behind a generic HTTP 400. Bearer values, URL strings and labeled credentials are redacted from provider error messages.
+
+Legacy `options.js:browseWorkspace` snapshots the location and rejects stale generations. Beta retains its existing listing epoch and now also prevents superseded navigation from saving its location or changing completion feedback. Buckets remain clickable during a read, allowing a newer choice to take precedence. Account changes immediately invalidate the previous listing and clear old sidebar controls. History navigation paints the correct account and bucket sidebar. Clicking a bucket clears the previous rows, selection, filter and continuation token before loading its root.
+
+Legacy bucket tiles ultimately select a target and call `goLocation`; their circular repair targets also perform explicit preparation. Beta adapts the target/context and generation behavior, while leaving Worker provisioning behind the existing explicitly confirmed setup action. No Legacy source was edited, and provisioning is not a prerequisite for browsing.
+
+The single top Refresh now reads the current account/bucket/prefix directly through the existing universal API. It retains history, clipboard, filter and surviving selections, updates metadata, removes vanished selections and clears the attention indicator after success. It does not enumerate accounts/buckets or probe Worker readiness for an ordinary successful reload. No current selection triggers discovery; HTTP 401/404 during refresh triggers recovery discovery. Other failures retain the location and actionable errors. Missing Worker setup continues to block mutations honestly, while successful browsing can clear the listing attention indicator. Failed/loading listings block stale-row file interactions.
+
+An added expired-auth test also exposed an existing classification bug: “Reconnect Cloudflare” matched the old disconnected regex before the HTTP 401/expired-auth check. Authorization errors now retain the proper authorization state.
+
+## Actual verification
+
+- Focused command: `node --test tests/beta-explorer.test.mjs tests/cloudflare-api.test.mjs tests/cloudflare-login.test.mjs tests/cloudflare-reconnect.test.mjs tests/explorer-copy.test.mjs`: **86 passed, 0 failed**, including **52 Beta tests**.
+- Final full `npm test`: **427 tests, 417 passed, 10 failed**.
+- Clean starting-commit archive with the same installed dependencies: **419 tests, 409 passed, 10 failed**. Failure names match exactly; no new failure names.
+- Syntax, API registry and issue inventory pass. `npm run reliability:check` remains failed because architecture freshness and the existing full-suite failures are not release-green. Frozen hashes/assertions/allowlists were not changed.
+- Installed-Chrome attempt: `node scripts/installed-chrome.mjs extension /tmp/redown-chrome.json`: **BLOCKED**, `CHROME_NOT_AVAILABLE_ENOENT`; zero installed assertions executed.
+- Live R2: **NOT TESTED**. No authenticated installed-extension context or live R2 credential was available to this checkout. No cloud mutation, repair or deployment was performed.
+
+New local GUI/adapter coverage includes distinct 1234/12345 object sets, A/B/A switching, folder refresh, history after refresh, selection and context-menu Download routing, delayed success/failure isolation, actual fixture-empty results, HTTP 400/403/401, network failure, expired-auth recovery, session invalidation during a read, metadata replacement/deleted selections, and all three Legacy listing envelopes with opaque continuation tokens. Existing local fixture operation tests still exercise uploads, copy/move/rename/delete and the embedded production Worker. These are fixtures, not installed/provider proof.
+
+The ten unchanged full-suite failure names are:
+
+1. offline discovery advertises only implemented operations and distinct versions
+2. catalog IDs, evidence labels, source hashes and references are internally consistent
+3. real discovery, case, history, filters and validation are deterministic and honest
+4. original case and proposal Markdown bytes are retained from pinned upstream
+5. current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input
+6. explicit labels are recorded as partly addressed while the omitted-item report stays open
+7. Nested drag-handle keyboard move saves sibling order with descendants and paths intact
+8. successful provisioning refreshes destination editors and inventory before reporting ready
+9. real vertical contract resolves intent, three upload invariants, handlers, current source and regression
+10. full finite public coverage inventory resolves strata and all canonical case links
+
+## Remaining limitations and next action
+
+The owner's live incident is not independently reproduced or certified fixed here. Reuse the existing signed-in Chrome installation to open 1234, 12345, then 1234; confirm the provider's actual contents each time. Open a nested folder and Refresh, confirm the path and metadata remain correct, then select a real file and check its context operations. Exercise a valid paginated bucket and an empty bucket. Record exact provider errors if any remain. Use a separately approved disposable prefix for write-operation acceptance.
+
+That installed-Chrome/live-R2 navigation test is the highest-priority next action. No exhaustive parity audit, Guided Testing, Preview pane, provider expansion or release promotion was started. Existing direct-upload limits and unfinished folder-download/durable-recovery capabilities remain as described below.
+
+---
+
 # Beta Explorer handoff, October 27, 2026
 
 Branch: **beta-explorer**. Starting commit: `44f8505648b9b1008d93999a17ce3efbe9627a67`.
