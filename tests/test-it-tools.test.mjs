@@ -8,19 +8,19 @@ const html=readFileSync(new URL('../extension/beta/explorer.html',import.meta.ur
 function fixture(){return new JSDOM(html,{pretendToBeVisual:true});}
 test('drop-up reuses unique action buttons, dismisses, and supports keyboard focus without running actions',()=>{
  const dom=fixture(),doc=dom.window.document,button=doc.querySelector('#test-it-tools-button'),menu=doc.querySelector('#test-it-tools-menu');
- let calls=[];for(const id of ['test-it','test-it-export','test-it-cleanup']){assert.equal(doc.querySelectorAll('#'+id).length,1);doc.getElementById(id).onclick=()=>calls.push(id);}
+ let calls=[];for(const id of ['test-it','test-it-export','test-it-restart','test-it-cleanup']){assert.equal(doc.querySelectorAll('#'+id).length,1);doc.getElementById(id).onclick=()=>calls.push(id);}
  assert.equal(doc.querySelector('#take-tour').parentElement.id,'explorer-menu');
  installTestItTools(doc);button.click();assert.equal(menu.hidden,false);assert.equal(doc.activeElement.id,'test-it');
  const key=k=>doc.activeElement.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:k,bubbles:true,cancelable:true}));
  key('ArrowUp');assert.equal(doc.activeElement.id,'test-it-cleanup');key('Home');key('ArrowDown');assert.equal(doc.activeElement.id,'test-it-export');key('Escape');assert.equal(menu.hidden,true);assert.equal(doc.activeElement,button);assert.deepEqual(calls,[]);
- for(const id of ['test-it','test-it-export','test-it-cleanup']){button.click();doc.getElementById(id).click();assert.equal(menu.hidden,true);}assert.deepEqual(calls,['test-it','test-it-export','test-it-cleanup']);
+ for(const id of ['test-it','test-it-export','test-it-restart','test-it-cleanup']){button.click();doc.getElementById(id).click();assert.equal(menu.hidden,true);}assert.deepEqual(calls,['test-it','test-it-export','test-it-restart','test-it-cleanup']);
  button.click();button.click();assert.equal(menu.hidden,true);button.click();doc.body.click();assert.equal(menu.hidden,true);
  button.click();doc.querySelector('#refresh').focus();assert.equal(menu.hidden,true);dom.window.close();
 });
 test('only gripper moves Test It, pointer offset and step position survive, resize clamps and controls work',()=>{
  const dom=fixture(),doc=dom.window.document,win=dom.window;
  let exited=0;const guide=createGuide({document:doc,draggable:true,steps:[{title:'One',text:'One'},{title:'Two',text:'Two'}],onExit:()=>exited++});guide.start();
- const card=doc.querySelector('.guide-card'),grip=card.querySelector('.guide-grip');
+ const card=doc.querySelector('.guide-card'),grip=card.querySelector('.guide-grip');assert.equal(grip.textContent,'⠿');assert.equal(doc.querySelector('#test-it-tools-menu .guide-grip'),null);
  card.getBoundingClientRect=()=>({left:parseFloat(card.style.left),top:parseFloat(card.style.top),width:340,height:260});grip.setPointerCapture=()=>{};
  const pointer=(target,type,x,y)=>{const event=new win.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{button:0,pointerId:1,clientX:x,clientY:y});target.dispatchEvent(event);};
  const start={left:parseFloat(card.style.left),top:parseFloat(card.style.top)};
