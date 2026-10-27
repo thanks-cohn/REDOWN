@@ -43,3 +43,23 @@ Files: `extension/beta/test-it.mjs`, `test-it-session.mjs`, `guided-interaction.
 Final safety test file: **8 passed, 0 failed**, including production fail-closed behavior when the adapter cannot enforce conditional ownership. Focused Beta/tour/session suite immediately before that final gate: **79 passed, 0 failed**. Full suite at that tested snapshot: **454 total, 444 passed, 10 failed**. Reliability: syntax/registry/issue stages passed; architecture freshness failed; full suite retained 10 failures. Those failure names match the existing recorded catalog/debug/semantic/architecture, Nested drag-handle and provisioning debt, but no fresh checkpoint comparison was run in this time box. The final fail-closed change was separately syntax checked and tested with the eight safety tests. Do not call the full suite green.
 
 At least exercises 26, 27, 32, 33, 35–37, 39–40, 43–45, 48–50, 54–56 and cleanup in 60 are blocked or dependent on blocked destructive work. All other exercises remain unaccepted until a participant browser/live session proves them. Functional end-to-end count is not established; independently completed full live exercises: **0**. This is a committed partial implementation, not completion of the final acceptance criterion.
+
+## Test It spacing, anchored tools and restart, October 27, 2026
+
+Base: `5ee42d75f8af165e901dc54d9ae9c9420e5e9b88`; delivery branch: `beta-explorer` only.
+
+- Preserved the original six-dot `⠿` glyph, font size, pointer capture, keyboard movement and drag behavior. The Test It-only card now has a 410px responsive width, generous padding, a reserved 44px grip target, balanced progress/close controls, clearer instruction/status spacing and separated actions. Tour styling is unchanged.
+- The tools remain a fixed bottom-right trigger with an ordinary absolutely anchored upward menu. Added Restart Test It alongside the three existing actions, increased row spacing, preserved outside-click/Escape/focus dismissal and keyboard navigation. Guide positioning reserves the trigger area and moves the instruction card clear when the menu opens; short viewports use bounded scrolling.
+- Restart uses the existing confirmation dialog. In-flight operations/checks and cleanup block restart; pending operations are reconciled through read-only metadata/hash checks. Ambiguous writes that cannot be proven safe block reset for manual review and are never replayed.
+- Successful restart replaces `betaExplorerTestIt` with a new session ID, index zero and fresh exercise records, clears transient guide state, and opens exercise 1. Serialized storage writes prevent older queued progress from overwriting the fresh session. Storage/reconciliation failures retain prior results.
+- A separate `betaExplorerTestItOwnership` record retains originals, destinations and tracked copies across restart; existing copy provenance and cleanup safety checks remain. Restart issues no cloud mutations. Downloaded reports are untouched; the new ID gives subsequent exports a new filename.
+- All 60 exercise definitions, copy-only destructive protections, ordinary file operations and preview code remain unchanged. Production rename/move/delete/cleanup still fail closed without atomic provider ownership support, as documented above.
+
+Verification:
+
+- Focused session/menu/grip tests: **15 passed, 0 failed**. Includes the unchanged glyph, drag/keyboard/resize behavior, all four menu actions, separate ownership, reset results/ID, storage failure, unresolved writes and in-flight blocking.
+- Actual Test It UI handler tests: **3 passed, 0 failed**, including confirmation cancellation, successful restart at exercise 1, 60 clean results and unchanged fixture cloud objects.
+- Full reliability run: **453 passed, 10 failed, 0 skipped**. Seven recognized historical failures plus three already present in the base (Explorer architecture references, issue-label evidence and provisioning UI fixture). The three additional failures were reproduced from an unmodified archive of the base commit. Syntax, registry and issue-inventory stages pass; architecture freshness remains failed. No frozen evidence hashes were rewritten.
+- `npm run check` and `git diff --check`: passed.
+- Rendered visual acceptance at desktop/mobile sizes and installed Chrome: **NOT_TESTED**. No Chromium binary was installed; the browser download returned an invalid archive. DOM tests cover pointer movement, viewport clamping and menu behavior, not actual rendered appearance.
+- Live Cloudflare/R2: **NOT_TESTED**. No real cloud objects were mutated.
