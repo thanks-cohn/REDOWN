@@ -71,7 +71,7 @@ async function navigate(target,record=true){
 }
 async function run(task,{refresh=true}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
-  try{await task(controller.signal);if(refresh&&current)await listing();}
+  try{await task(controller.signal);if(refresh&&current){try{await listing();}catch(error){status($('status').textContent+' Folder refresh failed: '+error.message);}}}
   catch(e){status(e.message||'Operation failed. Refresh before retrying.');}
   finally{busy=false;controller=null;$('progress').hidden=true;controls();}
 }
@@ -79,7 +79,7 @@ function outcome(result){
   const list=result.results || [result],bad=list.filter(r=>r.state!=='completed'&&r.state!=='started');
   const partial=result.state==='partial'||bad.length;
   const details=list.flatMap(r=>r.error?[r.error]:[...(r.data?.errors||[]).map(e=>typeof e==='string'?e:e.error||'File failed'),...(r.data?.conflicts||[]).map(()=> 'Destination exists; skipped.'),...(r.data?.partialMove?['Some copies succeeded but source deletion was not confirmed.']:[]),...(r.data?.recoveryKey?['Temporary upload retained at '+r.data.recoveryKey]:[])]);
-  status(partial?`Partial result. ${details.join(' ') || 'Stopped before all items completed. Refresh and inspect both locations.'}`:list.some(r=>r.state==='started')?'Download started. Chrome will report completion or interruption.':'Operation completed and provider result confirmed.');
+  status(!partial&&list.every(r=>r.data?.downloadState==='complete')?'Chrome reports download complete. Independent SHA-256 verification was not performed.':partial?`Partial result. ${details.join(' ') || 'Stopped before all items completed. Refresh and inspect both locations.'}`:list.some(r=>r.state==='started')?'Download started. Chrome will report completion or interruption.':'Operation completed and provider result confirmed.');
 }
 function dialog(title,{description='',value='',input=true,details='',confirm='Continue',required=true}={}){
   if($('dialog').open)return Promise.resolve(null);
@@ -146,6 +146,6 @@ async function loadAccounts(){const result=await request('accounts',{});accounts
 $('accounts').onchange=()=>loadBuckets().catch(e=>status(e.message));
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
 $('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];clipboard=null;accounts=[];$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;if($('dialog').open)$('dialog').close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 render();void loadAccounts().catch(e=>status(e.message));

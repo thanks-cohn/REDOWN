@@ -1,10 +1,11 @@
 import {location,key,prefix,name,entry} from './file-api.mjs';
 export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi}={}) {
   async function message(type,input={}) {
-    let timer;
+    let timer;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest'].includes(type);
     try {
-      const result=await Promise.race([send({type,...input}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('No final response. Refresh both locations before retrying; the operation may have changed files.'),{uncertain:true})),120000);})]);
-      if(!result?.ok)throw Object.assign(Error(result?.error || 'Cloudflare did not confirm this request.'),{code:result?.code || result?.diagnosticError?.code,uncertain:/EXPLORER_(REQUEST_TIMEOUT|RESULT_UNCONFIRMED|NETWORK_ERROR)/.test(result?.diagnosticError?.code||result?.code||'')});
+      const transport=Promise.resolve().then(()=>send({type,...input})).catch(error=>{if(writes){error.uncertain=true;error.message='Connection lost before a final result. Refresh both locations before retrying.';}throw error;});
+      const result=await Promise.race([transport,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('No final response. Refresh both locations before retrying; the operation may have changed files.'),{uncertain:true})),120000);})]);
+      if(!result?.ok)throw Object.assign(Error(result?.error || 'Cloudflare did not confirm this request.'),{code:result?.code || result?.diagnosticError?.code,uncertain:writes&&(/did not confirm|may have|not confirmed|timed out|fetch failed|failed to fetch|network/i.test(result?.error||'')||/EXPLORER_(REQUEST_TIMEOUT|RESULT_UNCONFIRMED|NETWORK_ERROR)/.test(result?.diagnosticError?.code||result?.code||''))});
       return result;
     } finally {clearTimeout(timer);}
   }
@@ -13,7 +14,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     const l=location(target),query=new URLSearchParams({per_page:'1000',prefix:p,cursor,delimiter});
     const response=await http.request(base(l)+'?'+query);
     const body=await response.json().catch(()=>null);
-    if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Error('Cloudflare could not list this folder. No files were changed.');
+    if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Error('Cloudflare could not list this folder. Refresh to inspect its current state.');
     const result=body.result,info=body.result_info || {};
     const objects=Array.isArray(result)?result:result.objects;
     const next=result?.cursor || info.cursor || '';
@@ -111,8 +112,10 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     },
     async download({source,entry:e},{onProgress}={}) {
       if(e.folder)throw Error('Folder downloads are not implemented in this beta.');
-      const id=await http.download(location(source),key(e.key),e.displayName||e.key.split('/').pop(),state=>onProgress?.({phase:'download-'+state.state,error:state.error}));
-      return {state:'started',downloadId:id};
+      let completed=false,interrupted='';
+      const id=await http.download(location(source),key(e.key),e.displayName||e.key.split('/').pop(),state=>{completed=state.state==='complete';if(state.state==='interrupted')interrupted=state.error||'Interrupted';onProgress?.({phase:'download-'+state.state,error:state.error});});
+      if(interrupted)throw Error('Chrome interrupted the download: '+interrupted);
+      return {state:completed?'completed':'started',downloadId:id,downloadState:completed?'complete':'started'};
     },
     async remoteIngest({destination,url,filename}) {
       const l=location(destination),u=new URL(url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw Error('Enter an HTTP or HTTPS source URL without credentials.');
