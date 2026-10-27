@@ -458,7 +458,11 @@ def main():
                 'cloudEvidence': 'NOT_TESTED',
                 'nextAction': 'Local inventory completed. Cloud transfers require a separate explicitly authorized online run.',
             }
-            checkpoint(report)
+            target = Path(args.report)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            temporary = target.with_suffix(target.suffix + '.tmp')
+            temporary.write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
+            temporary.replace(target)
             print(json.dumps({
                 'mode': report['mode'],
                 'localInventory': report['localInventory'],
