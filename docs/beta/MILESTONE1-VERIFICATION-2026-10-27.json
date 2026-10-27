@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-27",
+  "branch": "beta-explorer",
+  "startingCommit": "44f8505648b9b1008d93999a17ce3efbe9627a67",
+  "implementationCommit": "9c06ce16896fd69e5ba9e177964501e1010cf218",
+  "scope": "Local jsdom GUI, actual embedded production Worker with in-memory R2, and simulated Chrome messaging/downloads. No live cloud calls.",
+  "betaTests": {
+    "passed": 45,
+    "failed": 0
+  },
+  "focusedTests": {
+    "passed": 109,
+    "failed": 0,
+    "command": "node --test tests/beta-explorer.test.mjs tests/beta-popup.test.mjs tests/explorer-copy.test.mjs tests/explorer-worker.test.mjs tests/cloudflare-login.test.mjs tests/cloudflare-reconnect.test.mjs tests/cloudflare-session.test.mjs"
+  },
+  "fullSuite": {
+    "passed": 409,
+    "failed": 10,
+    "total": 419
+  },
+  "startingCommitFullSuite": {
+    "passed": 398,
+    "failed": 10,
+    "total": 408,
+    "method": "git archive of starting commit, same installed dependencies, node --test tests/*.test.mjs"
+  },
+  "sameFailureNamesAsStartingCommit": true,
+  "failures": [
+    {
+      "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    }
+  ],
+  "reliabilityCheck": {
+    "state": "failed",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "failed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "note": "The stored regression allowlist recognizes only seven failures; its three additional names also fail on the starting commit. Architecture validation is already partial on the starting commit and remains failed by the reliability gate. No frozen hashes/assertions were updated."
+  },
+  "installedChrome": {
+    "scope": "installed-chrome",
+    "installation": "unpacked directory",
+    "state": "blocked",
+    "scenario": "fresh isolated profile, real service worker and options, passive diagnostics, local persistence",
+    "startedAt": "2026-10-27T09:27:53.426Z",
+    "assertions": [],
+    "limitations": [
+      "No Cloudflare login or remote data",
+      "Not a CRX or store-distributed installation",
+      "Not the complete workflow matrix"
+    ],
+    "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+    "extensionVersion": "0.5.26",
+    "code": "CHROME_NOT_AVAILABLE_ENOENT",
+    "finishedAt": "2026-10-27T09:27:53.535Z"
+  },
+  "liveR2": {
+    "state": "UNVERIFIED",
+    "reason": "No installed authenticated owner extension or disposable cloud namespace available. No cloud objects were created, read, renamed, moved or deleted."
+  },
+  "fixture51MiB": {
+    "state": "PASSED",
+    "checks": [
+      "GUI File upload and list reconciliation",
+      "Independent SHA-256 of in-memory stored bytes",
+      "Rename",
+      "Duplicate",
+      "Cut/paste into nested folder",
+      "SHA-256 after move",
+      "Simulated Chrome download completion callback",
+      "Delete and visible-list reconciliation"
+    ],
+    "limitations": [
+      "R2 is in memory",
+      "Chrome download delivery is simulated; no downloaded on-disk file was verified",
+      "Fixture Worker storage buffers payloads, so this is not a production memory benchmark"
+    ]
+  },
+  "sourceSha256": {
+    "extension/background.js": "a9bcc224d0307d36bb656b23abe3c74dfaa50d47492ba6a30c438d3ebb8241ad",
+    "extension/beta/configuration.mjs": "56fd8431803404236e4a10afc636e6dca565ccfcdbd807f1e28a94a641f1d5eb",
+    "extension/beta/explorer.css": "5abed463f36c8114334022467c57730f37f9edc3d23126f2225bd558e132c54a",
+    "extension/beta/explorer.mjs": "4f9381b340f4d424a6ea89e27935fc8cadd66d02517896e97b75421a59ab8483",
+    "extension/beta/file-api.mjs": "24cdc5c5ccd0da7774acdc4f12f089f55b1201d2206cfa79edc774ad791efbe4",
+    "extension/beta/r2-adapter.mjs": "42b5372c82a3f539446d9a533ee2c6a957685c346c813dcb0c9a343592c04d19",
+    "tests/beta-explorer.test.mjs": "d48ace97808be5531a6b3b57154cb0ed0deec58c224cd2fc33224b40404ee520"
+  }
+}
