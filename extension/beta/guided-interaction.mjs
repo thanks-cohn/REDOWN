@@ -24,7 +24,17 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       else if(rect.top-gap-ch>=margin){left=rect.left;top=rect.top-gap-ch;}
       else {left=width-cw-margin;top=height-ch-margin;}
     }
+    if(draggable&&!manualPosition){
+      const tools=doc.querySelector('.test-it-tools-wrap')?.getBoundingClientRect();
+      if(tools&&left+cw>tools.left-gap&&top+ch>tools.top-gap)top=tools.top-ch-gap;
+    }
     if(manualPosition){left=manualPosition.left;top=manualPosition.top;}
+    const menu=draggable&&doc.querySelector('#test-it-tools-menu:not([hidden])')?.getBoundingClientRect();
+    if(menu&&left+cw>menu.left-gap&&left<menu.right+gap&&top+ch>menu.top-gap&&top<menu.bottom+gap){
+      if(menu.top-ch-gap>=margin)top=menu.top-ch-gap;
+      else if(menu.left-cw-gap>=margin)left=menu.left-cw-gap;
+      else{card.style.maxHeight=Math.max(80,menu.top-gap-margin)+'px';top=margin;}
+    }
     card.style.left=Math.max(margin,Math.min(left,width-cw-margin))+'px';
     card.style.top=Math.max(margin,Math.min(top,height-ch-margin))+'px';
     if(manualPosition)manualPosition={left:parseFloat(card.style.left),top:parseFloat(card.style.top)};
@@ -32,7 +42,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   function installGrip(){
     const grip=doc.createElement('button');grip.type='button';grip.className='guide-grip';
     grip.setAttribute('aria-label','Move Test It panel');grip.title='Drag to move; arrow keys move 10 pixels, Shift + arrow moves 1 pixel';
-    grip.innerHTML='<span aria-hidden="true">⠿</span>';card.prepend(grip);
+    grip.innerHTML='<span aria-hidden="true">⠿</span>';card.prepend(grip);card.classList.add('test-it-card');
     grip.addEventListener('pointerdown',event=>{
       if(event.button!==0||drag)return;event.preventDefault();event.stopPropagation();
       const rect=card.getBoundingClientRect();drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};
@@ -62,7 +72,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   }
   function exit(){stop();}
   function keydown(event){if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
-  function signal(event){if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;if(autoAdvance)advance();}}
+  function signal(event){if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;if(autoAdvance)advance();}}
   function show(){
     completed=false;clearHighlight();const step=steps[index];onStep(index);
     $('[data-guide-progress]').textContent=`${index+1} of ${steps.length}`;
