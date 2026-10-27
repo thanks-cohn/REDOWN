@@ -5,7 +5,7 @@
 **Known checkpoint:** `8545895aff026e2438239fd72d9e01d692c7cee0` (start from the latest branch head)
 **Priority:** CRITICAL
 **Execution limit:** **30 minutes maximum, wall-clock**
-**Handoff deadline:** **At minute 25, stop adding features and START writing a durable handoff.** Reserve minutes 25–30 for testing, committing, pushing, and completing the handoff. At minute 30 STOP implementation regardless of remaining work. Never claim unfinished work is complete.
+**Handoff deadline:** **At minute 25, transition immediately to drafting the durable handoff.** Reserve minutes 25–30 for finishing focused verification, committing, pushing, and presenting the completed handoff. The session has a firm 30-minute maximum; deliver the best verified result within it. Never claim unfinished work is complete.
 
 ## 1. Primary directive
 
@@ -76,8 +76,8 @@ Preserve accurate file bytes, explicit source/destination, conflicts, partial/un
 - **Minutes 0–5:** Inspect original/Beta, identify highest-risk parity gaps, configuration blocks, and working production integrations. Make a short checklist; no lengthy planning.
 - **Minutes 5–18:** Implement highest-impact parity and real configuration defaults/overrides through the universal API, preserving provider limits and existing TRUE REMOTE.
 - **Minutes 18–25:** Implement the spacious red-and-white GUI improvements, connect and test working interactions, and fix obvious regressions. Commit incrementally.
-- **MINUTE 25 HARD HANDOFF TRIGGER:** **STOP STARTING NEW FEATURES. START PRODUCING A HANDOFF immediately**, including actual changed files, verified working actions, configuration overrides that genuinely work, parity gaps, provider-method constraints, tests and blockers. Use remaining time to finalize focused checks, commit and push.
-- **MINUTE 30 HARD STOP:** End the task, deliver the handoff and commit/branch links. Do not continue developing after 30 minutes or pretend time is available to complete unresolved work.
+- **MINUTE 25 HANDOFF TRANSITION:** **Immediately begin producing the handoff**, including actual changed files, verified working actions, configuration overrides that genuinely work, parity gaps, provider-method constraints, tests and blockers. Use remaining time to finalize focused checks, commit and push.
+- **MINUTE 30 DELIVERY DEADLINE:** Complete the handoff, commit and push all verified progress, and deliver the final report and commit/branch links within the 30-minute maximum.
 
 If implementation is unusually difficult, still deliver the best verified partial result **inside** the time limit. Do not sacrifice handoff, commit, and push for a last-minute feature.
 
@@ -85,10 +85,10 @@ If implementation is unusually difficult, still deliver the best verified partia
 
 Test default vs session vs per-operation override precedence; effects of supported overrides; unsupported option rejection; 50 MiB not being a universal cap; method-specific 300 MB limit; no new original parity regressions; preserved TRUE REMOTE; copy/move/rename/delete content semantics; timeouts; Beta GUI-to-API routing; visual responsiveness. **Confirm pagination unchanged**, not redesigned. Differentiate fixture tests from installed-Chrome/live-R2 acceptance. Only perform live mutation in an owner-authorized disposable namespace.
 
-At minute 25 begin a concise, durable handoff (e.g., `docs/beta/HANDOFF.md`) and finish it by the minute-30 stop. Report: implemented features and remaining gaps; API and adapter changes; configurable defaults and proven overrides (excluding pagination); real provider restrictions; original TRUE REMOTE status; GUI changes; test commands/results and live-verification status; files changed; commit SHA; next single highest-value task. Push `beta-explorer`; leave `main` untouched.
+At minute 25 begin a concise, durable handoff (e.g., `docs/beta/HANDOFF.md`) and finish it by the minute-30 delivery deadline. Report: implemented features and remaining gaps; API and adapter changes; configurable defaults and proven overrides (excluding pagination); real provider restrictions; original TRUE REMOTE status; GUI changes; test commands/results and live-verification status; files changed; commit SHA; next single highest-value task. Push `beta-explorer`; leave `main` untouched.
 
 ## FINAL DIRECTIVE
 
 **FULL ORIGINAL EXPLORER FUNCTIONAL PARITY. ONE UNIVERSAL FILE API. WORKING CONFIGURABLE DEFAULTS WITHOUT ARTIFICIAL CEILINGS. PAGINATION UNCHANGED. PRESERVED TRUE REMOTE. SPACIOUS RED-AND-WHITE GUI. WORKING, VERIFIED COMMITS.**
 
-**30 MINUTES MAXIMUM. START THE HANDOFF AT MINUTE 25. STOP AT MINUTE 30.**
+**30 MINUTES MAXIMUM. BEGIN THE HANDOFF AT MINUTE 25. DELIVER THE HANDOFF, COMMITS, AND FINAL REPORT BY MINUTE 30.**
