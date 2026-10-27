@@ -40,7 +40,7 @@
 <h2 id="heading">Your files, beautifully organized.</h2>
 </div>
 <div class="header-actions">
-<div class="explorer-menu-wrap"><button id="explorer-menu-button" aria-label="Explorer menu" aria-expanded="false" aria-controls="explorer-menu">☰</button><div id="explorer-menu" hidden><button id="take-tour">Take the Tour</button><button id="test-it">Test It</button><button id="test-it-export">Export Test It results</button><button id="test-it-cleanup">Clean up practice copies…</button></div></div>
+<div class="explorer-menu-wrap"><button id="explorer-menu-button" aria-label="Explorer menu" aria-expanded="false" aria-controls="explorer-menu">☰</button><div id="explorer-menu" hidden><button id="take-tour">Take the Tour</button></div></div>
 <button id="remote">↗ Send URL to cloud</button>
 <button id="upload" class="primary">+ Upload files</button>
 </div>
@@ -119,6 +119,10 @@
 </progress>
 <small id="limitation">Beta: folder downloads and durable transfer recovery are not available yet.</small>
 </section>
+<div class="test-it-tools-wrap">
+<button id="test-it-tools-button" aria-expanded="false" aria-controls="test-it-tools-menu" aria-haspopup="menu">Test It Tools ▲</button>
+<div id="test-it-tools-menu" role="menu" aria-label="Test It Tools" hidden><button id="test-it" role="menuitem" tabindex="-1">Test It</button><button id="test-it-export" role="menuitem" tabindex="-1">Export Test It</button><button id="test-it-cleanup" role="menuitem" tabindex="-1">Clean Up Practice Copies</button></div>
+</div>
 </main>
 <input id="picker" type="file" multiple hidden>
 <input id="folder-picker" type="file" multiple webkitdirectory hidden>

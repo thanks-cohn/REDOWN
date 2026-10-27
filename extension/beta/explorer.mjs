@@ -1,3 +1,4 @@
+import {installTestItTools} from './test-it-tools.mjs';
 import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
@@ -172,7 +173,7 @@ function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
-  if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap'))return;
+  if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap'))return;
   if(event.key==='Escape'){$('context').hidden=true;return;}
   if(event.target.closest?.('input,select,textarea,dialog')||busy)return;
   const modified=event.ctrlKey||event.metaKey,k=event.key.toLowerCase();
@@ -420,5 +421,6 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
   $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
 };
 const tour=installTour({document,storage:chrome.storage.local});
+installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

@@ -205,3 +205,10 @@ h2{font-size:22px}
 .guide-highlight{outline:3px solid var(--accent)!important;outline-offset:3px;box-shadow:0 0 0 6px #a51e3a14!important}
 .guide-card [data-guide-status]{font-size:12px;color:var(--muted)}
 @media(max-width:650px){.header-actions{flex-wrap:wrap}.guide-card,.tour-invitation{padding:16px}}
+
+.guide-grip{display:block;padding:0;width:32px;height:32px;margin:-10px 0 0 -10px;cursor:grab;touch-action:none;user-select:none;font-size:28px;line-height:1}
+.guide-grip:active{cursor:grabbing}
+.test-it-tools-wrap{position:fixed;right:12px;bottom:12px;max-width:calc(100vw - 24px);z-index:40}
+main:has(.test-it-tools-wrap){padding-bottom:80px}
+#test-it-tools-menu{position:absolute;right:0;bottom:calc(100% + 6px);width:230px;max-width:calc(100vw - 20px);max-height:calc(100dvh - 80px);overflow:auto;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #30202722}
+#test-it-tools-menu button{display:block;width:100%;text-align:left}

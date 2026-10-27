@@ -135,7 +135,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
   async function start(){if(initializing)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);
-    guide=createGuide({document:doc,steps:exercises.map(e=>({...e,action:'test-it-'+e.id,target:()=>e.kind==='export'?'#explorer-menu-button':e.target})),startIndex:index,allowBack:false,
+    guide=createGuide({document:doc,steps:exercises.map(e=>({...e,action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
       onStep:i=>{index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
       onRetry:async()=>{try{const result=await session.reconcile();guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide.message(e.message);}},

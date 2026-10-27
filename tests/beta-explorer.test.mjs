@@ -1,3 +1,4 @@
+import {installTestItTools} from '../extension/beta/test-it-tools.mjs';
 import {installTestIt} from '../extension/beta/test-it.mjs';
 import {installTour} from '../extension/beta/tour.mjs';
 import test from 'node:test';
@@ -116,7 +117,7 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
@@ -572,7 +573,10 @@ test('disconnected tour, missing files, narrow viewport and unavailable interact
 
 test('Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
- d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));
+ d.querySelector('#test-it-tools-button').click();d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));
+ const progressBefore=JSON.stringify(f.storage.betaExplorerTestIt);
+ d.querySelector('#test-it-tools-button').click();d.querySelector('#test-it-tools-button').click();assert.equal(JSON.stringify(f.storage.betaExplorerTestIt),progressBefore);
+ assert.equal(d.activeElement.id,'test-it-tools-button');
  for(let i=0;i<60;i++){
    assert.equal(d.querySelector('[data-guide-progress]').textContent,`${i+1} of 60`);
    assert.ok(d.querySelector('.guide-highlight'),'Exercise has a real highlight');

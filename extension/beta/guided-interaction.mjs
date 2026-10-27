@@ -1,6 +1,7 @@
 // Small presentation/navigation primitive. Signals indicate GUI actions, not test evidence.
-export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},onStep=()=>{},onSkip=()=>{},onRetry=null,startIndex=0,allowBack=true,autoAdvance=false}){
+export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},onStep=()=>{},onSkip=()=>{},onRetry=null,startIndex=0,allowBack=true,autoAdvance=false,draggable=false}){
   const win=doc.defaultView;let index=0,card=null,highlight=null,previousFocus=null,observer=null,frame=0,completed=false;
+  let manualPosition=null,drag=null;
   const $=selector=>card.querySelector(selector);
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
   function position(){
@@ -23,15 +24,39 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       else if(rect.top-gap-ch>=margin){left=rect.left;top=rect.top-gap-ch;}
       else {left=width-cw-margin;top=height-ch-margin;}
     }
+    if(manualPosition){left=manualPosition.left;top=manualPosition.top;}
     card.style.left=Math.max(margin,Math.min(left,width-cw-margin))+'px';
     card.style.top=Math.max(margin,Math.min(top,height-ch-margin))+'px';
+    if(manualPosition)manualPosition={left:parseFloat(card.style.left),top:parseFloat(card.style.top)};
+  }
+  function installGrip(){
+    const grip=doc.createElement('button');grip.type='button';grip.className='guide-grip';
+    grip.setAttribute('aria-label','Move Test It panel');grip.title='Drag to move; arrow keys move 10 pixels, Shift + arrow moves 1 pixel';
+    grip.innerHTML='<span aria-hidden="true">⠿</span>';card.prepend(grip);
+    grip.addEventListener('pointerdown',event=>{
+      if(event.button!==0||drag)return;event.preventDefault();event.stopPropagation();
+      const rect=card.getBoundingClientRect();drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};
+      grip.focus({preventScroll:true});grip.setPointerCapture(event.pointerId);
+    });
+    grip.addEventListener('pointermove',event=>{
+      if(!drag||event.pointerId!==drag.id)return;event.preventDefault();event.stopPropagation();
+      manualPosition={left:drag.left+event.clientX-drag.x,top:drag.top+event.clientY-drag.y};position();
+    });
+    const release=event=>{if(!drag||event.pointerId!==drag.id)return;event.stopPropagation();drag=null;};
+    grip.addEventListener('pointerup',release);grip.addEventListener('pointercancel',release);grip.addEventListener('lostpointercapture',release);
+    grip.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();});
+    grip.addEventListener('keydown',event=>{
+      const delta={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];if(!delta)return;
+      event.preventDefault();event.stopPropagation();const rect=card.getBoundingClientRect(),step=event.shiftKey?1:10;
+      manualPosition={left:rect.left+delta[0]*step,top:rect.top+delta[1]*step};position();
+    });
   }
   function schedule(){if(card&&!frame)frame=win.requestAnimationFrame(position);}
   function stop(finished=false){
     if(!card)return;const ownedFocus=card.contains(doc.activeElement);
     win.removeEventListener('resize',schedule);doc.removeEventListener('scroll',schedule,true);doc.removeEventListener('redown:gui',signal);doc.removeEventListener('keydown',keydown,true);win.removeEventListener('pagehide',exit);
     observer?.disconnect();observer=null;if(frame)win.cancelAnimationFrame(frame);frame=0;
-    clearHighlight();card.remove();card=null;
+    drag=null;clearHighlight();card.remove();card=null;
     if(ownedFocus){const modal=[...doc.querySelectorAll('dialog[open]')].at(-1);const target=previousFocus?.isConnected&&!previousFocus.closest('[hidden]')&&(!modal||modal.contains(previousFocus))?previousFocus:modal||doc.querySelector('#explorer-menu-button');target?.focus({preventScroll:true});}
     previousFocus=null;(finished?onFinish:onExit)();
   }
@@ -52,6 +77,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     if(card)stop();index=startIndex;previousFocus=doc.activeElement;
     card=doc.createElement('section');card.className='guide-card';card.setAttribute('role','region');card.setAttribute('aria-label',allowBack?'Take the Tour':'Test It');
     card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-retry hidden>Retry</button><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
+    if(draggable)installGrip();
     doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-retry]').hidden=!onRetry;$('[data-guide-retry]').onclick=()=>onRetry?.(index);$('[data-guide-skip]').onclick=()=>{onSkip(index);advance();};$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
     win.addEventListener('resize',schedule);doc.addEventListener('scroll',schedule,true);doc.addEventListener('redown:gui',signal);doc.addEventListener('keydown',keydown,true);win.addEventListener('pagehide',exit);
     observer=new win.MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden']});show();
