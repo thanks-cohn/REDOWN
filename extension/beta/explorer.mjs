@@ -61,7 +61,7 @@ function render(){
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
   controls();syncSideSelection();
 }
-function guideAction(action,detail={}){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{action,...detail}}));}
+function guideAction(action,detail={}){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{...detail,commandAction:detail.action,action}}));}
 function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
 function progress(event){
   if(event.phase==='item'){$('progress').hidden=false;$('progress').max=event.total;$('progress').value=event.index;status(`Processing item ${event.index+1} of ${event.total}…`);}

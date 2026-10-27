@@ -74,7 +74,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(event.verdict!=='PASSED'){guide.message('That file did not arrive where expected. We’ve recorded the problem. Use Retry to check the files.');return;}
     const kind=exercises[index].kind,op=event.operation,changes=event.changes||[],keys=changes.map(c=>c.key).filter(Boolean),conflict=changes.some(c=>c.conflict);
     let matches=false;
-    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='duplicate')matches=matches&&command?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&command?.input.key?.toLowerCase()==='v'&&command?.input.ctrl;if(kind==='copy-other')matches=matches&&session.state.destinations.length>=2;if(kind==='restore')matches=matches&&session.state.originals.some(o=>command?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length)lastCreated=changes[0].id;}
+    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&command?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&command.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&command?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&command?.input.key?.toLowerCase()==='v'&&command?.input.ctrl;if(kind==='copy-other')matches=matches&&session.state.destinations.length>=2;if(kind==='restore')matches=matches&&session.state.originals.some(o=>command?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length)lastCreated=changes[0].id;}
     if(kind==='conflict')matches=op==='copy'&&conflict;
     if(kind==='rename'||kind==='rename-back'){matches=op==='rename'&&keys.length===1;if(kind==='rename-back')matches=matches&&keys[0]===renameFrom;if(kind==='rename')renameFrom=command?.entries?.[0];}
     if(['move','move-back','move-key','drag','move-two','return-two'].includes(kind)&&op==='move'){
@@ -92,10 +92,12 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   function snapshot(){return getState();}
   async function observe(action,detail={}){
     if(!guide?.active||checking)return;const step=exercises[index],s=snapshot(),b=baseline||s,k=step.kind;
+    // Compute identities before command handling, including context-menu Copy.
+    const selected=s.selected.filter(e=>!e.folder),selection=selected.map(e=>e.key);
     if(action==='command'){if(detail.action==='paste'&&command&&['duplicate','copy-to','move-to'].includes(command.action)){command={...command,input:command.input};return;}command={action:detail.action,input:{...lastInput},entries:(detail.action==='paste'?clipboardCommand?.entries:null)||s.selected.map(e=>e.key),location:s.current};if(['copy','cut'].includes(detail.action))clipboardCommand=command;if(['copy-menu','cut-menu'].includes(k)&&lastInput.context!==true)return;
       const isCopy=k==='copy-key'||k==='copy-menu',isCut=k==='cut-key'||k==='cut-menu';
       if((isCopy&&detail.action==='copy'||isCut&&detail.action==='cut')&&s.selected.length&&s.selected.every(e=>!e.folder)){
-        if(isCopy&&k==='copy-menu'&&!session.state.originals.some(o=>selection.includes(o.key)))return;
+        if(isCopy&&k==='copy-menu'&&!(selected.length===1&&session.state.originals.some(o=>o.key===selection[0]&&o.source.accountId===s.current?.accountId&&o.source.bucketName===s.current?.bucketName)))return;
         if(isCut&&s.selected.some(e=>!session.owned(s.current,e.key)))return;
         if(k.endsWith('key')&&!(lastInput.ctrl&&lastInput.key?.toLowerCase()===(isCopy?'c':'x')))return;
         if(index===28&&lastCreated&&!s.selected.every(e=>session.owned(s.current,e.key)?.id===lastCreated))return;
@@ -103,7 +105,6 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
       }return;
     }
     let ok=false;
-    const selected=s.selected.filter(e=>!e.folder),selection=selected.map(e=>e.key);
     if(k==='bucket')ok=action==='bucket-open'&&s.current&&!s.current.prefix;
     if(k==='folder'){ok=action==='folder-open'&&Boolean(s.current?.prefix);if(ok)folder=s.current.prefix;}
     if(k==='parent')ok=action==='folder-open'&&lastInput.target?.startsWith('crumbs')&&b.current?.prefix!==s.current?.prefix&&b.current?.prefix.startsWith(s.current?.prefix||'');
@@ -129,8 +130,8 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
       checking=true;const ticket=generation;try{const inventory=await session.reconcile();ok=inventory.originals>0&&(k!=='inventory'||inventory.copies>=2||index===58);record().independentlyObservedResult={inventory,sha256:'All recorded originals and live copies matched their saved SHA-256 and metadata.'};if(ticket!==generation)ok=false;}catch(e){guide?.message(e.message);record().verdict='BLOCKED';await save();}finally{checking=false;}
     }
     if(k==='copy-preview'||k==='document'){
-      ok=action==='preview-open'&&Boolean(s.previewKey)&&Boolean($('preview-content img, #preview-content pre, #preview-content iframe'));
-      if(k==='copy-preview'){const own=session.owned(s.current,s.previewKey);ok=ok&&Boolean(own);if(ok){checking=true;try{await session.check(own);}catch{ok=false;guide.message('This copy could not be checked.');}finally{checking=false;}}}else ok=ok&&/\.(pdf|txt|md|json|csv|log|js|mjs|css|html)$/i.test(s.previewKey);
+      ok=action==='preview-open'&&Boolean(s.previewKey)&&Boolean(doc.querySelector('#preview-content img, #preview-content pre, #preview-content iframe'));
+      if(k==='copy-preview'){const own=session.owned(s.current,s.previewKey);ok=ok&&Boolean(own)&&own.id===(lastCreated||session.state.records[22]?.testOwnedObjectIdentities?.[0]);if(ok){checking=true;try{await session.check(own);}catch{ok=false;guide.message('This copy could not be checked.');}finally{checking=false;}}}else ok=ok&&/\.(pdf|txt|md|json|csv|log|js|mjs|css|html)$/i.test(s.previewKey);
     }
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
@@ -140,9 +141,9 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
       onRetry:async()=>{try{const result=await session.reconcile();guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide.message(e.message);}},
       onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
-  function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
+  function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
-  doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,event.detail);});
+  doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(()=>guide?.message('Test It could not recognize that interaction. Retry the exercise; Explorer commands remain available.'));});
   async function exportResults(){if(!session||restarting)return;records();if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});await save();const report=structuredClone(session.state);delete report.pending;report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download='redown-test-it-'+session.state.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('test-it-restart').onclick=async()=>{
     if(initializing||restarting||cleaning)return;
