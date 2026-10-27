@@ -1,5 +1,5 @@
 // Small presentation/navigation primitive. Signals indicate GUI actions, not test evidence.
-export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{}}){
+export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},onStep=()=>{},onSkip=()=>{},onRetry=null,startIndex=0,allowBack=true,autoAdvance=false}){
   const win=doc.defaultView;let index=0,card=null,highlight=null,previousFocus=null,observer=null,frame=0,completed=false;
   const $=selector=>card.querySelector(selector);
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
@@ -37,24 +37,24 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{}}){
   }
   function exit(){stop();}
   function keydown(event){if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
-  function signal(event){if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;}}
+  function signal(event){if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;if(autoAdvance)advance();}}
   function show(){
-    completed=false;clearHighlight();const step=steps[index];
+    completed=false;clearHighlight();const step=steps[index];onStep(index);
     $('[data-guide-progress]').textContent=`${index+1} of ${steps.length}`;
     $('[data-guide-title]').textContent=step.title;$('[data-guide-text]').textContent=typeof step.text==='function'?step.text():step.text;
     $('[data-guide-status]').textContent=step.action?'Try this in the Explorer, or choose Skip.':'';
-    $('[data-guide-back]').disabled=index===0;$('[data-guide-skip]').hidden=!step.action;
+    $('[data-guide-back]').hidden=!allowBack;$('[data-guide-back]').disabled=index===0;$('[data-guide-skip]').hidden=!step.action;
     $('[data-guide-next]').textContent=index===steps.length-1?'Finish':'Next';$('[data-guide-next]').disabled=Boolean(step.action);
     position();highlight?.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});position();$('[data-guide-exit]').focus({preventScroll:true});
   }
   function advance(){if(index===steps.length-1)stop(true);else{index++;show();}}
   function start(){
-    if(card)stop();index=0;previousFocus=doc.activeElement;
-    card=doc.createElement('section');card.className='guide-card';card.setAttribute('role','region');card.setAttribute('aria-label','Take the Tour');
-    card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
-    doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-skip]').onclick=advance;$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
+    if(card)stop();index=startIndex;previousFocus=doc.activeElement;
+    card=doc.createElement('section');card.className='guide-card';card.setAttribute('role','region');card.setAttribute('aria-label',allowBack?'Take the Tour':'Test It');
+    card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-retry hidden>Retry</button><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
+    doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-retry]').hidden=!onRetry;$('[data-guide-retry]').onclick=()=>onRetry?.(index);$('[data-guide-skip]').onclick=()=>{onSkip(index);advance();};$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
     win.addEventListener('resize',schedule);doc.addEventListener('scroll',schedule,true);doc.addEventListener('redown:gui',signal);doc.addEventListener('keydown',keydown,true);win.addEventListener('pagehide',exit);
     observer=new win.MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden']});show();
   }
-  return {start,stop,get active(){return Boolean(card);}};
+  return {start,stop,message(text){if(card)$('[data-guide-status]').textContent=text;},get active(){return Boolean(card);}};
 }

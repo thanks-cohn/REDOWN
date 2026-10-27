@@ -12,10 +12,11 @@ export function name(value) {
   key(value);if(value!==value.trim())throw Error('Leading or trailing spaces in new names are not supported by the existing provider route.');if(value.includes('/') || !value.trim())throw Error('Enter one file or folder name, without slashes.');return value;
 }
 export function entry(value) { return {key:key(value.key),folder:value.folder===true,displayName:value.displayName}; }
-const methods=['connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry'];
+const methods=['connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry','inspect'];
 export function createFileApi(adapter) {
-  let preferences={};
-  const api={version:1,capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),
+  let preferences={},policy=null;
+  const api={version:1,conditionalPracticeMutations:adapter.conditionalPracticeMutations===true,capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),
+    setPolicy(value){policy=value;},
     getPreferences(){return {...preferences};},
     getDefaults(){return {...adapter.configuration?.defaults};},
     setPreferences(value={}){if(!adapter.configuration)throw Error('This adapter has no runtime preferences.');preferences=adapter.configuration.validate(value);return {...preferences};},
@@ -26,7 +27,8 @@ export function createFileApi(adapter) {
       options=adapter.configuration?adapter.configuration.resolve(operation,preferences,options):options;
       const onProgress=options.onProgress;options={...options,onProgress:event=>{try{onProgress?.(event);}catch{/* Presentation cannot change a provider outcome. */}}};
       options.signal?.throwIfAborted();options.onProgress({id,operation,phase:'started'});
-      const data=await adapter[operation](input,options);
+      const execute=()=>adapter[operation](input,options);
+      const data=await (policy?policy.run(operation,input,options,execute):execute());
       const partial=Boolean(data?.errors?.length || data?.conflicts?.length || data?.partialMove);
       const state=data?.state || (partial?'partial':'completed');
       options.onProgress?.({id,operation,phase:state});return {id,state,data};

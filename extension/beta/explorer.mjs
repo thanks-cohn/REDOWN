@@ -1,8 +1,10 @@
+import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
+let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
 let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0;
@@ -58,7 +60,7 @@ function render(){
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
   controls();syncSideSelection();
 }
-function guideAction(action){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{action}}));}
+function guideAction(action,detail={}){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{action,...detail}}));}
 function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
 function progress(event){
   if(event.phase==='item'){$('progress').hidden=false;$('progress').max=event.total;$('progress').value=event.index;status(`Processing item ${event.index+1} of ${event.total}…`);}
@@ -84,7 +86,7 @@ async function navigate(target,record=true,restore=false){
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   $('accounts').value=next.accountId;paintBuckets(next.accountId);render();
-  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');if(!next.prefix)guideAction('bucket-open');}}catch(e){failure(e);}
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open');}}catch(e){failure(e);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -122,20 +124,20 @@ const actions={
     const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,onState:status});
     await menu.show({source,key:e.key,name:e.displayName,returnFocus:$('get-url'),isCurrent:()=>current?.accountId===source.accountId&&current?.bucketName===source.bucketName});
   },
-  async duplicate(){if(busy||!selected.size)return;await actions.paste(context(),{source:context(),entries:chosen().map(e=>({...e})),operation:'copy',conflict:'keep'});},
+  async duplicate(){if(busy||!selected.size)return;guideAction('command',{action:'duplicate'});await actions.paste(context(),{source:context(),entries:chosen().map(e=>({...e})),operation:'copy',conflict:'keep'});},
   async 'copy-to'(){await chooseTransfer('copy');},
   async 'move-to'(){await chooseTransfer('move');},
-  copy(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};status(selected.size+' items copied to REDOWN clipboard.');controls();},
-  cut(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};status(selected.size+' items ready to move. Sources remain until paste.');controls();},
+  copy(){if(busy||!selected.size)return;guideAction('command',{action:'copy'});clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};status(selected.size+' items copied to REDOWN clipboard.');controls();},
+  cut(){if(busy||!selected.size)return;if(practice?.session?.active)practice.session.assertOwned(context(),chosen());guideAction('command',{action:'cut'});clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};status(selected.size+' items ready to move. Sources remain until paste.');controls();},
   async paste(destination=context(),clip=clipboard){
-    if(busy||!clip||!destination)return;const conflict=clip.conflict||$('conflict').value;
+    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste'});const conflict=clip.conflict||$('conflict').value;
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
     await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
   },
-  async rename(){const e=chosen()[0],source=context();if(!e||busy)return;const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)})));},
-  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress})));},
+  async rename(){const e=chosen()[0],source=context();if(!e||busy)return;guideAction('command',{action:'rename'});const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)})));},
+  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(practice?.session?.active)practice.session.assertOwned(source,entries);guideAction('command',{action:'delete'});if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress})));},
   async mkdir(){const source=context();if(!source||busy)return;const n=await dialog('New folder',{description:'Create a folder in '+source.bucketName+'/'+source.prefix});if(n===null)return;await run(async()=>outcome(await request('mkdir',{source,name:name(n)})));},
-  async download(){const source=context(),entries=chosen();if(!entries.length||entries.some(e=>e.folder)||busy)return;await run(async signal=>outcome(await api.batch('download',entries.map(e=>({source,entry:e})),{signal,onProgress:progress})),{refresh:false});},
+  async download(){const source=context(),entries=chosen();if(!entries.length||entries.some(e=>e.folder)||busy)return;guideAction('command',{action:'download'});await run(async signal=>outcome(await api.batch('download',entries.map(e=>({source,entry:e})),{signal,onProgress:progress})),{refresh:false});},
   async properties(){const e=chosen()[0],source=context();if(!e||busy)return;await run(async()=>{const result=e.folder?{key:e.key,type:'Folder prefix',bucket:source.bucketName,...(await request('list',{source:{...source,prefix:e.key}})).data}:(await request('stat',{source,key:e.key})).data.object;if(!result)throw Error('This file is no longer present. Refresh the folder.');await dialog('Properties',{input:false,details:JSON.stringify(result,null,2),confirm:'Close'});},{refresh:false});},
   async remote(){const destination=context();if(!destination||busy)return;const url=await dialog('Send URL to cloud',{description:'Cloudflare fetches the source directly into '+destination.bucketName+'/'+destination.prefix+'. Your computer does not relay the bytes.'});if(!url)return;await run(async()=>{status('Cloudflare is acquiring the remote source…');const result=await request('remoteIngest',{destination,url});status('Remote acquisition confirmed by Worker. Refresh to inspect the saved object.');return result;});}
 };
@@ -387,6 +389,7 @@ $('preview-divider').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'
 window.addEventListener('pagehide',closePreview);
 async function chooseTransfer(operation){
   if(busy||!selected.size)return;const clip={source:context(),entries:chosen().map(e=>({...e})),operation};
+  guideAction('command',{action:operation+'-to'});
   const target=await chooseDestination(operation);if(target)await actions.paste(target,clip);
 }
 let destinationEpoch=0;
@@ -416,5 +419,6 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
   await run(async signal=>{const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}});outcome(result);$('archive-status').textContent=$('status').textContent;for(let i=0;i<result.results.length;i++)if(result.results[i].state==='completed'){const check=[...document.querySelectorAll('#archive-files input')].find(c=>c.value===entries[i]);if(check)check.checked=false;}});
   $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
 };
-installTour({document,storage:chrome.storage.local});
+const tour=installTour({document,storage:chrome.storage.local});
+practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

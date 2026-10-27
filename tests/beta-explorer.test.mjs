@@ -1,3 +1,4 @@
+import {installTestIt} from '../extension/beta/test-it.mjs';
 import {installTour} from '../extension/beta/tour.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -115,7 +116,7 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
@@ -566,4 +567,25 @@ test('tour completion and Escape clean up without cancelling active preview; no 
 test('disconnected tour, missing files, narrow viewport and unavailable interactions always allow Skip and X',async()=>{
   const f=await uiFixture({autoOpen:false,sendOverride:async m=>m.type==='cfAccounts'?{ok:false,error:'Connect Cloudflare first.'}:{ok:true,profiles:[]}});try{const {d,w}=f;Object.defineProperty(w,'innerWidth',{value:360,configurable:true});Object.defineProperty(w,'innerHeight',{value:640,configurable:true});tourMenu(f);tourNext(f,3);assert.match(d.querySelector('[data-guide-text]').textContent,/No buckets/);assert.equal(d.querySelector('[data-guide-next]').disabled,true);assert.equal(d.querySelector('[data-guide-skip]').hidden,false);tourNext(f,11);assert.equal(d.querySelector('[data-guide-next]').textContent,'Finish');const card=d.querySelector('.guide-card');assert.ok(parseFloat(card.style.left)>=10);assert.ok(parseFloat(card.style.top)>=10);card.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);assert.equal(d.querySelector('#connect').disabled,false);
   }finally{f.dom.window.close();}
+});
+
+
+test('Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
+ d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));
+ for(let i=0;i<60;i++){
+   assert.equal(d.querySelector('[data-guide-progress]').textContent,`${i+1} of 60`);
+   assert.ok(d.querySelector('.guide-highlight'),'Exercise has a real highlight');
+   assert.ok(d.querySelector('[data-guide-exit]'));assert.ok(d.querySelector('[data-guide-retry]'));
+   if(i<59)d.querySelector('[data-guide-skip]').click();
+ }
+ assert.equal(f.storage.betaExplorerTestIt.records.length,60);
+ assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'));
+ d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);
+ assert.ok(f.stored.has('root.txt'));assert.ok(f.stored.has('Photos/one.jpg'));
+ d.querySelector('#test-it').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'60 of 60');d.querySelector('[data-guide-exit]').click();
+ }finally{f.dom.window.close();}
+});
+test('Test It blocks original deletion and cut through real toolbar handlers',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));d.querySelector('[data-key="root.txt"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#status').textContent.includes('protected'));assert.equal(d.querySelector('#dialog').open,false);assert.ok(f.stored.has('root.txt'));d.querySelector('#cut').click();await settle(()=>d.querySelector('#status').textContent.includes('protected'));assert.equal(d.querySelector('#paste').disabled,true);d.querySelector('[data-guide-exit]').click();}finally{f.dom.window.close();}
 });

@@ -141,6 +141,22 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       }
       return {entries:[...entries.values()],cursor:p.cursor,folderExists:!l.prefix||p.objects.length>0||p.delimited.length>0};
     },stat,
+    async inspect({source,key:k},options={}) {
+      const before=(await stat({source,key:k},options)).object;
+      if(!before)return {object:null};
+      const limit=16*1024*1024;
+      if(!Number.isSafeInteger(Number(before.size))||Number(before.size)>limit)throw Error('Choose a practice file no larger than 16 MiB for independent checking.');
+      const response=await http.request(base(location(source))+'/'+key(k).split('/').map(encodeURIComponent).join('/'),{signal:options.signal,timeoutMs:options.requestTimeoutMs});
+      if(!response.ok||!response.body)throw Error('The file could not be checked.');
+      const reader=response.body.getReader(),chunks=[];let size=0;
+      try{while(true){const part=await reader.read();if(part.done)break;size+=part.value.byteLength;if(size>limit)throw Error('Practice file exceeds the checking budget.');chunks.push(part.value);}}finally{await reader.cancel();}
+      const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+      const sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+      const after=(await stat({source,key:k},options)).object;
+      const identity=o=>o&&JSON.stringify([o.etag,o.size,o.uploaded||o.last_modified,o.version]);
+      if(size!==Number(before.size)||identity(before)!==identity(after))throw Error('The file changed while it was being checked.');
+      return {object:after,sha256,status:response.status};
+    },
     async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)},o);},
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
     rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
