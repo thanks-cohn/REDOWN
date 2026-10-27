@@ -142,3 +142,5 @@ if(chrome.storage.session?.get)chrome.storage.session.get('cloudflareLogin').the
     connectionEpoch++;connectionBusy=true;paintConnection('checking','Connecting to Cloudflare');loginDeadline=Date.now()+5*60*1000;void followLogin();
   }
 }).catch(()=>{});
+
+$("beta-explorer")?.addEventListener("click",()=>chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html")}));
