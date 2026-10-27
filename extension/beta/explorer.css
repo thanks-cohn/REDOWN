@@ -144,3 +144,4 @@ h2{font-size:22px}
 #archive-files label{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 #archive-files input{width:auto;margin:0;accent-color:var(--accent)}
 #archive-prefix{width:100%}
+#dropzone:has(#files.grid) .list-heading{display:none}
