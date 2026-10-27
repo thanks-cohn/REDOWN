@@ -18,10 +18,15 @@
 <label for="accounts">Cloudflare account</label>
 <select id="accounts" aria-label="Cloudflare account">
 </select>
-<div class="section-title">STORAGE BUCKETS</div>
+<div class="section-title">SAVED DESTINATIONS</div>
+<select id="profiles" aria-label="Saved destination"><option value="">Choose a saved destination…</option></select>
+<div class="section-title section-row"><span>STORAGE BUCKETS</span><button id="create-bucket" aria-label="Create bucket" title="Create bucket">＋</button></div>
 <nav id="buckets" aria-label="Buckets">
 </nav>
 <div class="aside-bottom">
+<button id="prepare">Set up right-click destination</button>
+<button id="preferences">Transfer preferences</button>
+<button id="transfer-history">Recent transfers</button>
 <button id="connect">Connect Cloudflare</button>
 <button id="disconnect">Disconnect</button>
 <a href="../options.html">Original Explorer & settings ↗</a>
@@ -54,13 +59,19 @@
 <button id="upload-folder">Upload folder</button>
 <span class="divider">
 </span>
-<button id="copy">Copy</button>
+<div class="action-group" aria-label="Organize files"><button id="copy">Copy</button>
 <button id="cut">Cut</button>
 <button id="paste">Paste</button>
 <button id="rename">Rename</button>
+<button id="duplicate">Duplicate</button>
+<button id="copy-to">Copy to…</button>
+<button id="move-to">Move to…</button></div>
+<div class="action-group" aria-label="Inspect files"><button id="preview">Preview</button>
+<button id="get-url">Get URL</button>
 <button id="download">Download</button>
 <button id="properties">Properties</button>
 <button id="delete" class="danger">Delete</button>
+</div>
 <select id="conflict" aria-label="Paste conflict policy">
 <option value="skip">Conflicts: skip</option>
 <option value="keep">Keep both</option>
@@ -122,6 +133,26 @@
 </div>
 </form>
 </dialog>
+<dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title">
+<div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><button id="preview-close" aria-label="Close preview">✕</button></div>
+<div id="preview-content"></div>
+<div class="preview-footer"><button id="preview-previous" aria-label="Previous file">← Previous</button><span id="preview-info"></span><button id="preview-next" aria-label="Next file">Next →</button></div>
+</dialog>
+<dialog id="preferences-dialog" aria-labelledby="preferences-title">
+<form id="preferences-form"><h2 id="preferences-title">Transfer preferences</h2><p>Applies to this Explorer tab. Restore defaults at any time.</p>
+<label for="pref-concurrency">Files processed at once</label><input id="pref-concurrency" type="number" min="1" step="1" required>
+<label for="pref-upload">Upload deadline (seconds)</label><input id="pref-upload" type="number" min="1" step="1" required>
+<label for="pref-preview">Preview memory budget (MiB)</label><input id="pref-preview" type="number" min="1" step="1" required>
+<p id="preferences-error" role="alert"></p><div class="dialog-actions"><button id="preferences-reset" type="button">Restore defaults</button><button id="preferences-cancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div></form>
+</dialog>
+<dialog id="destination-dialog" aria-labelledby="destination-title"><form id="destination-form">
+<h2 id="destination-title">Choose destination</h2><p>Copy or move to an exact bucket and folder. Conflict policy follows the toolbar selection.</p>
+<label for="destination-account">Account</label><select id="destination-account" required></select>
+<label for="destination-bucket">Bucket</label><select id="destination-bucket" required></select>
+<label for="destination-prefix">Folder path (empty for bucket root)</label><input id="destination-prefix" autocomplete="off">
+<p id="destination-error" role="alert"></p><div class="dialog-actions"><button id="destination-cancel" type="button">Cancel</button><button id="destination-confirm" type="submit" class="primary">Choose destination</button></div>
+</form></dialog>
+<script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>
 <script type="module" src="explorer.mjs">

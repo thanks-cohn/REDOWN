@@ -3,15 +3,18 @@ import {createR2Adapter} from './r2-adapter.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
+let savedProfiles=[],previewUrl='',previewItem=null;
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
 function status(text){$('status').textContent=text;}
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=handler;return b;}
 function controls(){
-  for(const id of ['accounts','upload','upload-folder','remote','mkdir','refresh','filter','path'])$(id).disabled=busy || (!current&&!['accounts'].includes(id));
+  for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','refresh','filter','path'])$(id).disabled=busy || (!current&&!['accounts','profiles'].includes(id));
   $('back').disabled=busy||historyIndex<1;$('forward').disabled=busy||historyIndex>=history.length-1;$('up').disabled=busy||!current?.prefix;
-  for(const id of ['copy','cut','delete'])$(id).disabled=busy||!selected.size;
-  for(const id of ['rename','properties'])$(id).disabled=busy||selected.size!==1;
+  for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=busy||!selected.size;
+  for(const id of ['rename','properties','get-url'])$(id).disabled=busy||selected.size!==1;
+  $('preview').disabled=busy||selected.size!==1||chosen()[0]?.folder;
+  $('prepare').disabled=busy||!current;$('create-bucket').disabled=busy||!$('accounts').value;
   $('download').disabled=busy||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=busy||!clipboard||!current;
   $('connect').disabled=busy;$('disconnect').disabled=busy;
@@ -35,7 +38,7 @@ function render(){
       else {selected=new Set([item.key]);anchor=index;}
       paintSelection();
     };
-    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void actions.download();}}};
+    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void actions.preview();}}};
     row.oncontextmenu=event=>{event.preventDefault();if(busy)return;if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}showMenu(event.clientX,event.clientY);};
     return row;
   }));
@@ -88,10 +91,18 @@ function dialog(title,{description='',value='',input=true,details='',confirm='Co
   return new Promise(resolve=>$('dialog').addEventListener('close',()=>resolve($('dialog').returnValue==='ok'?(input?$('dialog-input').value:true):null),{once:true}));
 }
 const actions={
+  async preview(){const e=chosen()[0];if(e&&!e.folder&&!busy)await showPreview(e);},
+  async 'get-url'(){const e=chosen()[0],source=context();if(!e||busy)return;
+    const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,onState:status});
+    await menu.show({source,key:e.key,name:e.displayName,returnFocus:$('get-url'),isCurrent:()=>current?.accountId===source.accountId&&current?.bucketName===source.bucketName});
+  },
+  async duplicate(){if(busy||!selected.size)return;await actions.paste(context(),{source:context(),entries:chosen().map(e=>({...e})),operation:'copy',conflict:'keep'});},
+  async 'copy-to'(){await chooseTransfer('copy');},
+  async 'move-to'(){await chooseTransfer('move');},
   copy(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};status(selected.size+' items copied to REDOWN clipboard.');controls();},
   cut(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};status(selected.size+' items ready to move. Sources remain until paste.');controls();},
   async paste(destination=context(),clip=clipboard){
-    if(busy||!clip||!destination)return;const conflict=$('conflict').value;
+    if(busy||!clip||!destination)return;const conflict=clip.conflict||$('conflict').value;
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
     await run(async signal=>{const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
   },
@@ -119,14 +130,17 @@ $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=aw
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';};
 $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
-function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['copy','cut','paste','rename','download','properties','delete','mkdir'].map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
+function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir'].map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){$('context').hidden=true;return;}
   if(event.target.closest?.('input,select,textarea,dialog')||busy)return;
   const modified=event.ctrlKey||event.metaKey,k=event.key.toLowerCase();
-  if(modified&&event.shiftKey&&k==='n'){event.preventDefault();$('mkdir').click();}
+  if(event.altKey&&['ArrowLeft','ArrowRight','ArrowUp'].includes(event.key)){event.preventDefault();$({ArrowLeft:'back',ArrowRight:'forward',ArrowUp:'up'}[event.key]).click();}
+  else if(event.key==='Backspace'){event.preventDefault();$('up').click();}
+  else if(event.key==='F5'){event.preventDefault();$('refresh').click();}
+  else if(modified&&event.shiftKey&&k==='n'){event.preventDefault();$('mkdir').click();}
   else if(['ArrowDown','ArrowUp'].includes(event.key)&&event.target.closest?.('#files')){event.preventDefault();const rows=[...document.querySelectorAll('.file')],i=rows.indexOf(event.target.closest?.('.file')),next=rows[Math.max(0,Math.min(rows.length-1,i+(event.key==='ArrowDown'?1:-1)))];next?.focus();if(next&&!modified)next.click();}
   else if(modified&&k==='a'){event.preventDefault();selected=new Set(visible().map(e=>e.key));paintSelection();}
   else if(modified&&['c','x','v'].includes(k)){event.preventDefault();$( {c:'copy',x:'cut',v:'paste'}[k]).click();}
@@ -142,10 +156,64 @@ async function loadBuckets(){
   $('buckets').replaceChildren(...buckets.map(bucket=>{const b=button('▱  '+bucket.name,()=>navigate({accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''}));b.dataset.bucket=bucket.name;return b;}));
   status(buckets.length?'Choose a bucket to explore.':'No authorized buckets found.');
 }
-async function loadAccounts(){const result=await request('accounts',{});accounts=result.data.accounts||[];$('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));await loadBuckets();}
+async function loadAccounts(){const result=await request('accounts',{});accounts=result.data.accounts||[];$('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));await loadBuckets();await loadProfiles();}
 $('accounts').onchange=()=>loadBuckets().catch(e=>status(e.message));
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
 $('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];clipboard=null;accounts=[];$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;if($('dialog').open)$('dialog').close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
+
+async function loadProfiles(){
+  const result=await request('profiles',{});savedProfiles=result.data.profiles||[];
+  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a saved destination…';
+  $('profiles').replaceChildren(placeholder,...savedProfiles.map((p,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=(p.name||p.bucketName)+' /'+p.prefix;return o;}));
+}
+$('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
+$('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadBuckets();status('Bucket created. Choose it to browse or set up right-click destinations.');},{refresh:false});};
+$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');});};
+$('transfer-history').onclick=()=>run(async()=>{const result=await request('transferHistory',{});await dialog('Recent transfers',{input:false,details:JSON.stringify(result.data.history,null,2),confirm:'Close',description:'Original transfer history. Local Beta uploads and copies are not included.'});},{refresh:false});
+const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
+function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
+$('preferences').onclick=()=>{paintPreferences();$('preferences-dialog').showModal();};
+$('preferences-cancel').onclick=()=>$('preferences-dialog').close();
+$('preferences-reset').onclick=()=>{api.setPreferences({});paintPreferences();status('Transfer preferences restored to defaults.');};
+$('preferences-form').onsubmit=event=>{event.preventDefault();try{const values=api.getPreferences();for(const [key,[id,scale]] of Object.entries(preferenceFields))values[key]=Number($(id).value)*scale;api.setPreferences(values);$('preferences-dialog').close();status('Transfer preferences applied to this tab.');}catch(e){$('preferences-error').textContent=e.message;}};
+function closePreview(){if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl='';previewItem=null;$('preview-content').replaceChildren();}
+$('preview-close').onclick=()=>$('preview-dialog').close();$('preview-dialog').addEventListener('close',closePreview);
+async function showPreview(item){
+  const source=context();await run(async signal=>{
+    status('Loading preview…');const result=await request('preview',{source,entry:item},{signal});signal.throwIfAborted();
+    if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=result.data.url;previewItem=item;
+    const {type,size}=result.data;let node;
+    if(type.startsWith('text/')){node=document.createElement('pre');node.textContent=await (await fetch(previewUrl)).text();}
+    else if(type.startsWith('image/')){node=document.createElement('img');node.alt=item.displayName;node.src=previewUrl;}
+    else if(type.startsWith('video/')||type.startsWith('audio/')){node=document.createElement(type.startsWith('video/')?'video':'audio');node.controls=true;node.src=previewUrl;}
+    else{node=document.createElement('iframe');node.title=item.displayName;node.setAttribute('sandbox','');node.src=previewUrl;}
+    $('preview-title').textContent=item.displayName;$('preview-content').replaceChildren(node);$('preview-info').textContent=bytes(size)+' · '+type;
+    if(!$('preview-dialog').open)$('preview-dialog').showModal();status('Preview loaded.');
+  },{refresh:false});
+}
+async function adjacentPreview(direction){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder),i=files.findIndex(e=>e.key===previewItem.key),next=files[i+direction];if(next)await showPreview(next);}
+$('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
+async function chooseTransfer(operation){
+  if(busy||!selected.size)return;const clip={source:context(),entries:chosen().map(e=>({...e})),operation};
+  const target=await chooseDestination(operation);if(target)await actions.paste(target,clip);
+}
+let destinationEpoch=0;
+async function destinationBuckets(){
+  const ticket=++destinationEpoch;$('destination-confirm').disabled=true;$('destination-error').textContent='';$('destination-bucket').replaceChildren();
+  try{const result=await request('buckets',{accountId:$('destination-account').value});if(ticket!==destinationEpoch)return;
+    $('destination-bucket').replaceChildren(...(result.data.buckets||[]).map(b=>{const o=document.createElement('option');o.value=b.name;o.textContent=b.name;return o;}));
+    if($('destination-account').value===current?.accountId)$('destination-bucket').value=current.bucketName;
+    $('destination-confirm').disabled=!$('destination-bucket').value;
+  }catch(e){if(ticket===destinationEpoch)$('destination-error').textContent=e.message;}
+}
+$('destination-account').onchange=destinationBuckets;$('destination-cancel').onclick=()=>$('destination-dialog').close('cancel');
+$('destination-form').onsubmit=event=>{event.preventDefault();try{prefix($('destination-prefix').value);$('destination-dialog').close('ok');}catch(e){$('destination-error').textContent=e.message;}};
+async function chooseDestination(operation){
+  if($('destination-dialog').open)return null;$('destination-title').textContent=(operation==='move'?'Move':'Copy')+' to…';
+  $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=current.prefix;$('destination-dialog').returnValue='';
+  $('destination-dialog').showModal();void destinationBuckets();
+  return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
+}
 render();void loadAccounts().catch(e=>status(e.message));

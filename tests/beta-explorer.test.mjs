@@ -30,6 +30,11 @@ async function fixture(){
   vm.runInContext(extract('async function explorerDirectoryExists(','function objectKeyFromLocation('),context);
   context.listObjectsPage=async(a,b,p='',cursor='')=>({objects:[...stored.values()].filter(o=>o.key.startsWith(p)).map(({key,size,etag,httpMetadata})=>({key,size,etag,httpMetadata})),cursor:'',truncated:false});
   const send=async m=>{messages.push(m);try{switch(m.type){
+    case 'profiles':return {ok:true,profiles:[{id:'fixture-profile',type:'cloudflare-r2',name:'Saved fixture',...source,defaultPrefix:'Photos/',token:'must-not-leak',workerUrl:'https://secret.fixture'}]};
+    case 'transferHistory':return {ok:true,transferHistory:[{ok:true,location:'fixture.txt'}]};
+    case 'cfPublicAddresses':return {ok:true,accountId:source.accountId,bucketName:source.bucketName,addresses:[{label:'R2 domain',base:'https://fixture.r2.dev',state:'configured'}]};
+    case 'cfCreateBucket':return {ok:true,bucket:{name:m.name}};
+    case 'cfProvision':return {ok:true,verification:{workerReachable:true},profile:{token:'must-not-leak'}};
     case 'cfAccounts':return {ok:true,accounts:[{id:source.accountId,name:'Fixture'}]};
     case 'cfBuckets':return {ok:true,buckets:[{name:source.bucketName}]};
     case 'cfTransferObjects':return {ok:true,...await context.transferExplorerObjects(m)};
@@ -64,8 +69,8 @@ test('bucket, folder, metadata and Unicode content workflows run through the act
   r=await f.api.run('move',{source,destination:{...source,prefix:'moved/'},entries:[{key:'雪 folder/nested/renamed.txt'}]});assert.equal(r.state,'completed');assert.ok(!f.stored.has('雪 folder/nested/renamed.txt'));assert.equal(hash(f.stored.get('moved/renamed.txt').bytes),hash(payload));
   r=await f.api.run('delete',{source,entries:[{key:'moved/renamed.txt'}]});assert.equal(r.state,'completed');assert.ok(!f.stored.has('moved/renamed.txt'));
 });
-test('zero bytes and 50 MiB binary upload retain bytes and forward File without client-side whole-file buffering',async()=>{
-  const f=await fixture();for(const size of [0,50*1024*1024]){const bytes=Buffer.alloc(size,0xb7),file=new File([bytes],size?'big.zip':'empty.dat');file.arrayBuffer=()=>{throw Error('Client must not buffer entire file');};const r=await f.api.run('upload',{source,file,key:file.name});assert.equal(r.state,'completed',JSON.stringify(r));assert.equal(hash(f.stored.get(file.name).bytes),hash(bytes));assert.equal(f.requests.findLast(r=>r.options.method==='PUT').options.body,file);}
+test('zero bytes, 50 MiB and 51 MiB binary uploads retain bytes and forward File without client-side whole-file buffering',async()=>{
+  const f=await fixture();for(const size of [0,50*1024*1024,51*1024*1024]){const bytes=Buffer.alloc(size,0xb7),file=new File([bytes],size?String(size)+'.zip':'empty.dat');file.arrayBuffer=()=>{throw Error('Client must not buffer entire file');};const r=await f.api.run('upload',{source,file,key:file.name});assert.equal(r.state,'completed',JSON.stringify(r));assert.equal(hash(f.stored.get(file.name).bytes),hash(bytes));assert.equal(f.requests.findLast(r=>r.options.method==='PUT').options.body,file);}
 });
 test('conflicts skip, keep both and explicitly replace while preserving accurate bytes',async()=>{
   const f=await fixture();await f.bucket.put('a.txt','original');const file=new File(['replacement'],'a.txt');
@@ -104,7 +109,13 @@ async function uiFixture(){
   const f=await fixture();await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
-  w.prefix=prefix;w.name=name;w.createFileApi=createFileApi;w.createR2Adapter=()=>f.adapter;w.chrome={storage:{onChanged:{addListener(){}}}};
+  w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
+  w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
+  w.prefix=prefix;w.name=name;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+    // jsdom UI and Node fetch run in different realms; bridge cancellation only.
+    if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
+    return value(input,options);
+  }:value]));w.chrome={storage:{onChanged:{addListener(){}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   w.eval(ui.replace(/^import .*;\n/gm,''));
@@ -134,3 +145,65 @@ test('folder drag/drop invokes the same real move API and preserves file bytes',
 test('unusable page cursors fail rather than silently hiding files',async()=>{const adapter=createR2Adapter({send:async()=>({ok:true}),http:{request:async()=>Response.json({success:true,result:{objects:[],truncated:true}})}});assert.equal((await createFileApi(adapter).run('list',{source})).state,'failed');});
 
 test('lost mutation messaging is uncertain and never replayed',async()=>{let calls=0;const api=createFileApi(createR2Adapter({send:async()=>{calls++;throw Error('Port closed');}}));const r=await api.run('delete',{source,entries:[{key:'a.txt'}]});assert.equal(r.state,'uncertain');assert.equal(calls,1);});
+
+
+test('provider defaults, session preferences and operation overrides alter real request deadlines in precedence order',async()=>{
+  const f=await fixture();
+  await f.api.run('list',{source});assert.equal(f.requests.at(-1).options.timeoutMs,30000);
+  f.api.setPreferences({requestTimeoutMs:45000,uploadTimeoutMs:65000,verificationTimeoutMs:55000});
+  await f.api.run('list',{source});assert.equal(f.requests.at(-1).options.timeoutMs,45000);
+  await f.api.run('list',{source},{requestTimeoutMs:75000});assert.equal(f.requests.at(-1).options.timeoutMs,75000);
+  const result=await f.api.run('upload',{source,file:new File(['test'],'deadline.txt'),key:'deadline.txt'},{uploadTimeoutMs:85000});
+  assert.equal(result.state,'completed',JSON.stringify(result));assert.equal(f.requests.findLast(r=>r.options.method==='PUT').options.timeoutMs,85000);
+  assert.equal(f.api.getPreferences().uploadTimeoutMs,65000);const snapshot=f.api.getDefaults();snapshot.requestTimeoutMs=1;assert.equal(f.api.getDefaults().requestTimeoutMs,30000);
+  f.api.setPreferences({});await f.api.run('list',{source});assert.equal(f.requests.at(-1).options.timeoutMs,30000);
+});
+test('unsupported, inactive, invalid and pagination configuration is rejected before dispatch',async()=>{
+  const f=await fixture();
+  for(const options of [{multipartThresholdMiB:50},{partSizeMiB:16},{requestTimeoutMs:0},{requestTimeoutMs:Infinity},{requestTimeoutMs:2147483648},{per_page:2000},{batchConcurrency:3},{previewMaxBytes:8}]){
+    const before=f.requests.length;const r=await f.api.run('list',{source},options);assert.equal(r.state,'failed',JSON.stringify(options));assert.equal(f.requests.length,before);
+  }
+  assert.throws(()=>f.api.setPreferences({invented:1}),/Unsupported/);assert.throws(()=>f.api.setPreferences({batchConcurrency:0}),/positive/);
+});
+test('batch concurrency is effective, keeps input result order, and uncertain outcomes prevent further dispatch',async()=>{
+  let active=0,peak=0,release;const gate=new Promise(resolve=>{release=resolve;});
+  const configuration=createR2Adapter({}).configuration;
+  const api=createFileApi({configuration,stat:async({index})=>{active++;peak=Math.max(peak,active);await gate;active--;return {index};}});
+  api.setPreferences({batchConcurrency:2});const pending=api.batch('stat',[{index:0},{index:1},{index:2}],{batchConcurrency:3});
+  await new Promise(resolve=>setTimeout(resolve,0));assert.equal(peak,3);release();const result=await pending;assert.deepEqual(result.results.map(r=>r.data.index),[0,1,2]);
+  let count=0;const uncertain=createFileApi({delete:async()=>{count++;throw Object.assign(Error('Unknown outcome'),{uncertain:true});}});
+  const partial=await uncertain.batch('delete',[{},{},{}]);assert.equal(count,1);assert.equal(partial.state,'partial');assert.equal(partial.processed,1);
+});
+test('message deadline overrides time out safe reads as failed and ambiguous writes as uncertain, without replay',async()=>{
+  const sent=[];const api=createFileApi(createR2Adapter({send:m=>{sent.push(m);return new Promise(()=>{});}}));
+  let r=await api.run('accounts',{}, {messageTimeoutMs:5});assert.equal(r.state,'failed');
+  r=await api.run('delete',{source,entries:[{key:'a'}]},{messageTimeoutMs:5});assert.equal(r.state,'uncertain');assert.equal(sent.length,2);
+  const controller=new AbortController();const pending=api.run('move',{source,destination:{...source,prefix:'dest/'},entries:[{key:'a'}]},{signal:controller.signal});await new Promise(resolve=>setTimeout(resolve,0));controller.abort();assert.equal((await pending).state,'uncertain');assert.equal(sent.length,3);
+});
+test('preview budget overrides affect real streamed reads, preserve bytes, and render HTML as text',async()=>{
+  const f=await fixture();await f.bucket.put('page.html','<script>alert(1)</script>');
+  let r=await f.api.run('preview',{source,entry:{key:'page.html'}},{previewMaxBytes:4});assert.equal(r.state,'failed');assert.match(r.error,/memory budget/);
+  r=await f.api.run('preview',{source,entry:{key:'page.html'}},{previewMaxBytes:100});assert.equal(r.state,'completed');assert.equal(r.data.type,'text/plain');assert.equal(await (await fetch(r.data.url)).text(),'<script>alert(1)</script>');URL.revokeObjectURL(r.data.url);
+  assert.equal((await f.api.run('preview',{source,entry:{key:'file.exe'}})).state,'failed');
+});
+test('300 MB restriction applies only to direct local upload, never to remote ingestion or download',async()=>{
+  const f=await fixture();let r=await f.api.run('upload',{source,file:{size:300000001},key:'oversize'});assert.equal(r.state,'failed');assert.match(r.error,/300 MB/);assert.equal(f.requests.length,0);
+  r=await f.api.run('remoteIngest',{destination:source,url:'https://source.invalid/huge.zip'});assert.equal(r.state,'completed');assert.equal(f.requests.length,0);
+  await f.bucket.put('huge.zip','fixture');r=await f.api.run('download',{source,entry:{key:'huge.zip',size:5000000000}});assert.equal(r.state,'completed');
+});
+test('saved profiles are redacted, public URLs and explicit setup reuse production services',async()=>{
+  const f=await fixture();let r=await f.api.run('profiles');assert.equal(r.data.profiles[0].prefix,'Photos/');assert.ok(!JSON.stringify(r).includes('must-not-leak'));assert.ok(!JSON.stringify(r).includes('workerUrl'));
+  r=await f.api.run('prepareBucket',{source});assert.equal(r.data.verification.workerReachable,true);assert.ok(!JSON.stringify(r).includes('must-not-leak'));assert.equal(f.messages.at(-1).type,'cfProvision');
+  r=await f.api.run('publicUrls',{source});assert.equal(r.data.addresses[0].base,'https://fixture.r2.dev');
+  r=await f.api.run('transferHistory');assert.equal(r.data.history[0].ok,true);
+});
+test('Beta preferences, duplicate, saved destination and preview are working UI interactions',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    d.querySelector('#preferences').click();assert.ok(d.querySelector('#preferences-dialog').open);d.querySelector('#pref-concurrency').value='2';d.querySelector('#pref-upload').value='450';d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.match(d.querySelector('#status').textContent,/applied/);
+    d.querySelector('[data-key="root.txt"]').click();d.querySelector('#duplicate').click();await settle(()=>f.stored.has('root (copy).txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('root (copy).txt').bytes.toString(),'payload');
+    d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-content pre').textContent,'payload');d.querySelector('#preview-close').click();assert.equal(d.querySelector('#preview-content').children.length,0);
+    d.querySelector('#profiles').value='0';d.querySelector('#profiles').dispatchEvent(new w.Event('change'));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));
+    d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',altKey:true,bubbles:true}));await settle(()=>d.querySelector('[data-key="root.txt"]'));
+  }finally{f.dom.window.close();}
+});

@@ -1,18 +1,26 @@
+import {providerDefaults,validatePreferences,resolveOptions} from './configuration.mjs';
 import {location,key,prefix,name,entry} from './file-api.mjs';
 export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi}={}) {
-  async function message(type,input={}) {
-    let timer;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest'].includes(type);
+  async function message(type,input={},options={}) {
+    options.signal?.throwIfAborted();
+    let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision'].includes(type);
     try {
-      const transport=Promise.resolve().then(()=>send({type,...input})).catch(error=>{if(writes){error.uncertain=true;error.message='Connection lost before a final result. Refresh both locations before retrying.';}throw error;});
-      const result=await Promise.race([transport,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('No final response. Refresh both locations before retrying; the operation may have changed files.'),{uncertain:true})),120000);})]);
+      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input});}).catch(error=>{if(writes&&dispatched){error.uncertain=true;error.message='Connection lost before a final result. Refresh both locations before retrying.';}throw error;});
+      const result=await Promise.race([transport,new Promise((_,reject)=>{
+        timer=setTimeout(()=>reject(Object.assign(Error(writes?'No final response. Refresh both locations before retrying; the operation may have changed files.':'No final response. Refresh and try the read again.'),{uncertain:writes&&dispatched})),options.messageTimeoutMs??providerDefaults.messageTimeoutMs);
+        abort=()=>reject(Object.assign(new Error(writes&&dispatched?'Cancellation requested after dispatch. The cloud operation may still complete; inspect before retrying.':'Operation cancelled.'),{name:'AbortError',uncertain:writes&&dispatched}));
+        options.signal?.addEventListener('abort',abort,{once:true});
+        if(options.signal?.aborted)abort();
+      })]);
       if(!result?.ok)throw Object.assign(Error(result?.error || 'Cloudflare did not confirm this request.'),{code:result?.code || result?.diagnosticError?.code,uncertain:writes&&(/did not confirm|may have|not confirmed|timed out|fetch failed|failed to fetch|network/i.test(result?.error||'')||/EXPLORER_(REQUEST_TIMEOUT|RESULT_UNCONFIRMED|NETWORK_ERROR)/.test(result?.diagnosticError?.code||result?.code||''))});
       return result;
-    } finally {clearTimeout(timer);}
+    } finally {clearTimeout(timer);options.signal?.removeEventListener('abort',abort);}
   }
+
   const base=l=>`/accounts/${encodeURIComponent(l.accountId)}/r2/buckets/${encodeURIComponent(l.bucketName)}/objects`;
-  async function page(target,p='',cursor='',delimiter='/') {
+  async function page(target,p='',cursor='',delimiter='/',options={}) {
     const l=location(target),query=new URLSearchParams({per_page:'1000',prefix:p,cursor,delimiter});
-    const response=await http.request(base(l)+'?'+query);
+    const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
     const body=await response.json().catch(()=>null);
     if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Error('Cloudflare could not list this folder. Refresh to inspect its current state.');
     const result=body.result,info=body.result_info || {};
@@ -22,32 +30,44 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     if(cursor && cursor===next || truncated&&!next)throw Error('Cloudflare returned an incomplete page. Refresh before changing files.');
     return {objects,delimited:result?.delimited || info.delimited || [],cursor:next};
   }
-  async function stat({source,key:k}) {
+  async function stat({source,key:k},options={}) {
     const exact=key(k);let cursor='';const seen=new Set();let pages=0;
-    do {if(++pages>1000)throw Error('Metadata lookup exceeded its page limit.');const p=await page(source,exact,cursor,'');const object=p.objects.find(o=>(o.key||o.name)===exact);if(object)return {object:{...object,key:exact}};cursor=p.cursor;if(seen.has(cursor)&&cursor)throw Error('Repeated metadata page.');seen.add(cursor);}while(cursor);
+    do {if(++pages>1000)throw Error('Metadata lookup exceeded its page limit.');const p=await page(source,exact,cursor,'',options);const object=p.objects.find(o=>(o.key||o.name)===exact);if(object)return {object:{...object,key:exact}};cursor=p.cursor;if(seen.has(cursor)&&cursor)throw Error('Repeated metadata page.');seen.add(cursor);}while(cursor);
     return {object:null};
   }
-  async function verifyUpload(l,staging,file,signal,onProgress) {
-    const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:300000});
+  async function verifyUpload(l,staging,file,options) {
+    const {onProgress}=options;
+    const deadline=AbortSignal.timeout(options.verificationTimeoutMs);
+    const signal=AbortSignal.any([deadline,...(options.signal?[options.signal]:[])]);
+    let lastProgress=0;
+    async function read(reader){
+      let timer,abort;
+      try{return await Promise.race([reader.read(),new Promise((_,reject)=>{
+        timer=setTimeout(()=>reject(Error('Upload verification stalled. Inspect the temporary upload before retrying.')),options.verificationIdleTimeoutMs);
+        abort=()=>reject(signal.reason);signal.addEventListener('abort',abort,{once:true});
+        if(signal.aborted)abort();
+      })]);}finally{clearTimeout(timer);signal.removeEventListener('abort',abort);}
+    }
+    const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs});
     if(!response.ok || !response.body){await response.body?.cancel();throw Error('Uploaded bytes could not be read back.');}
     const remote=response.body.getReader(),local=file.stream().getReader();
     let expected=new Uint8Array(),offset=0,verified=0;
     try {
       while(true){
-        signal?.throwIfAborted();const chunk=await remote.read();if(chunk.done)break;
+        signal?.throwIfAborted();const chunk=await read(remote);if(chunk.done)break;
         if(verified+chunk.value.length>file.size)throw Error('Upload read-back contains extra bytes.');
         for(let index=0;index<chunk.value.length;){
-          if(offset===expected.length){const next=await local.read();if(next.done)throw Error('Upload read-back contains extra bytes.');expected=next.value;offset=0;}
+          if(offset===expected.length){const next=await read(local);if(next.done)throw Error('Upload read-back contains extra bytes.');expected=next.value;offset=0;}
           const length=Math.min(expected.length-offset,chunk.value.length-index);
           for(let j=0;j<length;j++)if(expected[offset+j]!==chunk.value[index+j])throw Error('Upload read-back differs from the original file.');
           index+=length;offset+=length;verified+=length;
         }
-        onProgress?.({phase:'verifying',bytes:verified,totalBytes:file.size});
+        if(verified===file.size||Date.now()-lastProgress>=options.progressIntervalMs){lastProgress=Date.now();onProgress?.({phase:'verifying',bytes:verified,totalBytes:file.size});}
       }
       if(verified!==file.size)throw Error('Upload read-back ended early.');
     } finally {await Promise.allSettled([remote.cancel(),local.cancel()]);}
   }
-  async function transfer(operation,{source,destination,entries,conflict='skip'}) {
+  async function transfer(operation,{source,destination,entries,conflict='skip'},options) {
     const s=location(source),d=location(destination);
     if(!['skip','keep','replace'].includes(conflict))throw Error('Choose a conflict policy.');
     const selected=entries.map(entry);if(!selected.length)throw Error('Select at least one item.');
@@ -62,13 +82,19 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         e.destinationKey=d.prefix+duplicate+(e.folder?'/':'');
       }
     }
-    return message('cfTransferObjects',{operation,source:s,destination:d,entries:selected,conflict});
+    return message('cfTransferObjects',{operation,source:s,destination:d,entries:selected,conflict},options);
   }
   return {
-    connect:()=>message('cfConnect'),disconnect:()=>message('cfDisconnect'),
-    accounts:()=>message('cfAccounts'),buckets:({accountId})=>message('cfBuckets',{accountId}),
-    async list({source,cursor=''}) {
-      const l=location(source),p=await page(l,l.prefix,cursor),entries=new Map();
+    configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
+    connect:(_,o)=>message('cfConnect',{},o),disconnect:(_,o)=>message('cfDisconnect',{},o),
+    accounts:(_,o)=>message('cfAccounts',{},o),buckets:({accountId},o)=>message('cfBuckets',{accountId},o),
+    async profiles(_,o){const result=await message('profiles',{},o);return {profiles:(result.profiles||[]).filter(p=>p.type==='cloudflare-r2').map(p=>({id:p.id,name:p.name,accountId:p.accountId,accountName:p.accountName,bucketName:p.defaultBucketName||p.bucketName,prefix:p.defaultPrefix||''}))};},
+    async transferHistory(_,o){const result=await message('transferHistory',{},o);return {history:result.transferHistory||[]};},
+    prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification}));},
+    createBucket:({accountId,name:n},o)=>message('cfCreateBucket',{accountId,name:n},o),
+    publicUrls:({source},o)=>message('cfPublicAddresses',location(source),o),
+    async list({source,cursor=''},options) {
+      const l=location(source),p=await page(l,l.prefix,cursor,'/',options),entries=new Map();
       for(const raw of p.delimited){const k=typeof raw==='string'?raw:raw.prefix;if(k&&k.startsWith(l.prefix))entries.set(k,{key:k,folder:true,displayName:k.slice(l.prefix.length).replace(/\/$/,'')});}
       for(const object of p.objects){const k=String(object.key||object.name||'');if(!k.startsWith(l.prefix)||k===l.prefix)continue;
         const relative=k.slice(l.prefix.length);if(relative==='.redown')continue;const slash=relative.indexOf('/');
@@ -77,31 +103,32 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       }
       return {entries:[...entries.values()],cursor:p.cursor};
     },stat,
-    async mkdir({source,name:n}){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)});},
-    copy:input=>transfer('copy',input),move:input=>transfer('move',input),
-    rename:({source,entry:e,newName})=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)}),
-    delete:({source,entries})=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)}),
-    async upload({source,file,key:k,conflict='skip'},{signal,onProgress}={}) {
+    async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)},o);},
+    copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
+    rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
+    delete:({source,entries},o)=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)},o),
+    async upload({source,file,key:k,conflict='skip'},options={}) {
+      options=resolveOptions('upload',{},options);const {signal,onProgress}=options;
       const l=location(source);key(k);
-      if(!file || !Number.isSafeInteger(file.size))throw Error('Choose a local file.');
+      if(!file || !Number.isSafeInteger(file.size)||file.size<0)throw Error('Choose a local file.');
       if(file.size>300000000)throw Error('This beta uses the existing 300 MB direct upload route. Larger multipart uploads are unfinished.');
       if(!['skip','keep','replace'].includes(conflict))throw Error('Choose a conflict policy.');
       // A unique temporary key keeps the original untouched until the proven
       // Worker conditionally commits the final destination. Never replay PUT.
-      if(conflict==='skip' && (await stat({source:l,key:k})).object)return {state:'partial',conflicts:[{destinationKey:k,status:'conflict'}]};
+      if(conflict==='skip' && (await stat({source:l,key:k},options)).object)return {state:'partial',conflicts:[{destinationKey:k,status:'conflict'}]};
       const staging='.redown-beta-uploads/'+crypto.randomUUID()+'/payload';
       let attempted=false;
       try {
         signal?.throwIfAborted();onProgress?.({phase:'uploading',bytes:0,totalBytes:file.size});attempted=true;
-        const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:{'content-type':file.type||'application/octet-stream'},body:file,timeoutMs:300000,signal});
+        const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:{'content-type':file.type||'application/octet-stream'},body:file,timeoutMs:options.uploadTimeoutMs,signal});
         const body=await response.json().catch(()=>null);
         if(!response.ok || body?.success!==true)throw Error('Upload was not confirmed.');
-        const uploaded=await stat({source:l,key:staging});
+        const uploaded=await stat({source:l,key:staging},options);
         if(Number(uploaded.object?.size)!==file.size)throw Error('Uploaded file size could not be verified.');
-        await verifyUpload(l,staging,file,signal,onProgress);
+        await verifyUpload(l,staging,file,options);
         signal?.throwIfAborted();onProgress?.({phase:'committing',bytes:file.size,totalBytes:file.size});
         // destinationKey is exact, so a folder upload retains every component.
-        const result=await message('cfTransferObjects',{operation:'move',source:l,destination:l,entries:[{key:staging,folder:false,destinationKey:k}],conflict});
+        const result=await message('cfTransferObjects',{operation:'move',source:l,destination:l,entries:[{key:staging,folder:false,destinationKey:k}],conflict},options);
         if(result.errors?.length || result.conflicts?.length || result.partialMove)return {...result,recoveryKey:staging};
         if(result.completed!==1 || result.results?.[0]?.size!==file.size)throw Error('Final upload destination was not confirmed.');
         return {...result,key:result.results[0].destinationKey,verification:'byte-for-byte staging read-back and provider final copy receipt; not independent final SHA-256'};
@@ -110,6 +137,21 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         throw error;
       }
     },
+    async preview({source,entry:e},options={}) {
+      if(e.folder)throw Error('Choose a file to preview.');
+      const ext=e.key.split('.').pop().toLowerCase();
+      const types={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',pdf:'application/pdf',txt:'text/plain',json:'text/plain',md:'text/plain',csv:'text/plain'};
+      const type=types[ext]||(['markdown','xml','html','htm','js','mjs','ts','tsx','jsx','css','yaml','yml','py','rs','go','java','c','cpp','h','sh','bat','ps1','log'].includes(ext)?'text/plain':ext==='svg'?'image/svg+xml':null);if(!type)throw Error('Inline preview is unavailable for this file type. Use Download.');
+      const signal=AbortSignal.any([AbortSignal.timeout(options.requestTimeoutMs??providerDefaults.requestTimeoutMs),...(options.signal?[options.signal]:[])]);
+      const response=await http.request(base(location(source))+'/'+key(e.key).split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
+      if(!response.ok||!response.body)throw Error('Cloudflare could not read this preview.');
+      const limit=options.previewMaxBytes??providerDefaults.previewMaxBytes;
+      if(Number(response.headers.get('content-length'))>limit){await response.body.cancel();throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');}
+      const reader=response.body.getReader(),chunks=[];let size=0;
+      try{while(true){signal.throwIfAborted();const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit)throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');chunks.push(value);}}
+      finally{await reader.cancel();}
+      return {url:URL.createObjectURL(new Blob(chunks,{type})),type,size};
+    },
     async download({source,entry:e},{onProgress}={}) {
       if(e.folder)throw Error('Folder downloads are not implemented in this beta.');
       let completed=false,interrupted='';
@@ -117,11 +159,11 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       if(interrupted)throw Error('Chrome interrupted the download: '+interrupted);
       return {state:completed?'completed':'started',downloadId:id,downloadState:completed?'complete':'started'};
     },
-    async remoteIngest({destination,url,filename}) {
+    async remoteIngest({destination,url,filename},options) {
       const l=location(destination),u=new URL(url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw Error('Enter an HTTP or HTTPS source URL without credentials.');
       // The original background -> ingestCloudflareAtPrefix -> Worker pipeline
       // acquires source bytes remotely. This client never fetches the source.
-      return message('ingest',{destination:l,prefix:l.prefix,sourceUrl:u.href,...(filename?{filename:name(filename)}:{})});
+      return message('ingest',{destination:l,prefix:l.prefix,sourceUrl:u.href,...(filename?{filename:name(filename)}:{})},options);
     }
   };
 }

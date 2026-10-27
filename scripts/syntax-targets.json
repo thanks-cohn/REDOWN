@@ -40,5 +40,6 @@
   "extension/odometer.js",
   "extension/beta/file-api.mjs",
   "extension/beta/r2-adapter.mjs",
-  "extension/beta/explorer.mjs"
+  "extension/beta/explorer.mjs",
+  "extension/beta/configuration.mjs"
 ]
