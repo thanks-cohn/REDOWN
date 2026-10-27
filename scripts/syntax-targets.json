@@ -37,5 +37,8 @@
   "scripts/check-syntax.mjs",
   "agent/diagnostics/issues.mjs",
   "extension/transfer-counter.js",
-  "extension/odometer.js"
+  "extension/odometer.js",
+  "extension/beta/file-api.mjs",
+  "extension/beta/r2-adapter.mjs",
+  "extension/beta/explorer.mjs"
 ]
