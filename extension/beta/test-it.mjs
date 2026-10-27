@@ -65,7 +65,7 @@ const rows=[
 ];
 export const exercises=Object.freeze(rows.map(([title,target,text,kind],i)=>Object.freeze({id:i+1,chapter:'ABCDEF'[Math.floor(i/10)],title,target,text,kind})));
 export function installTestIt({document:doc,api,storage,getState,approve,stopTour}){
-  const $=id=>doc.getElementById(id);let session,guide,index=0,baseline=null,lastInput={},command=null,checking=false,generation=0,initializing=true;
+  const $=id=>doc.getElementById(id);let session,guide,index=0,baseline=null,lastInput={},command=null,checking=false,generation=0,initializing=true,restarting=false,cleaning=false;
   let folder=null,previousImage=null,lastMove=null,renameFrom=null,lastCreated=null,sideChecks={},multiEvidence=[],clipboardCommand=null;
   const records=()=>{for(const e of exercises)if(!session.state.records.find(r=>r.exerciseId===e.id))session.state.records.push({exerciseId:e.id,requestedAction:e.text,observedGuiInteraction:null,actualApiOperation:null,providerResponse:null,expectedResult:e.title,independentlyObservedResult:null,sha256Comparisons:[],latencyMs:null,testOwnedObjectIdentities:[],verdict:'NOT_TESTED'});};
   const record=()=>session.state.records[index];
@@ -134,7 +134,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     }
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
-  async function start(){if(initializing)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);
+  async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);
     guide=createGuide({document:doc,steps:exercises.map(e=>({...e,action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
       onStep:i=>{index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
@@ -143,9 +143,23 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
   doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,event.detail);});
-  async function exportResults(){if(!session)return;records();if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});await save();const report=structuredClone(session.state);delete report.pending;report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download='redown-test-it-'+session.state.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  async function exportResults(){if(!session||restarting)return;records();if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});await save();const report=structuredClone(session.state);delete report.pending;report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download='redown-test-it-'+session.state.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  $('test-it-restart').onclick=async()=>{
+    if(initializing||restarting||cleaning)return;
+    if(checking||session.busy){await approve('Restart is waiting','Wait for the current file operation or check to finish, then choose Restart Test It again.');return;}
+    restarting=true;
+    try{
+      if(!await approve('Restart Test It?','Replace the current session results and begin at exercise 1? Cloud files and practice-copy ownership will be preserved. Previously downloaded reports will stay unchanged.'))return;
+      if(checking||session.busy)throw Error('Wait for the current file operation before restarting.');
+      guide?.stop();generation++;
+      await session.restart();
+      index=0;baseline=null;lastInput={};command=null;folder=null;previousImage=null;lastMove=null;renameFrom=null;lastCreated=null;sideChecks={};multiEvidence=[];clipboardCommand=null;
+      restarting=false;await start();
+    }catch(e){await approve('Test It could not restart',e.message+' Your previous results and ownership records have been retained.');}
+    finally{restarting=false;}
+  };
   $('test-it').onclick=()=>void start();$('test-it-export').onclick=()=>void exportResults();
-  $('test-it-cleanup').onclick=async()=>{if(!session||checking)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{session.active=Boolean(guide?.active);}};
+  $('test-it-cleanup').onclick=async()=>{if(!session||checking||restarting||cleaning||session.busy)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;cleaning=true;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{cleaning=false;session.active=Boolean(guide?.active);}};
   $('take-tour').addEventListener('click',()=>guide?.stop());
   void (async()=>{try{const saved=(await storage.get('betaExplorerTestIt'))?.betaExplorerTestIt;session=createPracticeSession({api,storage,saved,approve,onEvidence:evidence});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
   return {observe,get lastCommand(){return command?.action;},get session(){return session;}};
