@@ -9,12 +9,29 @@ import tempfile
 from pathlib import Path
 import redown.install_host
 from redown import connect
-from redown.extension import RenewalSchedule
+from redown.extension import RenewalSchedule, ExtensionClient
 from redown.native_host import Relay, Server, Handler, read_frame, write_frame, MAX_FRAME, AUTHENTICATED_IDLE_TIMEOUT
 from redown.client import RedownError
 from redown.lab import conformance
 
 class NativeTransportTests(unittest.TestCase):
+    def test_copy_polls_once_dispatched_and_preserves_idempotency(self):
+        from unittest.mock import patch
+        client=object.__new__(ExtensionClient)
+        calls=[]
+        def query(method, **inputs):
+            calls.append((method,inputs))
+            if method=='describe':return {'limits':{'streaming':True}}
+            if method=='streamExecute':return {'pending':True}
+            if len([c for c in calls if c[0]=='streamStatus'])==1:return {'pending':True}
+            return {'pending':False,'response':{'state':'available','data':{'id':'copy-job','state':'completed'}}}
+        client.query=query
+        with patch('redown.extension.time.sleep'):
+            result=client.execute('copy',source={'key':'source'},destination={'key':'destination'},idempotency_key='stable')
+        self.assertEqual(result['state'],'completed')
+        self.assertEqual([m for m,_ in calls],['describe','streamExecute','streamStatus','streamStatus'])
+        self.assertEqual(calls[1][1]['request']['idempotencyKey'],'stable')
+
     def test_forty_minute_schedule_uses_monotonic_time_without_burst_replay(self):
         now = [0]
         schedule = RenewalSchedule(clock=lambda: now[0])

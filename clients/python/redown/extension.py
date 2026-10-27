@@ -90,6 +90,11 @@ class ExtensionClient(Client):
                 return response['data']
             time.sleep(0.25)
 
+    def execute(self, operation, *, idempotency_key=None, **arguments):
+        if operation == 'copy' and self.describe().get('limits', {}).get('streaming'):
+            return self._stream_execute(operation, idempotency_key=idempotency_key, **arguments)
+        return super().execute(operation, idempotency_key=idempotency_key, **arguments)
+
     def upload(self, path, destination, **options):
         expected_sha256 = options.pop('expected_sha256', None)
         expected_size = options.pop('expected_size', None)

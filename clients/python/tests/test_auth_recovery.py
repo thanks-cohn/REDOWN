@@ -12,6 +12,23 @@ from redown.contracts import checkpoint_view, describe_response
 from redown.recovery import reconcile
 
 class RecoveryTests(unittest.TestCase):
+    def test_large_streaming_reconciliation_hashes_all_bytes_without_mutations(self):
+        import hashlib
+        from types import SimpleNamespace
+        payload=b'x'*300000+b'end'
+        root={'provider':'extension-r2','account':'a','container':'test-1-new','key':'__redown_test__/11111111-1111-4111-8111-111111111111/'}
+        run_id='22222222-2222-4222-8222-222222222222'
+        previous={'destinationRoot':root,'runId':run_id,'inventory':{'selected':[{'relpath':'large.bin','bytes':len(payload),'sha256':hashlib.sha256(payload).hexdigest()}]},'results':[{'operation':'copy','file':'large.bin','status':'INDETERMINATE'}]}
+        reads=[]
+        def download(source,target):
+            reads.append(source);target.write_bytes(payload)
+        client=SimpleNamespace(describe=lambda:{'methods':['describe','execute'],'locations':[root],'limits':{'maxBytes':65536,'streaming':True}},download=download)
+        report=reconcile(client,previous)
+        self.assertEqual(report['reconciliation']['results'][0]['status'],'CONFIRMED')
+        self.assertEqual(len(reads),1)
+        self.assertIn('/copies/large.bin',reads[0]['key'])
+        self.assertEqual(previous['results'][0]['status'],'INDETERMINATE')
+
     def fixture(self, cls=ProviderFixture):
         client=cls()
         client.root['key']='__redown_test__/11111111-1111-4111-8111-111111111111/'
