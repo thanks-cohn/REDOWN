@@ -1,0 +1,19 @@
+✔ Python external process traverses native relay, canonical engine and Atlas (52983.317761ms)
+✔ existing embedded Worker multipart route conditionally publishes and cleans only its staging object (473.381452ms)
+✔ multipart interruption retains checkpoint and does not publish truncated input (35.381666ms)
+✔ extension session spools bounded frames, executes canonical upload asynchronously, streams readback (570.456083ms)
+✔ spool rejects wrong offsets, unsealed source, oversize frames and changed source hashes (0.967934ms)
+✔ canonical upload exceeds legacy limits; bounded chunks and payload-free journal (418.640152ms)
+✔ truncation, corrupt readback, source revision change and bad local digest never complete (17.535848ms)
+✔ stream read sends bounded chunks to sink and checks independently computed digest (45.473431ms)
+✔ incremental SHA-256 matches independent Node hashes at padding and binary boundaries (112.842812ms)
+✔ source cancellation is propagated, and authorization is checked between chunks (0.927732ms)
+✔ generated 200 MiB manifest independently matches incremental byte streaming (1808.571159ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53117.398998

@@ -37,7 +37,7 @@ test('extension session spools bounded frames, executes canonical upload asynchr
  const createObject=async()=>{throw Error('legacy path must not execute');};
  const grant=authorizeLab({roots:[root],write:true,isCurrent:()=>true,getStreamDirectory:async()=>dir,createObject,
   createStream:async(i,source)=>{const chunks=[];for await(const chunk of source)chunks.push(chunk.slice());objects.set(i.key,new Uint8Array(await new Blob(chunks).arrayBuffer()));},
-  request:async(path)=>{if(path.includes('?')){const prefix=new URL('https://fixture'+path).searchParams.get('prefix');return Response.json({result:[...objects].filter(([key])=>key.startsWith(prefix)).map(([key,b])=>({key,size:b.length,etag:digest(b)}))});}const key=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/'),data=objects.get(key);return data?new Response(data,{headers:{etag:digest(data),'content-length':String(data.length)}}):new Response(null,{status:404});}});
+  request:async(path)=>{if(path.includes('?')){const prefix=new URL('https://fixture'+path).searchParams.get('prefix');return Response.json({result:[...objects].filter(([key])=>key.startsWith(prefix)).sort(([a],[b])=>a<b?-1:a>b?1:0).slice(0,Number(new URL('https://fixture'+path).searchParams.get('per_page'))||50).map(([key,b])=>({key,size:b.length,etag:digest(b)}))});}const key=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/'),data=objects.get(key);return data?new Response(data,{headers:{etag:digest(data),'content-length':String(data.length)}}):new Response(null,{status:404});}});
  const query=async(method,input={})=>{const response=await grant.query(method,input);assert.equal(response.state,'available',JSON.stringify(response));return response.data;};
  const info=await query('describe');assert.equal(info.limits.streaming,true);const destination={...info.locations[0],key:info.writePrefix+'file'};
  const opened=await query('streamOpen',{mode:'upload',size:bytes.length,sha256:digest(bytes)});
@@ -47,6 +47,12 @@ test('extension session spools bounded frames, executes canonical upload asynchr
  let status;do{await new Promise(r=>setImmediate(r));status=await query('streamStatus');}while(status.pending);
  assert.equal(status.response.data.state,'completed',JSON.stringify(status));assert.equal(status.response.data.checkpoints[0].sha256,digest(bytes));
  await query('streamClose',{id:opened.id});
+ const copied={...destination,key:destination.key+'-copy'};
+ await query('streamExecute',{request:{apiVersion:'0.3.0',operation:'copy',idempotencyKey:crypto.randomUUID(),source:destination,destination:copied}});
+ do{await new Promise(r=>setImmediate(r));status=await query('streamStatus');}while(status.pending);
+ assert.equal(status.response.data.state,'completed',JSON.stringify(status));
+ assert.equal(digest(objects.get(copied.key)),digest(bytes));
+ assert.equal(digest(objects.get(destination.key)),digest(bytes));
  const read=await query('streamOpen',{mode:'read',size:bytes.length,sha256:null});
  const response=await query('execute',{request:{apiVersion:'0.3.0',operation:'read',idempotencyKey:crypto.randomUUID(),source:destination,transfer:{size:bytes.length}}});assert.equal(response.state,'completed');
  const hash=createHash('sha256');let count=0,part;do{part=await query('streamPull',{id:read.id,offset:count});const chunk=Buffer.from(part.bytesBase64,'base64');hash.update(chunk);count+=chunk.length;}while(!part.done);

@@ -42,13 +42,16 @@ def reconcile(client, previous, checkpoint=None):
         try:
             if op=='mkdir':
                 result['reason']='DIRECTORY_MARKER_REQUIRES_MANUAL_REVIEW'
-            elif not re.fullmatch(r'[a-f0-9]{64}',expected or '') or not isinstance(size,int) or not 0<=size<=info['limits']['maxBytes']:
+            elif not re.fullmatch(r'[a-f0-9]{64}',expected or '') or type(size) is not int or size<0 or (not info['limits'].get('streaming') and size>info['limits']['maxBytes']):
                 result['reason']='MISSING_OR_UNSUPPORTED_SOURCE_EVIDENCE'
             else:
                 with tempfile.TemporaryDirectory(prefix='redown-reconcile-') as directory:
                     target=Path(directory)/'readback.bin'
                     client.download(destination,target)
-                    with target.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest() if hasattr(hashlib,'file_digest') else hashlib.sha256(stream.read(65537)).hexdigest()
+                    digest_state=hashlib.sha256()
+                    with target.open('rb') as stream:
+                        for chunk in iter(lambda:stream.read(262144),b''):digest_state.update(chunk)
+                    digest=digest_state.hexdigest()
                     if target.stat().st_size==size and digest==expected:
                         result.update(status='CONFIRMED',sha256=digest,verifiedBytes=size)
                     else:result.update(status='CONFLICT',reason='VERIFICATION_DISAGREEMENT')

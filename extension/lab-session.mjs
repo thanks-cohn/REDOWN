@@ -61,7 +61,9 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
     if (!await active()) return await unavailable();
     if(method==='streamExecute'){
       if(streamingPending||streamingResult)return {apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_BUSY'}};
-      if(!input?.request?.transfer)return {apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_REQUIRED'}};
+      // Copies stream provider-to-provider without a local spool/transfer field.
+      // Keep their response off the native host's synchronous request deadline.
+      if(!input?.request?.transfer&&input?.request?.operation!=='copy')return {apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_REQUIRED'}};
       streamingPending=true;streamingProgress=null;
       void this.query('execute',input).then(response=>{streamingResult=response;streamingPending=false;},()=>{streamingResult={apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_FAILED'}};streamingPending=false;});
       return {apiVersion:'1.0.0',state:'available',data:{pending:true}};
