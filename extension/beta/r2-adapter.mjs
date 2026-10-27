@@ -24,7 +24,10 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
 
   const base=l=>`/accounts/${encodeURIComponent(l.accountId)}/r2/buckets/${encodeURIComponent(l.bucketName)}/objects`;
   async function page(target,p='',cursor='',delimiter='/',options={}) {
-    const l=location(target),query=new URLSearchParams({per_page:'1000',prefix:p,cursor,delimiter});
+    const l=location(target),query=new URLSearchParams({per_page:'1000'});
+    if(p)query.set('prefix',p);
+    if(cursor)query.set('cursor',cursor);
+    if(delimiter)query.set('delimiter',delimiter);
     const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
     const body=await response.json().catch(()=>null);
     if(!response.ok || body?.success===false || !body || !Array.isArray(body.result) && !Array.isArray(body.result?.objects))throw Object.assign(Error(response.status===401?'Cloudflare session expired (401). Reconnect Cloudflare.':response.status===403?'Cloudflare denied access to this folder (403). Check account authorization.':'Cloudflare could not list this folder (HTTP '+response.status+'). Refresh to inspect its current state.'),{code:'HTTP_'+response.status});
