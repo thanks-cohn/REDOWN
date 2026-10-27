@@ -1,3 +1,4 @@
+import {createStreamSpool} from './file-engine/stream-spool.mjs';
 import {projectLabSummary} from './lab-report.mjs';
 import {diagnosticFrom} from './file-engine/diagnostics.mjs';
 // One revocable, selected-bucket session per approved external connection.
@@ -5,7 +6,7 @@ import { createFileEngine, fail } from "./file-engine/engine.mjs";
 import { createScopedSession } from "./file-engine/scoped-session.mjs";
 import { request02, request03, session } from "./file-engine/session-validators.mjs";
 import { extensionR2Adapter } from "./file-engine/adapters/extension-r2.mjs";
-function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, ttl = 36e5, clock = Date.now, authorizationStatus, onLabReport, onLabProgress }) {
+function authorizeLab({ roots, request, isCurrent, renewAuthorization, extensionVersion = "UNKNOWN", doctorProvider, write = false, createObject, createStream, getStreamDirectory, ttl = 36e5, clock = Date.now, authorizationStatus, onLabReport, onLabProgress }) {
   if (!Array.isArray(roots) || !roots.length || roots.some((r) => r.provider !== "extension-r2" || r.key !== "")) throw fail("INVALID_SCOPE");
   if (write && (typeof createObject !== "function" || roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container)))) throw fail("LAB_BUCKET_REQUIRED");
   const writePrefix = write ? "__redown_test__/" + crypto.randomUUID() + "/" : null;
@@ -21,7 +22,11 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
     const code = await inactiveCode() || 'AUTHORIZATION_DENIED';
     return {apiVersion:'1.0.0',state:'failed',error:{code,diagnostic:diagnosticFrom(fail(code),{component:'session',stage:'connection'})}};
   };
-  const adapter = extensionR2Adapter({ createObject: write ? async (i, bytes, context = {}) => {
+  const spool=createStreamSpool({getDirectory:getStreamDirectory,active});
+  const adapter = extensionR2Adapter({ createStream:write&&createStream?async(i,source,options)=>{
+    if(!await active()||!inside(i))throw fail("AUTHORIZATION_DENIED");
+    return createStream(i,source,{...options,check:async()=>{await options.check();if(!await active()||!inside(i))throw fail("AUTHORIZATION_DENIED");}});
+  }:undefined, createObject: write ? async (i, bytes, context = {}) => {
     if (!await active() || !inside(i)) throw fail("AUTHORIZATION_DENIED");
     await createObject(i, bytes, {isActive: active, traceparent:context.traceparent});
     if (!await active()) throw fail("AUTHORIZATION_DENIED");
@@ -46,12 +51,31 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
     return fn(state);
   } };
   const engine = createFileEngine({ store, adapters: [adapter], authorize: async (r) => await active() && operations.includes(r.operation) && [r.source, r.destination].filter(Boolean).every(inside) });
-  const facade = createScopedSession({ engine, scope: { operations, locations, maxOperations: write ? 100000 : 100 }, validateRequests: [request02, request03], validateSession: session });
+  const facade = createScopedSession({ engine, scope: { operations, locations, maxOperations: write ? 100000 : 100 }, validateRequests: [request02, request03], validateSession: session, resolveTransfer:async r=>({...await spool.resolve(r),onProgress:p=>{streamingProgress=p;}}), finishTransfer:(r,j)=>spool.finish(r,j) });
   const observedRuns = new Map();
+  let streamingResult=null,streamingPending=false,streamingProgress=null;
   return Object.freeze({ expires, revoke() {
     revoked = true;
+    void spool.clear().catch(()=>{});
   }, async query(method, input = {}) {
     if (!await active()) return await unavailable();
+    if(method==='streamExecute'){
+      if(streamingPending||streamingResult)return {apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_BUSY'}};
+      if(!input?.request?.transfer)return {apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_REQUIRED'}};
+      streamingPending=true;streamingProgress=null;
+      void this.query('execute',input).then(response=>{streamingResult=response;streamingPending=false;},()=>{streamingResult={apiVersion:'1.0.0',state:'failed',error:{code:'STREAM_FAILED'}};streamingPending=false;});
+      return {apiVersion:'1.0.0',state:'available',data:{pending:true}};
+    }
+    if(method==='streamStatus'){
+      if(Object.keys(input).length)return {apiVersion:'1.0.0',state:'failed',error:{code:'INVALID_INPUT'}};
+      const data=streamingPending?{pending:true,progress:streamingProgress}:{pending:false,response:streamingResult};
+      if(!streamingPending)streamingResult=null;
+      return {apiVersion:'1.0.0',state:'available',data};
+    }
+    if(['streamOpen','streamAppend','streamSeal','streamPull','streamClose'].includes(method)) {
+      try {if(method==='streamOpen'&&input.mode==='upload'&&!write)throw fail('AUTHORIZATION_DENIED');return {apiVersion:'1.0.0',state:'available',data:await spool.query(method,input)};}
+      catch(error){return {apiVersion:'1.0.0',state:'failed',error:{code:error.code||'STREAM_STORAGE_FAILURE'}};}
+    }
     if (method === 'labReport') {
       try {
         if(input && Object.keys(input).join()==='progress' && typeof onLabProgress==='function') {
@@ -118,13 +142,17 @@ function authorizeLab({ roots, request, isCurrent, renewAuthorization, extension
       if (typeof doctorProvider==='function') response.data.methods.push('doctor');
       response.data.transport = "Chrome native messaging / authenticated loopback";
       response.data.limits.maxBytes = 65536;
+      response.data.limits.streaming = !!createStream;
+      response.data.limits.streamChunkBytes = 262144;
+      if(createStream)response.data.providerLimits={conditionalPublicationBytes:5363466240,reason:"R2 single conditional PUT limit; multipart staging does not remove this provider publication constraint",transferConcurrency:1,partBytes:8388608};
+      if(createStream)response.data.methods.push('streamExecute','streamStatus','streamOpen','streamAppend','streamSeal','streamPull','streamClose');
       response.data.expiresAt = expires;
       response.data.authorization = write ? "Explicit write approval; four laboratory buckets; unique grant namespace; conditional create only; no deletion" : "Explicit extension approval; read-only selected buckets; user-selected duration (up to eight hours); revocable";
       response.data.extensionVersion = extensionVersion;
       response.data.writePrefix = writePrefix;
       response.data.writeEnabled = write;
       response.data.independentReadback = "OAuth Object API, separate from Worker creation";
-      response.data.unsupported = write ? ["move", "rename", "delete", "streaming", "multipart", "durable recovery"] : ["mutations", "direct-s3", "durable recovery"];
+      response.data.unsupported = write ? ["move", "rename", "delete", ...(createStream?[]:["streaming", "multipart"]), "durable recovery"] : ["mutations", "direct-s3", "durable recovery"];
     }
     return response;
   } });

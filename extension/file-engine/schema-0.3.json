@@ -120,6 +120,24 @@
               "maxLength": 128
             }
           }
+        },
+        "transfer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
       },
       "allOf": [
@@ -204,8 +222,17 @@
                   "content"
                 ],
                 "not": {
-                  "required": [
-                    "bytesBase64"
+                  "anyOf": [
+                    {
+                      "required": [
+                        "bytesBase64"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "transfer"
+                      ]
+                    }
                   ]
                 }
               },
@@ -214,8 +241,36 @@
                   "bytesBase64"
                 ],
                 "not": {
-                  "required": [
-                    "content"
+                  "anyOf": [
+                    {
+                      "required": [
+                        "content"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "transfer"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "transfer"
+                ],
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "content"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "bytesBase64"
+                      ]
+                    }
                   ]
                 }
               }
@@ -235,6 +290,44 @@
               "url",
               "expectedSha256"
             ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "transfer"
+            ]
+          },
+          "then": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "upload",
+                  "read"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "transfer"
+            ],
+            "properties": {
+              "operation": {
+                "const": "upload"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "transfer": {
+                "required": [
+                  "sha256"
+                ]
+              }
+            }
           }
         }
       ]

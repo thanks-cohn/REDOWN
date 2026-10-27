@@ -156,9 +156,8 @@
               ><svg><use href="#i-upload" /></svg>Upload file<input
                 id="upload"
                 type="file"
-                accept="text/plain,.txt"
               /><span class="sr-only"
-                >Upload a text fixture up to 64 KiB</span
+                >Upload a file</span
               ></label
             >
           </div>
@@ -268,6 +267,7 @@
                     Select a file or folder to see its details.
                   </p>
                 </div>
+                <button id="download" class="secondary-button">Download file</button>
                 <button id="read" class="secondary-button">
                   <svg><use href="#i-eye" /></svg>Preview
                 </button>
@@ -374,6 +374,7 @@
         </div>
       </section>
     </main>
-    <script type="module" src="beta-explorer.mjs"></script>
+    <script src="cloudflare-api.js"></script>
+    <script type="module" src="beta-cloudflare.mjs"></script>
   </body>
 </html>

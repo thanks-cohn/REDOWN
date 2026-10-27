@@ -1,6 +1,8 @@
 // Actual Python processes, TCP and native frames; actual coordinator, injected provider.
 // No installed Chrome or live Cloudflare result is claimed by this fixture.
 import test from "node:test";
+import {createHash} from "node:crypto";
+import {diskDirectory} from "./fixtures/opfs-disk.mjs";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
@@ -9,7 +11,7 @@ import path from "node:path";
 import {laboratoryDoctor} from "../extension/lab-worker.mjs";
 import { authorizeLab } from "../extension/lab-session.mjs";
 const root = { provider: "extension-r2", account: "account", container: "test-1-new", key: "" };
-test("Python external process traverses native relay, canonical engine and Atlas", { timeout: 2e4 }, async () => {
+test("Python external process traverses native relay, canonical engine and Atlas", { timeout: process.env.REDOWN_CORPUS ? 180000 : 20000 }, async () => {
   const home = await mkdtemp(path.join(tmpdir(), "redown-native-")), directory = path.join(home, ".redown-laboratory");
   await mkdir(directory);
   await writeFile(path.join(directory, "host-config.json"), JSON.stringify({ origin: "chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/" }));
@@ -21,7 +23,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
   const grants = /* @__PURE__ */ new Map();
   const bytes = new TextEncoder().encode("Native round trip fixture");
   const summaries=[];
-  let writeMode=false, failureMode=false; const written=new Map();
+  let writeMode=false, failureMode=false, streamMode=false; const written=new Map();
   const request = async (url, options = {}) => {
     const key=url.split('/objects/')[1]?.split('/').map(decodeURIComponent).join('/');
     if(failureMode && new URL('https://fixture'+url).searchParams.get('per_page')==='1')return Response.json({errors:[{code:10021,message:'DO_NOT_EXPORT_SECRET /private/key'}]},{status:400,headers:{'cf-ray':'0123456789abcdef-ORD'}});
@@ -48,7 +50,7 @@ test("Python external process traverses native relay, canonical engine and Atlas
     if (m.type !== "request") return;
     let response;
     if (m.method === "pair") {
-      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, onLabReport:r=>summaries.push(r), onLabProgress:()=>{}, doctorProvider:laboratoryDoctor({request,getProfiles:async()=>[],fetcher:async()=>{throw Error('No cloud');}}), createObject:async(i,b)=>{
+      grants.set(m.client, authorizeLab({ roots: [root], request, write:writeMode, ...(streamMode?{getStreamDirectory:async()=>diskDirectory(home),createStream:async(i,stream)=>{const chunks=[];for await(const chunk of stream)chunks.push(chunk.slice());written.set(i.key,new Uint8Array(await new Blob(chunks).arrayBuffer()));}}:{}), onLabReport:r=>summaries.push(r), onLabProgress:()=>{}, doctorProvider:laboratoryDoctor({request,getProfiles:async()=>[],fetcher:async()=>{throw Error('No cloud');}}), createObject:async(i,b)=>{
         if(written.has(i.key))throw Object.assign(Error(),{code:'CONFLICT'});written.set(i.key,b.slice());
       }, isCurrent: () => true }));
       response = { apiVersion: "1.0.0", state: "available", data: { clientId: m.client } };
@@ -113,6 +115,29 @@ test("Python external process traverses native relay, canonical engine and Atlas
     assert.ok(evidence.results.find(r=>r.operation==='read').diskReadbackSha256);
     assert.equal(evidence.cleanup.status,'NOT_TESTED');
     assert.ok(!JSON.stringify(evidence).includes('Bearer'));
+    streamMode=true;
+    const streamedDirectory=path.join(home,'streamed-samples');await mkdir(streamedDirectory);
+    const large=Buffer.alloc(9*1024*1024+1,37);await writeFile(path.join(streamedDirectory,'large.bin'),large);
+    await writeFile(path.join(streamedDirectory,'manifest.json'),JSON.stringify({files:[{name:'large.bin',bytes:large.length,sha256:createHash('sha256').update(large).digest('hex')}]}));
+    const streamedPath=path.join(home,'streamed-report.json');
+    const streamed=spawn('python',['-m','redown.lab','complete','--directory',streamedDirectory,'--depth','Comprehensive','--manifest','manifest.json','--report',streamedPath],{env,stdio:['ignore','pipe','pipe']});let streamedOutput='',streamedErrors='';streamed.stdout.on('data',x=>streamedOutput+=x);streamed.stderr.on('data',x=>streamedErrors+=x);
+    assert.equal(await new Promise(r=>streamed.on('exit',r)),2,streamedOutput+streamedErrors+errors);
+    const streamedReport=JSON.parse(await readFile(streamedPath));
+    assert.equal(streamedReport.coverage.PASS,streamedReport.plan.plannedOperations,JSON.stringify(streamedReport));
+    assert.equal(streamedReport.verifiedFiles,1);assert.equal(streamedReport.plan.missing.length,0);
+    assert.ok(streamedReport.results.find(r=>r.operation==='read').diskReadbackSha256);
+    assert.match(streamedErrors,/Sending to extension/);streamMode=false;
+    if(process.env.REDOWN_CORPUS){
+      streamMode=true;
+      const corpusPath=path.join(home,'corpus-200.json');
+      const corpus=spawn('python',['-m','redown.lab','complete','--directory',process.env.REDOWN_CORPUS,'--depth','Comprehensive','--profile','Balanced','--manifest','manifest.json','--report',corpusPath],{env,stdio:['ignore','pipe','pipe']});let corpusOutput='',corpusErrors='';corpus.stdout.on('data',x=>corpusOutput+=x);corpus.stderr.on('data',x=>corpusErrors+=x);
+      assert.equal(await new Promise(r=>corpus.on('exit',r)),2,corpusOutput+corpusErrors+errors);
+      const corpusReport=JSON.parse(await readFile(corpusPath));
+      assert.equal(corpusReport.coverage.PASS,corpusReport.plan.plannedOperations,JSON.stringify(corpusReport));
+      assert.equal(corpusReport.verifiedFiles,12);assert.equal(corpusReport.plan.missing.length,0);
+      if(process.env.REDOWN_NATIVE_REPORT)await writeFile(process.env.REDOWN_NATIVE_REPORT,JSON.stringify({evidenceTier:'LOCAL_NATIVE_FIXTURE_NOT_LIVE_CLOUDFLARE',provider:'Injected fixture using actual extension adapter; no installed Chrome or Cloudflare',report:corpusReport},null,2)+'\n');
+      streamMode=false;
+    }
     failureMode=true;
     const failurePath=path.join(home,'native-provider-error.json');
     const failure=spawn('python',['-m','redown.lab','complete','--directory',samples,'--depth','Comprehensive','--report',failurePath],{env,stdio:['ignore','pipe','pipe']});failure.stdout.resume();failure.stderr.resume();

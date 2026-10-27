@@ -1,3 +1,5 @@
+import {sha256} from './file-engine/vendor/sha256.mjs';
+import {hex} from './file-engine/streaming.mjs';
 import {createFileEngine} from './file-engine/engine.mjs';
 import {createProviderRegistry,modelFor,providerDescription} from './file-engine/provider-contract.mjs';
 import {r2HttpAdapter,LAB_BUCKETS} from "./file-engine/adapters/r2-http.mjs";
@@ -25,7 +27,7 @@ export function installBetaExplorer({
   const positions=new Map(),parents=new Map();
   if(registry)for(const control of ['provider','destination'])$(control).replaceChildren(...[...bindings].map(([key,b])=>{const option=document.createElement('option');option.value=key;option.textContent=b.label||b.adapter.id;return option;}));
   const activeBinding=control=>bindings.get($(control).value);
-  const position=control=>positions.get($(control).value)||activeBinding(control)?.root;
+  const position=control=>{const root=positions.get($(control).value)||activeBinding(control)?.root;return root&&!root.locator?{...root,key:control==='provider'?$('prefix').value:root.key}:root;};
   const objectIdentity=object=>object.identity||{provider:object.provider,account:object.account,container:object.container,key:object.key};
   const nameOf=object=>object.name||displayName(object.key);
   const destinationFor=(control,name,folder=false)=>registry?modelFor(activeBinding(control).adapter).child(position(control),name,folder):identity($(control).value,$('prefix').value+name+(folder?'/':''));
@@ -135,7 +137,7 @@ export function installBetaExplorer({
     $("explorer").hidden = !enabled;
     $("gate").dataset.enabled = String(enabled);
     $("gate").textContent = enabled
-      ? (lab?"Beta Mode enabled · Authorized test laboratory":"Beta Mode enabled · Simulation foundation")
+      ? (registry?"Beta Mode enabled · Cloudflare R2":lab?"Beta Mode enabled · Authorized test laboratory":"Beta Mode enabled · Simulation foundation")
       : "Beta Explorer is hidden. Enable the existing Beta Mode in Dashboard settings. Saved simulation jobs are retained.";
     if (!enabled) {
       if($("explorer").contains(document.activeElement)){ $("gate").tabIndex=-1; $("gate").focus(); }
@@ -168,7 +170,7 @@ export function installBetaExplorer({
     if (!enabled) throw Error("BETA_MODE_DISABLED");
     await initialize();
   }
-  async function run(operation, args = {}) {
+  async function run(operation, args = {}, transfer) {
     const inputAt=performance.now();
     await allowed();
     const traceId=await collector.begin(operation);
@@ -178,7 +180,7 @@ export function installBetaExplorer({
       operation,
       idempotencyKey: crypto.randomUUID(),
       ...args,
-    },{traceId});
+    },{traceId,transfer});
     guideEvent({
       kind: "operation",
       operation,
@@ -312,10 +314,10 @@ export function installBetaExplorer({
     if(registry)return objectIdentity(selected);
     return selected.provider==='r2-lab'?{provider:selected.provider,account:selected.account,container:selected.container,key:selected.key}:identity(selected.provider, selected.key);
   }
-  async function mutation(operation, args) {
-    const result = await run(operation, args);
+  async function mutation(operation, args, transfer) {
+    const result = await run(operation, args, transfer);
     message(
-      result.state === "completed" ? "Simulation completed" : result.error,
+      result.state === "completed" ? (registry?"Transfer completed and verified":"Simulation completed") : result.error,
       result.state,
     );
     await refreshJobs();
@@ -436,6 +438,12 @@ export function installBetaExplorer({
     safe(async () => {
       const file = $("upload").files[0];
       if (!file) return;
+      if(registry&&activeBinding('provider').adapter.manifest?.features.streamingUploads){
+        const source=async function*(){for(let offset=0;offset<file.size;offset+=262144)yield new Uint8Array(await file.slice(offset,offset+262144).arrayBuffer());};
+        const digest=sha256.create();for await(const bytes of source())digest.update(bytes);
+        await mutation('upload',{destination:destinationFor('provider',file.name),transfer:{size:file.size,sha256:hex(digest.digest())},metadata:{contentType:file.type||'application/octet-stream'}},{source,onProgress:p=>message(`${p.bytes} / ${p.total} bytes`, 'executing')});
+        $('upload').value='';return;
+      }
       if (file.size > 65536)
         throw Error("Text fixtures are limited to 64 KiB.");
       if (file.type && !file.type.startsWith("text/"))
@@ -446,6 +454,18 @@ export function installBetaExplorer({
       });
       $("upload").value = "";
     });
+  if($('download'))$('download').onclick=()=>safe(async()=>{
+    const source=requireSelection();
+    if(!registry||selected.folder)throw Error('Select a connected Cloudflare file.');
+    if(typeof document.defaultView.showSaveFilePicker!=='function')throw Error('Streaming downloads require Chrome’s file save picker.');
+    const handle=await document.defaultView.showSaveFilePicker({suggestedName:nameOf(selected)});
+    const writer=await handle.createWritable();
+    try{
+      const result=await run('read',{source,transfer:{size:selected.size}},{sink:bytes=>writer.write(bytes),onProgress:p=>message(`${p.bytes} / ${p.total} bytes`,'executing')});
+      if(result.state!=='completed')throw Error(result.error);
+      await writer.close();message('Download verified: '+result.result.sha256,'completed');
+    }catch(error){await writer.abort();throw error;}
+  });
   $("read").onclick = () =>
     safe(async () => {
       const source = requireSelection();
@@ -535,6 +555,6 @@ export function installBetaExplorer({
   };
 }
 export const controller =
-  typeof document !== "undefined" && typeof chrome !== "undefined"
+  typeof document !== "undefined" && typeof chrome !== "undefined" && !globalThis.REDOWN_CLOUDFLARE_BOOTSTRAP
     ? installBetaExplorer({ document, chrome })
     : null;

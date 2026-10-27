@@ -442,6 +442,51 @@ export default {
     try {
       // Exact laboratory creation uses the existing authenticated STORAGE engine.
       // Never fall through to ingest or expose unconditional overwrite/delete.
+      // Multipart transport stages under an unpredictable private key, then publishes
+      // using conditional PUT. Multipart completion itself has no atomic onlyIf.
+      if (request.headers.get("x-redown-action")?.startsWith("stream-")) {
+        const action=request.headers.get("x-redown-action");
+        const key=decodeURIComponent(request.headers.get("x-redown-key")||"");exactObjectKey(key);
+        const size=Number(request.headers.get("x-redown-size"));
+        // Actual R2 single PUT limit for atomic conditional publication (5 GiB - 5 MiB).
+        if(!Number.isSafeInteger(size)||size<0)return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});
+        if(size>5363466240)return Response.json({ok:false,code:"PROVIDER_CONDITIONAL_PUT_LIMIT"},{status:413});
+        if(action==="stream-begin"){
+          if(await env.STORAGE.head(key))return Response.json({ok:false,code:"CONFLICT"},{status:409});
+          const temporary="__redown_upload__/"+crypto.randomUUID();
+          const contentType=request.headers.get("x-redown-content-type")||"application/octet-stream";
+          if(contentType.length>128)return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});
+          const upload=await env.STORAGE.createMultipartUpload(temporary,{httpMetadata:{contentType,cacheControl:"no-store"}});
+          return Response.json({ok:true,temporary,uploadId:upload.uploadId});
+        }
+        const temporary=request.headers.get("x-redown-temporary")||"";
+        const uploadId=request.headers.get("x-redown-upload-id")||"";
+        if(!/^__redown_upload__\\/[a-f0-9-]{36}$/.test(temporary)||!uploadId||uploadId.length>2048)return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});
+        const upload=env.STORAGE.resumeMultipartUpload(temporary,uploadId);
+        if(action==="stream-part"){
+          const partNumber=Number(request.headers.get("x-redown-part"));
+          if(!Number.isInteger(partNumber)||partNumber<1||partNumber>10000)return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});
+          const part=await upload.uploadPart(partNumber,request.body);
+          return Response.json({ok:true,part});
+        }
+        if(action==="stream-complete"){
+          const reader=request.body?.getReader();let length=0;const chunks=[];
+          if(reader)try{while(true){const {done,value}=await reader.read();if(done)break;length+=value.length;if(length>1048576)return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});chunks.push(value);}}finally{await reader.cancel();}
+          const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
+          const parts=JSON.parse(new TextDecoder().decode(bytes)).parts;
+          if(!Array.isArray(parts)||!parts.length||parts.length>10000||parts.some((p,i)=>p.partNumber!==i+1||typeof p.etag!=="string"))return Response.json({ok:false,code:"INVALID_REQUEST"},{status:400});
+          const staged=await upload.complete(parts);
+          if(staged.size!==size)return Response.json({ok:false,code:"TRUNCATED_READ"},{status:409});
+          const source=await env.STORAGE.get(temporary,{onlyIf:{etagMatches:staged.etag}});
+          if(!source?.body)return Response.json({ok:false,code:"SOURCE_CHANGED"},{status:409});
+          const created=await env.STORAGE.put(key,source.body,{onlyIf:new Headers({"If-None-Match":"*"}),httpMetadata:source.httpMetadata});
+          if(!created)return Response.json({ok:false,code:"CONFLICT"},{status:409});
+          // Only this request's private staging object is eligible for removal.
+          await env.STORAGE.delete(temporary);
+          return Response.json({ok:true,key,size:created.size,etag:created.etag});
+        }
+        return Response.json({ok:false,code:"UNSUPPORTED_OPERATION"},{status:400});
+      }
       if (request.headers.get("x-redown-action") === "lab-create") {
         const key = decodeURIComponent(request.headers.get("x-redown-key") || "");
         exactObjectKey(key);
@@ -602,7 +647,7 @@ export default {
         diagnostic?.event("source.cleanup","confirmed");
         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,labConditionalCreate:true,labMaxBytes:65536,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,labConditionalCreate:true,labMaxBytes:65536,streamingUpload:true,streamPartBytes:8388608,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "probeSource") {
         const base=new URL(String(body.sourceWorkerUrl||""));
         if(base.protocol!=="https:"||base.username||base.password||base.pathname!=="/"||base.search||base.hash||!base.hostname.endsWith(".workers.dev")||!body.sourceToken)throw new Error("Choose a configured workers.dev source");

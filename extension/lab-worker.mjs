@@ -72,3 +72,41 @@ export function laboratoryDoctor(deps){
   return {schemaVersion:'redown.doctor.v1',telemetry,provider:'extension-r2',traceId:context.traceId,mutationPhase:'NOT_SUBMITTED',readOnly:true,steps,capabilities,status:steps.some(s=>s.status==='FAIL'&&s.required!==false)?'FAIL':'PASS',missingEvidence:['Owner-authorized fresh write and independent byte readback'],liveWriteAcceptance:'NOT_TESTED'};
  };
 }
+
+// Multipart is a transport of the existing canonical upload operation, not a
+// separate job engine. Conditional publication preserves fail-on-conflict.
+export function laboratoryCreateStream(deps,{partBytes=8*1024*1024}={}){
+ if(!Number.isInteger(partBytes)||partBytes<5*1024*1024||partBytes>64*1024*1024)throw fail('INVALID_RESOURCE_BUDGET');
+ return async(identity,source,{size,metadata,check=async()=>{},onCheckpoint=async()=>{}}={})=>{
+  const {profile,url,capability}=await preflight(deps,identity,{isActive:async()=>{await check();return true;}});
+  if(capability.streamingUpload!==true)throw fail('LAB_WORKER_UPDATE_REQUIRED');
+  const headers={authorization:'Bearer '+profile.token,'x-redown-key':encodeURIComponent(identity.key),'x-redown-size':String(size),'x-redown-content-type':metadata?.contentType||'application/octet-stream'};
+  const rpc=async(action,body,extra={})=>{
+   await check();let response;
+   try{response=await deps.fetcher(url.href,{method:'POST',redirect:'error',headers:{...headers,...extra,'x-redown-action':action},body});}
+   catch{throw errorWithDiagnostic('WRITE_UNCERTAIN',{component:'worker-transport',stage:'worker.create',method:'POST',mutationPhase:'INDETERMINATE'});}
+   if(!response.ok){let code;try{code=(await response.clone().json()).code;}catch{}
+    if(['CONFLICT','PROVIDER_CONDITIONAL_PUT_LIMIT'].includes(code))throw errorWithDiagnostic(code,{component:'worker-transport',stage:'worker.create',method:'POST',mutationPhase:'SUBMITTED_REJECTED'});
+    throw await responseDiagnostic(response,{stage:'worker.create',method:'POST',mutationPhase:response.status>=500?'INDETERMINATE':'SUBMITTED_REJECTED'});
+   }
+   const value=await response.json();if(value.ok!==true)throw fail('INVALID_PROVIDER_RESPONSE');return value;
+  };
+  const begun=await rpc('stream-begin');
+  if(!/^__redown_upload__\/[a-f0-9-]{36}$/.test(begun.temporary)||typeof begun.uploadId!=='string')throw fail('INVALID_PROVIDER_RESPONSE');
+  const extra={'x-redown-temporary':begun.temporary,'x-redown-upload-id':begun.uploadId};
+  const parts=[];let buffer=new Uint8Array(partBytes),used=0,total=0;
+  const send=async()=>{
+   const partNumber=parts.length+1;
+   const value=await rpc('stream-part',buffer.subarray(0,used),{...extra,'x-redown-part':String(partNumber)});
+   if(value.part?.partNumber!==partNumber||typeof value.part.etag!=='string')throw fail('INVALID_PROVIDER_RESPONSE');
+   parts.push(value.part);await onCheckpoint({temporary:begun.temporary,uploadId:begun.uploadId,parts:[...parts],bytes:total});used=0;
+  };
+  for await(const bytes of source){let offset=0;while(offset<bytes.length){const count=Math.min(partBytes-used,bytes.length-offset);buffer.set(bytes.subarray(offset,offset+count),used);offset+=count;used+=count;total+=count;if(total>size)throw fail('SOURCE_CHANGED');if(used===partBytes)await send();}}
+  if(total!==size)throw fail('TRUNCATED_READ');
+  if(used||!parts.length)await send();
+  buffer=null;
+  const complete=await rpc('stream-complete',JSON.stringify({parts}),extra);
+  if(complete.key!==identity.key||complete.size!==size||!complete.etag)throw fail('WRITE_UNCERTAIN');
+  return complete;
+ };
+}

@@ -3,7 +3,7 @@ import { responseDiagnostic, errorWithDiagnostic, traceContext } from "../diagno
 import { fail, fileIdentity } from "../engine.mjs";
 import { providerDescription } from "../provider-contract.mjs";
 const EXTENSION_MAX_BYTES = 65536;
-function extensionR2Adapter({ request, roots, createObject }) {
+function extensionR2Adapter({ request, roots, createObject, createStream }) {
   const base = (i) => `/accounts/${encodeURIComponent(i.account)}/r2/buckets/${encodeURIComponent(i.container)}/objects`;
   const object = (i) => base(i) + "/" + i.key.split("/").map(encodeURIComponent).join("/");
   const checked = async (path, options = {}, stage = "object.read") => {
@@ -63,6 +63,31 @@ function extensionR2Adapter({ request, roots, createObject }) {
       if(!exact && (body.result_info?.cursor || body.result?.cursor)) throw fail('CAPACITY');
       return exact?metadata(i,exact.size,exact.etag||exact.version||exact.uploaded,exact.httpMetadata?.contentType):null;
     },
+    async readStream(i) {
+      adapter.assertIdentity(i);
+      const observed=await adapter.stat(i);
+      if(!observed)throw fail("NOT_FOUND_OR_INACCESSIBLE");
+      const response=await checked(object(i),{headers:{"If-Match":'"'+observed.revision+'"'}},"object.read");
+      if(!response?.body)throw fail("NOT_FOUND_OR_INACCESSIBLE");
+      const revision=response.headers.get("etag")?.replace(/^"|"$/g,"");
+      const length=response.headers.get("content-length");
+      if(revision!==observed.revision || length!==null&&(!/^\d+$/.test(length)||Number(length)!==observed.size)){
+        await response.body.cancel();throw fail("SOURCE_CHANGED");
+      }
+      return {metadata:observed,stream:(async function*(){
+        const reader=response.body.getReader();
+        try{while(true){const {done,value}=await reader.read();if(done)break;yield value;}}
+        finally{await reader.cancel();reader.releaseLock();}
+      })()};
+    },
+    async createStream(i, stream, options={}) {
+      adapter.assertIdentity(i);
+      if(typeof createStream!=="function")throw fail("PROVIDER_OPERATION_UNSUPPORTED");
+      await createStream(i,stream,options);
+      const fresh=await adapter.stat(i);
+      if(!fresh||fresh.size!==options.size)throw fail("VERIFICATION_DISAGREEMENT");
+      return fresh;
+    },
     async read(i, { range } = {}) {
       adapter.assertIdentity(i);
       if (range) throw fail("PROVIDER_OPERATION_UNSUPPORTED");
@@ -118,6 +143,12 @@ function extensionR2Adapter({ request, roots, createObject }) {
   const manifest = providerDescription(adapter);
   manifest.authentication = ["extension-oauth"];
   manifest.features.rangeReads = false;
+  manifest.features.streamingReads = true;
+  manifest.features.streamingUploads = typeof createStream === "function";
+  manifest.features.multipart = typeof createStream === "function";
+  if(createStream)manifest.limits.maxBytes=5363466240;
+  manifest.operations.readStream = "implemented";
+  if(createStream)manifest.operations.writeStream = "implemented";
   manifest.features.recursiveListing = true;
   for (const op of (createObject ? ["move", "rename", "delete", "ingest"] : ["upload", "copy", "mkdir", "move", "rename", "delete", "ingest"])) manifest.operations[op] = "unsupported";
   adapter.manifest = manifest;

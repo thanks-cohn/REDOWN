@@ -3,7 +3,7 @@ import {diagnosticFrom} from './diagnostics.mjs';
 import { validateLocator } from "./provider-contract.mjs";
 import { FILE_API_VERSION, METHODS, validate, fileIdentity, fail } from "./engine.mjs";
 const fields = (input, allowed) => input && typeof input === "object" && !Array.isArray(input) && Object.keys(input).every((k) => allowed.includes(k));
-function createScopedSession({ engine, scope, validateRequests, validateSession } = {}) {
+function createScopedSession({ engine, scope, validateRequests, validateSession, resolveTransfer, finishTransfer } = {}) {
   if (!engine || !fields(scope, ["operations", "locations", "maxOperations"]) || !Array.isArray(scope.operations) || !scope.operations.length || scope.operations.some((x) => ![...METHODS, "cancel", "reconcile"].includes(x)) || !Array.isArray(scope.locations) || !scope.locations.length) throw fail("INVALID_SCOPE");
   const policy = structuredClone(scope);
   for (const location of policy.locations) location.locator ? validateLocator(location) : fileIdentity(location, { root: true });
@@ -49,7 +49,8 @@ function createScopedSession({ engine, scope, validateRequests, validateSession 
         else {
           if (executions >= budget) throw fail("OPERATION_BUDGET");
           executions++;
-          data = await engine.run(request, { authorize: permitted });
+          data = await engine.run(request, { authorize: permitted, ...(request.transfer?{transfer:await resolveTransfer?.(request)}:{}) });
+          await finishTransfer?.(request,data);
           owned.add(data.id);
         }
       } else if (method === "jobs") {

@@ -1,5 +1,6 @@
 // Extension-owned approval surface; native clients cannot approve their own requests.
 import { laboratoryCreate, laboratoryDoctor } from "./lab-worker.mjs";
+import {laboratoryCreateStream} from "./lab-worker.mjs";
 import { authorizeLab } from "./lab-session.mjs";
 const $ = (id) => document.getElementById(id);
 const eventHistory = [];
@@ -241,7 +242,7 @@ async function startConnection() {
         const write = $("write-approval").checked;
         if (write && roots.some(r => !["test-1-new","test-2-new","test-3-new","test-4-new"].includes(r.container))) { status("Write approval is restricted to test-1-new through test-4-new. Uncheck other buckets or use read-only approval."); return; }
         const dependencies={request:RedownCloudflareApi.request,getProfiles:async()=> (await chrome.storage.local.get('profiles')).profiles||[],fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)};
-        const grant2 = authorizeLab({ roots, write, doctorProvider:laboratoryDoctor(dependencies), extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", onLabReport: paintLabReport, onLabProgress: paintProgress, createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, authorizationStatus: async () => {
+        const grant2 = authorizeLab({ roots, write, createStream:laboratoryCreateStream({request:RedownCloudflareApi.request,getProfiles:async()=>(await chrome.storage.local.get("profiles")).profiles||[],fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), doctorProvider:laboratoryDoctor(dependencies), extensionVersion: chrome.runtime.getManifest?.().version || "UNKNOWN", onLabReport: paintLabReport, onLabProgress: paintProgress, createObject: laboratoryCreate({request:RedownCloudflareApi.request, getProfiles:async () => (await chrome.storage.local.get("profiles")).profiles || [], fetcher:(...args)=>RedownCloudflareApi.boundedFetch(...args)}), ttl: hours * 3600000, authorizationStatus: async () => {
           const a = (await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
           return !a?.accessToken ? 'PROVIDER_SESSION_UNAVAILABLE' : a.sessionId !== sessionId ? 'PROVIDER_SESSION_CHANGED' : a.reconnectRequired ? a.authFailureCode || 'OAUTH_REFRESH_REJECTED' : null;
         }, renewAuthorization: () => RedownCloudflareApi.renewAuthorization(sessionId), request: RedownCloudflareApi.request, isCurrent: async () => {

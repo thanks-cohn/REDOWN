@@ -1,4 +1,10 @@
 """Provider-neutral extension transport. Mode direct-s3 is reserved, unsupported."""
+import sys
+import base64
+import hashlib
+import os
+import uuid
+from pathlib import Path
 import json
 import socket
 import threading
@@ -10,6 +16,7 @@ from .native_host import home, read_frame, write_frame
 class ExtensionClient(Client):
     def __init__(self, *, name='REDOWN Python Laboratory', timeout=130, on_pairing=None):
         self._closed, self._lock = False, threading.Lock()
+        self._last_transfer_progress = 0
         self._socket = None
         try:
             endpoint = json.loads((home() / 'connection.json').read_text())
@@ -60,6 +67,102 @@ class ExtensionClient(Client):
                 raise RedownError('INVALID_RESPONSE')
             try: return check_payload(result['data'])
             except ValueError: raise RedownError('DIAGNOSTICS_LOST') from None
+
+    def _transfer_progress(self, stage, count, total):
+        now = time.monotonic()
+        if now - self._last_transfer_progress >= 1 or count == total:
+            print(json.dumps(dict(stage=stage, bytes=count, totalBytes=total)), file=sys.stderr, flush=True)
+            self._last_transfer_progress = now
+
+    def _stream_execute(self, operation, **arguments):
+        request = dict(apiVersion='0.3.0', operation=operation,
+                       idempotencyKey=arguments.pop('idempotency_key', None) or str(uuid.uuid4()), **arguments)
+        self.query('streamExecute', request=request)
+        while True:
+            status = self.query('streamStatus')
+            progress = status.get('progress') or {}
+            if progress:
+                self._transfer_progress(progress.get('stage', operation), progress['bytes'], progress['total'])
+            if not status.get('pending'):
+                response = status['response']
+                if response.get('state') != 'available':
+                    raise RedownError(response.get('error', {}).get('code', 'STREAM_FAILED'))
+                return response['data']
+            time.sleep(0.25)
+
+    def upload(self, path, destination, **options):
+        expected_sha256 = options.pop('expected_sha256', None)
+        expected_size = options.pop('expected_size', None)
+        info = self.describe()
+        if not info.get('limits', {}).get('streaming'):
+            return super().upload(path, destination, **options)
+        source = Path(path)
+        before = source.stat()
+        digest = hashlib.sha256()
+        with source.open('rb') as stream:
+            for chunk in iter(lambda: stream.read(262144), b''):
+                digest.update(chunk)
+        checksum = digest.hexdigest()
+        if expected_sha256 is not None and checksum != expected_sha256 or expected_size is not None and before.st_size != expected_size:
+            raise RedownError('LOCAL_SOURCE_CHANGED')
+        opened = self.query('streamOpen', mode='upload', size=before.st_size, sha256=checksum)
+        try:
+            count = 0
+            with source.open('rb') as stream:
+                for chunk in iter(lambda: stream.read(262144), b''):
+                    self.query('streamAppend', id=opened['id'], offset=count,
+                               bytesBase64=base64.b64encode(chunk).decode('ascii'))
+                    count += len(chunk)
+                    self._transfer_progress('Sending to extension', count, before.st_size)
+            after = source.stat()
+            if (before.st_size, before.st_mtime_ns, before.st_ino) != (after.st_size, after.st_mtime_ns, after.st_ino):
+                raise RedownError('LOCAL_SOURCE_CHANGED')
+            self.query('streamSeal', id=opened['id'])
+            return self._stream_execute('upload', destination=destination,
+                                        transfer=dict(size=before.st_size, sha256=checksum), **options)
+        finally:
+            self.query('streamClose', id=opened['id'])
+
+    def download(self, source, path):
+        info = self.describe()
+        if not info.get('limits', {}).get('streaming'):
+            return super().download(source, path)
+        metadata = self.execute('metadata', source=source)
+        if metadata.get('state') != 'completed':
+            raise RedownError(metadata.get('error', 'READ_FAILED'))
+        size = metadata['result']['size']
+        opened = self.query('streamOpen', mode='read', size=size, sha256=None)
+        try:
+            job = self._stream_execute('read', source=source, transfer=dict(size=size))
+            if job.get('state') != 'completed':
+                raise RedownError(job.get('error', 'READ_FAILED'))
+            count, digest = 0, hashlib.sha256()
+            target = Path(path)
+            created = False
+            try:
+                with target.open('xb') as output:
+                    created = True
+                    while True:
+                        part = self.query('streamPull', id=opened['id'], offset=count)
+                        data = base64.b64decode(part['bytesBase64'], validate=True)
+                        if len(data) > 262144 or not data and count != size:
+                            raise RedownError('TRUNCATED_READ')
+                        output.write(data); digest.update(data); count += len(data)
+                        self._transfer_progress('Reading verified bytes', count, size)
+                        if part['offset'] != count or count > size:
+                            raise RedownError('INVALID_RESPONSE')
+                        if part['done']:
+                            break
+                    output.flush(); os.fsync(output.fileno())
+                if count != size or digest.hexdigest() != job['result']['sha256']:
+                    raise RedownError('VERIFICATION_DISAGREEMENT')
+            except Exception:
+                if created:
+                    target.unlink(missing_ok=True)
+                raise
+            return job
+        finally:
+            self.query('streamClose', id=opened['id'])
 
     def close(self):
         self._closed = True

@@ -91,5 +91,10 @@
   "tests/phase28-laboratory.test.mjs",
   "extension/file-engine/diagnostics.mjs",
   "scripts/compile-diagnostic-schema.mjs",
-  "tests/diagnostic-evidence.test.mjs"
+  "tests/diagnostic-evidence.test.mjs",
+  "extension/beta-cloudflare.mjs",
+  "extension/file-engine/streaming.mjs",
+  "extension/file-engine/stream-spool.mjs",
+  "extension/file-engine/vendor/sha256.mjs",
+  "scripts/build-stream-hash.mjs"
 ]

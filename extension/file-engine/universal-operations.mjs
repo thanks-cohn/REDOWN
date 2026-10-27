@@ -1,11 +1,29 @@
+import {sha256 as incrementalSha256} from './vendor/sha256.mjs';
+import {hex} from './streaming.mjs';
+import {verifiedChunks,readVerifiedStream} from './streaming.mjs';
 // Operation primitives for API 0.3, under the existing coordinator's journal/state/authorization lifecycle.
 import {modelFor} from './provider-contract.mjs';
 import {fail,hash,decode,encode} from './engine.mjs';
-export async function performUniversal(r,{source:a,destination:b,check,beforeWrite,verified,checkpoint,authorize}){
+export async function performUniversal(r,{source:a,destination:b,transfer,transferCheckpoint,check,beforeWrite,verified,checkpoint,authorize}){
  const sm=a&&modelFor(a),dm=b&&modelFor(b);
  const allowed=async(source,destination)=>{if(!await authorize({...r,source,destination}))throw fail('AUTHORIZATION_DENIED');};
  const read=async(adapter,id)=>{const value=await adapter.read(id);if(!(value.bytes instanceof Uint8Array)||value.bytes.length>2097152||value.bytes.length!==value.metadata?.size||!modelFor(adapter).matchesMetadata(value.metadata,id)||!['string','number'].includes(typeof value.metadata.revision)||String(value.metadata.revision).length===0)throw fail('INVALID_PROVIDER_RESPONSE');return {...value,sha256:await hash(value.bytes)};};
  const remember=async value=>{verified.push(value);await checkpoint();};
+ if(r.transfer){
+  if(r.operation==='read'){
+   if(typeof transfer?.sink!=='function')throw fail('STREAM_REQUIRED');
+   const value=await readVerifiedStream(a,r.source,{sink:transfer.sink,check:async()=>{await check();await allowed(r.source,undefined);},onProgress:transfer.onProgress,expectedSize:r.transfer.size,expectedSha256:r.transfer.sha256});
+   return {...value.metadata,sha256:value.sha256,streamed:true};
+  }
+  if(typeof transfer?.source!=='function'||typeof b.createStream!=='function')throw fail('STREAM_REQUIRED');
+  if(await b.stat(r.destination))throw fail('CONFLICT');
+  const verifyScope=async()=>{await check();await allowed(undefined,r.destination);};
+  await verifyScope();beforeWrite();
+  await b.createStream(r.destination,verifiedChunks(transfer.source(),{size:r.transfer.size,expectedSha256:r.transfer.sha256,check:verifyScope,onProgress:transfer.onProgress}),{size:r.transfer.size,metadata:r.metadata,idempotencyKey:r.idempotencyKey,onCheckpoint:transferCheckpoint,check:verifyScope});
+  const value=await readVerifiedStream(b,r.destination,{check:verifyScope,onProgress:p=>transfer?.onProgress?.({...p,stage:"verifying"}),expectedSha256:r.transfer.sha256,expectedSize:r.transfer.size});
+  await remember({destination:r.destination,revision:value.metadata.revision,size:value.size,sha256:value.sha256});
+  return {objects:[value.metadata],identity:r.destination,sha256:value.sha256,streamed:true};
+ }
  if(r.operation==='metadata'){const m=await a.stat(r.source);if(!m)throw fail('NOT_FOUND_OR_INACCESSIBLE');if(!sm.matchesMetadata(m,r.source)||!Number.isSafeInteger(m.size)||m.size<0)throw fail('INVALID_PROVIDER_RESPONSE');return m;}
  if(r.operation==='list'){
   const p=await a.list(r.source,{limit:r.limit||50,cursor:r.cursor,query:r.query,sort:r.sort});
@@ -41,6 +59,17 @@ export async function performUniversal(r,{source:a,destination:b,check,beforeWri
    beforeWrite();const created=b.createDirectory?await b.createDirectory(destination):await b.create(destination,new Uint8Array(),{}),actual=dm.identity(created,destination),folder=await b.stat(actual);if(!folder?.folder||!dm.matchesMetadata(folder,actual))throw fail('VERIFICATION_DISAGREEMENT');await remember({destination:actual,revision:folder.revision,size:0,sha256:await hash(new Uint8Array()),kind:'directory'});
    let cursor;const seen=new Set();do{const page=await a.list(source,{limit:100,cursor});if(!Array.isArray(page.objects)||page.objects.length>100||typeof page.complete!=='boolean'||page.complete===!!page.cursor)throw fail('INVALID_PROVIDER_RESPONSE');for(const child of page.objects){const identity=sm.identity(child,source);a.assertIdentity(identity);if(!await sm.contains(source,identity)||sm.same(identity,source)||!Number.isSafeInteger(child.size)||child.size<0)throw fail('INVALID_PROVIDER_RESPONSE');await copyNode(identity,dm.child(actual,sm.name(child),child.folder),child,depth+1);}cursor=page.cursor;if(cursor&&seen.has(cursor))throw fail('INVALID_CURSOR');seen.add(cursor);}while(cursor);
    copied.push(folder);return;
+  }
+  if(typeof a.readStream==='function'&&typeof b.createStream==='function'&&modelFor(b)&&b.manifest?.features.streamingUploads){
+   const value=await a.readStream(source);
+   if(!sm.matchesMetadata(value.metadata,source)||value.metadata.size!==metadata.size||String(value.metadata.revision)!==String(metadata.revision))throw fail('SOURCE_CHANGED');
+   const digest=incrementalSha256.create();
+   const scopeCheck=async()=>{await check();await allowed(source,destination);};
+   const stream=(async function*(){for await(const bytes of verifiedChunks(value.stream,{size:metadata.size,check:scopeCheck})){digest.update(bytes);yield bytes;}})();
+   beforeWrite();const created=await b.createStream(destination,stream,{size:metadata.size,metadata:{contentType:metadata.contentType},onCheckpoint:transferCheckpoint,check:scopeCheck}),actual=dm.identity(created,destination);
+   const current=await a.stat(source);if(!current||String(current.revision)!==String(metadata.revision))throw fail('SOURCE_CHANGED');
+   const dest=await readVerifiedStream(b,actual,{check:scopeCheck,expectedSha256:hex(digest.digest()),expectedSize:metadata.size});
+   await remember({source,destination:actual,sourceRevision:metadata.revision,revision:dest.metadata.revision,sha256:dest.sha256,size:dest.size});copied.push(dest.metadata);return;
   }
   const src=await read(a,source);if(String(src.metadata.revision)!==String(metadata.revision))throw fail('SOURCE_CHANGED');beforeWrite();const created=await b.create(destination,src.bytes,{metadata:{contentType:src.metadata.contentType},idempotencyKey:r.idempotencyKey}),actual=dm.identity(created,destination),dest=await read(b,actual);if(dest.sha256!==src.sha256)throw fail('VERIFICATION_DISAGREEMENT');await remember({source,destination:actual,sourceRevision:src.metadata.revision,revision:dest.metadata.revision,sha256:dest.sha256,size:dest.bytes.length});copied.push(dest.metadata);
  };

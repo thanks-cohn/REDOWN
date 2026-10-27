@@ -58,7 +58,7 @@ def plan(scan, depth='Quick', resources=None, info=None):
     if verification.get('status') == 'PASS':
         expected = {c['path'] for c in verification['cases'] if c.get('expected')}
         payload = [r for r in payload if r['relpath'] in expected]
-    eligible=[r for r in payload if r['bytes']<=ceiling]
+    eligible=[r for r in payload if (info or {}).get('limits',{}).get('streaming') or r['bytes']<=ceiling]
     chosen=eligible
     if depth=='Quick':
         groups={}
@@ -73,12 +73,12 @@ def plan(scan, depth='Quick', resources=None, info=None):
             cases.append({'operation':op,'file':row['relpath'],'bytes':row['bytes']})
         if depth=='Stress': cases.append({'operation':'read','file':row['relpath'],'bytes':row['bytes'],'probe':'repeat-read-no-write-retry'})
     if chosen: cases.append({'operation':'mkdir','file':None,'bytes':0})
-    missing=[{'file':r['relpath'],'status':'UNSUPPORTED','reason':'BOUNDED_TRANSPORT_LIMIT','bytes':r['bytes']} for r in payload if r['bytes']>ceiling]
+    missing=[{'file':r['relpath'],'status':'UNSUPPORTED','reason':'BOUNDED_TRANSPORT_LIMIT','bytes':r['bytes']} for r in payload if not (info or {}).get('limits',{}).get('streaming') and r['bytes']>ceiling]
     missing += [{'file':r['relpath'],'status':'NOT_TESTED','reason':'QUICK_SAMPLE'} for r in eligible if r not in chosen]
     missing += [{'file':r['relpath'],'status':'NOT_TESTED','reason':r['reason']} for r in scan['exclusions']]
     transfer=sum(c['bytes']*(2 if c['operation']=='upload' else 3 if c['operation']=='copy' else 1 if c['operation']=='read' else 0) for c in cases)
     return dict(depth=depth,resources=resources,cases=cases,missing=missing,totalFiles=scan.get('discoveredFiles',scan['hashedFiles']),totalBytes=scan.get('discoveredBytes',scan['hashedBytes']),formatDistribution=scan['countsByExtension'],scanComplete=scan['complete'],eligibleFiles=len(eligible),selectedFiles=len(chosen),plannedOperations=len(cases),estimatedTransferBytes=transfer,
-                operations=dict(Counter(c['operation'] for c in cases)),diskFreeBytes=shutil.disk_usage(scan['root']).free,temporaryDiskFreeBytes=shutil.disk_usage(tempfile.gettempdir()).free,requiredTemporaryBytes=min(ceiling,max((r['bytes'] for r in chosen),default=0)),
+                operations=dict(Counter(c['operation'] for c in cases)),diskFreeBytes=shutil.disk_usage(scan['root']).free,temporaryDiskFreeBytes=shutil.disk_usage(tempfile.gettempdir()).free,requiredTemporaryBytes=max((r['bytes'] for r in chosen),default=0) if (info or {}).get('limits',{}).get('streaming') else min(ceiling,max((r['bytes'] for r in chosen),default=0)),
                 estimatedSeconds=None,estimateReason='Awaiting actual connected throughput; no fabricated calibration',
                 cost={'currency':None,'estimate':None,'reason':'Account billing/free allowance unknown; includes Worker requests, R2 writes, reads and retained storage'},
                 permissions=['Separate extension write approval','Dedicated lab bucket','Updated existing REDOWN Worker'],
@@ -195,19 +195,20 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                 elif op=='upload':
                     source=Path(scan['root'])/rel
                     if source.is_symlink() or not source.resolve().is_relative_to(Path(scan['root'])): raise RedownError('LOCAL_SOURCE_CHANGED')
-                    # File size is bounded by negotiated transport before opening/reading.
                     with source.open('rb') as stream:
-                        chunks=[]; count=0
-                        while count <= info['limits']['maxBytes']:
-                            chunk=stream.read(min(report['plan']['resources']['bufferBytes'],info['limits']['maxBytes']+1-count))
-                            if not chunk: break
-                            chunks.append(chunk);count+=len(chunk)
-                        data=b''.join(chunks)
-                    if len(data)!=row['bytes'] or hashlib.sha256(data).hexdigest()!=row['sha256']: raise RedownError('LOCAL_SOURCE_CHANGED')
+                        local_hash=hashlib.sha256()
+                        for local_chunk in iter(lambda:stream.read(report['plan']['resources']['bufferBytes']),b''): local_hash.update(local_chunk)
+                        digest=local_hash.hexdigest()
+                    if source.stat().st_size!=row['bytes'] or digest!=row['sha256']: raise RedownError('LOCAL_SOURCE_CHANGED')
                     mutation_started=True
                     report['pendingOperation']={**case,'destination':dest,'sha256':row['sha256'],'status':'INDETERMINATE'}; save()
                     result['dispatched']=True
-                    job=client.execute(op,destination=dest,bytesBase64=base64.b64encode(data).decode('ascii'),idempotency_key=report['runId']+'-'+str(len(report['results'])))
+                    if info.get('limits',{}).get('streaming'):
+                        job=client.upload(source,dest,expected_sha256=row['sha256'],expected_size=row['bytes'],idempotency_key=report['runId']+'-'+str(len(report['results'])))
+                    else:
+                        with source.open('rb') as stream: data=stream.read(info['limits']['maxBytes']+1)
+                        if len(data)!=row['bytes'] or hashlib.sha256(data).hexdigest()!=row['sha256']: raise RedownError('LOCAL_SOURCE_CHANGED')
+                        job=client.execute(op,destination=dest,bytesBase64=base64.b64encode(data).decode('ascii'),idempotency_key=report['runId']+'-'+str(len(report['results'])))
                     uploads[rel]=job.get('state')=='completed'
                 elif op=='mkdir':
                     mutation_started=True; report['pendingOperation']={**case,'destination':dest,'status':'INDETERMINATE'}; save()
@@ -222,7 +223,9 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                         target=Path(directory)/'readback.bin'
                         result['dispatched']=True; job=client.download(dest,target)
                         with target.open('rb') as readback:
-                            result['diskReadbackSha256']=hashlib.file_digest(readback,'sha256').hexdigest() if hasattr(hashlib,'file_digest') else hashlib.sha256(readback.read(65537)).hexdigest()
+                            readback_hash=hashlib.sha256()
+                            for readback_chunk in iter(lambda:readback.read(report['plan']['resources']['bufferBytes']),b''): readback_hash.update(readback_chunk)
+                            result['diskReadbackSha256']=readback_hash.hexdigest()
                         if result['diskReadbackSha256']!=row['sha256']: raise RedownError('VERIFICATION_DISAGREEMENT')
                 else:
                     result['dispatched']=True; job=client.execute(op,source=dest)
@@ -235,10 +238,10 @@ def run(client,scan,*,depth='Quick',resources=None,roots=None,cancel=None,checkp
                         if job['state'] in ('uncertain','partially_completed') or job.get('error') in CONNECTION_RECOVERY or job.get('error') in ('NETWORK_FAILURE','TIMEOUT','SESSION_UNAVAILABLE'): halted=True
                     else:
                         if op=='read':
-                            data=base64.b64decode(job['result']['bytesBase64'],validate=True)
-                            digest=hashlib.sha256(data).hexdigest()
-                            if digest!=row['sha256'] or len(data)!=row['bytes']: raise RedownError('VERIFICATION_DISAGREEMENT')
-                            result.update(readVerified=True,sha256=digest,verifiedBytes=len(data),independentIntegrity='Python source SHA-256 vs OAuth readback; creation used Worker STORAGE')
+                            digest=result['diskReadbackSha256']
+                            if digest!=row['sha256']: raise RedownError('VERIFICATION_DISAGREEMENT')
+                            if job['result'].get('streamed') and job['result'].get('size')!=row['bytes']: raise RedownError('VERIFICATION_DISAGREEMENT')
+                            result.update(readVerified=True,sha256=digest,verifiedBytes=row['bytes'],independentIntegrity='Python source SHA-256 vs OAuth disk readback; creation used Worker STORAGE')
                         if op=='metadata':
                             if job.get('result',{}).get('size')!=row['bytes']: raise RedownError('VERIFICATION_DISAGREEMENT')
                             result['metadataVerified']=True

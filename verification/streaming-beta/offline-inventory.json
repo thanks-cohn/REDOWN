@@ -1,0 +1,848 @@
+{
+  "schemaVersion": "redown.lab.offline.v1",
+  "mode": "OFFLINE_LOCAL_ONLY",
+  "acceptance": "INCOMPLETE",
+  "localInventory": {
+    "status": "PASS",
+    "hashedFiles": 13,
+    "hashedBytes": 209717182,
+    "exclusions": [],
+    "sha256": "COMPUTED_PER_FILE",
+    "manifestComparison": "PASS",
+    "manifestVerification": {
+      "status": "PASS",
+      "manifest": "manifest.json",
+      "cases": [
+        {
+          "path": "additional-notes.txt",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 20768163,
+            "sha256": "2bc7a83031f2345dc0f441775ece6f170985adcd4c6545e42c7cb81cc1175269"
+          },
+          "actual": {
+            "bytes": 20768163,
+            "sha256": "2bc7a83031f2345dc0f441775ece6f170985adcd4c6545e42c7cb81cc1175269"
+          }
+        },
+        {
+          "path": "archive-large.zip",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 52428934,
+            "sha256": "b9e877daf2209a502930236b7447a2734e10f2cc325a309fde82025d0a2b5dca"
+          },
+          "actual": {
+            "bytes": 52428934,
+            "sha256": "b9e877daf2209a502930236b7447a2734e10f2cc325a309fde82025d0a2b5dca"
+          }
+        },
+        {
+          "path": "audio-large.wav",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 31457324,
+            "sha256": "39e7776ab8a1a21ab41e32d5927875c0a65b5a3dbaa1bb22ae783e0c2f5075a4"
+          },
+          "actual": {
+            "bytes": 31457324,
+            "sha256": "39e7776ab8a1a21ab41e32d5927875c0a65b5a3dbaa1bb22ae783e0c2f5075a4"
+          }
+        },
+        {
+          "path": "boundary-65535.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65535,
+            "sha256": "c7b1f8ff9b12dbb57a4ff66c3fea326c621648833843ed7d044302b63f0d8025"
+          },
+          "actual": {
+            "bytes": 65535,
+            "sha256": "c7b1f8ff9b12dbb57a4ff66c3fea326c621648833843ed7d044302b63f0d8025"
+          }
+        },
+        {
+          "path": "boundary-65536.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65536,
+            "sha256": "dc64a27791e5df65985cf33cd1e4c58ae4379fb15a42e7d8dfbf15c42968d303"
+          },
+          "actual": {
+            "bytes": 65536,
+            "sha256": "dc64a27791e5df65985cf33cd1e4c58ae4379fb15a42e7d8dfbf15c42968d303"
+          }
+        },
+        {
+          "path": "boundary-65537.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65537,
+            "sha256": "e89173b06ae90138b5cbb27010b9549a054fdf6e45e7d90f585d0b3e2b9b67de"
+          },
+          "actual": {
+            "bytes": 65537,
+            "sha256": "e89173b06ae90138b5cbb27010b9549a054fdf6e45e7d90f585d0b3e2b9b67de"
+          }
+        },
+        {
+          "path": "image-large.bmp",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 25165878,
+            "sha256": "437270a3ce7be084ecf5edf1723e1d48be10eeb27e19f8205c3eea9350670d17"
+          },
+          "actual": {
+            "bytes": 25165878,
+            "sha256": "437270a3ce7be084ecf5edf1723e1d48be10eeb27e19f8205c3eea9350670d17"
+          }
+        },
+        {
+          "path": "image-large.png",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 16779549,
+            "sha256": "9e81678439989d1fc09d1c3cb23cf9689c1c224c14a00dc2f820dcaf3e0a4c40"
+          },
+          "actual": {
+            "bytes": 16779549,
+            "sha256": "9e81678439989d1fc09d1c3cb23cf9689c1c224c14a00dc2f820dcaf3e0a4c40"
+          }
+        },
+        {
+          "path": "notes-\u00fc\u00f1\u00ed\u00e7\u00f8d\u00e9.txt",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 10485760,
+            "sha256": "75d80a2c3bdc825a5c8089e29baa094669f6d0e993204199a7017604dd2e5090"
+          },
+          "actual": {
+            "bytes": 10485760,
+            "sha256": "75d80a2c3bdc825a5c8089e29baa094669f6d0e993204199a7017604dd2e5090"
+          }
+        },
+        {
+          "path": "records-large.csv",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 31457309,
+            "sha256": "544da8b83f974e16890bb1d582c9414283ddcb0329e074fa55812eacd0441719"
+          },
+          "actual": {
+            "bytes": 31457309,
+            "sha256": "544da8b83f974e16890bb1d582c9414283ddcb0329e074fa55812eacd0441719"
+          }
+        },
+        {
+          "path": "records-large.json",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 20971579,
+            "sha256": "92853e607ba91df5c12f6c454d590623abb4dfde0b443e82b68c07c2420d2683"
+          },
+          "actual": {
+            "bytes": 20971579,
+            "sha256": "92853e607ba91df5c12f6c454d590623abb4dfde0b443e82b68c07c2420d2683"
+          }
+        },
+        {
+          "path": "tiny-4k.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 4096,
+            "sha256": "e94624ed592d0e6657da18bc132d901fbb7c445ac193d370652beb62f44d25c6"
+          },
+          "actual": {
+            "bytes": 4096,
+            "sha256": "e94624ed592d0e6657da18bc132d901fbb7c445ac193d370652beb62f44d25c6"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "manifest.json",
+          "classification": "MANIFEST",
+          "bytes": 1982,
+          "sha256": "7565c936c0603dfd98a7e768ea0371158ec4524e06a0cab87c4231c61dce6421"
+        }
+      ],
+      "verification": "Independent inventory SHA-256; no media validity claim",
+      "expectedFiles": 12,
+      "expectedBytes": 209715200,
+      "verifiedFiles": 12
+    }
+  },
+  "inventory": {
+    "version": "2.0.0",
+    "root": "/root/Downloads/REDOWN-Large-200MiB",
+    "discoveredFiles": 13,
+    "discoveredBytes": 209717182,
+    "complete": true,
+    "hashedFiles": 13,
+    "hashedBytes": 209717182,
+    "selectedBytes": 209717182,
+    "selected": [
+      {
+        "relpath": "additional-notes.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 20768163,
+        "sha256": "2bc7a83031f2345dc0f441775ece6f170985adcd4c6545e42c7cb81cc1175269",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "archive-large.zip",
+        "extension": ".zip",
+        "originalExtension": ".zip",
+        "caseNormalized": false,
+        "bytes": 52428934,
+        "sha256": "b9e877daf2209a502930236b7447a2734e10f2cc325a309fde82025d0a2b5dca",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "zip",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "audio-large.wav",
+        "extension": ".wav",
+        "originalExtension": ".wav",
+        "caseNormalized": false,
+        "bytes": 31457324,
+        "sha256": "39e7776ab8a1a21ab41e32d5927875c0a65b5a3dbaa1bb22ae783e0c2f5075a4",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "riff",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "boundary-65535.bin",
+        "extension": ".bin",
+        "originalExtension": ".bin",
+        "caseNormalized": false,
+        "bytes": 65535,
+        "sha256": "c7b1f8ff9b12dbb57a4ff66c3fea326c621648833843ed7d044302b63f0d8025",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": false,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "boundary-65536.bin",
+        "extension": ".bin",
+        "originalExtension": ".bin",
+        "caseNormalized": false,
+        "bytes": 65536,
+        "sha256": "dc64a27791e5df65985cf33cd1e4c58ae4379fb15a42e7d8dfbf15c42968d303",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": false,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "boundary-65537.bin",
+        "extension": ".bin",
+        "originalExtension": ".bin",
+        "caseNormalized": false,
+        "bytes": 65537,
+        "sha256": "e89173b06ae90138b5cbb27010b9549a054fdf6e45e7d90f585d0b3e2b9b67de",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "image-large.bmp",
+        "extension": ".bmp",
+        "originalExtension": ".bmp",
+        "caseNormalized": false,
+        "bytes": 25165878,
+        "sha256": "437270a3ce7be084ecf5edf1723e1d48be10eeb27e19f8205c3eea9350670d17",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "image-large.png",
+        "extension": ".png",
+        "originalExtension": ".png",
+        "caseNormalized": false,
+        "bytes": 16779549,
+        "sha256": "9e81678439989d1fc09d1c3cb23cf9689c1c224c14a00dc2f820dcaf3e0a4c40",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "png",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "manifest.json",
+        "extension": ".json",
+        "originalExtension": ".json",
+        "caseNormalized": false,
+        "bytes": 1982,
+        "sha256": "7565c936c0603dfd98a7e768ea0371158ec4524e06a0cab87c4231c61dce6421",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": false,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "notes-\u00fc\u00f1\u00ed\u00e7\u00f8d\u00e9.txt",
+        "extension": ".txt",
+        "originalExtension": ".txt",
+        "caseNormalized": false,
+        "bytes": 10485760,
+        "sha256": "75d80a2c3bdc825a5c8089e29baa094669f6d0e993204199a7017604dd2e5090",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": true,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "records-large.csv",
+        "extension": ".csv",
+        "originalExtension": ".csv",
+        "caseNormalized": false,
+        "bytes": 31457309,
+        "sha256": "544da8b83f974e16890bb1d582c9414283ddcb0329e074fa55812eacd0441719",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "records-large.json",
+        "extension": ".json",
+        "originalExtension": ".json",
+        "caseNormalized": false,
+        "bytes": 20971579,
+        "sha256": "92853e607ba91df5c12f6c454d590623abb4dfde0b443e82b68c07c2420d2683",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": true,
+        "multipartCandidate": false
+      },
+      {
+        "relpath": "tiny-4k.bin",
+        "extension": ".bin",
+        "originalExtension": ".bin",
+        "caseNormalized": false,
+        "bytes": 4096,
+        "sha256": "e94624ed592d0e6657da18bc132d901fbb7c445ac193d370652beb62f44d25c6",
+        "mediaValidation": "NOT_TESTED",
+        "zeroBytes": false,
+        "sparse": false,
+        "depth": 0,
+        "formatHint": "unknown",
+        "unicodeName": false,
+        "unusualName": false,
+        "streamingCandidate": false,
+        "multipartCandidate": false
+      }
+    ],
+    "countsByExtension": {
+      ".bin": {
+        "eligible": 4,
+        "selected": 4
+      },
+      ".bmp": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".csv": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".json": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".png": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".txt": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".wav": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".zip": {
+        "eligible": 1,
+        "selected": 1
+      }
+    },
+    "exclusions": [],
+    "caseCollisions": [],
+    "duplicates": [],
+    "mediaValidation": "NOT_TESTED: signature hints do not establish validity or corruption",
+    "limits": {
+      "maxEntries": 100000,
+      "maxFileBytes": 1073741824,
+      "maxTotalHashBytes": 4294967296,
+      "bufferBytes": 65536
+    },
+    "manifestVerification": {
+      "status": "PASS",
+      "manifest": "manifest.json",
+      "cases": [
+        {
+          "path": "additional-notes.txt",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 20768163,
+            "sha256": "2bc7a83031f2345dc0f441775ece6f170985adcd4c6545e42c7cb81cc1175269"
+          },
+          "actual": {
+            "bytes": 20768163,
+            "sha256": "2bc7a83031f2345dc0f441775ece6f170985adcd4c6545e42c7cb81cc1175269"
+          }
+        },
+        {
+          "path": "archive-large.zip",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 52428934,
+            "sha256": "b9e877daf2209a502930236b7447a2734e10f2cc325a309fde82025d0a2b5dca"
+          },
+          "actual": {
+            "bytes": 52428934,
+            "sha256": "b9e877daf2209a502930236b7447a2734e10f2cc325a309fde82025d0a2b5dca"
+          }
+        },
+        {
+          "path": "audio-large.wav",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 31457324,
+            "sha256": "39e7776ab8a1a21ab41e32d5927875c0a65b5a3dbaa1bb22ae783e0c2f5075a4"
+          },
+          "actual": {
+            "bytes": 31457324,
+            "sha256": "39e7776ab8a1a21ab41e32d5927875c0a65b5a3dbaa1bb22ae783e0c2f5075a4"
+          }
+        },
+        {
+          "path": "boundary-65535.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65535,
+            "sha256": "c7b1f8ff9b12dbb57a4ff66c3fea326c621648833843ed7d044302b63f0d8025"
+          },
+          "actual": {
+            "bytes": 65535,
+            "sha256": "c7b1f8ff9b12dbb57a4ff66c3fea326c621648833843ed7d044302b63f0d8025"
+          }
+        },
+        {
+          "path": "boundary-65536.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65536,
+            "sha256": "dc64a27791e5df65985cf33cd1e4c58ae4379fb15a42e7d8dfbf15c42968d303"
+          },
+          "actual": {
+            "bytes": 65536,
+            "sha256": "dc64a27791e5df65985cf33cd1e4c58ae4379fb15a42e7d8dfbf15c42968d303"
+          }
+        },
+        {
+          "path": "boundary-65537.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 65537,
+            "sha256": "e89173b06ae90138b5cbb27010b9549a054fdf6e45e7d90f585d0b3e2b9b67de"
+          },
+          "actual": {
+            "bytes": 65537,
+            "sha256": "e89173b06ae90138b5cbb27010b9549a054fdf6e45e7d90f585d0b3e2b9b67de"
+          }
+        },
+        {
+          "path": "image-large.bmp",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 25165878,
+            "sha256": "437270a3ce7be084ecf5edf1723e1d48be10eeb27e19f8205c3eea9350670d17"
+          },
+          "actual": {
+            "bytes": 25165878,
+            "sha256": "437270a3ce7be084ecf5edf1723e1d48be10eeb27e19f8205c3eea9350670d17"
+          }
+        },
+        {
+          "path": "image-large.png",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 16779549,
+            "sha256": "9e81678439989d1fc09d1c3cb23cf9689c1c224c14a00dc2f820dcaf3e0a4c40"
+          },
+          "actual": {
+            "bytes": 16779549,
+            "sha256": "9e81678439989d1fc09d1c3cb23cf9689c1c224c14a00dc2f820dcaf3e0a4c40"
+          }
+        },
+        {
+          "path": "notes-\u00fc\u00f1\u00ed\u00e7\u00f8d\u00e9.txt",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 10485760,
+            "sha256": "75d80a2c3bdc825a5c8089e29baa094669f6d0e993204199a7017604dd2e5090"
+          },
+          "actual": {
+            "bytes": 10485760,
+            "sha256": "75d80a2c3bdc825a5c8089e29baa094669f6d0e993204199a7017604dd2e5090"
+          }
+        },
+        {
+          "path": "records-large.csv",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 31457309,
+            "sha256": "544da8b83f974e16890bb1d582c9414283ddcb0329e074fa55812eacd0441719"
+          },
+          "actual": {
+            "bytes": 31457309,
+            "sha256": "544da8b83f974e16890bb1d582c9414283ddcb0329e074fa55812eacd0441719"
+          }
+        },
+        {
+          "path": "records-large.json",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 20971579,
+            "sha256": "92853e607ba91df5c12f6c454d590623abb4dfde0b443e82b68c07c2420d2683"
+          },
+          "actual": {
+            "bytes": 20971579,
+            "sha256": "92853e607ba91df5c12f6c454d590623abb4dfde0b443e82b68c07c2420d2683"
+          }
+        },
+        {
+          "path": "tiny-4k.bin",
+          "status": "PASS",
+          "code": "MATCH",
+          "expected": {
+            "bytes": 4096,
+            "sha256": "e94624ed592d0e6657da18bc132d901fbb7c445ac193d370652beb62f44d25c6"
+          },
+          "actual": {
+            "bytes": 4096,
+            "sha256": "e94624ed592d0e6657da18bc132d901fbb7c445ac193d370652beb62f44d25c6"
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "manifest.json",
+          "classification": "MANIFEST",
+          "bytes": 1982,
+          "sha256": "7565c936c0603dfd98a7e768ea0371158ec4524e06a0cab87c4231c61dce6421"
+        }
+      ],
+      "verification": "Independent inventory SHA-256; no media validity claim",
+      "expectedFiles": 12,
+      "expectedBytes": 209715200,
+      "verifiedFiles": 12
+    }
+  },
+  "plan": {
+    "depth": "Comprehensive",
+    "resources": {
+      "name": "Balanced",
+      "memoryTargetMiB": 128,
+      "concurrency": 2,
+      "requestedBufferBytes": 65536,
+      "bufferBytes": 65536,
+      "effectiveTransferConcurrency": 1,
+      "memoryGuarantee": false,
+      "limitation": "Native session serializes requests; buffers govern inventory/local reads. No strict process memory cap."
+    },
+    "cases": [
+      {
+        "operation": "list",
+        "file": null,
+        "bytes": 0
+      },
+      {
+        "operation": "upload",
+        "file": "boundary-65535.bin",
+        "bytes": 65535
+      },
+      {
+        "operation": "read",
+        "file": "boundary-65535.bin",
+        "bytes": 65535
+      },
+      {
+        "operation": "metadata",
+        "file": "boundary-65535.bin",
+        "bytes": 65535
+      },
+      {
+        "operation": "copy",
+        "file": "boundary-65535.bin",
+        "bytes": 65535
+      },
+      {
+        "operation": "upload",
+        "file": "boundary-65536.bin",
+        "bytes": 65536
+      },
+      {
+        "operation": "read",
+        "file": "boundary-65536.bin",
+        "bytes": 65536
+      },
+      {
+        "operation": "metadata",
+        "file": "boundary-65536.bin",
+        "bytes": 65536
+      },
+      {
+        "operation": "upload",
+        "file": "tiny-4k.bin",
+        "bytes": 4096
+      },
+      {
+        "operation": "read",
+        "file": "tiny-4k.bin",
+        "bytes": 4096
+      },
+      {
+        "operation": "metadata",
+        "file": "tiny-4k.bin",
+        "bytes": 4096
+      },
+      {
+        "operation": "mkdir",
+        "file": null,
+        "bytes": 0
+      }
+    ],
+    "missing": [
+      {
+        "file": "additional-notes.txt",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 20768163
+      },
+      {
+        "file": "archive-large.zip",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 52428934
+      },
+      {
+        "file": "audio-large.wav",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 31457324
+      },
+      {
+        "file": "boundary-65537.bin",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 65537
+      },
+      {
+        "file": "image-large.bmp",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 25165878
+      },
+      {
+        "file": "image-large.png",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 16779549
+      },
+      {
+        "file": "notes-\u00fc\u00f1\u00ed\u00e7\u00f8d\u00e9.txt",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 10485760
+      },
+      {
+        "file": "records-large.csv",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 31457309
+      },
+      {
+        "file": "records-large.json",
+        "status": "UNSUPPORTED",
+        "reason": "BOUNDED_TRANSPORT_LIMIT",
+        "bytes": 20971579
+      }
+    ],
+    "totalFiles": 13,
+    "totalBytes": 209717182,
+    "formatDistribution": {
+      ".bin": {
+        "eligible": 4,
+        "selected": 4
+      },
+      ".bmp": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".csv": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".json": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".png": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".txt": {
+        "eligible": 2,
+        "selected": 2
+      },
+      ".wav": {
+        "eligible": 1,
+        "selected": 1
+      },
+      ".zip": {
+        "eligible": 1,
+        "selected": 1
+      }
+    },
+    "scanComplete": true,
+    "eligibleFiles": 3,
+    "selectedFiles": 3,
+    "plannedOperations": 12,
+    "estimatedTransferBytes": 602106,
+    "operations": {
+      "list": 1,
+      "upload": 3,
+      "read": 3,
+      "metadata": 3,
+      "copy": 1,
+      "mkdir": 1
+    },
+    "diskFreeBytes": 28604456960,
+    "temporaryDiskFreeBytes": 28604456960,
+    "requiredTemporaryBytes": 65536,
+    "estimatedSeconds": null,
+    "estimateReason": "Awaiting actual connected throughput; no fabricated calibration",
+    "cost": {
+      "currency": null,
+      "estimate": null,
+      "reason": "Account billing/free allowance unknown; includes Worker requests, R2 writes, reads and retained storage"
+    },
+    "permissions": [
+      "Separate extension write approval",
+      "Dedicated lab bucket",
+      "Updated existing REDOWN Worker"
+    ],
+    "untested": [
+      "format decoding/corruption",
+      "streaming/multipart",
+      "interruption/reconnect",
+      "resource pressure",
+      "cloud conditional deletion",
+      "parallel network transfers"
+    ]
+  },
+  "coverage": {
+    "NOT_TESTED": 12
+  },
+  "dispatchedOperations": 0,
+  "connectionError": null,
+  "cloudEvidence": "NOT_TESTED",
+  "nextAction": "Local inventory completed. Cloud transfers require a separate explicitly authorized online run."
+}
