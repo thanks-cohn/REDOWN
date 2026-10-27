@@ -583,6 +583,7 @@ test('Test It uses the existing guide: sixty contextual targets, X on every exer
    assert.ok(d.querySelector('[data-guide-exit]'));assert.ok(d.querySelector('[data-guide-retry]'));
    if(i<59)d.querySelector('[data-guide-skip]').click();
  }
+ await settle(()=>f.storage.betaExplorerTestIt?.records.length===60);
  assert.equal(f.storage.betaExplorerTestIt.records.length,60);
  assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'));
  d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);
@@ -592,4 +593,19 @@ test('Test It uses the existing guide: sixty contextual targets, X on every exer
 });
 test('Test It blocks original deletion and cut through real toolbar handlers',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));d.querySelector('[data-key="root.txt"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#status').textContent.includes('protected'));assert.equal(d.querySelector('#dialog').open,false);assert.ok(f.stored.has('root.txt'));d.querySelector('#cut').click();await settle(()=>d.querySelector('#status').textContent.includes('protected'));assert.equal(d.querySelector('#paste').disabled,true);d.querySelector('[data-guide-exit]').click();}finally{f.dom.window.close();}
+});
+
+test('Restart Test It confirms, replaces saved results, reopens exercise one and preserves files',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{
+ const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));
+ d.querySelector('[data-guide-skip]').click();await settle(()=>f.storage.betaExplorerTestIt?.index===1);
+ const oldId=f.storage.betaExplorerTestIt.id,before=[...f.stored.keys()];
+ d.querySelector('#test-it-restart').click();await settle(()=>d.querySelector('#dialog').open);
+ d.querySelector('#dialog-cancel').click();await settle(()=>!d.querySelector('#dialog').open);assert.equal(f.storage.betaExplorerTestIt.id,oldId);await new Promise(resolve=>setImmediate(resolve));
+ d.querySelector('#test-it-restart').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();
+ await settle(()=>f.storage.betaExplorerTestIt.id!==oldId&&d.querySelector('[data-guide-progress]')?.textContent==='1 of 60');
+ await settle(()=>f.storage.betaExplorerTestIt?.records.length===60);
+ assert.equal(f.storage.betaExplorerTestIt.index,0);assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'&&r.observedGuiInteraction===null));
+ assert.deepEqual([...f.stored.keys()],before);assert.ok(f.storage.betaExplorerTestItOwnership);d.querySelector('[data-guide-exit]').click();
+ }finally{f.dom.window.close();}
 });
