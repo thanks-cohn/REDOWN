@@ -53,7 +53,12 @@ def plan(scan, depth='Quick', resources=None, info=None):
     if depth not in ('Quick','Comprehensive','Stress'): raise ValueError('Unknown depth')
     resources=resources or profile()
     ceiling=(info or {}).get('limits',{}).get('maxBytes',65536)
-    eligible=[r for r in scan['selected'] if r['bytes']<=ceiling]
+    payload = scan['selected']
+    verification = scan.get('manifestVerification', {})
+    if verification.get('status') == 'PASS':
+        expected = {c['path'] for c in verification['cases'] if c.get('expected')}
+        payload = [r for r in payload if r['relpath'] in expected]
+    eligible=[r for r in payload if r['bytes']<=ceiling]
     chosen=eligible
     if depth=='Quick':
         groups={}
@@ -68,7 +73,7 @@ def plan(scan, depth='Quick', resources=None, info=None):
             cases.append({'operation':op,'file':row['relpath'],'bytes':row['bytes']})
         if depth=='Stress': cases.append({'operation':'read','file':row['relpath'],'bytes':row['bytes'],'probe':'repeat-read-no-write-retry'})
     if chosen: cases.append({'operation':'mkdir','file':None,'bytes':0})
-    missing=[{'file':r['relpath'],'status':'UNSUPPORTED','reason':'BOUNDED_TRANSPORT_LIMIT','bytes':r['bytes']} for r in scan['selected'] if r['bytes']>ceiling]
+    missing=[{'file':r['relpath'],'status':'UNSUPPORTED','reason':'BOUNDED_TRANSPORT_LIMIT','bytes':r['bytes']} for r in payload if r['bytes']>ceiling]
     missing += [{'file':r['relpath'],'status':'NOT_TESTED','reason':'QUICK_SAMPLE'} for r in eligible if r not in chosen]
     missing += [{'file':r['relpath'],'status':'NOT_TESTED','reason':r['reason']} for r in scan['exclusions']]
     transfer=sum(c['bytes']*(2 if c['operation']=='upload' else 3 if c['operation']=='copy' else 1 if c['operation']=='read' else 0) for c in cases)
