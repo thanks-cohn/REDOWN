@@ -47,5 +47,6 @@
   "extension/beta/guided-interaction.mjs",
   "extension/beta/tour.mjs",
   "extension/beta/test-session.mjs",
-  "extension/beta/test-it.mjs"
+  "extension/beta/test-it.mjs",
+  "extension/beta/test-practice.mjs"
 ]

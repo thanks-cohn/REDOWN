@@ -570,77 +570,24 @@ test('disconnected tour, missing files, narrow viewport and unavailable interact
   }finally{f.dom.window.close();}
 });
 
-test('Test It starts in the real Explorer, preserves all 60 results, resumes, and X removes every guide highlight',async()=>{
-  const f=await uiFixture(),{d,w,settle}=f;
-  try{
-    d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card[aria-label="Test It"]'));
-    assert.equal(f.testIt.model.current().status,'PASSED');assert.equal(f.testIt.model.exportData().records.length,60);
-    d.querySelector('[data-guide-next]').click();assert.equal(f.testIt.model.session.index,1);assert.equal(f.testIt.model.current().status,'BLOCKED');
-    d.querySelector('[data-test-pause]').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true);d.querySelector('[data-test-pause]').click();
-    d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelector('.guide-card'),null);assert.equal(d.querySelectorAll('.guide-highlight').length,0);
-    d.querySelector('#test-it').click();assert.equal(f.testIt.model.session.index,1);assert.equal(f.testIt.model.session.records[0].status,'PASSED');
-    d.querySelector('[data-guide-exit]').click();d.querySelector('#take-tour').click();assert.ok(d.querySelector('.guide-card[aria-label="Take the Tour"]'));
-  }finally{f.testIt?.destroy();f.dom.window.close();}
+async function prepareTestIt(f){const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('[data-test-setup]'));assert.equal(f.testIt.model.current().status,'NOT_TESTED');d.querySelector('[data-test-setup]').click();await settle(()=>f.testIt.model.session.state.practice_ready===true);return f.storage.betaExplorerTestItPracticeV2;}
+async function nextExercise(f,n){await f.settle(()=>f.testIt.model.session.records[n-1].status==='PASSED');await f.settle(()=>f.testIt.model.session.index===n);}
+test('Test It consent creates nine unique practice objects, verifies SHA-256 and retains all sixty results',async()=>{
+ const f=await uiFixture();try{const before=f.stored.size;f.d.querySelector('#test-it').click();await new Promise(r=>setTimeout(r,20));assert.equal(f.stored.size,before);assert.equal(f.testIt.model.current().status,'NOT_TESTED');f.d.querySelector('[data-guide-exit]').click();const scope=await prepareTestIt(f);assert.equal(scope.objects.length,9);assert.equal(new Set(scope.objects.map(o=>o.id)).size,9);for(const o of scope.objects){assert.equal(hash(f.stored.get(o.key).bytes),o.expected_sha256);assert.equal(o.last_verified_sha256,o.expected_sha256);assert.equal(o.verified_existence,true);}assert.equal(f.stored.get('root.txt').bytes.toString(),'payload');assert.equal(f.testIt.model.exportData().records.length,60);assert.equal(f.testIt.model.exportData().coverage.implemented_count,13);assert.equal(f.testIt.model.current().status,'NOT_TESTED');}finally{f.testIt?.destroy();f.dom.window.close();}
 });
-test('Test It correlates an actual bucket GUI click to real adapter HTTP and fresh independent list verification',async()=>{
-  const f=await uiFixture(),{d,settle}=f;
-  try{
-    d.querySelector('#test-it').click();for(let i=0;i<8;i++)d.querySelector('[data-guide-next]').click();assert.equal(f.testIt.model.session.index,8);
-    d.querySelector('#buckets button').click();await settle(()=>f.testIt.model.current().status==='PASSED');const r=f.testIt.model.current();
-    assert.ok(r.ui_events.some(e=>e.type==='click'));assert.ok(r.requests.some(q=>q.kind==='http'&&q.http_status===200));assert.ok(r.requests.some(q=>q.verification&&q.outcome_confirmed));assert.equal(r.verification.independently_verified,true);assert.ok(r.latency_ms.action_to_verified_result>=0);
-    if(process.env.REDOWN_TEST_SAMPLE){const sample=f.testIt.model.exportData();sample.environment.execution='LOCAL_JSDOM_AND_IN_MEMORY_R2_FIXTURE';sample.known_limitations.unshift('This sample contains fixture HTTP responses and synthetic GUI events, never live Cloudflare evidence.');for(const item of sample.records)if(item.evidence_origin!=='NOT_OBSERVED')item.evidence_origin='LOCAL_JSDOM_FIXTURE';await (await import('node:fs/promises')).writeFile(process.env.REDOWN_TEST_SAMPLE,JSON.stringify(sample,null,2)+'\n');}
-    const json=JSON.stringify(f.testIt.model.exportData());assert.ok(!json.includes('fixture-account'));assert.ok(!json.includes('root.txt'));assert.ok(!json.includes('fixture-secret'));
-  }finally{f.testIt?.destroy();f.dom.window.close();}
+test('Test It real GUI navigation verifies five revised exercises and automatically advances',async()=>{
+ const f=await uiFixture();try{const scope=await prepareTestIt(f),{d,w}=f;d.querySelector('#buckets button').click();await nextExercise(f,1);await f.settle(()=>d.querySelector('[data-key="'+scope.working+'"]'));assert.ok(d.querySelector('.guide-highlight[data-key="'+scope.working+'"]'));d.querySelector('[data-key="'+scope.working+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await nextExercise(f,2);const crumbs=[...d.querySelectorAll('#crumbs button')];crumbs.at(-2).click();await nextExercise(f,3);d.querySelector('[data-key="'+scope.working+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await nextExercise(f,4);d.querySelector('#refresh').click();await nextExercise(f,5);for(const r of f.testIt.model.session.records.slice(0,5)){assert.equal(r.status,'PASSED');assert.ok(r.ui_events.length);assert.ok(r.requests.some(q=>q.verification&&q.http_status===200));assert.equal(r.verification.independently_verified,true);}assert.equal(d.querySelectorAll('.file').length,3);}finally{f.testIt?.destroy();f.dom.window.close();}
 });
-test('Test It blocks actual Explorer mutations even during Pause, and explicit skip reasons never produce passes',async()=>{
-  const f=await uiFixture(),{d,settle}=f;
-  try{
-    d.querySelector('#test-it').click();d.querySelector('[data-test-pause]').click();d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='must-not-create';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes('Test It blocks cloud writes')&&!d.querySelector('#mkdir').disabled);
-    assert.ok(!f.messages.some(m=>m.type==='cfCreateFolder'));assert.ok(!f.stored.has('must-not-create/.redown'));
-    d.querySelector('[data-test-pause]').click();d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();assert.equal(f.testIt.model.session.index,1);d.querySelector('[data-test-reason]').value='No verifier in this build';d.querySelector('[data-guide-skip]').click();assert.equal(f.testIt.model.session.records[1].status,'NOT_TESTED');assert.equal(f.testIt.model.session.records[1].disposition,'SKIPPED');
-  }finally{f.testIt?.destroy();f.dom.window.close();}
+test('Test It blocks protected, personal, working and multi-target mutations, even during pause',async()=>{
+ const f=await uiFixture();try{const scope=await prepareTestIt(f);f.d.querySelector('[data-test-pause]').click();for(const operation of ['delete','move','copy','rename','mkdir','upload','extractArchiveEntry','prepareBucket'])assert.throws(()=>f.testIt.observer.guard(operation,{}),/blocks cloud writes/);
+ for(const target of [scope.objects.find(o=>o.protection==='original'),scope.objects.find(o=>o.protection==='backup'),scope.objects.find(o=>o.protection==='working'),{key:'root.txt'}])assert.throws(()=>f.testIt.observer.guard('delete',{source,entries:[target]}),/blocks cloud writes/);
+ assert.throws(()=>f.testIt.observer.guard('delete',{source,entries:scope.objects}),/blocks cloud writes/);
+ f.d.querySelector('#mkdir').click();await f.settle(()=>f.d.querySelector('#dialog').open);f.d.querySelector('#dialog-input').value='must-not-create';f.d.querySelector('#dialog-confirm').click();await f.settle(()=>f.d.querySelector('#status').textContent.includes('Test It blocks cloud writes'));assert.ok(!f.stored.has('must-not-create/.redown'));for(const o of scope.objects)assert.ok(f.stored.has(o.key));}finally{f.testIt?.destroy();f.dom.window.close();}
 });
-test('Test It local view verification needs both actual view transitions, and empty-area menu exposes the existing selected-action gap',async()=>{
-  const f=await uiFixture(),{d,w,settle}=f;
-  try{
-    f.testIt.model.session.index=20;d.querySelector('#test-it').click();d.querySelector('#view').click();await new Promise(r=>setTimeout(r,30));assert.notEqual(f.testIt.model.current().status,'PASSED');d.querySelector('#view').click();await settle(()=>f.testIt.model.current().status==='PASSED');
-    d.querySelector('[data-guide-exit]').click();d.querySelector('[data-key="root.txt"]').click();f.testIt.model.session.index=26;d.querySelector('#test-it').click();d.querySelector('#dropzone').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,clientX:400,clientY:300}));await settle(()=>f.testIt.model.current().status==='FAILED');assert.equal(f.testIt.model.current().verification.checks.only_location_actions,false);
-  }finally{f.testIt?.destroy();f.dom.window.close();}
+test('Test It X removes cards and highlights immediately and Take the Tour still works',async()=>{const f=await uiFixture();try{await prepareTestIt(f);f.d.querySelector('[data-guide-exit]').click();assert.equal(f.d.querySelector('.guide-card'),null);assert.equal(f.d.querySelectorAll('.guide-highlight').length,0);f.d.querySelector('#take-tour').click();assert.ok(f.d.querySelector('.guide-card[aria-label="Take the Tour"]'));}finally{f.testIt?.destroy();f.dom.window.close();}});
+test('Test It revised selection, filter, sort and separate Grid/List exercises verify actual GUI state',async()=>{
+ const f=await uiFixture();try{const scope=await prepareTestIt(f),{d,w}=f;d.querySelector('#buckets button').click();await nextExercise(f,1);d.querySelector('[data-key="'+scope.working+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await nextExercise(f,2);[...d.querySelectorAll('#crumbs button')].at(-2).click();await nextExercise(f,3);d.querySelector('[data-key="'+scope.working+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await nextExercise(f,4);d.querySelector('#refresh').click();await nextExercise(f,5);
+ const row=name=>d.querySelector('[data-key="'+scope.working+name+'"]');row('picture-a.png').click();await nextExercise(f,6);row('notes.txt').click();await nextExercise(f,7);row('picture-a.png').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));await nextExercise(f,8);row('picture-b.png').dispatchEvent(new w.MouseEvent('click',{bubbles:true,shiftKey:true}));await nextExercise(f,9);d.querySelector('#filter').value='picture-a';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));await nextExercise(f,10);d.querySelector('#filter').value='';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));d.querySelector('#sort').value='name';d.querySelector('#sort').dispatchEvent(new w.Event('change',{bubbles:true}));await nextExercise(f,11);d.querySelector('#view').click();await nextExercise(f,12);d.querySelector('#view').click();await nextExercise(f,13);assert.equal(f.testIt.model.current().status,'BLOCKED');assert.equal(f.testIt.model.session.records.filter(r=>r.status==='PASSED').length,13);assert.equal(f.testIt.model.session.records[14].status,'NOT_TESTED');if(process.env.REDOWN_TEST_SAMPLE){const sample=f.testIt.model.exportData();sample.environment.execution='LOCAL_JSDOM_AND_IN_MEMORY_R2_FIXTURE';sample.known_limitations.unshift('All HTTP and GUI evidence in this sample is a local fixture, not installed Chrome or live Cloudflare.');for(const record of sample.records)if(record.evidence_origin!=='NOT_OBSERVED')record.evidence_origin='LOCAL_JSDOM_FIXTURE';await (await import('node:fs/promises')).writeFile(process.env.REDOWN_TEST_SAMPLE,JSON.stringify(sample,null,2)+'\n');}}finally{f.testIt?.destroy();f.dom.window.close();}
 });
-
-test('Test It verifies filter, each comparator, modifier selection, arrow focus and menu dismissal from actual GUI handlers',async()=>{
-  const f=await uiFixture(),{d,w,settle}=f;
-  try{
-    await f.bucket.put('another.txt','a');await f.bucket.put('z-last.txt','longer');d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="z-last.txt"]'));
-    const start=n=>{f.testIt.guide.stop();f.testIt.model.session.index=n-1;d.querySelector('#test-it').click();};
-    const pass=()=>settle(()=>f.testIt.model.current().status==='PASSED');
-    start(17);d.querySelector('#filter').value='txt';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));await pass();d.querySelector('#filter').value='';d.querySelector('#filter').dispatchEvent(new w.Event('input',{bubbles:true}));
-    for(const [n,value]of [[18,'name'],[19,'name-desc'],[20,'size']]){start(n);d.querySelector('#sort').value=value;d.querySelector('#sort').dispatchEvent(new w.Event('change',{bubbles:true}));await pass();}
-    start(22);d.querySelector('[data-key="root.txt"]').click();await pass();
-    start(23);d.querySelector('[data-key="another.txt"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));await pass();
-    f.testIt.guide.stop();d.querySelector('[data-key="another.txt"]').click();start(24);d.querySelector('[data-key="z-last.txt"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,shiftKey:true}));await pass();
-    f.testIt.guide.stop();d.querySelector('[data-key="root.txt"]').focus();start(25);d.querySelector('[data-key="root.txt"]').focus();d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));await pass();
-    start(26);d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));await pass();
-    start(28);d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await pass();
-    for(const n of [17,18,19,20,22,23,24,25,26,28]){const r=f.testIt.model.session.records[n-1];assert.equal(r.status,'PASSED');assert.ok(r.ui_events.length);assert.equal(r.verification.source,'independent_dom_snapshot');}
-  }finally{f.testIt?.destroy();f.dom.window.close();}
-});
-
-test('Test It verifies all seven navigation exercises against fresh distinct-bucket provider fixtures',async()=>{
-  const f=await uiFixture({autoOpen:false,sendOverride:twoBuckets,httpOverride:http=>({...http,request:async path=>bucketResponse(path)})}),{d,w,settle}=f;
-  try{
-    f.testIt.model.session.index=8;d.querySelector('#test-it').click();const pass=()=>settle(()=>f.testIt.model.current().status==='PASSED'),next=()=>d.querySelector('[data-guide-next]').click();
-    d.querySelector('[data-bucket="1234"]').click();await pass();next();d.querySelector('[data-bucket="12345"]').click();await pass();next();d.querySelector('[data-bucket="1234"]').click();await pass();next();d.querySelector('#refresh').click();await pass();next();d.querySelector('[data-key="Folder/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await pass();next();d.querySelector('#refresh').click();await pass();next();d.querySelector('#crumbs button').click();await pass();
-    for(let i=8;i<15;i++){const r=f.testIt.model.session.records[i];assert.equal(r.status,'PASSED',r.exercise_id);assert.ok(r.requests.some(q=>q.verification&&q.http_status===200));assert.ok(r.ui_events.length);assert.equal(r.verification.independently_verified,true);}
-  }finally{f.testIt?.destroy();f.dom.window.close();}
-});
-
-test('Test It reload restores only persisted evidence and resets interrupted monotonic milestones',async()=>{
-  const f=await uiFixture(),{d,settle}=f;let reloaded;
-  try{
-    d.querySelector('#test-it').click();d.querySelector('[data-guide-next]').click();const id=f.testIt.model.session.session_id;
-    f.testIt.model.session.index=16;f.testIt.model.action({type:'input',is_trusted:false});f.testIt.guide.stop();await settle(()=>f.storage.betaExplorerTestItV1?.index===16);
-    reloaded=await installTestIt({document:d,api:f.api,snapshot:()=>({}),storage:{get:async k=>({[k]:f.storage[k]}),set:async values=>Object.assign(f.storage,values)},matrix:JSON.parse(requireMatrix)});
-    assert.equal(reloaded.model.session.session_id,id);assert.equal(reloaded.model.session.records[0].status,'PASSED');assert.equal(reloaded.model.session.records[16].status,'UNCERTAIN');assert.equal(reloaded.model.session.records[16].timing.action,null);assert.ok(reloaded.model.session.records[16].evidence.some(e=>e.kind==='interrupted-document'));assert.equal(reloaded.model.session.records[39].status,'NOT_TESTED');
-  }finally{reloaded?.destroy();f.testIt?.destroy();f.dom.window.close();}
-});
+test('Test It incorrect actions and failed prerequisites cannot pass or unlock dependent exercises',async()=>{const f=await uiFixture();try{await prepareTestIt(f);f.d.querySelector('#view').click();await new Promise(r=>setTimeout(r,50));assert.equal(f.testIt.model.current().status,'NOT_TESTED');f.d.querySelector('[data-guide-next]').click();assert.equal(f.testIt.model.session.index,0);f.d.querySelector('[data-test-reason]').value='Skip navigation';f.d.querySelector('[data-guide-skip]').click();assert.equal(f.testIt.model.session.index,1);assert.equal(f.testIt.model.current().status,'BLOCKED');assert.equal(f.testIt.model.session.records[0].status,'NOT_TESTED');}finally{f.testIt?.destroy();f.dom.window.close();}});
+test('Test It saved v2 evidence is resumed but practice content must be rechecked; v1 is not reinterpreted',async()=>{const f=await uiFixture();let restored;try{await prepareTestIt(f);const id=f.testIt.model.session.session_id;f.testIt.model.session.index=5;f.testIt.model.action({type:'click'});f.testIt.guide.stop();await f.settle(()=>f.storage.betaExplorerTestItV2?.index===5);restored=await installTestIt({document:f.d,api:f.api,snapshot:()=>({}),storage:{get:async k=>({[k]:f.storage[k]}),set:async values=>Object.assign(f.storage,values)},matrix:JSON.parse(requireMatrix)});assert.equal(restored.model.session.session_id,id);assert.equal(restored.model.current().status,'UNCERTAIN');assert.equal(restored.model.current().timing.action,null);assert.ok(restored.model.current().evidence.some(e=>e.kind==='interrupted-document'));assert.equal(restored.model.session.records[39].status,'NOT_TESTED');}finally{restored?.destroy();f.testIt?.destroy();f.dom.window.close();}});

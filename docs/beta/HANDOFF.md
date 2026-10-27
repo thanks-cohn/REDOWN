@@ -1,3 +1,78 @@
+# Test It v2 rebuild handoff, October 27, 2026
+
+Branch: **beta-explorer**. Starting commit: `71001b58fae24ea2c83d833bf085326e96353950`. Final published SHA is supplied in the delivery response; this handoff is part of that commit.
+
+**Partial implementation: 13 functional exercises, 47 blocked. Specification v2.0.0 defines all 60 stable IDs. Not installed-Chrome verified, not live-R2 verified, and not public-beta safety certification.**
+
+## Delivered and verified locally
+
+- Replaced the obsolete master exercise definitions and runtime mappings in place. The authoritative JSON and packaged copy are byte identical. Chapters A-F now follow the owner's workflow, with logical identities, prerequisites, transitions, backup requirements, recovery instructions and mandatory evidence. The known Copies/Archive filename collision at exercise 32 explicitly uses Keep Both, preserving the existing copy and following the returned key.
+- Added explicit setup consent naming the selected account and bucket. No setup starts merely by opening Test It. A collision-resistant `REDOWN-TEST-IT/<uuid>/` namespace must be empty. Nine generated fixtures are uploaded using the existing universal API: two small PNGs and a text document in each of Protected Originals, Protected Backups and Working Area.
+- Setup records write intent before dispatch, distinct logical IDs, fixture ancestry, exact keys, expected/verified SHA-256, existence and recovery identities. Every final object is freshly read through the existing preview API, completely hashed, and compared to its known fixture bytes. All nine are read again before readiness. A successful upload acknowledgement alone is insufficient.
+- Failed or uncertain setup attempts retain object intent, prior namespaces and staging recovery keys. Retry creates a new namespace, never adopts matching filenames or replays an ambiguous write. No automatic cleanup occurs.
+- **S01-001 through S01-013 work as a connected flow:** bucket opening, Working Area navigation and parent return, Refresh, precise picture/different-file selection, modifier multi/range selection, exact named filtering, name sorting, Grid and List. Five navigation exercises perform fresh independently correlated provider listings; eight verify actual DOM/interface state. All thirteen require verified practice setup.
+- The existing Tour card engine supplies contextual highlighting and accessible X controls. Verified successes automatically advance. Incorrect actions cannot pass. Failed/skipped prerequisites block dependent activities. X removes temporary capture listeners, highlights and pending advance timers immediately. An in-flight setup upload settles and is retained; no subsequent upload starts after exit.
+- One evidence path retains all sixty records, actual sanitized HTTP/IPC diagnostics, real monotonic timings or null, setup readback comparisons and explicit unsupported coverage. Setup measurements are separate from exercise action timings. The partial fixture export has thirteen PASSED, one BLOCKED, forty-six NOT_TESTED; it is prominently labeled local simulation.
+- Saved v2 progress is separate from v1. Historical v1 exports, schema and verification samples remain unchanged as historical evidence, not current runtime definitions. Reopening saved practice requires fresh readback; old results are never interpreted as v2 results.
+
+## Exact coverage and remaining work
+
+| Measure | Count |
+| --- | ---: |
+| Defined stable exercises | 60 |
+| Functional GUI exercises | 13 |
+| GUI interaction detectors | 13 |
+| Independent state verifiers | 13 |
+| Exercises gated on verified practice recovery material | 13 |
+| Destructive exercises enabled | 0 |
+| Exercises with live Cloudflare evidence | 0 |
+| Blocked/incomplete exercises | 47 |
+
+**S01-014 through S01-060 remain blocked.** The product preview features continue working, but their new exercise-specific verifiers are not yet implemented. Copy/move/rename/delete/restore/upload/download/archive exercise execution and state reconciliation are incomplete. The runtime does not claim that writing sixty definitions implements sixty tests. It does not offer working cleanup or protected-reference restoration yet.
+
+## Safety limits and recovery
+
+All ordinary exercise mutations, including multi-file operations and preparation/provisioning, are rejected at the existing universal API observer boundary while Test It is open or setup is settling. Pause retains the gate. Only a private, exact-input setup upload authorization bypasses it. Protected sources, backups, working objects, personal objects and mixed sets are all blocked as exercise mutation targets. No deletion exercise is enabled, including last-copy deletion.
+
+This is an application-level gate, **not provider-enforced IAM separation**. Active credentials may still modify objects through other applications, tabs, or normal Explorer after X. Existing operations that started before Test It are not cancelled. No absolute data-loss guarantee is claimed. The shared adapter's existing upload implementation uses `.redown-beta-uploads/<uuid>/payload` staging outside the final practice namespace, then its existing safe final commit; staging failures can leave objects requiring reconciliation. No adapter or provider permission changes were introduced.
+
+Recovery procedure in this version: stop dependent activities, export the evidence and retain protected material. Recheck saved practice to read every expected object and compare the original fixture hashes. A failed/uncertain preparation may be retried explicitly into a fresh namespace; earlier namespaces remain listed for review. Restoration of a new working copy from protected material is specified in S01-050 but is blocked until a verified scoped mutation implementation exists. Do not delete protected material as routine cleanup. Separate explicit approval and fresh verification are required for eventual protected-material removal.
+
+## Verification
+
+- Focused model/setup/real GUI fixture suite: **95 passed, 0 failed**. Final model/setup rerun after fail-closed persistence handling: **18 passed, 0 failed**.
+- Full suite: **470 tests, 460 passed, 10 failed**. Clean starting commit with identical dependencies: **462 tests, 452 passed, the same 10 failure names**. No new failing test names. Frozen evidence hashes and assertions were not relaxed.
+- Syntax, registry and issue inventory pass. Reliability remains failed on existing architecture freshness and baseline tests.
+- Installed Chrome attempt: **BLOCKED, CHROME_NOT_AVAILABLE_ENOENT**, zero installed assertions executed. Browser interactions here are JSDOM through actual Explorer handlers and the existing embedded Worker with in-memory R2.
+- Live R2: **NOT TESTED**, zero live writes, reads, deployments, repairs or provider acceptance claims.
+- Safety tests cover occupied namespaces, corrupted/changed backups, fresh rechecks, distinct fixture identities, uncertain writes without replay, retained prior attempts/staging keys, rejection of forged saved identities, X before/after dispatch, protected and mixed-target guards, incorrect GUI actions, dependency blocking, partial exports and resumption.
+- Window Preview, Side Preview, Lightbox, navigation/Refresh, ordinary file operations and Take the Tour remain covered by existing passing Beta tests. Production Legacy source and main were not modified.
+
+Machine-readable evidence: [verification summary](verification/test-it-v2/validation-summary.json) and [local fixture export](verification/test-it-v2/sample-fixture-results.json).
+
+## Exact changed files
+
+- `docs/beta/REDOWN-COMPREHENSIVE-INTERACTION-TEST-MATRIX.json`
+- `extension/beta/test-matrix.json`
+- `extension/beta/test-it.mjs`
+- `extension/beta/test-session.mjs`
+- `extension/beta/test-practice.mjs` (new setup helper for the existing runtime)
+- `extension/beta/explorer.mjs` (passes its existing navigation callback)
+- `scripts/syntax-targets.json`
+- `tests/beta-explorer.test.mjs`
+- `tests/test-practice.test.mjs`
+- `docs/beta/verification/test-it-v2/sample-fixture-results.json`
+- `docs/beta/verification/test-it-v2/validation-summary.json`
+- `docs/beta/HANDOFF.md`
+
+## Clean replacement audit
+
+Removed the old hard-coded target/ID map, first/second/return-bucket state, self-passing menu-open exercise, old 17-28 event mappings/comparators/menu verifiers, obsolete technical instruction cards and superseded Test It GUI tests. Fixed the old anonymous Tour-stop listener so teardown removes it. No second engine, API, cloud adapter or dependency was added. The setup helper is owned by the single existing Test It runtime and uses its observer/recorder. Historical handoffs and v1 evidence intentionally remain below/on disk for version traceability. The packaged master copy remains necessary because the extension cannot fetch repository docs; the drift test enforces one authoritative specification.
+
+Next highest-value work: verify this consent/setup/navigation flow in an authorized installed Chrome/R2 session, then implement the remaining exercise verifiers and working-area mutations with full-set preflight, fresh protected recovery checks and identity-preserving readback reconciliation. Do not enable destructive tests simply to increase coverage counts.
+
+---
+
 # Test It partial-runtime handoff, October 27, 2026
 
 Branch: **beta-explorer**. Base/specification: `f617d034168f88c6a15c0d5f24fc14c62aac7502`.
