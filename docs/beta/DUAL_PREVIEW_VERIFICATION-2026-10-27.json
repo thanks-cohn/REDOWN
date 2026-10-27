@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-27",
+  "branch": "beta-explorer",
+  "startingCommit": "f6f4713d0adeb837ce83773d4f9388f33a26e9a7",
+  "scope": "local jsdom UI, API and embedded Worker fixtures; no rendered browser, installed Chrome or live R2 proof",
+  "focused": {
+    "command": "node --test tests/beta-explorer.test.mjs tests/cloudflare-api.test.mjs tests/cloudflare-login.test.mjs tests/cloudflare-reconnect.test.mjs tests/explorer-copy.test.mjs",
+    "passed": 96,
+    "failed": 0,
+    "betaTests": 62
+  },
+  "full": {
+    "command": "npm run reliability:check",
+    "passed": 427,
+    "failed": 10,
+    "failureNames": [
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "full finite public coverage inventory resolves strata and all canonical case links",
+      "offline discovery advertises only implemented operations and distinct versions",
+      "original case and proposal Markdown bytes are retained from pinned upstream",
+      "real discovery, case, history, filters and validation are deterministic and honest",
+      "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "successful provisioning refreshes destination editors and inventory before reporting ready"
+    ],
+    "baselineFailureNamesEqual": true
+  },
+  "startingCommitBaseline": {
+    "passed": 417,
+    "failed": 10,
+    "method": "git archive starting commit; same installed dependencies; node --test with reliability reporter"
+  },
+  "checks": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "renderedBrowser": {
+    "state": "blocked",
+    "assertionsExecuted": 0,
+    "reason": "Playwright Chromium executable absent; attempted download returned invalid/truncated archives",
+    "plannedWidths": [
+      1440,
+      1024,
+      768,
+      390
+    ]
+  },
+  "installedChrome": {
+    "scope": "installed-chrome",
+    "installation": "unpacked directory",
+    "state": "blocked",
+    "scenario": "fresh isolated profile, real service worker and options, passive diagnostics, local persistence",
+    "startedAt": "2026-10-27T11:10:17.468Z",
+    "assertions": [],
+    "limitations": [
+      "No Cloudflare login or remote data",
+      "Not a CRX or store-distributed installation",
+      "Not the complete workflow matrix"
+    ],
+    "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+    "extensionVersion": "0.5.26",
+    "code": "CHROME_NOT_AVAILABLE_ENOENT",
+    "finishedAt": "2026-10-27T11:10:17.582Z"
+  },
+  "liveR2": {
+    "state": "not-tested",
+    "reason": "No authenticated installed extension/provider context",
+    "cloudWrites": false
+  },
+  "sourceSha256": {
+    "extension/beta/explorer.html": "2cf3409219adcb505bfa855b096319ef19662e4e9abc7615b47ecd3ddfc043e9",
+    "extension/beta/explorer.css": "9b53df05ef543e76df7a99e85c9187e4e5c1843770490eeea7ddd1483fd45a50",
+    "extension/beta/explorer.mjs": "3d4eaef625bf08cfccec5cb0f5fcdc5699e14dd071fd75384834e85f38288ba7",
+    "tests/beta-explorer.test.mjs": "0895a98c59cd32423f84b8473ac090c27921ba57230ac38a4d759acd7c8844b3",
+    "scripts/beta-explorer-preview.mjs": "1cec5f80b3bc364f7d510bc9d08deb2b39fd427e4065020b740e005ec46c006d"
+  },
+  "nextTask": "Installed Chrome / live R2 dual-preview acceptance in HANDOFF.md"
+}

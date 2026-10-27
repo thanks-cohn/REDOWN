@@ -15,7 +15,7 @@ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],
 page.on('pageerror',error=>errors.push(error.message));
 await page.addInitScript(()=>{
   const auth={accessToken:'local-fixture-token',sessionId:'local-fixture-session'};
-  window.chrome={storage:{local:{get:async()=>({cloudflareAuth:auth})},onChanged:{addListener(){}}},runtime:{sendMessage:async m=>{
+  const stored={cloudflareAuth:auth};window.chrome={storage:{local:{get:async key=>({[key]:stored[key]}),set:async values=>Object.assign(stored,values)},onChanged:{addListener(){}}},runtime:{sendMessage:async m=>{
     window.__messages=(window.__messages||[]).concat(m);
     if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'account',name:'Personal workspace'}]};
     if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'creative-studio'},{name:'project-archive'},{name:'weekend-photos'}]};
@@ -29,6 +29,7 @@ await page.addInitScript(()=>{
 await page.route('**/*',async route=>{
   const url=new URL(route.request().url());if(url.origin===origin)return route.continue();
   if(url.hostname==='api.cloudflare.com'&&url.pathname.includes('/objects')){
+    if(url.pathname.includes('/objects/')&&url.pathname.endsWith('.webp'))return route.fulfill({status:200,body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64'),headers:{'content-type':'image/png'}});
     if(url.pathname.includes('/objects/'))return route.fulfill({status:200,body:'A little room for the next idea.\nKeep every detail in order.',headers:{'content-type':'text/plain'}});
     const prefix=url.searchParams.get('prefix')||'';
     return route.fulfill({json:{success:true,result:{delimited:prefix?[]:['Design/','Photography/','Projects/'],objects:prefix?[]:[{key:'Brand direction.pdf',size:2485000,uploaded:'2026-10-20T14:00:00Z'},{key:'Notes for tomorrow.txt',size:2450,uploaded:'2026-10-23T10:30:00Z'},{key:'Studio collection.zip',size:58200000,uploaded:'2026-10-24T08:00:00Z'},{key:'Winter campaign.webp',size:4120000,uploaded:'2026-10-26T16:30:00Z'}]}}});
@@ -45,8 +46,26 @@ try{
   await page.locator('[data-key="Studio collection.zip"]').click();await page.locator('#archive').click();await page.locator('#archive-files label').first().waitFor();assert.equal(await page.locator('#archive-files label').count(),2);await page.screenshot({path:resolve(output,'archive.png'),fullPage:true});await page.locator('#archive-close').click();
   await page.locator('#copy-to').click();await page.locator('#destination-confirm:not(:disabled)').waitFor();assert.equal(await page.locator('#destination-bucket').inputValue(),'creative-studio');await page.locator('#destination-cancel').click();
   await page.locator('#view').click();await page.screenshot({path:resolve(output,'grid.png'),fullPage:true});
-  const widths=[];for(const width of [1440,1024,768,390]){await page.setViewportSize({width,height:900});const dimensions=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));widths.push({width,...dimensions});assert.ok(dimensions.content<=dimensions.viewport,JSON.stringify(dimensions));}
+  // The same real page controls, intercepted R2 reads; no installed/cloud claim.
+  await page.locator('[data-key="Winter campaign.webp"]').dblclick();await page.locator('#preview-content img').waitFor();
+  await page.waitForFunction(()=>document.querySelector('#preview-content img')?.naturalWidth>0);
+  const readsBefore=await page.evaluate(()=>performance.getEntriesByType('resource').filter(e=>e.name.includes('/objects/')).length);
+  await page.locator('#preview-mode-inline').selectOption('side');assert.equal(await page.locator('#preview-dialog').evaluate(e=>e.open),false);
+  await page.locator('#side-preview img').waitFor();
+  assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(e=>e.name.includes('/objects/')).length),readsBefore);
+  await page.locator('[data-key="Notes for tomorrow.txt"]').click();await page.locator('#side-preview pre').waitFor();
+  await page.locator('#preview-minimize').click();assert.ok(await page.locator('#side-preview').evaluate(e=>e.classList.contains('minimized')));
+  await page.locator('#preview').click();assert.ok(!await page.locator('#side-preview').evaluate(e=>e.classList.contains('minimized')));
+  await page.locator('#preview-close').click();assert.ok(await page.locator('#side-preview').isHidden());await page.locator('#preview').click();await page.locator('#side-preview pre').waitFor();
+  await page.locator('#preview-expand').click();assert.ok(await page.locator('#file-workspace').evaluate(e=>e.classList.contains('preview-expanded')));
+  await page.locator('#preview-expand').click();
+  const divider=await page.locator('#preview-divider').boundingBox();await page.mouse.move(divider.x+divider.width/2,divider.y+40);await page.mouse.down();await page.mouse.move(divider.x-70,divider.y+40);await page.mouse.up();
+  assert.notEqual(await page.locator('#preview-divider').getAttribute('aria-valuenow'),'400');
+  await page.screenshot({path:resolve(output,'side-preview.png'),fullPage:true});
+
+  const widths=[];for(const width of [1440,1024,768,390]){await page.setViewportSize({width,height:900});const dimensions=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));widths.push({width,...dimensions});assert.equal(await page.locator('#side-preview').isVisible(),true);assert.ok(dimensions.content<=dimensions.viewport,JSON.stringify(dimensions));}
   await page.screenshot({path:resolve(output,'mobile.png'),fullPage:true});
+  await page.getByRole('button',{name:'project-archive',exact:false}).click();await page.waitForFunction(()=>!document.querySelector('#preview-content pre'));assert.equal(await page.locator('#preview-title').textContent(),'File preview');
   messages.push(...await page.evaluate(()=>window.__messages||[]));assert.deepEqual(errors,[]);assert.ok(messages.some(m=>m.type==='cfPublicAddresses'));
-  const report={scope:'Normal Chromium webpage with fixture Chrome messages and intercepted HTTP; no installed extension or live R2',state:'passed',widths,errors,checks:['preview text','public URL API routing','session preferences','archive inspection dialog','destination chooser','grid switch','no horizontal overflow at four widths']};await writeFile(resolve(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+  const report={scope:'Normal Chromium webpage with fixture Chrome messages and intercepted HTTP; no installed extension or live R2',state:'passed',widths,errors,checks:['window image and text','shared viewer switches without another object read','side selection','minimize/reopen','close/reopen','expand/restore','pointer divider resize','bucket clears preview','public URL API routing','session preferences','archive inspection dialog','destination chooser','grid switch','no horizontal overflow at four widths']};await writeFile(resolve(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -1,3 +1,60 @@
+# Dual-mode Preview handoff, October 27, 2026
+
+Branch: **beta-explorer**. Starting commit: `f6f4713d0adeb837ce83773d4f9388f33a26e9a7`.
+The delivery commit includes this handoff and verification JSON. Its SHA is in the delivery response and resolves at the branch head.
+
+**BUILT and LOCALLY TESTED with fixtures. Rendered-browser, installed-Chrome and live-R2 acceptance remain UNVERIFIED.** This section supersedes historical statements below that docked preview is deferred. The bucket navigation and Refresh fixes remain present. Main, Legacy, authentication, adapter/API contracts and production defaults are unchanged.
+
+## Exact files changed
+
+- `extension/beta/explorer.html`: Preview mode selector, dock host, accessible divider, shared viewer and pane controls. An inline selector also allows switching out of the modal without closing the loaded viewer.
+- `extension/beta/explorer.css`: crimson/white dock layout, constrained list/pane widths, compact minimized header, full-height expansion, container-responsive rows and stacked narrow-window layout.
+- `extension/beta/explorer.mjs`: shared viewer presentation, persistent mode/width, selection-driven reads, independent cancellation/generation checks, metadata/fallbacks and cleanup.
+- `tests/beta-explorer.test.mjs`: ten additional local interaction/lifecycle regressions; the original preview assertion now waits for the loaded text because the dialog visibly opens during loading.
+- `scripts/beta-explorer-preview.mjs`: extended normal-webpage Playwright fixture for image decoding, mode switches, pane controls, actual pointer drag and four viewport widths. **Prepared, syntax checked, but browser execution BLOCKED.**
+- `docs/beta/HANDOFF.md` and `docs/beta/DUAL_PREVIEW_VERIFICATION-2026-10-27.json`: scope, results, remaining acceptance and unchanged baseline failures.
+
+## Implemented behavior and fixture verification
+
+**Window Preview** remains the default. Toolbar Preview, supported-file double-click and context-menu Preview use the chosen mode. The original image, PDF iframe, safe text/code, video/audio controls, metadata and previous/next paths remain in one shared renderer. Loading is visible inside the preview; failures stay inside it and offer Download. This is DOM/API fixture verification, not browser PDF decoding or codec playback proof.
+
+**Side Preview** uses the same viewer DOM, object URL and universal API operation. Selecting a different file updates the pane without locking navigation or file operations. Selection of a folder shows its prefix; unsupported files show metadata and Download without attempting an unsupported preview read. Multiple/empty selection shows an appropriate placeholder. Closed panes stay closed until Preview is used again.
+
+Mode and preferred width persist under `betaExplorerPreview` in local extension storage. Switching modes moves the existing loaded viewer and does not reread the object. The selector remains available inside the modal. Minimize pauses media and retains the current DOM/URL; Preview restores it without another read if selection/content is unchanged. Close stops/unloads media, releases the URL and returns space to the list; reopening rereads intentionally because closed content was released. Expand/restore changes the workspace viewing height and retains width. The divider uses pointer capture and also supports arrows/Home/End; normal bounds leave at least 280px for each area and cap preferred pane width at 720px.
+
+At viewport widths up to 1150px, the pane stacks below a scrollable file list rather than squeezing rows; horizontal resizing is intentionally hidden there. Expanded narrow preview scrolls into view at viewport height. Desktop expanded mode preserves both the list and divider. These layout rules are implemented; actual desktop/laptop/narrow rendering and hit-target acceptance still need a browser.
+
+Preview requests use their own AbortController and generation, independent of mutation busy state. Obsolete successes/failures cannot repaint a different selection, and late URLs are revoked. Bucket/account/folder changes, deleted selections, auth invalidation and page exit invalidate preview state. Shared API memory budgets, bounded reads and explicit text truncation remain unchanged. Corrupt image/media error events produce an inline fallback. Browser PDF-plugin errors may not dispatch an iframe error event, so native PDF error UI is still possible.
+
+## Verification
+
+**Focused: 96 passed, 0 failed (62 Beta tests). Full suite: 437 tests, 427 passed, 10 failed. Starting commit: 427 tests, 417 passed, the same 10 failure names.** Verification details are recorded in `DUAL_PREVIEW_VERIFICATION-2026-10-27.json`.
+
+- Focused command: `node --test tests/beta-explorer.test.mjs tests/cloudflare-api.test.mjs tests/cloudflare-login.test.mjs tests/cloudflare-reconnect.test.mjs tests/explorer-copy.test.mjs`.
+- Full suite is exercised by `npm run reliability:check`, using the repository's existing test reporter. Syntax, registry and issue checks are included. The gate remains failed for existing architecture freshness and baseline failures; no frozen hashes, assertions or allowlists were relaxed.
+- Starting commit was extracted with `git archive` and tested with the same installed dependencies to compare failure names independently.
+- Browser fixture command: `REDOWN_PLAYWRIGHT_MODULE=/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs node scripts/beta-explorer-preview.mjs`.
+- Browser fixture is **BLOCKED before any assertions**: Playwright Chromium executable absent. Browser installation was attempted; download returned invalid/truncated archives. No rendering, viewport, pixel, native drag or codec pass is claimed.
+- `node scripts/installed-chrome.mjs extension /tmp/redown-dual-chrome.json`: **BLOCKED**, `CHROME_NOT_AVAILABLE_ENOENT`; zero installed assertions.
+- Live R2: **NOT TESTED**. No authenticated installed extension/provider context was available. No live cloud writes, provisioning, repair or deployment occurred.
+
+Local tests cover both mode render paths, no-reread switching, saved settings, side selection, context Preview, double-click, previous/next, minimize/reopen, close/reopen, expand/restore, divider handler bounds/persistence and keyboard control, obsolete reads/failures, URL cleanup/media unloading, explicit truncation, failed/corrupt/unsupported previews, bucket/logout invalidation, and file operations/Refresh/deleted-selection pruning with a pane open. Existing bucket A/B/A, auth, API, large-transfer and Worker operation tests remain included.
+
+## Remaining acceptance and highest-value next task
+
+**Run the installed Chrome/live-R2 dual-preview acceptance below before declaring Milestone 2 complete.** Reuse the owner's existing signed-in extension, without changing production defaults.
+
+1. Open a real R2 image in Window Preview using Preview, double-click and context Preview. Verify actual pixels, metadata, loading, previous/next and close/Escape.
+2. Switch to Side Preview inside the modal. Verify it docks and preserves the loaded content without another object GET. Select another image; rapidly alternate files and buckets and confirm no stale content.
+3. Minimize, then reopen with Preview; close, then reopen again. Expand/restore. Drag the divider and try its keyboard controls. Reopen Beta and confirm selected mode/width persistence. Check a changed selection while minimized.
+4. Exercise actual PDF, text/code including truncated large text, video and audio. Confirm playback stops on selection change/minimize/close. Include damaged and unsupported files; check inline metadata/Download and budget failures without navigation disruption.
+5. Test 1440px desktop, 1024px laptop, 768px and 390px narrow windows. Verify scrolling, list readability, side stacking, full-height expansion, file context menu and controls. The prepared Playwright fixture covers these widths once Chromium is available.
+6. Repeat 1234 → 12345 → 1234 and Refresh within a folder. Confirm previews clear on bucket changes and file operations still work. Use a separately approved disposable prefix for live writes; independently verify bytes when testing transfers.
+
+No local regression failure was introduced relative to the starting commit. Actual browser layout/playback and live R2 behavior are outstanding limitations, not passes. Exhaustive parity, Guided Testing, S3 expansion, multipart transfers and release promotion remain outside this change.
+
+---
+
 # Bucket navigation and Refresh handoff, October 27, 2026
 
 Branch: **beta-explorer**. Starting commit: `266a391bf4be6ea82b007bbe87632042272a59df`.
