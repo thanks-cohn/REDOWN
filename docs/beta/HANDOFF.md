@@ -1,3 +1,37 @@
+# Take the Tour handoff, October 27, 2026
+
+Branch: **beta-explorer**. Starting commit: `080881a166a8cd7c347be41795c57c2ebd22d6f2`.
+The pushed delivery commit includes this handoff; its SHA appears in the delivery response.
+
+**BUILT and LOCALLY TESTED with fixtures. Rendered Chrome and live R2 acceptance remain UNVERIFIED.**
+
+## Delivered
+
+- Header **☰ Explorer menu → Take the Tour** starts or cleanly restarts the walkthrough. The menu closes on launch, outside click or menu Escape. Connection is not required.
+- A small optional first-visit welcome offers **Take the Tour**, **Not Now** and X. Dismissal/start and completion are remembered under `betaExplorerTour`; completion includes a timestamp. No file data, auth information or unfinished-step position is persisted. No automatic resume.
+- Fifteen cards cover welcome, connection, accounts, bucket opening, files/folders, selection, sort/views, Refresh, operations, transfers, preview modes, preview controls/lightbox, destinations/TRUE REMOTE, preferences/help and completion.
+- Five exercises unlock Next only after the relevant existing handler reports an action: successful bucket-root navigation, actual file selection, changed List/Grid view, successful Refresh and supported preview creation/presentation. An ordinary unrelated click does not complete an exercise. Every exercise has **Skip**, including disconnected/empty/error cases. These signals are tutorial acknowledgements, not diagnostic/provider verification.
+- **Every card has X. X ends the entire tour immediately**, without confirmation, follow-up or restart. Exit removes the card/highlight, disconnects the observer, unregisters tour listeners and cancels pending animation-frame positioning. It leaves Explorer selection, session, files and preview state alone. Back, Next, Skip and Finish share this lifecycle. Escape exits only from tour focus; it does not cancel an underlying native dialog. Focus returns to a valid prior target or the menu/active dialog.
+- Crimson outlines and compact nonmodal cards keep the real controls operable. Positioning prefers space beside/above/below targets, clamps to the viewport, reacts to scroll/resize/DOM changes, and moves the card inside an active dialog so native modality does not make the tour inert. Large surfaces and constrained windows use a clamped corner fallback; pixel-level overlap acceptance remains outstanding.
+- `guided-interaction.mjs` is the reusable presentation/navigation lifecycle; `tour.mjs` owns tour content, invitation, persistence and menu. Application-local action signals contain only action names. **Test It, diagnostic logging, JSON exports, exercise generation and cloud mutation automation were not implemented.**
+
+## Files changed
+
+`extension/beta/guided-interaction.mjs`, `extension/beta/tour.mjs`, `extension/beta/explorer.html`, `extension/beta/explorer.css`, `extension/beta/explorer.mjs`, `tests/beta-explorer.test.mjs`, `scripts/syntax-targets.json`, `docs/beta/HANDOFF.md`.
+
+## Verification and limits
+
+- Focused Beta/API/auth/reconnect/copy command: **104 passed, 0 failed**, including **70 Beta tests**. Five new fixture tests cover invitation persistence, menu/restart, X on all 15 steps, Back/Next/Skip, intended-action recognition, disconnected/no-bucket navigation, completion, Escape with preview preserved, no unsolicited file mutations, and narrow viewport coordinate bounds.
+- Full `npm test`: **445 tests, 435 passed, 10 failed**. Clean starting-commit archive with the same dependencies: **440 tests, 430 passed, 10 failed**. The ten failure names match the baseline; no frozen evidence or assertions were relaxed.
+- Syntax checks include both new modules and pass. `npm run reliability:check` remains failed for pre-existing architecture freshness and full-suite baseline failures.
+- Playwright launch: **BLOCKED**, Chromium executable absent. jsdom viewport assertions do not prove rendered geometry, native hit targets, actual focus behavior or screen-reader output. Desktop/laptop/narrow visual acceptance remains to be performed.
+- **Live Cloudflare R2: NOT TESTED.** Tutorial exercises use existing user-invoked browsing/preview reads; the tour initiates no provisioning, authentication, upload, download or destructive action. Preview recognition is not evidence of browser decoding or provider acceptance.
+- Existing Window/Side Preview and file-selection/context-menu regressions pass. Main, Legacy, Worker provisioning, authentication, transfer limits and API contracts remain unchanged.
+
+Next acceptance: in installed Chrome, accept/decline the invitation, restart through ☰, exercise available reads, exit with X at different steps and from Preview, then verify desktop/narrow card placement and ordinary Explorer interaction. Earlier handoffs below are historical.
+
+---
+
 # Window navigation and image lightbox, October 27, 2026
 
 Branch: **beta-explorer**. Starting commit: `ee63a0904a0eaec3dcf4becf9d40f04c6cd66c0c`.

@@ -1,3 +1,4 @@
+import {installTour} from '../extension/beta/tour.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -108,22 +109,22 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null}={}){
+async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerLocation:saved,betaExplorerPreview:previewPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
-  await settle(()=>w.document.querySelector('#buckets button'));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
+  await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
   return {...f,dom,w,d:w.document,settle};
 }
 test('actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API',async()=>{
@@ -524,4 +525,45 @@ test('rapid lightbox arrows abort old reads, revoke late URLs and preserve lates
     previewKey(f,'ArrowRight');await settle(()=>d.querySelector('#preview-title').textContent==='g.gif'&&d.querySelector('#preview-content img'));previewKey(f,'ArrowRight');assert.equal(d.querySelector('#preview-title').textContent,'g.gif');
     d.querySelector('#preview-close').click();assert.equal(revoked.length,4);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);
   }finally{d.querySelector('#preview-close').click();f.dom.window.close();}
+});
+
+function tourMenu(f){f.d.querySelector('#explorer-menu-button').click();f.d.querySelector('#take-tour').click();}
+function tourNext(f,count=1){for(let i=0;i<count;i++){const next=f.d.querySelector('[data-guide-next]');if(next.disabled)f.d.querySelector('[data-guide-skip]').click();else next.click();}}
+test('tour invitation declines once, remains optional, and manual menu restart resets all steps',async()=>{
+  const f=await uiFixture();try{const {d}=f;assert.ok(d.querySelector('.tour-invitation'));assert.equal(d.querySelector('.guide-card'),null);
+    d.querySelector('[data-tour-decline]').click();assert.equal(d.querySelector('.tour-invitation'),null);assert.equal(f.storage.betaExplorerTour.invitationDismissed,true);
+    d.querySelector('#explorer-menu-button').click();assert.equal(d.querySelector('#explorer-menu').hidden,false);assert.equal(d.querySelector('#explorer-menu-button').getAttribute('aria-expanded'),'true');d.querySelector('#take-tour').click();assert.equal(d.querySelector('#explorer-menu').hidden,true);assert.equal(d.querySelector('[data-guide-progress]').textContent,'1 of 15');
+    tourNext(f,2);assert.equal(d.querySelector('[data-guide-progress]').textContent,'3 of 15');d.querySelector('[data-guide-back]').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'2 of 15');tourMenu(f);assert.equal(d.querySelectorAll('.guide-card').length,1);assert.equal(d.querySelector('[data-guide-progress]').textContent,'1 of 15');
+    d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelector('.guide-card'),null);assert.equal(d.querySelector('.guide-highlight'),null);
+    d.querySelector('[data-key="root.txt"]').click();assert.equal(d.querySelector('#copy').disabled,false);d.querySelector('#copy').click();assert.match(d.querySelector('#status').textContent,/clipboard/);
+    const again=await uiFixture({tourPreferences:f.storage.betaExplorerTour});try{assert.equal(again.d.querySelector('.tour-invitation'),null);tourMenu(again);assert.ok(again.d.querySelector('.guide-card'));again.d.querySelector('[data-guide-exit]').click();}finally{again.dom.window.close();}
+  }finally{f.dom.window.close();}
+});
+test('every tour card has an X that exits everything immediately, preserving selection and session',async()=>{
+  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{
+    const {d}=f;d.querySelector('[data-key="root.txt"]').click();const beforeMessages=f.messages.length,beforeKeys=[...f.stored.keys()];
+    for(let step=0;step<15;step++){tourMenu(f);tourNext(f,step);assert.equal(d.querySelector('[data-guide-progress]').textContent,`${step+1} of 15`);assert.ok(d.querySelector('[data-guide-exit]'));d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);assert.equal(d.querySelector('[data-key="root.txt"]').getAttribute('aria-selected'),'true');assert.equal(d.querySelector('.tour-invitation'),null);}
+    assert.equal(f.messages.length,beforeMessages);assert.deepEqual([...f.stored.keys()],beforeKeys);
+    await new Promise(r=>setTimeout(r,30));assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);
+  }finally{f.dom.window.close();}
+});
+test('tour recognizes completed bucket, selection, view, refresh and preview actions through actual UI handlers',async()=>{
+  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle,w}=f;tourMenu(f);tourNext(f,3);
+    const next=()=>d.querySelector('[data-guide-next]');assert.equal(next().disabled,true);d.querySelector('#heading').click();assert.equal(next().disabled,true);
+    d.querySelector('#buckets button').click();await settle(()=>!next().disabled);assert.match(d.querySelector('[data-guide-status]').textContent,/recognized/);next().click();tourNext(f);assert.equal(next().disabled,true);
+    d.querySelector('[data-key="Photos/"]').click();assert.equal(next().disabled,true);d.querySelector('[data-key="root.txt"]').click();assert.equal(next().disabled,false);next().click();assert.equal(next().disabled,true);d.querySelector('#sort').dispatchEvent(new w.Event('change'));assert.equal(next().disabled,true);d.querySelector('#view').click();assert.equal(next().disabled,false);
+    next().click();assert.equal(next().disabled,true);d.querySelector('#refresh').click();await settle(()=>!next().disabled);tourNext(f,3);assert.equal(d.querySelector('[data-guide-progress]').textContent,'11 of 15');assert.equal(next().disabled,true);
+    d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre')&&!next().disabled);await new Promise(r=>setTimeout(r,30));assert.equal(d.querySelector('.guide-card').parentElement,d.querySelector('#preview-dialog'));
+    d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelector('#preview-dialog').open,true);assert.equal(d.querySelector('#preview-content pre').textContent,'payload');d.querySelector('#preview-close').click();
+  }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
+});
+test('tour completion and Escape clean up without cancelling active preview; no automatic resume',async()=>{
+  const f=await uiFixture();try{const {d,w,settle}=f;d.querySelector('[data-tour-start]').click();tourNext(f,14);assert.equal(d.querySelector('[data-guide-next]').textContent,'Finish');d.querySelector('[data-guide-next]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);assert.equal(f.storage.betaExplorerTour.completed,true);assert.ok(f.storage.betaExplorerTour.completedAt);
+    d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));tourMenu(f);await new Promise(r=>setTimeout(r,30));const x=d.querySelector('[data-guide-exit]');x.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(d.querySelector('.guide-card'),null);assert.equal(d.querySelector('#preview-dialog').open,true);d.querySelector('#preview-close').click();
+    const again=await uiFixture({tourPreferences:f.storage.betaExplorerTour});try{assert.equal(again.d.querySelector('.guide-card,.tour-invitation'),null);tourMenu(again);assert.equal(again.d.querySelector('[data-guide-progress]').textContent,'1 of 15');assert.equal(again.storage.betaExplorerTour.completed,true);again.d.querySelector('[data-guide-exit]').click();}finally{again.dom.window.close();}
+  }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
+});
+test('disconnected tour, missing files, narrow viewport and unavailable interactions always allow Skip and X',async()=>{
+  const f=await uiFixture({autoOpen:false,sendOverride:async m=>m.type==='cfAccounts'?{ok:false,error:'Connect Cloudflare first.'}:{ok:true,profiles:[]}});try{const {d,w}=f;Object.defineProperty(w,'innerWidth',{value:360,configurable:true});Object.defineProperty(w,'innerHeight',{value:640,configurable:true});tourMenu(f);tourNext(f,3);assert.match(d.querySelector('[data-guide-text]').textContent,/No buckets/);assert.equal(d.querySelector('[data-guide-next]').disabled,true);assert.equal(d.querySelector('[data-guide-skip]').hidden,false);tourNext(f,11);assert.equal(d.querySelector('[data-guide-next]').textContent,'Finish');const card=d.querySelector('.guide-card');assert.ok(parseFloat(card.style.left)>=10);assert.ok(parseFloat(card.style.top)>=10);card.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);assert.equal(d.querySelector('#connect').disabled,false);
+  }finally{f.dom.window.close();}
 });

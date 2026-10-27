@@ -43,5 +43,7 @@
   "extension/beta/explorer.mjs",
   "extension/beta/configuration.mjs",
   "extension/beta/dropped-files.mjs",
-  "scripts/beta-explorer-preview.mjs"
+  "scripts/beta-explorer-preview.mjs",
+  "extension/beta/guided-interaction.mjs",
+  "extension/beta/tour.mjs"
 ]
