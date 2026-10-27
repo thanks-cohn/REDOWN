@@ -483,13 +483,18 @@ def main():
             target = Path(args.report)
             target.parent.mkdir(parents=True, exist_ok=True)
             temporary = target.with_suffix(target.suffix + '.tmp')
-            temporary.write_text(json.dumps(report, indent=2, ensure_ascii=True) + '\n', encoding='utf-8')
+            import os
+            with temporary.open('w', encoding='utf-8') as output:
+                output.write(json.dumps(report, indent=2, ensure_ascii=True) + '\n')
+                output.flush(); os.fsync(output.fileno())
             temporary.replace(target)
             summary = ['# REDOWN offline CMD Laboratory', '', 'Cloud acceptance: INCOMPLETE; no cloud operations dispatched.', '', 'Local inventory: ' + report['localInventory']['status'], 'Hashed files: ' + str(scan['hashedFiles']) + '; bytes: ' + str(scan['hashedBytes']), 'Manifest comparison: ' + scan['manifestVerification']['status'], '', '```json', json.dumps(scan['manifestVerification'], indent=2, ensure_ascii=True), '```', '']
             target.with_suffix('.md').write_text('\n'.join(summary), encoding='utf-8')
             print(json.dumps({
                 'mode': report['mode'],
-                'localInventory': report['localInventory'],
+                'localInventory': {k:v for k,v in report['localInventory'].items() if k != 'manifestVerification'},
+                'manifestSummary': {k:v for k,v in scan['manifestVerification'].items() if k != 'cases'},
+                'manifestFindings': [c for c in scan['manifestVerification']['cases'] if c['status'] != 'PASS'][:20],
                 'acceptance': report['acceptance'],
                 'coverage': report['coverage'],
                 'dispatchedOperations': 0,

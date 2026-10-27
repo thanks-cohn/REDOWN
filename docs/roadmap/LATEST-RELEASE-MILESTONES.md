@@ -10,6 +10,14 @@
 
 Owner-reported Python client 0.5.5, branch `fix/lab-result-codes`, R2 bucket `test-1-new`: 2,221 files totaling 157,571,693 bytes inventoried and hashed; **926/926 Quick planned cases PASS**, no FAIL/BLOCKED/INDETERMINATE/NOT_TESTED within the plan; **308 verified uploads, 308 verified reads, 308 metadata checks**, **2,809,232 verified bytes**. Real extension/native pairing, Doctor and progress display worked. **Overall acceptance INCOMPLETE**: 1,913 excluded from Quick coverage, including 192 limited by 65,536-byte transport and 1,721 excluded by sampling. Six operations were declared unsupported in the copied summary. These are not transfer failures and are not proof of unsupported-feature correctness. Full per-case local JSON remains the authoritative evidence; do not commit sensitive raw reports.
 
+## Current CMD acceptance override
+
+The owner now requires CMD first, GUI equivalence second, verified freeze third.
+See [CMD implementation, gates and owner commands](../laboratory/CMD-ACCEPTANCE-2026-10-26.md).
+Manifest verification and a leased standalone engine integration are implemented locally;
+owner Gate A and live Gates B/C are pending. Large streaming, standalone recovery,
+GUI equivalence and release tagging remain incomplete. Provider expansion stays blocked.
+
 ## Release sequencing and gates
 
 ### M0. Preserve the successful baseline (NOW)

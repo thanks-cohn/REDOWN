@@ -59,3 +59,43 @@ class StandaloneTests(unittest.TestCase):
                 self.assertEqual(start.call_args.kwargs['env']['REDOWN_TEST_LEASE'], token)
                 self.assertFalse(Path(command[3]).exists())
                 self.assertTrue(client.describe()['writeEnabled'])
+
+    def test_runner_with_real_stdio_engine_and_worker_handler_fake_storage(self):
+        # No network and no live R2 claim: Node preload routes the adapter's fetch
+        # into the existing Worker handler backed by an in-memory R2 fixture.
+        import os
+        from redown.adaptive import run
+        from redown.inventory import inventory
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d); config = scope(); root = validate(config)
+            owner = folder/'owner.json'; owner.write_text(json.dumps(config))
+            corpus = folder/'corpus'; corpus.mkdir()
+            (corpus/'é # boundary.bin').write_bytes(b'x'*65537)
+            worker = (Path(__file__).resolve().parents[3]/'worker/laboratory/index.mjs').as_uri()
+            preload = folder/'preload.mjs'
+            preload.write_text('import worker from '+json.dumps(worker)+';\n'+'''
+import {createHash} from 'node:crypto';
+const objects=new Map(); let revision=0;
+const bucket={
+ async head(key){return objects.get(key)||null;},
+ async get(key){const o=objects.get(key);return o?{...o,body:new Response(o.bytes).body}:null;},
+ async list({prefix}){return {objects:[...objects.values()].filter(o=>o.key.startsWith(prefix)),truncated:false};},
+ async put(key,bytes,{onlyIf,customMetadata,httpMetadata}){
+  if(onlyIf.get('If-None-Match')==='*'&&objects.has(key))return null;
+  const o={key,bytes:Uint8Array.from(bytes),size:bytes.length,etag:'e'+(++revision),version:String(revision),customMetadata,httpMetadata};
+  objects.set(key,o);return o;
+ }
+};
+const env={B0:bucket,RUN_PREFIX:'__redown_test__/abc-123/',EXPIRES_AT:Date.now()+60000,
+ AUTH_SHA256:createHash('sha256').update('Bearer '+'a'.repeat(64)).digest('hex')};
+globalThis.fetch=async(url,options)=>worker.fetch(new Request(url,options),env);
+''', encoding='utf-8')
+            with patch.dict(os.environ, {'NODE_OPTIONS':'--import='+preload.as_uri()}):
+                with StandaloneClient(owner,folder/'journal.json',prompt=lambda _:root['container']+' '+root['key'],secret=lambda _:'Bearer '+'a'*64) as client:
+                    report = run(client, inventory(corpus,per_extension=None), depth='Comprehensive')
+            self.assertEqual(report['coverage'], {'PASS':6}, report['results'])
+            self.assertEqual(report['verifiedFiles'], 1)
+            self.assertEqual(report['verifiedBytes'], 65537)
+            self.assertEqual(report['verifiedUploads'], 1)
+            self.assertEqual(report['acceptance'], 'INCOMPLETE')
+            self.assertTrue((folder/'journal.json').exists())

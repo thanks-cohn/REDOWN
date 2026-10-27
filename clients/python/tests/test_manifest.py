@@ -37,6 +37,35 @@ class ManifestTests(unittest.TestCase):
             self.assertEqual(plan(scan, 'Comprehensive')['selectedFiles'], 2)
             self.assertEqual(len(plan(scan, 'Comprehensive')['missing']), 1)
 
+    def test_200_mib_payload_plus_exact_2048_artifact_bytes(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d) / 'corpus'; folder.mkdir()
+            sizes = [65535, 65536, 65537] + [1024**2] * 7
+            sizes.append(200 * 1024**2 - sum(sizes))
+            rows = []
+            chunk = b'x' * 65536
+            for n, size in enumerate(sizes):
+                digest = hashlib.sha256(); name = str(n) + '.bin'
+                with (folder / name).open('wb') as output:
+                    remaining = size
+                    while remaining:
+                        block = chunk[:min(remaining, len(chunk))]
+                        output.write(block); digest.update(block); remaining -= len(block)
+                rows.append(dict(path=name, bytes=size, sha256=digest.hexdigest()))
+            manifest = json.dumps(dict(files=rows)).encode()
+            self.assertLess(len(manifest), 1800)
+            (folder / 'manifest.json').write_bytes(manifest + b' ' * (1800-len(manifest)))
+            (folder / 'README.txt').write_bytes(b'n' * 248)
+            scan = inventory(folder, per_extension=None, buffer_bytes=65536)
+            self.assertEqual(scan['hashedFiles'], 13)
+            self.assertEqual(scan['hashedBytes'], 209717248)
+            self.assertEqual(compare(scan)['status'], 'FAIL')
+            result = compare(scan, artifacts=['README.txt'])
+            self.assertEqual(result['status'], 'PASS')
+            self.assertEqual(result['expectedFiles'], 11)
+            self.assertEqual(result['expectedBytes'], 209715200)
+            self.assertEqual(sum(a['bytes'] for a in result['artifacts']), 2048)
+
     def test_mismatch_missing_unexpected_and_unverified_are_distinct(self):
         with tempfile.TemporaryDirectory() as d:
             folder = Path(d); rows = self.fixture(folder)

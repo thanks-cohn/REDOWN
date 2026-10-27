@@ -1,0 +1,94 @@
+{
+  "status": "PARTIAL_IMPLEMENTATION_NOT_RELEASE_ACCEPTANCE",
+  "startingCommit": "14af6e522117b3e139325e7ef13dd14b421d0d6c",
+  "python": "3.12.14",
+  "extensionVersion": "0.5.26",
+  "pythonTests": {
+    "total": 59,
+    "passed": 58,
+    "skipped": 1,
+    "failed": 0,
+    "command": "PYTHONPATH=clients/python python -m unittest discover -s clients/python/tests -q"
+  },
+  "fixtures": [
+    "Manifest boundaries 65535/65536/65537",
+    "11 synthetic payloads = 209715200 bytes + 2 artifacts = 2048 bytes; not owner corpus",
+    "Actual stdio/engine/adapter/Worker handler; simulated R2 storage; 65537-byte content verified"
+  ],
+  "reliability": {
+    "passed": 499,
+    "knownFailures": 7,
+    "additionalFailures": [
+      {
+        "type": "fail",
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      }
+    ],
+    "additionalFailuresReproducedAtStartingCommit": true,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ]
+  },
+  "sourceSha256": {
+    "clients/python/redown/manifest.py": "54ddb621709792de21359eb769450563fa57de33e224d79b92b08a2420efca50",
+    "clients/python/redown/standalone.py": "e568aa4f091268d5511d6aa941042a51570fbd2853262e7d2cf2a915df8a0143",
+    "clients/python/redown/lab.py": "15ac180d944bb1a18fc34b7de946ea4cf7808a852bf5e322e66abd505f985ee4",
+    "clients/python/redown/adaptive.py": "35fa3a6302acb8f630f756171a88a618a2c4ecdc8b612fc6db81b139dcda820b",
+    "clients/python/redown/client.py": "5d0123837152875f5eca676b37086a79bbe7c8d0ea845fddf6f45424165058b6",
+    "clients/python/redown/lab_results.py": "56b4630f4bc05a3f2d658c3e69b92614d0fac98c797adcc92a3a1d56a776ebf1"
+  },
+  "gates": {
+    "A": "OWNER_CORPUS_PENDING",
+    "B": "LIVE_AUTHORIZED_TRANSFER_PENDING",
+    "C": "STREAMING_NOT_IMPLEMENTED",
+    "D": "BLOCKED",
+    "E": "BLOCKED"
+  },
+  "cloudMutations": 0,
+  "limitations": [
+    "No Windows execution",
+    "No owner manifest/corpus present",
+    "No issued/deployed live standalone lease",
+    "No new streaming or multipart support",
+    "No standalone read-only recovery interface",
+    "No GUI changes",
+    "No acceptance tag or freeze"
+  ]
+}
