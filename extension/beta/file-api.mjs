@@ -12,7 +12,7 @@ export function name(value) {
   key(value);if(value!==value.trim())throw Error('Leading or trailing spaces in new names are not supported by the existing provider route.');if(value.includes('/') || !value.trim())throw Error('Enter one file or folder name, without slashes.');return value;
 }
 export function entry(value) { return {key:key(value.key),folder:value.folder===true,displayName:value.displayName}; }
-const methods=['connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory'];
+const methods=['connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry'];
 export function createFileApi(adapter) {
   let preferences={};
   const api={version:1,capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),

@@ -20,7 +20,7 @@
 </select>
 <div class="section-title">SAVED DESTINATIONS</div>
 <select id="profiles" aria-label="Saved destination"><option value="">Choose a saved destination…</option></select>
-<div class="section-title section-row"><span>STORAGE BUCKETS</span><button id="create-bucket" aria-label="Create bucket" title="Create bucket">＋</button></div>
+<div class="section-title section-row"><span>STORAGE BUCKETS</span><button id="create-bucket" aria-label="Create bucket" title="Create bucket">+</button></div>
 <nav id="buckets" aria-label="Buckets">
 </nav>
 <div class="aside-bottom">
@@ -41,7 +41,7 @@
 </div>
 <div class="header-actions">
 <button id="remote">↗ Send URL to cloud</button>
-<button id="upload" class="primary">＋ Upload files</button>
+<button id="upload" class="primary">+ Upload files</button>
 </div>
 </header>
 <div class="toolbar">
@@ -66,7 +66,8 @@
 <button id="duplicate">Duplicate</button>
 <button id="copy-to">Copy to…</button>
 <button id="move-to">Move to…</button></div>
-<div class="action-group" aria-label="Inspect files"><button id="preview">Preview</button>
+<div class="action-group" aria-label="Inspect files"><button id="archive">Open archive</button>
+<button id="preview">Preview</button>
 <button id="get-url">Get URL</button>
 <button id="download">Download</button>
 <button id="properties">Properties</button>
@@ -152,6 +153,11 @@
 <label for="destination-prefix">Folder path (empty for bucket root)</label><input id="destination-prefix" autocomplete="off">
 <p id="destination-error" role="alert"></p><div class="dialog-actions"><button id="destination-cancel" type="button">Cancel</button><button id="destination-confirm" type="submit" class="primary">Choose destination</button></div>
 </form></dialog>
+<dialog id="archive-dialog" class="archive-dialog" aria-labelledby="archive-title"><div class="preview-header"><div><span class="eyebrow">ZIP / CBZ CONTENTS</span><h2 id="archive-title"></h2></div><button id="archive-close" aria-label="Close archive">✕</button></div>
+<p>Choose files to extract with their complete paths. Existing destination files are preserved.</p>
+<label><input id="archive-all" type="checkbox"> Select all files</label><div id="archive-files"></div>
+<label for="archive-prefix">Extract into folder (empty for bucket root)</label><input id="archive-prefix" autocomplete="off">
+<p id="archive-status" role="status"></p><div class="dialog-actions"><button id="archive-cancel" hidden>Cancel remaining</button><button id="archive-extract" class="primary" disabled>Extract selected</button></div></dialog>
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>

@@ -3,9 +3,9 @@ import {location,key,prefix,name,entry} from './file-api.mjs';
 export function createR2Adapter({send=message=>chrome.runtime.sendMessage(message),http=globalThis.RedownCloudflareApi}={}) {
   async function message(type,input={},options={}) {
     options.signal?.throwIfAborted();
-    let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision'].includes(type);
+    let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision','cfExtractArchive'].includes(type);
     try {
-      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input});}).catch(error=>{if(writes&&dispatched){error.uncertain=true;error.message='Connection lost before a final result. Refresh both locations before retrying.';}throw error;});
+      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
       const result=await Promise.race([transport,new Promise((_,reject)=>{
         timer=setTimeout(()=>reject(Object.assign(Error(writes?'No final response. Refresh both locations before retrying; the operation may have changed files.':'No final response. Refresh and try the read again.'),{uncertain:writes&&dispatched})),options.messageTimeoutMs??providerDefaults.messageTimeoutMs);
         abort=()=>reject(Object.assign(new Error(writes&&dispatched?'Cancellation requested after dispatch. The cloud operation may still complete; inspect before retrying.':'Operation cancelled.'),{name:'AbortError',uncertain:writes&&dispatched}));
@@ -88,6 +88,12 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
     connect:(_,o)=>message('cfConnect',{},o),disconnect:(_,o)=>message('cfDisconnect',{},o),
     accounts:(_,o)=>message('cfAccounts',{},o),buckets:({accountId},o)=>message('cfBuckets',{accountId},o),
+    archiveEntries:({source,key:k},o)=>message('cfArchiveEntries',{...location(source),key:key(k)},o),
+    async extractArchiveEntry({source,key:k,entry:archiveEntry,destinationPrefix=''},o){
+      const result=await message('cfExtractArchive',{...location(source),key:key(k),entries:[key(archiveEntry)],destinationPrefix:prefix(destinationPrefix)},o);
+      if(!Array.isArray(result.results)||result.results.length!==1)throw Object.assign(Error('Archive extraction was not confirmed. Inspect the destination before retrying.'),{uncertain:true});
+      return {...result,completed:result.results.filter(r=>r.status==='extracted').length,errors:result.results.filter(r=>r.status!=='extracted')};
+    },
     async profiles(_,o){const result=await message('profiles',{},o);return {profiles:(result.profiles||[]).filter(p=>p.type==='cloudflare-r2').map(p=>({id:p.id,name:p.name,accountId:p.accountId,accountName:p.accountName,bucketName:p.defaultBucketName||p.bucketName,prefix:p.defaultPrefix||''}))};},
     async transferHistory(_,o){const result=await message('transferHistory',{},o);return {history:result.transferHistory||[]};},
     prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification}));},
@@ -133,7 +139,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         if(result.completed!==1 || result.results?.[0]?.size!==file.size)throw Error('Final upload destination was not confirmed.');
         return {...result,key:result.results[0].destinationKey,verification:'byte-for-byte staging read-back and provider final copy receipt; not independent final SHA-256'};
       }catch(error){
-        if(attempted){error.uncertain=true;error.recoveryKey=staging;error.message+=' Temporary upload may remain at '+staging+'. Inspect it before retrying.';}
+        if(attempted)throw Object.assign(new Error((error.message||'Upload interrupted.')+' Temporary upload may remain at '+staging+'. Inspect it before retrying.'),{name:error.name,uncertain:true,recoveryKey:staging,code:error.code,cause:error});
         throw error;
       }
     },
@@ -144,13 +150,13 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       const type=types[ext]||(['markdown','xml','html','htm','js','mjs','ts','tsx','jsx','css','yaml','yml','py','rs','go','java','c','cpp','h','sh','bat','ps1','log'].includes(ext)?'text/plain':ext==='svg'?'image/svg+xml':null);if(!type)throw Error('Inline preview is unavailable for this file type. Use Download.');
       const signal=AbortSignal.any([AbortSignal.timeout(options.requestTimeoutMs??providerDefaults.requestTimeoutMs),...(options.signal?[options.signal]:[])]);
       const response=await http.request(base(location(source))+'/'+key(e.key).split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
-      if(!response.ok||!response.body)throw Error('Cloudflare could not read this preview.');
+      if(!response.ok||!response.body){await response.body?.cancel();throw Error('Cloudflare could not read this preview.');}
       const limit=options.previewMaxBytes??providerDefaults.previewMaxBytes;
       if(Number(response.headers.get('content-length'))>limit){await response.body.cancel();throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');}
-      const reader=response.body.getReader(),chunks=[];let size=0;
-      try{while(true){signal.throwIfAborted();const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit)throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');chunks.push(value);}}
+      const reader=response.body.getReader(),chunks=[];let size=0,truncated=false;const textLimit=type==='text/plain'?(options.textPreviewMaxBytes??providerDefaults.textPreviewMaxBytes):Infinity;
+      try{while(true){signal.throwIfAborted();const {done,value}=await reader.read();if(done)break;const take=Math.min(value.byteLength,textLimit-size);if(size+take>limit)throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');if(take)chunks.push(value.subarray(0,take));size+=take;if(take<value.byteLength){truncated=true;break;}}}
       finally{await reader.cancel();}
-      return {url:URL.createObjectURL(new Blob(chunks,{type})),type,size};
+      return {url:URL.createObjectURL(new Blob(chunks,{type})),type,size,truncated};
     },
     async download({source,entry:e},{onProgress}={}) {
       if(e.folder)throw Error('Folder downloads are not implemented in this beta.');

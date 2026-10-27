@@ -1,5 +1,6 @@
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createR2Adapter} from './r2-adapter.mjs';
+import {collectDroppedFiles} from './dropped-files.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
@@ -13,6 +14,7 @@ function controls(){
   $('back').disabled=busy||historyIndex<1;$('forward').disabled=busy||historyIndex>=history.length-1;$('up').disabled=busy||!current?.prefix;
   for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=busy||!selected.size;
   for(const id of ['rename','properties','get-url'])$(id).disabled=busy||selected.size!==1;
+  $('archive').disabled=busy||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
   $('preview').disabled=busy||selected.size!==1||chosen()[0]?.folder;
   $('prepare').disabled=busy||!current;$('create-bucket').disabled=busy||!$('accounts').value;
   $('download').disabled=busy||!selected.size||chosen().some(e=>e.folder);
@@ -38,7 +40,7 @@ function render(){
       else {selected=new Set([item.key]);anchor=index;}
       paintSelection();
     };
-    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void actions.preview();}}};
+    row.ondblclick=()=>{if(!busy){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():actions.preview());}}};
     row.oncontextmenu=event=>{event.preventDefault();if(busy)return;if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}showMenu(event.clientX,event.clientY);};
     return row;
   }));
@@ -91,6 +93,12 @@ function dialog(title,{description='',value='',input=true,details='',confirm='Co
   return new Promise(resolve=>$('dialog').addEventListener('close',()=>resolve($('dialog').returnValue==='ok'?(input?$('dialog-input').value:true):null),{once:true}));
 }
 const actions={
+  async archive(){const e=chosen()[0],source=context();if(!e||e.folder||busy)return;await run(async signal=>{
+    const result=await request('archiveEntries',{source,key:e.key},{signal});archiveContext={source,key:e.key};
+    $('archive-title').textContent=e.displayName;$('archive-prefix').value=source.prefix;$('archive-status').textContent='';$('archive-all').checked=false;
+    $('archive-files').replaceChildren(...(result.data.archive?.entries||[]).filter(e=>!e.directory).map(e=>{const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');check.type='checkbox';check.value=e.name;check.onchange=archiveControls;text.textContent=e.name+' · '+bytes(e.size);label.append(check,text);return label;}));
+    archiveControls();$('archive-dialog').showModal();
+  },{refresh:false});},
   async preview(){const e=chosen()[0];if(e&&!e.folder&&!busy)await showPreview(e);},
   async 'get-url'(){const e=chosen()[0],source=context();if(!e||busy)return;
     const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,onState:status});
@@ -118,19 +126,29 @@ async function upload(files,source=context()){
 if(!source||busy||!files.length)return;
   const conflict=$('conflict').value;
   if(conflict==='replace'&&!await dialog('Replace matching uploaded files?',{input:false,description:'Existing destination files with matching names may be overwritten.',confirm:'Replace'}))return;
-  await run(async signal=>{const inputs=files.map(file=>({source,file,key:source.prefix+(file.webkitRelativePath||file.name),conflict}));outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));});
+  await run(async signal=>{const inputs=files.map(value=>{const file=value.file||value;return {source,file,key:source.prefix+(value.relativePath||file.webkitRelativePath||file.name),conflict};});outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));});
 }
 $('upload').onclick=()=>$('picker').click();$('upload-folder').onclick=()=>$('folder-picker').click();
 for(const id of ['picker','folder-picker'])$(id).onchange=()=>{const files=Array.from($(id).files);$(id).value='';void upload(files).catch(e=>status(e.message));};
 $('dropzone').ondragover=event=>{event.preventDefault();if(current&&!busy)$('dropzone').classList.add('drag');};$('dropzone').ondragleave=()=>$('dropzone').classList.remove('drag');
-async function droppedFiles(event,target=context()){if([...event.dataTransfer.items].some(i=>i.webkitGetAsEntry?.()?.isDirectory)){status('Use Upload folder to preserve a dropped directory tree. No files uploaded.');return;}await upload([...event.dataTransfer.files],target).catch(e=>status(e.message));}
+async function droppedFiles(event,target=context()){
+  if(!target||busy)return;
+  // Capture handles during the drop event, before the browser protects its data store.
+  const entries=[...event.dataTransfer.items].map(item=>{const entry=item.webkitGetAsEntry?.(),file=entry?null:item.getAsFile?.();return {kind:item.kind,webkitGetAsEntry:()=>entry,getAsFile:()=>file};}),fallback=[...event.dataTransfer.files];
+  const conflict=$('conflict').value;
+  if(conflict==='replace'&&!await dialog('Replace matching dropped files?',{input:false,description:'Existing destination files with matching relative paths may be overwritten.',confirm:'Replace'}))return;
+  await run(async signal=>{status('Reading dropped folder paths…');const files=await collectDroppedFiles(entries,fallback,{signal,onEntry:count=>status('Found '+count+' files in dropped folders…')});
+    if(!files.length){status('No files found. Empty folders were not uploaded.');return;}
+    const inputs=files.map(({file,relativePath})=>({source:target,file,key:target.prefix+relativePath,conflict}));outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));
+  });
+}
 $('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip).catch(e=>status(e.message));}else void droppedFiles(event);};
 $('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>listing(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';};
 $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
-function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir'].map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
+function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir'].map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
@@ -160,7 +178,7 @@ async function loadAccounts(){const result=await request('accounts',{});accounts
 $('accounts').onchange=()=>loadBuckets().catch(e=>status(e.message));
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
 $('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];clipboard=null;accounts=[];$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();if(after?.accessToken)void loadAccounts().catch(e=>status(e.message));else status('Cloudflare session changed. Connect to continue.');});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -188,8 +206,8 @@ async function showPreview(item){
     if(type.startsWith('text/')){node=document.createElement('pre');node.textContent=await (await fetch(previewUrl)).text();}
     else if(type.startsWith('image/')){node=document.createElement('img');node.alt=item.displayName;node.src=previewUrl;}
     else if(type.startsWith('video/')||type.startsWith('audio/')){node=document.createElement(type.startsWith('video/')?'video':'audio');node.controls=true;node.src=previewUrl;}
-    else{node=document.createElement('iframe');node.title=item.displayName;node.setAttribute('sandbox','');node.src=previewUrl;}
-    $('preview-title').textContent=item.displayName;$('preview-content').replaceChildren(node);$('preview-info').textContent=bytes(size)+' · '+type;
+    else{node=document.createElement('iframe');node.title=item.displayName;node.referrerPolicy='no-referrer';node.src=previewUrl;}
+    $('preview-title').textContent=item.displayName;$('preview-content').replaceChildren(node);$('preview-info').textContent=bytes(size)+' · '+type+(result.data.truncated?' · Text preview truncated':'');
     if(!$('preview-dialog').open)$('preview-dialog').showModal();status('Preview loaded.');
   },{refresh:false});
 }
@@ -216,4 +234,14 @@ async function chooseDestination(operation){
   $('destination-dialog').showModal();void destinationBuckets();
   return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
 }
+let archiveContext=null;
+function archiveControls(){const checks=[...document.querySelectorAll('#archive-files input')],count=checks.filter(c=>c.checked).length;$('archive-extract').disabled=busy||!count;$('archive-all').checked=checks.length>0&&count===checks.length;$('archive-all').indeterminate=count>0&&count<checks.length;}
+$('archive-all').onchange=()=>{document.querySelectorAll('#archive-files input').forEach(c=>c.checked=$('archive-all').checked);archiveControls();};
+$('archive-close').onclick=()=>$('archive-dialog').close();$('archive-cancel').onclick=()=>controller?.abort();
+$('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const target={...archiveContext};let destinationPrefix;try{destinationPrefix=prefix($('archive-prefix').value);}catch(e){$('archive-status').textContent=e.message;return;}
+  const entries=[...document.querySelectorAll('#archive-files input:checked')].map(c=>c.value);if(!entries.length)return;
+  $('archive-cancel').hidden=false;$('archive-extract').disabled=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=true);$('archive-all').disabled=true;
+  await run(async signal=>{const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}});outcome(result);$('archive-status').textContent=$('status').textContent;for(let i=0;i<result.results.length;i++)if(result.results[i].state==='completed'){const check=[...document.querySelectorAll('#archive-files input')].find(c=>c.value===entries[i]);if(check)check.checked=false;}});
+  $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
+};
 render();void loadAccounts().catch(e=>status(e.message));

@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
 import {createR2Adapter} from '../extension/beta/r2-adapter.mjs';
+import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const source={accountId:'fixture-account',bucketName:'disposable-fixture',prefix:''};
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -16,7 +17,7 @@ async function fixture(){
   const stored=new Map(),messages=[],requests=[];let cancelled=false;
   function object(k,bytes,options={}){const md5=createHash('md5').update(bytes).digest();return {key:k,bytes,size:bytes.length,etag:md5.toString('hex'),version:randomUUID(),checksums:{md5:md5.buffer.slice(md5.byteOffset,md5.byteOffset+md5.byteLength)},httpMetadata:options.httpMetadata||{},customMetadata:options.customMetadata||{},body:new Blob([bytes]).stream()};}
   const bucket={
-    async head(k){return stored.get(k)||null;},async get(k){const o=stored.get(k);return o?{...o,body:new Blob([o.bytes]).stream()}:null;},
+    async head(k){return stored.get(k)||null;},async get(k,options={}){const o=stored.get(k);if(!o)return null;const bytes=options.range?o.bytes.slice(options.range.offset,options.range.offset+options.range.length):o.bytes;return {...o,body:new Blob([bytes]).stream(),arrayBuffer:async()=>Uint8Array.from(bytes).buffer};},
     async put(k,value,options={}){const old=stored.get(k);if(options.onlyIf instanceof Headers&&options.onlyIf.get('if-none-match')==='*'&&old)return null;if(options.onlyIf?.etagMatches&&old?.etag!==options.onlyIf.etagMatches)return null;const bytes=Buffer.from(await new Response(value).arrayBuffer());if(options.md5)assert.equal(createHash('md5').update(bytes).digest('hex'),options.md5);const o=object(k,bytes,options);stored.set(k,o);return o;},
     async delete(keys){for(const k of Array.isArray(keys)?keys:[keys])stored.delete(k);}
   };
@@ -37,6 +38,8 @@ async function fixture(){
     case 'cfProvision':return {ok:true,verification:{workerReachable:true},profile:{token:'must-not-leak'}};
     case 'cfAccounts':return {ok:true,accounts:[{id:source.accountId,name:'Fixture'}]};
     case 'cfBuckets':return {ok:true,buckets:[{name:source.bucketName}]};
+    case 'cfArchiveEntries':return {ok:true,...await manage(profile,{action:'listArchive',key:m.key})};
+    case 'cfExtractArchive':return {ok:true,...await manage(profile,{action:'extractArchiveEntries',key:m.key,entries:m.entries,destinationPrefix:m.destinationPrefix})};
     case 'cfTransferObjects':return {ok:true,...await context.transferExplorerObjects(m)};
     case 'cfRenameEntry':return {ok:true,...await context.renameExplorerEntry(m)};
     case 'cfDeleteObjects':return {ok:true,...await context.deleteExplorerObjects(m)};
@@ -50,7 +53,7 @@ async function fixture(){
     for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag});}
     return Response.json({success:true,result:{objects,delimited:[...delimited]}});
   },async download(s,k,n,onState){assert.ok(stored.has(k));onState({state:'complete'});return 123;}};
-  const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
+  const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
 }
 test('Beta launcher is separate; original Explorer and context-menu pipeline stay in place',async()=>{
   const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),dom=new JSDOM(html);assert.match(dom.window.document.querySelector('#beta-explorer').textContent,/Beta Explorer/);assert.ok(dom.window.document.querySelector('#dashboard'));dom.window.close();
@@ -111,7 +114,7 @@ async function uiFixture(){
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.prefix=prefix;w.name=name;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
@@ -205,5 +208,86 @@ test('Beta preferences, duplicate, saved destination and preview are working UI 
     d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-content pre').textContent,'payload');d.querySelector('#preview-close').click();assert.equal(d.querySelector('#preview-content').children.length,0);
     d.querySelector('#profiles').value='0';d.querySelector('#profiles').dispatchEvent(new w.Event('change'));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));
     d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',altKey:true,bubbles:true}));await settle(()=>d.querySelector('[data-key="root.txt"]'));
+  }finally{f.dom.window.close();}
+});
+
+function storedZip(entries) {
+  const chunks = [], central = [];
+  let offset = 0;
+  for (const [name, value] of entries) {
+    const nameBytes = new TextEncoder().encode(name), data = new TextEncoder().encode(value), local = new Uint8Array(30 + nameBytes.length + data.length);
+    const view = new DataView(local.buffer);
+    view.setUint32(0, 0x04034b50, true); view.setUint16(4, 20, true); view.setUint32(18, data.length, true); view.setUint32(22, data.length, true); view.setUint16(26, nameBytes.length, true);
+    local.set(nameBytes, 30); local.set(data, 30 + nameBytes.length); chunks.push(local);
+    const header = new Uint8Array(46 + nameBytes.length), cv = new DataView(header.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true); cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true); cv.setUint16(28, nameBytes.length, true); cv.setUint32(42, offset, true); header.set(nameBytes, 46); central.push(header);
+    offset += local.length;
+  }
+  const centralSize = central.reduce((sum, part) => sum + part.length, 0), eocd = new Uint8Array(22), ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, entries.length, true); ev.setUint16(10, entries.length, true); ev.setUint32(12, centralSize, true); ev.setUint32(16, offset, true);
+  const output = new Uint8Array(offset + centralSize + eocd.length); let cursor = 0;
+  for (const part of [...chunks, ...central, eocd]) { output.set(part, cursor); cursor += part.length; }
+  return output;
+}
+
+test('ZIP inspection and individual extraction reuse the real production Worker, preserve paths and reject overwrite',async()=>{
+  const f=await fixture();await f.bucket.put('book.zip',storedZip([['notes.txt','original archive bytes'],['nested/page.txt','deep bytes']]));
+  const listed=await f.api.run('archiveEntries',{source,key:'book.zip'});assert.equal(listed.state,'completed',JSON.stringify(listed));assert.equal(listed.data.archive.entries.length,2);
+  let r=await f.api.run('extractArchiveEntry',{source,key:'book.zip',entry:'nested/page.txt',destinationPrefix:'output/'});assert.equal(r.state,'completed');assert.equal(f.stored.get('output/nested/page.txt').bytes.toString(),'deep bytes');
+  await f.bucket.put('output/notes.txt','keep existing');r=await f.api.run('extractArchiveEntry',{source,key:'book.zip',entry:'notes.txt',destinationPrefix:'output/'});assert.equal(r.state,'partial');assert.equal(f.stored.get('output/notes.txt').bytes.toString(),'keep existing');
+});
+test('archive dialog and destination chooser route actual extraction and copy through API',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    d.querySelector('[data-key="root.txt"]').click();d.querySelector('#copy-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Copies/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>f.stored.has('Copies/root.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Copies/root.txt').bytes.toString(),'payload');assert.ok(f.stored.has('root.txt'));
+    await f.bucket.put('book.zip',storedZip([['nested/one.txt','archive bytes']]));d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="book.zip"]')&&!d.querySelector('#upload').disabled);d.querySelector('[data-key="book.zip"]').click();d.querySelector('#archive').click();await settle(()=>d.querySelector('#archive-dialog').open&&!d.querySelector('#upload').disabled);d.querySelector('#archive-all').checked=true;d.querySelector('#archive-all').dispatchEvent(new w.Event('change'));d.querySelector('#archive-prefix').value='Extracted/';d.querySelector('#archive-extract').click();await settle(()=>f.stored.has('Extracted/nested/one.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Extracted/nested/one.txt').bytes.toString(),'archive bytes');assert.ok(f.stored.has('book.zip'));
+  }finally{f.dom.window.close();}
+});
+test('verification deadline and inactivity overrides interrupt stalled read-back without replay or final commit',async()=>{
+  for(const mode of ['idle','deadline']){
+    let puts=0,commits=0,cancelled=false;
+    const http={async request(path,options={}){
+      if(options.method==='PUT'){puts++;return Response.json({success:true});}
+      if(path.includes('/objects/'))return new Response(new ReadableStream({cancel(){cancelled=true;}}));
+      const p=new URL('https://fixture'+path).searchParams.get('prefix');return Response.json({success:true,result:{objects:p.startsWith('.redown-beta-uploads/')?[{key:p,size:1}]:[]}});
+    }};
+    const api=createFileApi(createR2Adapter({http,send:async()=>{commits++;return {ok:true};}}));
+    const options=mode==='idle'?{verificationIdleTimeoutMs:5,verificationTimeoutMs:100}:{verificationIdleTimeoutMs:100,verificationTimeoutMs:5};
+    const result=await api.run('upload',{source,file:new File(['x'],'x.txt'),key:'x.txt'},options);assert.equal(result.state,'uncertain');assert.equal(puts,1);assert.equal(commits,0);assert.equal(cancelled,true);assert.ok(result.recoveryKey);
+  }
+});
+test('observer exceptions never turn confirmed provider changes into failed operations',async()=>{
+  let writes=0;const api=createFileApi({delete:async()=>{writes++;return {completed:1};}});const result=await api.batch('delete',[{},{}],{onProgress(){throw Error('UI disconnected');}});assert.equal(result.state,'completed');assert.equal(writes,2);
+});
+
+test('dropped directory traversal consumes every reader batch and preserves nested paths without reading payloads',async()=>{
+  const a=new File(['a'],'雪.txt'),b=new File(['b'],'b.txt');a.arrayBuffer=b.arrayBuffer=()=>{throw Error('Do not buffer payloads while selecting files');};
+  const fileEntry=file=>({name:file.name,isFile:true,file(resolve){resolve(file);}});
+  const directory=(name,batches)=>({name,isDirectory:true,createReader(){let index=0;return {readEntries(resolve){resolve(batches[index++]||[]);}};}});
+  const folder=directory('Root',[[fileEntry(a)],[directory('Deep',[[fileEntry(b)]])]]);
+  const result=await collectDroppedFiles([{kind:'file',webkitGetAsEntry:()=>folder}]);assert.deepEqual(result.map(e=>e.relativePath).sort(),['Root/Deep/b.txt','Root/雪.txt']);assert.equal(result.find(e=>e.relativePath.endsWith('雪.txt')).file,a);
+  const controller=new AbortController();controller.abort();await assert.rejects(collectDroppedFiles([{kind:'file',webkitGetAsEntry:()=>folder}],[],{signal:controller.signal}),{name:'AbortError'});
+});
+test('progress frequency preferences change real verification callbacks',async()=>{
+  const counts=[];
+  for(const interval of [0,100000]){
+    const f=await fixture(),original=f.http.request;f.http.request=async(path,options={})=>{if(path.includes('/objects/')&&!options.method)return new Response(new ReadableStream({start(controller){for(const byte of [65,66,67,68])controller.enqueue(Uint8Array.of(byte));controller.close();}}));return original(path,options);};
+    let count=0;const r=await f.api.run('upload',{source,file:new File(['ABCD'],'count.txt'),key:'count.txt'},{progressIntervalMs:interval,onProgress:event=>{if(event.phase==='verifying')count++;}});assert.equal(r.state,'completed',JSON.stringify(r));counts.push(count);
+  }
+  assert.deepEqual(counts,[4,2]);
+});
+
+test('text preview defaults are bounded, and the text byte override changes actual returned content',async()=>{
+  const f=await fixture();await f.bucket.put('notes.txt','ABCDEFGH');
+  let r=await f.api.run('preview',{source,entry:{key:'notes.txt'}},{textPreviewMaxBytes:4});assert.equal(r.state,'completed');assert.equal(r.data.truncated,true);assert.equal(await (await fetch(r.data.url)).text(),'ABCD');URL.revokeObjectURL(r.data.url);
+  r=await f.api.run('preview',{source,entry:{key:'notes.txt'}},{textPreviewMaxBytes:16});assert.equal(r.data.truncated,false);assert.equal(await (await fetch(r.data.url)).text(),'ABCDEFGH');URL.revokeObjectURL(r.data.url);
+});
+test('dropping a directory on Beta uploads nested file bytes through the universal API',async()=>{
+  const f=await uiFixture(),{d,w,settle}=f;
+  try{
+    const file=new File(['dropped bytes'],'雪.txt');let read=false;
+    const directory={name:'Dropped',isDirectory:true,createReader(){return {readEntries(resolve){resolve(read?[]:[{name:file.name,isFile:true,file:resolve=>resolve(file)}]);read=true;}};}};
+    const event=new w.Event('drop',{bubbles:true,cancelable:true});Object.defineProperty(event,'dataTransfer',{value:{items:[{kind:'file',webkitGetAsEntry:()=>directory}],files:[]}});d.querySelector('#dropzone').dispatchEvent(event);
+    await settle(()=>f.stored.has('Dropped/雪.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Dropped/雪.txt').bytes.toString(),'dropped bytes');assert.ok(f.requests.some(r=>r.options.method==='PUT'));
   }finally{f.dom.window.close();}
 });

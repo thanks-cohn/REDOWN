@@ -41,5 +41,7 @@
   "extension/beta/file-api.mjs",
   "extension/beta/r2-adapter.mjs",
   "extension/beta/explorer.mjs",
-  "extension/beta/configuration.mjs"
+  "extension/beta/configuration.mjs",
+  "extension/beta/dropped-files.mjs",
+  "scripts/beta-explorer-preview.mjs"
 ]

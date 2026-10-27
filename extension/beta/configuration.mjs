@@ -3,14 +3,14 @@
 export const providerDefaults=Object.freeze({
   messageTimeoutMs:120000,requestTimeoutMs:30000,uploadTimeoutMs:300000,
   verificationTimeoutMs:300000,verificationIdleTimeoutMs:30000,
-  progressIntervalMs:100,previewMaxBytes:64*1024*1024,batchConcurrency:1
+  progressIntervalMs:100,previewMaxBytes:64*1024*1024,textPreviewMaxBytes:512*1024,batchConcurrency:1
 });
 const message=['messageTimeoutMs'];
 export const operationOptions=Object.freeze({
-  profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
+  archiveEntries:message,extractArchiveEntry:message,profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
   list:['requestTimeoutMs'],stat:['requestTimeoutMs'],mkdir:message,copy:message,move:message,rename:message,delete:message,
   remoteIngest:message,publicUrls:message,
-  preview:['requestTimeoutMs','previewMaxBytes'],download:[],
+  preview:['requestTimeoutMs','previewMaxBytes','textPreviewMaxBytes'],download:[],
   upload:['messageTimeoutMs','requestTimeoutMs','uploadTimeoutMs','verificationTimeoutMs','verificationIdleTimeoutMs','progressIntervalMs']
 });
 export function validatePreferences(value={}) {
