@@ -433,7 +433,43 @@ def main():
             publish_progress(connected,'Inventorying files')
             return inventory(args.directory,per_extension=None,buffer_bytes=settings['bufferBytes'],max_files=args.max_files,max_file_bytes=args.max_file_bytes,max_total_bytes=args.max_total_bytes,progress=lambda p: publish_progress(connected,**p))
         checkpoint=lambda r: adaptive_persist(r,args.report)
-        if args.offline: report=adaptive_run(None,scan_files(),depth=args.depth,resources=settings,checkpoint=checkpoint)
+        if args.offline:
+            # Local-only execution must never instantiate the extension or claim a
+            # provider authorization failure. Cloud operations remain NOT_TESTED.
+            scan = scan_files()
+            planned = adaptive_plan(scan, depth=args.depth, resources=settings)
+            report = {
+                'schemaVersion': 'redown.lab.offline.v1',
+                'mode': 'OFFLINE_LOCAL_ONLY',
+                'acceptance': 'INCOMPLETE',
+                'localInventory': {
+                    'status': 'PASS' if scan['complete'] and not scan['exclusions'] else 'INCOMPLETE',
+                    'hashedFiles': scan['hashedFiles'],
+                    'hashedBytes': scan['hashedBytes'],
+                    'exclusions': scan['exclusions'],
+                    'sha256': 'COMPUTED_PER_FILE',
+                    'manifestComparison': 'NOT_TESTED',
+                },
+                'inventory': scan,
+                'plan': planned,
+                'coverage': {'NOT_TESTED': planned['plannedOperations']},
+                'dispatchedOperations': 0,
+                'connectionError': None,
+                'cloudEvidence': 'NOT_TESTED',
+                'nextAction': 'Local inventory completed. Cloud transfers require a separate explicitly authorized online run.',
+            }
+            checkpoint(report)
+            print(json.dumps({
+                'mode': report['mode'],
+                'localInventory': report['localInventory'],
+                'acceptance': report['acceptance'],
+                'coverage': report['coverage'],
+                'dispatchedOperations': 0,
+                'connectionError': None,
+                'report': args.report,
+                'nextAction': report['nextAction'],
+            }))
+            return 0 if report['localInventory']['status'] == 'PASS' else 2
         else:
             import sys
             connection_started=time.monotonic()
