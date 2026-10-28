@@ -706,10 +706,18 @@ test('production copy indicators survive List, Grid and refresh; original verifi
  const labels=()=>{assert.equal(d.querySelector('[data-key="root (copy).txt"] .test-ownership-label').textContent,'Test Copy');assert.equal(d.querySelector('[data-key="root.txt"] .test-ownership-label').textContent,'Original · Protected');assert.equal(d.querySelector('[data-key="root.txt"]').classList.contains('test-owned-copy'),false);};labels();
  d.querySelector('#view').click();labels();d.querySelector('#refresh').click();await settle(()=>!d.querySelector('#refresh').disabled);labels();
  d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');assert.match(d.querySelector('[data-guide-text]').textContent,/Original:.*root.txt/);assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*root \(copy\).txt/);
+ // An existing original cannot be renamed through the real dialog either.
+ d.querySelector('[data-key="root.txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='original-renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes('protected')&&!d.querySelector('#refresh').disabled);assert.ok(f.stored.has('root.txt'));assert.ok(!f.stored.has('original-renamed.txt'));
  // Attempt the actual R2 route and confirm the exact limitation stays in JSON.
- d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes("can't safely"));
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes("couldn't rename"));
  assert.ok(f.stored.has('root.txt'));assert.ok(f.stored.has('root (copy).txt'));assert.ok(!f.stored.has('renamed.txt'));
  assert.equal(f.storage.betaExplorerTestIt.records[23].apiObservations.at(-1).diagnostic,'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION');assert.doesNotMatch(d.querySelector('.test-it-card').textContent,/atomic|adapter|preflight/i);
+ for(let i=23;i<26;i++)d.querySelector('[data-guide-skip]').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true);assert.match(d.querySelector('[data-guide-text]').textContent,/first rename has not succeeded/);assert.match(d.querySelector('[data-guide-text]').textContent,/Last verified name: root \(copy\).txt/);assert.equal(f.storage.betaExplorerTestIt.workflow?.rename,undefined);
+ d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'x',ctrlKey:true,bubbles:true,cancelable:true}));assert.ok(f.stored.has('root (copy).txt'));
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]')&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('#paste').disabled,false);
+ d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'v',ctrlKey:true,bubbles:true,cancelable:true}));await settle(()=>d.querySelector('#status').textContent.includes("couldn't move")&&!d.querySelector('#refresh').disabled);
+ assert.ok(f.stored.has('root (copy).txt'));assert.ok(!f.stored.has('Photos/root (copy).txt'));assert.ok(f.stored.has('root.txt'));assert.equal(d.querySelector('#paste').disabled,false);assert.equal(f.storage.betaExplorerTestIt.pending,null);assert.notEqual(f.storage.betaExplorerTestIt.records[26].verdict,'PASSED');
+
  }finally{f.dom.window.close();}
 });
 
@@ -738,17 +746,35 @@ test('real Explorer copy/rename/Cut/Paste/back/duplicate/delete/export sequence 
  d.querySelector('[data-key="Photos/one.jpg"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/one (copy).jpg"].test-owned-copy'));
  const id=f.storage.betaExplorerTestIt.objects.find(o=>!o.deleted).id,originalHash=hash(f.stored.get('Photos/one.jpg').bytes);
  d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');
+ d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'26 of 60');
  d.querySelector('[data-key="Photos/one (copy).jpg"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.jpg';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/renamed.jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
- for(const outward of [true,false]){
-  const key=outward?'Photos/renamed.jpg':'renamed.jpg';d.querySelector(`[data-key="${key}"]`).click();d.querySelector('#cut').click();assert.ok(f.stored.has(key),'Cut does not delete');
-  if(outward)d.querySelector('#up').click();else d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));
-  await settle(()=>d.querySelector(outward?'[data-key="root.txt"]':'[data-key="Photos/one.jpg"]')&&!d.querySelector('#refresh').disabled);d.querySelector('#paste').click();
-  const dest=outward?'renamed.jpg':'Photos/renamed.jpg';await settle(()=>d.querySelector(`[data-key="${dest}"].test-owned-copy`)&&!d.querySelector('#refresh').disabled);assert.ok(!f.stored.has(key));assert.equal(f.storage.betaExplorerTestIt.objects.findLast(o=>!o.deleted&&o.key===dest).id,id);
- }
- d.querySelector('[data-key="Photos/renamed.jpg"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="Photos/renamed (copy).jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
- d.querySelector('[data-key="Photos/renamed (copy).jpg"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-key="Photos/renamed (copy).jpg"]')&&!d.querySelector('#refresh').disabled);
- assert.equal(hash(f.stored.get('Photos/one.jpg').bytes),originalHash);assert.equal(hash(f.stored.get('Photos/renamed.jpg').bytes),originalHash);assert.ok(d.querySelector('[data-key="Photos/renamed.jpg"].test-owned-copy'));assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*Photos\/renamed.jpg/);
+ assert.equal(f.storage.betaExplorerTestIt.records[25].verdict,'PASSED');d.querySelector('[data-guide-next]').click();
+ d.querySelector('[data-key="Photos/renamed.jpg"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='one (copy).jpg';d.querySelector('#dialog-confirm').click();await settle(()=>f.storage.betaExplorerTestIt.records[26].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
+ assert.equal(f.storage.betaExplorerTestIt.objects.findLast(o=>!o.deleted).id,id);
+ // Exercise 34 requires the real keyboard Cut, then 35 requires keyboard Paste.
+ tourNext(f,7);
+ d.querySelector('[data-key="Photos/one (copy).jpg"]').click();d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'x',ctrlKey:true,bubbles:true,cancelable:true}));assert.ok(f.stored.has('Photos/one (copy).jpg'),'Cut does not delete');await settle(()=>f.storage.betaExplorerTestIt.records[33].verdict==='PASSED');d.querySelector('[data-guide-next]').click();
+ d.querySelector('#up').click();await settle(()=>d.querySelector('[data-key="root.txt"]')&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('#paste').disabled,false);
+ d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'v',ctrlKey:true,bubbles:true,cancelable:true}));await settle(()=>f.storage.betaExplorerTestIt.records[34].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);assert.ok(!f.stored.has('Photos/one (copy).jpg'));assert.ok(d.querySelector('[data-key="one (copy).jpg"].test-owned-copy'));
+ d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();
+ d.querySelector('[data-key="one (copy).jpg"]').click();d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Photos/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>f.storage.betaExplorerTestIt.records[36].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one (copy).jpg"].test-owned-copy'));
+ assert.equal(f.storage.betaExplorerTestIt.objects.findLast(o=>!o.deleted).id,id);
+ d.querySelector('[data-key="Photos/one (copy).jpg"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="Photos/one (copy) (copy).jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('[data-key="Photos/one (copy) (copy).jpg"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-key="Photos/one (copy) (copy).jpg"]')&&!d.querySelector('#refresh').disabled);
+ assert.equal(hash(f.stored.get('Photos/one.jpg').bytes),originalHash);assert.equal(hash(f.stored.get('Photos/one (copy).jpg').bytes),originalHash);assert.ok(d.querySelector('[data-key="Photos/one (copy).jpg"].test-owned-copy'));assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*Photos\/one \(copy\).jpg/);
  URL.createObjectURL=blob=>{blobs.push(blob);return 'blob:fixture';};URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){};d.querySelector('#test-it-export').click();await settle(()=>blobs.length===1);
  const exported=JSON.parse(await blobs[0].text());assert.equal(exported.pending,null);assert.equal(exported.lastVerifiedOperation.operation,'delete');assert.equal(exported.originals[0].sha256,originalHash);assert.equal(exported.objects.findLast(o=>!o.deleted).id,id);
  }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
+});
+
+test('Window Preview actual Previous then Next buttons register Next without a cached expected key',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
+ await f.bucket.put('Photos/two.jpg','second');d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/two.jpg"]'));
+ await practiceAt(f,14);d.querySelector('[data-key="Photos/two.jpg"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='two.jpg');
+ assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ d.querySelector('#preview-previous').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='one.jpg');assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ d.querySelector('#preview-next').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[14].verdict,'PASSED');assert.equal(d.querySelector('#preview-content img').alt,'two.jpg');
+ d.querySelector('[data-guide-next]').click();d.querySelector('#preview-previous').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[15].verdict,'PASSED');
+ }finally{f.dom.window.close();}
 });

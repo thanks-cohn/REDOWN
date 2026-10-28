@@ -110,9 +110,10 @@ function outcome(result){
   const details=list.flatMap(r=>r.error?[r.error]:[...(r.data?.errors||[]).map(e=>typeof e==='string'?e:e.error||'File failed'),...(r.data?.conflicts||[]).map(()=> 'Destination exists; skipped.'),...(r.data?.partialMove?['Some copies succeeded but source deletion was not confirmed.']:[]),...(r.data?.recoveryKey?['Temporary upload retained at '+r.data.recoveryKey]:[])]);
   status(!partial&&list.every(r=>r.data?.downloadState==='complete')?'Chrome reports download complete. Independent SHA-256 verification was not performed.':partial?`Partial result. ${details.join(' ') || 'Stopped before all items completed. Refresh and inspect both locations.'}`:list.some(r=>r.state==='started')?'Download started. Chrome will report completion or interruption.':'Operation completed and provider result confirmed.');
 }
+function openModal(modal){modal.showModal();document.dispatchEvent(new CustomEvent('redown:modal-open',{detail:{modal}}));}
 function dialog(title,{description='',value='',input=true,details='',confirm='Continue',required=true}={}){
   if($('dialog').open)return Promise.resolve(null);
-  $('dialog-title').textContent=title;$('dialog-description').textContent=description;$('dialog-input').hidden=!input;$('dialog-label').hidden=!input;$('dialog-input').value=value;$('dialog-input').required=input&&required;$('dialog-details').hidden=!details;$('dialog-details').textContent=details;$('dialog-confirm').textContent=confirm;$('dialog').returnValue='';$('dialog').showModal();
+  $('dialog-title').textContent=title;$('dialog-description').textContent=description;$('dialog-input').hidden=!input;$('dialog-label').hidden=!input;$('dialog-input').value=value;$('dialog-input').required=input&&required;$('dialog-details').hidden=!details;$('dialog-details').textContent=details;$('dialog-confirm').textContent=confirm;$('dialog').returnValue='';openModal($('dialog'));
   if(input){$('dialog-input').focus();$('dialog-input').select();}else $('dialog-confirm').focus();
   return new Promise(resolve=>$('dialog').addEventListener('close',()=>resolve($('dialog').returnValue==='ok'?(input?$('dialog-input').value:true):null),{once:true}));
 }
@@ -121,7 +122,7 @@ const actions={
     const result=await request('archiveEntries',{source,key:e.key},{signal});archiveContext={source,key:e.key};
     $('archive-title').textContent=e.displayName;$('archive-prefix').value=source.prefix;$('archive-status').textContent='';$('archive-all').checked=false;
     $('archive-files').replaceChildren(...(result.data.archive?.entries||[]).filter(e=>!e.directory).map(e=>{const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');check.type='checkbox';check.value=e.name;check.onchange=archiveControls;text.textContent=e.name+' · '+bytes(e.size);label.append(check,text);return label;}));
-    archiveControls();$('archive-dialog').showModal();
+    archiveControls();openModal($('archive-dialog'));
   },{refresh:false});},
   async preview(){const e=chosen()[0];if(e&&!busy)await showPreview(e);},
   async 'get-url'(){const e=chosen()[0],source=context();if(!e||busy)return;
@@ -261,7 +262,7 @@ $('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if
 $('transfer-history').onclick=()=>run(async()=>{const result=await request('transferHistory',{});await dialog('Recent transfers',{input:false,details:JSON.stringify(result.data.history,null,2),confirm:'Close',description:'Original transfer history. Local Beta uploads and copies are not included.'});},{refresh:false});
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
-$('preferences').onclick=()=>{paintPreferences();$('preferences-dialog').showModal();};
+$('preferences').onclick=()=>{paintPreferences();openModal($('preferences-dialog'));};
 $('preferences-cancel').onclick=()=>$('preferences-dialog').close();
 $('preferences-reset').onclick=()=>{api.setPreferences({});paintPreferences();status('Transfer preferences restored to defaults.');};
 $('preferences-form').onsubmit=event=>{event.preventDefault();try{const values=api.getPreferences();for(const [key,[id,scale]] of Object.entries(preferenceFields))values[key]=Number($(id).value)*scale;api.setPreferences(values);$('preferences-dialog').close();status('Transfer preferences applied to this tab.');}catch(e){$('preferences-error').textContent=e.message;}};
@@ -307,7 +308,7 @@ function presentPreview(){
     if($('preview-dialog').open)$('preview-dialog').close();
   }else{
     $('preview-dialog').append(previewViewer);sideState='closed';
-    if(!$('preview-dialog').open){$('preview-dialog').showModal();$('preview-dialog').focus();}
+    if(!$('preview-dialog').open){openModal($('preview-dialog'));$('preview-dialog').focus();}
   }
   layoutPreview();
 }
@@ -384,7 +385,7 @@ async function showPreview(item,navigation={}){
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
-async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,expectedKey:next.key,invocation:key?'keyboard':'button'});}}
+async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,invocation:key?'keyboard':'button'});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
 function resizePreview(width){
   const total=$('file-workspace').getBoundingClientRect().width||1000;
@@ -417,7 +418,7 @@ $('destination-form').onsubmit=event=>{event.preventDefault();try{prefix($('dest
 async function chooseDestination(operation){
   if($('destination-dialog').open)return null;$('destination-title').textContent=(operation==='move'?'Move':'Copy')+' to…';
   $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=current.prefix;$('destination-dialog').returnValue='';
-  $('destination-dialog').showModal();void destinationBuckets();
+  openModal($('destination-dialog'));void destinationBuckets();
   return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
 }
 let archiveContext=null;

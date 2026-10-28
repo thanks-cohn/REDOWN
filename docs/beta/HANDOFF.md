@@ -174,3 +174,98 @@ Consequently production R2 rename, move, destructive Paste and delete/cleanup re
 The required production end-to-end sequence is **not passed**: R2 cannot safely execute its rename/move/delete steps under the specified copy-only boundary. The equivalent conditioned-memory sequence passes and exports evidence, but it does not certify live behavior or all 60 exercises. The original 16 MiB independent hashing budget, prior-session copy protection, no replacement of user destinations, quarantine of unresolved writes, and provider/version metadata limitations remain. No successful live result was invented.
 
 Files modified: `extension/beta/explorer.mjs`, `extension/beta/explorer.css`, `extension/beta/file-api.mjs`, `extension/beta/r2-adapter.mjs`, `extension/beta/test-it.mjs`, `extension/beta/test-it-session.mjs`, `tests/beta-explorer.test.mjs`, `tests/test-it-session.test.mjs`, and this handoff.
+
+## 27 October 2026: Critical follow-up, partial delivery
+
+Base: `e6210dea9a1615b0ef9aa53fc0db83743999bfaa`, `beta-explorer` only.
+**The primary R2 editing acceptance remains unmet.** No production destructive
+capability has been enabled, and no unconditional deletion was substituted for
+an identity-protected one. Main, Legacy, Worker source and the 60 exercises are
+unchanged.
+
+### Changes and causes
+
+- Window Preview recognition no longer requires `expectedKey`, a redundant cached
+  navigation prediction. It uses the real button/keyboard direction, previous
+  and current identities, changed current preview and completed image rendering.
+  Lightbox navigation cannot satisfy the Window exercises. An actual Previous →
+  Next → Previous button regression passes; repeated load, failed render and
+  unrelated refresh regressions remain. This is DOM evidence, not a reproduction
+  of the owner's installed Chrome symptom.
+- Native modal top-layer order was incorrectly inferred from HTML order. The
+  generic confirmation dialog precedes Preview in HTML even when opened later.
+  Every Beta modal now announces opening synchronously. The guide follows actual
+  opening order, enters the active modal immediately, returns to the prior modal
+  on close, and uses the modal bounds when its target is outside the modal. This
+  preserves native focus/inert handling. A newly opened modal can reposition a
+  previously dragged card to avoid its target; dimensions, grip, resize handlers
+  and normal dragging remain unchanged. OS-owned file pickers cannot be overlaid
+  by page content; no claim of that behavior is made.
+- Rename Back previously stored a command filename without a verified logical
+  object prerequisite. It now records the successful change's object ID, actual
+  old location and new key. Back requires that same ID and exact return location.
+  A failed/skipped first rename retains the verified name and explains the
+  prerequisite. A successful first rename performed while on Rename Back is
+  recognized, recorded against the first exercise and then requires the actual
+  return rename. Saved verified prior evidence can restore this prerequisite.
+- Failed destructive Paste now identifies moving as the failed operation and
+  confirms the source remains in its folder. Cut and clipboard survive navigation
+  and a blocked Paste. A quarantined/pending copy reports its unresolved prior
+  action before another Cut/Paste; no new destructive attempt is dispatched.
+
+### Provider investigation and remaining blocker
+
+`file-api.mjs` forwards the session's exact ownership records through
+`options.practice`. The production `r2-adapter.mjs` explicitly reports
+`R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION`. Background Rename uses Move's copy
+then delete pipeline; cleanup calls the embedded Worker's `deleteKeys`, which
+checks HEAD identities and then calls unconditional `STORAGE.delete(keys)`.
+A replacement between those calls remains deletable. An application mutex
+cannot exclude the dashboard, REST, S3 or other Workers.
+
+Rechecked official [Workers API](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/),
+[S3 compatibility](https://developers.cloudflare.com/r2/api/s3/api/) and
+[consistency](https://developers.cloudflare.com/r2/reference/consistency/).
+The binding's delete takes keys only; no documented exact-version-conditioned
+DeleteObject alternative was found. Conditional PUT/Copy destination creation
+cannot condition the later DELETE. Even an ETag-only comparison would not prove
+upload-version identity after a same-content replacement. No undocumented header
+or mock condition is treated as a production guarantee.
+
+Missing capability: **source removal atomically conditioned on the recorded R2
+upload identity**, or an enforceable exclusive-write boundary covering every
+writer. Consequently R2 Rename, Rename Back, Move To, destructive Ctrl+V and
+Delete/cleanup remain blocked. Copy/Paste and Duplicate to an unused destination,
+Cut staging, ownership markings and read-only operations remain available.
+
+### Verification
+
+- Focused four-file suite: **146 passed, 0 failed**, no skips. Actual Explorer
+  handlers run in jsdom; explicit image-load simulation and memory R2 are used.
+- The conditioned-memory GUI sequence executes approved image Copy/Paste → Rename
+  → Rename Back → Ctrl+X → folder navigation → Ctrl+V → Move To back → Duplicate
+  → delete duplicate → unchanged original/content hashes → export and parse JSON.
+  Same logical copy identity is asserted through all moves. This passes only
+  with an explicitly conditioned memory provider, not production R2.
+- Production adapter/Worker fixture asserts List/Grid labels, protected-original
+  Rename, blocked copy Rename, honest Rename Back guidance, actual Ctrl+X/Ctrl+V
+  failure, retained clipboard/source, no destination overwrite and no false pass.
+- Existing recovery, source replacement, destination races, independent hashing,
+  duplicate ancestry, cleanup ownership, restart, JSON export, Tour, four resize
+  corners and six-dot grip regressions pass.
+- Full reliability: **521 tests, 511 passed, 10 failed**. Syntax, registry and issue
+  inventory pass; architecture freshness fails. An untouched `e6210de` archive
+  runs **518 tests, 508 passed, the same 10 failure names**. These are historical
+  catalog/debug/semantic assertions, Nested drag-handle expectation, architecture
+  references, issue-label evidence and provisioning UI fixture. Frozen evidence
+  was not refreshed.
+- Installed Chrome command executed: **BLOCKED**, `CHROME_NOT_AVAILABLE_ENOENT`,
+  zero installed assertions. No real rendering/focus or installed acceptance pass.
+- Live R2: **NOT TESTED**; no authenticated object mutations or Worker deployment.
+  The requested real-world acceptance/export sequence is **not passed**.
+
+Files: four Beta production modules (`explorer.mjs`, `guided-interaction.mjs`,
+`test-it.mjs`, `test-it-session.mjs`), three existing regression files
+(`beta-explorer.test.mjs`, `test-it-copy.test.mjs`, `test-it-tools.test.mjs`) and
+this handoff. Existing 16 MiB read-back budget, session-only ownership,
+no-overwrite protections and unknown-write quarantine remain in force.

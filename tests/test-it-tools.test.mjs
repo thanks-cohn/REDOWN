@@ -52,3 +52,18 @@ test('fullscreen preview bounds cannot shrink Test It and narrow viewport keeps 
  Object.defineProperties(w,{innerWidth:{value:360},innerHeight:{value:400}});w.dispatchEvent(new w.Event('resize'));
  return new Promise(resolve=>w.requestAnimationFrame(()=>{assert.equal(card.style.width,'340px');assert.equal(card.style.height,'380px');assert.ok(parseFloat(card.style.top)>=10);guide.stop();dom.window.close();resolve();}));
 });
+
+test('guide follows actual modal opening order rather than HTML order and restores the prior modal',()=>{
+ const dom=fixture(),doc=dom.window.document,w=dom.window;
+ const preview=doc.querySelector('#preview-dialog'),confirmation=doc.querySelector('#dialog');
+ const guide=createGuide({document:doc,draggable:true,steps:[{title:'Select',text:'Approve the selected copy',target:'#files',action:'confirmed'}]});guide.start();
+ const open=modal=>{modal.setAttribute('open','');doc.dispatchEvent(new w.CustomEvent('redown:modal-open',{detail:{modal}}));};
+ open(preview);assert.equal(doc.querySelector('.guide-card').parentElement,preview);
+ // The confirmation appears FIRST in HTML but LAST in the native top layer.
+ open(confirmation);const card=doc.querySelector('.guide-card');assert.equal(card.parentElement,confirmation);
+ const input=confirmation.querySelector('input');input.focus();assert.equal(doc.activeElement,input);
+ assert.equal(card.querySelector('.guide-grip').textContent,'⠿');assert.equal(card.querySelectorAll('.guide-resize').length,4);
+ confirmation.removeAttribute('open');confirmation.dispatchEvent(new w.Event('close'));
+ assert.equal(card.parentElement,preview);preview.removeAttribute('open');preview.dispatchEvent(new w.Event('close'));assert.equal(card.parentElement,doc.body);
+ guide.stop();dom.window.close();
+});

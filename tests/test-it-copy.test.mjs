@@ -6,7 +6,7 @@ import {installTestIt} from '../extension/beta/test-it.mjs';
 import {createFileApi} from '../extension/beta/file-api.mjs';
 const html=readFileSync(new URL('../extension/beta/explorer.html',import.meta.url),'utf8');
 const tick=()=>new Promise(r=>setTimeout(r,0));
-async function fixture(index=21){
+async function fixture(index=21,setup=()=>{}){
  const dom=new JSDOM(html,{pretendToBeVisual:true}),doc=dom.window.document;
  const current={accountId:'a',bucketName:'b',prefix:'source/'},key='source/original.txt';
  const object={etag:'etag',size:5,version:'v1'},sha256='hash';
@@ -14,8 +14,9 @@ async function fixture(index=21){
  const saved={version:1,id:'session',index,originals:[original],objects:[],destinations:[],locations:{a:current,b:{...current,prefix:'practice/'}},records:[],pending:null};
  let state={current,selected:[{key}],visible:[]},clip=null,pastes=0,persisted=null,storageFail=false;
  const objects=new Map([[key,{object,sha256}]]);let fail=false;
- const api=createFileApi({inspect:async({key})=>objects.get(key)||{object:null},stat:async({key})=>({object:objects.get(key)?.object||null}),
- copy:async({entries,destination})=>{if(fail)throw Error('Provider unavailable');const destinationKey=destination.prefix+'original.txt';objects.set(destinationKey,{object:{...object,version:'v2'},sha256});return {completed:1,results:[{sourceKey:entries[0].key,destinationKey,status:'copied',verified:true,destinationVersion:'v2',destinationEtag:'etag',size:5}]};}});
+ const adapter={inspect:async({key})=>objects.get(key)||{object:null},stat:async({key})=>({object:objects.get(key)?.object||null}),
+ copy:async({entries,destination})=>{if(fail)throw Error('Provider unavailable');const destinationKey=destination.prefix+'original.txt';objects.set(destinationKey,{object:{...object,version:'v2'},sha256});return {completed:1,results:[{sourceKey:entries[0].key,destinationKey,status:'copied',verified:true,destinationVersion:'v2',destinationEtag:'etag',size:5}]};}};
+ setup(adapter,objects);const api=createFileApi(adapter);
  const practice=installTestIt({document:doc,api,storage:{get:async()=>({betaExplorerTestIt:saved}),set:async value=>{if(storageFail)throw Error("Storage unavailable");persisted=structuredClone(value);}},getState:()=>state,approve:async()=>true,stopTour(){}});
  await tick();doc.getElementById('test-it').click();
  const explorer=readFileSync(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
@@ -136,4 +137,27 @@ test('Retry reconciles missed verified Paste without another write and never inv
  await f.doc.querySelector('[data-guide-retry]').onclick();await tick();
  assert.equal(record.verdict,keyboard?'NOT_TESTED':'PASSED');assert.equal(f.saved.objects.length,1);assert.ok(f.objects.has('source/original.txt'));
  }finally{f.dom.window.close();}}
+});
+
+test('Rename Back retains the verified name after failure and recognizes a successful prerequisite retry',async()=>{
+ let contract,serial=2,calls=0;
+ const f=await fixture(26,(adapter,objects)=>{
+   contract={supported:false,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true};adapter.practiceMutations={rename:contract};
+   adapter.rename=async({entry,newName},options)=>{
+     calls++;const before=objects.get(entry.key),expected=options.practice.sources[0];assert.equal(before.object.version,expected.object.version);
+     const destinationKey=entry.key.slice(0,entry.key.lastIndexOf('/')+1)+newName;assert.equal(objects.has(destinationKey),false);
+     const object={...before.object,version:'v'+ ++serial};objects.set(destinationKey,{object,sha256:before.sha256});objects.delete(entry.key);
+     return {completed:1,results:[{sourceKey:entry.key,destinationKey,status:'copied',verified:true,destinationVersion:object.version,destinationEtag:object.etag,size:object.size}]};
+   };
+ });
+ try{
+   const source=f.state.current,destination={...source,prefix:'practice/'};
+   assert.equal((await f.api.run('copy',{source,destination,entries:f.state.selected,conflict:'skip'})).state,'completed');
+   const copy=f.practice.session.state.objects[0];f.state={...f.state,current:destination,selected:[{key:copy.key}]};
+   const rename=newName=>f.api.run('rename',{source:destination,entry:f.state.selected[0],newName});
+   assert.equal((await rename('renamed.txt')).state,'failed');assert.equal(calls,0);assert.equal(f.practice.session.state.workflow?.rename,undefined);assert.equal(f.saved.records[26].verdict,'BLOCKED');assert.ok(f.objects.has(copy.key));
+   f.practice.paintOwnership();assert.match(f.doc.querySelector('[data-guide-text]').textContent,/first rename has not succeeded/);assert.match(f.doc.querySelector('[data-guide-text]').textContent,/Last verified name: practice\/original.txt/);
+   contract.supported=true;assert.equal((await rename('renamed.txt')).state,'completed');assert.equal(f.saved.records[25].verdict,'PASSED');assert.notEqual(f.saved.records[26].verdict,'PASSED');assert.equal(f.doc.querySelector('[data-guide-next]').disabled,true);
+   f.state={...f.state,selected:[{key:'practice/renamed.txt'}]};assert.equal((await rename('original.txt')).state,'completed');assert.equal(f.saved.records[26].verdict,'PASSED');assert.equal(f.doc.querySelector('[data-guide-next]').disabled,false);assert.equal(f.practice.session.owned(destination,copy.key).id,copy.id);assert.ok(f.objects.has('source/original.txt'));
+ }finally{f.dom.window.close();}
 });

@@ -2,17 +2,21 @@
 export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},onStep=()=>{},onSkip=()=>{},onRetry=null,startIndex=0,allowBack=true,autoAdvance=false,draggable=false}){
   const win=doc.defaultView;let index=0,card=null,highlight=null,previousFocus=null,observer=null,frame=0,completed=false;
   let manualPosition=null,drag=null,resizing=null,preferredSize=null;
+  const modalOrder=[];
+  function activeModal(){return [...modalOrder].reverse().find(modal=>modal.open)||doc.activeElement?.closest?.('dialog[open]')||[...doc.querySelectorAll('dialog[open]')].at(-1);}
+  function modalOpened(event){const modal=event.detail?.modal;if(!modal?.open)return;const old=modalOrder.indexOf(modal);if(old>=0)modalOrder.splice(old,1);modalOrder.push(modal);position();}
+  function modalClosed(){position();}
   if(draggable)try{const saved=JSON.parse(win.localStorage.getItem('redown-test-it-size'));if(Number.isFinite(saved?.width)&&Number.isFinite(saved?.height))preferredSize=saved;}catch{}
   const $=selector=>card.querySelector(selector);
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
   function position(){
     frame=0;if(!card)return;
-    const modal=[...doc.querySelectorAll('dialog[open]')].at(-1),host=modal||doc.body;
+    const modal=activeModal(),host=modal||doc.body,hostChanged=card.parentElement!==host;
     if(card.parentElement!==host)host.append(card);
     clearHighlight();const selector=typeof steps[index].target==='function'?steps[index].target():steps[index].target;const target=doc.querySelector(selector);
     if(target&&(!modal||modal.contains(target)))highlight=target;
     highlight?.classList.add('guide-highlight');
-    const rect=highlight?.getBoundingClientRect(),gap=12,margin=10;
+    const rect=(highlight||modal)?.getBoundingClientRect(),gap=12,margin=10;
     const width=win.innerWidth,height=win.innerHeight;
     card.style.maxHeight=Math.max(1,height-margin*2)+'px';
     if(draggable){const size=preferredSize||{width:410,height:480};card.style.width=Math.min(Math.max(320,size.width),Math.max(1,width-margin*2))+'px';card.style.height=Math.min(Math.max(300,size.height),Math.max(1,height-margin*2))+'px';}
@@ -30,7 +34,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       const tools=doc.querySelector('.test-it-tools-wrap')?.getBoundingClientRect();
       if(tools&&left+cw>tools.left-gap&&top+ch>tools.top-gap)top=tools.top-ch-gap;
     }
-    if(manualPosition){left=manualPosition.left;top=manualPosition.top;}
+    if(manualPosition&&!hostChanged){left=manualPosition.left;top=manualPosition.top;}
     if(!draggable&&rect&&selector?.startsWith('#preview-')&&left<rect.right+gap&&left+cw>rect.left-gap&&top<rect.bottom+gap&&top+ch>rect.top-gap){top=rect.bottom+gap;if(top+ch>height-margin){top=margin;card.style.maxHeight=Math.max(80,rect.top-gap-margin)+'px';}}
     const menu=draggable&&doc.querySelector('#test-it-tools-menu:not([hidden])')?.getBoundingClientRect();
     if(menu&&left+cw>menu.left-gap&&left<menu.right+gap&&top+ch>menu.top-gap&&top<menu.bottom+gap){
@@ -89,10 +93,11 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   function schedule(){if(card&&!frame)frame=win.requestAnimationFrame(position);}
   function stop(finished=false){
     if(!card)return;const ownedFocus=card.contains(doc.activeElement);
+    doc.removeEventListener('redown:modal-open',modalOpened);doc.removeEventListener('close',modalClosed,true);
     win.removeEventListener('resize',schedule);doc.removeEventListener('scroll',schedule,true);doc.removeEventListener('redown:gui',signal);doc.removeEventListener('keydown',keydown,true);win.removeEventListener('pagehide',exit);
     observer?.disconnect();observer=null;if(frame)win.cancelAnimationFrame(frame);frame=0;
     drag=null;resizing=null;clearHighlight();card.remove();card=null;
-    if(ownedFocus){const modal=[...doc.querySelectorAll('dialog[open]')].at(-1);const target=previousFocus?.isConnected&&!previousFocus.closest('[hidden]')&&(!modal||modal.contains(previousFocus))?previousFocus:modal||doc.querySelector('#explorer-menu-button');target?.focus({preventScroll:true});}
+    if(ownedFocus){const modal=activeModal();const target=previousFocus?.isConnected&&!previousFocus.closest('[hidden]')&&(!modal||modal.contains(previousFocus))?previousFocus:modal||doc.querySelector('#explorer-menu-button');target?.focus({preventScroll:true});}
     previousFocus=null;(finished?onFinish:onExit)();
   }
   function exit(){stop();}
@@ -114,6 +119,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-retry hidden>Retry</button><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
     if(draggable){installGrip();installResize();}
     doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-retry]').hidden=!onRetry;$('[data-guide-retry]').onclick=()=>onRetry?.(index);$('[data-guide-skip]').onclick=()=>{onSkip(index);advance();};$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
+    doc.addEventListener('redown:modal-open',modalOpened);doc.addEventListener('close',modalClosed,true);
     win.addEventListener('resize',schedule);doc.addEventListener('scroll',schedule,true);doc.addEventListener('redown:gui',signal);doc.addEventListener('keydown',keydown,true);win.addEventListener('pagehide',exit);
     observer=new win.MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden']});show();
   }
