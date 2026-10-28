@@ -5,20 +5,20 @@ import {createPracticeSession} from '../extension/beta/test-it-session.mjs';
 import {exercises} from '../extension/beta/test-it.mjs';
 import {createHash} from 'node:crypto';
 const source={accountId:'account',bucketName:'bucket',prefix:''};
-function fixture(saved){
-  const objects=new Map(),events=[],calls=[];let serial=0,storageFail=false,loseReply=false;
+function fixture(saved,recovery=[]){
+  const objects=new Map(),events=[],calls=[];let serial=0,storageFail=false,loseReply=false,statFail=false;
   const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
   const put=(key,bytes)=>objects.set(key,{key,size:bytes.length,etag:hash(bytes),uploaded:new Date(1700000000000+ ++serial).toISOString(),version:'v'+serial,bytes});
   put('original.txt','original');put('unrelated.txt','unrelated');
   const inspect=key=>{const o=objects.get(key);if(!o)return {object:null};const {bytes,...object}=o;return {object,sha256:hash(bytes),status:200};};
-  const adapter={conditionalPracticeMutations:true,list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>({object:inspect(key).object}),
+  const adapter={conditionalPracticeMutations:true,list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>{if(statFail)throw Error('Destination unavailable');return {object:inspect(key).object};},
     copy:async input=>transfer('copy',input),move:async input=>transfer('move',input),
     rename:async({source,entry,newName})=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName}),
     delete:async({entries})=>{calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
   async function transfer(op,{entries,destination,source,newName,conflict}){calls.push(op);const results=[];for(const e of entries){const o=objects.get(e.key);let key=destination.prefix+(newName||e.key.split('/').pop());if(key===e.key&&conflict==='keep')key=destination.prefix+e.key.split('/').pop().replace(/(\.[^.]*)?$/,' (copy)$1');if(objects.has(key)){results.push({sourceKey:e.key,destinationKey:key,status:'conflict'});continue;}put(key,o.bytes);const d=objects.get(key);results.push({sourceKey:e.key,destinationKey:key,sourceEtag:o.etag,sourceVersion:o.version,destinationEtag:d.etag,destinationVersion:d.version,size:d.size,verified:true,status:'copied'});if(op==='move')objects.delete(e.key);}if(loseReply)throw Object.assign(Error('Lost response'),{uncertain:true});return {completed:results.filter(r=>r.status==='copied').length,results};}
-  const api=createFileApi(adapter),storage={set:async value=>{if(storageFail)throw Error('Storage unavailable');storage.saved=structuredClone(value.betaExplorerTestIt);storage.ownership=structuredClone(value.betaExplorerTestItOwnership);}},session=createPracticeSession({api,storage,saved,approve:async()=>true,onEvidence:e=>events.push(e)});api.setPolicy(session);session.active=true;
+  const api=createFileApi(adapter),storage={set:async value=>{if(storageFail)throw Error('Storage unavailable');storage.saved=structuredClone(value.betaExplorerTestIt);storage.ownership=structuredClone(value.betaExplorerTestItOwnership);storage.recovery=structuredClone(value.betaExplorerTestItRecovery);}},session=createPracticeSession({api,storage,saved:structuredClone(saved),recovery,approve:async()=>true,onEvidence:e=>events.push(e)});api.setPolicy(session);session.active=true;
   const copy=(key='original.txt',prefix='practice/')=>api.run('copy',{source,destination:{...source,prefix},entries:[{key}],conflict:'skip'});
-  return {objects,put,api,session,events,calls,storage,copy,set storageFail(v){storageFail=v;},set loseReply(v){loseReply=v;}};
+  return {objects,put,api,session,events,calls,storage,copy,set storageFail(v){storageFail=v;},set loseReply(v){loseReply=v;},set statFail(v){statFail=v;}};
 }
 test('exactly sixty practical exercises have unique IDs and real target selectors',()=>{assert.equal(exercises.length,60);assert.deepEqual(exercises.map(e=>e.id),Array.from({length:60},(_,i)=>i+1));assert.ok(exercises.every(e=>e.target.startsWith('#')&&e.text.length>0));});
 test('copy first, preserve source, track ancestry through rename/move/copy and safely delete',async()=>{
@@ -48,11 +48,11 @@ test('restart replaces results and session ID, preserves ownership, and never mu
  f.session.state.index=42;f.session.state.records=[{exerciseId:1,verdict:'PASSED'}];await f.session.save();
  const before=structuredClone([...f.objects]),calls=[...f.calls];await f.session.restart();
  assert.notEqual(f.session.state.id,oldId);assert.equal(f.session.state.index,0);assert.deepEqual(f.storage.saved.records,[]);
- assert.equal(f.session.owned(source,'practice/original.txt').id,ownedId);assert.equal(f.storage.ownership.objects[0].id,ownedId);assert.deepEqual([...f.objects],before);assert.deepEqual(f.calls,calls);
+ assert.equal(f.session.owned(source,'practice/original.txt'),undefined);assert.equal(f.session.recovery[0].session.objects[0].id,ownedId);assert.equal(f.storage.ownership.objects[0].id,ownedId);assert.deepEqual([...f.objects],before);assert.deepEqual(f.calls,calls);
 });
-test('restart retains uncertain operations and old results when reconciliation cannot prove safety',async()=>{
+test('restart archives uncertain operations and old results when reconciliation cannot prove safety',async()=>{
  const f=fixture();f.session.state.records=[{exerciseId:1,verdict:'PASSED'}];f.loseReply=true;await f.copy();const oldId=f.session.state.id;
- await assert.rejects(f.session.restart(),/review/);assert.equal(f.session.state.id,oldId);assert.ok(f.session.state.pending);assert.equal(f.storage.saved.records[0].verdict,'PASSED');assert.deepEqual(f.calls,['copy']);
+ const pending=structuredClone(f.session.state.pending);const result=await f.session.restart();assert.equal(result.unfinished,true);assert.notEqual(f.session.state.id,oldId);assert.equal(f.session.state.pending,null);assert.deepEqual(f.storage.saved.records,[]);assert.deepEqual(f.storage.recovery[0].session.pending,pending);assert.equal(f.storage.recovery[0].session.records[0].verdict,'PASSED');assert.deepEqual(f.calls,['copy']);
 });
 test('restart storage failure keeps current session and results',async()=>{
  const f=fixture();const oldId=f.session.state.id;f.session.state.records=[{exerciseId:1}];f.storageFail=true;
@@ -80,4 +80,49 @@ test('two locations must differ, cross-bucket practice fails closed, and only an
 test('restart preserves provenance but old-session objects cannot be destructively modified in the fresh session',async()=>{
  const f=fixture();await f.copy();await f.session.restart();const count=f.calls.length;
  const r=await f.api.run('delete',{source,entries:[{key:'practice/original.txt'}]});assert.equal(r.state,'failed');assert.match(r.error,/earlier Test It session/);assert.equal(f.calls.length,count);assert.ok(f.objects.has('practice/original.txt'));
+});
+
+for(const operation of ['rename','move','delete'])test('restart after interrupted '+operation+' retains exact evidence and changes no cloud objects',async()=>{
+ const f=fixture();await f.copy();const own=f.session.state.objects[0];
+ f.session.state.pending={operation,source,entries:[{key:own.key}],destinations:operation==='delete'?[]:[{source:{...source,prefix:'other/'},key:'other/changed.txt',absent:true}],receipts:[],startedAt:123};
+ // Simulate suspension after a provider changed the source, before local confirmation.
+ f.objects.delete(own.key);if(operation!=='delete')f.put('other/changed.txt','original');
+ await f.session.save();const prior=structuredClone(f.storage.saved),objects=structuredClone([...f.objects]),calls=[...f.calls];
+ const resumed=fixture(prior);for(const [key] of resumed.objects)resumed.objects.delete(key);for(const [key,obj] of objects)resumed.objects.set(key,obj);
+ await resumed.session.restart();assert.deepEqual(resumed.storage.recovery[0].session,prior);assert.equal(resumed.storage.recovery[0].reconciliation.status,'needs-review');assert.deepEqual([...resumed.objects],objects);assert.deepEqual(resumed.calls,[]);assert.deepEqual(f.calls,calls);
+ assert.equal((await resumed.api.run('delete',{source,entries:[{key:'other/changed.txt'}]})).state,'failed');
+});
+test('uncertain destination reads are archived, no retry occurs, and old destinations stay reserved',async()=>{
+ const f=fixture();f.loseReply=true;await f.copy();f.objects.delete('practice/original.txt');
+ const pending=structuredClone(f.session.state.pending);await f.session.restart();assert.deepEqual(f.session.recovery[0].session.pending,pending);
+ const count=f.calls.length;assert.equal((await f.copy()).state,'failed');assert.equal(f.calls.length,count);
+ f.loseReply=false;assert.equal((await f.copy('original.txt','fresh/')).state,'completed');
+ assert.equal((await f.api.run('delete',{source,entries:[{key:'fresh/original.txt'}]})).state,'completed');
+ assert.ok(f.objects.has('original.txt'));
+});
+test('recovery survives reload, repeated restart, ordinary saves and attempted old-object deletion',async()=>{
+ const f=fixture();await f.copy();await f.session.restart();const recovery=structuredClone(f.storage.recovery);
+ const resumed=fixture(f.storage.saved,recovery);await resumed.session.save();assert.deepEqual(resumed.storage.recovery,recovery);
+ assert.equal((await resumed.api.run('delete',{source,entries:[{key:'practice/original.txt'}]})).state,'failed');
+ await resumed.session.restart();assert.equal(resumed.storage.recovery.length,2);assert.deepEqual(resumed.storage.recovery[0],recovery[0]);assert.equal(resumed.storage.ownership.objects.length,1);
+});
+test('failed archive persistence preserves pending, ownership and old saved results; retry succeeds',async()=>{
+ const f=fixture();f.loseReply=true;await f.copy();const before=structuredClone(f.session.state),persisted=structuredClone(f.storage.saved);
+ f.storageFail=true;await assert.rejects(f.session.restart(),/Recovery details could not be saved/);assert.deepEqual(f.session.state,before);assert.deepEqual(f.storage.saved,persisted);assert.deepEqual(f.storage.recovery,[]);
+ f.storageFail=false;await f.session.restart();assert.deepEqual(f.storage.recovery[0].session,before);
+});
+test('mutations during restart reconciliation are blocked even with practice temporarily inactive',async()=>{
+ const f=fixture();await f.copy();let release;const checking=new Promise(resolve=>{release=resolve;});
+ // A separate policy fixture permits holding the inspect adapter across restart.
+ let session,hold=false,calls=0;
+ const api=createFileApi({inspect:async()=>{if(hold)await checking;return {object:{etag:'x',size:1,version:'1'},sha256:'h'};},copy:async()=>{calls++;}});
+ const original={identity:JSON.stringify(['account','bucket','x']),source,key:'x',stamp:JSON.stringify(['x',1,null,'1']),sha256:'h'};
+ session=createPracticeSession({api,storage:{set:async()=>{}},saved:{id:'old',version:1,index:0,originals:[original],objects:[],destinations:[],records:[],pending:null},approve:async()=>true});api.setPolicy(session);session.active=true;hold=true;
+ const restart=session.restart();await new Promise(resolve=>setTimeout(resolve,0));assert.equal((await api.run('copy',{})).state,'failed');assert.equal(calls,0);release();await restart;
+});
+
+test('restart preserves uncertain destination evidence when read-only stat fails',async()=>{
+ const f=fixture();f.loseReply=true;await f.copy();f.objects.delete('practice/original.txt');f.statFail=true;
+ const before=structuredClone(f.session.state);await f.session.restart();assert.deepEqual(f.storage.recovery[0].session,before);
+ assert.equal(f.storage.recovery[0].reconciliation.status,'needs-review');assert.deepEqual(f.calls,['copy']);
 });

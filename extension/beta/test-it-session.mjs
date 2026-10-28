@@ -4,15 +4,24 @@ const writes=new Set(['copy','move','rename','delete','upload','mkdir','remoteIn
 const id=(source,key)=>JSON.stringify([source.accountId,source.bucketName,key]);
 const stamp=o=>JSON.stringify([o?.etag,Number(o?.size),o?.uploaded||o?.last_modified||null,o?.version||null]);
 const leaf=key=>key.slice(key.lastIndexOf('/')+1);
-export function createPracticeSession({api,storage,saved,approve,onEvidence=()=>{},captureEvidence=()=>({}),requireLocations=false}){
+export function createPracticeSession({api,storage,saved,recovery=[],approve,onEvidence=()=>{},captureEvidence=()=>({}),requireLocations=false}){
   const state=saved||{version:1,id:crypto.randomUUID(),index:0,originals:[],objects:[],destinations:[],records:[],pending:null};
+  let recoveryRuns=structuredClone(recovery);
   let setupFolder=null;
   let active=false,locked=false,inFlight=0,restarting=false,saveQueue=Promise.resolve();
   function persist(value){const task=saveQueue.catch(()=>{}).then(()=>storage.set(value));saveQueue=task;return task;}
-  async function save(){await persist({betaExplorerTestIt:structuredClone(state),betaExplorerTestItOwnership:structuredClone({originals:state.originals,objects:state.objects,destinations:state.destinations})});}
+  function snapshot(current,runs=recoveryRuns){return structuredClone({
+    betaExplorerTestIt:current,
+    betaExplorerTestItRecovery:runs,
+    betaExplorerTestItOwnership:{originals:[...runs.flatMap(r=>r.session.originals),...current.originals],objects:[...runs.flatMap(r=>r.session.objects),...current.objects],destinations:[...runs.flatMap(r=>r.session.destinations),...current.destinations]}
+  });}
+  async function save(){await persist(snapshot(state));}
   function emitEvidence(event){try{onEvidence(event);}catch{(state.observationFailures||=[]).push({operation:event.operation,providerVerdict:event.verdict,reason:'Test It observer callback failed.',at:Date.now()});void save().catch(()=>{});}}
   async function read(source,key){const r=await api.run('inspect',{source,key});if(r.state!=='completed')throw Error(r.error||'The file could not be checked.');return r.data;}
   function owned(source,key){return state.objects.find(o=>!o.deleted&&o.identity===id(source,key));}
+  function reserved(source,key){const identity=id(source,key);return recoveryRuns.some(r=>
+    r.session.objects.some(o=>o.identity===identity)||
+    r.session.pending?.destinations?.some(d=>id(d.source,d.key)===identity));}
   async function check(record){const actual=await read(record.source,record.key);if(!actual.object||stamp(actual.object)!==record.stamp||actual.sha256!==record.sha256)throw Error('A tracked file changed. Refresh and check it before continuing.');return actual;}
   async function originals(){for(const o of state.originals)await check(o);}
   async function source(source,key){let record=state.originals.find(o=>o.identity===id(source,key));if(record){await check(record);return record;}const value=await read(source,key);if(!value.object?.etag||!(value.object.uploaded||value.object.last_modified||value.object.version))throw Error('This file does not have enough identity information for safe practice.');if(!await approve('Practice with this file?',source.bucketName+'/'+key+'\nYour original will remain untouched.'))throw Error('Practice source was not approved.');record={identity:id(source,key),source:{...source},key,stamp:stamp(value.object),sha256:value.sha256,object:value.object,approvedAt:Date.now()};state.originals.push(record);await save();return record;}
@@ -36,13 +45,14 @@ export function createPracticeSession({api,storage,saved,approve,onEvidence=()=>
     const entries=input.entries||[input.entry];if(!entries.length||entries.some(e=>!e||e.folder))throw Error('Practice works with individual files only.');
     if(operation!=='copy'&&!api.conditionalPracticeMutations)throw Error('This bucket cannot enforce practice-copy ownership during changes yet. Rename, Move and Delete are blocked to protect your files.');
     await originals();const records=[];
-    for(const e of entries){const own=owned(input.source,e.key);if(operation!=='copy'&&!own)throw Error('Your original is protected. Choose a verified practice copy.');if(own&&operation!=='copy'&&own.sessionId!==state.id)throw Error('This copy belongs to an earlier Test It session. Create a fresh copy for this session.');const record=own||await source(input.source,e.key);await check(record);records.push(record);}
+    for(const e of entries){const own=owned(input.source,e.key);if(operation!=='copy'&&reserved(input.source,e.key))throw Error('This copy belongs to an earlier Test It session. Create a fresh copy for this session.');if(operation!=='copy'&&!own)throw Error('Your original is protected. Choose a verified practice copy.');if(own&&operation!=='copy'&&own.sessionId!==state.id)throw Error('This copy belongs to an earlier Test It session. Create a fresh copy for this session.');const record=own||await source(input.source,e.key);await check(record);records.push(record);}
     const target=operation==='rename'?{...input.source,prefix:input.entry.key.slice(0,input.entry.key.lastIndexOf('/')+1)}:input.destination;
     const destinations=[];
     if(operation!=='delete'){
       await destination(target);if(input.conflict==='replace')throw Error('Replace is unavailable in Test It. Use Skip or Keep Both.');
       for(const e of entries){let key=(target.prefix||'')+(operation==='rename'?input.newName:leaf(e.key));
         if(operation==='copy'&&id(input.source,e.key)===id(target,key)&&input.conflict==='keep'){const n=leaf(e.key),dot=n.lastIndexOf('.');key=(target.prefix||'')+(dot>0?n.slice(0,dot):n)+' (copy)'+(dot>0?n.slice(dot):'');}
+        if(reserved(target,key))throw Error('This destination belongs to an earlier Test It session. Choose an unused destination; its recovery details are retained.');
         const existing=(await api.run('stat',{source:target,key}));if(existing.state!=='completed')throw Error('The destination could not be checked.');
         if(existing.data.object){const own=owned(target,key);if(!own)throw Error('That destination contains an existing user file. Choose another location.');await check(own);if(input.conflict!=='skip')throw Error('Use Skip for this conflict, or choose an unused destination.');}
         destinations.push({source:{...target},key,absent:!existing.data.object});
@@ -96,12 +106,12 @@ export function createPracticeSession({api,storage,saved,approve,onEvidence=()=>
       throw Object.assign(Error(dispatched?'That file did not arrive where expected. We have recorded the problem. Use Retry to check the files.':error.message),{uncertain:dispatched});
     }finally{locked=false;}
   }
-  async function reconcile(){await originals();for(const o of state.objects.filter(o=>!o.deleted))await check(o);if(state.pending){
+  async function reconcile({readOnly=false}={}){await originals();for(const o of state.objects.filter(o=>!o.deleted))await check(o);if(state.pending){
     // Only an unchanged source AND absent destination proves no write occurred.
     for(const e of state.pending.entries){const o=owned(state.pending.source,e.key)||state.originals.find(o=>o.identity===id(state.pending.source,e.key));if(!o)throw Error('The unfinished action needs manual review.');await check(o);}
     for(const d of state.pending.destinations){const r=await api.run('stat',{source:d.source,key:d.key});if(r.state!=='completed'||r.data.object)throw Error('The unfinished action needs manual review. No files will be changed.');}
-    if(state.pending.operation==='delete')throw Error('The unfinished deletion needs manual review.');state.pending=null;
-  }await save();return {originals:state.originals.length,copies:state.objects.filter(o=>!o.deleted).length};}
+    if(state.pending.operation==='delete')throw Error('The unfinished deletion needs manual review.');if(!readOnly)state.pending=null;
+  }if(!readOnly)await save();return {originals:state.originals.length,copies:state.objects.filter(o=>!o.deleted).length};}
   async function run(...args){
     if(restarting&&writes.has(args[0]))throw Error('Wait for Test It to restart.');
     inFlight++;try{return await perform(...args);}finally{inFlight--;}
@@ -110,12 +120,21 @@ export function createPracticeSession({api,storage,saved,approve,onEvidence=()=>
     if(inFlight||restarting)throw Error('Wait for the current file operation before restarting.');
     restarting=true;const wasActive=active;active=false;
     try{
-      await reconcile();
-      const fresh={...state,id:crypto.randomUUID(),index:0,records:[],workflow:null,pending:null};
-      // Persist before switching state. Failure leaves the old session recoverable.
-      await persist({betaExplorerTestIt:structuredClone(fresh),betaExplorerTestItOwnership:structuredClone({originals:state.originals,objects:state.objects,destinations:state.destinations})});
+      // Read-only reconciliation must never erase the original pending evidence.
+      await saveQueue.catch(()=>{});
+      let reconciliation={status:'checked'};
+      try{await reconcile({readOnly:true});}catch(error){reconciliation={status:'needs-review',reason:error.message};}
+      const archived={session:structuredClone(state),archivedAt:Date.now(),reconciliation};
+      const runs=[...recoveryRuns,archived];
+      const fresh={version:1,id:crypto.randomUUID(),index:0,originals:[],objects:[],destinations:[],records:[],workflow:null,pending:null};
+      // A single storage transaction retains recovery and replaces active results.
+      // Do not switch in-memory state until persistence succeeds (including quota checks).
+      try{await persist(snapshot(fresh,runs));}catch(error){throw Error('Recovery details could not be saved. Restore browser storage, export your previous results, then try Restart Test It again. '+error.message);}
+      recoveryRuns=runs;
+      for(const key of Object.keys(state))delete state[key];
       Object.assign(state,fresh);
+      return {unfinished:Boolean(archived.session.pending),sessionId:fresh.id};
     }finally{restarting=false;active=wasActive;}
   }
-  return {state,run,restart,configureLocations,get busy(){return inFlight>0||restarting;},source,owned,save,reconcile,check,originals,assertOwned(source,entries){if(!entries.length||entries.some(e=>e.folder||!owned(source,e.key)||owned(source,e.key).sessionId!==state.id))throw Error('Your original is protected. Select only verified practice copies.');},get active(){return active;},set active(value){active=value;}};
+  return {state,get recovery(){return structuredClone(recoveryRuns);},run,restart,configureLocations,get busy(){return inFlight>0||restarting;},source,owned,save,reconcile,check,originals,assertOwned(source,entries){if(!entries.length||entries.some(e=>e.folder||!owned(source,e.key)||owned(source,e.key).sessionId!==state.id))throw Error('Your original is protected. Select only verified practice copies.');},get active(){return active;},set active(value){active=value;}};
 }

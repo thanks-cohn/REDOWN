@@ -162,7 +162,20 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
   doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(error=>{record().observationFailure={action:event.detail.action,error:error.message};void save();guide?.message('Test It observation failed. Explorer results are recorded separately. Retry the exercise.');});});
-  async function exportResults(){if(!session||restarting)return;records();if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});await save();const report=structuredClone(session.state);delete report.pending;report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download='redown-test-it-'+session.state.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  function downloadJson(value,filename){
+    const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'})),link=doc.createElement('a');
+    link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  async function exportResults(){
+    if(!session||restarting)return;records();
+    if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});
+    await save();const report=structuredClone(session.state);delete report.pending;
+    report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';
+    downloadJson(report,'redown-test-it-'+session.state.id+'.json');
+    // Recovery is a separate report so the active JSON contains only this run.
+    const recovery=session.recovery;
+    if(recovery.length)downloadJson({version:1,recovery},'redown-test-it-recovery-'+session.state.id+'.json');
+  }
   $('test-it-restart').onclick=async()=>{
     if(initializing||restarting||cleaning)return;
     if(checking||session.busy){await approve('Restart is waiting','Wait for the current file operation or check to finish, then choose Restart Test It again.');return;}
@@ -171,15 +184,16 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
       if(!await approve('Restart Test It?','Replace the current session results and begin at exercise 1? Cloud files and practice-copy ownership will be preserved. Previously downloaded reports will stay unchanged.'))return;
       if(checking||session.busy)throw Error('Wait for the current file operation before restarting.');
       guide?.stop();generation++;
-      await session.restart();
+      const result=await session.restart();
       index=0;baseline=null;lastInput={};command=null;folder=null;previousImage=null;lastMove=null;renameFrom=null;lastCreated=null;sideChecks={};multiEvidence=[];clipboardCommand=null;
       restarting=false;await start();
+      if(result.unfinished)guide?.message("Your previous test had an unfinished file action. We've kept its recovery details. Your new test can begin.");
     }catch(e){await approve('Test It could not restart',e.message+' Your previous results and ownership records have been retained.');}
     finally{restarting=false;}
   };
   $('test-it').onclick=()=>void start();$('test-it-export').onclick=()=>void exportResults();
   $('test-it-cleanup').onclick=async()=>{if(!session||checking||restarting||cleaning||session.busy)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;cleaning=true;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{cleaning=false;session.active=Boolean(guide?.active);}};
   $('take-tour').addEventListener('click',()=>guide?.stop());
-  void (async()=>{try{const saved=(await storage.get('betaExplorerTestIt'))?.betaExplorerTestIt;session=createPracticeSession({api,storage,saved,approve,requireLocations:true,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
+  void (async()=>{try{const stored=await storage.get(['betaExplorerTestIt','betaExplorerTestItRecovery']),saved=stored?.betaExplorerTestIt,recovery=stored?.betaExplorerTestItRecovery||[];session=createPracticeSession({api,storage,saved,recovery,approve,requireLocations:true,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
   return {observe,get lastCommand(){return command?.action;},get session(){return session;}};
 }

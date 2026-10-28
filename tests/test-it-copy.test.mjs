@@ -12,11 +12,11 @@ async function fixture(index=21){
  const object={etag:'etag',size:5,version:'v1'},sha256='hash';
  const original={identity:JSON.stringify(['a','b',key]),source:current,key,stamp:JSON.stringify(['etag',5,null,'v1']),sha256,object};
  const saved={version:1,id:'session',index,originals:[original],objects:[],destinations:[],locations:{a:current,b:{...current,prefix:'practice/'}},records:[],pending:null};
- let state={current,selected:[{key}],visible:[]},clip=null,pastes=0;
+ let state={current,selected:[{key}],visible:[]},clip=null,pastes=0,persisted=null,storageFail=false;
  const objects=new Map([[key,{object,sha256}]]);let fail=false;
  const api=createFileApi({inspect:async({key})=>objects.get(key)||{object:null},stat:async({key})=>({object:objects.get(key)?.object||null}),
  copy:async({entries,destination})=>{if(fail)throw Error('Provider unavailable');const destinationKey=destination.prefix+'original.txt';objects.set(destinationKey,{object:{...object,version:'v2'},sha256});return {completed:1,results:[{sourceKey:entries[0].key,destinationKey,status:'copied',verified:true,destinationVersion:'v2',destinationEtag:'etag',size:5}]};}});
- const practice=installTestIt({document:doc,api,storage:{get:async()=>({betaExplorerTestIt:saved}),set:async()=>{}},getState:()=>state,approve:async()=>true,stopTour(){}});
+ const practice=installTestIt({document:doc,api,storage:{get:async()=>({betaExplorerTestIt:saved}),set:async value=>{if(storageFail)throw Error("Storage unavailable");persisted=structuredClone(value);}},getState:()=>state,approve:async()=>true,stopTour(){}});
  await tick();doc.getElementById('test-it').click();
  const explorer=readFileSync(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
  const body=explorer.match(/function guideAction\(action,detail=\{\}\)\{([^\n]+)\}/)[1];
@@ -32,7 +32,7 @@ async function fixture(index=21){
  const keypress=key=>doc.body.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key,ctrlKey:true,bubbles:true}));
  const menu=doc.getElementById('context'),button=doc.createElement('button');menu.append(button);button.onclick=()=>doc.getElementById('copy').click();
  const menuCopy=()=>{button.onclick=()=>doc.getElementById('copy').click();invocation={method:'contextmenu'};try{button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));}finally{invocation={method:'toolbar'};}};
- return {dom,doc,practice,saved,menuCopy,menuPaste:()=>{button.onclick=()=>doc.getElementById('paste').click();invocation={method:'contextmenu'};try{button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));}finally{invocation={method:'toolbar'};}},keypress,api,objects,set fail(v){fail=v;},get clip(){return clip;},get pastes(){return pastes;},set state(s){state=s;},get state(){return state;}};
+ return {dom,doc,practice,saved,get persisted(){return persisted;},set storageFail(v){storageFail=v;},menuCopy,menuPaste:()=>{button.onclick=()=>doc.getElementById('paste').click();invocation={method:'contextmenu'};try{button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));}finally{invocation={method:'toolbar'};}},keypress,api,objects,set fail(v){fail=v;},get clip(){return clip;},get pastes(){return pastes;},set state(s){state=s;},get state(){return state;}};
 }
 test('context-menu Copy uses scoped approved identities, survives synthetic forwarding and leaves Explorer clipboard usable across navigation',async()=>{
  const f=await fixture();try{
@@ -87,4 +87,43 @@ test('context-menu Paste and Ctrl+V complete only after verified API evidence',a
  const result=await f.api.run('copy',{source:f.clip.source,destination:f.state.current,entries:f.clip.entries,conflict:'skip'});
  assert.equal(result.state,'completed');assert.equal(f.saved.records[index].verdict,'PASSED');assert.ok(f.saved.objects[0].id);
  }finally{f.dom.window.close();}}
+});
+
+for(const mode of ['completed','clipboard','verified','uncertain'])test('Restart Test It UI after '+mode+' starts exercise 1 only after persistence',async()=>{
+ const f=await fixture();try{
+ f.menuCopy();await tick();const oldId=f.practice.session.state.id;
+ if(mode==='verified'||mode==='uncertain'){
+  if(mode==='uncertain')f.fail=true;
+  await f.api.run('copy',{source:f.state.current,destination:{...f.state.current,prefix:'practice/'},entries:f.state.selected,conflict:'skip'});
+ }
+ const old=structuredClone(f.practice.session.state),cloud=structuredClone([...f.objects]);
+ await f.doc.getElementById('test-it-restart').onclick();await tick();
+ assert.notEqual(f.practice.session.state.id,oldId);assert.equal(f.practice.session.state.index,0);assert.equal(f.persisted.betaExplorerTestIt.index,0);
+ assert.equal(f.practice.session.state.records.length,60);assert.ok(f.practice.session.state.records.every(r=>r.verdict==='NOT_TESTED'));
+ assert.deepEqual(f.persisted.betaExplorerTestItRecovery[0].session,old);assert.deepEqual([...f.objects],cloud);
+ assert.ok(f.doc.querySelector('.test-it-card'));assert.equal(f.practice.session.active,true);
+ if(mode==='uncertain')assert.match(f.doc.querySelector('.test-it-card').textContent,/We've kept its recovery details/);
+ // The reopened guide can observe ordinary progress.
+ await f.practice.observe('bucket');
+ }finally{f.dom.window.close();}
+});
+test('Restart UI storage failure does not report success or replace previous session',async()=>{
+ const f=await fixture();try{f.menuCopy();await tick();const old=structuredClone(f.practice.session.state);f.storageFail=true;
+ await f.doc.getElementById('test-it-restart').onclick();assert.equal(f.practice.session.state.id,old.id);assert.deepEqual(f.practice.session.state.records,old.records);
+ assert.equal(f.doc.querySelector('.test-it-card'),null);
+ }finally{f.dom.window.close();}
+});
+
+test('Export keeps fresh results and recovery evidence in separate JSON files',async()=>{
+ const f=await fixture();const create=URL.createObjectURL,revoke=URL.revokeObjectURL,blobs=[],names=[];
+ try{
+ f.fail=true;await f.api.run('copy',{source:f.state.current,destination:{...f.state.current,prefix:'practice/'},entries:f.state.selected,conflict:'skip'});
+ const oldId=f.practice.session.state.id;await f.doc.getElementById('test-it-restart').onclick();await tick();
+ URL.createObjectURL=blob=>{blobs.push(blob);return 'blob:test-'+blobs.length;};URL.revokeObjectURL=()=>{};
+ f.dom.window.HTMLAnchorElement.prototype.click=function(){names.push(this.download);};
+ f.doc.getElementById('test-it-export').click();await tick();
+ assert.equal(blobs.length,2);const active=JSON.parse(await blobs[0].text()),archive=JSON.parse(await blobs[1].text());
+ assert.equal(active.id,f.practice.session.state.id);assert.ok(!('recovery' in active));assert.ok(active.records.every(r=>r.verdict==='NOT_TESTED'));
+ assert.equal(archive.recovery[0].session.id,oldId);assert.equal(archive.recovery[0].session.pending.operation,'copy');assert.match(names[1],/recovery/);
+ }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
 });
