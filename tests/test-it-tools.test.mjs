@@ -33,3 +33,22 @@ test('only gripper moves Test It, pointer offset and step position survive, resi
  return new Promise(resolve=>win.requestAnimationFrame(()=>{assert.equal(card.style.left,'10px');assert.ok(parseFloat(card.style.top)<=30);card.querySelector('[data-guide-exit]').click();assert.equal(exited,1);assert.equal(doc.querySelector('.guide-card'),null);dom.window.close();resolve();}));
 });
 test('Tour has no gripper by default',()=>{const dom=fixture();const guide=createGuide({document:dom.window.document,steps:[{title:'Tour',text:'Tour'}]});guide.start();assert.equal(dom.window.document.querySelector('.guide-grip'),null);guide.stop();dom.window.close();});
+
+for(const corner of ['nw','ne','sw','se'])test('corner '+corner+' resizes independently of grip, clamps viewport and preserves dimensions',()=>{
+ const dom=new JSDOM(html,{pretendToBeVisual:true,url:'https://fixture.invalid'}),doc=dom.window.document,w=dom.window;
+ const guide=createGuide({document:doc,draggable:true,steps:[{title:'Resize',text:'Instructions'},{title:'Next',text:'More instructions'}]});guide.start();
+ const card=doc.querySelector('.test-it-card');card.getBoundingClientRect=()=>{const left=parseFloat(card.style.left),top=parseFloat(card.style.top),width=parseFloat(card.style.width),height=parseFloat(card.style.height);return {left,top,width,height,right:left+width,bottom:top+height};};
+ // Move into the middle to exercise each anchored corner.
+ card.style.left='200px';card.style.top='150px';const before=card.getBoundingClientRect(),handle=card.querySelector('[data-resize-corner="'+corner+'"]');handle.setPointerCapture=()=>{};
+ const pointer=(type,x,y)=>{const e=new w.Event(type,{bubbles:true,cancelable:true});Object.assign(e,{button:0,pointerId:11,clientX:x,clientY:y});handle.dispatchEvent(e);};
+ pointer('pointerdown',0,0);pointer('pointermove',corner.includes('w')?-30:30,corner.includes('n')?-30:30);pointer('pointerup',0,0);
+ assert.equal(parseFloat(card.style.width),before.width+30);assert.equal(parseFloat(card.style.height),before.height+30);const size=[card.style.width,card.style.height];card.querySelector('[data-guide-next]').click();assert.deepEqual([card.style.width,card.style.height],size);
+ assert.equal(card.querySelector('.guide-grip').innerHTML,'<span aria-hidden="true">⠿</span>');assert.ok(card.querySelector('[data-guide-exit]'));assert.ok(card.querySelector('[data-guide-next]'));guide.stop();guide.start();assert.deepEqual([doc.querySelector('.test-it-card').style.width,doc.querySelector('.test-it-card').style.height],size);
+ guide.stop();dom.window.close();
+});
+test('fullscreen preview bounds cannot shrink Test It and narrow viewport keeps panel dimensions usable',()=>{
+ const dom=fixture(),doc=dom.window.document,w=dom.window;const preview=doc.querySelector('#preview-dialog');preview.setAttribute('open','');const target=doc.querySelector('#preview-content');target.getBoundingClientRect=()=>({left:0,top:0,right:1024,bottom:768,width:1024,height:768});
+ const guide=createGuide({document:doc,draggable:true,steps:[{title:'Lightbox',text:'Readable instructions',target:'#preview-content'}]});guide.start();const card=doc.querySelector('.test-it-card');assert.equal(card.parentElement,preview);assert.equal(card.style.height,'480px');assert.equal(card.style.maxHeight,'748px');
+ Object.defineProperties(w,{innerWidth:{value:360},innerHeight:{value:400}});w.dispatchEvent(new w.Event('resize'));
+ return new Promise(resolve=>w.requestAnimationFrame(()=>{assert.equal(card.style.width,'340px');assert.equal(card.style.height,'380px');assert.ok(parseFloat(card.style.top)>=10);guide.stop();dom.window.close();resolve();}));
+});

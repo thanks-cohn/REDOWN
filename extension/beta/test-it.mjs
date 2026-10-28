@@ -16,28 +16,28 @@ const rows=[
 ['Switch to Grid view','#view','Click Grid view.','grid'],
 ['Switch back to List view','#view','Click List view.','list'],
 ['Open an image in Window Preview','#preview','Choose Window Preview, then open an image you approve for viewing.','image'],
-['Navigate to the next image','#preview-next','Press Right Arrow to view the next image.','next-image'],
-['Return to the previous image','#preview-previous','Press Left Arrow to return to the previous image.','previous-image'],
+['Navigate to the next image','#preview-next','Click Next or press Right Arrow to view the next image.','next-image'],
+['Return to the previous image','#preview-previous','Click Previous or press Left Arrow to return to the previous image.','previous-image'],
 ['Enter image Lightbox Mode','#preview-lightbox','Click the image lightbox button.','lightbox'],
 ['Exit Lightbox Mode','#preview-content','Press Escape to leave the lightbox.','exit-lightbox'],
 ['Open Side Preview','#preview-mode','Close Window Preview and choose Side Preview.','side'],
 ['Resize, close, and reopen Side Preview','#preview-divider','Resize the divider, close Side Preview, then reopen it.','resize-side'],
-['Choose a source file','#files','Select a file in Location A. Approve it, then choose a different folder as Location B for working copies. Your original will not be changed.','source'],
+['Choose a source file','#files','Select an existing file and approve it as a read-only copy source. Your original will not be changed.','source'],
 ['Copy the source','#copy','Right-click your selected source and choose Copy.','copy-menu'],
-['Paste into an approved destination','#paste','Open an existing practice folder and click Paste. Approve the destination when asked.','copy'],
+['Paste wherever you like','#paste','Paste wherever you like, including this folder. Wait for REDOWN to find and verify your copy.','copy'],
 ['Confirm the original remains','#files','Return to the original folder and click Refresh.','original'],
 ['Preview the new copy','#preview','Open the new copy and click Preview.','copy-preview'],
 ['Rename the copy','#rename','Close the preview. Select the practice copy and choose Rename.','rename'],
 ['Rename it back','#rename','Rename that practice copy back to its earlier name.','rename-back'],
 ['Duplicate the working copy','#duplicate','Select the working copy and click Duplicate.','duplicate'],
 ['Copy the duplicate using Ctrl+C','#files','Select the new duplicate and press Ctrl+C.','copy-key'],
-['Paste it into another approved location','#paste','Open another existing folder and paste the duplicate.','copy-other'],
+['Paste it into another location','#paste','Open another existing folder and paste the duplicate.','copy-other'],
 ['Cut a test-created copy','#cut','Right-click a working copy and choose Cut.','cut-menu'],
-['Paste it into another approved location','#paste','Open another approved folder and click Paste.','move'],
+['Paste it into another location','#paste','Open another folder and click Paste.','move'],
 ['Move that copy back','#move-to','Select the moved copy and use Move to… to return it.','move-back'],
 ['Move it again using Ctrl+X','#files','Select a working copy and press Ctrl+X.','cut-key'],
-['Paste it back using Ctrl+V','#files','Open another approved folder and press Ctrl+V.','move-key'],
-['Drag a working copy into another folder','#files','Drag a verified working copy onto another approved folder.','drag'],
+['Paste it back using Ctrl+V','#files','Open another folder and press Ctrl+V.','move-key'],
+['Drag a working copy into another folder','#files','Drag a verified working copy onto another folder.','drag'],
 ['Move the dragged copy back','#move-to','Use Move to… to return the dragged copy.','move-back'],
 ['Select two test-created copies','#files','Select two verified practice copies with Ctrl+Click.','two-owned'],
 ['Move both copies together','#move-to','Use Move to… to move both selected copies.','move-two'],
@@ -50,12 +50,12 @@ const rows=[
 ['Create a filename conflict between copies','#copy-to','Copy a practice file to a location containing another tracked copy of the same name, with Conflicts: skip.','conflict'],
 ['Resolve the conflict safely','#conflict','Choose Conflicts: skip and repeat the copy to confirm both copies are preserved.','conflict'],
 ['Delete one extra copy','#delete','Select one extra verified practice copy and click Delete.','delete'],
-['Restore it from the preserved source','#copy-to','Copy the preserved original into the now-unused approved location.','restore'],
+['Restore it from the preserved source','#copy-to','Copy the preserved original into the now-unused location.','restore'],
 ['Delete another extra copy, then verify the original','#delete','Delete another extra practice copy. The original will be checked automatically.','delete'],
 ['Copy using Ctrl+C','#files','Select an approved source or working copy and press Ctrl+C.','copy-key'],
-['Paste using Ctrl+V','#files','Open an unused approved destination and press Ctrl+V.','copy-key-paste'],
+['Paste using Ctrl+V','#files','Open an unused destination and press Ctrl+V.','copy-key-paste'],
 ['Cut that working copy with Ctrl+X','#files','Select the new working copy and press Ctrl+X.','cut-key'],
-['Paste it elsewhere','#paste','Open another approved folder and paste the working copy.','move'],
+['Paste it elsewhere','#paste','Open another folder and paste the working copy.','move'],
 ['Return that copy','#move-to','Use Move to… to return the last moved copy.','move-back'],
 ['Find a renamed working copy','#filter','Rename a working copy if needed, then find it with Filter.','find-owned'],
 ['Download a working copy','#download','Select a practice copy and click Download.','download'],
@@ -64,7 +64,7 @@ const rows=[
 ['Export results and optional cleanup','#test-it-export','Export your results. Cleanup is optional from the Explorer menu.','export']
 ];
 export const exercises=Object.freeze(rows.map(([title,target,text,kind],i)=>Object.freeze({id:i+1,chapter:'ABCDEF'[Math.floor(i/10)],title,target,text,kind})));
-export function installTestIt({document:doc,api,storage,getState,approve,stopTour,choosePracticeDestination,navigatePractice}){
+export function installTestIt({document:doc,api,storage,getState,approve,stopTour}){
   const $=id=>doc.getElementById(id);let session,guide,index=0,baseline=null,lastInput={},command=null,checking=false,generation=0,initializing=true,restarting=false,cleaning=false;
   let folder=null,previousImage=null,lastMove=null,renameFrom=null,lastCreated=null,sideChecks={},multiEvidence=[],clipboardCommand=null;
   const records=()=>{for(const e of exercises)if(!session.state.records.find(r=>r.exerciseId===e.id))session.state.records.push({exerciseId:e.id,requestedAction:e.text,observedGuiInteraction:null,actualApiOperation:null,providerResponse:null,expectedResult:e.title,independentlyObservedResult:null,sha256Comparisons:[],latencyMs:null,testOwnedObjectIdentities:[],verdict:'NOT_TESTED'});};
@@ -75,7 +75,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     const operationCommand=event.correlation?.command||command;
     const kind=exercises[index].kind,op=event.operation,changes=event.changes||[],keys=changes.map(c=>c.key).filter(Boolean),conflict=changes.some(c=>c.conflict);
     let matches=false;
-    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&operationCommand?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&operationCommand.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&operationCommand?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&operationCommand?.input.key?.toLowerCase()==='v'&&operationCommand?.input.ctrl;if(kind==='copy-other')matches=matches&&session.state.destinations.length>=2;if(kind==='restore')matches=matches&&session.state.originals.some(o=>operationCommand?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length){lastCreated=changes[0].id;session.state.workflow={...session.state.workflow,workingCopyId:lastCreated};}}
+    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&operationCommand?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&operationCommand.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&operationCommand?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&operationCommand?.input.key?.toLowerCase()==='v'&&operationCommand?.input.ctrl;if(kind==='copy-other')matches=matches&&changes.every(c=>c.from&&(c.source.accountId!==c.from.source.accountId||c.source.bucketName!==c.from.source.bucketName||c.key.slice(0,c.key.lastIndexOf('/')+1)!==c.from.key.slice(0,c.from.key.lastIndexOf('/')+1)));if(kind==='restore')matches=matches&&session.state.originals.some(o=>operationCommand?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length){lastCreated=changes[0].id;session.state.workflow={...session.state.workflow,workingCopyId:lastCreated};}}
     if(kind==='conflict')matches=op==='copy'&&conflict;
     if(kind==='rename'||kind==='rename-back'){matches=op==='rename'&&keys.length===1;if(kind==='rename-back')matches=matches&&keys[0]===renameFrom;if(kind==='rename'){renameFrom=operationCommand?.entries?.[0];session.state.workflow={...session.state.workflow,renameFrom};}}
     if(['move','move-back','move-key','drag','move-two','return-two'].includes(kind)&&op==='move'){
@@ -89,7 +89,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(kind==='download')matches=op==='download'&&event.response?.downloadState==='complete';
     if(kind==='delete')matches=op==='delete'&&changes.length===1;
     if(['move-two','return-two'].includes(kind)&&!matches&&multiEvidence.length<2){guide.message('First copy verified. Waiting for the other copy.');void save();return;}
-    if(matches)pass({type:'verified-operation',command:operationCommand,...event});else{r.observationFailure={reason:'Verified operation did not meet this exercise’s interaction or state requirements.',operation:op,command:structuredClone(operationCommand)};guide.message('Explorer completed and verified the operation. It did not match this exercise. Retry the requested action; provider success is recorded.');void save();}
+    if(matches){pass({type:'verified-operation',command:operationCommand,...event});if(op==='copy'&&keys.length)guide.message('Good. REDOWN found and verified your copy at '+changes[0].source.bucketName+'/'+changes[0].key+'.');}else{r.observationFailure={reason:'Verified operation did not meet this exercise’s interaction or state requirements.',operation:op,command:structuredClone(operationCommand)};guide.message('Explorer completed and verified the operation. It did not match this exercise. Retry the requested action; provider success is recorded.');void save();}
   }
   function pass(observed){if(!guide?.active)return;const r=record();r.verdict='PASSED';r.observedGuiInteraction=observed;r.independentlyObservedResult=r.independentlyObservedResult||'Observed the intended GUI state after its interaction.';void save();doc.dispatchEvent(new doc.defaultView.CustomEvent('redown:gui',{detail:{action:'test-it-'+exercises[index].id}}));}
   function snapshot(){return getState();}
@@ -110,7 +110,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     let ok=false;
     if(k==='bucket')ok=action==='bucket-open'&&s.current&&!s.current.prefix;
     if(k==='folder'){ok=action==='folder-open'&&Boolean(s.current?.prefix);if(ok)folder=s.current.prefix;}
-    if(k==='parent')ok=action==='folder-open'&&lastInput.target?.startsWith('crumbs')&&b.current?.prefix!==s.current?.prefix&&b.current?.prefix.startsWith(s.current?.prefix||'');
+    if(k==='parent'){const from=detail.previous,to=detail.current,p=from?.prefix||'',parent=p.replace(/\/$/,'').slice(0,p.replace(/\/$/,'').lastIndexOf('/')+1);ok=['folder-open','bucket-open'].includes(action)&&detail.completed===true&&detail.origin==='breadcrumb'&&Boolean(p)&&from.accountId===to?.accountId&&from.bucketName===to?.bucketName&&to.prefix===parent&&s.current?.prefix===to.prefix;}
     if(k==='return-folder')ok=action==='folder-open'&&s.current?.prefix===folder;
     if(k==='refresh')ok=action==='refresh'&&s.current?.prefix===b.current?.prefix;
     if(k==='select')ok=action==='select-file'&&selected.length===1;
@@ -120,14 +120,19 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(k==='filter'||k==='find-owned')ok=action==='ui'&&lastInput.target==='filter'&&$('filter').value.trim()&&s.visible.length>0&&s.visible.every(e=>e.displayName.toLocaleLowerCase().includes($('filter').value.toLocaleLowerCase()))&&(k!=='find-owned'||s.visible.some(e=>session.owned(s.current,e.key)&&session.state.objects.some(o=>o.id===session.owned(s.current,e.key)?.id&&o.deleted&&o.key!==e.key)));
     if(k==='sort')ok=action==='ui'&&lastInput.target==='sort'&&$('sort').value==='name'&&s.visible.every((e,i,a)=>i===0||a[i-1].folder&&!e.folder||a[i-1].folder===e.folder&&a[i-1].displayName.localeCompare(e.displayName,undefined,{numeric:true})<=0);
     if(k==='grid'||k==='list')ok=action==='switch-view'&&s.grid===(k==='grid');
-    if(k==='image')ok=action==='preview-open'&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'));
-    if(k==='next-image'||k==='previous-image'){ok=action==='preview-open'&&Boolean(doc.querySelector('#preview-content img'))&&s.previewKey!==b.previewKey&&detail.key===(k==='next-image'?'ArrowRight':'ArrowLeft');if(k==='previous-image')ok=ok&&s.previewKey===previousImage;if(k==='next-image'&&ok)previousImage=b.previewKey;}
+    if(k==='image')ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'));
+    if(k==='next-image'||k==='previous-image'){
+      const direction=k==='next-image'?1:-1;
+      ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'))&&detail.direction===direction&&detail.previousKey===b.previewKey&&detail.currentKey===s.previewKey&&detail.expectedKey===s.previewKey&&s.previewKey!==b.previewKey;
+      if(k==='previous-image')ok=ok&&s.previewKey===previousImage;
+      if(k==='next-image'&&ok){previousImage=b.previewKey;session.state.workflow={...session.state.workflow,previousImage};}
+    }
     if(k==='lightbox')ok=['ui','lightbox-change'].includes(action)&&s.lightbox;
     if(k==='exit-lightbox')ok=['ui','lightbox-change'].includes(action)&&!s.lightbox&&b.lightbox&&(detail.key||lastInput.key)==='Escape';
     if(k==='side')ok=s.previewMode==='side'&&s.sideState==='open'&&Boolean(s.previewKey)&&action==='preview-open';
     if(k==='resize-side'){if(s.previewWidth!==b.previewWidth)sideChecks.resized=true;if(s.sideState==='closed')sideChecks.closed=true;ok=sideChecks.resized&&sideChecks.closed&&s.sideState==='open'&&Boolean(s.previewKey);}
     if(k==='two-owned')ok=action==='select-file'&&selected.length===2&&selected.every(e=>session.owned(s.current,e.key));
-    if(k==='source'&&action==='select-file'&&selected.length===1){checking=true;const ticket=generation;try{await session.source(s.current,selection[0]);if(ticket!==generation)return;if(!session.state.locations){if(!choosePracticeDestination)throw Error('Choose Location A and Location B before copying.');const b=await choosePracticeDestination();if(ticket!==generation)return;if(!b)throw Error('Choose Location B to continue. Select the source again to retry.');await session.configureLocations(s.current,b);renderLocations();}if(ticket===generation)ok=true;}catch(e){guide?.message(e.message);}finally{checking=false;}}
+    if(k==='source'&&action==='select-file'&&selected.length===1){checking=true;const ticket=generation;try{await session.source(s.current,selection[0]);if(ticket!==generation)return;if(ticket===generation)ok=true;}catch(e){guide?.message(e.message);}finally{checking=false;}}
     if(['original','inventory'].includes(k)&&action==='refresh'){
       if(k==='original'&&!session.state.originals.some(o=>o.source.accountId===s.current?.accountId&&o.source.bucketName===s.current?.bucketName&&o.key.slice(0,o.key.lastIndexOf('/')+1)===s.current?.prefix))return;
       checking=true;const ticket=generation;try{const inventory=await session.reconcile();ok=inventory.originals>0&&(k!=='inventory'||inventory.copies>=2||index===58);record().independentlyObservedResult={inventory,sha256:'All recorded originals and live copies matched their saved SHA-256 and metadata.'};if(ticket!==generation)ok=false;}catch(e){guide?.message(e.message);record().verdict='BLOCKED';await save();}finally{checking=false;}
@@ -138,27 +143,18 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     }
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
-  function renderLocations(){
-    const card=doc.querySelector('.test-it-card'),locations=session.state.locations;if(!card||!locations)return;
-    let nav=card.querySelector('.practice-locations');if(!nav){nav=doc.createElement('div');nav.className='practice-locations';nav.setAttribute('aria-label','Approved practice locations');card.querySelector('[data-guide-text]').after(nav);}
-    nav.replaceChildren(...['a','b'].map(key=>{const button=doc.createElement('button');button.type='button';button.textContent='Open Location '+key.toUpperCase();button.onclick=()=>{if(!session.busy&&!checking)void navigatePractice?.(locations[key]);};return button;}));
-  }
   function instruction(e){
-    const l=session.state.locations;if(!l||e.id<21)return e.text;
-    const label=x=>x.bucketName+'/'+(x.prefix||'');
     const owned=session.state.objects.findLast(o=>!o.deleted&&o.id===lastCreated)||session.state.objects.findLast(o=>!o.deleted);
     let text=e.text;
-    if(e.kind==='copy-menu')text='Copy the approved picture from Location A using its context menu.';
-    if(e.kind==='copy')text='Open Location B, then click Paste. Wait for independent metadata and SHA-256 verification.';
-    if(['rename','rename-back','move','move-back','cut-menu','cut-key','delete'].includes(e.kind)&&!api.conditionalPracticeMutations)text='Blocked: this bucket adapter cannot atomically enforce ownership during deletion. Rename and move also delete their old source. Use Skip or exit; no destructive request will be sent.';
-    return text+'\nLocation A: '+label(l.a)+'\nLocation B: '+label(l.b)+(owned?'\nWorking copy: '+owned.source.bucketName+'/'+owned.key:'\nNo verified working copy yet. Copy from A and paste into B first.');
+    if(['rename','rename-back','move','move-back','cut-menu','cut-key','delete'].includes(e.kind)&&!api.conditionalPracticeMutations)text='Blocked: this adapter cannot atomically enforce copy ownership during deletion. Rename and move also delete their old source. Use Skip; no destructive request will be sent.';
+    return text+(owned&&e.id>=24?'\nWorking copy: '+owned.source.bucketName+'/'+owned.key:'');
   }
-  async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);lastCreated=session.state.workflow?.workingCopyId||null;lastMove=session.state.workflow?.lastMove||null;renameFrom=session.state.workflow?.renameFrom||null;
+  async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);previousImage=session.state.workflow?.previousImage||null;lastCreated=session.state.workflow?.workingCopyId||null;lastMove=session.state.workflow?.lastMove||null;renameFrom=session.state.workflow?.renameFrom||null;
     guide=createGuide({document:doc,steps:exercises.map(e=>({...e,text:()=>instruction(e),action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
-      onStep:i=>{generation++;setTimeout(renderLocations,0);index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
+      onStep:i=>{generation++;index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
-      onRetry:async()=>{try{const result=await session.reconcile();guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide.message(e.message);}},
-      onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();renderLocations();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
+      onRetry:async()=>{if(checking||session.busy)return;checking=true;const ticket=generation;try{const result=await session.reconcile();if(ticket!==generation||!guide?.active)return;const event=session.state.lastVerifiedOperation;if(event?.correlation?.exerciseId===exercises[index].id&&event.changes?.every(c=>c.conflict||c.deleted||session.state.objects.some(o=>!o.deleted&&o.id===c.id&&o.key===c.key&&o.source.accountId===c.source?.accountId&&o.source.bucketName===c.source?.bucketName))){evidence(event);if(record().verdict==='PASSED')return;}guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide?.message(e.message);}finally{checking=false;}},
+      onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
   doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(error=>{record().observationFailure={action:event.detail.action,error:error.message};void save();guide?.message('Test It observation failed. Explorer results are recorded separately. Retry the exercise.');});});
@@ -194,6 +190,6 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   $('test-it').onclick=()=>void start();$('test-it-export').onclick=()=>void exportResults();
   $('test-it-cleanup').onclick=async()=>{if(!session||checking||restarting||cleaning||session.busy)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;cleaning=true;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{cleaning=false;session.active=Boolean(guide?.active);}};
   $('take-tour').addEventListener('click',()=>guide?.stop());
-  void (async()=>{try{const stored=await storage.get(['betaExplorerTestIt','betaExplorerTestItRecovery']),saved=stored?.betaExplorerTestIt,recovery=stored?.betaExplorerTestItRecovery||[];session=createPracticeSession({api,storage,saved,recovery,approve,requireLocations:true,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
+  void (async()=>{try{const stored=await storage.get(['betaExplorerTestIt','betaExplorerTestItRecovery']),saved=stored?.betaExplorerTestIt,recovery=stored?.betaExplorerTestItRecovery||[];session=createPracticeSession({api,storage,saved,recovery,approve,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
   return {observe,get lastCommand(){return command?.action;},get session(){return session;}};
 }

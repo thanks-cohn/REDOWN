@@ -106,6 +106,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     return message('cfTransferObjects',{operation,source:s,destination:d,entries:selected,conflict},options);
   }
   return {
+    crossBucketCopy:true,
     configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
     async connectionStatus({source},options={}){
       const l=location(source),result=await message('profiles',{},options);

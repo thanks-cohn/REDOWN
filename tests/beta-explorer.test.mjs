@@ -111,7 +111,7 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null}={}){
+async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
@@ -124,6 +124,7 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
   }:value]));const storage={betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
+  if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
@@ -613,14 +614,11 @@ test('Restart Test It confirms, replaces saved results, reopens exercise one and
 async function practiceAt(f,index){const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));for(let i=0;i<index;i++)d.querySelector('[data-guide-skip]').click();}
 async function approvePracticeSource(f){const {d,w,settle}=f;
  d.querySelector('[data-key="root.txt"]').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();
- await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);
- d.querySelector('#destination-prefix').value='Photos/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
- await settle(()=>d.querySelector('#dialog').open);assert.match(d.querySelector('#dialog-title').textContent,/two practice locations/);d.querySelector('#dialog-confirm').click();
  await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
 }
-test('Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into B',async()=>{
+test('Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
- assert.equal(d.querySelector('[data-guide-progress]').textContent,'22 of 60');assert.match(d.querySelector('[data-guide-text]').textContent,/Location B: disposable-fixture\/Photos\//);
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'22 of 60');assert.doesNotMatch(d.querySelector('[data-guide-text]').textContent,/Location [AB]/);assert.equal(d.querySelector('#destination-dialog').open,false);
  d.querySelector('#copy').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true,'Toolbar cannot satisfy context-menu exercise');
  const row=d.querySelector('[data-key="root.txt"]');row.dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,clientX:10,clientY:10}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();
  assert.equal(d.querySelector('[data-guide-next]').disabled,false);await settle(()=>f.storage.betaExplorerTestIt?.records[21].verdict==='PASSED');assert.equal(f.storage.betaExplorerTestIt.records[21].observedGuiInteraction.input.context,true);
@@ -647,4 +645,44 @@ test('Test It observes real Preview arrow transitions and Escape closes Lightbox
  assert.ok(d.querySelector('.guide-card'));assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);assert.equal(d.querySelector('[data-guide-next]').disabled,false);
  await settle(()=>f.storage.betaExplorerTestIt?.records[17].verdict==='PASSED');d.querySelector('[data-guide-exit]').click();
  }finally{f.dom.window.close();}
+});
+
+for(const nested of [false,true])test('parent breadcrumb observes completed navigation including '+(nested?'nested click targets':'root parent'),async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
+ if(nested)await f.bucket.put('Photos/child/item.txt','child');
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));
+ if(nested){d.querySelector('[data-key="Photos/child/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/child/item.txt"]'));}
+ await practiceAt(f,2);const buttons=d.querySelectorAll('#crumbs button'),parent=buttons[buttons.length-2];
+ const click=nested?parent.appendChild(d.createElement('span')):parent;click.click();assert.equal(d.querySelector('[data-guide-next]').disabled,true,'wait for completed listing');
+ await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[2].verdict,'PASSED');
+ }finally{f.dom.window.close();}
+});
+test('breadcrumb grandparent and non-breadcrumb parent navigation do not pass parent exercise',async()=>{
+ for(const viaUp of [false,true]){const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
+ await f.bucket.put('Photos/child/item.txt','child');d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/child/"]'));
+ d.querySelector('[data-key="Photos/child/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/child/item.txt"]'));await practiceAt(f,2);
+ d.querySelector(viaUp?'#up':'#crumbs button').click();await settle(()=>d.querySelector(viaUp?'[data-key="Photos/one.jpg"]':'[data-key="root.txt"]'));assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ }finally{f.dom.window.close();}}
+});
+test('image buttons await actual load, reject repeated load and error, then recognize next and previous',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true},autoLoadImages:false});try{const {d,w,settle}=f;
+ await f.bucket.put('Photos/two.jpg','second');d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/two.jpg"]'));await practiceAt(f,13);
+ const load=img=>{Object.defineProperties(img,{complete:{value:true,configurable:true},naturalWidth:{value:100,configurable:true}});img.dispatchEvent(new w.Event('load'));};
+ d.querySelector('[data-key="Photos/one.jpg"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content img'));assert.equal(d.querySelector('[data-guide-next]').disabled,true);load(d.querySelector('#preview-content img'));assert.equal(d.querySelector('[data-guide-next]').disabled,false);d.querySelector('[data-guide-next]').click();
+ d.querySelector('#preview-content img').dispatchEvent(new w.Event('load'));assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ d.querySelector('#preview-next').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='two.jpg');assert.equal(d.querySelector('[data-guide-next]').disabled,true);load(d.querySelector('#preview-content img'));assert.equal(d.querySelector('[data-guide-next]').disabled,false);d.querySelector('[data-guide-next]').click();
+ d.querySelector('#preview-previous').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='one.jpg');assert.equal(d.querySelector('[data-guide-next]').disabled,true);load(d.querySelector('#preview-content img'));assert.equal(d.querySelector('[data-guide-next]').disabled,false);
+ d.querySelector('[data-guide-next]').click();d.querySelector('#preview-next').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='two.jpg');d.querySelector('#preview-content img').dispatchEvent(new w.Event('error'));assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ }finally{f.dom.window.close();}
+});
+test('Test It same-folder Paste creates a distinct remotely verified copy without destination configuration',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
+ d.querySelector('[data-key="root.txt"]').dispatchEvent(new f.w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();
+ await settle(()=>f.storage.betaExplorerTestIt?.records[22].verdict==='PASSED');assert.ok(f.stored.has('root (copy).txt'));assert.ok(f.stored.has('root.txt'));assert.equal(f.storage.betaExplorerTestIt.objects[0].key,'root (copy).txt');assert.equal(d.querySelector('#destination-dialog').open,false);assert.equal(d.querySelector('.practice-locations'),null);
+ }finally{f.dom.window.close();}
+});
+
+test('failed parent listing never completes breadcrumb exercise',async()=>{
+ let fail=false;const f=await uiFixture({tourPreferences:{invitationDismissed:true},httpOverride:http=>({...http,request:async(...args)=>{if(fail)throw Error('Fixture listing unavailable');return http.request(...args);}})});
+ try{const {d,w,settle}=f;d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));await practiceAt(f,2);fail=true;d.querySelector('#crumbs button').click();await settle(()=>d.querySelector('#dropzone').dataset.state==='failed');assert.equal(d.querySelector('[data-guide-next]').disabled,true);}finally{f.dom.window.close();}
 });

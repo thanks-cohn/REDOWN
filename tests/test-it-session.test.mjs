@@ -67,15 +67,13 @@ test('restart refuses an operation still in flight without resetting results',as
 });
 
 
-test('two locations must differ, cross-bucket practice fails closed, and only an approved empty folder marker is created',async()=>{
- const f=fixture();await f.session.source(source,'original.txt');
- await assert.rejects(f.session.configureLocations(source,source),/distinct/);
- await assert.rejects(f.session.configureLocations(source,{...source,bucketName:'another',prefix:'B/'}),/Cross-bucket/);
- assert.deepEqual(f.calls,[]);
- await f.session.configureLocations(source,{...source,prefix:'B/'});assert.deepEqual(f.calls,['mkdir']);assert.ok(f.objects.has('B/.redown'));assert.equal(f.session.state.destinations.length,2);
- assert.equal((await f.copy('original.txt','B/')).state,'completed');
- assert.equal((await f.copy('original.txt','unexpected/')).state,'failed');assert.ok(!f.objects.has('unexpected/original.txt'));
- assert.equal((await f.api.run('mkdir',{source,name:'unapproved'})).state,'failed');assert.ok(!f.objects.has('unapproved/.redown'));
+test('no destination setup: same-folder Keep Both and arbitrary folders work without creating folders',async()=>{
+ const f=fixture();assert.equal((await f.api.run('copy',{source,destination:source,entries:[{key:'original.txt'}],conflict:'keep'})).state,'completed');
+ assert.ok(f.session.owned(source,'original (copy).txt'));assert.equal((await f.copy('original.txt','chosen/')).state,'completed');assert.ok(f.session.owned(source,'chosen/original.txt'));
+ assert.ok(!f.calls.includes('mkdir'));assert.equal((await f.api.run('mkdir',{source,name:'unapproved'})).state,'failed');
+});
+test('cross-bucket destination requires an explicit adapter capability',async()=>{
+ const f=fixture();const r=await f.api.run('copy',{source,destination:{...source,bucketName:'other'},entries:[{key:'original.txt'}],conflict:'skip'});assert.equal(r.state,'failed');assert.match(r.error,/Cross-bucket/);assert.deepEqual(f.calls,[]);
 });
 test('restart preserves provenance but old-session objects cannot be destructively modified in the fresh session',async()=>{
  const f=fixture();await f.copy();await f.session.restart();const count=f.calls.length;
@@ -125,4 +123,13 @@ test('restart preserves uncertain destination evidence when read-only stat fails
  const f=fixture();f.loseReply=true;await f.copy();f.objects.delete('practice/original.txt');f.statFail=true;
  const before=structuredClone(f.session.state);await f.session.restart();assert.deepEqual(f.storage.recovery[0].session,before);
  assert.equal(f.storage.recovery[0].reconciliation.status,'needs-review');assert.deepEqual(f.calls,['copy']);
+});
+
+test('capable adapter cross-bucket copy verifies exact destination while unrelated remote objects stay unowned',async()=>{
+ const from={...source,prefix:'source/'},to={...source,bucketName:'other',prefix:'chosen/'},hash='same-bytes',object={etag:'etag',size:3,version:'v1'};
+ const objects=new Map([[JSON.stringify([from.bucketName,'source/file.txt']),{object,sha256:hash}],[JSON.stringify([to.bucketName,'chosen/unrelated.txt']),{object,sha256:hash}]]),get=(source,key)=>objects.get(JSON.stringify([source.bucketName,key]));let writes=0;
+ const api=createFileApi({crossBucketCopy:true,inspect:async({source,key})=>get(source,key)||{object:null},stat:async({source,key})=>({object:get(source,key)?.object||null}),copy:async({source,destination,entries})=>{writes++;const sourceKey=entries[0].key,destinationKey=destination.prefix+'file.txt';objects.set(JSON.stringify([destination.bucketName,destinationKey]),{object:{...object,version:'v2'},sha256:hash});return {completed:1,results:[{sourceKey,destinationKey,status:'copied',verified:true,destinationVersion:'v2',destinationEtag:'etag',size:3}]};}});
+ const session=createPracticeSession({api,storage:{set:async()=>{}},approve:async()=>true});api.setPolicy(session);session.active=true;
+ assert.equal((await api.run('copy',{source:from,destination:to,entries:[{key:'source/file.txt'}],conflict:'skip'})).state,'completed');assert.equal(writes,1);assert.equal(session.owned(to,'chosen/file.txt').source.bucketName,'other');assert.equal(session.owned(from,'source/file.txt'),undefined);assert.equal(session.owned(to,'chosen/unrelated.txt'),undefined);
+ assert.equal(session.state.lastVerifiedOperation.changes[0].source.bucketName,'other');
 });

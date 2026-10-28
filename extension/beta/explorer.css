@@ -229,4 +229,18 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 @media(max-width:450px){.guide-card.test-it-card{padding:20px}.test-it-card .guide-grip{left:16px;top:16px}.test-it-card .guide-exit{right:16px;top:16px}.test-it-card .guide-actions{gap:10px}}
 
 .test-it-card [data-guide-text]{white-space:pre-line}
-.practice-locations{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+
+/* Corner hit areas leave the original six-dot move grip untouched. */
+.test-it-card{display:flex;flex-direction:column;overflow:auto}
+.test-it-card > *{flex-shrink:0}
+.test-it-card [data-guide-text]{flex:1 1 auto;min-height:24px;overflow:auto;overflow-wrap:anywhere}
+.test-it-card [data-guide-status]{max-height:25%;overflow:auto;flex-shrink:1;min-height:24px}
+.test-it-card .guide-actions{flex-wrap:wrap}
+.test-it-card .guide-resize{position:absolute;width:14px;height:14px;touch-action:none;user-select:none;z-index:2}
+.guide-resize-nw{top:0;left:0;cursor:nwse-resize}
+.guide-resize-ne{top:0;right:0;cursor:nesw-resize}
+.guide-resize-sw{bottom:0;left:0;cursor:nesw-resize}
+.guide-resize-se{bottom:0;right:0;cursor:nwse-resize}
+@media(max-height:450px){.test-it-card [data-guide-progress]{margin-bottom:4px}.test-it-card h2{margin-bottom:4px}.test-it-card p{margin:4px 0}.test-it-card .guide-actions{margin-top:4px;padding-top:4px}.test-it-card [data-guide-status]{padding:4px}}
+
+@media(max-height:450px){.test-it-card{overflow:auto}.test-it-card [data-guide-text]{flex-shrink:0}}

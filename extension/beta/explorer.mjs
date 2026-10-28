@@ -58,7 +58,7 @@ function render(){
   }));
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
-  $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
+  $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''},true,false,'breadcrumb')));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target},true,false,'breadcrumb')));}}
   controls();syncSideSelection();
 }
 let commandInvocation=null;
@@ -85,11 +85,12 @@ async function listing(add=false){
   items=add?[...new Map([...items,...result.data.entries].map(e=>[e.key,e])).values()]:result.data.entries;cursor=result.data.cursor;
   selected=new Set([...selected].filter(k=>items.some(e=>e.key===k)));render();return result.data;
 }
-async function navigate(target,record=true,restore=false){
+async function navigate(target,record=true,restore=false,origin=null){
+  const previous=context();
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   $('accounts').value=next.accountId;paintBuckets(next.accountId);render();
-  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open');}}catch(e){failure(e);}
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true});}}catch(e){failure(e);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -133,7 +134,7 @@ const actions={
   copy(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};guideAction('command',{action:'copy',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items copied to REDOWN clipboard.');controls();},
   cut(){if(busy||!selected.size)return;if(practice?.session?.active)practice.session.assertOwned(context(),chosen());clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};guideAction('command',{action:'cut',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items ready to move. Sources remain until paste.');controls();},
   async paste(destination=context(),clip=clipboard,invocation=commandInvocation||{method:'toolbar'}){
-    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste',invocation,entries:clip.entries,source:clip.source,destination,clipboard:{source:clip.source,entries:clip.entries,operation:clip.operation}});const conflict=clip.conflict||$('conflict').value;
+    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste',invocation,entries:clip.entries,source:clip.source,destination,clipboard:{source:clip.source,entries:clip.entries,operation:clip.operation}});const sameFile=clip.operation==='copy'&&sameBucket(clip.source,destination)&&clip.entries.every(e=>e.key===(destination.prefix||'')+e.key.split('/').pop());const conflict=clip.conflict||(practice?.session?.active&&sameFile?'keep':$('conflict').value);
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
     await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
   },
@@ -354,7 +355,7 @@ async function showPreview(item,navigation={}){
   const source=context();if(!source)return;
   const identity=JSON.stringify([source.accountId,source.bucketName,source.prefix,item.key,item.size,item.uploaded,item.last_modified,item.lastModified]);
   presentPreview();
-  if(identity===previewIdentity){guideAction('preview-open',navigation);return;}
+  if(identity===previewIdentity){const node=$('preview-content').firstElementChild;if(node&&(node.tagName!=='IMG'||node.complete&&node.naturalWidth))guideAction('preview-open',{currentKey:item.key,mode:previewMode,rendered:true});return;}
   closePreview(lightbox);previewIdentity=identity;previewItem={...item,source};lightboxControl();
   $('preview-title').textContent=item.displayName;
   const metadata=[item.folder?'Folder':bytes(item.size),item.folder?'Folder prefix':previewType(item.key)||item.key.split('.').pop().toUpperCase(),source.bucketName+'/'+item.key,item.uploaded||item.last_modified||item.lastModified].filter(Boolean).join(' · ');
@@ -377,11 +378,13 @@ async function showPreview(item,navigation={}){
     if(ticket!==previewEpoch||abort.signal.aborted)return;
     if(node.tagName!=='PRE')node.addEventListener('error',()=>{if(ticket===previewEpoch){setLightbox(false);$('preview-lightbox').disabled=true;$('preview-content').textContent='This file could not be displayed. The content may be damaged or unsupported by your browser.';$('preview-content').append(download());}},{once:true});
     previewUrl=ownedUrl;ownedUrl='';
-    $('preview-content').replaceChildren(node);lightboxControl();guideAction('preview-open',navigation);$('preview-info').textContent=metadata+' · '+type+(result.data.truncated?' · Text preview truncated at '+bytes(size):'');
+    let announced=false;const rendered=()=>{if(announced||ticket!==previewEpoch||abort.signal.aborted||!node.isConnected)return;if(node.tagName==='IMG'&&(!node.complete||!node.naturalWidth))return;announced=true;guideAction('preview-open',{...navigation,currentKey:item.key,mode:previewMode,rendered:true});};
+    if(node.tagName==='IMG')node.addEventListener('load',rendered,{once:true});
+    $('preview-content').replaceChildren(node);lightboxControl();if(node.tagName!=='IMG'||node.complete)rendered();$('preview-info').textContent=metadata+' · '+type+(result.data.truncated?' · Text preview truncated at '+bytes(size):'');
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
-async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction});}}
+async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,expectedKey:next.key,invocation:key?'keyboard':'button'});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
 function resizePreview(width){
   const total=$('file-workspace').getBoundingClientRect().width||1000;
@@ -412,8 +415,8 @@ async function destinationBuckets(){
 $('destination-account').onchange=destinationBuckets;$('destination-cancel').onclick=()=>$('destination-dialog').close('cancel');
 $('destination-form').onsubmit=event=>{event.preventDefault();try{prefix($('destination-prefix').value);$('destination-dialog').close('ok');}catch(e){$('destination-error').textContent=e.message;}};
 async function chooseDestination(operation){
-  if($('destination-dialog').open)return null;$('destination-title').textContent=operation==='practice'?'Choose Location B for practice copies':(operation==='move'?'Move':'Copy')+' to…';
-  $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=operation==='practice'?current.prefix+'REDOWN-practice/':current.prefix;$('destination-dialog').returnValue='';
+  if($('destination-dialog').open)return null;$('destination-title').textContent=(operation==='move'?'Move':'Copy')+' to…';
+  $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=current.prefix;$('destination-dialog').returnValue='';
   $('destination-dialog').showModal();void destinationBuckets();
   return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
 }
@@ -429,5 +432,5 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
 };
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
-practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),choosePracticeDestination:()=>chooseDestination('practice'),navigatePractice:navigate,approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
+practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

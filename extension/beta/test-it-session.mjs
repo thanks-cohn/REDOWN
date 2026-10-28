@@ -1,13 +1,13 @@
+import {location} from './file-api.mjs';
 // Session provenance is established only by an absent-before destination, a
 // provider copy receipt, and independent metadata + byte read-back.
 const writes=new Set(['copy','move','rename','delete','upload','mkdir','remoteIngest','extractArchiveEntry','createBucket','prepareBucket']);
 const id=(source,key)=>JSON.stringify([source.accountId,source.bucketName,key]);
 const stamp=o=>JSON.stringify([o?.etag,Number(o?.size),o?.uploaded||o?.last_modified||null,o?.version||null]);
 const leaf=key=>key.slice(key.lastIndexOf('/')+1);
-export function createPracticeSession({api,storage,saved,recovery=[],approve,onEvidence=()=>{},captureEvidence=()=>({}),requireLocations=false}){
+export function createPracticeSession({api,storage,saved,recovery=[],approve,onEvidence=()=>{},captureEvidence=()=>({})}){
   const state=saved||{version:1,id:crypto.randomUUID(),index:0,originals:[],objects:[],destinations:[],records:[],pending:null};
   let recoveryRuns=structuredClone(recovery);
-  let setupFolder=null;
   let active=false,locked=false,inFlight=0,restarting=false,saveQueue=Promise.resolve();
   function persist(value){const task=saveQueue.catch(()=>{}).then(()=>storage.set(value));saveQueue=task;return task;}
   function snapshot(current,runs=recoveryRuns){return structuredClone({
@@ -25,22 +25,14 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
   async function check(record){const actual=await read(record.source,record.key);if(!actual.object||stamp(actual.object)!==record.stamp||actual.sha256!==record.sha256)throw Error('A tracked file changed. Refresh and check it before continuing.');return actual;}
   async function originals(){for(const o of state.originals)await check(o);}
   async function source(source,key){let record=state.originals.find(o=>o.identity===id(source,key));if(record){await check(record);return record;}const value=await read(source,key);if(!value.object?.etag||!(value.object.uploaded||value.object.last_modified||value.object.version))throw Error('This file does not have enough identity information for safe practice.');if(!await approve('Practice with this file?',source.bucketName+'/'+key+'\nYour original will remain untouched.'))throw Error('Practice source was not approved.');record={identity:id(source,key),source:{...source},key,stamp:stamp(value.object),sha256:value.sha256,object:value.object,approvedAt:Date.now()};state.originals.push(record);await save();return record;}
-  async function destination(target){if(state.locations&&!Object.values(state.locations).some(l=>id(l,l.prefix||'')===id(target,target.prefix||'')))throw Error('Choose approved Location A or Location B. This destination is not approved.');if(!state.originals.length||target.accountId!==state.originals[0].source.accountId||target.bucketName!==state.originals[0].source.bucketName)throw Error('Practice stays in the approved existing bucket.');const identity=id(target,target.prefix||'');if(!state.destinations.some(d=>d.identity===identity)){if(!await approve('Allow practice copies here?',target.bucketName+'/'+(target.prefix||'')+'\nOnly newly created copies may be changed. Existing files will be preserved.'))throw Error('Destination was not approved.');state.destinations.push({identity,source:{...target}});await save();}}
-  async function configureLocations(a,b){
-    if(!a||!b||id(a,a.prefix||'')===id(b,b.prefix||''))throw Error('Choose two distinct locations. Location B must differ from Location A.');
-    if(a.accountId!==b.accountId||a.bucketName!==b.bucketName)throw Error('Cross-bucket practice is not verified by this adapter. Choose a different folder in the same bucket.');
-    const result=await api.run('list',{source:b});if(result.state!=='completed')throw Error(result.error||'Location B could not be checked.');
-    if(result.data.folderExists===false){
-      const p=b.prefix.replace(/\/$/,''),slash=p.lastIndexOf('/'),parent={...b,prefix:p.slice(0,slash+1)},name=p.slice(slash+1);
-      if(!name||!await approve('Create this practice folder?',b.bucketName+'/'+b.prefix+'\nOnly this folder marker will be created. No bucket will be created.'))throw Error('Practice folder was not approved.');
-      setupFolder={source:parent,name};try{const made=await api.run('mkdir',setupFolder);if(made.state!=='completed')throw Error(made.error||'Folder creation was not confirmed.');}finally{setupFolder=null;}
-    }
-    if(!await approve('Use these two practice locations?','Location A: '+a.bucketName+'/'+(a.prefix||'')+'\nLocation B: '+b.bucketName+'/'+b.prefix+'\nOriginal files remain protected.'))throw Error('Practice locations were not approved.');
-    state.locations={a:{...a},b:{...b}};state.destinations=[a,b].map(source=>({identity:id(source,source.prefix||''),source:{...source}}));await save();
+  async function destination(target,source){
+    const dest=location(target);
+    if((dest.accountId!==source.accountId||dest.bucketName!==source.bucketName)&&!api.crossBucketCopy)throw Error('Cross-bucket copying is not supported by this adapter.');
+    const identity=id(dest,dest.prefix);
+    if(!state.destinations.some(d=>d.identity===identity)){state.destinations.push({identity,source:dest});await save();}
   }
   async function validate(operation,input){
     if(!['copy','move','rename','delete'].includes(operation))throw Error('Exit Test It before using this operation.');
-    if(requireLocations&&!state.locations)throw Error('Select and approve distinct Location A and Location B before copying.');
     if(state.pending)throw Error('An earlier action needs checking. Use Retry before making more changes.');
     const entries=input.entries||[input.entry];if(!entries.length||entries.some(e=>!e||e.folder))throw Error('Practice works with individual files only.');
     if(operation!=='copy'&&!api.conditionalPracticeMutations)throw Error('This bucket cannot enforce practice-copy ownership during changes yet. Rename, Move and Delete are blocked to protect your files.');
@@ -49,7 +41,7 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
     const target=operation==='rename'?{...input.source,prefix:input.entry.key.slice(0,input.entry.key.lastIndexOf('/')+1)}:input.destination;
     const destinations=[];
     if(operation!=='delete'){
-      await destination(target);if(input.conflict==='replace')throw Error('Replace is unavailable in Test It. Use Skip or Keep Both.');
+      await destination(target,input.source);if(input.conflict==='replace')throw Error('Replace is unavailable in Test It. Use Skip or Keep Both.');
       for(const e of entries){let key=(target.prefix||'')+(operation==='rename'?input.newName:leaf(e.key));
         if(operation==='copy'&&id(input.source,e.key)===id(target,key)&&input.conflict==='keep'){const n=leaf(e.key),dot=n.lastIndexOf('.');key=(target.prefix||'')+(dot>0?n.slice(0,dot):n)+' (copy)'+(dot>0?n.slice(dot):'');}
         if(reserved(target,key))throw Error('This destination belongs to an earlier Test It session. Choose an unused destination; its recovery details are retained.');
@@ -62,7 +54,6 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
   }
   async function perform(operation,input,options,execute){
     if(!active)return execute();
-    if(operation==='mkdir'&&setupFolder&&JSON.stringify(input)===JSON.stringify(setupFolder))return execute();
     if(operation==='download'){
       const o=owned(input.source,input.entry.key);if(!o)throw Error('Choose a verified practice copy to download.');await check(o);const started=performance.now(),result=await execute();
       emitEvidence({operation,verdict:result.downloadState==='complete'?'PASSED':'UNCERTAIN',response:{downloadState:result.downloadState,downloadId:result.downloadId},changes:[{id:o.id}],latencyMs:performance.now()-started,observed:result.downloadState==='complete'?'Chrome reported completion. Local downloaded bytes were not independently hashed.':'Chrome download completion was not observed.'});return result;
@@ -99,7 +90,7 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
         const next={id:operation==='copy'?crypto.randomUUID():previous.id,sessionId:state.id,parentId:previous.id||previous.identity,identity:id(dest.source,dest.key),source:dest.source,key:dest.key,stamp:stamp(actual.object),sha256:actual.sha256,object:actual.object,receipt,deleted:false};state.objects.push(next);changes.push({id:next.id,key:next.key,source:next.source,from:{source:previous.source,key:previous.key},sha256:next.sha256,parentId:next.parentId});
       }
       await originals();state.pending=null;await save();
-      report({operation,verdict:'PASSED',response:{completed:response.completed,receipts},changes,latencyMs:performance.now()-started,observed:'Independent remote metadata and SHA-256 read-back matched; originals unchanged.'});return response;
+      const verified={operation,verdict:'PASSED',response:{completed:response.completed,receipts},changes,latencyMs:performance.now()-started,observed:'Independent remote metadata and SHA-256 read-back matched; originals unchanged.',correlation};state.lastVerifiedOperation=structuredClone(verified);await save();report(verified);return response;
     }catch(error){
       if(dispatched){report({operation,verdict:'UNCERTAIN',response:state.pending?.receipts||null,latencyMs:performance.now()-started,observed:'Remote result needs reconciliation. No destructive retry was made.'});}
       else report({operation,verdict:'BLOCKED',observed:'Safety preflight: '+error.message,latencyMs:performance.now()-started});
@@ -136,5 +127,5 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
       return {unfinished:Boolean(archived.session.pending),sessionId:fresh.id};
     }finally{restarting=false;active=wasActive;}
   }
-  return {state,get recovery(){return structuredClone(recoveryRuns);},run,restart,configureLocations,get busy(){return inFlight>0||restarting;},source,owned,save,reconcile,check,originals,assertOwned(source,entries){if(!entries.length||entries.some(e=>e.folder||!owned(source,e.key)||owned(source,e.key).sessionId!==state.id))throw Error('Your original is protected. Select only verified practice copies.');},get active(){return active;},set active(value){active=value;}};
+  return {state,get recovery(){return structuredClone(recoveryRuns);},run,restart,get busy(){return inFlight>0||restarting;},source,owned,save,reconcile,check,originals,assertOwned(source,entries){if(!entries.length||entries.some(e=>e.folder||!owned(source,e.key)||owned(source,e.key).sessionId!==state.id))throw Error('Your original is protected. Select only verified practice copies.');},get active(){return active;},set active(value){active=value;}};
 }

@@ -127,3 +127,13 @@ test('Export keeps fresh results and recovery evidence in separate JSON files',a
  assert.equal(archive.recovery[0].session.id,oldId);assert.equal(archive.recovery[0].session.pending.operation,'copy');assert.match(names[1],/recovery/);
  }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
 });
+
+test('Retry reconciles missed verified Paste without another write and never invents keyboard invocation',async()=>{
+ for(const keyboard of [false,true]){const f=await fixture(keyboard?51:22);try{
+ f.menuCopy();f.doc.getElementById('paste').click();
+ const destination={...f.state.current,prefix:'practice/'};const result=await f.api.run('copy',{source:f.state.current,destination,entries:f.state.selected,conflict:'skip'});assert.equal(result.state,'completed');
+ const index=keyboard?51:22,record=f.saved.records[index];record.verdict='NOT_TESTED';record.observedGuiInteraction=null;f.doc.querySelector('[data-guide-next]').disabled=true;
+ await f.doc.querySelector('[data-guide-retry]').onclick();await tick();
+ assert.equal(record.verdict,keyboard?'NOT_TESTED':'PASSED');assert.equal(f.saved.objects.length,1);assert.ok(f.objects.has('source/original.txt'));
+ }finally{f.dom.window.close();}}
+});
