@@ -107,13 +107,12 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
   }
   return {
     crossBucketCopy:true,
-    // Test It authorizes mutations only for independently verified copies.
-    // R2 source deletion is best-effort (no version-conditioned DELETE).
-    // Do not apply this allowance to originals or normal Explorer operations.
+    // Test It uses the same normal R2 Explorer operations after its ledger
+    // confirms a verified working copy. There is no conditional DELETE in R2.
     practiceMutations:{
-      rename:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true},
-      move:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true},
-      delete:{supported:true,exactIdentity:true}
+      rename:{supported:true},
+      move:{supported:true},
+      delete:{supported:true}
     },
     configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
     async connectionStatus({source},options={}){
@@ -166,7 +165,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       if(size!==Number(before.size)||identity(before)!==identity(after))throw Error('The file changed while it was being checked.');
       return {object:after,sha256,status:response.status};
     },
-    async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n),...(o?.practice?.operation==='mkdir'?{createOnly:true}:{})},o);},
+    async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)},o);},
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
     rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
     delete:({source,entries},o)=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)},o),
