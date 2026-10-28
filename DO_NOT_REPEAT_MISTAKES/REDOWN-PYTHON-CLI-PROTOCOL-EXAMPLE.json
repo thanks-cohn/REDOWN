@@ -1,0 +1,176 @@
+{
+  "schema_version": "0.1.0-draft",
+  "kind": "redown.test_run",
+  "run_id": "run-20261028-0001",
+  "scenario_id": "mixed-directory-roundtrip",
+  "seed": 1842,
+  "created_at": "2026-10-28T15:00:00Z",
+  "time_budget": {
+    "total_seconds": 2400,
+    "soft_stop_seconds": 2280,
+    "per_operation_seconds": 180,
+    "auth_expiry_strategy": "refresh_if_supported_else_pause_for_reauthorization",
+    "note": "40-minute run limit is not a guarantee against OAuth token expiry"
+  },
+  "environment": {
+    "runner": "python-cli",
+    "transport": "native-host-control-plus-streaming-data",
+    "api": "redown-universal-file-api",
+    "api_version": "to-be-discovered",
+    "provider": "cloudflare-r2",
+    "sandbox_prefix": "redown-test-lab/run-20261028-0001/",
+    "fixture_root": "./REDOWN-TEST-LAB/fixtures",
+    "fixture_budget_bytes": 524288000,
+    "fixtures_immutable": true
+  },
+  "manifest": {
+    "file_count": 128,
+    "aggregate_bytes": 524288000,
+    "inventory_sha256": "REPLACE_WITH_COMPUTED_MANIFEST_SHA256",
+    "representative_files": [
+      {
+        "fixture_id": "f-001",
+        "relative_path": "documents/report.pdf",
+        "size_bytes": 242483,
+        "sha256": "REPLACE_WITH_64_HEX_HASH"
+      },
+      {
+        "fixture_id": "f-002",
+        "relative_path": "nested/deep/image.png",
+        "size_bytes": 1903335,
+        "sha256": "REPLACE_WITH_64_HEX_HASH"
+      }
+    ]
+  },
+  "request": {
+    "command_id": "cmd-0042",
+    "idempotency_key": "run-20261028-0001:cmd-0042",
+    "operation": "move",
+    "source": {
+      "provider": "cloudflare-r2",
+      "bucket": "redown-test-bucket",
+      "key": "redown-test-lab/run-20261028-0001/source/image.png"
+    },
+    "destination": {
+      "provider": "cloudflare-r2",
+      "bucket": "redown-test-bucket",
+      "key": "redown-test-lab/run-20261028-0001/destination/image.png"
+    },
+    "conflict": "skip",
+    "expected": {
+      "destination_exists": true,
+      "source_absent": true,
+      "sha256_equals_fixture": true
+    },
+    "deadline_seconds": 180
+  },
+  "response": {
+    "command_id": "cmd-0042",
+    "status": "completed",
+    "code": "OK",
+    "message": "Move completed",
+    "started_at": "2026-10-28T15:02:00Z",
+    "finished_at": "2026-10-28T15:02:02Z",
+    "duration_ms": 2150,
+    "provider_http_status": 200,
+    "provider_request_id": "example-provider-request-id",
+    "retryable": false,
+    "items": [
+      {
+        "source_key": "redown-test-lab/run-20261028-0001/source/image.png",
+        "destination_key": "redown-test-lab/run-20261028-0001/destination/image.png",
+        "status": "completed",
+        "code": "OK",
+        "bytes_transferred": 1903335
+      }
+    ],
+    "counts": {
+      "requested": 1,
+      "completed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "verification": {
+    "status": "passed",
+    "checks": [
+      {
+        "name": "destination_exists",
+        "status": "passed"
+      },
+      {
+        "name": "source_absent",
+        "status": "passed"
+      },
+      {
+        "name": "sha256_match",
+        "status": "passed",
+        "observed_sha256": "REPLACE_WITH_64_HEX_HASH"
+      }
+    ],
+    "verified_by": "independent_readback",
+    "verified_at": "2026-10-28T15:02:04Z"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "time": "2026-10-28T15:02:00Z",
+      "phase": "command.accepted",
+      "code": "ACCEPTED",
+      "message": "Command accepted"
+    },
+    {
+      "sequence": 2,
+      "time": "2026-10-28T15:02:01Z",
+      "phase": "provider.transfer",
+      "code": "IN_PROGRESS",
+      "message": "Transferring file"
+    },
+    {
+      "sequence": 3,
+      "time": "2026-10-28T15:02:02Z",
+      "phase": "provider.completed",
+      "code": "OK",
+      "message": "Provider reported completion"
+    },
+    {
+      "sequence": 4,
+      "time": "2026-10-28T15:02:04Z",
+      "phase": "verification.passed",
+      "code": "VERIFIED",
+      "message": "Independent verification passed"
+    }
+  ],
+  "error_example": {
+    "command_id": "cmd-0043",
+    "status": "failed",
+    "code": "DESTINATION_EXISTS",
+    "message": "Destination already contains a file",
+    "category": "conflict",
+    "stage": "preflight",
+    "retryable": false,
+    "provider_http_status": 409,
+    "provider_code": "Conflict",
+    "details": {
+      "destination_key": "redown-test-lab/run-20261028-0001/destination/image.png"
+    },
+    "suggested_action": "Use keep-both or a different destination; do not retry unchanged",
+    "original_unchanged": true
+  },
+  "summary": {
+    "status": "sample_only",
+    "pass_rate_target": 1,
+    "requested": 1,
+    "verified_passed": 1,
+    "failed": 0,
+    "unverified": 0,
+    "notes": "Illustrative data only, not a measured REDOWN test result"
+  },
+  "artifacts": {
+    "jsonl_events": "reports/run-20261028-0001.events.jsonl",
+    "json_summary": "reports/run-20261028-0001.summary.json",
+    "human_report": "reports/run-20261028-0001.md",
+    "manifest": "manifests/run-20261028-0001.json",
+    "replay": "scenarios/run-20261028-0001.yaml"
+  }
+}
