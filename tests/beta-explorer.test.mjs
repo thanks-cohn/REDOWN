@@ -18,7 +18,7 @@ async function fixture(){
   const code=Function(`return \`${embedded[1]}\``)().replace('__REDOWN_SHARED_SECRET__','fixture-secret');
   const worker=(await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'))).default;
   const stored=new Map(),messages=[],requests=[];let cancelled=false;
-  function object(k,bytes,options={}){const md5=createHash('md5').update(bytes).digest();return {key:k,bytes,size:bytes.length,etag:md5.toString('hex'),version:randomUUID(),checksums:{md5:md5.buffer.slice(md5.byteOffset,md5.byteOffset+md5.byteLength)},httpMetadata:options.httpMetadata||{},customMetadata:options.customMetadata||{},body:new Blob([bytes]).stream()};}
+  function object(k,bytes,options={}){const md5=createHash('md5').update(bytes).digest();return {key:k,bytes,size:bytes.length,etag:md5.toString('hex'),version:randomUUID(),uploaded:new Date().toISOString(),checksums:{md5:md5.buffer.slice(md5.byteOffset,md5.byteOffset+md5.byteLength)},httpMetadata:options.httpMetadata||{},customMetadata:options.customMetadata||{},body:new Blob([bytes]).stream()};}
   const bucket={
     async head(k){return stored.get(k)||null;},async get(k,options={}){const o=stored.get(k);if(!o)return null;const bytes=options.range?o.bytes.slice(options.range.offset,options.range.offset+options.range.length):o.bytes;return {...o,body:new Blob([bytes]).stream(),arrayBuffer:async()=>Uint8Array.from(bytes).buffer};},
     async put(k,value,options={}){const old=stored.get(k);if(options.onlyIf instanceof Headers&&options.onlyIf.get('if-none-match')==='*'&&old)return null;if(options.onlyIf?.etagMatches&&old?.etag!==options.onlyIf.etagMatches)return null;const bytes=Buffer.from(await new Response(value).arrayBuffer());if(options.md5)assert.equal(createHash('md5').update(bytes).digest('hex'),options.md5);const o=object(k,bytes,options);stored.set(k,o);return o;},
@@ -53,7 +53,7 @@ async function fixture(){
   const http={async boundedFetch(url,options){assert.equal(url,profile.workerUrl);assert.equal(JSON.parse(options.body).action,'capabilities');return worker.fetch(new Request(url,options),{STORAGE:bucket});},async request(path,options={}){requests.push({path,options});if(options.method==='PUT'){if(cancelled)throw Error('Disconnected');const k=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/');await bucket.put(k,options.body,{httpMetadata:{contentType:options.headers['content-type']}});return Response.json({success:true,result:{key:k}});}
     if(path.includes('/objects/')){const k=path.split('/objects/')[1].split('/').map(decodeURIComponent).join('/'),o=stored.get(k);return o?new Response(new Blob([o.bytes]).stream()):new Response(null,{status:404});}
     const u=new URL('https://fixture.invalid'+path),p=u.searchParams.get('prefix')||'',delimiter=u.searchParams.get('delimiter'),delimited=new Set(),objects=[];
-    for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag});}
+    for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag,version:o.version,uploaded:o.uploaded});}
     return Response.json({success:true,result:{objects,delimited:[...delimited]}});
   },async download(s,k,n,onState){assert.ok(stored.has(k));onState({state:'complete'});return 123;}};
   const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
@@ -607,5 +607,44 @@ test('Restart Test It confirms, replaces saved results, reopens exercise one and
  await settle(()=>f.storage.betaExplorerTestIt?.records.length===60);
  assert.equal(f.storage.betaExplorerTestIt.index,0);assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'&&r.observedGuiInteraction===null));
  assert.deepEqual([...f.stored.keys()],before);assert.ok(f.storage.betaExplorerTestItOwnership);d.querySelector('[data-guide-exit]').click();
+ }finally{f.dom.window.close();}
+});
+
+async function practiceAt(f,index){const {d,settle}=f;d.querySelector('#test-it').click();await settle(()=>d.querySelector('.guide-card'));for(let i=0;i<index;i++)d.querySelector('[data-guide-skip]').click();}
+async function approvePracticeSource(f){const {d,w,settle}=f;
+ d.querySelector('[data-key="root.txt"]').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();
+ await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);
+ d.querySelector('#destination-prefix').value='Photos/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+ await settle(()=>d.querySelector('#dialog').open);assert.match(d.querySelector('#dialog-title').textContent,/two practice locations/);d.querySelector('#dialog-confirm').click();
+ await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+}
+test('Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into B',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'22 of 60');assert.match(d.querySelector('[data-guide-text]').textContent,/Location B: disposable-fixture\/Photos\//);
+ d.querySelector('#copy').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true,'Toolbar cannot satisfy context-menu exercise');
+ const row=d.querySelector('[data-key="root.txt"]');row.dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,clientX:10,clientY:10}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();
+ assert.equal(d.querySelector('[data-guide-next]').disabled,false);await settle(()=>f.storage.betaExplorerTestIt?.records[21].verdict==='PASSED');assert.equal(f.storage.betaExplorerTestIt.records[21].observedGuiInteraction.input.context,true);
+ d.querySelector('[data-guide-next]').click();d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));
+ assert.equal(d.querySelector('#paste').disabled,false);d.querySelector('#paste').click();await settle(()=>f.storage.betaExplorerTestIt?.records[22].verdict==='PASSED');
+ assert.equal(hash(f.stored.get('Photos/root.txt').bytes),hash(f.stored.get('root.txt').bytes));assert.equal(f.storage.betaExplorerTestIt.objects[0].sessionId,f.storage.betaExplorerTestIt.id);assert.equal(f.storage.betaExplorerTestIt.records[22].sha256Comparisons.length,1);await settle(()=>d.querySelector('[data-key="Photos/root.txt"]')&&!d.querySelector('#upload').disabled);assert.equal(f.storage.betaExplorerTestIt.records[22].actualApiOperation,'copy','Refresh read must not overwrite copy evidence');
+ // Generic Copy exercises observe all command methods, while Ctrl+C remains specific.
+ for(let i=22;i<50;i++)d.querySelector('[data-guide-skip]').click();d.querySelector('[data-key="Photos/root.txt"]').click();d.querySelector('#copy').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'c',ctrlKey:true,bubbles:true}));assert.equal(d.querySelector('[data-guide-next]').disabled,false);
+ const before=hash(f.stored.get('root.txt').bytes);d.querySelector('[data-guide-exit]').click();assert.equal(hash(f.stored.get('root.txt').bytes),before);
+ }finally{f.dom.window.close();}
+});
+test('Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await f.bucket.put('Photos/two.jpg','second image');
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/two.jpg"]'));await practiceAt(f,13);
+ d.querySelector('[data-key="Photos/one.jpg"]').click();d.querySelector('#preview').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ d.querySelector('[data-guide-exit]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+ // Arrow navigation from actual preview focus, the guide deliberately owns arrows on its controls.
+ d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ d.querySelector('#preview-lightbox').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'18 of 60');assert.ok(d.querySelector('#preview-dialog').classList.contains('image-lightbox'));
+ d.querySelector('[data-guide-exit]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+ assert.ok(d.querySelector('.guide-card'));assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);assert.equal(d.querySelector('[data-guide-next]').disabled,false);
+ await settle(()=>f.storage.betaExplorerTestIt?.records[17].verdict==='PASSED');d.querySelector('[data-guide-exit]').click();
  }finally{f.dom.window.close();}
 });

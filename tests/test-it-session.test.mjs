@@ -11,7 +11,7 @@ function fixture(saved){
   const put=(key,bytes)=>objects.set(key,{key,size:bytes.length,etag:hash(bytes),uploaded:new Date(1700000000000+ ++serial).toISOString(),version:'v'+serial,bytes});
   put('original.txt','original');put('unrelated.txt','unrelated');
   const inspect=key=>{const o=objects.get(key);if(!o)return {object:null};const {bytes,...object}=o;return {object,sha256:hash(bytes),status:200};};
-  const adapter={conditionalPracticeMutations:true,inspect:async({key})=>inspect(key),stat:async({key})=>({object:inspect(key).object}),
+  const adapter={conditionalPracticeMutations:true,list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>({object:inspect(key).object}),
     copy:async input=>transfer('copy',input),move:async input=>transfer('move',input),
     rename:async({source,entry,newName})=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName}),
     delete:async({entries})=>{calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
@@ -64,4 +64,20 @@ test('restart refuses an operation still in flight without resetting results',as
  const running=f.session.run('list',{}, {},()=>new Promise(resolve=>{finish=resolve;}));
  assert.equal(f.session.busy,true);await assert.rejects(f.session.restart(),/current file operation/);assert.equal(f.session.state.id,oldId);
  finish({entries:[]});await running;assert.equal(f.session.busy,false);await f.session.restart();assert.notEqual(f.session.state.id,oldId);
+});
+
+
+test('two locations must differ, cross-bucket practice fails closed, and only an approved empty folder marker is created',async()=>{
+ const f=fixture();await f.session.source(source,'original.txt');
+ await assert.rejects(f.session.configureLocations(source,source),/distinct/);
+ await assert.rejects(f.session.configureLocations(source,{...source,bucketName:'another',prefix:'B/'}),/Cross-bucket/);
+ assert.deepEqual(f.calls,[]);
+ await f.session.configureLocations(source,{...source,prefix:'B/'});assert.deepEqual(f.calls,['mkdir']);assert.ok(f.objects.has('B/.redown'));assert.equal(f.session.state.destinations.length,2);
+ assert.equal((await f.copy('original.txt','B/')).state,'completed');
+ assert.equal((await f.copy('original.txt','unexpected/')).state,'failed');assert.ok(!f.objects.has('unexpected/original.txt'));
+ assert.equal((await f.api.run('mkdir',{source,name:'unapproved'})).state,'failed');assert.ok(!f.objects.has('unapproved/.redown'));
+});
+test('restart preserves provenance but old-session objects cannot be destructively modified in the fresh session',async()=>{
+ const f=fixture();await f.copy();await f.session.restart();const count=f.calls.length;
+ const r=await f.api.run('delete',{source,entries:[{key:'practice/original.txt'}]});assert.equal(r.state,'failed');assert.match(r.error,/earlier Test It session/);assert.equal(f.calls.length,count);assert.ok(f.objects.has('practice/original.txt'));
 });

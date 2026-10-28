@@ -29,6 +29,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       if(tools&&left+cw>tools.left-gap&&top+ch>tools.top-gap)top=tools.top-ch-gap;
     }
     if(manualPosition){left=manualPosition.left;top=manualPosition.top;}
+    if(rect&&selector?.startsWith('#preview-')&&left<rect.right+gap&&left+cw>rect.left-gap&&top<rect.bottom+gap&&top+ch>rect.top-gap){top=rect.bottom+gap;if(top+ch>height-margin){top=margin;card.style.maxHeight=Math.max(80,rect.top-gap-margin)+'px';}}
     const menu=draggable&&doc.querySelector('#test-it-tools-menu:not([hidden])')?.getBoundingClientRect();
     if(menu&&left+cw>menu.left-gap&&left<menu.right+gap&&top+ch>menu.top-gap&&top<menu.bottom+gap){
       if(menu.top-ch-gap>=margin)top=menu.top-ch-gap;
@@ -71,7 +72,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     previousFocus=null;(finished?onFinish:onExit)();
   }
   function exit(){stop();}
-  function keydown(event){if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
+  function keydown(event){if(event.defaultPrevented||draggable&&doc.querySelector('dialog[open],#context:not([hidden]),#test-it-tools-menu:not([hidden])'))return;if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
   function signal(event){if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;if(autoAdvance)advance();}}
   function show(){
     completed=false;clearHighlight();const step=steps[index];onStep(index);

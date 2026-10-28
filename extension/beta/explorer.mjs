@@ -44,7 +44,7 @@ function render(){
     const title=document.createElement('span');title.className='file-name';const icon=document.createElement('span');icon.className='icon';icon.setAttribute('aria-hidden','true');icon.textContent=item.folder?'▰':(item.displayName.split('.').length>1?item.displayName.split('.').pop().slice(0,4).toUpperCase():'FILE');const text=document.createElement('span');text.className='name';text.textContent=item.displayName;title.append(icon,text);
     const size=document.createElement('span');size.className='file-size';size.textContent=item.folder?'Folder':bytes(item.size);const date=document.createElement('span');date.className='file-date';const d=new Date(item.uploaded||item.last_modified||item.lastModified||'');date.textContent=Number.isNaN(d.getTime())?'—':d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});row.append(title,size,date);
     row.draggable=true;row.ondragstart=event=>{if(busy||listingState!=='ready'){event.preventDefault();return;}if(!selected.has(item.key)){selected=new Set([item.key]);paintSelection();}dragState={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};event.dataTransfer.setData('application/x-redown-beta','selection');event.dataTransfer.effectAllowed='copyMove';};row.ondragend=()=>{dragState=null;row.classList.remove('drop-target');};
-    if(item.folder){row.ondragover=event=>{event.preventDefault();event.stopPropagation();if(!busy&&listingState==='ready'){row.classList.add('drop-target');event.dataTransfer.dropEffect=dragState?(event.ctrlKey||event.metaKey?'copy':'move'):'copy';}};row.ondragleave=()=>row.classList.remove('drop-target');row.ondrop=event=>{event.preventDefault();event.stopPropagation();row.classList.remove('drop-target');if(busy||listingState!=='ready')return;const target={...context(),prefix:item.key};if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(target,clip).catch(e=>status(e.message));}else void droppedFiles(event,target);};}
+    if(item.folder){row.ondragover=event=>{event.preventDefault();event.stopPropagation();if(!busy&&listingState==='ready'){row.classList.add('drop-target');event.dataTransfer.dropEffect=dragState?(event.ctrlKey||event.metaKey?'copy':'move'):'copy';}};row.ondragleave=()=>row.classList.remove('drop-target');row.ondrop=event=>{event.preventDefault();event.stopPropagation();row.classList.remove('drop-target');if(busy||listingState!=='ready')return;const target={...context(),prefix:item.key};if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(target,clip,{method:'drop'}).catch(e=>status(e.message));}else void droppedFiles(event,target);};}
     row.onclick=event=>{
       if(busy||listingState!=='ready')return;
       if(event.shiftKey&&anchor>=0){if(!event.ctrlKey&&!event.metaKey)selected.clear();for(const e of shown.slice(Math.min(anchor,index),Math.max(anchor,index)+1))selected.add(e.key);}
@@ -61,7 +61,9 @@ function render(){
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''})));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target})));}}
   controls();syncSideSelection();
 }
-function guideAction(action,detail={}){document.dispatchEvent(new CustomEvent('redown:gui',{detail:{...detail,commandAction:detail.action,action}}));}
+let commandInvocation=null;
+function invokeCommand(id,method,input={}){commandInvocation={method,...input};try{$(id).click();}finally{commandInvocation=null;}}
+function guideAction(action,detail={}){if(action==='command')detail={commandId:crypto.randomUUID(),invocation:commandInvocation||{method:'toolbar'},entries:chosen().map(e=>({...e})),source:context(),...detail};document.dispatchEvent(new CustomEvent('redown:gui',{detail:{...detail,commandAction:detail.action,action}}));}
 function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
 function progress(event){
   if(event.phase==='item'){$('progress').hidden=false;$('progress').max=event.total;$('progress').value=event.index;status(`Processing item ${event.index+1} of ${event.total}…`);}
@@ -128,10 +130,10 @@ const actions={
   async duplicate(){if(busy||!selected.size)return;guideAction('command',{action:'duplicate'});await actions.paste(context(),{source:context(),entries:chosen().map(e=>({...e})),operation:'copy',conflict:'keep'});},
   async 'copy-to'(){await chooseTransfer('copy');},
   async 'move-to'(){await chooseTransfer('move');},
-  copy(){if(busy||!selected.size)return;guideAction('command',{action:'copy'});clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};status(selected.size+' items copied to REDOWN clipboard.');controls();},
-  cut(){if(busy||!selected.size)return;if(practice?.session?.active)practice.session.assertOwned(context(),chosen());guideAction('command',{action:'cut'});clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};status(selected.size+' items ready to move. Sources remain until paste.');controls();},
-  async paste(destination=context(),clip=clipboard){
-    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste'});const conflict=clip.conflict||$('conflict').value;
+  copy(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};guideAction('command',{action:'copy',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items copied to REDOWN clipboard.');controls();},
+  cut(){if(busy||!selected.size)return;if(practice?.session?.active)practice.session.assertOwned(context(),chosen());clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};guideAction('command',{action:'cut',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items ready to move. Sources remain until paste.');controls();},
+  async paste(destination=context(),clip=clipboard,invocation=commandInvocation||{method:'toolbar'}){
+    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste',invocation,entries:clip.entries,source:clip.source,destination,clipboard:{source:clip.source,entries:clip.entries,operation:clip.operation}});const conflict=clip.conflict||$('conflict').value;
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
     await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&result.state==='completed')clipboard=null;});
   },
@@ -142,7 +144,7 @@ const actions={
   async properties(){const e=chosen()[0],source=context();if(!e||busy)return;await run(async()=>{const result=e.folder?{key:e.key,type:'Folder prefix',bucket:source.bucketName,...(await request('list',{source:{...source,prefix:e.key}})).data}:(await request('stat',{source,key:e.key})).data.object;if(!result)throw Error('This file is no longer present. Refresh the folder.');await dialog('Properties',{input:false,details:JSON.stringify(result,null,2),confirm:'Close'});},{refresh:false});},
   async remote(){const destination=context();if(!destination||busy)return;const url=await dialog('Send URL to cloud',{description:'Cloudflare fetches the source directly into '+destination.bucketName+'/'+destination.prefix+'. Your computer does not relay the bytes.'});if(!url)return;await run(async()=>{status('Cloudflare is acquiring the remote source…');const result=await request('remoteIngest',{destination,url});status('Remote acquisition confirmed by Worker. Refresh to inspect the saved object.');return result;});}
 };
-for(const [id,action] of Object.entries(actions))$(id).onclick=()=>{Promise.resolve(action()).catch(e=>status(e.message));};
+for(const [id,action] of Object.entries(actions))$(id).onclick=()=>{try{Promise.resolve(action()).catch(e=>status(e.message));}catch(e){status(e.message);}};
 async function upload(files,source=context()){
 if(!source||busy||listingState!=='ready'||!files.length)return;
   const conflict=$('conflict').value;
@@ -163,13 +165,13 @@ async function droppedFiles(event,target=context()){
     const inputs=files.map(({file,relativePath})=>({source:target,file,key:target.prefix+relativePath,conflict}));outcome(await api.batch('upload',inputs,{signal,onProgress:progress}));
   });
 }
-$('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(listingState!=='ready')return;if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip).catch(e=>status(e.message));}else void droppedFiles(event);};
+$('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(listingState!=='ready')return;if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip,{method:'drop'}).catch(e=>status(e.message));}else void droppedFiles(event);};
 $('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>refreshConnection(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';guideAction('switch-view');};
 $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
-function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir','refresh'].filter(id=>!$(id).disabled).map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;$(id).click();});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
+function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir','refresh'].filter(id=>!$(id).disabled).map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;invokeCommand(id,'contextmenu');});b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
@@ -183,7 +185,7 @@ document.addEventListener('keydown',event=>{
   else if(modified&&event.shiftKey&&k==='n'){event.preventDefault();$('mkdir').click();}
   else if(['ArrowDown','ArrowUp'].includes(event.key)&&event.target.closest?.('#files')){event.preventDefault();const rows=[...document.querySelectorAll('.file')],i=rows.indexOf(event.target.closest?.('.file')),next=rows[Math.max(0,Math.min(rows.length-1,i+(event.key==='ArrowDown'?1:-1)))];next?.focus();if(next&&!modified)next.click();}
   else if(modified&&k==='a'){event.preventDefault();selected=new Set(visible().map(e=>e.key));paintSelection();}
-  else if(modified&&['c','x','v'].includes(k)){event.preventDefault();$( {c:'copy',x:'cut',v:'paste'}[k]).click();}
+  else if(modified&&['c','x','v'].includes(k)){event.preventDefault();invokeCommand({c:'copy',x:'cut',v:'paste'}[k],'keyboard',{key:k,ctrl:true});}
   else if(event.key==='F2'){event.preventDefault();$('rename').click();}
   else if(event.key==='Delete'){$('delete').click();}
   else if(event.key==='Enter'&&event.target.closest?.('.file')){event.preventDefault();event.target.closest?.('.file').ondblclick();}
@@ -265,10 +267,11 @@ $('preferences-form').onsubmit=event=>{event.preventDefault();try{const values=a
 // Both presentations own the same viewer DOM and the same universal API read.
 let previewMode='window',sideState='closed',previewExpanded=false,previewWidth=400;
 let previewEpoch=0,previewController=null,previewIdentity='',lightbox=false;
-function setLightbox(active){
+function setLightbox(active,key){
   lightbox=Boolean(active&&previewMode==='window'&&$('preview-dialog').open);
   $('preview-dialog').classList.toggle('image-lightbox',lightbox);
   if(lightbox)$('preview-dialog').focus();
+  guideAction('lightbox-change',{open:lightbox,key});
 }
 function lightboxControl(){
   $('preview-lightbox').hidden=previewMode!=='window'||!(previewType(previewItem?.key||'')||'').startsWith('image/');
@@ -320,16 +323,20 @@ $('preview-mode-inline').onchange=event=>setPreviewMode(event.target.value);
 $('preview-close').onclick=()=>{closePreview();sideState='closed';if($('preview-dialog').open)$('preview-dialog').close();layoutPreview();$('preview').focus();};
 $('preview-lightbox').onclick=()=>{if($('preview-content').querySelector('img'))setLightbox(true);};
 $('preview-dialog').addEventListener('click',event=>{if(lightbox&&[ $('preview-dialog'),previewViewer,$('preview-content') ].includes(event.target))setLightbox(false);});
-$('preview-dialog').addEventListener('cancel',event=>{event.preventDefault();if(lightbox)setLightbox(false);else $('preview-close').click();});
+$('preview-dialog').addEventListener('cancel',event=>{event.preventDefault();if(lightbox)setLightbox(false,'Escape');else $('preview-close').click();});
 document.addEventListener('keydown',event=>{
-  if(event.target.closest?.('.guide-card')||previewMode!=='window'||!$('preview-dialog').open)return;
+  if(previewMode!=='window'||!$('preview-dialog').open)return;
+  if(event.target.closest?.('.guide-card:not(.test-it-card)'))return;
+  if([...document.querySelectorAll('dialog[open]')].at(-1)!==$('preview-dialog'))return;
+  if(event.key==='Escape'&&!$('context').hidden){event.preventDefault();event.stopImmediatePropagation();$('context').hidden=true;return;}
+  if(event.key!=='Escape'&&event.target.closest?.('.guide-card'))return;
   // Keep all Explorer shortcuts behind the modal, even if focus was elsewhere.
-  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();if(lightbox)setLightbox(false);else $('preview-close').click();return;}
+  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();if(lightbox)setLightbox(false,'Escape');else $('preview-close').click();return;}
   if(!['ArrowLeft','ArrowRight'].includes(event.key)) {if(!event.target.closest?.('#preview-dialog'))event.stopImmediatePropagation();return;}
   if(event.target.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),video,audio,[role="slider"],[role="spinbutton"]'))return;
   event.stopImmediatePropagation();
   if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
-  event.preventDefault();void adjacentPreview(event.key==='ArrowRight'?1:-1);
+  event.preventDefault();void adjacentPreview(event.key==='ArrowRight'?1:-1,event.key);
 },true);
 $('preview-dialog').addEventListener('close',()=>{if(previewMode==='window'&&!$('preview-dialog').open)closePreview();});
 $('preview-minimize').onclick=()=>{sideState=sideState==='minimized'?'open':'minimized';if(sideState==='minimized')stopPreviewMedia();layoutPreview();if(sideState==='open')syncSideSelection();};
@@ -343,11 +350,11 @@ function syncSideSelection(){
   if(previewItem)closePreview();
   $('preview-content').textContent=selected.size?'Select one item to preview.':'Select a file or folder to preview.';
 }
-async function showPreview(item){
+async function showPreview(item,navigation={}){
   const source=context();if(!source)return;
   const identity=JSON.stringify([source.accountId,source.bucketName,source.prefix,item.key,item.size,item.uploaded,item.last_modified,item.lastModified]);
   presentPreview();
-  if(identity===previewIdentity){guideAction('preview-open');return;}
+  if(identity===previewIdentity){guideAction('preview-open',navigation);return;}
   closePreview(lightbox);previewIdentity=identity;previewItem={...item,source};lightboxControl();
   $('preview-title').textContent=item.displayName;
   const metadata=[item.folder?'Folder':bytes(item.size),item.folder?'Folder prefix':previewType(item.key)||item.key.split('.').pop().toUpperCase(),source.bucketName+'/'+item.key,item.uploaded||item.last_modified||item.lastModified].filter(Boolean).join(' · ');
@@ -370,11 +377,11 @@ async function showPreview(item){
     if(ticket!==previewEpoch||abort.signal.aborted)return;
     if(node.tagName!=='PRE')node.addEventListener('error',()=>{if(ticket===previewEpoch){setLightbox(false);$('preview-lightbox').disabled=true;$('preview-content').textContent='This file could not be displayed. The content may be damaged or unsupported by your browser.';$('preview-content').append(download());}},{once:true});
     previewUrl=ownedUrl;ownedUrl='';
-    $('preview-content').replaceChildren(node);lightboxControl();guideAction('preview-open');$('preview-info').textContent=metadata+' · '+type+(result.data.truncated?' · Text preview truncated at '+bytes(size):'');
+    $('preview-content').replaceChildren(node);lightboxControl();guideAction('preview-open',navigation);$('preview-info').textContent=metadata+' · '+type+(result.data.truncated?' · Text preview truncated at '+bytes(size):'');
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
-async function adjacentPreview(direction){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next);}}
+async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
 function resizePreview(width){
   const total=$('file-workspace').getBoundingClientRect().width||1000;
@@ -405,8 +412,8 @@ async function destinationBuckets(){
 $('destination-account').onchange=destinationBuckets;$('destination-cancel').onclick=()=>$('destination-dialog').close('cancel');
 $('destination-form').onsubmit=event=>{event.preventDefault();try{prefix($('destination-prefix').value);$('destination-dialog').close('ok');}catch(e){$('destination-error').textContent=e.message;}};
 async function chooseDestination(operation){
-  if($('destination-dialog').open)return null;$('destination-title').textContent=(operation==='move'?'Move':'Copy')+' to…';
-  $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=current.prefix;$('destination-dialog').returnValue='';
+  if($('destination-dialog').open)return null;$('destination-title').textContent=operation==='practice'?'Choose Location B for practice copies':(operation==='move'?'Move':'Copy')+' to…';
+  $('destination-account').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('destination-account').value=current.accountId;$('destination-prefix').value=operation==='practice'?current.prefix+'REDOWN-practice/':current.prefix;$('destination-dialog').returnValue='';
   $('destination-dialog').showModal();void destinationBuckets();
   return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
 }
@@ -422,5 +429,5 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
 };
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
-practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
+practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),choosePracticeDestination:()=>chooseDestination('practice'),navigatePractice:navigate,approve:(title,description)=>dialog(title,{input:false,description,confirm:'Approve'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();

@@ -63,3 +63,35 @@ Verification:
 - `npm run check` and `git diff --check`: passed.
 - Rendered visual acceptance at desktop/mobile sizes and installed Chrome: **NOT_TESTED**. No Chromium binary was installed; the browser download returned an invalid archive. DOM tests cover pointer movement, viewport clamping and menu behavior, not actual rendered appearance.
 - Live Cloudflare/R2: **NOT_TESTED**. No real cloud objects were mutated.
+
+## October 27 critical repair follow-up
+
+Base: `fcb3246` on `beta-explorer`. **Partial delivery: the final live copy/rename/move/delete acceptance criterion is NOT met.** No claim of a passed uninterrupted R2 sequence or completed 60-exercise session.
+
+### Causes and repairs
+
+| Issue | Defective layer / finding | Change and remaining boundary |
+| --- | --- | --- |
+| Copy recognition | Observer depended on captured/synthetic input; Explorer emitted Copy/Cut before assigning the clipboard. | Explorer emits committed clipboard identities, command UUID, source, destination and explicit context-menu/keyboard/toolbar provenance. Method-specific predicates remain enforced. Existing user-session screenshots/JSON were not available as attachments in this checkout, so their exact failure path is not independently reproduced. |
+| Rename ownership | Deliberate production adapter capability gate, not a missing ledger lookup. Worker rename/move/delete ultimately use unconditional R2 deletion after preflight checks. | Guard retained. Matching metadata, version and SHA-256 do not atomically bind deletion to that object. Enabling a Boolean would expose an external-replacement race. Old-session destructive targets are additionally rejected; exposed destination versions must match the receipt. **Production rename/move/delete remain blocked.** |
+| Cut/Paste | Cut already leaves sources intact. Paste is a distinct asynchronous move, blocked by the same production gate. Observer also used mutable command state and incomplete multi-file return identities. | Freeze exercise/command correlation per operation, retain late evidence on its originating exercise, and track logical IDs plus source locations across multi-stage moves. Capable mock passes the existing ownership chain; production move is not enabled. |
+| Escape and image navigation | Guide capture could dismiss Test It while focus was on its controls; Preview explicitly ignored guide focus. Preview stopped keyboard propagation before the observer; image predicates used getElementById with a CSS selector. | Preview owns Escape over Test It when open, respects a newer transient dialog/context menu, and reports Lightbox/arrow transitions directly. Guide defers to higher layers. Correct image selectors. Existing Tour behavior retained. |
+| One destination | No two-location prerequisite existed; destinations were approved ad hoc during writes. | Exercise 21 approves the source at A and uses the existing destination picker for distinct B. Same-bucket folders are supported. A missing prefix requires explicit folder-marker authorization through existing mkdir; no bucket creation. Production writes require both locations. Unapproved destinations and cross-bucket practice are rejected. |
+| Export truth | Automatic list/preview observations overwrote verified mutation operation/response fields. | Read observations, command interactions and API evidence are retained separately. Observation mismatches/callback failures are recorded as observer failures, not provider failures. |
+
+The guide displays both locations and the current working copy, provides Open Location A/B controls, and explains unsupported destructive steps instead of asking the user to try an impossible operation. Source setup is generation-checked against Skip/exit. Workflow copy ID, rename origin and move-return locations persist across resume; restart clears transient workflow/results without modifying cloud files. The six-dot grip, drag behavior and anchored tools drop-up remain. Preview target placement avoids the highlighted navigation control when practical; actual rendered positioning still needs browser acceptance.
+
+### Verification boundaries
+
+- Focused DOM/adapter/session/Tour/menu suite: results appended below. These execute real Explorer handlers in jsdom and the production embedded Worker against in-memory R2, **not installed Chrome or live Cloudflare**.
+- New DOM sequence: approve A/B → actual context-menu Copy → recognize exercise 22 → navigate to B with clipboard intact → Paste → independent fixture metadata/SHA-256 → recognize exercise 23. Toolbar is recorded but cannot satisfy the context-only exercise; Ctrl+C satisfies its keyboard exercise.
+- New Preview sequence: open image → Right → Left → Lightbox → Escape with focus on Test It → Lightbox closed, Window Preview and Test It preserved, exercise 18 passed.
+- Session fixtures cover exact ownership, original/collision protection, same-byte external replacement, copy → rename → move → descendant copy → delete, ambiguous writes, restart, two distinct locations, approved empty-folder creation and rejection of cross-bucket/unapproved destinations. Capable-mock behavior does not establish production conditional deletion support.
+- Installed Chrome: **NOT_TESTED**; no chromium/chromium-browser/google-chrome/google-chrome-stable executable was available. No policy bypass attempted.
+- Live Cloudflare R2: **NOT_TESTED**; no cloud objects were read or mutated for this repair. No authenticated participant source/destination sequence was executed.
+- Required uninterrupted acceptance: **NOT PASSED / NOT EXECUTED LIVE**. The production ownership capability blocks step 9 (rename) and subsequent destructive steps. No evidence JSON claiming such a run was manufactured.
+- Remaining production-blocked/dependent exercises: 26–27, 31–40 (Cut itself can stage an owned copy but its move cannot complete), 43–45, 48–50, 53–56, and cleanup in 60. Conflict, duplicate and restore exercises also depend on having the appropriate verified copies and free approved keys. All 60 still require participant installed/live acceptance.
+
+Files changed: `extension/beta/explorer.mjs`, `explorer.css`, `guided-interaction.mjs`, `test-it.mjs`, `test-it-session.mjs`; `tests/beta-explorer.test.mjs`, `test-it-copy.test.mjs`, `test-it-session.test.mjs`; this handoff. Universal API, R2 adapter, embedded Worker, original Explorer and main were not changed.
+
+Final local results for this repair: **99 focused tests passed, 0 failed**. Full reliability execution: **474 tests, 464 passed, 10 failed**; syntax, API registry and issue-inventory stages passed; architecture freshness failed. An unmodified archive of base `fcb3246` ran **470 tests, 460 passed, the same 10 failed**. Failure names matched: the seven recorded catalog/debug/semantic/Nested failures plus architecture references, issue-label evidence and provisioning UI fixture. The reliability registry labels those latter three new relative to its older pinned baseline, but they also fail on this repair's actual starting commit. No frozen evidence hashes or assertions were relaxed. `git diff --check` passed.

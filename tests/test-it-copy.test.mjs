@@ -11,7 +11,7 @@ async function fixture(index=21){
  const current={accountId:'a',bucketName:'b',prefix:'source/'},key='source/original.txt';
  const object={etag:'etag',size:5,version:'v1'},sha256='hash';
  const original={identity:JSON.stringify(['a','b',key]),source:current,key,stamp:JSON.stringify(['etag',5,null,'v1']),sha256,object};
- const saved={version:1,id:'session',index,originals:[original],objects:[],destinations:[],records:[],pending:null};
+ const saved={version:1,id:'session',index,originals:[original],objects:[],destinations:[],locations:{a:current,b:{...current,prefix:'practice/'}},records:[],pending:null};
  let state={current,selected:[{key}],visible:[]},clip=null,pastes=0;
  const objects=new Map([[key,{object,sha256}]]);let fail=false;
  const api=createFileApi({inspect:async({key})=>objects.get(key)||{object:null},stat:async({key})=>({object:objects.get(key)?.object||null}),
@@ -20,17 +20,19 @@ async function fixture(index=21){
  await tick();doc.getElementById('test-it').click();
  const explorer=readFileSync(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
  const body=explorer.match(/function guideAction\(action,detail=\{\}\)\{([^\n]+)\}/)[1];
- const emit=new Function('document','CustomEvent','action','detail',body);
- const command=action=>emit(doc,dom.window.CustomEvent,'command',{action});
+ let invocation={method:'toolbar'};
+ const emitBody=new Function('document','CustomEvent','commandInvocation','crypto','chosen','context','action','detail',body);
+ const emit=(action,detail)=>emitBody(doc,dom.window.CustomEvent,invocation,crypto,()=>state.selected,()=>state.current,action,detail);
+ const command=action=>emit('command',{action,...(action==='paste'?{entries:clip?.entries,source:clip?.source}:{})});
  const copyBody=explorer.match(/^  copy\(\)\{(.*)\},$/m)[1];
  const explorerCopy=new Function('guideAction','context','chosen','status','controls','selected','let busy=false,clipboard=null;'+copyBody+';return clipboard;');
- doc.getElementById('copy').onclick=()=>{clip=explorerCopy((action,detail)=>emit(doc,dom.window.CustomEvent,action,detail),()=>state.current,()=>state.selected,()=>{},()=>{},new Set(state.selected.map(e=>e.key)));};
+ doc.getElementById('copy').onclick=()=>{clip=explorerCopy((action,detail)=>emit(action,detail),()=>state.current,()=>state.selected,()=>{},()=>{},new Set(state.selected.map(e=>e.key)));};
  doc.getElementById('paste').onclick=()=>{if(clip&&state.current){command('paste');pastes++;}};
- doc.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','v'].includes(e.key))doc.getElementById(e.key==='c'?'copy':'paste').click();});
+ doc.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','v'].includes(e.key)){invocation={method:'keyboard',key:e.key,ctrl:true};try{doc.getElementById(e.key==='c'?'copy':'paste').click();}finally{invocation={method:'toolbar'};}}});
  const keypress=key=>doc.body.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key,ctrlKey:true,bubbles:true}));
  const menu=doc.getElementById('context'),button=doc.createElement('button');menu.append(button);button.onclick=()=>doc.getElementById('copy').click();
- const menuCopy=()=>{button.onclick=()=>doc.getElementById('copy').click();button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));};
- return {dom,doc,practice,saved,menuCopy,menuPaste:()=>{button.onclick=()=>doc.getElementById('paste').click();button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));},keypress,api,objects,set fail(v){fail=v;},get clip(){return clip;},get pastes(){return pastes;},set state(s){state=s;},get state(){return state;}};
+ const menuCopy=()=>{button.onclick=()=>doc.getElementById('copy').click();invocation={method:'contextmenu'};try{button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));}finally{invocation={method:'toolbar'};}};
+ return {dom,doc,practice,saved,menuCopy,menuPaste:()=>{button.onclick=()=>doc.getElementById('paste').click();invocation={method:'contextmenu'};try{button.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,detail:1}));}finally{invocation={method:'toolbar'};}},keypress,api,objects,set fail(v){fail=v;},get clip(){return clip;},get pastes(){return pastes;},set state(s){state=s;},get state(){return state;}};
 }
 test('context-menu Copy uses scoped approved identities, survives synthetic forwarding and leaves Explorer clipboard usable across navigation',async()=>{
  const f=await fixture();try{

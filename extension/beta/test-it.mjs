@@ -22,7 +22,7 @@ const rows=[
 ['Exit Lightbox Mode','#preview-content','Press Escape to leave the lightbox.','exit-lightbox'],
 ['Open Side Preview','#preview-mode','Close Window Preview and choose Side Preview.','side'],
 ['Resize, close, and reopen Side Preview','#preview-divider','Resize the divider, close Side Preview, then reopen it.','resize-side'],
-['Choose a source file','#files','Select a file you want to practice with. Your original will not be changed.','source'],
+['Choose a source file','#files','Select a file in Location A. Approve it, then choose a different folder as Location B for working copies. Your original will not be changed.','source'],
 ['Copy the source','#copy','Right-click your selected source and choose Copy.','copy-menu'],
 ['Paste into an approved destination','#paste','Open an existing practice folder and click Paste. Approve the destination when asked.','copy'],
 ['Confirm the original remains','#files','Return to the original folder and click Refresh.','original'],
@@ -64,29 +64,32 @@ const rows=[
 ['Export results and optional cleanup','#test-it-export','Export your results. Cleanup is optional from the Explorer menu.','export']
 ];
 export const exercises=Object.freeze(rows.map(([title,target,text,kind],i)=>Object.freeze({id:i+1,chapter:'ABCDEF'[Math.floor(i/10)],title,target,text,kind})));
-export function installTestIt({document:doc,api,storage,getState,approve,stopTour}){
+export function installTestIt({document:doc,api,storage,getState,approve,stopTour,choosePracticeDestination,navigatePractice}){
   const $=id=>doc.getElementById(id);let session,guide,index=0,baseline=null,lastInput={},command=null,checking=false,generation=0,initializing=true,restarting=false,cleaning=false;
   let folder=null,previousImage=null,lastMove=null,renameFrom=null,lastCreated=null,sideChecks={},multiEvidence=[],clipboardCommand=null;
   const records=()=>{for(const e of exercises)if(!session.state.records.find(r=>r.exerciseId===e.id))session.state.records.push({exerciseId:e.id,requestedAction:e.text,observedGuiInteraction:null,actualApiOperation:null,providerResponse:null,expectedResult:e.title,independentlyObservedResult:null,sha256Comparisons:[],latencyMs:null,testOwnedObjectIdentities:[],verdict:'NOT_TESTED'});};
   const record=()=>session.state.records[index];
   async function save(){try{await session.save();return true;}catch{guide?.message('Progress could not be saved. Exit and restore browser storage before making changes.');return false;}}
-  function evidence(event){if(!guide?.active)return;const r=record();if(event.observationOnly){r.actualApiOperation=event.operation;r.providerResponse=event.response;void save();return;}Object.assign(r,{actualApiOperation:event.operation,providerResponse:event.response||null,independentlyObservedResult:event.observed,latencyMs:event.latencyMs,verdict:event.verdict==='PASSED'?r.verdict:event.verdict,testOwnedObjectIdentities:(event.changes||[]).map(c=>c.id).filter(Boolean),sha256Comparisons:(event.changes||[]).filter(c=>c.sha256).map(c=>({objectId:c.id,expected:c.sha256,observed:c.sha256}))});void save();
-    if(event.verdict!=='PASSED'){guide.message('That file did not arrive where expected. We’ve recorded the problem. Use Retry to check the files.');return;}
+  function evidence(event){if(!guide?.active)return;if(event.correlation&&event.correlation.exerciseId!==exercises[index].id){const r=session.state.records.find(r=>r.exerciseId===event.correlation.exerciseId);if(r){r.lateOperationEvidence=event;void save();}return;}const r=record();if(event.observationOnly){(r.readObservations||=[]).push({operation:event.operation,response:event.response});void save();return;}(r.apiObservations||=[]).push(event);Object.assign(r,{actualApiOperation:event.operation,providerResponse:event.response||null,independentlyObservedResult:event.observed,latencyMs:event.latencyMs,verdict:event.verdict==='PASSED'?r.verdict:event.verdict,testOwnedObjectIdentities:(event.changes||[]).map(c=>c.id).filter(Boolean),sha256Comparisons:(event.changes||[]).filter(c=>c.sha256).map(c=>({objectId:c.id,expected:c.sha256,observed:c.sha256}))});void save();
+    if(event.verdict!=='PASSED'){guide.message(event.observed||'The operation needs reconciliation. Use Retry.');return;}
+    const operationCommand=event.correlation?.command||command;
     const kind=exercises[index].kind,op=event.operation,changes=event.changes||[],keys=changes.map(c=>c.key).filter(Boolean),conflict=changes.some(c=>c.conflict);
     let matches=false;
-    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&command?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&command.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&command?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&command?.input.key?.toLowerCase()==='v'&&command?.input.ctrl;if(kind==='copy-other')matches=matches&&session.state.destinations.length>=2;if(kind==='restore')matches=matches&&session.state.originals.some(o=>command?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length)lastCreated=changes[0].id;}
+    if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&operationCommand?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&operationCommand.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&operationCommand?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&operationCommand?.input.key?.toLowerCase()==='v'&&operationCommand?.input.ctrl;if(kind==='copy-other')matches=matches&&session.state.destinations.length>=2;if(kind==='restore')matches=matches&&session.state.originals.some(o=>operationCommand?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length){lastCreated=changes[0].id;session.state.workflow={...session.state.workflow,workingCopyId:lastCreated};}}
     if(kind==='conflict')matches=op==='copy'&&conflict;
-    if(kind==='rename'||kind==='rename-back'){matches=op==='rename'&&keys.length===1;if(kind==='rename-back')matches=matches&&keys[0]===renameFrom;if(kind==='rename')renameFrom=command?.entries?.[0];}
+    if(kind==='rename'||kind==='rename-back'){matches=op==='rename'&&keys.length===1;if(kind==='rename-back')matches=matches&&keys[0]===renameFrom;if(kind==='rename'){renameFrom=operationCommand?.entries?.[0];session.state.workflow={...session.state.workflow,renameFrom};}}
     if(['move','move-back','move-key','drag','move-two','return-two'].includes(kind)&&op==='move'){
-      matches=keys.length>0;if(kind==='move-key')matches=matches&&command?.input.key?.toLowerCase()==='v'&&command.input.ctrl;
-      if(kind==='drag')matches=matches&&command?.input.type==='drop';
+      matches=keys.length>0;if(kind==='move-key')matches=matches&&operationCommand?.input.key?.toLowerCase()==='v'&&operationCommand.input.ctrl;
+      if(kind==='drag')matches=matches&&operationCommand?.input.type==='drop';
       if(kind==='move-two'||kind==='return-two'){multiEvidence.push(...changes);matches=multiEvidence.length===2;}
-      if(kind==='move-back'||kind==='return-two')matches=matches&&lastMove&&(kind==='return-two'?multiEvidence.map(c=>c.key):keys).every(k=>lastMove.includes(k));
-      if(matches)lastMove=command?.entries;
+      const moved=kind==='move-two'||kind==='return-two'?multiEvidence:changes;
+      if(kind==='move-back'||kind==='return-two')matches=matches&&lastMove&&moved.every(c=>lastMove.some(old=>old.id===c.id&&old.key===c.key&&old.source.accountId===c.source?.accountId&&old.source.bucketName===c.source?.bucketName));
+      if(matches){lastMove=moved.map(c=>({id:c.id,key:c.from?.key,source:c.from?.source}));session.state.workflow={...session.state.workflow,lastMove};}
     }
     if(kind==='download')matches=op==='download'&&event.response?.downloadState==='complete';
     if(kind==='delete')matches=op==='delete'&&changes.length===1;
-    if(matches)pass({type:'verified-operation',command,...event});
+    if(['move-two','return-two'].includes(kind)&&!matches&&multiEvidence.length<2){guide.message('First copy verified. Waiting for the other copy.');void save();return;}
+    if(matches)pass({type:'verified-operation',command:operationCommand,...event});else{r.observationFailure={reason:'Verified operation did not meet this exercise’s interaction or state requirements.',operation:op,command:structuredClone(operationCommand)};guide.message('Explorer completed and verified the operation. It did not match this exercise. Retry the requested action; provider success is recorded.');void save();}
   }
   function pass(observed){if(!guide?.active)return;const r=record();r.verdict='PASSED';r.observedGuiInteraction=observed;r.independentlyObservedResult=r.independentlyObservedResult||'Observed the intended GUI state after its interaction.';void save();doc.dispatchEvent(new doc.defaultView.CustomEvent('redown:gui',{detail:{action:'test-it-'+exercises[index].id}}));}
   function snapshot(){return getState();}
@@ -94,14 +97,14 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(!guide?.active||checking)return;const step=exercises[index],s=snapshot(),b=baseline||s,k=step.kind;
     // Compute identities before command handling, including context-menu Copy.
     const selected=s.selected.filter(e=>!e.folder),selection=selected.map(e=>e.key);
-    if(action==='command'){if(detail.action==='paste'&&command&&['duplicate','copy-to','move-to'].includes(command.action)){command={...command,input:command.input};return;}command={action:detail.action,input:{...lastInput},entries:(detail.action==='paste'?clipboardCommand?.entries:null)||s.selected.map(e=>e.key),location:s.current};if(['copy','cut'].includes(detail.action))clipboardCommand=command;if(['copy-menu','cut-menu'].includes(k)&&lastInput.context!==true)return;
+    if(action==='command'){(record().interactions||=[]).push({commandId:detail.commandId,action:detail.action,invocation:detail.invocation,source:detail.source,destination:detail.destination,entries:detail.entries?.map(e=>e.key),clipboard:detail.clipboard,at:Date.now()});void save();if(detail.action==='paste'&&command&&['duplicate','copy-to','move-to'].includes(command.action)){command={...command,input:command.input};return;}const invocation=detail.invocation;const commandInput=invocation?{type:invocation.method==='keyboard'?'keydown':invocation.method==='contextmenu'?'contextmenu':invocation.method==='drop'?'drop':'click',key:invocation.key,ctrl:Boolean(invocation.ctrl),context:invocation.method==='contextmenu'}:{...lastInput};command={id:detail.commandId,action:detail.action,input:commandInput,entries:detail.entries?.map(e=>e.key)||(detail.action==='paste'?clipboardCommand?.entries:null)||s.selected.map(e=>e.key),location:detail.source||s.current,destination:detail.destination};if(['copy','cut'].includes(detail.action))clipboardCommand=command;if(['copy-menu','cut-menu'].includes(k)&&command.input.context!==true)return;
       const isCopy=k==='copy-key'||k==='copy-menu',isCut=k==='cut-key'||k==='cut-menu';
       if((isCopy&&detail.action==='copy'||isCut&&detail.action==='cut')&&s.selected.length&&s.selected.every(e=>!e.folder)){
         if(isCopy&&k==='copy-menu'&&!(selected.length===1&&session.state.originals.some(o=>o.key===selection[0]&&o.source.accountId===s.current?.accountId&&o.source.bucketName===s.current?.bucketName)))return;
-        if(isCut&&s.selected.some(e=>!session.owned(s.current,e.key)))return;
-        if(k.endsWith('key')&&!(lastInput.ctrl&&lastInput.key?.toLowerCase()===(isCopy?'c':'x')))return;
+        if(isCut&&s.selected.some(e=>!session.owned(s.current,e.key)||session.owned(s.current,e.key).sessionId!==session.state.id))return;
+        if(k.endsWith('key')&&!(command.input.ctrl&&command.input.key?.toLowerCase()===(isCopy?'c':'x')))return;
         if(index===28&&lastCreated&&!s.selected.every(e=>session.owned(s.current,e.key)?.id===lastCreated))return;
-        pass({action:detail.action,input:lastInput,selection:s.selected.map(e=>e.key)});
+        if(detail.clipboard&&detail.clipboard.operation!==(isCopy?'copy':'move'))return;pass({action:detail.action,input:command.input,selection:command.entries,clipboard:detail.clipboard});
       }return;
     }
     let ok=false;
@@ -117,14 +120,14 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(k==='filter'||k==='find-owned')ok=action==='ui'&&lastInput.target==='filter'&&$('filter').value.trim()&&s.visible.length>0&&s.visible.every(e=>e.displayName.toLocaleLowerCase().includes($('filter').value.toLocaleLowerCase()))&&(k!=='find-owned'||s.visible.some(e=>session.owned(s.current,e.key)&&session.state.objects.some(o=>o.id===session.owned(s.current,e.key)?.id&&o.deleted&&o.key!==e.key)));
     if(k==='sort')ok=action==='ui'&&lastInput.target==='sort'&&$('sort').value==='name'&&s.visible.every((e,i,a)=>i===0||a[i-1].folder&&!e.folder||a[i-1].folder===e.folder&&a[i-1].displayName.localeCompare(e.displayName,undefined,{numeric:true})<=0);
     if(k==='grid'||k==='list')ok=action==='switch-view'&&s.grid===(k==='grid');
-    if(k==='image')ok=action==='preview-open'&&s.previewMode==='window'&&Boolean($('preview-content img'));
-    if(k==='next-image'||k==='previous-image'){ok=action==='preview-open'&&Boolean($('preview-content img'))&&s.previewKey!==b.previewKey&&lastInput.key===(k==='next-image'?'ArrowRight':'ArrowLeft');if(k==='previous-image')ok=ok&&s.previewKey===previousImage;if(k==='next-image'&&ok)previousImage=b.previewKey;}
-    if(k==='lightbox')ok=action==='ui'&&s.lightbox;
-    if(k==='exit-lightbox')ok=action==='ui'&&!s.lightbox&&lastInput.key==='Escape';
+    if(k==='image')ok=action==='preview-open'&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'));
+    if(k==='next-image'||k==='previous-image'){ok=action==='preview-open'&&Boolean(doc.querySelector('#preview-content img'))&&s.previewKey!==b.previewKey&&detail.key===(k==='next-image'?'ArrowRight':'ArrowLeft');if(k==='previous-image')ok=ok&&s.previewKey===previousImage;if(k==='next-image'&&ok)previousImage=b.previewKey;}
+    if(k==='lightbox')ok=['ui','lightbox-change'].includes(action)&&s.lightbox;
+    if(k==='exit-lightbox')ok=['ui','lightbox-change'].includes(action)&&!s.lightbox&&b.lightbox&&(detail.key||lastInput.key)==='Escape';
     if(k==='side')ok=s.previewMode==='side'&&s.sideState==='open'&&Boolean(s.previewKey)&&action==='preview-open';
     if(k==='resize-side'){if(s.previewWidth!==b.previewWidth)sideChecks.resized=true;if(s.sideState==='closed')sideChecks.closed=true;ok=sideChecks.resized&&sideChecks.closed&&s.sideState==='open'&&Boolean(s.previewKey);}
     if(k==='two-owned')ok=action==='select-file'&&selected.length===2&&selected.every(e=>session.owned(s.current,e.key));
-    if(k==='source'&&action==='select-file'&&selected.length===1){checking=true;const ticket=generation;try{await session.source(s.current,selection[0]);if(ticket===generation)ok=true;}catch(e){guide?.message(e.message);}finally{checking=false;}}
+    if(k==='source'&&action==='select-file'&&selected.length===1){checking=true;const ticket=generation;try{await session.source(s.current,selection[0]);if(ticket!==generation)return;if(!session.state.locations){if(!choosePracticeDestination)throw Error('Choose Location A and Location B before copying.');const b=await choosePracticeDestination();if(ticket!==generation)return;if(!b)throw Error('Choose Location B to continue. Select the source again to retry.');await session.configureLocations(s.current,b);renderLocations();}if(ticket===generation)ok=true;}catch(e){guide?.message(e.message);}finally{checking=false;}}
     if(['original','inventory'].includes(k)&&action==='refresh'){
       if(k==='original'&&!session.state.originals.some(o=>o.source.accountId===s.current?.accountId&&o.source.bucketName===s.current?.bucketName&&o.key.slice(0,o.key.lastIndexOf('/')+1)===s.current?.prefix))return;
       checking=true;const ticket=generation;try{const inventory=await session.reconcile();ok=inventory.originals>0&&(k!=='inventory'||inventory.copies>=2||index===58);record().independentlyObservedResult={inventory,sha256:'All recorded originals and live copies matched their saved SHA-256 and metadata.'};if(ticket!==generation)ok=false;}catch(e){guide?.message(e.message);record().verdict='BLOCKED';await save();}finally{checking=false;}
@@ -135,15 +138,30 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     }
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
-  async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);
-    guide=createGuide({document:doc,steps:exercises.map(e=>({...e,action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
-      onStep:i=>{index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
+  function renderLocations(){
+    const card=doc.querySelector('.test-it-card'),locations=session.state.locations;if(!card||!locations)return;
+    let nav=card.querySelector('.practice-locations');if(!nav){nav=doc.createElement('div');nav.className='practice-locations';nav.setAttribute('aria-label','Approved practice locations');card.querySelector('[data-guide-text]').after(nav);}
+    nav.replaceChildren(...['a','b'].map(key=>{const button=doc.createElement('button');button.type='button';button.textContent='Open Location '+key.toUpperCase();button.onclick=()=>{if(!session.busy&&!checking)void navigatePractice?.(locations[key]);};return button;}));
+  }
+  function instruction(e){
+    const l=session.state.locations;if(!l||e.id<21)return e.text;
+    const label=x=>x.bucketName+'/'+(x.prefix||'');
+    const owned=session.state.objects.findLast(o=>!o.deleted&&o.id===lastCreated)||session.state.objects.findLast(o=>!o.deleted);
+    let text=e.text;
+    if(e.kind==='copy-menu')text='Copy the approved picture from Location A using its context menu.';
+    if(e.kind==='copy')text='Open Location B, then click Paste. Wait for independent metadata and SHA-256 verification.';
+    if(['rename','rename-back','move','move-back','cut-menu','cut-key','delete'].includes(e.kind)&&!api.conditionalPracticeMutations)text='Blocked: this bucket adapter cannot atomically enforce ownership during deletion. Rename and move also delete their old source. Use Skip or exit; no destructive request will be sent.';
+    return text+'\nLocation A: '+label(l.a)+'\nLocation B: '+label(l.b)+(owned?'\nWorking copy: '+owned.source.bucketName+'/'+owned.key:'\nNo verified working copy yet. Copy from A and paste into B first.');
+  }
+  async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);lastCreated=session.state.workflow?.workingCopyId||null;lastMove=session.state.workflow?.lastMove||null;renameFrom=session.state.workflow?.renameFrom||null;
+    guide=createGuide({document:doc,steps:exercises.map(e=>({...e,text:()=>instruction(e),action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
+      onStep:i=>{generation++;setTimeout(renderLocations,0);index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
       onRetry:async()=>{try{const result=await session.reconcile();guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide.message(e.message);}},
-      onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
+      onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();renderLocations();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
-  doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(()=>guide?.message('Test It could not recognize that interaction. Retry the exercise; Explorer commands remain available.'));});
+  doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(error=>{record().observationFailure={action:event.detail.action,error:error.message};void save();guide?.message('Test It observation failed. Explorer results are recorded separately. Retry the exercise.');});});
   async function exportResults(){if(!session||restarting)return;records();if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});await save();const report=structuredClone(session.state);delete report.pending;report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),a=doc.createElement('a');a.href=url;a.download='redown-test-it-'+session.state.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('test-it-restart').onclick=async()=>{
     if(initializing||restarting||cleaning)return;
@@ -162,6 +180,6 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   $('test-it').onclick=()=>void start();$('test-it-export').onclick=()=>void exportResults();
   $('test-it-cleanup').onclick=async()=>{if(!session||checking||restarting||cleaning||session.busy)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;cleaning=true;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{cleaning=false;session.active=Boolean(guide?.active);}};
   $('take-tour').addEventListener('click',()=>guide?.stop());
-  void (async()=>{try{const saved=(await storage.get('betaExplorerTestIt'))?.betaExplorerTestIt;session=createPracticeSession({api,storage,saved,approve,onEvidence:evidence});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
+  void (async()=>{try{const saved=(await storage.get('betaExplorerTestIt'))?.betaExplorerTestIt;session=createPracticeSession({api,storage,saved,approve,requireLocations:true,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
   return {observe,get lastCommand(){return command?.action;},get session(){return session;}};
 }
