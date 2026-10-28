@@ -6,19 +6,24 @@ import {exercises} from '../extension/beta/test-it.mjs';
 import {createHash} from 'node:crypto';
 const source={accountId:'account',bucketName:'bucket',prefix:''};
 function fixture(saved,recovery=[]){
-  const objects=new Map(),events=[],calls=[];let serial=0,storageFail=false,loseReply=false,statFail=false;
+  const objects=new Map(),events=[],calls=[];let serial=0,storageFail=false,loseReply=false,statFail=false,beforeMutation=null;const conditions=[];
   const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
   const put=(key,bytes)=>objects.set(key,{key,size:bytes.length,etag:hash(bytes),uploaded:new Date(1700000000000+ ++serial).toISOString(),version:'v'+serial,bytes});
   put('original.txt','original');put('unrelated.txt','unrelated');
   const inspect=key=>{const o=objects.get(key);if(!o)return {object:null};const {bytes,...object}=o;return {object,sha256:hash(bytes),status:200};};
-  const adapter={conditionalPracticeMutations:true,list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>{if(statFail)throw Error('Destination unavailable');return {object:inspect(key).object};},
-    copy:async input=>transfer('copy',input),move:async input=>transfer('move',input),
-    rename:async({source,entry,newName})=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName}),
-    delete:async({entries})=>{calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
-  async function transfer(op,{entries,destination,source,newName,conflict}){calls.push(op);const results=[];for(const e of entries){const o=objects.get(e.key);let key=destination.prefix+(newName||e.key.split('/').pop());if(key===e.key&&conflict==='keep')key=destination.prefix+e.key.split('/').pop().replace(/(\.[^.]*)?$/,' (copy)$1');if(objects.has(key)){results.push({sourceKey:e.key,destinationKey:key,status:'conflict'});continue;}put(key,o.bytes);const d=objects.get(key);results.push({sourceKey:e.key,destinationKey:key,sourceEtag:o.etag,sourceVersion:o.version,destinationEtag:d.etag,destinationVersion:d.version,size:d.size,verified:true,status:'copied'});if(op==='move')objects.delete(e.key);}if(loseReply)throw Object.assign(Error('Lost response'),{uncertain:true});return {completed:results.filter(r=>r.status==='copied').length,results};}
+  function condition(operation,options){
+    const practice=options?.practice;assert.ok(practice?.sessionId);conditions.push(structuredClone(practice));beforeMutation?.();beforeMutation=null;
+    for(const record of practice.sources){const current=inspect(record.key);if(current.sha256!==record.sha256||JSON.stringify(current.object)!==JSON.stringify(record.object))throw Error('Exact provider ownership condition failed');}
+    for(const dest of practice.destinations)if(dest.absent&&objects.has(dest.key))throw Error('Provider destination condition failed');
+  }
+  const adapter={practiceMutations:Object.fromEntries(['rename','move','delete'].map(op=>[op,{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}])),list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>{if(statFail)throw Error('Destination unavailable');return {object:inspect(key).object};},
+    copy:async (input,options)=>transfer('copy',input,options),move:async (input,options)=>transfer('move',input,options),
+    rename:async({source,entry,newName},options)=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName},options),
+    delete:async({entries},options)=>{condition('delete',options);calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
+  async function transfer(op,{entries,destination,source,newName,conflict},options){condition(op,options);calls.push(op);const results=[];for(const e of entries){const o=objects.get(e.key);let key=destination.prefix+(newName||e.key.split('/').pop());if(key===e.key&&conflict==='keep')key=destination.prefix+e.key.split('/').pop().replace(/(\.[^.]*)?$/,' (copy)$1');if(objects.has(key)){results.push({sourceKey:e.key,destinationKey:key,status:'conflict'});continue;}put(key,o.bytes);const d=objects.get(key);results.push({sourceKey:e.key,destinationKey:key,sourceEtag:o.etag,sourceVersion:o.version,destinationEtag:d.etag,destinationVersion:d.version,size:d.size,verified:true,status:'copied'});if(op==='move')objects.delete(e.key);}if(loseReply)throw Object.assign(Error('Lost response'),{uncertain:true});return {completed:results.filter(r=>r.status==='copied').length,results};}
   const api=createFileApi(adapter),storage={set:async value=>{if(storageFail)throw Error('Storage unavailable');storage.saved=structuredClone(value.betaExplorerTestIt);storage.ownership=structuredClone(value.betaExplorerTestItOwnership);storage.recovery=structuredClone(value.betaExplorerTestItRecovery);}},session=createPracticeSession({api,storage,saved:structuredClone(saved),recovery,approve:async()=>true,onEvidence:e=>events.push(e)});api.setPolicy(session);session.active=true;
   const copy=(key='original.txt',prefix='practice/')=>api.run('copy',{source,destination:{...source,prefix},entries:[{key}],conflict:'skip'});
-  return {objects,put,api,session,events,calls,storage,copy,set storageFail(v){storageFail=v;},set loseReply(v){loseReply=v;},set statFail(v){statFail=v;}};
+  return {objects,put,api,session,events,calls,storage,copy,conditions,set beforeMutation(fn){beforeMutation=fn;},set storageFail(v){storageFail=v;},set loseReply(v){loseReply=v;},set statFail(v){statFail=v;}};
 }
 test('exactly sixty practical exercises have unique IDs and real target selectors',()=>{assert.equal(exercises.length,60);assert.deepEqual(exercises.map(e=>e.id),Array.from({length:60},(_,i)=>i+1));assert.ok(exercises.every(e=>e.target.startsWith('#')&&e.text.length>0));});
 test('copy first, preserve source, track ancestry through rename/move/copy and safely delete',async()=>{
@@ -37,11 +42,11 @@ test('originals, lookalikes, user destinations and mixed multi-selections never 
  assert.equal((await f.api.run('copy',{source,destination:{...source,prefix:'practice/'},entries:[{key:'original.txt'}],conflict:'replace'})).state,'failed');assert.equal(f.objects.get('other/original.txt').bytes,'user-owned');
 });
 test('same bytes at the same filename do not restore ownership after an external replacement',async()=>{const f=fixture();await f.copy();f.put('practice/original.txt','original');const before=f.calls.length;assert.equal((await f.api.run('delete',{source,entries:[{key:'practice/original.txt'}]})).state,'failed');assert.equal(f.calls.length,before);});
-test('unconfirmed writes persist a lock, block dependent writes and are not replayed on Retry',async()=>{const f=fixture();f.loseReply=true;assert.equal((await f.copy()).state,'uncertain');assert.ok(f.storage.saved.pending);const count=f.calls.length;assert.equal((await f.copy()).state,'failed');await assert.rejects(f.session.reconcile(),/review/);assert.equal(f.calls.length,count);assert.equal(f.session.state.objects.length,0);assert.ok(f.objects.has('original.txt'));});
+test('unconfirmed writes persist a lock, block dependent writes and are not replayed on Retry',async()=>{const f=fixture();f.loseReply=true;assert.equal((await f.copy()).state,'uncertain');assert.ok(f.storage.saved.pending);const count=f.calls.length;assert.equal((await f.copy()).state,'failed');assert.equal((await f.session.reconcile()).quarantined,1);assert.equal(f.calls.length,count);assert.equal(f.session.state.objects.length,0);assert.ok(f.objects.has('original.txt'));});
 test('storage failure prevents dispatch and session resume preserves copy identities',async()=>{const f=fixture();await f.copy();const saved=f.storage.saved;const resumed=fixture(saved);assert.equal(resumed.session.owned(source,'practice/original.txt').id,f.session.owned(source,'practice/original.txt').id);f.storageFail=true;const count=f.calls.length;assert.equal((await f.copy('original.txt','fresh/')).state,'failed');assert.equal(f.calls.length,count);});
 test('unrelated operation classes and folder recursion are blocked during practice',async()=>{const f=fixture();assert.equal((await f.api.run('upload',{})).state,'failed');assert.equal((await f.api.run('delete',{source,entries:[{key:'practice/',folder:true}]})).state,'failed');assert.deepEqual(f.calls,[]);});
 
-test('real adapter without atomic ownership support blocks all destructive practice operations',async()=>{const api=createFileApi({move:async()=>{throw Error('Must not dispatch');},rename:async()=>{throw Error('Must not dispatch');},delete:async()=>{throw Error('Must not dispatch');}}),session=createPracticeSession({api,storage:{set:async()=>{}},approve:async()=>true});api.setPolicy(session);session.active=true;for(const operation of ['move','rename','delete']){const r=await api.run(operation,{source,destination:source,entries:[{key:'x'}],entry:{key:'x'},newName:'y'});assert.equal(r.state,'failed');assert.match(r.error,/ownership/);}});
+test('real adapter without atomic ownership support blocks all destructive practice operations',async()=>{const api=createFileApi({move:async()=>{throw Error('Must not dispatch');},rename:async()=>{throw Error('Must not dispatch');},delete:async()=>{throw Error('Must not dispatch');}}),session=createPracticeSession({api,storage:{set:async()=>{}},approve:async()=>true});api.setPolicy(session);session.active=true;for(const operation of ['move','rename','delete']){const r=await api.run(operation,{source,destination:source,entries:[{key:'x'}],entry:{key:'x'},newName:'y'});assert.equal(r.state,'failed');assert.match(r.error,/protected/);}});
 
 test('restart replaces results and session ID, preserves ownership, and never mutates remote files',async()=>{
  const f=fixture();await f.copy();const oldId=f.session.state.id,ownedId=f.session.state.objects[0].id;
@@ -132,4 +137,54 @@ test('capable adapter cross-bucket copy verifies exact destination while unrelat
  const session=createPracticeSession({api,storage:{set:async()=>{}},approve:async()=>true});api.setPolicy(session);session.active=true;
  assert.equal((await api.run('copy',{source:from,destination:to,entries:[{key:'source/file.txt'}],conflict:'skip'})).state,'completed');assert.equal(writes,1);assert.equal(session.owned(to,'chosen/file.txt').source.bucketName,'other');assert.equal(session.owned(from,'source/file.txt'),undefined);assert.equal(session.owned(to,'chosen/unrelated.txt'),undefined);
  assert.equal(session.state.lastVerifiedOperation.changes[0].source.bucketName,'other');
+});
+
+test('operation-specific contracts allow rename independently of move/delete and receive exact ownership evidence',async()=>{
+ const f=fixture();await f.copy();const contracts=f.api.practiceMutations;contracts.move.supported=false;contracts.delete.supported=false;
+ const first=f.session.owned(source,'practice/original.txt');
+ assert.equal((await f.api.run('rename',{source,entry:{key:first.key},newName:'renamed.txt'})).state,'completed');assert.equal(f.conditions.at(-1).sources[0].id,first.id);assert.equal(f.conditions.at(-1).sources[0].object.version,first.object.version);
+ for(const operation of ['move','delete']){const before=f.calls.length;const result=await f.api.run(operation,{source,entries:[{key:'practice/renamed.txt'}],destination:{...source,prefix:'other/'}});assert.equal(result.state,'failed');assert.equal(f.calls.length,before);assert.equal(f.events.at(-1).diagnostic,'NO_CONDITIONED_OWNERSHIP_MUTATION');}
+});
+for(const operation of ['copy','move','rename','delete'])test('terminal '+operation+' receipt reconciles actual completed state without replay',async()=>{
+ const f=fixture();await f.copy();const before=structuredClone(f.session.state.objects),record=operation==='copy'?f.session.state.originals[0]:before[0];
+ const result=await f.api.run(operation,operation==='delete'?{source,entries:[{key:record.key}]}:operation==='rename'?{source,entry:{key:record.key},newName:'changed.txt'}:{source,entries:[{key:record.key}],destination:{...source,prefix:'other/'},conflict:'skip'});
+ assert.equal(result.state,'completed');const event=f.session.state.lastVerifiedOperation;const dest=event.changes[0];
+ f.session.state.objects=before;f.session.state.pending={operation,source,entries:[{key:record.key}],records:[record],destinations:operation==='delete'?[]:[{source:dest.source,key:dest.key,absent:true}],receipts:event.response.receipts,...(operation==='copy'?{}:{responseReceived:true}),completed:1,correlation:{exerciseId:9},startedAt:123};
+ const writes=f.calls.length;await f.session.reconcile();assert.equal(f.calls.length,writes);assert.equal(f.session.state.pending,null);assert.equal(f.session.state.lastVerifiedOperation.reconciled,true);assert.ok(f.session.state.reconciliations.at(-1).pending.receipts);
+ if(operation==='delete')assert.equal(f.session.owned(source,record.key),undefined);else {const own=f.session.owned(dest.source,dest.key);assert.ok(own);if(operation!=='copy')assert.equal(own.id,record.id);}
+});
+test('unknown write quarantines only involved objects, permits unrelated safe work, and survives restart',async()=>{
+ const f=fixture();f.loseReply=true;await f.copy();f.loseReply=false;
+ assert.equal((await f.copy('unrelated.txt','safe/')).state,'completed');assert.equal(f.session.state.pending,null);assert.equal(f.session.state.quarantinedActions.length,1);assert.equal(f.session.quarantined(source,'practice/original.txt'),true);
+ assert.equal((await f.api.run('delete',{source,entries:[{key:'practice/original.txt'}]})).state,'failed');
+ const before=f.calls.length;assert.equal((await f.copy('unrelated.txt','practice/')).state,'completed');assert.equal(f.calls.length,before+1);
+ await f.session.restart();assert.equal(f.session.recovery[0].session.quarantinedActions.length,1);
+ assert.equal((await f.copy('original.txt','practice/')).state,'failed');
+});
+test('absent destination is not proof that a dispatched unknown write has stopped',async()=>{
+ const f=fixture();f.loseReply=true;await f.copy();f.objects.delete('practice/original.txt');
+ await assert.rejects(f.session.reconcile(),/could not confirm/);assert.ok(f.session.state.pending);assert.equal(f.session.state.objects.length,0);
+});
+test('required sequence preserves logical identity, hashes and original in a capable in-memory provider',async()=>{
+ const f=fixture();await f.copy();const first=f.session.owned(source,'practice/original.txt'),hash=first.sha256;
+ assert.equal((await f.api.run('rename',{source,entry:{key:first.key},newName:'renamed.txt'})).state,'completed');
+ for(const [key,prefix] of [['practice/renamed.txt','other/'],['other/renamed.txt','practice/']])assert.equal((await f.api.run('move',{source,entries:[{key}],destination:{...source,prefix},conflict:'skip'})).state,'completed');
+ const remaining=f.session.owned(source,'practice/renamed.txt');assert.equal(remaining.id,first.id);assert.equal(remaining.sha256,hash);assert.equal(remaining.originalIdentity,f.session.state.originals[0].identity);
+ await f.copy(remaining.key,'extra/');assert.equal((await f.api.run('delete',{source,entries:[{key:'extra/renamed.txt'}]})).state,'completed');
+ await f.session.reconcile();assert.equal(f.objects.get('original.txt').bytes,'original');assert.equal(f.session.state.originalVerification.originals[0].sha256,hash);assert.ok(f.session.owned(source,remaining.key));
+ const json=JSON.parse(JSON.stringify(f.session.state));assert.equal(json.lastVerifiedOperation.operation,'delete');assert.equal(json.lastVerifiedOperation.verdict,'PASSED');assert.equal(json.pending,null);
+});
+test('terminal failed operation reconciles unchanged source and absent destination without claiming success',async()=>{
+ const f=fixture();await f.copy();const record=f.session.owned(source,'practice/original.txt'),last=f.session.state.lastVerifiedOperation;
+ f.session.state.pending={operation:'move',source,records:[structuredClone(record)],entries:[{key:record.key}],destinations:[{source,key:'other/original.txt',absent:true}],receipts:[{sourceKey:record.key,destinationKey:'other/original.txt',status:'failed',stage:'source.read'}],responseReceived:true,completed:0,hasErrors:true};
+ const writes=f.calls.length;const result=await f.session.reconcile();assert.equal(result.failed,true);assert.equal(f.calls.length,writes);assert.equal(f.session.state.pending,null);assert.equal(f.session.state.lastVerifiedOperation,last);assert.equal(f.events.at(-1).verdict,'BLOCKED');assert.ok(f.session.owned(source,record.key));
+});
+for(const operation of ['rename','move','delete'])test('provider condition rejects source replacement after client checks for '+operation,async()=>{
+ const f=fixture();await f.copy();const copy=f.session.owned(source,'practice/original.txt');f.beforeMutation=()=>f.put(copy.key,'external replacement');const count=f.calls.length;
+ const result=await f.api.run(operation,{source,entries:[{key:copy.key}],entry:{key:copy.key},newName:'changed.txt',destination:{...source,prefix:'other/'},conflict:'skip'});
+ assert.notEqual(result.state,'completed');assert.equal(f.calls.length,count);assert.equal(f.objects.get(copy.key).bytes,'external replacement');assert.ok(f.objects.has('original.txt'));assert.notEqual(f.events.at(-1).verdict,'PASSED');
+});
+test('provider destination condition preserves a user object appearing after the destination check',async()=>{
+ const f=fixture();await f.copy();f.beforeMutation=()=>f.put('other/original.txt','user file');const result=await f.api.run('move',{source,entries:[{key:'practice/original.txt'}],destination:{...source,prefix:'other/'},conflict:'skip'});
+ assert.notEqual(result.state,'completed');assert.equal(f.objects.get('other/original.txt').bytes,'user file');assert.ok(f.objects.has('practice/original.txt'));
 });

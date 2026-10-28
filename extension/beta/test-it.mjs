@@ -25,7 +25,7 @@ const rows=[
 ['Choose a source file','#files','Select an existing file and approve it as a read-only copy source. Your original will not be changed.','source'],
 ['Copy the source','#copy','Right-click your selected source and choose Copy.','copy-menu'],
 ['Paste wherever you like','#paste','Paste wherever you like, including this folder. Wait for REDOWN to find and verify your copy.','copy'],
-['Confirm the original remains','#files','Return to the original folder and click Refresh.','original'],
+['Confirm the original remains','#files','REDOWN checks the original and your copy automatically.','original'],
 ['Preview the new copy','#preview','Open the new copy and click Preview.','copy-preview'],
 ['Rename the copy','#rename','Close the preview. Select the practice copy and choose Rename.','rename'],
 ['Rename it back','#rename','Rename that practice copy back to its earlier name.','rename-back'],
@@ -71,7 +71,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   const record=()=>session.state.records[index];
   async function save(){try{await session.save();return true;}catch{guide?.message('Progress could not be saved. Exit and restore browser storage before making changes.');return false;}}
   function evidence(event){if(!guide?.active)return;if(event.correlation&&event.correlation.exerciseId!==exercises[index].id){const r=session.state.records.find(r=>r.exerciseId===event.correlation.exerciseId);if(r){r.lateOperationEvidence=event;void save();}return;}const r=record();if(event.observationOnly){(r.readObservations||=[]).push({operation:event.operation,response:event.response});void save();return;}(r.apiObservations||=[]).push(event);Object.assign(r,{actualApiOperation:event.operation,providerResponse:event.response||null,independentlyObservedResult:event.observed,latencyMs:event.latencyMs,verdict:event.verdict==='PASSED'?r.verdict:event.verdict,testOwnedObjectIdentities:(event.changes||[]).map(c=>c.id).filter(Boolean),sha256Comparisons:(event.changes||[]).filter(c=>c.sha256).map(c=>({objectId:c.id,expected:c.sha256,observed:c.sha256}))});void save();
-    if(event.verdict!=='PASSED'){guide.message(event.observed||'The operation needs reconciliation. Use Retry.');return;}
+    if(event.verdict!=='PASSED'){guide.message(event.verdict==='UNCERTAIN'?'REDOWN is checking the last file action.':event.observed||"This copy couldn't be verified, so REDOWN won't change it.");return;}
     const operationCommand=event.correlation?.command||command;
     const kind=exercises[index].kind,op=event.operation,changes=event.changes||[],keys=changes.map(c=>c.key).filter(Boolean),conflict=changes.some(c=>c.conflict);
     let matches=false;
@@ -123,9 +123,8 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(k==='image')ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'));
     if(k==='next-image'||k==='previous-image'){
       const direction=k==='next-image'?1:-1;
-      ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'))&&detail.direction===direction&&detail.previousKey===b.previewKey&&detail.currentKey===s.previewKey&&detail.expectedKey===s.previewKey&&s.previewKey!==b.previewKey;
-      if(k==='previous-image')ok=ok&&s.previewKey===previousImage;
-      if(k==='next-image'&&ok){previousImage=b.previewKey;session.state.workflow={...session.state.workflow,previousImage};}
+      ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'))&&detail.direction===direction&&['button','keyboard'].includes(detail.invocation)&&Boolean(detail.previousKey)&&detail.currentKey===s.previewKey&&detail.expectedKey===s.previewKey&&s.previewKey!==detail.previousKey;
+      if(k==='next-image'&&ok){previousImage=detail.previousKey;session.state.workflow={...session.state.workflow,previousImage};}
     }
     if(k==='lightbox')ok=['ui','lightbox-change'].includes(action)&&s.lightbox;
     if(k==='exit-lightbox')ok=['ui','lightbox-change'].includes(action)&&!s.lightbox&&b.lightbox&&(detail.key||lastInput.key)==='Escape';
@@ -134,7 +133,6 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(k==='two-owned')ok=action==='select-file'&&selected.length===2&&selected.every(e=>session.owned(s.current,e.key));
     if(k==='source'&&action==='select-file'&&selected.length===1){checking=true;const ticket=generation;try{await session.source(s.current,selection[0]);if(ticket!==generation)return;if(ticket===generation)ok=true;}catch(e){guide?.message(e.message);}finally{checking=false;}}
     if(['original','inventory'].includes(k)&&action==='refresh'){
-      if(k==='original'&&!session.state.originals.some(o=>o.source.accountId===s.current?.accountId&&o.source.bucketName===s.current?.bucketName&&o.key.slice(0,o.key.lastIndexOf('/')+1)===s.current?.prefix))return;
       checking=true;const ticket=generation;try{const inventory=await session.reconcile();ok=inventory.originals>0&&(k!=='inventory'||inventory.copies>=2||index===58);record().independentlyObservedResult={inventory,sha256:'All recorded originals and live copies matched their saved SHA-256 and metadata.'};if(ticket!==generation)ok=false;}catch(e){guide?.message(e.message);record().verdict='BLOCKED';await save();}finally{checking=false;}
     }
     if(k==='copy-preview'||k==='document'){
@@ -143,17 +141,42 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     }
     if(ok)pass({action,input:{...lastInput},location:s.current,selection,previewKey:s.previewKey});
   }
+  function workingCopy(){return session.state.objects.findLast(o=>!o.deleted&&o.id===lastCreated)||session.state.objects.findLast(o=>!o.deleted);}
+  function originalFor(copy){const direct=session.state.originals.find(o=>o.identity===copy?.originalIdentity);if(direct)return direct;let record=copy,seen=new Set();while(record?.parentId&&!seen.has(record.parentId)){seen.add(record.parentId);const original=session.state.originals.find(o=>o.identity===record.parentId);if(original)return original;record=session.state.objects.find(o=>o.id===record.parentId&&o.parentId!==o.id);}return session.state.originals.at(-1);}
   function instruction(e){
-    const owned=session.state.objects.findLast(o=>!o.deleted&&o.id===lastCreated)||session.state.objects.findLast(o=>!o.deleted);
+    const copy=workingCopy(),original=originalFor(copy),path=o=>o.source.bucketName+'/'+o.key;
     let text=e.text;
-    if(['rename','rename-back','move','move-back','cut-menu','cut-key','delete'].includes(e.kind)&&!api.conditionalPracticeMutations)text='Blocked: this adapter cannot atomically enforce copy ownership during deletion. Rename and move also delete their old source. Use Skip; no destructive request will be sent.';
-    return text+(owned&&e.id>=24?'\nWorking copy: '+owned.source.bucketName+'/'+owned.key:'');
+    if(['rename','rename-back'].includes(e.kind))text='Select the red-outlined Test Copy and rename it'+(e.kind==='rename-back'&&renameFrom?' back to '+renameFrom:'')+'.';
+    if(e.kind==='move-back')text='Move the red-outlined Test Copy back into its previous folder.';
+    if(e.kind==='delete')text='Delete only the extra red-outlined Test Copy.';
+    if(e.id>=21&&original)text+='\nOriginal: '+path(original);
+    if(e.id>=23&&copy)text+='\nYour copy: '+path(copy);
+    if(e.kind==='move-back'&&copy){const destination=lastMove?.find(o=>o.id===copy.id);if(destination?.source)text+='\nReturn to: '+destination.source.bucketName+'/'+destination.key.slice(0,destination.key.lastIndexOf('/')+1);}
+    return text;
+  }
+  function paintOwnership(){
+    if(!session)return;const current=getState().current;
+    for(const row of doc.querySelectorAll('#files .file')){
+      const copy=current&&session.owned(current,row.dataset.key),quarantine=current&&(session.quarantined(current,row.dataset.key)||session.state.pending?.entries?.some(e=>session.state.pending.source.accountId===current.accountId&&session.state.pending.source.bucketName===current.bucketName&&e.key===row.dataset.key));
+      const original=current&&session.state.originals.some(o=>o.source.accountId===current.accountId&&o.source.bucketName===current.bucketName&&o.key===row.dataset.key);
+      const entry=getState().visible?.find(e=>e.key===row.dataset.key);
+      const matches=copy&&(!entry||['etag','version','size','uploaded','last_modified'].every(k=>entry[k]==null||copy.object[k]==null||String(entry[k])===String(copy.object[k])));
+      const label=matches&&!quarantine?'Test Copy':original?'Original · Protected':quarantine?'Checking test action':'';
+      row.classList.toggle('test-owned-copy',label==='Test Copy');row.classList.toggle('test-original',Boolean(original));
+      let badge=row.querySelector('.test-ownership-label');if(!label){badge?.remove();continue;}if(!badge){badge=doc.createElement('span');badge.className='test-ownership-label';(row.querySelector('.file-name')||row).append(badge);}if(badge.textContent!==label)badge.textContent=label;
+    }
+    const text=doc.querySelector('.test-it-card [data-guide-text]');if(text&&guide?.active)text.textContent=instruction(exercises[index]);
+  }
+  async function verifyOriginalAutomatically(){
+    if(!guide?.active||exercises[index].kind!=='original'||checking)return;
+    checking=true;const ticket=generation;guide.message('REDOWN is checking the original and your copy.');
+    try{const inventory=await session.reconcile();const copy=workingCopy();if(ticket!==generation||!guide?.active)return;if(!copy||!inventory.originals)throw Error('Create a verified Test Copy first.');await session.check(copy);if(ticket!==generation)return;record().independentlyObservedResult={inventory,checkedAt:Date.now(),originals:session.state.originals.map(o=>({key:o.key,source:o.source,sha256:o.sha256})),copy:{id:copy.id,key:copy.key,sha256:copy.sha256}};pass({action:'automatic-original-check',freshRemoteEvidence:true});guide.message('The original is unchanged and your Test Copy is verified.');}catch(error){if(ticket===generation)guide?.message(error.message);}finally{checking=false;}
   }
   async function start(){if(initializing||restarting||cleaning)return;if(guide?.active)return;stopTour();doc.querySelector('.tour-invitation')?.remove();session.active=true;generation++;records();index=Math.min(session.state.index,59);previousImage=session.state.workflow?.previousImage||null;lastCreated=session.state.workflow?.workingCopyId||null;lastMove=session.state.workflow?.lastMove||null;renameFrom=session.state.workflow?.renameFrom||null;
     guide=createGuide({document:doc,steps:exercises.map(e=>({...e,text:()=>instruction(e),action:'test-it-'+e.id,target:()=>e.kind==='export'?'#test-it-tools-button':e.target})),startIndex:index,allowBack:false,draggable:true,
-      onStep:i=>{generation++;index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();},
+      onStep:i=>{generation++;index=i;session.state.index=i;baseline=snapshot();sideChecks={};multiEvidence=[];record().verdict=record().verdict==='PASSED'?'PASSED':'NOT_TESTED';void save();queueMicrotask(()=>void verifyOriginalAutomatically());},
       onSkip:i=>{session.state.records[i].verdict='NOT_TESTED';session.state.records[i].independentlyObservedResult='Participant skipped this exercise. Dependent operations still require verified copies.';void save();},
-      onRetry:async()=>{if(checking||session.busy)return;checking=true;const ticket=generation;try{const result=await session.reconcile();if(ticket!==generation||!guide?.active)return;const event=session.state.lastVerifiedOperation;if(event?.correlation?.exerciseId===exercises[index].id&&event.changes?.every(c=>c.conflict||c.deleted||session.state.objects.some(o=>!o.deleted&&o.id===c.id&&o.key===c.key&&o.source.accountId===c.source?.accountId&&o.source.bucketName===c.source?.bucketName))){evidence(event);if(record().verdict==='PASSED')return;}guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide?.message(e.message);}finally{checking=false;}},
+      onRetry:async()=>{if(checking||session.busy)return;checking=true;const ticket=generation;try{const result=await session.reconcile();if(ticket!==generation||!guide?.active)return;const event=session.state.lastVerifiedOperation;if(event?.correlation?.exerciseId===exercises[index].id&&event.changes?.every(c=>c.conflict||c.deleted||session.state.objects.some(o=>!o.deleted&&o.id===c.id&&o.key===c.key&&o.source.accountId===c.source?.accountId&&o.source.bucketName===c.source?.bucketName))){evidence(event);if(record().verdict==='PASSED')return;}if(result.quarantined){guide.message("REDOWN is still checking an earlier file action. Other verified copies are available.");return;}guide.message(`Checked ${result.originals} original(s) and ${result.copies} practice copy/copies. Try the interaction again.`);}catch(e){guide?.message(e.message);}finally{checking=false;}},
       onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape')setTimeout(()=>void observe('ui'),0);else if(['click','input','change','pointerup'].includes(event.type))setTimeout(()=>void observe('ui'),0);}
   for(const type of ['click','contextmenu','keydown','input','change','pointerup','drop'])doc.addEventListener(type,input,true);
@@ -165,7 +188,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   async function exportResults(){
     if(!session||restarting)return;records();
     if(guide?.active&&exercises[index].kind==='export')pass({action:'export',format:'JSON'});
-    await save();const report=structuredClone(session.state);delete report.pending;
+    await save();const report=structuredClone(session.state);
     report.evidenceBoundary='Recorded participant GUI and provider observations only. NOT_TESTED means no verified completion. Exact approved file paths are included; no auth credentials are exported.';
     downloadJson(report,'redown-test-it-'+session.state.id+'.json');
     // Recovery is a separate report so the active JSON contains only this run.
@@ -190,6 +213,6 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
   $('test-it').onclick=()=>void start();$('test-it-export').onclick=()=>void exportResults();
   $('test-it-cleanup').onclick=async()=>{if(!session||checking||restarting||cleaning||session.busy)return;const copies=session.state.objects.filter(o=>!o.deleted);if(!copies.length)return;cleaning=true;try{await session.reconcile();if(!await approve('Delete these practice copies?',copies.map(o=>o.source.bucketName+'/'+o.key).join('\n')+'\nOriginals and unrelated files will be preserved.'))return;session.active=true;for(const o of copies){const r=await api.run('delete',{source:o.source,entries:[{key:o.key,folder:false}]});if(r.state!=='completed')throw Error(r.error||'Cleanup stopped.');}guide?.message('The listed practice copies were removed.');}catch(e){guide?.message(e.message);}finally{cleaning=false;session.active=Boolean(guide?.active);}};
   $('take-tour').addEventListener('click',()=>guide?.stop());
-  void (async()=>{try{const stored=await storage.get(['betaExplorerTestIt','betaExplorerTestItRecovery']),saved=stored?.betaExplorerTestIt,recovery=stored?.betaExplorerTestItRecovery||[];session=createPracticeSession({api,storage,saved,recovery,approve,onEvidence:evidence,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
-  return {observe,get lastCommand(){return command?.action;},get session(){return session;}};
+  void (async()=>{try{const stored=await storage.get(['betaExplorerTestIt','betaExplorerTestItRecovery']),saved=stored?.betaExplorerTestIt,recovery=stored?.betaExplorerTestItRecovery||[];session=createPracticeSession({api,storage,saved,recovery,approve,onEvidence:evidence,onOwnership:paintOwnership,captureEvidence:()=>({exerciseId:exercises[index].id,command:structuredClone(command)})});records();api.setPolicy(session);initializing=false;paintOwnership();}catch{$('test-it').disabled=true;$('test-it').title='Browser storage is unavailable.';}})();
+  return {observe,paintOwnership,get lastCommand(){return command?.action;},get session(){return session;}};
 }

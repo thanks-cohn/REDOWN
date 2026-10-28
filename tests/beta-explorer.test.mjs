@@ -112,7 +112,7 @@ test('upload read-back detects corruption before touching the final destination'
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
 async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null,autoLoadImages=true}={}){
-  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter);
+  const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
@@ -685,4 +685,70 @@ test('Test It same-folder Paste creates a distinct remotely verified copy withou
 test('failed parent listing never completes breadcrumb exercise',async()=>{
  let fail=false;const f=await uiFixture({tourPreferences:{invitationDismissed:true},httpOverride:http=>({...http,request:async(...args)=>{if(fail)throw Error('Fixture listing unavailable');return http.request(...args);}})});
  try{const {d,w,settle}=f;d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));await practiceAt(f,2);fail=true;d.querySelector('#crumbs button').click();await settle(()=>d.querySelector('#dropzone').dataset.state==='failed');assert.equal(d.querySelector('[data-guide-next]').disabled,true);}finally{f.dom.window.close();}
+});
+
+test('Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline',async()=>{
+ for(const keyboard of [false,true]){const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;
+ await f.bucket.put('Photos/two.jpg','second');await f.bucket.put('Photos/three.jpg','third');
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/two.jpg"]'));await practiceAt(f,13);
+ d.querySelector('[data-key="Photos/one.jpg"]').click();d.querySelector('#preview').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ d.querySelector('#preview-next').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ // Next again during Previous changes the active starting image legitimately.
+ d.querySelector('#preview-next').click();await settle(()=>d.querySelector('#preview-content img')?.alt==='two.jpg');assert.equal(d.querySelector('[data-guide-next]').disabled,true);
+ if(keyboard)d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));else d.querySelector('#preview-previous').click();
+ await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[15].verdict,'PASSED');assert.equal(d.querySelector('#preview-content img').alt,'three.jpg');
+ }finally{f.dom.window.close();}}
+});
+test('production copy indicators survive List, Grid and refresh; original verifies automatically and unsafe R2 rename is reported honestly',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
+ d.querySelector('[data-key="root.txt"]').dispatchEvent(new f.w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();
+ await settle(()=>f.storage.betaExplorerTestIt?.records[22].verdict==='PASSED'&&d.querySelector('[data-key="root (copy).txt"].test-owned-copy'));
+ const labels=()=>{assert.equal(d.querySelector('[data-key="root (copy).txt"] .test-ownership-label').textContent,'Test Copy');assert.equal(d.querySelector('[data-key="root.txt"] .test-ownership-label').textContent,'Original · Protected');assert.equal(d.querySelector('[data-key="root.txt"]').classList.contains('test-owned-copy'),false);};labels();
+ d.querySelector('#view').click();labels();d.querySelector('#refresh').click();await settle(()=>!d.querySelector('#refresh').disabled);labels();
+ d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');assert.match(d.querySelector('[data-guide-text]').textContent,/Original:.*root.txt/);assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*root \(copy\).txt/);
+ // Attempt the actual R2 route and confirm the exact limitation stays in JSON.
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes("can't safely"));
+ assert.ok(f.stored.has('root.txt'));assert.ok(f.stored.has('root (copy).txt'));assert.ok(!f.stored.has('renamed.txt'));
+ assert.equal(f.storage.betaExplorerTestIt.records[23].apiObservations.at(-1).diagnostic,'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION');assert.doesNotMatch(d.querySelector('.test-it-card').textContent,/atomic|adapter|preflight/i);
+ }finally{f.dom.window.close();}
+});
+
+test('real Explorer copy/rename/Cut/Paste/back/duplicate/delete/export sequence with an explicitly conditioned memory provider',async()=>{
+ // This provider performs identity comparison and mutation synchronously, with
+ // no await between them. It is NOT the production R2 delete implementation.
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{
+   adapter.practiceMutations=Object.fromEntries(['rename','move','delete'].map(op=>[op,{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}]));
+   const mutate=(operation,input,options)=>{
+     assert.equal(options.practice.operation,operation);assert.ok(options.practice.sessionId);
+     const records=options.practice.sources;for(const record of records){const object=memory.stored.get(record.key);if(!object||object.version!==record.object.version||hash(object.bytes)!==record.sha256)throw Error('Ownership condition failed');}
+     const results=[];
+     for(let i=0;i<records.length;i++){const record=records[i],object=memory.stored.get(record.key);if(operation==='delete'){memory.stored.delete(record.key);continue;}
+       const dest=options.practice.destinations[i];if(memory.stored.has(dest.key))throw Error('Destination condition failed');
+       const copy={...object,key:dest.key,version:randomUUID(),uploaded:new Date().toISOString()};memory.stored.set(dest.key,copy);
+       assert.equal(hash(memory.stored.get(dest.key).bytes),record.sha256);assert.equal(memory.stored.get(record.key).version,record.object.version);memory.stored.delete(record.key);
+       results.push({sourceKey:record.key,destinationKey:dest.key,status:'copied',verified:true,sourceEtag:object.etag,sourceVersion:object.version,destinationEtag:copy.etag,destinationVersion:copy.version,size:copy.size});
+     }
+     return {completed:records.length,results};
+   };
+   for(const operation of ['rename','move','delete'])adapter[operation]=(input,options)=>mutate(operation,input,options);
+ }});
+ const create=URL.createObjectURL,revoke=URL.revokeObjectURL,blobs=[];
+ try{const {d,w,settle}=f;d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));await practiceAt(f,20);
+ d.querySelector('[data-key="Photos/one.jpg"]').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ d.querySelector('[data-key="Photos/one.jpg"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/one (copy).jpg"].test-owned-copy'));
+ const id=f.storage.betaExplorerTestIt.objects.find(o=>!o.deleted).id,originalHash=hash(f.stored.get('Photos/one.jpg').bytes);
+ d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');
+ d.querySelector('[data-key="Photos/one (copy).jpg"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.jpg';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/renamed.jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ for(const outward of [true,false]){
+  const key=outward?'Photos/renamed.jpg':'renamed.jpg';d.querySelector(`[data-key="${key}"]`).click();d.querySelector('#cut').click();assert.ok(f.stored.has(key),'Cut does not delete');
+  if(outward)d.querySelector('#up').click();else d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));
+  await settle(()=>d.querySelector(outward?'[data-key="root.txt"]':'[data-key="Photos/one.jpg"]')&&!d.querySelector('#refresh').disabled);d.querySelector('#paste').click();
+  const dest=outward?'renamed.jpg':'Photos/renamed.jpg';await settle(()=>d.querySelector(`[data-key="${dest}"].test-owned-copy`)&&!d.querySelector('#refresh').disabled);assert.ok(!f.stored.has(key));assert.equal(f.storage.betaExplorerTestIt.objects.findLast(o=>!o.deleted&&o.key===dest).id,id);
+ }
+ d.querySelector('[data-key="Photos/renamed.jpg"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="Photos/renamed (copy).jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('[data-key="Photos/renamed (copy).jpg"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-key="Photos/renamed (copy).jpg"]')&&!d.querySelector('#refresh').disabled);
+ assert.equal(hash(f.stored.get('Photos/one.jpg').bytes),originalHash);assert.equal(hash(f.stored.get('Photos/renamed.jpg').bytes),originalHash);assert.ok(d.querySelector('[data-key="Photos/renamed.jpg"].test-owned-copy'));assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*Photos\/renamed.jpg/);
+ URL.createObjectURL=blob=>{blobs.push(blob);return 'blob:fixture';};URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){};d.querySelector('#test-it-export').click();await settle(()=>blobs.length===1);
+ const exported=JSON.parse(await blobs[0].text());assert.equal(exported.pending,null);assert.equal(exported.lastVerifiedOperation.operation,'delete');assert.equal(exported.originals[0].sha256,originalHash);assert.equal(exported.objects.findLast(o=>!o.deleted).id,id);
+ }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
 });

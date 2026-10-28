@@ -244,3 +244,9 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 @media(max-height:450px){.test-it-card [data-guide-progress]{margin-bottom:4px}.test-it-card h2{margin-bottom:4px}.test-it-card p{margin:4px 0}.test-it-card .guide-actions{margin-top:4px;padding-top:4px}.test-it-card [data-guide-status]{padding:4px}}
 
 @media(max-height:450px){.test-it-card{overflow:auto}.test-it-card [data-guide-text]{flex-shrink:0}}
+
+/* Ownership accents are independent of aria-selected and preserve normal input. */
+.file.test-owned-copy{outline:2px solid #a51f3d;outline-offset:-2px}
+.test-ownership-label{display:inline-block;flex-shrink:0;max-width:100%;margin-left:8px;padding:1px 6px;border-radius:4px;font-size:11px;line-height:1.5;color:var(--muted);background:var(--bg)}
+.test-owned-copy .test-ownership-label{color:#921b36;background:#fce9ee;font-weight:600}
+#files.grid .test-ownership-label{margin-left:0;white-space:normal}

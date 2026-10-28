@@ -107,6 +107,14 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
   }
   return {
     crossBucketCopy:true,
+    // R2 binding delete(key) has no condition/version argument. A HEAD followed
+    // by DELETE cannot protect an externally replaced object. Do not advertise
+    // rename/move as safe merely because their copy half is conditional.
+    practiceMutations:{
+      rename:{supported:false,reason:'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION'},
+      move:{supported:false,reason:'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION'},
+      delete:{supported:false,reason:'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION'}
+    },
     configuration:{defaults:providerDefaults,validate:validatePreferences,resolve:resolveOptions},
     async connectionStatus({source},options={}){
       const l=location(source),result=await message('profiles',{},options);

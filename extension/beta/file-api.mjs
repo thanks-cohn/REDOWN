@@ -15,7 +15,7 @@ export function entry(value) { return {key:key(value.key),folder:value.folder===
 const methods=['connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry','inspect'];
 export function createFileApi(adapter) {
   let preferences={},policy=null;
-  const api={version:1,crossBucketCopy:adapter.crossBucketCopy===true,conditionalPracticeMutations:adapter.conditionalPracticeMutations===true,capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),
+  const api={version:1,crossBucketCopy:adapter.crossBucketCopy===true,conditionalPracticeMutations:adapter.conditionalPracticeMutations===true,practiceMutations:Object.freeze({...adapter.practiceMutations}),capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),
     setPolicy(value){policy=value;},
     getPreferences(){return {...preferences};},
     getDefaults(){return {...adapter.configuration?.defaults};},
