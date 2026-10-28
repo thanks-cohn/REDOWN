@@ -269,3 +269,43 @@ Files: four Beta production modules (`explorer.mjs`, `guided-interaction.mjs`,
 (`beta-explorer.test.mjs`, `test-it-copy.test.mjs`, `test-it-tools.test.mjs`) and
 this handoff. Existing 16 MiB read-back budget, session-only ownership,
 no-overwrite protections and unknown-write quarantine remain in force.
+
+
+## 27 October 2026: Repeated critical request, current-head verification
+
+Inspected untouched `7a65821` on `beta-explorer`. The requested preview,
+modal-opening order, Rename Back prerequisite and recoverable clipboard changes
+are already present in that head. This follow-up makes **no runtime changes**
+and enables **no additional operations**. The primary production R2 editing
+acceptance is still **unmet**.
+
+Rechecked the official Workers API reference and S3 compatibility table:
+- https://developers.cloudflare.com/r2/api/workers/workers-api-reference/
+- https://developers.cloudflare.com/r2/api/s3/api/
+
+The binding still documents `delete(key: string | string[]): Promise<void>`.
+The S3 table documents conditional Head/Get/Put/Copy, but no conditioned
+DeleteObject. No supported atomic removal conditioned on the recorded upload
+identity was found. The existing background cleanup checks metadata before an
+unconditional delete; adding a Worker mutex or another HEAD does not exclude
+external writers. No undocumented header, tombstone overwrite or weakened guard
+was substituted. A backend endpoint wrapping this same primitive would retain
+the race. An alternative would require a provider-enforced write boundary for
+all writers or a different storage operation contract, not a capability flag.
+
+Executed on the unchanged checkout with Node v24.22.1:
+- Focused four-file suite: **146 passed, 0 failed**, no skips.
+- Full `npm run reliability:check`: **511 passed, 10 failed**; syntax,
+  API registry and issue inventory stages pass; architecture stage fails.
+  The runner classifies seven failures as known and three as new relative to
+  its older baseline (architecture-reference, issue-label and provisioning UI).
+  All ten occur before this documentation-only change.
+- Installed Chrome command: **blocked**, `CHROME_NOT_AVAILABLE_ENOENT`, zero
+  installed assertions. Live Cloudflare R2: **not tested**. The required real
+  provider acceptance sequence and live JSON export are **not passed**.
+
+Only this handoff changed. No Worker deployment or cloud mutation occurred.
+Rename, Rename Back, Move To, destructive Paste and Delete remain unsupported
+for production Test Copies under the required identity-protected removal rule.
+Copy/Paste, unused-destination Duplicate, Cut intent and read-only operations
+retain their existing behavior. Main and Legacy Explorer remain unchanged.
