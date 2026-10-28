@@ -1,3 +1,5 @@
+> **Current parity/size audit (28 October 2026):** Start at the [permanent living audit](../../DO_NOT_REPEAT_MISTAKES/explorer-parity/README.md). It supersedes older inferred parity/size claims, not historical evidence. Inspected `a7effa80b20a4d12f9e6837486ff1d7f7e52ebd9`. Local upload is capped at 300 MB in both Explorers; Test It hashing is separately 16 MiB; shared streaming copy/download have different limits. No parity roadmap implementation or deployment was made. Maintain action/limit rows and tests in the same implementation commit.
+
 # Simple Test It implementation, October 27, 2026
 
 Base: `7c0447b9bbc73ecf042c47051b199ca6e8c46e65`, branch `beta-explorer`.
@@ -591,3 +593,15 @@ Evidence: [focused log](verification/question-history/focused.log),
 [baseline/final comparison](verification/question-history/verification.json),
 [Chrome result](verification/question-history/installed-chrome.json),
 [memory benchmark](verification/question-history/benchmark.json).
+
+## 28 October 2026: Critical Legacy/Beta parity and limits audit
+
+Audited the committed request at `a7effa80b20a4d12f9e6837486ff1d7f7e52ebd9` on `beta-explorer`. [Permanent index](../../DO_NOT_REPEAT_MISTAKES/explorer-parity/README.md) links the complete action matrix, hard-limit register, reuse/bloat audit, phased roadmap and acceptance plan. This is source-backed discovery plus local characterization, not implementation of the larger roadmap or release acceptance.
+
+Confirmed source-level Beta losses include scoped remote search, archive-entry preview/download/cross-bucket extraction, metadata/MOV/3D preview coverage, public-access enablement, browsable destination folders, sort/paging/touch/history surfaces, safe pre-write retries, blocking download waits and an extra Worker prerequisite for local upload. See R1–R14 in the matrix, including explicit live/unverified boundaries.
+
+Both local upload routes reject above 300,000,000 bytes; no active multipart uploader was found. The 16 MiB independent SHA-256 check is practice-only. Known-length TRUE REMOTE streams up to the shared default 300 MiB policy; unknown-length ingestion buffers. Cloud copy/move/rename already share verified streams; Chrome handles downloads without whole-file JS buffering. Nested 25/30-second deadlines, single-put constraints, Worker memory/subrequest limits and archive decompression buffers still prevent unlimited claims. Current provider docs do not independently establish the project's exact 300 MB REST attribution; do not remove it without endpoint proof or an implemented alternate route.
+
+Verification commands/counts, baseline comparison and evidence live in the [acceptance reference](../../DO_NOT_REPEAT_MISTAKES/explorer-parity/EXPLORER-PARITY-ACCEPTANCE-AND-REGRESSION-PLAN.md) and its evidence/verification.json. Full suite retains ten same baseline failures. Browser probe found Chrome but administrator policy blocks unpacked extension loading; zero installed assertions, live R2 untested. No user/cloud objects were read or mutated, Workers deployed or credentials configured; historical hashes/tags and main are unchanged. Six non-destructive audit tests were added; production code was not changed.
+
+Next work follows the [integrated parity sequence](../../DO_NOT_REPEAT_MISTAKES/explorer-parity/BETA-EXPLORER-PARITY-ROADMAP.md): truthful duration/outcomes and upload availability, then reuse current search/archive/preview services. Every operation/limit/provider change must update the permanent matrix/register and matching regression tests in the same commit.

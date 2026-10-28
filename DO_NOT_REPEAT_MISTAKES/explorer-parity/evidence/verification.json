@@ -1,0 +1,135 @@
+{
+  "inspectedRevision": "a7effa80b20a4d12f9e6837486ff1d7f7e52ebd9",
+  "branch": "beta-explorer",
+  "date": "2026-10-28",
+  "timezone": "America/Chicago",
+  "node": "v24.19.0",
+  "environment": "Linux, local fixtures only",
+  "productionBehaviorChanged": false,
+  "initialAttempt": "npm test before npm ci failed due to missing jsdom; installed locked dependencies then reran; not counted as product results",
+  "commands": [
+    {
+      "command": "npm ci --cache /workspace/.npm-cache --no-audit --no-fund",
+      "state": "passed",
+      "result": "88 packages installed"
+    },
+    {
+      "command": "npm test (untouched starting revision, before audit tests)",
+      "result": {
+        "tests": 556,
+        "pass": 546,
+        "fail": 10,
+        "skipped": 0
+      },
+      "log": "baseline-full.log"
+    },
+    {
+      "command": "node --test tests/beta-explorer.test.mjs tests/test-it*.test.mjs tests/explorer-worker.test.mjs tests/cloudflare-files.test.mjs tests/upload-request-context.test.mjs tests/runtime-reliability.test.mjs",
+      "result": {
+        "tests": 229,
+        "pass": 229,
+        "fail": 0,
+        "skipped": 0
+      },
+      "log": "focused.log"
+    },
+    {
+      "command": "node --test tests/explorer-parity-audit.test.mjs",
+      "result": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "skipped": 0
+      },
+      "log": "boundaries.log"
+    },
+    {
+      "command": "npm test (final, including six characterization tests)",
+      "result": {
+        "tests": 562,
+        "pass": 552,
+        "fail": 10,
+        "skipped": 0
+      },
+      "log": "final-full.log"
+    },
+    {
+      "command": "npm run check",
+      "state": "passed",
+      "log": "syntax.log"
+    },
+    {
+      "command": "npm run reliability:check",
+      "state": "failed",
+      "stages": [
+        {
+          "id": "syntax",
+          "state": "passed"
+        },
+        {
+          "id": "architecture",
+          "state": "failed"
+        },
+        {
+          "id": "api-registry",
+          "state": "passed"
+        },
+        {
+          "id": "issue-inventory",
+          "state": "passed"
+        }
+      ],
+      "log": "reliability.json"
+    },
+    {
+      "command": "node FOREVER_WORKS/tools/query.mjs describe; npm run diagnostics -- getStartGuide/validateRegistry/listIssues/getReleaseReadiness",
+      "state": "executed; discovery not release acceptance",
+      "log": "onboarding-diagnostics.log"
+    },
+    {
+      "command": "node scripts/installed-chrome.mjs extension work/parity/installed-chrome.json",
+      "state": "blocked",
+      "code": "CDP_-32600: Loading of unpacked extensions is disabled by the administrator.",
+      "assertions": 0,
+      "log": "installed-chrome.json"
+    },
+    {
+      "command": "git diff --check",
+      "state": "passed"
+    },
+    {
+      "command": "audit Markdown relative links and source snapshot SHA-256 checks",
+      "state": "passed",
+      "linksChecked": 52,
+      "sourceFilesChecked": 32
+    }
+  ],
+  "baselineFailures": [
+    "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+    "catalog IDs, evidence labels, source hashes and references are internally consistent",
+    "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+    "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+    "full finite public coverage inventory resolves strata and all canonical case links",
+    "offline discovery advertises only implemented operations and distinct versions",
+    "original case and proposal Markdown bytes are retained from pinned upstream",
+    "real discovery, case, history, filters and validation are deterministic and honest",
+    "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+    "successful provisioning refreshes destination editors and inventory before reporting ready"
+  ],
+  "sameFailureNames": true,
+  "liveCloud": "UNVERIFIED; no authenticated provider reads, writes, deployment or configuration",
+  "largeFiles": "Only local existing fixtures up to 51 MiB; new practice probes up to 16 MiB+1. Larger numeric metadata/dispatch is not transfer proof.",
+  "preservedRemoteTags": {
+    "test-it-before-question-history-2026-10-28": "0f3235568a0ab37dfb21524c2dfe73e50298950c",
+    "test-it-chrome-56-of-60-2026-10-28": "5056e9907b589f294a13dcbdc0c8567b82c92b71"
+  },
+  "evidenceFormatting": "Log trailing whitespace normalized for git; verdicts and failure details retained.",
+  "integration": {
+    "rebasedOnto": "dc1eb4b",
+    "preservedConcurrentCommits": [
+      "e2d0bf4",
+      "dc1eb4b"
+    ],
+    "scope": "Two documentation-only commits added Python CLI/multicloud request and illustrative JSON. No implementation/test source changed. All 32 inspected implementation/configuration SHA-256 values revalidated after rebase. Existing local test results remain scoped to inspected source revision."
+  }
+}

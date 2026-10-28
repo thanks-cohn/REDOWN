@@ -1,0 +1,844 @@
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs getStartGuide
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "available",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "steps": [
+      {
+        "purpose": "Discover APIs",
+        "operation": "diagnostics.describe",
+        "input": {}
+      },
+      {
+        "purpose": "Check routing/ownership",
+        "operation": "diagnostics.validateRegistry",
+        "input": {}
+      },
+      {
+        "purpose": "Locate subsystem",
+        "operation": "diagnostics.getProjectMap",
+        "input": {}
+      },
+      {
+        "purpose": "Review current issues",
+        "operation": "diagnostics.listIssues",
+        "input": {}
+      },
+      {
+        "purpose": "Check local evidence",
+        "operation": "diagnostics.getVerificationStatus",
+        "input": {}
+      },
+      {
+        "purpose": "Inspect release blockers",
+        "operation": "diagnostics.getReleaseReadiness",
+        "input": {}
+      },
+      {
+        "purpose": "Choose a smoke test",
+        "operation": "diagnostics.getTestPlan",
+        "input": {
+          "preset": "all"
+        }
+      }
+    ],
+    "runtimeEvidence": "Import the matching reviewed bundle explicitly; discovery does not connect to a live extension",
+    "forever": "No accepted purpose model or certification is claimed"
+  }
+}
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs validateRegistry
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "available",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "findings": [],
+    "qualifiedOverlaps": [
+      {
+        "name": "describe",
+        "operations": [
+          "diagnostics.describe",
+          "project.describe",
+          "debug.describe",
+          "semantic.describe",
+          "runtime.describe"
+        ]
+      },
+      {
+        "name": "listOperations",
+        "operations": [
+          "diagnostics.listOperations",
+          "project.listOperations"
+        ]
+      },
+      {
+        "name": "projectOverview",
+        "operations": [
+          "project.projectOverview",
+          "semantic.projectOverview"
+        ]
+      },
+      {
+        "name": "explainOperation",
+        "operations": [
+          "project.explainOperation",
+          "explorer.explainOperation"
+        ]
+      }
+    ],
+    "operationCount": 55,
+    "namespaceCount": 5,
+    "scope": "Registry coverage/version/ownership against native discovery; not runtime or semantic completeness"
+  }
+}
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs listIssues
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "partial",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "issues": [
+      {
+        "id": "BUG-019",
+        "title": "BUG-019 — Directory Keep both merges into an existing destination directory",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "critical owner data-safety report; source-confirmed folder merging and lost directory retry identity corrected. Actual installed byte overwrite/recovery remains unverified.",
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Directory conflicts now preflight before merging and Keep both preserves directory identity into a separate sibling. Owner-reported byte loss and installed acceptance remain unverified.",
+          "reviewedOn": "2026-10-23",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "symbol": "const folderTargets=new Map()",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
+            },
+            {
+              "path": "tests/explorer-worker.test.mjs",
+              "symbol": "directory Keep both preserves the entire existing tree",
+              "sha256": "1fe36d5fccb5e432c3796473405580ce1c2ab9daeaace37fe5d562fea2913c22"
+            }
+          ]
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG-019 — Directory Keep both merges into an existing destination directory",
+          "line": 623,
+          "sha256": "cf2ef185ea3e5ab207627ebf2d5a9046d5dd8ad280a7859729fe9fb8c3146642"
+        },
+        "nextAction": "Verify disposable installed-directory Copy/Move/drag-and-drop with original destination hashes; no recovery or live closure is claimed.",
+        "related": [
+          "BUG-018",
+          "EXPLORER-COPY-404-2026-10"
+        ]
+      },
+      {
+        "id": "CODE-UPLOAD-CONCURRENT-CREATE",
+        "title": "Local upload existence check and PUT are separate operations",
+        "sourceKind": "code-review",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "Source review; not a live failure",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Source performs a preflight existence check followed by direct PUT, without an atomic conditional-create boundary. Concurrent-writer safety is unverified.",
+          "reviewedOn": "2026-10-22",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/options.js",
+              "symbol": "if(existed!==\"no\")throw new Error",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+            },
+            {
+              "path": "extension/options.js",
+              "symbol": "method:\"PUT\"",
+              "sha256": "97ad5e70291974f9c93c3a2d8d940dd0f9ecbd59479036eeadd56b907e03a0b2"
+            }
+          ]
+        },
+        "nextAction": "Use a provider-supported conditional write or the existing verified Worker path, then test two concurrent writers and ambiguous responses.",
+        "related": [
+          "GATE-local-upload-conditional-races"
+        ]
+      },
+      {
+        "id": "GATE-installed-workflow-matrix",
+        "title": "installed-workflow-matrix",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Administrator rejects unpacked extension loading; zero extension assertions"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "7a00b8014c9ae98622d9205b4d1747438e30fafad1906b3b2d12dc8ce78af2f3"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-live-worker-object-truth",
+        "title": "live-worker-object-truth",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No STORAGE Worker revision, HEAD/read/hash evidence"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "f027ca820af8e3479f84cfe0e25e519e255a98d485cc08a5c4cc584690b326ca"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-local-upload-conditional-races",
+        "title": "local-upload-conditional-races",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Initial absence check and direct PUT still race across clients"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "23918a51dafdf038a134455fc47baa2fe8004cbbcc37f85e59c64d0e29c4f3bc"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-real-expiry-and-soak",
+        "title": "real-expiry-and-soak",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No live credentials/scoped resources; accelerated clocks are mock only"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "57fa9691520419857912439ad753c0014c2196282c009233ea160cb579c383ac"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-remote-write-idempotency",
+        "title": "remote-write-idempotency",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No durable operation receipt to reconcile timeout after committed numbered copy"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "7a89976c246bf45023235f319e31382fed263a3d43b68de1f6dc5b21acfd1b38"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-upload-ambiguous-replay",
+        "title": "upload-ambiguous-replay",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "critical",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Mock transport failure stops automatic replay; no remote byte certification"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "a709c48a1c91006ddbf4f8febf9bd2f42a7cf0223a9fcb01ba20f7db3e283e12"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "CODE-WINDOWS-SYNTAX",
+        "title": "Reliability checker launched npm.cmd without a Windows shell",
+        "sourceKind": "code-review",
+        "state": "open",
+        "severity": "high",
+        "recordedStatus": "Source review; not a live failure",
+        "source": {
+          "path": "agent/diagnostics/issue-assessments.json"
+        },
+        "assessment": {
+          "status": "source-implemented",
+          "confidence": "source-reviewed",
+          "summary": "Syntax checks now invoke the current Node executable directly from one target list; no npm.cmd or shell is required. Native Windows execution remains to be observed.",
+          "reviewedOn": "2026-10-22",
+          "freshness": "current",
+          "evidence": [
+            {
+              "path": "scripts/check-syntax.mjs",
+              "symbol": "spawnSync(process.execPath,['--check'",
+              "sha256": "8c8f5ae1c8afef98c54d7d1bc6d041e479c4fe86f6bfd90d70cbad937b2da3d2"
+            },
+            {
+              "path": "tests/syntax-portability.test.mjs",
+              "symbol": "paths with spaces",
+              "sha256": "16742ac00365d9d9bf71aa54305fc0d57804b419bc59d8cb7d73b877f11b7887"
+            }
+          ]
+        },
+        "nextAction": "Run npm run reliability:check on Windows and retain platform-specific evidence.",
+        "related": []
+      },
+      {
+        "id": "DBG-001",
+        "title": "Nested editor cannot reliably append deeper children without ancestor reselection",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-001.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      },
+      {
+        "id": "DBG-003",
+        "title": "Upload from Computer mixes existing selection and creation draft; folder listings can mix bucket data",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-003.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      },
+      {
+        "id": "EXPLORER-COPY-404-2026-10",
+        "title": "Cross-bucket Copy/Move/Paste returns HTTP 404",
+        "sourceKind": "explorer-incident",
+        "state": "open",
+        "severity": "high",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "reported",
+          "confidence": "user-report",
+          "summary": "Root cause and installed/deployed versions remain unverified."
+        },
+        "source": {
+          "path": "docs/explorer/COPY_404_CASE.json",
+          "sha256": "340c7c5f1a01380e7232ad584bbb2708e2593624095781771bbafe86d1ab9027"
+        },
+        "nextAction": "Capture same-operation source/destination evidence using disposable authorized files; do not infer missing data from HTTP404 alone."
+      },
+      {
+        "id": "GATE-accessibility-workflow-audit",
+        "title": "accessibility-workflow-audit",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Existing fixtures and aria-live are insufficient full audit"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "9824a7c2f04b64ad885d712fb47b8dd59480938dee4e602355da71a27d6e3c55"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-auth-generation-and-read-retry",
+        "title": "auth-generation-and-read-retry",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Mock regressions; not live session proof"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "da8ecc278286b2704a4fb23cc84f4d85a6373dacfe2344d8a0606a94afbef895"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-durable-transfer-recovery",
+        "title": "durable-transfer-recovery",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "General/local queues lack restart-safe File recovery; gallery-specific queue is not universal"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "39830ef3f5281e10e3cf37ccf09d5e86976b170dee0ba63ae85c5f208d093dcb"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-exact-artifact-installation",
+        "title": "exact-artifact-installation",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "blocked",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Extracted ZIP unpacked install blocked; CRX/store distribution not run"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "f05892e80ca303117ba6327f29374b22a28cff0e67ef43b88b6aacdbe6eb1966"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-full-runtime-debug-surface",
+        "title": "full-runtime-debug-surface",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "No durable traces, complete span chain or preview/transfer verification adapters"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "3034581827004f1194aed5268755d0049557c68c668a4dee01cf6bde9c6bcab6"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-full-suite",
+        "title": "full-suite",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Six historical freshness/corpus assertions retained; classified individually"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "93a91a9c86abcf3dcc798101ccd19eedce3a63a4fa3757ec28750c99d5db5d0e"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-license-consistency",
+        "title": "license-consistency",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "failed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "07325c6f3b5fd895397f3e9d23e43d89f148d574695fb491d66547bb1d1ecb21"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-malformed-listing",
+        "title": "malformed-listing",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Actual source function tested against injected malformed/empty replies"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "03cb0058a0de328e1e9bf0da87c2ffc8f57e3797367ec2375013c9099ab0697b"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-privacy-permissions-current-policy",
+        "title": "privacy-permissions-current-policy",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "not run",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Caller inventory only; current authoritative review and operator URLs missing"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "860105e4362c54e940edbaf8256c5a8da222b116396c1c6c12e716a067cc1219"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-progressive-search-local",
+        "title": "progressive-search-local",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "passed",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Pull engine and actual UI VM regressions; installed and restart-resume gates separate"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "c3f0ddeb761803344eda2d55d9c40d72af467be48c78fa4fe5c601956b8556b3"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "GATE-store-submission",
+        "title": "store-submission",
+        "sourceKind": "release-gate",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "explicitly out of scope",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "User request prohibits submission; store branch preserved"
+        },
+        "source": {
+          "path": "docs/runtime/release-gates.json",
+          "sha256": "cb69a2b6f49f70a2fc218737049c176c192fcf90357b2af93a00ea4b6ef88470"
+        },
+        "nextAction": "Revalidate the recorded release requirement; a recorded pass is not current live proof."
+      },
+      {
+        "id": "REPORT-9d785a223e76",
+        "title": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)",
+        "sourceKind": "bug-report",
+        "state": "unknown",
+        "severity": "high",
+        "recordedStatus": "Open; user-reported, source inspected, not reproduced against installed Chrome settings. **Priority: P1 menu reliability.** No application code changed in this investigation.",
+        "assessment": {
+          "status": "needs-revalidation",
+          "confidence": "stale-review",
+          "summary": "Explicit Simple label precedence and empty defaults remain implemented, re-inspected and re-tested after transfer safety changes. Missing configured destinations and native menu acceptance remain unresolved.",
+          "reviewedOn": "2026-10-23",
+          "freshness": "stale",
+          "evidence": [
+            {
+              "path": "extension/background.js",
+              "symbol": "if(explicit)return explicit;",
+              "sha256": "04262ac42c49794c89a09a33a64685676fecc06e81ccb98761acf6a7dc1e00d7"
+            },
+            {
+              "path": "tests/simple-menu-flat.test.mjs",
+              "symbol": "blank and whitespace Simple labels",
+              "sha256": "aedd67649ea7c4097804418eebb57314fdc86944fa0a15401c1985a6b3967a04"
+            }
+          ]
+        },
+        "source": {
+          "path": "bugs/README.md",
+          "heading": "BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)",
+          "line": 3,
+          "sha256": "e9f453f2526ad265a708bf3ab8819cdde0979f779ee041b18a50da9f6ffc1b98"
+        },
+        "nextAction": "Reconcile configured versus rendered menu items with omission reasons and verify the actual Chrome menu.",
+        "related": [
+          "DBG-002"
+        ]
+      },
+      {
+        "id": "DBG-002",
+        "title": "Simple right-click menu location editor must support redirection and explicit creation without losing child rows",
+        "sourceKind": "historical-incident",
+        "state": "unknown",
+        "severity": "medium",
+        "recordedStatus": "open",
+        "assessment": {
+          "status": "recorded-only",
+          "confidence": "historical",
+          "summary": "Original DBG lifecycle is preserved; inspect newer evidence separately.",
+          "freshness": "stale"
+        },
+        "source": {
+          "path": "debug/cases/DBG-002.json"
+        },
+        "nextAction": "Read the native debug record and linked current reports before deciding whether this remains reproducible."
+      }
+    ],
+    "total": 66,
+    "nextOffset": 25,
+    "filters": {
+      "sourceKinds": [
+        "bug-report",
+        "release-gate",
+        "historical-incident",
+        "explorer-incident",
+        "regression-debt",
+        "code-review"
+      ],
+      "states": [
+        "open",
+        "closed",
+        "unknown"
+      ],
+      "assessments": [
+        "needs-triage",
+        "recorded-only",
+        "reported",
+        "partially-addressed",
+        "source-implemented",
+        "source-risk",
+        "needs-revalidation"
+      ],
+      "severities": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+    "findings": [
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "REPORT-9d785a223e76"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "REPORT-06ffddcefe46"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "CODE-UPLOAD-CONCURRENT-CREATE"
+      },
+      {
+        "code": "STALE_ASSESSMENT",
+        "id": "BUG-019"
+      }
+    ],
+    "coverage": {
+      "markdownSections": 32,
+      "releaseRequirements": 21,
+      "scope": "All top-level bugs README sections, recorded release gates, baseline test debt, historical DBG records and the Explorer404 case; not live issue detection"
+    },
+    "authority": "Read-only source projection. Source-implemented is not browser/provider-verified. Original reports and records remain unchanged."
+  }
+}
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs getReleaseReadiness
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "partial",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "decisions": {
+      "beta": "blocked",
+      "releaseCandidate": "blocked",
+      "publicLaunch": "blocked"
+    },
+    "requirements": [
+      {
+        "id": "local-runtime-contract",
+        "state": "passed",
+        "severity": "medium",
+        "evidence": "Mock/local conformance and bounds tests; runtime adapter installed evidence blocked"
+      },
+      {
+        "id": "auth-generation-and-read-retry",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Mock regressions; not live session proof"
+      },
+      {
+        "id": "progressive-search-local",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Pull engine and actual UI VM regressions; installed and restart-resume gates separate"
+      },
+      {
+        "id": "malformed-listing",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Actual source function tested against injected malformed/empty replies"
+      },
+      {
+        "id": "upload-ambiguous-replay",
+        "state": "passed",
+        "severity": "critical",
+        "evidence": "Mock transport failure stops automatic replay; no remote byte certification"
+      },
+      {
+        "id": "installed-workflow-matrix",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "Administrator rejects unpacked extension loading; zero extension assertions"
+      },
+      {
+        "id": "real-expiry-and-soak",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "No live credentials/scoped resources; accelerated clocks are mock only"
+      },
+      {
+        "id": "live-worker-object-truth",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "No STORAGE Worker revision, HEAD/read/hash evidence"
+      },
+      {
+        "id": "local-upload-conditional-races",
+        "state": "not run",
+        "severity": "critical",
+        "evidence": "Initial absence check and direct PUT still race across clients"
+      },
+      {
+        "id": "remote-write-idempotency",
+        "state": "not run",
+        "severity": "critical",
+        "evidence": "No durable operation receipt to reconcile timeout after committed numbered copy"
+      },
+      {
+        "id": "durable-transfer-recovery",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "General/local queues lack restart-safe File recovery; gallery-specific queue is not universal"
+      },
+      {
+        "id": "full-suite",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "Six historical freshness/corpus assertions retained; classified individually"
+      },
+      {
+        "id": "license-consistency",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+      },
+      {
+        "id": "audit-package-integrity",
+        "state": "passed",
+        "severity": "medium",
+        "evidence": "Allowlist, hashes and deterministic ZIP; audit-only, not release"
+      },
+      {
+        "id": "exact-artifact-installation",
+        "state": "blocked",
+        "severity": "high",
+        "evidence": "Extracted ZIP unpacked install blocked; CRX/store distribution not run"
+      },
+      {
+        "id": "modest-windows-performance",
+        "state": "not run",
+        "severity": "medium",
+        "evidence": "Collector microbenchmark is not product/list/media performance"
+      },
+      {
+        "id": "accessibility-workflow-audit",
+        "state": "not run",
+        "severity": "high",
+        "evidence": "Existing fixtures and aria-live are insufficient full audit"
+      },
+      {
+        "id": "privacy-permissions-current-policy",
+        "state": "not run",
+        "severity": "high",
+        "evidence": "Caller inventory only; current authoritative review and operator URLs missing"
+      },
+      {
+        "id": "store-submission",
+        "state": "explicitly out of scope",
+        "severity": "high",
+        "evidence": "User request prohibits submission; store branch preserved"
+      },
+      {
+        "id": "full-runtime-debug-surface",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "No durable traces, complete span chain or preview/transfer verification adapters"
+      },
+      {
+        "id": "search-durable-resume-and-abort",
+        "state": "failed",
+        "severity": "medium",
+        "evidence": "Restart explicitly interrupted; dispatched reads bounded but not aborted"
+      }
+    ],
+    "authority": "recorded release requirements; historical passes are not fresh runs",
+    "localVerificationCommand": [
+      "node",
+      "scripts/reliability-check.mjs"
+    ],
+    "releaseCheckCommand": [
+      "node",
+      "scripts/reliability-check.mjs",
+      "--strict"
+    ],
+    "installedAndLive": "not established by this offline query"
+  }
+}

@@ -1,0 +1,14 @@
+✔ audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP (8.698287ms)
+✔ audit: inspect 16 MiB boundary checks actual streamed bytes; above metadata budget never reads body (148.82972ms)
+✔ audit: inspect rejects lying metadata once actual stream crosses budget (23.463016ms)
+✔ audit: ordinary copy, download and remote ingest do not inherit inspect/upload gates (3.319821ms)
+✔ audit: preview rejects above configured memory budget and text truncates independently (6.366309ms)
+✔ audit: exact UTF-8 key budget inclusive, path policy narrower than general R2 keys (0.321647ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 283.727032

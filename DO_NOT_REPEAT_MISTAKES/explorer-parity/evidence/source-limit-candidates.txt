@@ -1,0 +1,668 @@
+Search candidates at inspected revision; semantic classifications are in the maintained register. Incidental presentation/JSON parsing hits are not file limits.
+extension/options.js:40:   let timeout;
+extension/options.js:45:     timeout=setTimeout(()=>reject(Object.assign(new Error("REDOWN did not confirm this request. For uploads or changes, refresh the destination before retrying."),{name:"TimeoutError",code:"EXPLORER_REQUEST_TIMEOUT"})),120000);
+extension/options.js:49:   } finally { clearTimeout(timeout); }
+extension/options.js:76:   clearTimeout(saveTimer);
+extension/options.js:77:   saveTimer=setTimeout(()=>saveProfiles(),180);
+extension/options.js:140:       limit:250
+extension/options.js:237: function renderTreeNode(profile,node,depth){
+extension/options.js:241:   item.style.setProperty("--depth",String(depth));
+extension/options.js:358:     for(const child of node.children)children.append(renderTreeNode(profile,child,depth+1));
+extension/options.js:418:       status.textContent="Outcome unknown or failed: "+(error?.message||String(error))+". Refresh URLs and check Cloudflare before retrying.";
+extension/options.js:514:       const parent=parts.slice(0,index);
+extension/options.js:547:             new Promise((_,reject)=>{creationTimer=setTimeout(()=>reject(new Error("Folder creation has not been confirmed. Refresh locations to check whether it was created before retrying.")),60000);})
+extension/options.js:550:           if(token!==generation||bucket!==bucketName()||parent.join("/")!==parts.slice(0,index).join("/")||!row.isConnected){
+extension/options.js:560:         finally{clearTimeout(creationTimer);if(row.isConnected)create.disabled=false;}
+extension/options.js:564:         const response=await send({type:"cfFolderChildren",accountId:profile.accountId,bucketName:bucket,parentPrefix:parent.join("/"),limit:100000});
+extension/options.js:634:     const handle=globalThis.RedownReorder?.attach(row,{items:()=>options,item,save:saveProfiles,label:item.label||"Simple destination",changed:error=>setStatus("menu-location-status",error?"Could not save menu order. Please retry.":"Menu order saved.",error?"bad":"ok")});
+extension/options.js:699:       if(!prepared?.ok)throw new Error("Bucket created, but destination preparation failed: "+(prepared?.error||"Retry from Cloudflare settings."));
+extension/options.js:763:     const handle=globalThis.RedownReorder?.attach(card,{items:()=>profiles,item:p,save:saveProfileOrder,label:displayName(p),changed:error=>setStatus("menu-location-status",error?"Could not save menu order. Please retry.":"Menu order saved.",error?"bad":"ok")});
+extension/options.js:882:       const parentSegments=segments.slice(0,index).map(cleanSegment).filter(Boolean);
+extension/options.js:919:         segments=segments.slice(0,index+1);
+extension/options.js:942:         segments=segments.slice(0,index+1);
+extension/options.js:957:           segments=segments.slice(0,index);
+extension/options.js:980:       limit:5000
+extension/options.js:984:       ?"Choose existing folders or create new ones. You can continue to any depth."
+extension/options.js:1017:   while(x>=1024&&i<units.length-1){x/=1024;i++;}
+extension/options.js:1127:     limit:250
+extension/options.js:1177:     row.style.setProperty("--depth",String(Math.min(index,3)));
+extension/options.js:1190:     const parent=uploadLocationSegments.slice(0,index)
+extension/options.js:1237:       uploadLocationSegments=uploadLocationSegments.slice(0,index+1);
+extension/options.js:1263:       uploadLocationSegments=uploadLocationSegments.slice(0,index+1);
+extension/options.js:1270:       uploadLocationSegments=uploadLocationSegments.slice(0,index);
+extension/options.js:1315:     limit:250
+extension/options.js:1394:   let cursor="";
+extension/options.js:1396:     const result=await send({type:"cfObjects",accountId:target.accountId,bucketName:target.bucketName,prefix:key,cursor});
+extension/options.js:1399:     if(!result.cursor)return "no";
+extension/options.js:1400:     if(result.cursor===cursor)break;
+extension/options.js:1401:     cursor=result.cursor;
+extension/options.js:1430:       feedback("Network retry queue: "+completed+" uploaded, "+skipped+" already existed, "+queue.length+" pending. Keep this page open.");
+extension/options.js:1431:       await new Promise(resolve=>setTimeout(resolve,Math.min(30000,Math.max(250,earliest-Date.now()))));
+extension/options.js:1434:     let retryable=true;
+extension/options.js:1451:       if(existed!=="no")throw new Error("Could not confirm this destination is empty. Retry the file check before uploading.");
+extension/options.js:1452:       if(file.size>300*1000*1000){retryable=false;throw new Error("Cloudflare's direct upload API has a 300 MB per-file limit.");}
+extension/options.js:1466:             timeoutMs:300000
+extension/options.js:1469:           const kind=error?.name==="TimeoutError"?"timeout":error?.name==="AbortError"?"aborted":"network-or-browser";
+extension/options.js:1474:         const result=await response.json().catch(()=>null);
+extension/options.js:1477:           if(uploaded.size!=null&&Number(uploaded.size)!==file.size)throw new Error("Uploaded object size did not match the local file.");
+extension/options.js:1482:         retryable=transient||response.ok;
+extension/options.js:1499:         after=match?"yes":verification.cursor?"unknown (listing incomplete)":"no";
+extension/options.js:1502:       const possibleWrite=after==="yes"&&afterSize===file.size;
+extension/options.js:1503:       const detail=`${error?.message||String(error)}; before=${existed}; after=${after}; afterSize=${afterSize??"unavailable"}; localSize=${file.size}; ${possibleWrite?"matching object size, completion unconfirmed":""}${firstLookupError?"; initial lookup "+firstLookupError:""}`;
+extension/options.js:1507:       if(writeAttempted||item.failures>=4)retryable=false;
+extension/options.js:1508:       if(retryable){
+extension/options.js:1515:       if(!retryable)await send({type:"recordLocalTransfer",ok:false,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),error:detail}).catch(()=>{});
+extension/options.js:1516:       status.className=retryable?"status":"status bad";
+extension/options.js:1517:       feedback(`${retryable?"Retry queued":writeAttempted?"Completion unconfirmed; inspect the destination before retrying":"Stopped after file checks failed"}: ${file.name} (already exists: ${existed}): ${detail}. ${queue.length} pending; keep this page open.`,queue.length?"running":completed||skipped?"partial":"failed");
+extension/options.js:1523:     ?`Batch finished: ${completed} uploaded, ${skipped} already existed (skipped); ${permanentFailures.length} non-retryable failures. ${permanentFailures.map(entry=>entry.name+" ("+entry.error+")").join("; ")}`
+extension/options.js:1602:       const message=error?.message||"Could not open this preview. Retry.";
+extension/options.js:1660:       const text=await response.text();
+extension/options.js:1702:   const paint=()=>{const img=image();if(!img)return;img.style.transform=`translate(${x}px,${y}px) scale(${zoom})`;img.style.cursor=zoom>1?"grab":"zoom-in";img.draggable=false;};
+extension/options.js:1875: let explorerNextCursor = "";
+extension/options.js:1999:     : labels[kind][0].toUpperCase() + labels[kind].slice(1);
+extension/options.js:2012:     const relative = key.slice(prefix.length);
+extension/options.js:2016:       const name = relative.slice(0, slash);
+extension/options.js:2048:   if (explorerSearchActive) return explorerItems.slice();
+extension/options.js:2049:   return explorerItems.slice().sort((a, b) => {
+extension/options.js:2105:   explorerNextCursor="";
+extension/options.js:2132:     const parent=key.replace(/\/$/,"").split("/").slice(0,-1).join("/");
+extension/options.js:2150:     setExplorerStatus(`${scope} · Path/name search · ${search.state} · ${search.examined} files examined · ${search.completed}/${search.total} buckets · ${search.matches} matches${search.errors.length?` · ${search.errors.length} bucket errors; search again to retry`:""}${explorerInventoryErrors.size?` · ${explorerInventoryErrors.size} account inventories unavailable; Refresh accounts to retry`:""}${search.state==="limited"?" · Limit reached; narrow your search":""}`,search.state==="scanning"?"running":search.errors.length||explorerInventoryErrors.size||search.state==="limited"?"partial":"done",operationTicket);
+extension/options.js:2154:     if(search.state!=="scanning"){finishOperation(search.errors.length?"Search complete with bucket errors":search.state==="limited"?"Search limit reached; narrow your search":"Search complete",false,operationTicket,search.errors.length||explorerInventoryErrors.size||search.state==="limited"?"partial":"done");break;}
+extension/options.js:2155:     await new Promise(resolve=>setTimeout(resolve,0));
+extension/options.js:2160:   clearTimeout(explorerSearchTimer);
+extension/options.js:2163:   explorerSearchTimer=setTimeout(()=>runExplorerSearch($("workspace-search")?.value||""),220);
+extension/options.js:2172:   const parent=clean.split("/").slice(0,-1).join("/");
+extension/options.js:2222:   if(next!=="running")setTimeout(()=>{
+extension/options.js:2236:   return raw?`Could not ${action}: ${safeUiMessage(raw)}`:`Could not ${action}. Refresh and retry.`;
+extension/options.js:2285:         await new Promise((resolve) => setTimeout(resolve, 2000));
+extension/options.js:2304:   explorerHistory = explorerHistory.slice(0, explorerHistoryIndex + 1);
+extension/options.js:2517:   explorerNextCursor = "";
+extension/options.js:2613:     explorerNextCursor = "";
+extension/options.js:2627:       cursor: append ? explorerNextCursor : "",
+extension/options.js:2654:       await new Promise((resolve)=>setTimeout(resolve,20000));
+extension/options.js:2674:     explorerNextCursor = result.cursor || "";
+extension/options.js:2691:   const items = all.slice(start,start+explorerPageSize);
+extension/options.js:2710:       ? `${start+1}–${start+items.length} of ${all.length}${explorerNextCursor && !explorerSearchActive ? "+" : ""}`
+extension/options.js:2722:       if(required>sortedVisibleItems().length && explorerNextCursor && !explorerSearchActive){
+extension/options.js:2724:         while(explorerNextCursor && required>sortedVisibleItems().length && attempts++<20){
+extension/options.js:2725:           const cursor=explorerNextCursor;
+extension/options.js:2727:           if(cursor===explorerNextCursor)break;
+extension/options.js:2762:     // R2 cursors don't expose the ultimate number of pages.
+extension/options.js:2764:     const canAdvance=(explorerPage+1)*explorerPageSize<all.length || Boolean(explorerNextCursor&&!explorerSearchActive);
+extension/options.js:2767:     if(explorerNextCursor&&!explorerSearchActive){
+extension/options.js:2796:       ? `${all.length}${explorerNextCursor ? "+" : ""} item${all.length === 1 ? "" : "s"}`
+extension/options.js:2883:     timer = setTimeout(() => {
+extension/options.js:2888:   row.ontouchend = row.ontouchmove = () => clearTimeout(timer);
+extension/options.js:2956:     items.slice(a, b + 1).forEach((x) => explorerSelected.add(x.id));
+extension/options.js:3026:     const rest = entry.name.slice(prefix.length), slash = rest.indexOf("/");
+extension/options.js:3028:       const name = rest.slice(0, slash);
+extension/options.js:3162:           finishOperation(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.",true,operationTicket);
+extension/options.js:3163:           setExplorerStatus(result?.error||"The transfer was not confirmed. Refresh the destination before retrying.","failed",operationTicket);
+extension/options.js:3180:     const summary=failed?`${result.completed||0} files completed · ${failed} failed. ${result.errors?.[0]?.error||"Refresh both locations before retrying."}`: `${result.completed||0} files ${request.operation==="move"?"moved":"copied"}${result.conflicts?.length?` · ${result.conflicts.length} existing files skipped`:""}`;
+extension/options.js:3184:     const message=error?.code==="EXPLORER_CLIPBOARD_EMPTY"||error?.code==="EXPLORER_DESTINATION_REQUIRED"?error.message:"The transfer was not confirmed. Refresh the destination before retrying; files may already exist.";
+extension/options.js:3351:     finishOperation(cancelled?"Download cancelled":error?.message||"Could not download this file. Retry.",!cancelled,operationTicket,cancelled?"cancelled":"failed");
+extension/options.js:3366:   if(!result?.ok)return finishOperation(result?.error||"Could not load properties. Refresh and retry.",true,operationTicket);
+extension/options.js:3373:     ["Bucket",source.bucketName],["Path",item.key.slice(0,item.key.lastIndexOf("/")+1)||"/"],
+extension/options.js:3456:     catch(error){finishOperation(error?.message || "That action could not finish. Please retry.",true);}
+extension/options.js:3475:       if(!response?.ok)throw new Error("Could not load folders. Retry.");
+extension/options.js:3480:       const message=error?.name==="TimeoutError"?"The transfer was not confirmed in time. Refresh the destination before retrying; a copy may already exist.":error?.message||"Could not transfer these files.";
+extension/options.js:3701:       const parent=explorerArchive.key.split("/").slice(0,-1).join("/");
+extension/options.js:3806:     return target.pathname.slice(basePath.length).split("/").map(decodeURIComponent).join("/");
+extension/options.js:3842:   const extension=dot>0?filename.slice(dot+1):"";
+extension/options.js:3849:   const stem=hasExt?name.slice(0,dot):name;
+extension/options.js:3850:   const ext=hasExt?name.slice(dot):"";
+extension/options.js:3852:   return `${stem.slice(0,5)}...${stem.slice(-5)}${ext}`;
+extension/options.js:3868:   const folder=parts.key.split("/").slice(0,-1).join("/");
+extension/options.js:3876:     while(!target && explorerNextCursor && pages++<50){
+extension/options.js:3877:       const previous=explorerNextCursor;
+extension/options.js:3880:       if(explorerNextCursor===previous)break;
+extension/options.js:3939:   const items=(result?.transferHistory||[]).slice().sort((a,b)=>new Date(b?.at||0)-new Date(a?.at||0));
+extension/options.js:3970:       location.style.cursor="default";
+extension/options.js:4044:   }catch(error){setStatus("menu-location-status",error?.message||"Could not refresh locations. Retry.","bad");}
+extension/options.js:4080:     const message=result?.error||"Could not verify Cloudflare access. Retry.";
+extension/options.js:4162:       if(debugUse)debugUse.textContent=configured?"Use this bucket":"Retry setup";
+extension/options.js:4176:           if(currentChoice())setStatus("cf-status",bucket+" is configured, but Explorer could not open it: "+(error?.message||"Refresh Explorer and retry."),"bad");
+extension/options.js:4180:       if(accountId===currentAccountId&&requestId===bucketLoadVersion&&el.isConnected){setStatus("cf-status",error?.message||"Setup interrupted. Retry.","bad");signalBucket(el,"repair",caption,"Repair needed");if(debugUse)debugUse.textContent="Retry setup";}
+extension/options.js:4249:     if(!/failed to fetch|network.changed|network changed|networkerror|connection.reset|connection reset|timeout|timed out|reachability|dns/i.test(message)||attempt===4){
+extension/options.js:4253:     setStatus("cf-status",bucketName+" is in R2, but Worker setup was interrupted ("+message+"). Retrying "+(attempt+1)+"/4 without losing the bucket…");
+extension/options.js:4254:     await new Promise(resolve=>setTimeout(resolve,Math.min(10000,1200*Math.pow(2,attempt-1))));
+extension/options.js:4283:         timer = setTimeout(() => reject(new Error("Chrome did not finish opening Cloudflare. Click Connect Cloudflare to retry.")), 15000);
+extension/options.js:4286:   } finally { clearTimeout(timer); }
+extension/options.js:4301:     await new Promise(resolve => setTimeout(resolve, 1000));
+extension/options.js:4383:     link.download="redown-rfis-"+new Date().toISOString().slice(0,10)+".json";
+extension/options.js:4387:     setTimeout(()=>URL.revokeObjectURL(url),30000);
+extension/options.js:4556:       const link=document.createElement("a");link.href=url;link.download="redown-support.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+extension/options.html:45:     .bucket-select:disabled{opacity:1;cursor:progress}
+extension/options.html:91:     .url-disclosure summary{cursor:pointer;color:var(--muted);padding:6px 0}
+extension/options.html:96:     .settings-disclosure > summary{list-style:none;width:42px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+extension/options.html:117:     button{max-width:100%;min-height:40px;border:1px solid transparent;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;line-height:1.35;cursor:pointer;transition:background .16s,border-color .16s,box-shadow .16s}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible{outline:2px solid var(--purple2);outline-offset:3px}
+extension/options.html:127:     .reorder-handle{flex:0 0 32px;width:32px;min-height:36px;padding:4px;background:transparent;color:var(--muted);border:1px solid var(--line);font-size:21px;cursor:grab;touch-action:none;user-select:none}
+extension/options.html:128:     .reorder-handle:active{cursor:grabbing}.reorder-handle:hover{color:var(--purple2);border-color:var(--purple)}
+extension/options.html:152:     .rfis-row .toggle{margin:0;letter-spacing:normal;text-transform:none;font-size:13px;cursor:pointer}
+extension/options.html:167:     input,select{width:100%;min-width:0;max-width:100%;min-height:42px;border:1px solid #3b4a65;background:#0d1525;color:var(--text);border-radius:9px;padding:10px 12px;outline:none;font:inherit}input::placeholder{color:#8795b1}input[type=checkbox]{min-height:0;accent-color:var(--purple);flex:0 0 auto}select{cursor:pointer}
+extension/options.html:187:     .download-location{min-width:0;color:#bca9d5;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+extension/options.html:190:     .download-name{display:inline;max-width:100%;font-weight:780;cursor:pointer;white-space:nowrap}
+extension/options.html:209:     .tree-row{position:relative;display:grid;grid-template-columns:22px minmax(165px,.8fr) minmax(330px,1.5fr) 38px 38px;gap:8px;align-items:center;margin:8px 0;padding:8px 8px 8px calc(var(--depth) * 8px);border:1px solid rgba(73,52,96,.48);border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));transition:border-color .14s ease,background .14s ease,transform .14s ease}
+extension/options.html:225:     .tree-target:disabled{opacity:.34;cursor:not-allowed}
+extension/options.html:226:     .dropzone{margin-top:12px;border:1px dashed #604191;border-radius:16px;padding:26px;text-align:center;background:linear-gradient(180deg,rgba(139,92,246,.07),rgba(255,255,255,.015));transition:.16s ease;cursor:pointer}
+extension/options.html:238:     .object{cursor:pointer}
+extension/options.html:253:     .upload-path-row{position:relative;display:grid;grid-template-columns:14px minmax(190px,.9fr) minmax(220px,1.1fr) 38px 38px;gap:8px;align-items:center;padding-left:calc(var(--depth) * 18px)}
+extension/options.html:275:       gap:7px;padding-left:min(calc(var(--depth) * 10px),30px);
+extension/options.html:303:     .explorer-pagination button:disabled{opacity:.4;cursor:default}
+extension/options.html:319:     .preview-lightbox-backdrop{position:absolute;inset:0;border:0;border-radius:0;background:rgba(15,14,17,.96);backdrop-filter:blur(18px);cursor:zoom-out}
+extension/options.html:353:     .explorer:focus-visible{box-shadow:0 0 0 3px rgba(139,92,246,.2),0 18px 55px rgba(0,0,0,.25)}.explorer.busy{cursor:progress}.explorer.busy .file-row,.explorer.busy .source-item,.explorer.busy button{cursor:progress}.source-item.loading{position:relative;opacity:.82}.source-item.loading:after{content:"";width:10px;height:10px;margin-left:auto;border:2px solid #5b4b6c;border-top-color:#c6a6ff;border-radius:50%;animation:spin .8s linear infinite}.preview-loading{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:#aab8d0}.preview-loading strong{color:#ddd3e8;font-size:13px}.preview-loading .operation-spinner{width:18px;height:18px;margin:0}
+extension/options.html:355:     .nav-buttons{display:flex;gap:4px}.icon-button{width:34px;height:34px;min-height:34px;padding:0;border-radius:8px;background:transparent;color:#d8cfdf;border:1px solid transparent;font-size:17px}.icon-button:hover:not(:disabled){background:#21172c;border-color:#39294c}.icon-button:disabled{opacity:.3;cursor:default}
+extension/options.html:359:     .explorer-main{min-width:0;background:#0d1524;display:flex;flex-direction:column}.file-head,.file-row{display:grid;grid-template-columns:minmax(190px,1fr) 90px 135px 100px;align-items:center}.file-head{height:36px;border-bottom:1px solid var(--line);background:#172239}.file-head button{min-height:36px;padding:0 12px;text-align:left;background:transparent;color:#a8b6cf;border:0;border-right:1px solid #2c3b55;border-radius:0;font-size:10px;text-transform:uppercase;letter-spacing:.06em}.file-row{min-height:38px;border-bottom:1px solid rgba(42,29,59,.58);color:#cbc3d3;cursor:default;outline:none;user-select:none}.file-row:hover{background:#1c2a40}.file-row.drop-target{background:#35224b;box-shadow:inset 0 0 0 1px #9c6bf4}.file-row.cut{opacity:.5}.file-row.selected{background:#353657;color:#fff}.file-cell{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.file-name{display:flex;gap:9px;align-items:center;font-weight:670}.file-icon{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px}.file-icon svg,.source-icon svg{width:17px;height:17px;display:block}.folder .file-icon{color:#c5a6ff}.file-muted{color:#a5b3cd}.file-list{flex:1;overflow:auto;min-height:0}.file-empty{padding:70px 24px;text-align:center;color:#a5b3cd}.file-empty strong{display:block;color:#cfc6d8;font-size:14px;margin-bottom:5px}.explorer-status{padding:0 14px;color:var(--text);font-size:11px}.explorer-preview{border-width:0 0 0 1px;border-radius:0;min-height:0;background:#131e32}.explorer-body.expanded{grid-template-columns:1fr}.explorer-body.expanded .explorer-sidebar,.explorer-body.expanded .explorer-main{display:none}.explorer-body.expanded .explorer-preview{display:flex;min-height:620px;border-left:0}.explorer-footer{min-height:31px;height:auto;gap:10px;flex-wrap:wrap;display:flex;justify-content:space-between;align-items:center;padding:0 13px;border-top:1px solid var(--line);color:#aab8d0;font-size:11px;background:#172239}.location-mobile{display:none}.operation-spinner{display:inline-block;width:10px;height:10px;margin-right:7px;border:2px solid #635571;border-top-color:#c6a6ff;border-radius:50%;animation:spin .8s linear infinite}
+extension/options.html:364:     @keyframes spin{to{transform:rotate(360deg)}}.context-menu{position:fixed;z-index:50;min-width:190px;max-width:min(320px,calc(100vw - 16px));max-height:calc(100vh - 16px);overflow:auto;padding:6px;background:#1d2a40;border:1px solid #3d2b53;border-radius:10px;box-shadow:0 18px 50px rgba(0,0,0,.55)}.menu-item{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 10px;text-align:left;background:transparent;color:#e2dae9;border:0;border-radius:6px;font-weight:600;font-size:12px}.menu-item:hover:not(:disabled){background:#302044}.menu-item:focus-visible{outline:2px solid #bda2e8;outline-offset:-2px;background:#302044}.menu-item:disabled{opacity:.36;cursor:default}.menu-separator{height:1px;background:#342542;margin:5px}.menu-label{overflow-wrap:anywhere;padding:6px 10px;color:#83758f;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.inline-rename{width:100%;padding:4px 7px;border-radius:6px}.load-more{margin:14px auto;display:block}.properties-dialog{width:min(520px,calc(100vw - 32px));padding:0;border:1px solid #44305c;border-radius:16px;background:#1a263d;color:var(--text);box-shadow:0 30px 100px rgba(0,0,0,.65)}.properties-dialog::backdrop{background:rgba(5,3,8,.72);backdrop-filter:blur(3px)}.properties-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line)}.properties-head h3{margin:2px 0 0;font-size:19px}.eyebrow{color:#a58ebd;font-size:10px;text-transform:uppercase;letter-spacing:.12em}.properties-content{display:grid;grid-template-columns:125px minmax(0,1fr);gap:10px 16px;padding:22px;font-size:12px}.property-label{color:#8e8298}.property-value{word-break:break-word}.property-value code{font:11px ui-monospace,SFMono-Regular,Consolas,monospace;color:#d8c5ec}
+extension/options.html:371:     .right-click-mode{padding:6px;border:1px solid #405170;border-radius:12px;background:#0e1728;margin:0 0 12px;width:fit-content;max-width:100%}.right-click-mode .toggle{margin:0;padding:12px 18px;border:1px solid transparent;border-radius:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px}.right-click-mode .toggle:has(input:checked){background:#302e50;border-color:#77639f;color:#e9e2ff}.right-click-mode .meta{margin-top:8px}
+extension/options.html:409:     #workspace-preview .preview-media img{max-width:100%;max-height:360px;object-fit:contain;cursor:zoom-in}
+extension/options.html:430:     .preview-lightbox-layer .image-zoom-menu button:disabled{opacity:.35;cursor:default}
+extension/options.html:481:     .signal-demo-action:disabled{opacity:1;cursor:default}
+extension/options.html:514:     .url-popover-row[hidden]{display:none}.url-popover-list{display:grid;gap:5px}.url-popover-row{position:relative;display:grid;gap:6px;width:100%;min-width:0;text-align:left;padding:12px 44px 12px 10px;border:1px solid transparent;border-radius:7px;background:#172238;color:#edf1f8;cursor:pointer}
+extension/options.html:516:     .url-popover-row:hover:not(:disabled),.url-popover-row:focus-visible{background:#302b47;border-color:#79638e;outline:none}.url-popover-row:hover .url-popover-copy,.url-popover-row:focus-visible .url-popover-copy,.url-popover-row[data-copied] .url-popover-copy{opacity:1}.url-popover-row:disabled{opacity:.6;cursor:default}.url-popover-feedback{padding:10px 7px 4px;color:#c9c2d6;line-height:1.5}.url-popover-close:focus-visible{outline:2px solid #bda2e8;border-radius:5px}
+extension/background.js:66:     .replace(/[^a-zA-Z0-9._ -]/g, "-").replace(/^\\\\.+/, "").slice(0, 180);
+extension/background.js:84:     return Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,"0")).join("");
+extension/background.js:89:   return {context,event,fingerprint,payload,header:JSON.stringify(context),headers(){return {"x-redown-diagnostic":JSON.stringify(payload())};},json(body,options={}){return Response.json({...body,explorerDiagnostic:payload()},options);},merge(response){try{const data=JSON.parse(response.headers.get("x-redown-diagnostic")||"null");if(data?.operationId===context.operationId&&data.protocol===1)for(const item of (data.events||[]).slice(0,16))event(item.stage,item.outcome,item);}catch{}},async identity(key,role="source",encoding="literal"){try{event(role==="source"?"source.identity":"destination.identity","confirmed",{expectedKey:role==="source"?context.expectedKey:undefined,key:await fingerprint("key",key),encodedKey:await fingerprint("key",encoding==="query"?encodeURIComponent(key):key),encoding,role,scope:context.scope});}catch{}}};
+extension/background.js:93:   if (typeof value !== "string" || !value || value.includes("\\0") || new TextEncoder().encode(value).byteLength > 1024) throw new Error("Invalid object key");
+extension/background.js:105:   return md5?Array.from(new Uint8Array(md5),byte=>byte.toString(16).padStart(2,"0")).join(""):"";
+extension/background.js:111:   if(!head||head.size!==expectedSize||!receipt.etag||head.etag!==receipt.etag||receipt.version&&head.version!==receipt.version)throw explorerWorkerError("Destination verification failed. The source was preserved; inspect the destination before retrying.","EXPLORER_COPY_VERIFICATION_FAILED",409,"destination.verify");
+extension/background.js:133:     const response=await fetch(sourceWorkerUrl+"/object?key="+encodeURIComponent(sourceKey),{redirect:"manual",headers:{authorization:"Bearer "+sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",new URL(sourceWorkerUrl).origin)})}:{})},signal:AbortSignal.timeout(25000)});
+extension/background.js:136:     stream=response.body;size=Number(response.headers.get("content-length"));etag=response.headers.get("x-redown-etag");sourceVersion=response.headers.get("x-redown-version");md5=response.headers.get("x-redown-md5")||"";
+extension/background.js:137:     if(!response.headers.has("content-length")||!Number.isSafeInteger(size)||size<0||!etag){await stream.cancel();throw new Error("Source Worker cannot confirm content. Repair its bucket and retry.");}
+extension/background.js:150:   const parent = slash >= 0 ? requested.slice(0, slash + 1) : "";
+extension/background.js:151:   const name = slash >= 0 ? requested.slice(slash + 1) : requested;
+extension/background.js:153:   const stem = dot > 0 ? name.slice(0, dot) : name;
+extension/background.js:154:   const extension = dot > 0 ? name.slice(dot) : "";
+extension/background.js:163:   if (result === null) throw new Error("Another download claimed this filename. Please retry; the existing file was preserved.");
+extension/background.js:224: const ARCHIVE_MAX_INDEX = 4 * 1024 * 1024;
+extension/background.js:225: const ARCHIVE_MAX_ENTRY = 512 * 1024 * 1024;
+extension/background.js:229:   return bytesHex(new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, utf8.encode(key + "\\n" + expires))));
+extension/background.js:249:   return new Uint8Array(await new Response(object.body).arrayBuffer());
+extension/background.js:272:   if (count > 10000 || indexSize > ARCHIVE_MAX_INDEX || indexOffset + indexSize > head.size) throw new Error("Archive index exceeds safe limits");
+extension/background.js:276:   let cursor = 0;
+extension/background.js:278:     if (cursor + 46 > index.length || central.getUint32(cursor, true) !== 0x02014b50) throw new Error("Malformed ZIP central directory");
+extension/background.js:279:     const flags = central.getUint16(cursor + 8, true), method = central.getUint16(cursor + 10, true);
+extension/background.js:280:     const compressedSize = central.getUint32(cursor + 20, true), size = central.getUint32(cursor + 24, true);
+extension/background.js:281:     const nameLength = central.getUint16(cursor + 28, true), extraLength = central.getUint16(cursor + 30, true), commentLength = central.getUint16(cursor + 32, true);
+extension/background.js:282:     const name = safeArchiveName(readUtf8.decode(index.slice(cursor + 46, cursor + 46 + nameLength)));
+extension/background.js:285:     if (size > ARCHIVE_MAX_ENTRY || (compressedSize && size / compressedSize > 200)) throw new Error("Archive entry exceeds safe expansion limits");
+extension/background.js:286:     entries.push({ name, size, compressedSize, method, directory:name.endsWith("/"), offset:central.getUint32(cursor + 42, true) });
+extension/background.js:287:     cursor += 46 + nameLength + extraLength + commentLength;
+extension/background.js:300:   const output = new Uint8Array(await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+extension/background.js:301:   if (output.byteLength !== entry.size || output.byteLength > ARCHIVE_MAX_ENTRY) throw new Error("Archive entry failed safe decompression checks");
+extension/background.js:313:       const rawKey = requestUrl.pathname.slice(assetPrefix.length);
+extension/background.js:335:       baseHeaders.set("access-control-expose-headers", "ETag, Content-Length, Content-Type, Accept-Ranges, Content-Range");
+extension/background.js:339:         baseHeaders.set("content-length", String(head.size));
+extension/background.js:345:         const firstRange = rangeHeader.slice(6).split(",")[0];
+extension/background.js:370:         headers.set("content-length", String(length));
+extension/background.js:378:       headers.set("content-length", String(head.size));
+extension/background.js:400:       catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
+extension/background.js:401:       if (!authorized && !(await validSignedRead(requestUrl, key + "\\narchive:" + entry))) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
+extension/background.js:403:       return new Response(bytes, { headers:{ "content-type":requestUrl.searchParams.get("type") || "application/octet-stream", "content-length":String(bytes.byteLength), "cache-control":"private, no-store" } });
+extension/background.js:407:       try { key = exactObjectKey(requestUrl.searchParams.get("key") || ""); } catch (error) { return Response.json({ ok:false, error:error.message }, { status:400 }); }
+extension/background.js:409:       if (!authorized && !signed) return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+extension/background.js:412:       if (!head){diagnostic?.event("source.read","failed",{status:404,code:"EXPLORER_SOURCE_NOT_FOUND"});return diagnostic?diagnostic.json({ok:false,error:"Object not found",code:"EXPLORER_SOURCE_NOT_FOUND",stage:"source.read"},{status:404,headers:diagnostic.headers()}):Response.json({ok:false,error:"Object not found"},{status:404});}
+extension/background.js:424:       if (request.method === "HEAD") { headers.set("content-length", String(head.size)); return new Response(null, { status:200, headers }); }
+extension/background.js:435:       if(!object?.body||head.version&&object.version!==head.version)return Response.json({ok:false,error:"Object changed while reading. Refresh and retry."},{status:409});
+extension/background.js:436:       headers.set("content-length", String(length));
+extension/background.js:439:     if (request.method === "GET") return Response.json({ ok:true, service:"REDOWN", secretConfigured:Boolean(REDOWN_SHARED_SECRET), storageBound:Boolean(env.STORAGE), workerVersion:6, diagnosticProtocol:1, safeTransfers:true });
+extension/background.js:440:     if (request.method !== "POST") return Response.json({ ok:false, error:"Method not allowed" }, { status:405 });
+extension/background.js:441:     if (!authorized) return Response.json({ ok:false, error:"Unauthorized" }, { status:401 });
+extension/background.js:459:         const length = Number(request.headers.get("content-length") || 0);
+extension/background.js:460:         const max = Number(env.MAX_BYTES || 314572800);
+extension/background.js:462:           return Response.json({ ok: false, error: "Local file is larger than this REDOWN profile allows" }, { status: 413 });
+extension/background.js:480:           const fixed = new FixedLengthStream(length);
+extension/background.js:482:           const limiter = new TransformStream({
+extension/background.js:485:               if (count > max) throw new Error("Local file exceeded size limit");
+extension/background.js:489:           const pipePromise = request.body.pipeThrough(limiter).pipeTo(fixed.writable);
+extension/background.js:494:           const bytes = new Uint8Array(await request.arrayBuffer());
+extension/background.js:495:           if (bytes.byteLength > max) throw new Error("Local file exceeded size limit");
+extension/background.js:500:         return Response.json({
+extension/background.js:511:       const body = await request.json();
+extension/background.js:516:         if (!head) return Response.json({ ok:false, error:"Object not found" }, { status:404 });
+extension/background.js:517:         return Response.json({ ok:true, object:{ key, size:head.size, etag:head.etag, httpEtag:head.httpEtag, uploaded:head.uploaded, httpMetadata:head.httpMetadata, customMetadata:head.customMetadata } });
+extension/background.js:521:         if (!key || !(await env.STORAGE.head(key))) return Response.json({ ok:false, error:"Object not found" }, { status:404 });
+extension/background.js:522:         return Response.json({ ok:true, url:await signedReadUrl(requestUrl, key, body.ttl), expiresIn:Math.max(30, Math.min(3600, Number(body.ttl) || 900)) });
+extension/background.js:526:         return Response.json({ ok:true, archive:{ key, type:/\\.cbz$/i.test(key)?"cbz":"zip", entries:await archiveEntries(env.STORAGE, key) } });
+extension/background.js:533:         return Response.json({ ok:true, url, expiresIn:900 });
+extension/background.js:537:         const requested = Array.from(new Set(body.entries || [])).slice(0, 1000);
+extension/background.js:547:         return Response.json({ ok:true, results });
+extension/background.js:553:         for (const rawName of Array.from(new Set(body.entries || [])).slice(0, 1000)) {
+extension/background.js:558:             if(!response.headers.has("content-length"))throw new Error("Archive entry length unavailable; nothing written");
+extension/background.js:559:             await verifiedObjectPut(env.STORAGE,destinationKey,response.body,{onlyIf:new Headers({"If-None-Match":"*"}),httpMetadata:{contentType:response.headers.get("content-type")||"application/octet-stream"},customMetadata:{extractedFrom:sourceKey,extractedAt:new Date().toISOString()}},Number(response.headers.get("content-length")));
+extension/background.js:563:         return Response.json({ ok:true,results });
+extension/background.js:571:           if(expected&&(!head||head.etag!==expected.etag||head.size!==expected.size||expected.version&&head.version!==expected.version))throw new Error("Source changed since copy. Original preserved; refresh before retrying.");
+extension/background.js:578:               const response=await fetch(base+"/object?key="+encodeURIComponent(expected.destinationKey),{method:"HEAD",headers:{authorization:"Bearer "+body.destinationToken},signal:AbortSignal.timeout(25000)});
+extension/background.js:579:               if(response.ok)destination={etag:response.headers.get("x-redown-etag"),size:Number(response.headers.get("content-length")),version:response.headers.get("x-redown-version")};
+extension/background.js:581:             if(!destination||destination.etag!==expected.destinationEtag||destination.size!==expected.size||expected.destinationVersion&&destination.version!==expected.destinationVersion)throw new Error("Destination changed since copy. Original preserved; refresh before retrying.");
+extension/background.js:586:         for(const key of keys)if(await env.STORAGE.head(key))throw new Error("Deletion could not be confirmed. Refresh before retrying.");
+extension/background.js:588:         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
+extension/background.js:590:       if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,createOnlyFolders:true,storageBound:Boolean(env.STORAGE)});
+extension/background.js:596:         const response=await fetch(base.origin+"/object?key="+encodeURIComponent(key),{method:"HEAD",redirect:"manual",headers:{authorization:"Bearer "+body.sourceToken,...(diagnostic?{"x-redown-diagnostic":JSON.stringify({...diagnostic.context,expectedBinding:diagnostic.context.sourceBinding,expectedOrigin:await diagnostic.fingerprint("origin",base.origin)})}:{})},signal:AbortSignal.timeout(10000)});
+extension/background.js:601:         return diagnostic?diagnostic.json(result):Response.json(result);
+extension/background.js:612:         return diagnostic?diagnostic.json({ok:true,results}):Response.json({ok:true,results});
+extension/background.js:619:         const newKey=oldKey.slice(0,oldKey.lastIndexOf("/")+1)+newFilename;
+extension/background.js:620:         if(oldKey===newKey)return Response.json({ok:true,key:oldKey,filename:newFilename});
+extension/background.js:622:         if(result.status!=="copied")return Response.json({ok:false,error:"A file with that name already exists"},{status:409});
+extension/background.js:624:         if(!source||source.etag!==result.sourceEtag||source.size!==result.size||result.sourceVersion&&source.version!==result.sourceVersion)throw new Error("Source changed during rename. Both objects retained; refresh before retrying.");
+extension/background.js:626:         if(await env.STORAGE.head(oldKey))throw new Error("Renamed copy verified, but source deletion is unconfirmed. Refresh before retrying.");
+extension/background.js:629:         return Response.json({ok:true,key:newKey,filename:newFilename,publicPath,publicUrl});
+extension/background.js:648:         return Response.json({ ok: true, created });
+extension/background.js:660:       const length = Number(remote.headers.get("content-length") || 0);
+extension/background.js:661:       const max = Number(env.MAX_BYTES || 314572800);
+extension/background.js:663:         return Response.json({ ok: false, error: "Remote file is larger than this REDOWN profile allows" }, { status: 413 });
+extension/background.js:689:         const fixed = new FixedLengthStream(length);
+extension/background.js:691:         const limiter = new TransformStream({
+extension/background.js:694:             if (count > max) throw new Error("Remote file exceeded size limit");
+extension/background.js:699:         const pipePromise = remote.body.pipeThrough(limiter).pipeTo(fixed.writable);
+extension/background.js:704:         // Some CDNs (including signed image URLs) omit Content-Length.
+extension/background.js:713:           if (count > max) throw new Error("Remote file exceeded size limit");
+extension/background.js:717:         const combined = new Uint8Array(count);
+extension/background.js:728:       return Response.json({ ok: true, key, filename, publicPath, publicUrl, bytes: bytesWritten, contentType });
+extension/background.js:732:       return diagnostic?diagnostic.json(payload,{status:error.status||400}):Response.json(payload,{status:error.status||400});
+extension/background.js:744:   const array = crypto.getRandomValues(new Uint8Array(bytes));
+extension/background.js:749:   return bytesToBase64Url(new Uint8Array(digest));
+extension/background.js:780:     .replace(/^-+|-+$/g, "").slice(0, max) || "assets";
+extension/background.js:792:   const bitmap = await createImageBitmap(await response.blob());
+extension/background.js:798: }, pause = ms => new Promise(resolve=>setTimeout(resolve,ms))) {
+extension/background.js:876:   const body = await res.json().catch(() => ({}));
+extension/background.js:922:     const body = await res.json().catch(() => ({}));
+extension/background.js:924:     if(!Array.isArray(body.result))throw new Error("Cloudflare returned an unreadable account list. Retry Refresh.");
+extension/background.js:934:   let cursor = "";
+extension/background.js:937:     if (cursor) params.set("cursor", cursor);
+extension/background.js:939:     const body = await res.json().catch(() => ({}));
+extension/background.js:942:     if(!Array.isArray(result)&&!Array.isArray(result.buckets))throw new Error("Cloudflare returned an unreadable bucket list. Retry Refresh.");
+extension/background.js:945:     const next = result?.cursor || body?.result_info?.cursor || "";
+extension/background.js:946:     if (!next || next === cursor) break;
+extension/background.js:947:     cursor = next;
+extension/background.js:965:     const body = await res.json();
+extension/background.js:969:     `redown-${accountId.slice(0, 8)}`,
+extension/background.js:970:     `redown-${accountId.slice(0, 8)}-${Math.random().toString(36).slice(2, 7)}`
+extension/background.js:1001:   const scriptName = existing?.scriptName || `redown-${safeSlug(bucketName, 38)}-${accountId.slice(0, 6)}`;
+extension/background.js:1013:       { type: "plain_text", name: "MAX_BYTES", text: "314572800" },
+extension/background.js:1026:     const text = await upload.text();
+extension/background.js:1027:     throw new Error(`Could not provision REDOWN Worker (${upload.status}): ${text.slice(0, 300)}`);
+extension/background.js:1035:     const text = await enable.text();
+extension/background.js:1036:     throw new Error(`Worker uploaded, but workers.dev could not be enabled (${enable.status}): ${text.slice(0, 300)}`);
+extension/background.js:1046:   const healthTimeoutMs = 60_000;
+extension/background.js:1049:   while (Date.now() - healthStartedAt < healthTimeoutMs) {
+extension/background.js:1058:         health = await response.json().catch(() => null);
+extension/background.js:1070:     await new Promise(resolve => setTimeout(resolve, waitMs));
+extension/background.js:1077:       "Check your connection and retry repair. Your bucket was not deleted."
+extension/background.js:1109:     await new Promise(resolve => setTimeout(resolve, 2000));
+extension/background.js:1111:   const prefixBody = await prefixCheck.json().catch(() => ({}));
+extension/background.js:1182:     const body = await current.json().catch(() => ({}));
+extension/background.js:1185:     const body = await current.json().catch(() => ({}));
+extension/background.js:1217:       "ETag", "Content-Length", "Content-Type", "Accept-Ranges", "Content-Range"
+extension/background.js:1224:       exposeHeaders: ["ETag", "Content-Length", "Content-Type", "Accept-Ranges", "Content-Range"],
+extension/background.js:1253:   catch{return {hostname,state:"unknown",message:"Cloudflare accepted the request, but its association could not be refreshed. Check Cloudflare before retrying."};}
+extension/background.js:1255:   if(!domain)return {hostname,state:"unknown",message:"Cloudflare has not confirmed this hostname on this bucket’s Worker. Refresh and check the domain before retrying."};
+extension/background.js:1272:   }catch(error){return finish("needs-setup",`Attached — Cloudflare reports the hostname association, but public delivery needs setup: ${error.message}. Check the Worker and DNS/SSL before retrying.`);}
+extension/background.js:1276:     const response=await RedownCloudflareApi.boundedFetch(origin+"/",{credentials:"omit",redirect:"error",timeoutMs:8000});
+extension/background.js:1277:     const body=await response.json();reachable=response.ok&&isVerifiedWorkerHealth(body);
+extension/background.js:1314:       const response=await cfFetch(path,options),body=await response.json().catch(()=>null);
+extension/background.js:1322:       return {ok:false,code:"EXPLORER_RESULT_UNCONFIRMED",error:"Public access could not be verified. Refresh URL choices before retrying; the setting may have changed."};
+extension/background.js:1326:     return {ok:false,code:denied?"EXPLORER_PERMISSION_DENIED":expired?"EXPLORER_AUTH_EXPIRED":"EXPLORER_RESULT_UNCONFIRMED",error:denied?"Cloudflare denied this change. Check this login’s R2 bucket permissions.":expired?"Cloudflare rejected the login. Reconnect and try again.":"Could not verify public access. Refresh URL choices before retrying; the setting may have changed."};
+extension/background.js:1335: async function listObjectsPage(accountId, bucketName, prefix = "", cursor = "", delimiter = "") {
+extension/background.js:1338:   if (cursor) params.set("cursor", cursor);
+extension/background.js:1339:   if (delimiter) params.set("delimiter", delimiter);
+extension/background.js:1341:   const body = await res.json().catch(() => null);
+extension/background.js:1343:     throw new Error("Cloudflare returned an unreadable listing. Retry Refresh; your files have not been changed.");
+extension/background.js:1349:   const delimited = Array.isArray(result?.delimited)
+extension/background.js:1350:     ? result.delimited
+extension/background.js:1351:     : Array.isArray(info?.delimited)
+extension/background.js:1352:       ? info.delimited
+extension/background.js:1361:     delimited,
+extension/background.js:1362:     cursor:result?.cursor || info?.cursor || "",
+extension/background.js:1366: async function listObjects(accountId, bucketName, prefix = "", cursor = "") {
+extension/background.js:1367:   return listObjectsPage(accountId, bucketName, prefix, cursor);
+extension/background.js:1370:   const objects=[],seen=new Set();let cursor="";
+extension/background.js:1372:     const result=await listObjectsPage(accountId,bucketName,prefix,cursor);
+extension/background.js:1374:     if(!result.cursor){if(result.truncated)throw new Error("Folder listing is incomplete. Refresh before changing files.");return objects;}
+extension/background.js:1375:     if(seen.has(result.cursor))throw new Error("Cloudflare repeated a folder page. No file changes were started; refresh and retry.");
+extension/background.js:1376:     seen.add(result.cursor);cursor=result.cursor;
+extension/background.js:1378:   throw new Error("Folder listing exceeded its safe page limit. Open a smaller folder before changing files.");
+extension/background.js:1390:   let tokenScore=0, cursor=0;
+extension/background.js:1392:     const found=value.indexOf(token,cursor);
+extension/background.js:1396:       for(let i=cursor;i<value.length&&qi<token.length;i++) if(value[i]===token[qi]) qi++;
+extension/background.js:1401:       cursor=found+token.length;
+extension/background.js:1406: async function searchExplorerObjects(targets, query, limit = 200) {
+extension/background.js:1428:       const depth=parts[parts.length-1]===".redown"?parts.length-1:Math.max(0,parts.length-1);
+extension/background.js:1430:       for(let i=0;i<depth;i++){
+extension/background.js:1448:   return ranked.slice(0,Math.max(1,Math.min(500,Number(limit)||200)));
+extension/background.js:1450: async function listFolderPrefixes(accountId, bucketName, limit = 5000) {
+extension/background.js:1459:     const depth = isMarker ? parts.length - 1 : Math.max(0, parts.length - 1);
+extension/background.js:1461:     for (let i = 0; i < depth; i++) {
+extension/background.js:1464:       if (prefixes.size >= limit) break;
+extension/background.js:1466:     if (prefixes.size >= limit) break;
+extension/background.js:1472: async function listFolderChildren(accountId, bucketName, parentPrefix = "", limit = 250) {
+extension/background.js:1475:   let cursor = "";
+extension/background.js:1476:   while (children.size < limit) {
+extension/background.js:1477:     const result = await listObjectsPage(accountId, bucketName, parent, cursor, "/");
+extension/background.js:1478:     for (const raw of result.delimited || []) {
+extension/background.js:1481:       const relative=parent && full.startsWith(parent) ? full.slice(parent.length) : full;
+extension/background.js:1484:       if(children.size>=limit)break;
+extension/background.js:1490:       const relative=key.slice(parent.length);
+extension/background.js:1492:       if(slash>0)children.add(relative.slice(0,slash));
+extension/background.js:1493:       if(children.size>=limit)break;
+extension/background.js:1495:     if(!result.cursor||result.cursor===cursor)break;
+extension/background.js:1496:     cursor=result.cursor;
+extension/background.js:1507:   if(typeof value!=="string"||!value||value.includes("\0")||new TextEncoder().encode(value).byteLength>1024)throw new Error("Invalid object key");
+extension/background.js:1513:   if(new TextEncoder().encode(name).byteLength>1024)throw new Error("That name is too long");
+extension/background.js:1520:       timeoutMs:8000,method:"POST",
+extension/background.js:1530:     if(!response.ok)throw new Error("Bucket connection check failed (HTTP "+response.status+"). Reconnect or retry Refresh; no repair was attempted.");
+extension/background.js:1531:     const result = await response.json().catch(() => ({}));
+extension/background.js:1535:     throw new Error(error?.message||"Bucket connection check failed. Retry Refresh; no repair was attempted.");
+extension/background.js:1566:         timeoutMs:body.action==="probeSource"||body.action==="capabilities"?15000:30000,method:"POST",
+extension/background.js:1571:       result=await response.json().catch(error=>{if(error?.name==="TimeoutError"||response.ok)throw error;return {};});
+extension/background.js:1573:       observe("unknown",error?.name==="TimeoutError"?"TIMEOUT":"NETWORK");
+extension/background.js:1574:       const failure=new Error(error?.name==="TimeoutError"?(read?"The read-only bucket request exceeded its deadline.":"The bucket did not confirm this operation within 30 seconds. Refresh the destination before retrying; a copy may already exist."):"The bucket did not confirm this operation. Check the destination before retrying; a change may already have completed.");
+extension/background.js:1575:       failure.code=error?.name==="TimeoutError"?"EXPLORER_REQUEST_TIMEOUT":error?.name==="AbortError"?"EXPLORER_RESULT_UNCONFIRMED":"EXPLORER_NETWORK_ERROR";failure.stage="worker.response";throw failure;
+extension/background.js:1620:   if(!valid(input?.source)||!valid(input?.destination)||typeof input.key!=="string"||!input.key||new TextEncoder().encode(input.key).byteLength>1024||input.key.includes("\0"))throw new Error("Choose one ordinary file and a destination bucket.");
+extension/background.js:1640:         const result=await cfJson(`/accounts/${encodeURIComponent(profile.accountId)}/workers/scripts/${encodeURIComponent(profile.scriptName)}/settings`,{timeoutMs:10000});
+extension/background.js:1649:       const response=await cfFetch(path,{headers:{range:"bytes=0-0"},redirect:"error",timeoutMs:10000});
+extension/background.js:1655:       const response=await RedownCloudflareApi.boundedFetch(source.workerUrl+"/object?key="+encodeURIComponent(input.key),{method:"HEAD",redirect:"manual",timeoutMs:10000,headers:{authorization:`Bearer ${source.token}`,"x-redown-diagnostic":JSON.stringify(wire)}});
+extension/background.js:1667:     collector.finish(id,state);return {explorerDiagnosticVersion:"1.0.0",state:state==="confirmed"?"available":"partial",data:{operationId:id,readOnly:true,checks,diagnosis:collector.diagnose(id),limitations:["Headers and metadata only; no file byte integrity established","Older Workers may lack the read-only proxy capability","Settings inspect provider configuration, not deployed code identity","No writes, repair, provisioning, or automatic write retries"]}};
+extension/background.js:1675:   const settings=await cfJson(`/accounts/${encodeURIComponent(profile.accountId)}/workers/scripts/${encodeURIComponent(profile.scriptName)}/settings`,{timeoutMs:10000});
+extension/background.js:1685:   if(page.objects.length||page.delimited?.length)return true;
+extension/background.js:1686:   if(page.truncated||page.cursor)throw new Error("Directory existence could not be confirmed. Refresh before transferring; no files were changed.");
+extension/background.js:1719:       const base=requested.slice(0,-1);let available=false;
+extension/background.js:1735:         ? folderTargets.get(folderRoot) + entry.key.slice(folderRoot.length)
+extension/background.js:1743:     const batch=mapped.slice(index,index+25);
+extension/background.js:1752:       const parent=key=>key.slice(0,key.lastIndexOf("/")+1);
+extension/background.js:1755:         const name=requested.slice(parent(requested).length),dot=name.lastIndexOf(".");
+extension/background.js:1756:         const stem=dot>0?name.slice(0,dot):name,extension=dot>0?name.slice(dot):"";
+extension/background.js:1758:         const index=result.destinationKey.slice(start.length,-end.length);
+extension/background.js:1762:     }))throw new Error("The bucket did not confirm all selected files. Refresh the destination before retrying; some copies may already exist.");
+extension/background.js:1771:         const batch=copied.slice(index,index+100),keys=batch.map(result=>result.sourceKey);
+extension/background.js:1773:         if(!Array.isArray(result.deleted)||result.deleted.length!==keys.length||keys.some(key=>!result.deleted.includes(key)))throw new Error("Source deletion was not confirmed. Refresh both locations before retrying.");
+extension/background.js:1788:     try { const keys=expanded.slice(index,index+100).map(x => x.key); const receipt=await callBucketWorker(profile,{action:"deleteKeys",keys,explorerTrace:message.explorerTrace});if(!Array.isArray(receipt.deleted)||receipt.deleted.length!==keys.length||keys.some(key=>!receipt.deleted.includes(key)))throw new Error("Deletion was not confirmed. Refresh before retrying.");completed+=keys.length; }
+extension/background.js:1799:   const parent = key.replace(/\/$/, "").split("/").slice(0,-1).join("/");
+extension/background.js:1809:     if(page.objects.some(o=>o.key===prefix||o.key.startsWith(prefix+"/"))||page.delimited?.some(p=>(typeof p==="string"?p:p.prefix)===prefix+"/")||page.truncated||page.cursor)throw new Error("That folder name already exists or could not be checked.");
+extension/background.js:1821:     return target.pathname.slice(basePath.length).split("/").map(decodeURIComponent).join("/");
+extension/background.js:1842:   const body = await response.json().catch(() => ({}));
+extension/background.js:1857:   if(item.destination)item.destination={...item.destination,key:renamed.key,prefix:renamed.key.split("/").slice(0,-1).join("/")};
+extension/background.js:1902:     if(capabilities.exactIngestPaths!==true)throw Object.assign(new Error("This folder needs exact-path support. Use the bucket’s Repair control in Settings, then retry. No upload was started."),{code:"EXPLORER_WORKER_CAPABILITY_MISMATCH"});
+extension/background.js:1918:   const text = await response.text();
+extension/background.js:1924:   const actualFolder=key.split("/").slice(0,-1).join("/");
+extension/background.js:1925:   if(!key||actualFolder!==folder)throw new Error("Destination verification failed: Worker returned a different folder. The file may have been written; check storage before retrying.");
+extension/background.js:2050:       // Simple means one menu level regardless of R2 directory depth.
+extension/background.js:2092:  * First slice limits whole-file buffering to 64 MiB; larger galleries need
+extension/background.js:2093:  * persistent streaming/multipart R2 upload, not unbounded MV3 service worker RAM.
+extension/background.js:2108: async function retryPendingHitomi(){
+extension/background.js:2115:       await markHitomiQueue(job.id,{status:"needs-tab",lastError:"Reopen the original gallery and retry the right-click action; request retained."});
+extension/background.js:2122:       const retries=(job.retries||0)+1;
+extension/background.js:2123:       await markHitomiQueue(job.id,{status:"pending",retries,nextAt:Date.now()+Math.min(300000,5000*Math.pow(2,Math.min(retries,6))),lastError:error?.message||String(error)});
+extension/background.js:2128:   if(alarm.name==="redown-hitomi-queue")retryPendingHitomi().catch(error=>console.warn("Hitomi queued retry",error));
+extension/background.js:2130: chrome.runtime.onStartup.addListener(()=>retryPendingHitomi().catch(()=>{}));
+extension/background.js:2132: const HITOMI_MAX_BYTES = 64 * 1024 * 1024;
+extension/background.js:2175:     jobs.push({id:jobId,menuId:String(info.menuItemId),url:tab.url,tabId:tab.id,status:"pending",createdAt:Date.now(),updatedAt:Date.now(),retries:0,nextAt:0});
+extension/background.js:2176:     await chrome.storage.local.set({[HITOMI_QUEUE_KEY]:jobs.slice(-250)});
+extension/background.js:2203:         setTimeout(()=>{URL.createObjectURL=original;document.removeEventListener("click",onClick,true);},120000);
+extension/background.js:2213:   if(!intent)throw new Error("No active gallery capture. The queued request is retained; retry the right-click action.");
+extension/background.js:2225:     if(!Number.isSafeInteger(message.size)||message.size<=0||message.size>HITOMI_MAX_BYTES)throw new Error("Gallery ZIP exceeds the 64 MiB initial capture limit");
+extension/background.js:2233:     const buf=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)buf[i]=binary.charCodeAt(i);
+extension/background.js:2252:     const body=await response.json().catch(()=>({}));
+extension/background.js:2256:     if(!key||key.split("/").slice(0,-1).join("/")!==folder)throw new Error("Destination verification failed. Check storage before retrying.");
+extension/background.js:2479:       if(message?.type==="cfSearchRetry")return sendResponse({ok:true,search:searchSessions.retry(message.sessionId)});
+extension/background.js:2523:       if (message?.type === "cfObjects") return sendResponse({ ok:true, ...(await listObjects(message.accountId,message.bucketName,message.prefix,message.cursor)) });
+extension/background.js:2529:       if (message?.type === "cfFolderPrefixes") return sendResponse({ ok:true, prefixes:await listFolderPrefixes(message.accountId,message.bucketName,message.limit || 5000) });
+extension/background.js:2532:         children:await listFolderChildren(message.accountId,message.bucketName,message.parentPrefix || "",message.limit || 250)
+extension/background.js:2537:         const page=await listObjectsPage(message.accountId,message.bucketName,parent,message.cursor||"","/");
+extension/background.js:2538:         if(page.cursor&&page.cursor===message.cursor||page.truncated&&!page.cursor)throw new Error("Cloudflare did not return a usable folder page. Retry.");
+extension/background.js:2540:         for(const path of [...page.delimited,...page.objects.map(object=>object.key||object.name||"")]){
+extension/background.js:2542:           const relative=key.slice(parent.length),slash=relative.indexOf("/");
+extension/background.js:2543:           if(slash>0)names.add(relative.slice(0,slash));
+extension/background.js:2545:         return sendResponse({ok:true,folders:[...names].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).map(name=>({name,prefix:parent+name+"/"})),cursor:page.cursor||""});
+extension/background.js:2547:       if (message?.type === "cfSearchObjects") return sendResponse({ ok:true, results:await searchExplorerObjects(message.targets || [], message.query, message.limit || 200) });
+extension/background.js:2572:         if(!object)throw new Error(page.cursor?"Object metadata could not be confirmed. Refresh and retry.":"Object not found. Refresh this folder.");
+extension/cloudflare-api.js:5:     const {timeoutMs = 30000, ...fetchOptions} = options;
+extension/cloudflare-api.js:7:       ...(fetchOptions.signal ? [fetchOptions.signal] : []), AbortSignal.timeout(timeoutMs)
+extension/cloudflare-api.js:25:       const body = await response.json().catch(()=>({}));
+extension/cloudflare-api.js:31:         throw new Error("Cloudflare access could not be renewed right now. Retry; your saved connection has been retained.");
+extension/cloudflare-api.js:43:     const body=await response.clone().json().catch(()=>({}));
+extension/cloudflare-api.js:71:       // One retry for safe reads only. Long Retry-After values are returned to
+extension/cloudflare-api.js:74:         const header=response.headers.get("retry-after");
+extension/cloudflare-api.js:80:             const onAbort=()=>{clearTimeout(timer);reject(options.signal.reason);};
+extension/cloudflare-api.js:81:             const timer=setTimeout(()=>{options.signal?.removeEventListener("abort",onAbort);resolve();},delay);
+extension/cloudflare-api.js:94:       try {globalThis.redownRuntimeObserver?.record({requestId:traceId,operation:read?"api.read":"api.write",outcome:"failed",code:error?.name==="TimeoutError"?"TIMEOUT":error?.name==="AbortError"?"CANCELLED":"NETWORK",durationMs:(globalThis.performance?.now?.()||0)-started});} catch {}
+extension/cloudflare-api.js:110:     const config=await response.json().catch(()=>({}));
+extension/cloudflare-api.js:129:     const limit = 64*1024*1024;
+extension/cloudflare-api.js:130:     if (Number(response.headers.get("content-length")) > limit) { await response.body?.cancel(); throw new Error("This file is too large for an inline preview. Use Download."); }
+extension/cloudflare-api.js:137:         if(size>limit) throw new Error("This file is too large for an inline preview. Use Download.");
+extension/cloudflare-api.js:149:       const probe=await request(objectPath(source,key),{method:'GET',headers:{Range:'bytes=0-0'},timeoutMs:12000});
+extension/cloudflare-api.js:161:       const cleanup=()=>{if(closed)return;closed=true;chrome.downloads.onChanged.removeListener(listener);clearTimeout(timer);};
+extension/cloudflare-api.js:168:       timer=setTimeout(cleanup,30*60*1000);
+extension/cloudflare-api.js:177:         if(interruption)throw new Error(`Chrome interrupted this download (${interruption}). Check Chrome Downloads before retrying.`);
+extension/cloudflare-auth.js:15:   const array = crypto.getRandomValues(new Uint8Array(bytes));
+extension/cloudflare-auth.js:20:   return bytesToBase64Url(new Uint8Array(digest));
+extension/cloudflare-auth.js:144:   const timer = setTimeout(() => controller.abort(), 30000);
+extension/cloudflare-auth.js:147:     const body = await response.json().catch(() => ({}));
+extension/cloudflare-auth.js:153:     clearTimeout(timer);
+extension/cloudflare-auth.js:210:         if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+extension/search-session.js:10:       errors:s.targets.filter(t=>t.error).map(t=>({accountId:t.accountId,bucketName:t.bucketName,code:t.error})),results:s.results.slice(),limit:2000});
+extension/search-session.js:15:       for(const t of targets){if(!t||typeof t.accountId!=='string'||typeof t.bucketName!=='string'||t.accountId.length>128||t.bucketName.length>128)throw new Error('INVALID_SEARCH');unique.set(JSON.stringify([t.accountId,t.bucketName]),{accountId:t.accountId,bucketName:t.bucketName,accountName:String(t.accountName||'').slice(0,128),cursor:'',done:false,pages:0});}
+extension/search-session.js:22:         const batch=s.targets.filter(t=>!t.done).slice(0,2);
+extension/search-session.js:24:         const pages=await Promise.allSettled(batch.map(t=>listPage(t.accountId,t.bucketName,'',t.cursor)));
+extension/search-session.js:34:             for(let depth=1;depth<parts.length;depth++)candidates.push({key:parts.slice(0,depth).join('/')+'/',folder:true});
+extension/search-session.js:38:               if(s.results.length>=2000){s.state='limited';break;}
+extension/search-session.js:41:             if(s.state==='limited')break;
+extension/search-session.js:43:           if(page.truncated&&!page.cursor){t.error='MISSING_CURSOR';t.done=true;}
+extension/search-session.js:44:           else if(page.cursor&&page.cursor===t.cursor){t.error='REPEATED_CURSOR';t.done=true;}
+extension/search-session.js:45:           else {t.cursor=page.cursor||'';t.done=!t.cursor;}
+extension/search-session.js:49:         if(s.state==='scanning'&&(s.examined>=100000||now()-s.startedAt>=300000))s.state='limited';
+extension/search-session.js:53:     return {start,step,cancelAll(){for(const s of sessions.values())s.state="cancelled";},snapshot:id=>view(get(id)),cancel(id){const s=get(id);s.state='cancelled';return view(s);},retry(id){const s=get(id);if(s.busy)throw new Error('SEARCH_BUSY');for(const t of s.targets)if(t.error){t.done=false;delete t.error;}s.state=s.targets.some(t=>!t.done)?'scanning':s.state;return view(s);}};
+extension/explorer-destination-menu.js:6:       const key=JSON.stringify([target.accountId,target.bucketName,target.prefix,target.cursor]);
+extension/explorer-destination-menu.js:14:         new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Folder listing timed out. Retry.')),12000);})
+extension/explorer-destination-menu.js:15:       ]).then(page=>{entry.pending=false;entry.expiresAt=Date.now()+10000;return page;},error=>{if(pageCache.get(key)===entry)pageCache.delete(key);throw error;}).finally(()=>clearTimeout(timer));
+extension/explorer-destination-menu.js:18:     const closeFrom=depth=>{
+extension/explorer-destination-menu.js:19:       clearTimeout(hoverTimer);
+extension/explorer-destination-menu.js:20:       for(const panel of panels.splice(depth)){panel.owner.setAttribute('aria-expanded','false');panel.element.remove();}
+extension/explorer-destination-menu.js:22:     function keyboard(menu,depth,event){
+extension/explorer-destination-menu.js:35:         const panel=panels[depth-1];
+extension/explorer-destination-menu.js:36:         if(panel){closeFrom(depth-1);panel.owner.focus();}
+extension/explorer-destination-menu.js:46:     function branch(menu,label,load,depth=0,enabled=true){
+extension/explorer-destination-menu.js:51:         clearTimeout(hoverTimer);
+extension/explorer-destination-menu.js:52:         if(panels[depth]?.owner===button){if(focus)panels[depth].element.querySelector('button:not(:disabled)')?.focus();return;}
+extension/explorer-destination-menu.js:53:         closeFrom(depth);
+extension/explorer-destination-menu.js:56:         element.addEventListener('keydown',event=>keyboard(element,depth+1,event));
+extension/explorer-destination-menu.js:57:         element.addEventListener('scroll',()=>closeFrom(depth+1));
+extension/explorer-destination-menu.js:58:         if(load.initialEntries)render(element,load.initialEntries,depth+1,panel);
+extension/explorer-destination-menu.js:61:           const entries=await load();if(panels[depth]!==panel)return;
+extension/explorer-destination-menu.js:62:           status.remove();render(element,entries,depth+1,panel);position(element,button);
+extension/explorer-destination-menu.js:65:           if(panels[depth]!==panel)return;
+extension/explorer-destination-menu.js:66:           status.textContent='Could not load child folders. Retry to browse deeper.';
+extension/explorer-destination-menu.js:67:           const retry=document.createElement('button');retry.className='menu-item';retry.textContent='Retry';retry.onclick=()=>{closeFrom(depth);return open(true);};element.append(retry);if(focus)retry.focus();
+extension/explorer-destination-menu.js:70:       button.onmouseenter=()=>{clearTimeout(hoverTimer);hoverTimer=setTimeout(()=>void open(),160);};
+extension/explorer-destination-menu.js:71:       button.onmouseleave=()=>clearTimeout(hoverTimer);
+extension/explorer-destination-menu.js:76:     function render(menu,entries,depth,panel){
+extension/explorer-destination-menu.js:79:         if(entry.children){branch(menu,entry.label,entry.children,depth,entry.enabled!==false);continue;}
+extension/explorer-destination-menu.js:81:         button.onmouseenter=()=>closeFrom(depth);
+extension/explorer-destination-menu.js:86:             try{const extra=await entry.more();if(panels[depth-1]!==panel)return;button.remove();render(menu,extra,depth,panel);position(menu,panel.owner);menu.querySelector('button:not(:disabled):last-child')?.focus();}
+extension/explorer-destination-menu.js:87:             catch{button.disabled=false;button.textContent='Could not load more — retry';}
+extension/explorer-destination-menu.js:104:       function children(destination,cursor=''){
+extension/explorer-destination-menu.js:105:         const initialEntries=cursor?[]:[{label:`${verb} here`,enabled:allowed(destination),choose:()=>{pageCache.clear();return onChoose(operation,destination,items,source);}}];
+extension/explorer-destination-menu.js:107:           const page=await cachedPage({...destination,cursor});
+extension/explorer-destination-menu.js:110:           if(page.cursor)entries.push({label:'More folders…',more:children(destination,page.cursor)});
+extension/explorer-destination-menu.js:111:           if(!page.folders.length&&!page.cursor)entries.push({label:cursor?'No more folders':'No subfolders',enabled:false});
+extension/explorer-diagnostics.js:14:  EXPLORER_CLIPBOARD_FAILED:['The browser did not confirm clipboard writing.','retry-clipboard'],
+extension/explorer-diagnostics.js:24:  EXPLORER_REQUEST_TIMEOUT:['Request deadline elapsed; a write may have committed.','inspect-destination-before-retry'],
+extension/explorer-diagnostics.js:32:  EXPLORER_RESTART_INTERRUPTED:['Collection restarted while the operation was incomplete.','inspect-outcome-before-retry']
+extension/explorer-diagnostics.js:40:  if(name==='TimeoutError')return 'EXPLORER_REQUEST_TIMEOUT';
+extension/explorer-diagnostics.js:46:  return {code,description:taxonomy[code][0],stage,component,httpStatus:Number.isInteger(status)&&status>=100&&status<=599?status:null,retryability:['EXPLORER_DESTINATION_CONFLICT','EXPLORER_PERMISSION_DENIED'].includes(code)?'requires-action':'inspect-before-retry',recovery:[taxonomy[code][1]],confidence:'confirmed-observation',rootCause:'unknown'};
+extension/explorer-diagnostics.js:75:  function prune(){const cutoff=now()-LIMITS.retentionMs;records=records.filter(op=>op.startedAt>=cutoff).slice(-LIMITS.operations);while(records.length&&JSON.stringify(records).length>LIMITS.bytes-4096)records.shift();}
+extension/explorer-diagnostics.js:93:  async function keySeed(){if(!seed)seed=Array.from(cryptoApi.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');return seed;}
+extension/explorer-diagnostics.js:98:   const hash=await cryptoApi.subtle.sign('HMAC',key,new TextEncoder().encode(kind+'\0'+raw));return Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
+extension/explorer-diagnostics.js:106:  function exportBundle(){prune();return {explorerDiagnosticVersion:VERSION,scope:'redacted-explorer',runId,exportedAt:now(),limits:LIMITS,operations:JSON.parse(JSON.stringify(records)),limitations:['Fingerprints comparable only within their recorded scope','No credentials, private names, URLs or contents','Binding declaration is not platform binding introspection','Collection is bounded and may be truncated','Observed completion is not automatically byte verification']};}
+extension/explorer-diagnostics.js:117:    if(restart&&clean.state==='running'){clean.state='unknown';clean.error=failure('EXPLORER_RESTART_INTERRUPTED','interrupted','adapter');clean.events.push({sequence:clean.events.length+1,at:now(),stage:'interrupted',component:'adapter',outcome:'unknown'});clean.events=clean.events.slice(-LIMITS.events);}
+extension/runtime-diagnostics.js:8:     build=String(build).slice(0,64);
+extension/runtime-diagnostics.js:11:     const prune=()=>{const cutoff=now()-86400000;events=events.filter(e=>Date.parse(e.at)>=cutoff).slice(-256);};
+extension/runtime-diagnostics.js:29:       if(operation==='describe')return result('available',{operations,adapter:context,permissions:['storage'],sideEffects:'local diagnostics only; no remote requests',limits:{events:256,retentionMs:86400000,exportBytes:196608},unsupported:['cloud probes','transfer verification','preview state','durable task recovery']});
+extension/runtime-diagnostics.js:34:         const {after=0,limit=50}=input;
+extension/runtime-diagnostics.js:35:         if(!Number.isInteger(after)||after<0||!Number.isInteger(limit)||limit<1||limit>100)return result('failed',{code:'INVALID_INPUT'});
+extension/runtime-diagnostics.js:36:         const page=events.filter(e=>e.sequence>after).slice(0,limit);
+extension/runtime-diagnostics.js:39:       return result(enabled?'partial':'unavailable',{schemaVersion:VERSION,scope:'passive-runtime',build,exportedAt:new Date(now()).toISOString(),events:structuredClone(events),limitations:['No object names or credentials collected','In-memory traces reset on service-worker restart','No installed-Chrome or live-cloud certification']});
+extension/transfer-counter.js:29:         const next=[{id:crypto.randomUUID(),at:now,...entry},...cleaned].slice(0,50);
+extension/hitomi-capture.js:14:       const blob = await response.blob();
+extension/hitomi-capture.js:15:       const fileName = String(event.data.filename || document.title || "hitomi-gallery").replace(/[\\/:*?"<>|]/g, "_").slice(0,120) + ".zip";
+extension/hitomi-capture.js:18:       const chunkSize = 256 * 1024;
+extension/hitomi-capture.js:20:         const bytes = new Uint8Array(await blob.slice(offset,offset+chunkSize).arrayBuffer());
+extension/popup.js:10:   try{return await Promise.race([chrome.runtime.sendMessage(message),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Request timed out. Please try again.')),12000);})]);}
+extension/popup.js:11:   finally{clearTimeout(timer);}
+extension/popup.js:30:     if(!result?.ok)throw Error('Connection status unavailable. Tap LOGIN to retry.');
+extension/popup.js:32:       if(Date.now()>loginDeadline)throw Error('Sign-in is taking longer than expected. Tap LOGIN to retry.');
+extension/popup.js:33:       loginTimer=setTimeout(followLogin,1000);return;
+extension/popup.js:45:     if(!result?.ok)throw Error(result?.error||'Could not open sign-in. Tap LOGIN to retry.');
+extension/popup.js:65:   $('counter-note').textContent=login?'Tap LOGIN. Let’s get you connected ✦':working?'A quick hello to Cloudflare…':total===null?'Counter is resting. Reopen REDOWN to retry.':ready?'First adventure? Ready when you are ✦':'Every delivery, a little further ✦';
+extension/popup.js:138: globalThis.addEventListener?.('pagehide',()=>{clearTimeout(loginTimer);roller.cancel();if(shownTotal!==null&&preferencesReady){seenTotal=shownTotal;savePreferences();}try{void audio?.close();}catch{}});
+worker/src/index.js:22:   const [a, b] = ipv4.slice(1).map(Number);
+worker/src/index.js:59:     .slice(0, 180);
+worker/src/index.js:85: function makeLimiter(maxBytes, counter) {
+worker/src/index.js:86:   return new TransformStream({
+worker/src/index.js:88:       const bytes = chunk instanceof Uint8Array ? chunk.byteLength : new TextEncoder().encode(chunk).byteLength;
+worker/src/index.js:90:       if (counter.bytes > maxBytes) throw new Error("Remote file exceeded MAX_BYTES");
+worker/src/index.js:116:       body = await request.json();
+worker/src/index.js:131:       const maxBytes = Math.max(1, Number(env.MAX_BYTES) || 104857600);
+worker/src/index.js:139:       const declaredLength = Number(remote.headers.get("content-length") || 0);
+worker/src/index.js:141:         return json({ ok: false, error: "Remote file exceeds MAX_BYTES" }, 413);
+worker/src/index.js:146:       const limited = remote.body.pipeThrough(makeLimiter(maxBytes, counter));
+worker/src/index.js:148:       await env.ASSETS.put(key, limited, {
+local/bridge.mjs:13:     const key = trimmed.slice(0, eq).trim();
+local/bridge.mjs:14:     let value = trimmed.slice(eq + 1).trim();
+local/bridge.mjs:16:       value = value.slice(1, -1);
+local/bridge.mjs:83:       const text = await upstream.text();
+wrangler.toml:12: MAX_BYTES = "104857600"
+extension/beta/configuration.mjs:1: // Runtime preferences are deliberately limited to options with real consumers.
+extension/beta/configuration.mjs:4:   messageTimeoutMs:120000,requestTimeoutMs:30000,uploadTimeoutMs:300000,
+extension/beta/configuration.mjs:5:   verificationTimeoutMs:300000,verificationIdleTimeoutMs:30000,
+extension/beta/configuration.mjs:6:   progressIntervalMs:100,previewMaxBytes:64*1024*1024,textPreviewMaxBytes:512*1024,batchConcurrency:1
+extension/beta/configuration.mjs:8: const message=['messageTimeoutMs'];
+extension/beta/configuration.mjs:10:   connectionStatus:['messageTimeoutMs','requestTimeoutMs'],archiveEntries:message,extractArchiveEntry:message,profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
+extension/beta/configuration.mjs:11:   list:['requestTimeoutMs'],stat:['requestTimeoutMs'],mkdir:message,copy:message,move:message,rename:message,delete:message,
+extension/beta/configuration.mjs:13:   preview:['requestTimeoutMs','previewMaxBytes','textPreviewMaxBytes'],download:[],
+extension/beta/configuration.mjs:14:   upload:['messageTimeoutMs','requestTimeoutMs','uploadTimeoutMs','verificationTimeoutMs','verificationIdleTimeoutMs','progressIntervalMs']
+extension/beta/explorer.css:8: button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:10px 14px;cursor:pointer;transition:background .12s,border-color .12s}
+extension/beta/explorer.css:10: button:disabled{opacity:.4;cursor:default}
+extension/beta/explorer.css:50: .file{padding:18px 26px;border-bottom:1px solid #f2edef;cursor:default;transition:background .12s}
+extension/beta/explorer.css:156: #preview-divider{cursor:col-resize;touch-action:none;position:relative;align-self:stretch}
+extension/beta/explorer.css:209: .guide-grip{display:block;padding:0;width:32px;height:32px;margin:-10px 0 0 -10px;cursor:grab;touch-action:none;user-select:none;font-size:28px;line-height:1}
+extension/beta/explorer.css:210: .guide-grip:active{cursor:grabbing}
+extension/beta/explorer.css:240: .guide-resize-nw{top:0;left:0;cursor:nwse-resize}
+extension/beta/explorer.css:241: .guide-resize-ne{top:0;right:0;cursor:nesw-resize}
+extension/beta/explorer.css:242: .guide-resize-sw{bottom:0;left:0;cursor:nesw-resize}
+extension/beta/explorer.css:243: .guide-resize-se{bottom:0;right:0;cursor:nwse-resize}
+extension/beta/explorer.css:255: .test-it-card .question-history-toggle { cursor:pointer; text-align:left; padding:6px 8px; border-radius:8px; }
+extension/beta/explorer.html:120: <small id="limitation">Beta: folder downloads and durable transfer recovery are not available yet.</small>
+extension/beta/explorer.html:156: <label for="pref-concurrency">Files processed at once</label><input id="pref-concurrency" type="number" min="1" step="1" required>
+extension/beta/explorer.mjs:9: let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
+extension/beta/explorer.mjs:10: const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
+extension/beta/explorer.mjs:35:   $('selection').textContent=selected.size?selected.size+' selected · '+bytes(chosen().filter(e=>!e.folder).reduce((n,e)=>n+Number(e.size||0),0)):items.length+' items'+(cursor?' · more available':'');
+extension/beta/explorer.mjs:36:   $('more').hidden=!cursor;$('more').disabled=locked;
+extension/beta/explorer.mjs:44:     const title=document.createElement('span');title.className='file-name';const icon=document.createElement('span');icon.className='icon';icon.setAttribute('aria-hidden','true');icon.textContent=item.folder?'▰':(item.displayName.split('.').length>1?item.displayName.split('.').pop().slice(0,4).toUpperCase():'FILE');const text=document.createElement('span');text.className='name';text.textContent=item.displayName;title.append(icon,text);
+extension/beta/explorer.mjs:50:       if(event.shiftKey&&anchor>=0){if(!event.ctrlKey&&!event.metaKey)selected.clear();for(const e of shown.slice(Math.min(anchor,index),Math.max(anchor,index)+1))selected.add(e.key);}
+extension/beta/explorer.mjs:59:   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
+extension/beta/explorer.mjs:83:   let result;try{result=await request('list',{source:target,cursor:add?cursor:''},{signal:controller?.signal});}catch(error){if(ticket!==epoch)return;throw error;}if(ticket!==epoch)return;
+extension/beta/explorer.mjs:85:   items=add?[...new Map([...items,...result.data.entries].map(e=>[e.key,e])).values()]:result.data.entries;cursor=result.data.cursor;
+extension/beta/explorer.mjs:90:   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
+extension/beta/explorer.mjs:91:   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
+extension/beta/explorer.mjs:98:   catch(e){status(e.message||'Operation failed. Refresh before retrying.');$('refresh').classList.add('attention');}
+extension/beta/explorer.mjs:175: $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
+extension/beta/explorer.mjs:203:   const ticket=++discoveryEpoch;epoch++;current=null;items=[];selected.clear();cursor='';
+extension/beta/explorer.mjs:207:     current=null;items=[];selected.clear();cursor='';clipboard=null;history=[];historyIndex=-1;epoch++;
+extension/beta/explorer.mjs:214:   const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
+extension/beta/explorer.mjs:229:     else{current=null;items=[];cursor='';selected.clear();connectionState(all.length?'choose':errors.length?'failed':'empty-buckets',all.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets were found.');render();}
+extension/beta/explorer.mjs:230:     if(errors.length){if(!all.length)failure(Error(errors.join(' ')));$('refresh').classList.add('attention');status('Some accounts could not be discovered. '+errors.join(' ')+' Use Refresh to retry or Connect Cloudflare to renew authorization.');}
+extension/beta/explorer.mjs:251: $('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();connectionState('disconnected');$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
+extension/beta/explorer.mjs:264: const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
+extension/beta/explorer.mjs:377:     if(type.startsWith('text/')){node=document.createElement('pre');node.textContent=await (await fetch(ownedUrl)).text();}
+extension/beta/file-api.mjs:7:   if (typeof value !== 'string' || !value || value.includes('\0') || value.includes('\\') || new TextEncoder().encode(value).length > 1024 || value.split('/').some(s=>s==='.'||s==='..')) throw Error('Invalid object path.');
+extension/beta/file-api.mjs:42:     const concurrency=options.batchConcurrency??preferences.batchConcurrency??adapter.configuration?.defaults.batchConcurrency??1;
+extension/beta/file-api.mjs:43:     if(!Number.isSafeInteger(concurrency)||concurrency<1)throw Error('batchConcurrency must be a positive safe integer.');
+extension/beta/file-api.mjs:45:     const {batchConcurrency:_,...itemOptions}=options;
+extension/beta/file-api.mjs:54:     await Promise.all(Array.from({length:Math.min(concurrency,items.length)},()=>worker()));
+extension/beta/guided-interaction.mjs:2: export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},onStep=()=>{},onSkip=()=>{},onRetry=null,startIndex=0,allowBack=true,autoAdvance=false,draggable=false,history=null}){
+extension/beta/guided-interaction.mjs:120:     $('[data-guide-title]').textContent=step.title;$('[data-guide-text]').textContent=typeof step.text==='function'?step.text():step.text;
+extension/beta/guided-interaction.mjs:131:     card.innerHTML='<button type="button" class="guide-exit" data-guide-exit aria-label="Exit entire tour">✕</button><div data-guide-progress class="eyebrow" role="status" aria-live="polite" aria-atomic="true"></div><h2 data-guide-title></h2><p data-guide-text></p><p data-guide-status role="status" aria-live="polite"></p><div class="guide-actions"><button type="button" data-guide-retry hidden>Retry</button><button type="button" data-guide-back>Back</button><button type="button" data-guide-skip>Skip</button><button type="button" data-guide-next class="primary">Next</button></div>';
+extension/beta/guided-interaction.mjs:142:     doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0&&(!history||history.jump(index-1))){index--;show();}};$('[data-guide-retry]').hidden=!onRetry;$('[data-guide-retry]').onclick=()=>onRetry?.(index);$('[data-guide-skip]').onclick=()=>{onSkip(index);advance();};$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed||history?.canContinue(index))advance();};
+extension/beta/r2-adapter.mjs:13:       const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input,...(['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfArchiveEntries','cfExtractArchive'].includes(type)?{betaNoProvision:true}:{})});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
+extension/beta/r2-adapter.mjs:15:         timer=setTimeout(()=>reject(Object.assign(Error(writes?'No final response. Refresh both locations before retrying; the operation may have changed files.':'No final response. Refresh and try the read again.'),{uncertain:writes&&dispatched})),options.messageTimeoutMs??providerDefaults.messageTimeoutMs);
+extension/beta/r2-adapter.mjs:16:         abort=()=>reject(Object.assign(new Error(writes&&dispatched?'Cancellation requested after dispatch. The cloud operation may still complete; inspect before retrying.':'Operation cancelled.'),{name:'AbortError',uncertain:writes&&dispatched}));
+extension/beta/r2-adapter.mjs:22:     } finally {clearTimeout(timer);options.signal?.removeEventListener('abort',abort);}
+extension/beta/r2-adapter.mjs:26:   async function page(target,p='',cursor='',delimiter='/',options={}) {
+extension/beta/r2-adapter.mjs:29:     if(cursor)query.set('cursor',cursor);
+extension/beta/r2-adapter.mjs:30:     if(delimiter)query.set('delimiter',delimiter);
+extension/beta/r2-adapter.mjs:31:     const response=await http.request(base(l)+'?'+query,{signal:options.signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
+extension/beta/r2-adapter.mjs:32:     const body=await response.json().catch(()=>null);
+extension/beta/r2-adapter.mjs:37:         const code=String(error.code||'').replace(/[^0-9A-Za-z_-]/g,'').slice(0,40);
+extension/beta/r2-adapter.mjs:38:         const message=String(error.message||'').replace(/Bearer\s+\S+/gi,'Bearer [redacted]').replace(/https?:\/\/\S+/gi,'[URL]').replace(/((?:access_token|refresh_token|authorization|token|secret)\s*[=:]\s*)\S+/gi,'$1[redacted]').slice(0,240);
+extension/beta/r2-adapter.mjs:41:       const guidance=response.status===401?'Cloudflare session expired. Reconnect Cloudflare.':response.status===403?'Cloudflare denied access. Check account authorization.':response.status===404?'This bucket may no longer exist. Refresh connection discovery.':'Retry Refresh; no files were changed.';
+extension/beta/r2-adapter.mjs:47:     if(!Array.isArray(objects))throw Error('Cloudflare returned an unreadable listing. Retry Refresh; no files were changed.');
+extension/beta/r2-adapter.mjs:48:     const next=result?.cursor || info.cursor || '';
+extension/beta/r2-adapter.mjs:49:     if(typeof next!=='string')throw Error('Cloudflare returned an invalid continuation token. Retry Refresh.');
+extension/beta/r2-adapter.mjs:51:     if(cursor && cursor===next || truncated&&!next)throw Error('Cloudflare returned an incomplete page. Refresh before changing files.');
+extension/beta/r2-adapter.mjs:52:     return {objects,delimited:Array.isArray(result?.delimited)?result.delimited:Array.isArray(info.delimited)?info.delimited:[],cursor:next};
+extension/beta/r2-adapter.mjs:55:     const exact=key(k);let cursor='';const seen=new Set();let pages=0;
+extension/beta/r2-adapter.mjs:56:     do {if(++pages>1000)throw Error('Metadata lookup exceeded its page limit.');const p=await page(source,exact,cursor,'',options);const object=p.objects.find(o=>(o.key||o.name)===exact);if(object)return {object:{...object,key:exact}};cursor=p.cursor;if(seen.has(cursor)&&cursor)throw Error('Repeated metadata page.');seen.add(cursor);}while(cursor);
+extension/beta/r2-adapter.mjs:61:     const deadline=AbortSignal.timeout(options.verificationTimeoutMs);
+extension/beta/r2-adapter.mjs:67:         timer=setTimeout(()=>reject(Error('Upload verification stalled. Inspect the temporary upload before retrying.')),options.verificationIdleTimeoutMs);
+extension/beta/r2-adapter.mjs:70:       })]);}finally{clearTimeout(timer);signal.removeEventListener('abort',abort);}
+extension/beta/r2-adapter.mjs:72:     const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs});
+extension/beta/r2-adapter.mjs:74:     const remote=response.body.getReader(),local=file.stream().getReader();
+extension/beta/r2-adapter.mjs:75:     let expected=new Uint8Array(),offset=0,verified=0;
+extension/beta/r2-adapter.mjs:79:         if(verified+chunk.value.length>file.size)throw Error('Upload read-back contains extra bytes.');
+extension/beta/r2-adapter.mjs:86:         if(verified===file.size||Date.now()-lastProgress>=options.progressIntervalMs){lastProgress=Date.now();onProgress?.({phase:'verifying',bytes:verified,totalBytes:file.size});}
+extension/beta/r2-adapter.mjs:88:       if(verified!==file.size)throw Error('Upload read-back ended early.');
+extension/beta/r2-adapter.mjs:97:       const original=e.key.replace(/\/$/,''),leaf=original.slice(original.lastIndexOf('/')+1);
+extension/beta/r2-adapter.mjs:102:         const duplicate=(dot>0?leaf.slice(0,dot):leaf)+' (copy)'+(dot>0?leaf.slice(dot):'');
+extension/beta/r2-adapter.mjs:122:       const response=await http.boundedFetch(profile.workerUrl,{timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs,signal:options.signal,method:'POST',cache:'no-store',headers:{authorization:'Bearer '+profile.token,'content-type':'application/json','cache-control':'no-cache'},body:JSON.stringify({action:'capabilities'})});
+extension/beta/r2-adapter.mjs:123:       const capabilities=await response.json().catch(()=>({}));
+extension/beta/r2-adapter.mjs:134:       if(!Array.isArray(result.results)||result.results.length!==1)throw Object.assign(Error('Archive extraction was not confirmed. Inspect the destination before retrying.'),{uncertain:true});
+extension/beta/r2-adapter.mjs:142:     async list({source,cursor=''},options) {
+extension/beta/r2-adapter.mjs:143:       const l=location(source),p=await page(l,l.prefix,cursor,'/',options),entries=new Map();
+extension/beta/r2-adapter.mjs:144:       for(const raw of p.delimited){const k=typeof raw==='string'?raw:raw.prefix;if(k&&k.startsWith(l.prefix))entries.set(k,{key:k,folder:true,displayName:k.slice(l.prefix.length).replace(/\/$/,'')});}
+extension/beta/r2-adapter.mjs:146:         const relative=k.slice(l.prefix.length);if(relative==='.redown')continue;const slash=relative.indexOf('/');
+extension/beta/r2-adapter.mjs:147:         if(slash>=0){const folder=l.prefix+relative.slice(0,slash+1);entries.set(folder,{key:folder,folder:true,displayName:relative.slice(0,slash)});}
+extension/beta/r2-adapter.mjs:150:       return {entries:[...entries.values()],cursor:p.cursor,folderExists:!l.prefix||p.objects.length>0||p.delimited.length>0};
+extension/beta/r2-adapter.mjs:155:       const limit=16*1024*1024;
+extension/beta/r2-adapter.mjs:156:       if(!Number.isSafeInteger(Number(before.size))||Number(before.size)>limit)throw Error('Choose a practice file no larger than 16 MiB for independent checking.');
+extension/beta/r2-adapter.mjs:157:       const response=await http.request(base(location(source))+'/'+key(k).split('/').map(encodeURIComponent).join('/'),{signal:options.signal,timeoutMs:options.requestTimeoutMs});
+extension/beta/r2-adapter.mjs:160:       try{while(true){const part=await reader.read();if(part.done)break;size+=part.value.byteLength;if(size>limit)throw Error('Practice file exceeds the checking budget.');chunks.push(part.value);}}finally{await reader.cancel();}
+extension/beta/r2-adapter.mjs:161:       const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+extension/beta/r2-adapter.mjs:162:       const sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+extension/beta/r2-adapter.mjs:175:       if(!file || !Number.isSafeInteger(file.size)||file.size<0)throw Error('Choose a local file.');
+extension/beta/r2-adapter.mjs:176:       if(file.size>300000000)throw Error('This beta uses the existing 300 MB direct upload route. Larger multipart uploads are unfinished.');
+extension/beta/r2-adapter.mjs:184:         signal?.throwIfAborted();onProgress?.({phase:'uploading',bytes:0,totalBytes:file.size});attempted=true;
+extension/beta/r2-adapter.mjs:185:         const response=await http.request(base(l)+'/'+staging.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:{'content-type':file.type||'application/octet-stream'},body:file,timeoutMs:options.uploadTimeoutMs,signal});
+extension/beta/r2-adapter.mjs:186:         const body=await response.json().catch(()=>null);
+extension/beta/r2-adapter.mjs:189:         if(Number(uploaded.object?.size)!==file.size)throw Error('Uploaded file size could not be verified.');
+extension/beta/r2-adapter.mjs:191:         signal?.throwIfAborted();onProgress?.({phase:'committing',bytes:file.size,totalBytes:file.size});
+extension/beta/r2-adapter.mjs:195:         if(result.completed!==1 || result.results?.[0]?.size!==file.size)throw Error('Final upload destination was not confirmed.');
+extension/beta/r2-adapter.mjs:198:         if(attempted)throw Object.assign(new Error((error.message||'Upload interrupted.')+' Temporary upload may remain at '+staging+'. Inspect it before retrying.'),{name:error.name,uncertain:true,recoveryKey:staging,code:error.code,cause:error});
+extension/beta/r2-adapter.mjs:205:       const signal=AbortSignal.any([AbortSignal.timeout(options.requestTimeoutMs??providerDefaults.requestTimeoutMs),...(options.signal?[options.signal]:[])]);
+extension/beta/r2-adapter.mjs:206:       const response=await http.request(base(location(source))+'/'+key(e.key).split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:options.requestTimeoutMs??providerDefaults.requestTimeoutMs});
+extension/beta/r2-adapter.mjs:208:       const limit=options.previewMaxBytes??providerDefaults.previewMaxBytes;
+extension/beta/r2-adapter.mjs:209:       if(Number(response.headers.get('content-length'))>limit){await response.body.cancel();throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');}
+extension/beta/r2-adapter.mjs:210:       const reader=response.body.getReader(),chunks=[];let size=0,truncated=false;const textLimit=type==='text/plain'?(options.textPreviewMaxBytes??providerDefaults.textPreviewMaxBytes):Infinity;
+extension/beta/r2-adapter.mjs:211:       try{while(true){signal.throwIfAborted();const {done,value}=await reader.read();if(done)break;const take=Math.min(value.byteLength,textLimit-size);if(size+take>limit)throw Error('Preview exceeds the configured memory budget. Use Download or increase previewMaxBytes.');if(take)chunks.push(value.subarray(0,take));size+=take;if(take<value.byteLength){truncated=true;break;}}}
+extension/beta/r2-adapter.mjs:222:         timer=setTimeout(()=>finish({state:'unobserved'}),30*60*1000);
+extension/beta/r2-adapter.mjs:233:       }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
+extension/beta/test-it-history.mjs:35:   return {h, begin, finish, jump, reach, entries: () => state.records.slice(0, h.highest + 1),
+extension/beta/test-it-session.mjs:7: const leaf=key=>key.slice(key.lastIndexOf('/')+1);
+extension/beta/test-it-session.mjs:68:     const target=operation==='rename'?{...input.source,prefix:input.entry.key.slice(0,input.entry.key.lastIndexOf('/')+1)}:input.destination;
+extension/beta/test-it-session.mjs:73:         if(operation==='copy'&&id(input.source,e.key)===id(target,key)&&input.conflict==='keep'){const n=leaf(e.key),dot=n.lastIndexOf('.');key=(target.prefix||'')+(dot>0?n.slice(0,dot):n)+' (copy)'+(dot>0?n.slice(dot):'');}
+extension/beta/test-it-session.mjs:91:       if(['list','preview'].includes(operation))emitEvidence({observationOnly:true,operation,response:operation==='list'?{entries:result.entries?.length,cursorPresent:Boolean(result.cursor)}:{type:result.type,size:result.size,truncated:result.truncated}});
+extension/beta/test-it-session.mjs:101:         if(exact.data.object||listing.data.folderExists||listing.data.entries?.length||listing.data.cursor)throw Error('That name already exists. Choose an unused folder name.');
+extension/beta/test-it-session.mjs:129:       if(dispatched){report({operation,verdict:'UNCERTAIN',response:state.pending?.receipts||null,latencyMs:performance.now()-started,observed:'Remote result needs reconciliation. No destructive retry was made.'});}
+extension/beta/test-it-session.mjs:204:   return {state,get recovery(){return structuredClone(recoveryRuns);},run,restart,capability,quarantined,get busy(){return inFlight>0||restarting;},source,owned,save,saveProgress,reconcile,check,originals,assertOwned(source,entries){if(entries.some(e=>quarantined(source,e.key)||involved(state.pending,source,e.key)))throw Error('REDOWN is still checking the previous action on this copy. Use Retry before cutting or pasting it again.');if(!entries.length||entries.some(e=>e.folder||quarantined(source,e.key)||involved(state.pending,source,e.key)||!owned(source,e.key)||owned(source,e.key).sessionId!==state.id))throw Error('Your original is protected. Select only verified practice copies.');},get active(){return active;},set active(value){active=value;}};
+extension/beta/test-it.mjs:92:     if(['copy','duplicate','copy-other','copy-key-paste','restore'].includes(kind)&&op==='copy'&&!conflict){matches=keys.length>0;if(kind==='copy')matches=matches&&operationCommand?.action==='paste'&&changes.every(c=>session.state.originals.some(o=>o.identity===c.parentId&&operationCommand.entries.includes(o.key)));if(kind==='duplicate')matches=matches&&operationCommand?.action==='duplicate';if(kind==='copy-key-paste')matches=matches&&operationCommand?.input.key?.toLowerCase()==='v'&&operationCommand?.input.ctrl;if(kind==='copy-other')matches=matches&&changes.every(c=>c.from&&(c.source.accountId!==c.from.source.accountId||c.source.bucketName!==c.from.source.bucketName||c.key.slice(0,c.key.lastIndexOf('/')+1)!==c.from.key.slice(0,c.from.key.lastIndexOf('/')+1)));if(kind==='restore')matches=matches&&session.state.originals.some(o=>operationCommand?.entries?.includes(o.key));if(kind==='copy-other'&&lastCreated)matches=matches&&changes.some(c=>c.parentId===lastCreated);if(keys.length){lastCreated=changes[0].id;session.state.workflow={...session.state.workflow,workingCopyId:lastCreated};}}
+extension/beta/test-it.mjs:116:     if(matches){pass({type:'verified-operation',command:operationCommand,...event});if(op==='move'&&keys.length)guide.message('Moved and verified at '+changes[0].source.bucketName+'/'+changes[0].key+'.');if(op==='copy'&&keys.length)guide.message('Good. REDOWN found and verified your copy at '+changes[0].source.bucketName+'/'+changes[0].key+'.');}else{r.observationFailure={reason:'Verified operation did not meet this exercise’s interaction or state requirements.',operation:op,command:structuredClone(operationCommand)};guide.message('Explorer completed and verified the operation. It did not match this exercise. Retry the requested action; provider success is recorded.');void save();}
+extension/beta/test-it.mjs:137:     if(k==='parent'){const from=detail.previous,to=detail.current,p=from?.prefix||'',parent=p.replace(/\/$/,'').slice(0,p.replace(/\/$/,'').lastIndexOf('/')+1);ok=['folder-open','bucket-open'].includes(action)&&detail.completed===true&&detail.origin==='breadcrumb'&&Boolean(p)&&from.accountId===to?.accountId&&from.bucketName===to?.bucketName&&to.prefix===parent&&s.current?.prefix===to.prefix;}
+extension/beta/test-it.mjs:182:     if(e.kind==='move-back'&&copy){const destination=lastMove?.find(o=>o.id===copy.id);if(destination?.source)text+='\nReturn to: '+destination.source.bucketName+'/'+destination.key.slice(0,destination.key.lastIndexOf('/')+1);}
+extension/beta/test-it.mjs:211:     guide=createGuide({document:doc,steps:exercises.map(e=>({...e,text:()=>instruction(e),action:'test-it-'+e.id,target:()=>{if(e.kind==='export')return '#test-it-tools-button';if(['copy-key','cut-key','move-key','copy-key-paste'].includes(e.kind))return doc.querySelector('#files .file[aria-selected="true"]')?'#files .file[aria-selected="true"]':'#files';if(['copy-menu','cut-menu'].includes(e.kind)){const action=e.kind==='copy-menu'?'copy':'cut';return !doc.getElementById('context')?.hidden?'#context [data-command="'+action+'"]':(doc.querySelector('#files .file[aria-selected="true"]')?'#files .file[aria-selected="true"]':'#files');}return e.target;}})),startIndex:index,allowBack:true,draggable:true,history:{entries:()=>history.entries(),origin:()=>history.h.origin,jump:i=>{const ok=history.jump(i);if(ok)viewing=true;return ok;},result:i=>session.state.records[i].verdict,counts:()=>history.counts(),retried:id=>(history.h.attempts[id]?.filter(a=>a.retry).length||0)>0,cancel:()=>{const a=history.h.active[index+1];if(a)history.finish(index+1,a.id,null,'Participant canceled.');generation++;viewing=true;void save();guide.refresh();},active:()=>!viewing&&Boolean(history.h.active[index+1]),canContinue:i=>i<history.h.highest||session.state.records[i].verdict==='PASSED'},
+extension/beta/test-it.mjs:216:           const prerequisite=session.state.records.slice(0,i).findLast(r=>r.actualApiOperation==='move'&&r.verdict==='PASSED');
+extension/beta/test-it.mjs:224:       onRetry:async()=>{if(checking)return;generation++;viewing=false;history.begin().retry=true;history.h.attempts[index+1].at(-1).retry=true;baseline=snapshot();sideChecks={};multiEvidence=[];lastInput={};command=null;await save();guide.refresh();guide.message('New attempt started. '+instruction(exercises[index]));if(!session.busy&&(session.state.pending||session.state.quarantinedActions?.length)){const ticket=generation;try{await session.reconcile({targeted:true});}catch(e){if(ticket===generation)guide.message(e.message);}if(ticket!==generation)return;}void verifyOriginalAutomatically();},
+extension/beta/test-it.mjs:225:       onExit:()=>{generation++;session.active=false;void save();},onFinish:()=>{session.active=false;void save();}});guide.start();guide.message('Your existing files remain protected. Practice changes are limited to verified copies. Use X to exit at any time.');}
+extension/beta/test-it.mjs:226:   function input(event){if(event.target.closest?.('[data-tour-start]'))guide?.stop();if(!guide?.active||event.target.closest?.('.guide-card'))return;const el=event.target.closest?.('[id]');/* Menu and keyboard handlers forward commands with button.click(). */if(event.type==='click'&&event.detail===0&&['copy','cut','paste'].includes(el?.id)&&(lastInput.context||lastInput.type==='keydown'))return;lastInput={type:event.type,target:el?.id||'',key:event.key,ctrl:Boolean(event.ctrlKey||event.metaKey),shift:Boolean(event.shiftKey),context:event.type==='contextmenu'||Boolean(event.target.closest?.('#context'))};if(event.type==='keydown'&&event.key==='Escape'||['click','input','change','pointerup'].includes(event.type)){if(uiTimer!==null)clearTimeout(uiTimer);const ticket=generation;uiTimer=setTimeout(()=>{uiTimer=null;if(ticket===generation)void observe('ui');},0);}}
+extension/beta/test-it.mjs:228:   doc.addEventListener('redown:gui',event=>{if(!event.detail?.action?.startsWith('test-it-'))void observe(event.detail.action,{...event.detail,action:event.detail.commandAction||event.detail.action}).catch(error=>{if(viewing)return;record().observationFailure={action:event.detail.action,error:error.message};void save();guide?.message('Test It observation failed. Explorer results are recorded separately. Retry the exercise.');});},{signal:listeners.signal});
+extension/beta/test-it.mjs:231:     link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+extension/beta/test-it.mjs:262:   return {capture(){return {exerciseId:index+1,attemptId:!viewing?history?.h.active[index+1]?.id:null,command:structuredClone(command)};},destroy(){destroyed=true;guide?.stop();listeners.abort();if(uiTimer!==null)clearTimeout(uiTimer);for(const id of ['test-it','test-it-export','test-it-restart','test-it-cleanup'])$(id).onclick=null;api.setPolicy(null);},observe,paintOwnership,get lastCommand(){return command?.action;},get session(){return session;}};

@@ -1,0 +1,198 @@
+{
+  "revision": "a7effa80b20a4d12f9e6837486ff1d7f7e52ebd9",
+  "scope": "active first-party explorer, shared transport/provider/helper source; excludes frozen corpora, generated evidence, vendored libraries",
+  "files": [
+    {
+      "path": "extension/options.js",
+      "bytes": 218636,
+      "lines": 4559,
+      "sha256": "03ec4cefcff397a0750be73df416c51413822c1229a25306a1f66351bb07a8cf"
+    },
+    {
+      "path": "extension/options.html",
+      "bytes": 83252,
+      "lines": 753,
+      "sha256": "5c16bc0b573df05565b421d1d58df3cf617ded62e42243f9dacceaf2509f65f6"
+    },
+    {
+      "path": "extension/background.js",
+      "bytes": 158522,
+      "lines": 2634,
+      "sha256": "dd0cf1d8c7a5feb442babe3105bd0445dd4a148a2701cae7a6c8932447443891"
+    },
+    {
+      "path": "extension/cloudflare-api.js",
+      "bytes": 11473,
+      "lines": 185,
+      "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+    },
+    {
+      "path": "extension/cloudflare-auth.js",
+      "bytes": 13235,
+      "lines": 258,
+      "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789"
+    },
+    {
+      "path": "extension/search-session.js",
+      "bytes": 4302,
+      "lines": 56,
+      "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce"
+    },
+    {
+      "path": "extension/explorer-destination-menu.js",
+      "bytes": 8734,
+      "lines": 125,
+      "sha256": "bbee7b5870c34075ba07e09d90c8dce2e0b9db110371a011581aa423e1057711"
+    },
+    {
+      "path": "extension/explorer-diagnostics.js",
+      "bytes": 19735,
+      "lines": 167,
+      "sha256": "e7ee43dc9a94d39023cca4e63791667541f448e136900c02595bc7bb93eeb9e7"
+    },
+    {
+      "path": "extension/runtime-diagnostics.js",
+      "bytes": 3975,
+      "lines": 44,
+      "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+    },
+    {
+      "path": "extension/transfer-counter.js",
+      "bytes": 2281,
+      "lines": 35,
+      "sha256": "b32d8f9cbe1f15783a542e21e19fac58fc8aa0ea46a73bd3a875aa9daedb597e"
+    },
+    {
+      "path": "extension/hitomi-capture.js",
+      "bytes": 1852,
+      "lines": 32,
+      "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1"
+    },
+    {
+      "path": "extension/rfis-index.js",
+      "bytes": 4320,
+      "lines": 100,
+      "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f"
+    },
+    {
+      "path": "extension/popup.js",
+      "bytes": 10298,
+      "lines": 146,
+      "sha256": "3f3b3305a5388274d52002318f5578384b6398e5d6f99b7c0bea682f837c9c97"
+    },
+    {
+      "path": "extension/manifest.json",
+      "bytes": 1422,
+      "lines": 45,
+      "sha256": "ed0f9f887e63651e7cc34af7952aa8121e81d3eda2b7f5208fd2a73206e64ab3"
+    },
+    {
+      "path": "worker/src/index.js",
+      "bytes": 5465,
+      "lines": 171,
+      "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4"
+    },
+    {
+      "path": "local/bridge.mjs",
+      "bytes": 3098,
+      "lines": 95,
+      "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31"
+    },
+    {
+      "path": "wrangler.toml",
+      "bytes": 253,
+      "lines": 12,
+      "sha256": "0e40d6f4a7f8486439b9085f24b2f2b629bc5431101c2d9a292799ca2ae37764"
+    },
+    {
+      "path": "windows/CMakeLists.txt",
+      "bytes": 341,
+      "lines": 20,
+      "sha256": "87de8306cd775d933e0fc5b8031cac1a8d6ea603f2dd2b88e8a177002a3371e1"
+    },
+    {
+      "path": "github/remote-ingest.yml",
+      "bytes": 1450,
+      "lines": 48,
+      "sha256": "0512a179cbfd41ff2177e3dfc2ddd2a0bd0f4a59fe76006536379d7182837328"
+    },
+    {
+      "path": "extension/beta/configuration.mjs",
+      "bytes": 2284,
+      "lines": 31,
+      "sha256": "56fd8431803404236e4a10afc636e6dca565ccfcdbd807f1e28a94a641f1d5eb"
+    },
+    {
+      "path": "extension/beta/dropped-files.mjs",
+      "bytes": 1307,
+      "lines": 21,
+      "sha256": "cde6f2bac605ccce3dc3cc6bb208a60d621e9bd061102b5d96b0763d4ad934fd"
+    },
+    {
+      "path": "extension/beta/explorer.css",
+      "bytes": 21283,
+      "lines": 263,
+      "sha256": "800055cf808e2c91cdf699b5221e0f9f6176b7586003dc659309a28cb16d1caa"
+    },
+    {
+      "path": "extension/beta/explorer.html",
+      "bytes": 10250,
+      "lines": 179,
+      "sha256": "f59b4af4ad4e34640a45c7af147bc667f58a9f3be2269286303f0a04992db75f"
+    },
+    {
+      "path": "extension/beta/explorer.mjs",
+      "bytes": 55482,
+      "lines": 439,
+      "sha256": "8b59ace3c2d3390ba4dfbb9241234c9faae7bdaa710238df1abd792c1c50f251"
+    },
+    {
+      "path": "extension/beta/file-api.mjs",
+      "bytes": 4792,
+      "lines": 58,
+      "sha256": "668cb489833ae41f79a5c623da702e160910267819ff4c2f0490180a36554ca4"
+    },
+    {
+      "path": "extension/beta/guided-interaction.mjs",
+      "bytes": 16648,
+      "lines": 148,
+      "sha256": "d27a1bb5df1aa221e0065eb1422df139e90b2f48dad61603b28c42a766ff4d3d"
+    },
+    {
+      "path": "extension/beta/r2-adapter.mjs",
+      "bytes": 22448,
+      "lines": 242,
+      "sha256": "34bae29dfd8ba770975e0f339b3f461578948f6610cd721a4f20da2df04d0f3b"
+    },
+    {
+      "path": "extension/beta/test-it-history.mjs",
+      "bytes": 2303,
+      "lines": 37,
+      "sha256": "c334bdb51603dd986f72164fcae36aa8ac405a21a3ee24302419d47bf0254801"
+    },
+    {
+      "path": "extension/beta/test-it-session.mjs",
+      "bytes": 22217,
+      "lines": 205,
+      "sha256": "1ac90122cff5f466f5f545a37d394792156aa0666e96c1411a936e70456764fc"
+    },
+    {
+      "path": "extension/beta/test-it-tools.mjs",
+      "bytes": 1816,
+      "lines": 22,
+      "sha256": "e7b7c852790b1024eb1ec0cbd1835b4ffa3ffa00b8ddd730399ba1bc93548667"
+    },
+    {
+      "path": "extension/beta/test-it.mjs",
+      "bytes": 39099,
+      "lines": 263,
+      "sha256": "3e69e9810cb53f173a6be3eff8f4d6abed1f019dfd0ff1101251f9d3ab312fb5"
+    },
+    {
+      "path": "extension/beta/tour.mjs",
+      "bytes": 7400,
+      "lines": 36,
+      "sha256": "8569270933757cf148b3d2bdf0660e101ee453df7fdeddefe5c48926810df549"
+    }
+  ]
+}
