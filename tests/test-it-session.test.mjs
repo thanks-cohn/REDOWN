@@ -143,7 +143,7 @@ test('operation-specific contracts allow rename independently of move/delete and
  const f=fixture();await f.copy();const contracts=f.api.practiceMutations;contracts.move.supported=false;contracts.delete.supported=false;
  const first=f.session.owned(source,'practice/original.txt');
  assert.equal((await f.api.run('rename',{source,entry:{key:first.key},newName:'renamed.txt'})).state,'completed');assert.equal(f.conditions.at(-1).sources[0].id,first.id);assert.equal(f.conditions.at(-1).sources[0].object.version,first.object.version);
- for(const operation of ['move','delete']){const before=f.calls.length;const result=await f.api.run(operation,{source,entries:[{key:'practice/renamed.txt'}],destination:{...source,prefix:'other/'}});assert.equal(result.state,'failed');assert.equal(f.calls.length,before);assert.equal(f.events.at(-1).diagnostic,'NO_CONDITIONED_OWNERSHIP_MUTATION');}
+ for(const operation of ['move','delete']){const before=f.calls.length;const result=await f.api.run(operation,{source,entries:[{key:'practice/renamed.txt'}],destination:{...source,prefix:'other/'}});assert.equal(result.state,'failed');assert.equal(f.calls.length,before);assert.equal(f.events.at(-1).diagnostic,'OPERATION_UNAVAILABLE');}
 });
 for(const operation of ['copy','move','rename','delete'])test('terminal '+operation+' receipt reconciles actual completed state without replay',async()=>{
  const f=fixture();await f.copy();const before=structuredClone(f.session.state.objects),record=operation==='copy'?f.session.state.originals[0]:before[0];
@@ -235,3 +235,13 @@ test('GUI progress snapshots coalesce without delaying required mutation journal
 test('new folder journal must persist before dispatch; failed persistence cannot create a folder',async()=>{
  const f=fixture();f.storageFail=true;const result=await f.api.run('mkdir',{source,name:'unsaved'});assert.equal(result.state,'failed');assert.ok(!f.calls.includes('mkdir'));assert.ok(!f.objects.has('unsaved/.redown'));
 });
+
+ test('ordinary supported contracts without atomic deletion fields allow disposable copy mutations',async()=>{
+ const f=fixture();for(const contract of Object.values(f.api.practiceMutations)){delete contract.exactIdentity;delete contract.noOverwrite;delete contract.verifyDestinationBeforeDelete;}
+ await f.copy();const own=f.session.owned(source,'practice/original.txt');
+ assert.equal((await f.api.run('rename',{source,entry:{key:own.key},newName:'renamed.txt'})).state,'completed');
+ assert.equal((await f.api.run('move',{source,destination:{...source,prefix:'return/'},entries:[{key:'practice/renamed.txt'}]})).state,'completed');
+ assert.equal(f.session.owned(source,'return/renamed.txt').id,own.id);
+ assert.equal((await f.api.run('delete',{source,entries:[{key:'return/renamed.txt'}]})).state,'completed');
+ assert.equal(f.objects.get('original.txt').bytes,'original');
+ });

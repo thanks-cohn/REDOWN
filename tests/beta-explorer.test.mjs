@@ -56,7 +56,7 @@ async function fixture(){
     for(const o of stored.values()){if(!o.key.startsWith(p))continue;const relative=o.key.slice(p.length),slash=relative.indexOf('/');if(delimiter&&slash>=0)delimited.add(p+relative.slice(0,slash+1));else objects.push({key:o.key,size:o.size,etag:o.etag,version:o.version,uploaded:o.uploaded});}
     return Response.json({success:true,result:{objects,delimited:[...delimited]}});
   },async download(s,k,n,onState){assert.ok(stored.has(k));onState({state:'complete'});return 123;}};
-  const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,disconnect(){cancelled=true;}};
+  const adapter=createR2Adapter({send,http});return {api:createFileApi(adapter),adapter,http,stored,messages,requests,bucket,context,disconnect(){cancelled=true;}};
 }
 test('Beta launcher is separate; original Explorer and context-menu pipeline stay in place',async()=>{
   const html=await readFile(new URL('../extension/popup.html',import.meta.url),'utf8'),dom=new JSDOM(html);assert.match(dom.window.document.querySelector('#beta-explorer').textContent,/Beta Explorer/);assert.ok(dom.window.document.querySelector('#dashboard'));dom.window.close();
@@ -699,7 +699,7 @@ test('Previous uses active preview after extra navigation, for buttons and arrow
  await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[15].verdict,'PASSED');assert.equal(d.querySelector('#preview-content img').alt,'three.jpg');
  }finally{f.dom.window.close();}}
 });
-test('production copy indicators survive List, Grid and refresh; original verifies automatically and unsafe R2 rename is reported honestly',async()=>{
+test('production copy indicators survive List, Grid and refresh; original verifies automatically and ordinary R2 rename and keyboard movement succeed',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
  d.querySelector('[data-key="root.txt"]').dispatchEvent(new f.w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();
  await settle(()=>f.storage.betaExplorerTestIt?.records[22].verdict==='PASSED'&&d.querySelector('[data-key="root (copy).txt"].test-owned-copy'));
@@ -708,38 +708,20 @@ test('production copy indicators survive List, Grid and refresh; original verifi
  d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');assert.match(d.querySelector('[data-guide-text]').textContent,/Original:.*root.txt/);assert.match(d.querySelector('[data-guide-text]').textContent,/Your copy:.*root \(copy\).txt/);
  // An existing original cannot be renamed through the real dialog either.
  d.querySelector('[data-key="root.txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='original-renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes('protected')&&!d.querySelector('#refresh').disabled);assert.ok(f.stored.has('root.txt'));assert.ok(!f.stored.has('original-renamed.txt'));
- // Attempt the actual R2 route and confirm the exact limitation stays in JSON.
- d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('#status').textContent.includes("couldn't rename"));
- assert.ok(f.stored.has('root.txt'));assert.ok(f.stored.has('root (copy).txt'));assert.ok(!f.stored.has('renamed.txt'));
- assert.equal(f.storage.betaExplorerTestIt.records[23].apiObservations.at(-1).diagnostic,'R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION');assert.doesNotMatch(d.querySelector('.test-it-card').textContent,/atomic|adapter|preflight/i);
- for(let i=23;i<26;i++)d.querySelector('[data-guide-skip]').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true);assert.match(d.querySelector('[data-guide-text]').textContent,/first rename has not succeeded/);assert.match(d.querySelector('[data-guide-text]').textContent,/Last verified name: root \(copy\).txt/);assert.equal(f.storage.betaExplorerTestIt.workflow?.rename,undefined);
- d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'x',ctrlKey:true,bubbles:true,cancelable:true}));assert.ok(f.stored.has('root (copy).txt'));
- d.querySelector('[data-key="Photos/"]').dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]')&&!d.querySelector('#refresh').disabled);assert.equal(d.querySelector('#paste').disabled,false);
- d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'v',ctrlKey:true,bubbles:true,cancelable:true}));await settle(()=>d.querySelector('#status').textContent.includes("couldn't move")&&!d.querySelector('#refresh').disabled);
- assert.ok(f.stored.has('root (copy).txt'));assert.ok(!f.stored.has('Photos/root (copy).txt'));assert.ok(f.stored.has('root.txt'));assert.equal(d.querySelector('#paste').disabled,false);assert.equal(f.storage.betaExplorerTestIt.pending,null);assert.notEqual(f.storage.betaExplorerTestIt.records[26].verdict,'PASSED');
+ // Exercise the unchanged ordinary adapter and embedded Worker routes.
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="renamed.txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ assert.ok(f.stored.has('root.txt'));assert.ok(!f.stored.has('root (copy).txt'));assert.ok(f.stored.has('renamed.txt'));
+ d.querySelector('[data-key="renamed.txt"]').click();d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'x',ctrlKey:true,bubbles:true,cancelable:true}));assert.ok(f.stored.has('renamed.txt'));
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('#files').dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'v',ctrlKey:true,bubbles:true,cancelable:true}));await settle(()=>d.querySelector('[data-key="Photos/renamed.txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ assert.ok(!f.stored.has('renamed.txt'));assert.ok(f.stored.has('root.txt'));assert.equal(d.querySelector('#paste').disabled,true);assert.equal(f.storage.betaExplorerTestIt.pending,null);
 
  }finally{f.dom.window.close();}
 });
 
-test('real Explorer copy/rename/Cut/Paste/back/duplicate/delete/export sequence with an explicitly conditioned memory provider',async()=>{
- // This provider performs identity comparison and mutation synchronously, with
- // no await between them. It is NOT the production R2 delete implementation.
- const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{
-   adapter.practiceMutations=Object.fromEntries(['rename','move','delete'].map(op=>[op,{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}]));
-   const mutate=(operation,input,options)=>{
-     assert.equal(options.practice.operation,operation);assert.ok(options.practice.sessionId);
-     const records=options.practice.sources;for(const record of records){const object=memory.stored.get(record.key);if(!object||object.version!==record.object.version||hash(object.bytes)!==record.sha256)throw Error('Ownership condition failed');}
-     const results=[];
-     for(let i=0;i<records.length;i++){const record=records[i],object=memory.stored.get(record.key);if(operation==='delete'){memory.stored.delete(record.key);continue;}
-       const dest=options.practice.destinations[i];if(memory.stored.has(dest.key))throw Error('Destination condition failed');
-       const copy={...object,key:dest.key,version:randomUUID(),uploaded:new Date().toISOString()};memory.stored.set(dest.key,copy);
-       assert.equal(hash(memory.stored.get(dest.key).bytes),record.sha256);assert.equal(memory.stored.get(record.key).version,record.object.version);memory.stored.delete(record.key);
-       results.push({sourceKey:record.key,destinationKey:dest.key,status:'copied',verified:true,sourceEtag:object.etag,sourceVersion:object.version,destinationEtag:copy.etag,destinationVersion:copy.version,size:copy.size});
-     }
-     return {completed:records.length,results};
-   };
-   for(const operation of ['rename','move','delete'])adapter[operation]=(input,options)=>mutate(operation,input,options);
- }});
+test('ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/duplicate/delete/export sequence',async()=>{
+ // Real source routes with a memory R2 binding, not live R2 acceptance.
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});
  const create=URL.createObjectURL,revoke=URL.revokeObjectURL,blobs=[];
  try{const {d,w,settle}=f;d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));await practiceAt(f,20);
  d.querySelector('[data-key="Photos/one.jpg"]').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
@@ -795,28 +777,13 @@ test('production Explorer dialog creates a new Test It destination, preserves se
 });
 test('create-only folder Worker rejects marker races and backend rejects file/prefix collisions',async()=>{
  const f=await fixture();await f.bucket.put('used/file.txt','unrelated');await f.bucket.put('same','unrelated');
- for(const name of ['used','same'])await assert.rejects(f.adapter.mkdir({source,name},{practice:{operation:'mkdir'}}),/already exists/);
+ for(const name of ['used','same'])await assert.rejects(f.context.createExplorerFolder({...source,name,createOnly:true}),/already exists/);
  assert.ok(f.stored.has('used/file.txt'));assert.ok(f.stored.has('same'));
- const options={practice:{operation:'mkdir'}};assert.equal((await f.adapter.mkdir({source,name:'fresh'},options)).key,'fresh/');await assert.rejects(f.adapter.mkdir({source,name:'fresh'},options),/already exists/);
+ assert.equal((await f.context.createExplorerFolder({...source,name:'fresh',createOnly:true})).key,'fresh/');await assert.rejects(f.context.createExplorerFolder({...source,name:'fresh',createOnly:true}),/already exists/);
 });
 
-test('ordinary GUI moves two Test Copies into a new folder with a conditioned memory adapter (not R2)',async()=>{
- let operations=0;
- const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{
-   adapter.practiceMutations={move:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}};
-   adapter.move=async(input,options)=>{
-     operations++;const results=[];
-     for(let i=0;i<input.entries.length;i++){
-       const prior=options.practice.sources[i],dest=options.practice.destinations[i],object=memory.stored.get(prior.key);
-       if(!object||object.version!==prior.object.version||hash(object.bytes)!==prior.sha256)throw Error('Ownership condition failed');
-       if(memory.stored.has(dest.key))throw Error('Destination condition failed');
-       // One synchronous memory transaction, unlike production binding delete.
-       const next={...object,key:dest.key,version:randomUUID()};memory.stored.set(dest.key,next);memory.stored.delete(prior.key);
-       results.push({sourceKey:prior.key,destinationKey:dest.key,status:'copied',verified:true,destinationVersion:next.version,destinationEtag:next.etag,size:next.size});
-     }
-     return {completed:results.length,results};
-   };
- }});
+test('ordinary GUI and embedded Worker move two Test Copies into a new folder',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});
  try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
  d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
  d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="root (copy) (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
@@ -828,9 +795,15 @@ test('ordinary GUI moves two Test Copies into a new folder with a conditioned me
  assert.equal(f.storage.betaExplorerTestIt.index,38);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');
  d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Batch destination/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
  await settle(()=>f.storage.betaExplorerTestIt.records[38].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
- assert.equal(operations,2);for(const key of keys){assert.ok(!f.stored.has(key));assert.equal(hash(f.stored.get('Batch destination/'+key).bytes),hash(f.stored.get('root.txt').bytes));}
+ for(const key of keys){assert.ok(!f.stored.has(key));assert.equal(hash(f.stored.get('Batch destination/'+key).bytes),hash(f.stored.get('root.txt').bytes));}
  assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids.sort());
  d.querySelector('[data-key="Batch destination/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>keys.every(key=>d.querySelector('[data-key="Batch destination/'+key+'"].test-owned-copy')));
+ d.querySelector('[data-guide-next]').click();
+ d.querySelector('[data-key="Batch destination/'+keys[0]+'"]').click();d.querySelector('[data-key="Batch destination/'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));
+ d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
+ await settle(()=>f.storage.betaExplorerTestIt.records[39].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
+ for(const key of keys){assert.ok(f.stored.has(key));assert.ok(!f.stored.has('Batch destination/'+key));}
+ assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids.sort());
  }finally{f.dom.window.close();}
 });
 
@@ -839,3 +812,49 @@ test('old Workers cannot silently accept create-only practice folders or trigger
  const context=vm.createContext({cleanExplorerPrefix:p=>p,cleanExplorerName:n=>n,preparedProfile:async(...args)=>{assert.equal(args.at(-1),true);return {};},callBucketWorker:async(profile,body)=>{calls.push(body.action);return {ok:true};}});vm.runInContext(code,context);
  await assert.rejects(context.createExplorerFolder({...source,name:'new',createOnly:true,betaNoProvision:true}),/create-only folder Worker update/);assert.deepEqual(calls,['capabilities']);
 });
+
+test('delayed Chrome completion resolves the original download operation with its ID',async()=>{
+ let notify;const api=createFileApi(createR2Adapter({http:{download:async(s,k,n,callback)=>{notify=callback;return 859;}}}));
+ let settled=false;const operation=api.run('download',{source,entry:{key:'working.txt'}}).then(r=>{settled=true;return r;});
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(settled,false);
+ notify({state:'complete'});const result=await operation;
+ assert.equal(result.state,'completed');assert.equal(result.data.downloadState,'complete');assert.equal(result.data.downloadId,859);
+});
+test('delayed Chrome interruption never counts as completed',async()=>{
+ let notify;const api=createFileApi(createR2Adapter({http:{download:async(s,k,n,callback)=>{notify=callback;return 860;}}}));
+ const operation=api.run('download',{source,entry:{key:'working.txt'}});
+ await new Promise(resolve=>setImmediate(resolve));notify({state:'interrupted',error:'USER_CANCELED'});
+ const result=await operation;assert.equal(result.state,'failed');assert.match(result.error,/USER_CANCELED/);
+});
+
+test('source approval owns focus above guide, and context Copy highlights the file then menu item',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});
+ try{const {d,w,settle}=f;await practiceAt(f,20);d.querySelector('[data-key="root.txt"]').click();await settle(()=>d.querySelector('#dialog').open);
+ assert.equal(d.querySelector('#dialog-title').textContent,'Practice with this file?');assert.equal(d.querySelector('#dialog-confirm').textContent,'Yes, use this file');assert.equal(d.querySelector('#dialog-cancel').textContent,'No');
+ assert.ok(d.querySelector('.guide-card').hidden);assert.ok(!d.querySelector('#dialog').contains(d.querySelector('.guide-card')));assert.equal(d.activeElement.id,'dialog-confirm');
+ d.querySelector('#dialog-confirm').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
+ assert.ok(d.querySelector('[data-key="root.txt"]').classList.contains('guide-highlight'));assert.ok(!d.querySelector('#copy').classList.contains('guide-highlight'));
+ d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));await settle(()=>d.querySelector('#context [data-command="copy"]').classList.contains('guide-highlight'));
+ }finally{f.dom.window.close();}
+});
+for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Chrome completion, guide exited: '+exitGuide,async()=>{
+ let notify;const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{adapter.download=createR2Adapter({http:{...memory.http,download:async(s,k,n,callback)=>{notify=callback;return 859;}}}).download;}});
+ try{const {d,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ while(d.querySelector('[data-guide-progress]').textContent!=='57 of 60')d.querySelector('[data-guide-skip]').click();
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#download').click();await settle(()=>Boolean(notify));assert.notEqual(f.storage.betaExplorerTestIt.records[56].verdict,'PASSED');
+ if(exitGuide)d.querySelector('[data-guide-exit]').click();
+ notify({state:'complete'});await settle(()=>f.storage.betaExplorerTestIt.records[56].verdict==='PASSED');assert.equal(f.storage.betaExplorerTestIt.records[56].providerResponse.downloadId,859);if(exitGuide){d.querySelector('#test-it').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);}
+ }finally{f.dom.window.close();}
+});
+
+ test('partial ordinary multi-file Move preserves successful identity and the unresolved copy',async()=>{
+ let count=0;const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:adapter=>{const move=adapter.move;adapter.move=async(...args)=>{if(++count===2)return {completed:0,errors:[{error:'Injected provider failure'}],results:[{sourceKey:args[0].entries[0].key,status:'failed',stage:'source.read'}]};return move(...args);};}});
+ try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="root (copy) (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ const keys=['root (copy).txt','root (copy) (copy).txt'],ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort();
+ while(d.querySelector('[data-guide-progress]').textContent!=='39 of 60')d.querySelector('[data-guide-skip]').click();
+ d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Photos/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>count===2&&!d.querySelector('#refresh').disabled);
+ assert.ok(f.stored.has('Photos/'+keys[0]));assert.ok(!f.stored.has(keys[0]));assert.ok(f.stored.has(keys[1]));assert.ok(!f.stored.has('Photos/'+keys[1]));
+ assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');assert.ok(f.stored.has('root.txt'));
+ }finally{f.dom.window.close();}
+ });

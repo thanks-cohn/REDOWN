@@ -11,7 +11,8 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
   function position(){
     frame=0;if(!card)return;
-    const modal=activeModal(),host=modal||doc.body;
+    const modal=activeModal(),approval=modal?.querySelector('#dialog-title')?.textContent==='Practice with this file?',host=approval?doc.body:modal||doc.body;
+    card.hidden=approval;
     if(card.parentElement!==host)host.append(card);
     clearHighlight();const selector=typeof steps[index].target==='function'?steps[index].target():steps[index].target;const target=doc.querySelector(selector);
     if(target&&(!modal||modal.contains(target)))highlight=target;
@@ -111,7 +112,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   }
   function exit(){stop();}
   function keydown(event){if(event.defaultPrevented||draggable&&doc.querySelector('dialog[open],#context:not([hidden]),#test-it-tools-menu:not([hidden])'))return;if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
-  function signal(event){if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;schedule();if(autoAdvance)advance();}}
+  function signal(event){if(card&&event.detail?.action==='select-file'&&typeof steps[index].target==='function')schedule();if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;schedule();if(autoAdvance)advance();}}
   function show(){
     completed=false;clearHighlight();const step=steps[index];onStep(index);
     $('[data-guide-progress]').textContent=`${index+1} of ${steps.length}`;

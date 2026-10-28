@@ -212,12 +212,25 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       finally{await reader.cancel();}
       return {url:URL.createObjectURL(new Blob(chunks,{type})),type,size,truncated};
     },
-    async download({source,entry:e},{onProgress}={}) {
+    async download({source,entry:e},{onProgress,signal}={}) {
       if(e.folder)throw Error('Folder downloads are not implemented in this beta.');
-      let completed=false,interrupted='';
-      const id=await http.download(location(source),key(e.key),e.displayName||e.key.split('/').pop(),state=>{completed=state.state==='complete';if(state.state==='interrupted')interrupted=state.error||'Interrupted';onProgress?.({phase:'download-'+state.state,error:state.error});});
-      if(interrupted)throw Error('Chrome interrupted the download: '+interrupted);
-      return {state:completed?'completed':'started',downloadId:id,downloadState:completed?'complete':'started'};
+      let finish,timer,abort;
+      const terminal=new Promise(resolve=>{finish=resolve;});
+      try{
+        // Keep the operation alive until the correlated Chrome download reaches
+        // a terminal state. A started ID alone is never completion evidence.
+        timer=setTimeout(()=>finish({state:'unobserved'}),30*60*1000);
+        abort=()=>finish({state:'unobserved'});
+        signal?.addEventListener('abort',abort,{once:true});
+        const id=await http.download(location(source),key(e.key),e.displayName||e.key.split('/').pop(),state=>{
+          onProgress?.({phase:'download-'+state.state,error:state.error});
+          if(['complete','interrupted'].includes(state.state))finish(state);
+        });
+        if(signal?.aborted)abort();
+        const state=await terminal;
+        if(state.state==='interrupted')throw Object.assign(Error('Chrome interrupted the download: '+(state.error||'Interrupted')),{downloadId:id,downloadState:'interrupted'});
+        return {state:state.state==='complete'?'completed':'started',downloadId:id,downloadState:state.state==='complete'?'complete':'started'};
+      }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
     },
     async remoteIngest({destination,url,filename},options) {
       const l=location(destination),u=new URL(url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw Error('Enter an HTTP or HTTPS source URL without credentials.');

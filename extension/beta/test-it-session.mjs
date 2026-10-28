@@ -26,10 +26,10 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
   function owned(source,key){return state.objects.find(o=>!o.deleted&&!o.quarantined&&o.sessionId===state.id&&o.identity===id(source,key));}
   function capability(operation){
     const contract=api.practiceMutations?.[operation];
-    // A global boolean is not an operation contract. Providers must consume
-    // options.practice and enforce exact identity and destination preservation.
-    const supported=contract?.supported===true&&contract.exactIdentity===true&&(operation==='delete'||contract.noOverwrite===true&&contract.verifyDestinationBeforeDelete===true);
-    return {...contract,supported,reason:contract?.reason||'NO_CONDITIONED_OWNERSHIP_MUTATION'};
+    // Ownership is checked by the session ledger before ordinary Explorer
+    // dispatch. Disposable copies use the provider's ordinary guarantees.
+    const supported=api.capabilities.includes(operation)&&contract?.supported!==false;
+    return {...contract,supported,reason:contract?.reason||'OPERATION_UNAVAILABLE'};
   }
   function involved(p,source,key){return p?.entries?.some(e=>id(p.source,e.key)===id(source,key))||p?.destinations?.some(d=>id(d.source,d.key)===id(source,key));}
   function quarantined(source,key){return (state.quarantinedActions||[]).some(p=>involved(p,source,key));}
@@ -64,7 +64,7 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
     const entries=input.entries||[input.entry];if(!entries.length||entries.some(e=>!e||e.folder))throw Error('Practice works with individual files only.');
     await originals();const records=[];
     for(const e of entries){if(quarantined(input.source,e.key))throw Error("REDOWN is still checking this file's last action. Choose another verified copy.");const own=owned(input.source,e.key);if(operation!=='copy'&&reserved(input.source,e.key))throw Error('This copy belongs to an earlier Test It session. Create a fresh copy for this session.');if(operation!=='copy'&&!own)throw Error('Your original is protected. Choose a verified practice copy.');if(own&&operation!=='copy'&&own.sessionId!==state.id)throw Error('This copy belongs to an earlier Test It session. Create a fresh copy for this session.');const record=own||await source(input.source,e.key);await check(record);records.push(record);}
-    if(operation!=='copy'&&!capability(operation).supported)throw Object.assign(Error(operation==='rename'?"REDOWN couldn't rename this copy. Its verified name is unchanged; this connection cannot protect the source during removal.":operation==='move'?"REDOWN couldn't move this copy. It remains in its original folder; this connection cannot protect the source during removal.":"REDOWN couldn't delete this copy. It remains untouched; this connection cannot protect it during removal."),{diagnostic:capability(operation).reason});
+    if(operation!=='copy'&&!capability(operation).supported)throw Object.assign(Error('This provider does not support '+operation+'. No files were changed.'),{diagnostic:capability(operation).reason});
     const target=operation==='rename'?{...input.source,prefix:input.entry.key.slice(0,input.entry.key.lastIndexOf('/')+1)}:input.destination;
     const destinations=[];
     if(operation!=='delete'){
@@ -83,8 +83,8 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
   async function perform(operation,input,options,execute){
     if(!active)return execute();
     if(operation==='download'){
-      const o=owned(input.source,input.entry.key);if(!o)throw Error('Choose a verified practice copy to download.');await check(o);const started=performance.now(),result=await execute();
-      emitEvidence({operation,verdict:result.downloadState==='complete'?'PASSED':'UNCERTAIN',response:{downloadState:result.downloadState,downloadId:result.downloadId},changes:[{id:o.id}],latencyMs:performance.now()-started,observed:result.downloadState==='complete'?'Chrome reported completion. Local downloaded bytes were not independently hashed.':'Chrome download completion was not observed.'});return result;
+      const o=owned(input.source,input.entry.key);if(!o)throw Error('Choose a verified practice copy to download.');await check(o);const correlation=captureEvidence();const started=performance.now();let result;try{result=await execute();}catch(error){emitEvidence({operation,correlation,verdict:'BLOCKED',response:{downloadId:error.downloadId,downloadState:error.downloadState||'unobserved'},changes:[{id:o.id}],observed:error.message});throw error;}
+      emitEvidence({operation,correlation,verdict:result.downloadState==='complete'?'PASSED':'UNCERTAIN',response:{downloadState:result.downloadState,downloadId:result.downloadId},changes:[{id:o.id}],latencyMs:performance.now()-started,observed:result.downloadState==='complete'?'Chrome reported completion. Local downloaded bytes were not independently hashed.':'Chrome download completion was not observed.'});return result;
     }
     if(!writes.has(operation)){
       const result=await execute();
