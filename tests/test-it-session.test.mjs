@@ -16,7 +16,7 @@ function fixture(saved,recovery=[]){
     for(const record of practice.sources){const current=inspect(record.key);if(current.sha256!==record.sha256||JSON.stringify(current.object)!==JSON.stringify(record.object))throw Error('Exact provider ownership condition failed');}
     for(const dest of practice.destinations)if(dest.absent&&objects.has(dest.key))throw Error('Provider destination condition failed');
   }
-  const adapter={practiceMutations:Object.fromEntries(['rename','move','delete'].map(op=>[op,{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}])),list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1};},inspect:async({key})=>inspect(key),stat:async({key})=>{if(statFail)throw Error('Destination unavailable');return {object:inspect(key).object};},
+  const adapter={practiceMutations:Object.fromEntries(['rename','move','delete'].map(op=>[op,{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}])),list:async({source})=>({entries:[],folderExists:[...objects.keys()].some(k=>k.startsWith(source.prefix))}),mkdir:async({source,name})=>{calls.push('mkdir');put(source.prefix+name+'/.redown','');return {completed:1,key:source.prefix+name+'/'};},inspect:async({key})=>inspect(key),stat:async({key})=>{if(statFail)throw Error('Destination unavailable');return {object:inspect(key).object};},
     copy:async (input,options)=>transfer('copy',input,options),move:async (input,options)=>transfer('move',input,options),
     rename:async({source,entry,newName},options)=>transfer('move',{source,destination:{...source,prefix:entry.key.slice(0,entry.key.lastIndexOf('/')+1)},entries:[entry],newName},options),
     delete:async({entries},options)=>{condition('delete',options);calls.push('delete');for(const e of entries)objects.delete(e.key);return {completed:entries.length};},upload:async()=>{calls.push('upload');return {};}};
@@ -75,7 +75,7 @@ test('restart refuses an operation still in flight without resetting results',as
 test('no destination setup: same-folder Keep Both and arbitrary folders work without creating folders',async()=>{
  const f=fixture();assert.equal((await f.api.run('copy',{source,destination:source,entries:[{key:'original.txt'}],conflict:'keep'})).state,'completed');
  assert.ok(f.session.owned(source,'original (copy).txt'));assert.equal((await f.copy('original.txt','chosen/')).state,'completed');assert.ok(f.session.owned(source,'chosen/original.txt'));
- assert.ok(!f.calls.includes('mkdir'));assert.equal((await f.api.run('mkdir',{source,name:'unapproved'})).state,'failed');
+ assert.ok(!f.calls.includes('mkdir'));assert.equal((await f.api.run('mkdir',{source,name:'new'})).state,'completed');assert.equal(f.session.state.practiceFolders[0].status,'created');
 });
 test('cross-bucket destination requires an explicit adapter capability',async()=>{
  const f=fixture();const r=await f.api.run('copy',{source,destination:{...source,bucketName:'other'},entries:[{key:'original.txt'}],conflict:'skip'});assert.equal(r.state,'failed');assert.match(r.error,/Cross-bucket/);assert.deepEqual(f.calls,[]);
@@ -187,4 +187,51 @@ for(const operation of ['rename','move','delete'])test('provider condition rejec
 test('provider destination condition preserves a user object appearing after the destination check',async()=>{
  const f=fixture();await f.copy();f.beforeMutation=()=>f.put('other/original.txt','user file');const result=await f.api.run('move',{source,entries:[{key:'practice/original.txt'}],destination:{...source,prefix:'other/'},conflict:'skip'});
  assert.notEqual(result.state,'completed');assert.equal(f.objects.get('other/original.txt').bytes,'user file');assert.ok(f.objects.has('practice/original.txt'));
+});
+
+
+test('new folders have separate journals, reject collisions, retain exercise, and never own user contents',async()=>{
+ const f=fixture();await f.copy();f.session.state.index=38;
+ const own=f.session.owned(source,'practice/original.txt');
+ assert.equal((await f.api.run('mkdir',{source,name:'chosen'})).state,'completed');
+ assert.equal(f.session.state.index,38);assert.equal(f.session.owned(source,'practice/original.txt').id,own.id);
+ assert.equal(f.session.state.practiceFolders.length,1);assert.equal(f.session.owned(source,'chosen/'),undefined);
+ f.put('chosen/unrelated.txt','private');
+ assert.equal((await f.api.run('mkdir',{source,name:'chosen'})).state,'failed');
+ assert.equal((await f.api.run('mkdir',{source,name:'original.txt'})).state,'failed');
+ assert.equal((await f.api.run('delete',{source,entries:[{key:'chosen/',folder:true}]})).state,'failed');
+ assert.equal((await f.api.run('delete',{source,entries:[{key:'chosen/unrelated.txt'}]})).state,'failed');
+ assert.ok(f.objects.has('chosen/unrelated.txt'));
+ await f.session.restart();assert.equal(f.session.recovery[0].session.practiceFolders[0].key,'chosen/');
+});
+test('two independently verified copies move into a newly created folder in a conditioned memory provider',async()=>{
+ const f=fixture();await f.copy();await f.copy('unrelated.txt');
+ const keys=['practice/original.txt','practice/unrelated.txt'],ids=keys.map(key=>f.session.owned(source,key).id);
+ assert.equal((await f.api.run('mkdir',{source,name:'new-destination'})).state,'completed');
+ const result=await f.api.run('move',{source,destination:{...source,prefix:'new-destination/'},entries:keys.map(key=>({key})),conflict:'skip'});
+ assert.equal(result.state,'completed',JSON.stringify(result));assert.equal(result.data.completed,2);
+ for(let i=0;i<keys.length;i++){const next='new-destination/'+keys[i].split('/').pop();assert.equal(f.session.owned(source,next).id,ids[i]);assert.ok(!f.objects.has(keys[i]));}
+ assert.equal(f.events.at(-1).changes.length,2);assert.equal(f.events.at(-1).verdict,'PASSED');
+});
+test('ordinary API batch records first move independently, rejects second ownership race, and retries only incomplete file',async()=>{
+ const f=fixture();await f.copy();await f.copy('unrelated.txt');
+ const destination={...source,prefix:'new/'};
+ const first={source,destination,entries:[{key:'practice/original.txt'}],conflict:'skip'};
+ const second={source,destination,entries:[{key:'practice/unrelated.txt'}],conflict:'skip'};
+ // Queue the replacement after the first completed mutation, before the next validation.
+ const originalSave=f.storage.set;let replaced=false;
+ f.storage.set=async value=>{await originalSave(value);if(!replaced&&value.betaExplorerTestIt.objects.some(o=>o.key==='new/original.txt')){replaced=true;f.put('practice/unrelated.txt','replacement');}};
+ const result=await f.api.batch('move',[first,second]);assert.equal(result.state,'partial');assert.deepEqual(result.results.map(r=>r.state),['completed','failed']);
+ assert.ok(f.session.owned(source,'new/original.txt'));assert.ok(!f.objects.has('practice/original.txt'));assert.ok(!f.objects.has('new/unrelated.txt'));
+ assert.equal(f.objects.get('practice/unrelated.txt').bytes,'replacement');
+ const before=f.calls.filter(c=>c==='move').length;const retry=await f.api.batch('move',[second]);assert.equal(retry.state,'partial');assert.equal(f.calls.filter(c=>c==='move').length,before);
+});
+test('GUI progress snapshots coalesce without delaying required mutation journals',async()=>{
+ const f=fixture();let writes=0;const set=f.storage.set;f.storage.set=async value=>{writes++;await set(value);};
+ await Promise.all(Array.from({length:20},()=>f.session.saveProgress()));assert.equal(writes,1);
+ await f.copy();assert.ok(f.storage.saved.objects.length);assert.equal(f.storage.saved.pending,null);
+});
+
+test('new folder journal must persist before dispatch; failed persistence cannot create a folder',async()=>{
+ const f=fixture();f.storageFail=true;const result=await f.api.run('mkdir',{source,name:'unsaved'});assert.equal(result.state,'failed');assert.ok(!f.calls.includes('mkdir'));assert.ok(!f.objects.has('unsaved/.redown'));
 });

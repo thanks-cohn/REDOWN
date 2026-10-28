@@ -166,7 +166,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       if(size!==Number(before.size)||identity(before)!==identity(after))throw Error('The file changed while it was being checked.');
       return {object:after,sha256,status:response.status};
     },
-    async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n)},o);},
+    async mkdir({source,name:n},o){const l=location(source);return message('cfCreateFolder',{...l,name:name(n),...(o?.practice?.operation==='mkdir'?{createOnly:true}:{})},o);},
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
     rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
     delete:({source,entries},o)=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)},o),

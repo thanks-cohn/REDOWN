@@ -309,3 +309,179 @@ Rename, Rename Back, Move To, destructive Paste and Delete remain unsupported
 for production Test Copies under the required identity-protected removal rule.
 Copy/Paste, unused-destination Duplicate, Cut intent and read-only operations
 retain their existing behavior. Main and Legacy Explorer remain unchanged.
+
+
+## 28 October 2026: New Folder and measured Test It overhead repair
+
+Base: `2a34d8ed76561328f1db5ee0fda5b49578bd5174`, branch `beta-explorer`.
+**Partial delivery: the mandatory production R2 two-file Move acceptance remains
+BLOCKED. No installed/browser or live-provider acceptance is claimed.**
+
+### Audit findings and consolidation
+
+Inspected the 60 exercise definitions, session/ownership policy, canonical
+Explorer command events, universal file API and R2 adapter, embedded primary
+Worker, preview/lightbox forwarding, clipboard and destination chooser,
+reconciliation/recovery, persistence, tools and guide lifecycle. Kept the same
+60 exercises and existing operation engine. No additional framework/dependency.
+
+Source-confirmed overhead:
+- Each successful mutation reconciled every unaffected live copy, downloading
+  and hashing them again. Work grew with the accumulated object count.
+- Reconciliation saved its full snapshot twice on the success path. Every save
+  also repainted all ownership rows and replaced instruction text, even for
+  progress-only evidence. Automatic original verification redundantly checked
+  the working copy after a complete inventory check.
+- Guide placement ran twice per exercise presentation and in full for every
+  drag/resize pointer event. A body-wide child-list observer also scheduled
+  placement for file rendering and the guide's own changing text.
+- Each low-level click/input/change/pointerup queued a separate fallback GUI
+  observation. Repeated pass signals and duplicate logical move identities
+  could be counted again. No growing guide listener set was demonstrated.
+
+Removed the second successful-reconciliation save and duplicate automatic copy
+check, consolidated show placement to one calculation, and removed the
+child-list subscription. Mutation reconciliation now checks affected copies;
+explicit inventory/original checks and cleanup retain full verification.
+Original verification, per-source identity/content checks, destination absence,
+provider receipt requirements, source absence checks and pending journals stay.
+Retry outside inventory exercises uses targeted reconciliation. Unknown writes
+are not replayed. Noncritical progress saves coalesce in one microtask; critical
+journals still await serialized storage writes before dispatch and after receipts.
+Snapshots still grow with evidence/recovery history; this is batching, not an
+append-only storage migration or a guarantee of constant serialization cost.
+
+Ownership paints now occur on ownership changes or Explorer render, use one
+visible-entry lookup map, and replace instruction text only when it changes.
+The canonical Explorer command IDs remain the command correlation source;
+fallback GUI observations coalesce, pass signaling is idempotent, and multi-file
+progress deduplicates logical IDs and checks both current destination records.
+Test It exposes destroy cleanup using abortable listeners and removes pending
+fallback timers/handlers. Guide stop disconnects its observer and global events.
+No separate mutation engine or duplicate provider listener was introduced.
+
+### Folder behavior and backend capability
+
+New Folder uses the unchanged ordinary Explorer dialog and existing mkdir API.
+Test It checks both the exact object name and directory prefix, persists a
+separate `practiceFolders` journal, then invokes the existing folder route with
+`createOnly`. The background preflight checks collisions and requires the actual
+Worker capability `createOnlyFolders`. The embedded Worker now advertises that
+capability and rejects an existing marker when its atomic `If-None-Match: *` PUT
+fails. Ordinary legacy ensure-prefix semantics are unchanged when the flag is
+absent. No automatic Worker deployment/provisioning occurs.
+
+Folders are not Test Copies. Neither folder creation nor a marker authorizes
+recursive deletion or deletion of unrelated children. Journals survive restart.
+Creation is evidence-only: selection, clipboard and exercise remain intact.
+New-folder navigation followed by Paste independently verifies the copy and only
+then passes the Paste exercise. The production GUI/adapter/embedded-Worker path
+passes this in jsdom with in-memory R2 storage. Installed Workers need the explicit
+create-only capability update before this guarded practice route is available.
+A namespace preflight is a point-in-time check, not a lock excluding external
+writers from later creating children. Those children never acquire ownership.
+
+### Move/Paste status and fault coverage
+
+No conditional-removal capability was implemented or advertised for R2.
+The actual blocker is still `R2_BINDING_DELETE_HAS_NO_VERSION_CONDITION`:
+`STORAGE.delete(key | keys)` cannot condition removal on a saved upload version.
+The background's current pre-delete HEAD checks are subject to an external
+replacement between HEAD and DELETE. Another HEAD, Worker-local mutex, or a
+conditional marker PUT cannot close that external-writer race.
+
+Rechecked official documentation on 28 October:
+- https://developers.cloudflare.com/r2/api/workers/workers-api-reference/
+- https://developers.cloudflare.com/r2/api/s3/api/
+
+No documented version-conditioned deletion or conditional DeleteObject contract
+was found. Destructive practice guards remain disabled for this production
+adapter. A provider-enforced conditional delete or enforceable exclusive boundary
+covering all writers is needed to meet the requested original-safety contract.
+No undocumented delete headers, false capability flags or tombstone overwrites
+were substituted. The generic refusal was not cosmetically relabeled as a fix.
+
+The required GUI sequence now has an explicitly identified **conditioned memory
+adapter** integration test: create two Test Copies, select both, create a new
+folder, retain both selections and exercise, Move To, verify both destination
+hashes/source absence, retain both logical IDs, and show both red Test Copy
+markings. It passes through the ordinary Explorer and universal API batch. This
+is NOT evidence that production R2 can perform protected removal.
+
+Existing API batching records each one-file result independently. The clipboard
+now drops only completed move entries after a partial Cut/Paste, retaining
+incomplete/unprocessed entries; repeated error strings are consolidated.
+Regression coverage includes first-file success with second-file ownership
+replacement/rejection, independent destination conflicts, interrupted/unknown
+writes, restart/retry without destructive replay, lost receipts, and source
+replacement after client checks. Pending multi-entry operations that bypass
+Explorer's ordinary per-entry batching still reconcile as a whole; partial
+multi-entry recovery was not redesigned. No claim of a live interrupted R2 batch
+recovery pass is made.
+
+### Layout and measurements
+
+Default width is 360px and default height follows content, bounded by the viewport.
+Manual dimensions/position remain authoritative, including modal host changes.
+There is one card scroll surface; text/status no longer create nested scrollbars.
+Automatic placement tests sides/above/below and chooses the least-overlapping
+corner if none fits. Fullscreen content can have no nonoverlapping rectangle;
+manual placement is not overridden to chase a target. Cached pointer geometry
+avoids full placement reads during drag/resize. Modal/window/scroll changes,
+step presentation and changed status still schedule relevant placement.
+
+Local benchmark, Node v24.22.1, 15 samples/checkpoint, 1 MiB files:
+
+| Seeded copies/checkpoint | Before p50 / p95 ms | After p50 / p95 ms | Inspections per Copy |
+| --- | --- | --- | --- |
+| 0 | 5.09 / 7.98 | 4.59 / 7.67 | 6 → 6 |
+| 20 | 18.25 / 24.36 | 4.69 / 5.39 | 26 → 6 |
+| 40 | 32.61 / 41.20 | 5.10 / 5.77 | 46 → 6 |
+| 60 | 45.28 / 54.68 | 5.13 / 6.72 | 66 → 6 |
+
+These are memory-provider session times, including SHA-256 and snapshot costs,
+not click/paint latency, network duration or a participant completing 60 exercises.
+Timing noise and GC apply. Successful-copy session writes fall from 5 to 4;
+20 simultaneous progress saves fall from 20 to 1. Each real adapter inspection
+normally entails before/after metadata reads and a byte download, with pagination
+potentially adding calls. Remote request counts and Cloudflare latency were not
+measured. Raw results include serialization sizes and noisy Node heap deltas;
+these do not establish browser memory usage or absence of a memory leak.
+
+The lifecycle regression runs 60 guide transitions, checks registrations at
+20/40/60, stops/reopens 10 times, and verifies the listener count returns to its
+starting value. Appending 100 file rows triggers no placement reads. One hundred
+grid-pointer drag events cause zero extra placement reads after pointerdown.
+These are jsdom assertions, not a real browser layout benchmark.
+
+| Requested interaction | Verified evidence | Browser p50/p95 and network time |
+| --- | --- | --- |
+| Startup, exercise changes, Retry, Restart, JSON export | Local GUI/session regressions pass | Not measured |
+| New Folder then navigate/Paste | Actual Explorer + adapter + Worker in memory passes | Not measured |
+| Preview Next/Previous and Lightbox | Local rendered-state event fixtures pass | Not measured |
+| Guide drag/resize and modal positioning | Geometry/lifecycle fixtures pass | Not measured |
+| Copy/Paste | Independent SHA-256 memory integration passes | Session benchmark above only |
+| Rename/Move, two-file new-folder Move | Conditioned memory provider passes; production R2 blocked | Not measured |
+
+### Verification and remaining acceptance
+
+- Focused five-file suite: **182 passed, 0 failed**, no skips.
+- Full `npm run reliability:check`: **533 tests, 523 passed, 10 failed**.
+  Syntax, API registry and issue inventory pass; architecture freshness fails.
+- An untouched archive of the base commit, executed from its own directory with
+  the same dependencies: **521 tests, 511 passed, the same 10 failure names**.
+  The runner labels three of those as new against its older built-in baseline;
+  the fresh base-commit comparison confirms they predate this change. Historical
+  evidence hashes were not refreshed to hide failures.
+- `node scripts/installed-chrome.mjs extension /tmp/redown-installed-chrome.json`:
+  **BLOCKED: CHROME_NOT_AVAILABLE_ENOENT**, zero installed assertions.
+- Live R2: **NOT TESTED**. No Worker deployment or authenticated cloud mutation.
+  No real browser startup/click/paint/DOM/layout/storage/network percentile or
+  extended 20/40/60-exercise acceptance is available. No zero-lag guarantee.
+
+Reproduce session measurements with `node scripts/test-it-benchmark.mjs BASE_SHA`
+and `node scripts/test-it-benchmark.mjs`; results and regression-name comparison
+are in [verification/test-it-latency](verification/test-it-latency/).
+Main and Legacy Explorer UI/ordinary operation behavior remain unchanged; only
+explicit create-only requests opt into the shared Worker addition. This commit
+ships the safe folder/performance repairs, not final production-move acceptance.

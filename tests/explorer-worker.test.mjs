@@ -359,3 +359,10 @@ test('remote ingest exact-folder capability preserves Unicode, reserved characte
   assert.equal(r.ok,true,r.error);assert.equal(r.key,folder+'/photo.png');assert.ok(await bucket.head(folder+'/photo.png'));assert.equal(bucket.objects.size,1);
  }finally{globalThis.fetch=originalFetch;}
 });
+
+test('create-only folder marker cannot claim a concurrent existing marker as newly created',async()=>{
+ const {default:worker}=await workerModule(),bucket=new MemoryBucket();
+ await bucket.put('new/.redown',text('external marker'));
+ const response=await worker.fetch(manageRequest({action:'ensurePrefixes',prefixes:['new'],createOnly:true}),{STORAGE:bucket});
+ assert.equal(response.ok,false);assert.equal(new TextDecoder().decode(bucket.objects.get('new/.redown').bytes),'external marker');
+});

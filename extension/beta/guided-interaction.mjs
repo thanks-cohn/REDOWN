@@ -11,7 +11,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   function clearHighlight(){highlight?.classList.remove('guide-highlight');highlight=null;}
   function position(){
     frame=0;if(!card)return;
-    const modal=activeModal(),host=modal||doc.body,hostChanged=card.parentElement!==host;
+    const modal=activeModal(),host=modal||doc.body;
     if(card.parentElement!==host)host.append(card);
     clearHighlight();const selector=typeof steps[index].target==='function'?steps[index].target():steps[index].target;const target=doc.querySelector(selector);
     if(target&&(!modal||modal.contains(target)))highlight=target;
@@ -19,7 +19,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     const rect=(highlight||modal)?.getBoundingClientRect(),gap=12,margin=10;
     const width=win.innerWidth,height=win.innerHeight;
     card.style.maxHeight=Math.max(1,height-margin*2)+'px';
-    if(draggable){const size=preferredSize||{width:410,height:480};card.style.width=Math.min(Math.max(320,size.width),Math.max(1,width-margin*2))+'px';card.style.height=Math.min(Math.max(300,size.height),Math.max(1,height-margin*2))+'px';}
+    if(draggable){card.style.width=Math.min(Math.max(320,preferredSize?.width||360),Math.max(1,width-margin*2))+'px';card.style.height=preferredSize?Math.min(Math.max(240,preferredSize.height),Math.max(1,height-margin*2))+'px':'';}
     const box=card.getBoundingClientRect(),cw=box.width||Math.min(340,width-20),ch=box.height||260;
     // Prefer a side with room; fall back above/below. Underlying controls remain clickable.
     let left=width-cw-margin,top=height-ch-margin;
@@ -28,13 +28,17 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       else if(rect.left-gap-cw>=margin){left=rect.left-gap-cw;top=rect.top;}
       else if(rect.bottom+gap+ch<=height-margin){left=rect.left;top=rect.bottom+gap;}
       else if(rect.top-gap-ch>=margin){left=rect.left;top=rect.top-gap-ch;}
-      else {left=width-cw-margin;top=height-ch-margin;}
+      else {
+        const corners=[[margin,margin],[width-cw-margin,margin],[margin,height-ch-margin],[width-cw-margin,height-ch-margin]];
+        const overlap=([x,y])=>Math.max(0,Math.min(x+cw,rect.right+gap)-Math.max(x,rect.left-gap))*Math.max(0,Math.min(y+ch,rect.bottom+gap)-Math.max(y,rect.top-gap));
+        [left,top]=corners.sort((a,b)=>overlap(a)-overlap(b))[0];
+      }
     }
     if(draggable&&!manualPosition){
       const tools=doc.querySelector('.test-it-tools-wrap')?.getBoundingClientRect();
       if(tools&&left+cw>tools.left-gap&&top+ch>tools.top-gap)top=tools.top-ch-gap;
     }
-    if(manualPosition&&!hostChanged){left=manualPosition.left;top=manualPosition.top;}
+    if(manualPosition){left=manualPosition.left;top=manualPosition.top;}
     if(!draggable&&rect&&selector?.startsWith('#preview-')&&left<rect.right+gap&&left+cw>rect.left-gap&&top<rect.bottom+gap&&top+ch>rect.top-gap){top=rect.bottom+gap;if(top+ch>height-margin){top=margin;card.style.maxHeight=Math.max(80,rect.top-gap-margin)+'px';}}
     const menu=draggable&&doc.querySelector('#test-it-tools-menu:not([hidden])')?.getBoundingClientRect();
     if(menu&&left+cw>menu.left-gap&&left<menu.right+gap&&top+ch>menu.top-gap&&top<menu.bottom+gap){
@@ -46,18 +50,23 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     card.style.top=Math.max(margin,Math.min(top,height-ch-margin))+'px';
     if(manualPosition)manualPosition={left:parseFloat(card.style.left),top:parseFloat(card.style.top)};
   }
+  function placeManual(width,height){
+    card.style.left=Math.max(10,Math.min(manualPosition.left,win.innerWidth-width-10))+'px';
+    card.style.top=Math.max(10,Math.min(manualPosition.top,win.innerHeight-height-10))+'px';
+    manualPosition={left:parseFloat(card.style.left),top:parseFloat(card.style.top)};
+  }
   function installGrip(){
     const grip=doc.createElement('button');grip.type='button';grip.className='guide-grip';
     grip.setAttribute('aria-label','Move Test It panel');grip.title='Drag to move; arrow keys move 10 pixels, Shift + arrow moves 1 pixel';
     grip.innerHTML='<span aria-hidden="true">⠿</span>';card.prepend(grip);card.classList.add('test-it-card');
     grip.addEventListener('pointerdown',event=>{
       if(event.button!==0||drag||resizing)return;event.preventDefault();event.stopPropagation();
-      const rect=card.getBoundingClientRect();drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};
+      const rect=card.getBoundingClientRect();drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top,width:rect.width,height:rect.height};
       grip.focus({preventScroll:true});grip.setPointerCapture(event.pointerId);
     });
     grip.addEventListener('pointermove',event=>{
       if(!drag||event.pointerId!==drag.id)return;event.preventDefault();event.stopPropagation();
-      manualPosition={left:drag.left+event.clientX-drag.x,top:drag.top+event.clientY-drag.y};position();
+      manualPosition={left:drag.left+event.clientX-drag.x,top:drag.top+event.clientY-drag.y};placeManual(drag.width,drag.height);
     });
     const release=event=>{if(!drag||event.pointerId!==drag.id)return;event.stopPropagation();drag=null;};
     grip.addEventListener('pointerup',release);grip.addEventListener('pointercancel',release);grip.addEventListener('lostpointercapture',release);
@@ -78,12 +87,12 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
       handle.addEventListener('pointermove',event=>{
         if(!resizing||event.pointerId!==resizing.id)return;event.preventDefault();event.stopPropagation();
         const r=resizing,dx=event.clientX-r.x,dy=event.clientY-r.y,west=corner.includes('w'),north=corner.includes('n');
-        const minW=Math.min(320,win.innerWidth-20),minH=Math.min(300,win.innerHeight-20);
+        const minW=Math.min(320,win.innerWidth-20),minH=Math.min(240,win.innerHeight-20);
         const left=west?Math.max(10,Math.min(r.left+dx,r.right-minW)):r.left;
         const top=north?Math.max(10,Math.min(r.top+dy,r.bottom-minH)):r.top;
         const right=west?r.right:Math.min(win.innerWidth-10,Math.max(r.right+dx,r.left+minW));
         const bottom=north?r.bottom:Math.min(win.innerHeight-10,Math.max(r.bottom+dy,r.top+minH));
-        preferredSize={width:right-left,height:bottom-top};manualPosition={left,top};position();
+        preferredSize={width:right-left,height:bottom-top};manualPosition={left,top};card.style.width=preferredSize.width+'px';card.style.height=preferredSize.height+'px';placeManual(preferredSize.width,preferredSize.height);
       });
       const release=event=>{if(!resizing||event.pointerId!==resizing.id)return;event.stopPropagation();resizing=null;try{win.localStorage.setItem('redown-test-it-size',JSON.stringify(preferredSize));}catch{}};
       for(const type of ['pointerup','pointercancel','lostpointercapture'])handle.addEventListener(type,release);
@@ -102,7 +111,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
   }
   function exit(){stop();}
   function keydown(event){if(event.defaultPrevented||draggable&&doc.querySelector('dialog[open],#context:not([hidden]),#test-it-tools-menu:not([hidden])'))return;if(event.key==='Escape'&&card?.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();stop();}}
-  function signal(event){if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;if(autoAdvance)advance();}}
+  function signal(event){if(card&&draggable&&event.detail?.action==='test-it-tools-open'){position();return;}if(card&&steps[index].action===event.detail?.action){completed=true;$('[data-guide-status]').textContent='Action recognized. Continue when you’re ready.';$('[data-guide-next]').disabled=false;schedule();if(autoAdvance)advance();}}
   function show(){
     completed=false;clearHighlight();const step=steps[index];onStep(index);
     $('[data-guide-progress]').textContent=`${index+1} of ${steps.length}`;
@@ -110,7 +119,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     $('[data-guide-status]').textContent=step.action?'Try this in the Explorer, or choose Skip.':'';
     $('[data-guide-back]').hidden=!allowBack;$('[data-guide-back]').disabled=index===0;$('[data-guide-skip]').hidden=!step.action;
     $('[data-guide-next]').textContent=index===steps.length-1?'Finish':'Next';$('[data-guide-next]').disabled=Boolean(step.action);
-    position();highlight?.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});position();$('[data-guide-exit]').focus({preventScroll:true});
+    highlight?.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});position();$('[data-guide-exit]').focus({preventScroll:true});
   }
   function advance(){if(index===steps.length-1)stop(true);else{index++;show();}}
   function start(){
@@ -121,7 +130,7 @@ export function createGuide({document:doc,steps,onFinish=()=>{},onExit=()=>{},on
     doc.body.append(card);$('[data-guide-exit]').onclick=exit;$('[data-guide-back]').onclick=()=>{if(index>0){index--;show();}};$('[data-guide-retry]').hidden=!onRetry;$('[data-guide-retry]').onclick=()=>onRetry?.(index);$('[data-guide-skip]').onclick=()=>{onSkip(index);advance();};$('[data-guide-next]').onclick=()=>{if(!steps[index].action||completed)advance();};
     doc.addEventListener('redown:modal-open',modalOpened);doc.addEventListener('close',modalClosed,true);
     win.addEventListener('resize',schedule);doc.addEventListener('scroll',schedule,true);doc.addEventListener('redown:gui',signal);doc.addEventListener('keydown',keydown,true);win.addEventListener('pagehide',exit);
-    observer=new win.MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden']});show();
+    observer=new win.MutationObserver(changes=>{if(changes.some(change=>!card?.contains(change.target)))schedule();});observer.observe(doc.body,{subtree:true,attributes:true,attributeFilter:['open','hidden']});show();
   }
-  return {start,stop,message(text){if(card)$('[data-guide-status]').textContent=text;},get active(){return Boolean(card);}};
+  return {start,stop,message(text){if(card&&$('[data-guide-status]').textContent!==text){$('[data-guide-status]').textContent=text;schedule();}},get active(){return Boolean(card);}};
 }

@@ -587,7 +587,7 @@ export default {
         diagnostic?.event("source.cleanup","confirmed");
         return diagnostic?diagnostic.json({ok:true,deleted:keys}):Response.json({ok:true,deleted:keys});
       }
-      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,storageBound:Boolean(env.STORAGE)});
+      if (body.action === "capabilities") return Response.json({ok:true,workerVersion:6,diagnosticProtocol:1,readOnlyProbe:true,exactIngestPaths:true,safeTransfers:true,createOnlyFolders:true,storageBound:Boolean(env.STORAGE)});
       if (body.action === "probeSource") {
         const base=new URL(String(body.sourceWorkerUrl||""));
         if(base.protocol!=="https:"||base.username||base.password||base.pathname!=="/"||base.search||base.hash||!base.hostname.endsWith(".workers.dev")||!body.sourceToken)throw new Error("Choose a configured workers.dev source");
@@ -641,6 +641,7 @@ export default {
             httpMetadata: { contentType: "text/plain; charset=utf-8", cacheControl: "no-store" },
             customMetadata: { redownMarker: "true", createdAt: new Date().toISOString() }
           });
+          if(!marker&&body.createOnly===true)throw new Error("That folder already exists. Choose an unused name.");
           if(!marker&&!(await env.STORAGE.head(key)))throw new Error("Folder creation could not be confirmed");
           created.push(key);
         }
@@ -1801,7 +1802,13 @@ async function renameExplorerEntry(message) {
 async function createExplorerFolder(message) {
   const prefix = cleanExplorerPrefix(message.prefix) + cleanExplorerName(message.name);
   const profile = await preparedProfile(message.accountId, message.bucketName, message.accountName,false,message.explorerTrace,message.betaNoProvision===true);
-  await callBucketWorker(profile, { action:"ensurePrefixes", prefixes:[prefix],explorerTrace:message.explorerTrace });
+  if(message.createOnly===true){
+    const capabilities=await callBucketWorker(profile,{action:"capabilities"});
+    if(capabilities.createOnlyFolders!==true)throw new Error("New practice folders require the create-only folder Worker update. Use explicit bucket setup before testing; no folder was changed.");
+    const page=await listObjectsPage(message.accountId,message.bucketName,prefix);
+    if(page.objects.some(o=>o.key===prefix||o.key.startsWith(prefix+"/"))||page.delimited?.some(p=>(typeof p==="string"?p:p.prefix)===prefix+"/")||page.truncated||page.cursor)throw new Error("That folder name already exists or could not be checked.");
+  }
+  await callBucketWorker(profile, { action:"ensurePrefixes", prefixes:[prefix],createOnly:message.createOnly===true,explorerTrace:message.explorerTrace });
   return { key:`${prefix}/` };
 }
 function objectKeyFromLocation(profile, location) {

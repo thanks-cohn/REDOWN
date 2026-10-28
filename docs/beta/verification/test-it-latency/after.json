@@ -1,0 +1,56 @@
+{
+  "ref": "working",
+  "environment": "v24.22.1",
+  "boundary": "Local Node memory-provider benchmark; 1 MiB SHA-256 reads. No network, GUI, browser memory, or live R2 latency measured. Checkpoints seed owned-copy counts, not 60 participant GUI exercises. Heap deltas include GC noise.",
+  "samplesPerCheckpoint": 15,
+  "results": [
+    {
+      "transitions": 0,
+      "p50Ms": 4.59172199999999,
+      "p95Ms": 7.667892999999999,
+      "copy": {
+        "inspections": 6,
+        "writes": 4,
+        "serializedBytes": 20737
+      },
+      "progressWritesFor20Calls": 1,
+      "heapDeltaP50Bytes": 157288
+    },
+    {
+      "transitions": 20,
+      "p50Ms": 4.687066000000016,
+      "p95Ms": 5.391536000000002,
+      "copy": {
+        "inspections": 6,
+        "writes": 4,
+        "serializedBytes": 82582
+      },
+      "progressWritesFor20Calls": 1,
+      "heapDeltaP50Bytes": 272824
+    },
+    {
+      "transitions": 40,
+      "p50Ms": 5.095399999999984,
+      "p95Ms": 5.773822000000024,
+      "copy": {
+        "inspections": 6,
+        "writes": 4,
+        "serializedBytes": 144685
+      },
+      "progressWritesFor20Calls": 1,
+      "heapDeltaP50Bytes": 411552
+    },
+    {
+      "transitions": 60,
+      "p50Ms": 5.126486999999997,
+      "p95Ms": 6.715189000000009,
+      "copy": {
+        "inspections": 6,
+        "writes": 4,
+        "serializedBytes": 206785
+      },
+      "progressWritesFor20Calls": 1,
+      "heapDeltaP50Bytes": 506272
+    }
+  ]
+}

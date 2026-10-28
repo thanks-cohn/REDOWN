@@ -1,0 +1,51 @@
+{
+  "baselineCommit": "2a34d8ed76561328f1db5ee0fda5b49578bd5174",
+  "baseline": {
+    "tests": 521,
+    "passed": 511,
+    "failed": 10
+  },
+  "changed": {
+    "tests": 533,
+    "passed": 523,
+    "failed": 10
+  },
+  "focused": {
+    "tests": 182,
+    "passed": 182,
+    "failed": 0
+  },
+  "sameFailureNames": true,
+  "failures": [
+    "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+    "catalog IDs, evidence labels, source hashes and references are internally consistent",
+    "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+    "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+    "full finite public coverage inventory resolves strata and all canonical case links",
+    "offline discovery advertises only implemented operations and distinct versions",
+    "original case and proposal Markdown bytes are retained from pinned upstream",
+    "real discovery, case, history, filters and validation are deterministic and honest",
+    "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+    "successful provisioning refreshes destination editors and inventory before reporting ready"
+  ],
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "browser": "CHROME_NOT_AVAILABLE_ENOENT; zero installed assertions",
+  "liveR2": "NOT_TESTED"
+}

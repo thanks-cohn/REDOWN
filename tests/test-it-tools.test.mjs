@@ -37,7 +37,7 @@ test('Tour has no gripper by default',()=>{const dom=fixture();const guide=creat
 for(const corner of ['nw','ne','sw','se'])test('corner '+corner+' resizes independently of grip, clamps viewport and preserves dimensions',()=>{
  const dom=new JSDOM(html,{pretendToBeVisual:true,url:'https://fixture.invalid'}),doc=dom.window.document,w=dom.window;
  const guide=createGuide({document:doc,draggable:true,steps:[{title:'Resize',text:'Instructions'},{title:'Next',text:'More instructions'}]});guide.start();
- const card=doc.querySelector('.test-it-card');card.getBoundingClientRect=()=>{const left=parseFloat(card.style.left),top=parseFloat(card.style.top),width=parseFloat(card.style.width),height=parseFloat(card.style.height);return {left,top,width,height,right:left+width,bottom:top+height};};
+ const card=doc.querySelector('.test-it-card');card.getBoundingClientRect=()=>{const left=parseFloat(card.style.left),top=parseFloat(card.style.top),width=parseFloat(card.style.width),height=parseFloat(card.style.height)||300;return {left,top,width,height,right:left+width,bottom:top+height};};
  // Move into the middle to exercise each anchored corner.
  card.style.left='200px';card.style.top='150px';const before=card.getBoundingClientRect(),handle=card.querySelector('[data-resize-corner="'+corner+'"]');handle.setPointerCapture=()=>{};
  const pointer=(type,x,y)=>{const e=new w.Event(type,{bubbles:true,cancelable:true});Object.assign(e,{button:0,pointerId:11,clientX:x,clientY:y});handle.dispatchEvent(e);};
@@ -48,9 +48,9 @@ for(const corner of ['nw','ne','sw','se'])test('corner '+corner+' resizes indepe
 });
 test('fullscreen preview bounds cannot shrink Test It and narrow viewport keeps panel dimensions usable',()=>{
  const dom=fixture(),doc=dom.window.document,w=dom.window;const preview=doc.querySelector('#preview-dialog');preview.setAttribute('open','');const target=doc.querySelector('#preview-content');target.getBoundingClientRect=()=>({left:0,top:0,right:1024,bottom:768,width:1024,height:768});
- const guide=createGuide({document:doc,draggable:true,steps:[{title:'Lightbox',text:'Readable instructions',target:'#preview-content'}]});guide.start();const card=doc.querySelector('.test-it-card');assert.equal(card.parentElement,preview);assert.equal(card.style.height,'480px');assert.equal(card.style.maxHeight,'748px');
+ const guide=createGuide({document:doc,draggable:true,steps:[{title:'Lightbox',text:'Readable instructions',target:'#preview-content'}]});guide.start();const card=doc.querySelector('.test-it-card');assert.equal(card.parentElement,preview);assert.equal(card.style.height,'');assert.equal(card.style.maxHeight,'748px');
  Object.defineProperties(w,{innerWidth:{value:360},innerHeight:{value:400}});w.dispatchEvent(new w.Event('resize'));
- return new Promise(resolve=>w.requestAnimationFrame(()=>{assert.equal(card.style.width,'340px');assert.equal(card.style.height,'380px');assert.ok(parseFloat(card.style.top)>=10);guide.stop();dom.window.close();resolve();}));
+ return new Promise(resolve=>w.requestAnimationFrame(()=>{assert.equal(card.style.width,'340px');assert.equal(card.style.height,'');assert.equal(card.style.maxHeight,'380px');assert.ok(parseFloat(card.style.top)>=10);guide.stop();dom.window.close();resolve();}));
 });
 
 test('guide follows actual modal opening order rather than HTML order and restores the prior modal',()=>{
@@ -66,4 +66,28 @@ test('guide follows actual modal opening order rather than HTML order and restor
  confirmation.removeAttribute('open');confirmation.dispatchEvent(new w.Event('close'));
  assert.equal(card.parentElement,preview);preview.removeAttribute('open');preview.dispatchEvent(new w.Event('close'));assert.equal(card.parentElement,doc.body);
  guide.stop();dom.window.close();
+});
+
+
+test('sixty transitions and repeated reopen cycles retain a fixed guide listener set and ignore row mutations',async()=>{
+ const dom=fixture(),doc=dom.window.document,w=dom.window;const registrations=new Map();
+ for(const target of [doc,w]){const add=target.addEventListener.bind(target),remove=target.removeEventListener.bind(target);target.addEventListener=(type,fn,options)=>{if(!registrations.has(target))registrations.set(target,new Map());const types=registrations.get(target);if(!types.has(type))types.set(type,new Set());types.get(type).add(fn);return add(type,fn,options);};target.removeEventListener=(type,fn,options)=>{registrations.get(target)?.get(type)?.delete(fn);return remove(type,fn,options);};}
+ const count=()=>[...registrations.values()].reduce((n,types)=>n+[...types.values()].reduce((m,set)=>m+set.size,0),0);
+ // Warm jsdom's lazily installed document selector listeners before measuring.
+ doc.querySelector('#files');const baseline=count();
+ const guide=createGuide({document:doc,draggable:true,steps:Array.from({length:60},(_,i)=>({title:'Exercise '+i,text:'Instructions',target:'#refresh'}))});
+ guide.start();const installed=count();assert.ok(installed>baseline);
+ let reads=0;const rect=w.HTMLElement.prototype.getBoundingClientRect;w.HTMLElement.prototype.getBoundingClientRect=function(){reads++;return rect.call(this);};
+ const before=reads;doc.querySelector('#files').append(...Array.from({length:100},()=>doc.createElement('div')));
+ await new Promise(resolve=>w.requestAnimationFrame(resolve));assert.equal(reads,before,'row mutations must not reposition the guide');
+ for(let i=1;i<60;i++){doc.querySelector('[data-guide-next]').click();if([20,40,59].includes(i))assert.equal(count(),installed);}
+ guide.stop();assert.equal(count(),baseline);for(let i=0;i<10;i++){guide.start();assert.equal(count(),installed);guide.stop();assert.equal(count(),baseline);}
+ dom.window.close();
+});
+test('pointer movement uses cached geometry without repeated placement reads',()=>{
+ const dom=fixture(),doc=dom.window.document;const guide=createGuide({document:doc,draggable:true,steps:[{title:'Move',text:'Instructions'}]});guide.start();
+ const card=doc.querySelector('.test-it-card'),grip=card.querySelector('.guide-grip');let reads=0;
+ card.getBoundingClientRect=()=>{reads++;return {left:100,top:100,width:360,height:300,right:460,bottom:400};};grip.setPointerCapture=()=>{};
+ const pointer=(type,x,y)=>{const event=new dom.window.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{button:0,pointerId:1,clientX:x,clientY:y});grip.dispatchEvent(event);};
+ pointer('pointerdown',110,110);const before=reads;for(let i=0;i<100;i++)pointer('pointermove',110+i,110+i);assert.equal(reads,before);pointer('pointerup',210,210);guide.stop();dom.window.close();
 });

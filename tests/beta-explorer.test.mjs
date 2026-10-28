@@ -778,3 +778,64 @@ test('Window Preview actual Previous then Next buttons register Next without a c
  d.querySelector('[data-guide-next]').click();d.querySelector('#preview-previous').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);assert.equal(f.storage.betaExplorerTestIt.records[15].verdict,'PASSED');
  }finally{f.dom.window.close();}
 });
+
+
+test('production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir',async()=>{
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
+ d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();
+ d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Fresh destination';d.querySelector('#dialog-confirm').click();
+ await settle(()=>d.querySelector('[data-key="Fresh destination/"]')&&!d.querySelector('#mkdir').disabled);
+ assert.equal(d.querySelector('[data-key="root.txt"]').getAttribute('aria-selected'),'true');assert.equal(d.querySelector('#paste').disabled,false);
+ assert.equal(f.storage.betaExplorerTestIt.index,22);assert.notEqual(f.storage.betaExplorerTestIt.records[22].verdict,'PASSED');assert.equal(f.storage.betaExplorerTestIt.practiceFolders[0].status,'created');
+ assert.equal(f.storage.betaExplorerTestIt.objects.length,0);
+ d.querySelector('[data-key="Fresh destination/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('#crumbs').textContent.includes('Fresh destination')&&!d.querySelector('#paste').disabled);
+ d.querySelector('#paste').click();await settle(()=>f.storage.betaExplorerTestIt.records[22].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
+ assert.equal(hash(f.stored.get('Fresh destination/root.txt').bytes),hash(f.stored.get('root.txt').bytes));assert.ok(d.querySelector('[data-key="Fresh destination/root.txt"].test-owned-copy'));
+ }finally{f.dom.window.close();}
+});
+test('create-only folder Worker rejects marker races and backend rejects file/prefix collisions',async()=>{
+ const f=await fixture();await f.bucket.put('used/file.txt','unrelated');await f.bucket.put('same','unrelated');
+ for(const name of ['used','same'])await assert.rejects(f.adapter.mkdir({source,name},{practice:{operation:'mkdir'}}),/already exists/);
+ assert.ok(f.stored.has('used/file.txt'));assert.ok(f.stored.has('same'));
+ const options={practice:{operation:'mkdir'}};assert.equal((await f.adapter.mkdir({source,name:'fresh'},options)).key,'fresh/');await assert.rejects(f.adapter.mkdir({source,name:'fresh'},options),/already exists/);
+});
+
+test('ordinary GUI moves two Test Copies into a new folder with a conditioned memory adapter (not R2)',async()=>{
+ let operations=0;
+ const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{
+   adapter.practiceMutations={move:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}};
+   adapter.move=async(input,options)=>{
+     operations++;const results=[];
+     for(let i=0;i<input.entries.length;i++){
+       const prior=options.practice.sources[i],dest=options.practice.destinations[i],object=memory.stored.get(prior.key);
+       if(!object||object.version!==prior.object.version||hash(object.bytes)!==prior.sha256)throw Error('Ownership condition failed');
+       if(memory.stored.has(dest.key))throw Error('Destination condition failed');
+       // One synchronous memory transaction, unlike production binding delete.
+       const next={...object,key:dest.key,version:randomUUID()};memory.stored.set(dest.key,next);memory.stored.delete(prior.key);
+       results.push({sourceKey:prior.key,destinationKey:dest.key,status:'copied',verified:true,destinationVersion:next.version,destinationEtag:next.etag,size:next.size});
+     }
+     return {completed:results.length,results};
+   };
+ }});
+ try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
+ d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="root (copy) (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
+ while(d.querySelector('[data-guide-progress]').textContent!=='39 of 60')d.querySelector('[data-guide-skip]').click();
+ const keys=['root (copy).txt','root (copy) (copy).txt'];d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));
+ const ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id);
+ d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Batch destination';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
+ for(const key of keys)assert.equal(d.querySelector('[data-key="'+key+'"]').getAttribute('aria-selected'),'true');
+ assert.equal(f.storage.betaExplorerTestIt.index,38);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');
+ d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Batch destination/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
+ await settle(()=>f.storage.betaExplorerTestIt.records[38].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
+ assert.equal(operations,2);for(const key of keys){assert.ok(!f.stored.has(key));assert.equal(hash(f.stored.get('Batch destination/'+key).bytes),hash(f.stored.get('root.txt').bytes));}
+ assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids.sort());
+ d.querySelector('[data-key="Batch destination/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>keys.every(key=>d.querySelector('[data-key="Batch destination/'+key+'"].test-owned-copy')));
+ }finally{f.dom.window.close();}
+});
+
+test('old Workers cannot silently accept create-only practice folders or trigger automatic provisioning',async()=>{
+ const calls=[];const code=background.slice(background.indexOf('async function createExplorerFolder('),background.indexOf('function objectKeyFromLocation('));
+ const context=vm.createContext({cleanExplorerPrefix:p=>p,cleanExplorerName:n=>n,preparedProfile:async(...args)=>{assert.equal(args.at(-1),true);return {};},callBucketWorker:async(profile,body)=>{calls.push(body.action);return {ok:true};}});vm.runInContext(code,context);
+ await assert.rejects(context.createExplorerFolder({...source,name:'new',createOnly:true,betaNoProvision:true}),/create-only folder Worker update/);assert.deepEqual(calls,['capabilities']);
+});
