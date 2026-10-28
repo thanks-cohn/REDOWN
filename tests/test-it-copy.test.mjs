@@ -6,12 +6,12 @@ import {installTestIt} from '../extension/beta/test-it.mjs';
 import {createFileApi} from '../extension/beta/file-api.mjs';
 const html=readFileSync(new URL('../extension/beta/explorer.html',import.meta.url),'utf8');
 const tick=()=>new Promise(r=>setTimeout(r,0));
-async function fixture(index=21,setup=()=>{}){
+async function fixture(index=21,setup=()=>{},resume=null){
  const dom=new JSDOM(html,{pretendToBeVisual:true}),doc=dom.window.document;
  const current={accountId:'a',bucketName:'b',prefix:'source/'},key='source/original.txt';
  const object={etag:'etag',size:5,version:'v1'},sha256='hash';
  const original={identity:JSON.stringify(['a','b',key]),source:current,key,stamp:JSON.stringify(['etag',5,null,'v1']),sha256,object};
- const saved={version:1,id:'session',index,originals:[original],objects:[],destinations:[],locations:{a:current,b:{...current,prefix:'practice/'}},records:[],pending:null};
+ const saved=resume||{version:1,id:'session',index,originals:[original],objects:[],destinations:[],locations:{a:current,b:{...current,prefix:'practice/'}},records:[],pending:null};
  let state={current,selected:[{key}],visible:[]},clip=null,pastes=0,persisted=null,storageFail=false;
  const objects=new Map([[key,{object,sha256}]]);let fail=false;
  const adapter={inspect:async({key})=>objects.get(key)||{object:null},stat:async({key})=>({object:objects.get(key)?.object||null}),
@@ -129,13 +129,13 @@ test('Export keeps fresh results and recovery evidence in separate JSON files',a
  }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
 });
 
-test('Retry reconciles missed verified Paste without another write and never invents keyboard invocation',async()=>{
+test('Retry starts fresh evidence without replaying the previous verified Paste or inventing keyboard invocation',async()=>{
  for(const keyboard of [false,true]){const f=await fixture(keyboard?51:22);try{
  f.menuCopy();f.doc.getElementById('paste').click();
  const destination={...f.state.current,prefix:'practice/'};const result=await f.api.run('copy',{source:f.state.current,destination,entries:f.state.selected,conflict:'skip'});assert.equal(result.state,'completed');
  const index=keyboard?51:22,record=f.saved.records[index];record.verdict='NOT_TESTED';record.observedGuiInteraction=null;f.doc.querySelector('[data-guide-next]').disabled=true;
  await f.doc.querySelector('[data-guide-retry]').onclick();await tick();
- assert.equal(record.verdict,keyboard?'NOT_TESTED':'PASSED');assert.equal(f.saved.objects.length,1);assert.ok(f.objects.has('source/original.txt'));
+ assert.equal(f.saved.records[index].verdict,'NOT_TESTED');assert.ok(f.saved.questionHistory.active[index+1]);assert.equal(f.saved.objects.length,1);assert.ok(f.objects.has('source/original.txt'));
  }finally{f.dom.window.close();}}
 });
 
@@ -157,7 +157,106 @@ test('Rename Back retains the verified name after failure and recognizes a succe
    const rename=newName=>f.api.run('rename',{source:destination,entry:f.state.selected[0],newName});
    assert.equal((await rename('renamed.txt')).state,'failed');assert.equal(calls,0);assert.equal(f.practice.session.state.workflow?.rename,undefined);assert.equal(f.saved.records[26].verdict,'BLOCKED');assert.ok(f.objects.has(copy.key));
    f.practice.paintOwnership();assert.match(f.doc.querySelector('[data-guide-text]').textContent,/first rename has not succeeded/);assert.match(f.doc.querySelector('[data-guide-text]').textContent,/Last verified name: practice\/original.txt/);
-   contract.supported=true;assert.equal((await rename('renamed.txt')).state,'completed');assert.equal(f.saved.records[25].verdict,'PASSED');assert.notEqual(f.saved.records[26].verdict,'PASSED');assert.equal(f.doc.querySelector('[data-guide-next]').disabled,true);
+   contract.supported=true;await f.doc.querySelector('[data-guide-retry]').onclick();assert.equal((await rename('renamed.txt')).state,'completed');assert.equal(f.saved.records[25].verdict,'NOT_TESTED');assert.notEqual(f.saved.records[26].verdict,'PASSED');assert.equal(f.doc.querySelector('[data-guide-next]').disabled,true);
    f.state={...f.state,selected:[{key:'practice/renamed.txt'}]};assert.equal((await rename('original.txt')).state,'completed');assert.equal(f.saved.records[26].verdict,'PASSED');assert.equal(f.doc.querySelector('[data-guide-next]').disabled,false);assert.equal(f.practice.session.owned(destination,copy.key).id,copy.id);assert.ok(f.objects.has('source/original.txt'));
+ }finally{f.dom.window.close();}
+});
+
+test('floating history exposes all 60 questions, review is inert, observation retry replaces result and returns to origin',async()=>{
+ const f=await fixture(59);try{
+ const {doc,practice}=f;const jump=n=>{doc.querySelector('[data-guide-progress]').click();const entries=[...doc.querySelectorAll('[data-question-options] button')];assert.equal(entries.length,60);entries.find(b=>b.textContent.startsWith(n+'. ')).click();};
+ const before=structuredClone(f.saved.records),files=structuredClone([...f.objects]);
+ jump(12);assert.equal(doc.querySelector('[data-guide-progress]').textContent,'Question 12 of 60');assert.equal(f.saved.questionHistory.origin,59);
+ f.state={...f.state,grid:true};await practice.observe('switch-view');assert.deepEqual(f.saved.records,before);assert.deepEqual([...f.objects],files);
+ await doc.querySelector('[data-guide-retry]').onclick();await practice.observe('switch-view');assert.equal(f.saved.records[11].verdict,'PASSED');
+ assert.equal(f.saved.records.filter(r=>r.verdict==='PASSED').length,1);assert.equal(f.saved.questionHistory.attempts[12].length,1);
+ assert.match(doc.querySelector('[data-guide-result]').textContent,/Previous result: PASSED/);
+ doc.querySelector('[data-guide-return]').click();assert.equal(f.saved.index,59);
+ jump(3);jump(26);assert.equal(f.saved.questionHistory.origin,59);assert.equal(f.saved.records[11].verdict,'PASSED');
+ doc.querySelector('[data-guide-progress]').click();const input=doc.querySelector('[data-question-history] input');input.value='12.';input.dispatchEvent(new f.dom.window.Event('input'));assert.equal(doc.querySelectorAll('[data-question-options] button').length,1);
+ input.dispatchEvent(new f.dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(doc.querySelector('[data-question-history]').hidden,true);assert.ok(doc.querySelector('.guide-card'));
+ assert.deepEqual([...f.objects],files);
+ }finally{f.dom.window.close();}
+});
+
+test('historical real API rename retry replaces only its question, uses current copy location and exports authoritative results',async()=>{
+ const f=await fixture(59,(adapter,objects)=>{adapter.practiceMutations={rename:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}};adapter.rename=async({entry,newName})=>{const before=objects.get(entry.key),destinationKey='practice/'+newName,object={...before.object,version:crypto.randomUUID()};objects.set(destinationKey,{object,sha256:before.sha256});objects.delete(entry.key);return {completed:1,results:[{sourceKey:entry.key,destinationKey,status:'copied',verified:true,destinationVersion:object.version,destinationEtag:object.etag,size:5}]};};});
+ const create=URL.createObjectURL,revoke=URL.revokeObjectURL,blobs=[];
+ try{
+ const destination={...f.state.current,prefix:'practice/'};await f.api.run('copy',{source:f.state.current,destination,entries:f.state.selected,conflict:'skip'});
+ f.saved.records[25].verdict='BLOCKED';const before=structuredClone(f.saved.records);f.state={...f.state,current:destination,selected:[{key:'practice/original.txt'}]};
+ f.doc.querySelector('[data-guide-progress]').click();[...f.doc.querySelectorAll('[data-question-options] button')].find(b=>b.textContent.startsWith('26. ')).click();
+ assert.match(f.doc.querySelector('[data-guide-text]').textContent,/practice\/original.txt/);assert.equal(f.saved.records[25].verdict,'BLOCKED');
+ await f.doc.querySelector('[data-guide-retry]').onclick();assert.equal(f.saved.records[25].verdict,'BLOCKED');
+ assert.equal((await f.api.run('rename',{source:destination,entry:{key:'practice/original.txt'},newName:'retried.txt'})).state,'completed');
+ assert.equal(f.saved.records[25].verdict,'PASSED');assert.equal(f.practice.session.owned(destination,'practice/retried.txt').key,'practice/retried.txt');
+ for(let i=0;i<60;i++)if(i!==25)assert.deepEqual(f.saved.records[i],before[i]);
+ f.doc.querySelector('[data-guide-return]').click();assert.equal(f.saved.index,59);
+ URL.createObjectURL=blob=>{blobs.push(blob);return 'blob:test';};URL.revokeObjectURL=()=>{};f.dom.window.HTMLAnchorElement.prototype.click=function(){};
+ f.doc.getElementById('test-it-export').click();await tick();const report=JSON.parse(await blobs[0].text());assert.equal(report.records[25].verdict,'PASSED');assert.equal(report.records.length,60);
+ assert.equal(report.questionHistory.attempts[26].at(-1).result,'PASSED');assert.ok(f.objects.has('source/original.txt'));
+ }finally{URL.createObjectURL=create;URL.revokeObjectURL=revoke;f.dom.window.close();}
+});
+
+for(const mode of ['navigate','cancel','new retry','close'])test('pending historical rename remains associated with its attempt: '+mode,async()=>{
+ let release,started;const ready=new Promise(r=>started=r);
+ const f=await fixture(59,(adapter,objects)=>{adapter.practiceMutations={rename:{supported:true,exactIdentity:true,noOverwrite:true,verifyDestinationBeforeDelete:true}};adapter.rename=async({entry,newName})=>{started();await new Promise(r=>release=r);const before=objects.get(entry.key),destinationKey='practice/'+newName,object={...before.object,version:'renamed'};objects.set(destinationKey,{object,sha256:before.sha256});objects.delete(entry.key);return {completed:1,results:[{sourceKey:entry.key,destinationKey,status:'copied',verified:true,destinationVersion:'renamed',destinationEtag:object.etag,size:5}]};};});
+ try{
+ const destination={...f.state.current,prefix:'practice/'};await f.api.run('copy',{source:f.state.current,destination,entries:f.state.selected,conflict:'skip'});
+ f.state={...f.state,current:destination,selected:[{key:'practice/original.txt'}]};
+ const jump=n=>{f.doc.querySelector('[data-guide-progress]').click();[...f.doc.querySelectorAll('[data-question-options] button')].find(b=>b.textContent.startsWith(n+'. ')).click();};
+ jump(26);await f.doc.querySelector('[data-guide-retry]').onclick();const pending=f.api.run('rename',{source:destination,entry:{key:'practice/original.txt'},newName:'late.txt'});await ready;
+ if(mode==='navigate')jump(55);
+ if(mode==='cancel')f.doc.querySelector('[data-guide-cancel]').click();
+ if(mode==='new retry')await f.doc.querySelector('[data-guide-retry]').onclick();
+ if(mode==='close')f.doc.querySelector('[data-guide-exit]').click();
+ release();assert.equal((await pending).state,'completed');
+ assert.equal(f.saved.records[25].verdict,['navigate','close'].includes(mode)?'PASSED':'NOT_TESTED');assert.equal(f.saved.records[54].verdict,'NOT_TESTED');
+ assert.equal(f.practice.session.owned(destination,'practice/late.txt').key,'practice/late.txt');
+ assert.equal(f.saved.observationFailures?.length||0,0);
+ if(mode==='close'){f.doc.getElementById('test-it').click();assert.match(f.doc.querySelector('[data-guide-result]').textContent,/PASSED/);}
+ }finally{release?.();f.dom.window.close();}
+});
+
+test('late preview event from a superseded attempt cannot satisfy another preview question',async()=>{
+ const f=await fixture(59);try{
+ const jump=n=>{f.doc.querySelector('[data-guide-progress]').click();[...f.doc.querySelectorAll('[data-question-options] button')].find(b=>b.textContent.startsWith(n+'. ')).click();};
+ jump(14);await f.doc.querySelector('[data-guide-retry]').onclick();const token=f.practice.capture();jump(58);await f.doc.querySelector('[data-guide-retry]').onclick();
+ f.doc.getElementById('preview-content').innerHTML='<pre>Rendered</pre>';f.state={...f.state,previewKey:'document.txt'};
+ await f.practice.observe('preview-open',{testItCorrelation:token,rendered:true});assert.equal(f.saved.records[57].verdict,'NOT_TESTED');
+ await f.practice.observe('preview-open',{testItCorrelation:f.practice.capture(),rendered:true});assert.equal(f.saved.records[57].verdict,'PASSED');
+ }finally{f.dom.window.close();}
+});
+
+test('reload restores reviewed question, highest, origin, revised result and unfinished retry identity',async()=>{
+ const f=await fixture(59);let next;
+ try{
+ const jump=n=>{f.doc.querySelector('[data-guide-progress]').click();[...f.doc.querySelectorAll('[data-question-options] button')].find(b=>b.textContent.startsWith(n+'. ')).click();};
+ jump(12);await f.doc.querySelector('[data-guide-retry]').onclick();f.state={...f.state,grid:true};await f.practice.observe('switch-view');
+ jump(3);await f.doc.querySelector('[data-guide-retry]').onclick();const id=f.saved.questionHistory.active[3].id;jump(26);await tick();
+ next=await fixture(0,()=>{},structuredClone(f.persisted.betaExplorerTestIt));
+ assert.equal(next.saved.index,25);assert.equal(next.saved.questionHistory.highest,59);assert.equal(next.saved.questionHistory.origin,59);assert.equal(next.saved.questionHistory.active[3].id,id);assert.equal(next.saved.records[11].verdict,'PASSED');
+ assert.equal(next.doc.querySelector('[data-guide-progress]').textContent,'Question 26 of 60');assert.equal(next.doc.querySelector('[data-guide-return]').textContent,'Return to Question 60');
+ next.doc.querySelector('[data-guide-return]').click();assert.equal(next.saved.index,59);
+ }finally{f.dom.window.close();next?.dom.window.close();}
+});
+
+test('repeated full history navigation creates no remote inspections, attempt growth or extra guide cards',async t=>{
+ let inspections=0;const f=await fixture(59,adapter=>{const inspect=adapter.inspect;adapter.inspect=async input=>{inspections++;return inspect(input);};});
+ try{
+ const timings=[];for(let round=0;round<4;round++){const start=performance.now();for(let i=0;i<60;i++){
+ f.doc.querySelector('[data-guide-progress]').click();const buttons=[...f.doc.querySelectorAll('[data-question-options] button')];assert.equal(buttons.length,60);buttons[(i*17)%60].click();
+ }timings.push(performance.now()-start);}
+ assert.equal(inspections,0);assert.equal(f.doc.querySelectorAll('.guide-card').length,1);assert.equal(f.saved.records.length,60);assert.equal(Object.keys(f.saved.questionHistory.attempts).length,1);
+ t.diagnostic('Local jsdom milliseconds per 60 history jumps: '+timings.map(n=>n.toFixed(1)).join(', ')+'. No browser latency claim.');
+ }finally{f.dom.window.close();}
+});
+
+test('canceling a historical retry retains a previous pass and Previous is disabled only at question one',async()=>{
+ const f=await fixture(59);try{
+ f.saved.records[11].verdict='PASSED';const jump=n=>{f.doc.querySelector('[data-guide-progress]').click();[...f.doc.querySelectorAll('[data-question-options] button')].find(b=>b.textContent.startsWith(n+'. ')).click();};
+ jump(12);await f.doc.querySelector('[data-guide-retry]').onclick();assert.equal(f.saved.records[11].verdict,'PASSED');f.doc.querySelector('[data-guide-cancel]').click();assert.equal(f.saved.records[11].verdict,'PASSED');
+ jump(60);for(let i=59;i>0;i--){assert.equal(f.doc.querySelector('[data-guide-back]').disabled,false);f.doc.querySelector('[data-guide-back]').click();assert.equal(f.saved.index,i-1);}
+ assert.equal(f.doc.querySelector('[data-guide-back]').disabled,true);assert.equal(f.saved.records[11].verdict,'PASSED');assert.equal(f.saved.records.length,60);
  }finally{f.dom.window.close();}
 });

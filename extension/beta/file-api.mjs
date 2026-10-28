@@ -24,7 +24,9 @@ export function createFileApi(adapter) {
     const id=crypto.randomUUID();
     if(!methods.includes(operation)||typeof adapter[operation]!=='function')return {id,state:'failed',error:'This operation is not implemented.'};
     try {
+      const {testItCorrelation,...providerOptions}=options;options=providerOptions;
       options=adapter.configuration?adapter.configuration.resolve(operation,preferences,options):options;
+      if(testItCorrelation)options={...options,testItCorrelation};
       const onProgress=options.onProgress;options={...options,onProgress:event=>{try{onProgress?.(event);}catch{/* Presentation cannot change a provider outcome. */}}};
       options.signal?.throwIfAborted();options.onProgress({id,operation,phase:'started'});
       const execute=()=>adapter[operation](input,options);

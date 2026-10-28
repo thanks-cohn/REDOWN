@@ -83,7 +83,7 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
   async function perform(operation,input,options,execute){
     if(!active)return execute();
     if(operation==='download'){
-      const o=owned(input.source,input.entry.key);if(!o)throw Error('Choose a verified practice copy to download.');await check(o);const correlation=captureEvidence();const started=performance.now();let result;try{result=await execute();}catch(error){emitEvidence({operation,correlation,verdict:'BLOCKED',response:{downloadId:error.downloadId,downloadState:error.downloadState||'unobserved'},changes:[{id:o.id}],observed:error.message});throw error;}
+      const correlation=options.testItCorrelation||captureEvidence();const o=owned(input.source,input.entry.key);if(!o)throw Error('Choose a verified practice copy to download.');await check(o);const started=performance.now();let result;try{result=await execute();}catch(error){emitEvidence({operation,correlation,verdict:'BLOCKED',response:{downloadId:error.downloadId,downloadState:error.downloadState||'unobserved'},changes:[{id:o.id}],observed:error.message});throw error;}
       emitEvidence({operation,correlation,verdict:result.downloadState==='complete'?'PASSED':'UNCERTAIN',response:{downloadState:result.downloadState,downloadId:result.downloadId},changes:[{id:o.id}],latencyMs:performance.now()-started,observed:result.downloadState==='complete'?'Chrome reported completion. Local downloaded bytes were not independently hashed.':'Chrome download completion was not observed.'});return result;
     }
     if(!writes.has(operation)){
@@ -108,7 +108,7 @@ export function createPracticeSession({api,storage,saved,recovery=[],approve,onE
         catch(error){journal.status='needs-review';await save();throw error;}
       }finally{locked=false;}
     }
-    let correlation={};try{correlation=captureEvidence();}catch{/* Observer failures cannot change provider execution. */}
+    let correlation={};try{correlation=options.testItCorrelation||captureEvidence();}catch{/* Observer failures cannot change provider execution. */}
     const report=event=>emitEvidence({...event,correlation});
     const started=performance.now();let plan,providerResponse,dispatched=false;
     try{

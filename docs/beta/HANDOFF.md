@@ -485,3 +485,109 @@ are in [verification/test-it-latency](verification/test-it-latency/).
 Main and Legacy Explorer UI/ordinary operation behavior remain unchanged; only
 explicit create-only requests opt into the shared Worker addition. This commit
 ships the safe folder/performance repairs, not final production-move acceptance.
+
+## 28 October 2026: Unlimited question history and authoritative retries
+
+Base: `f48001de228fe240f9f4d5ffaa711d2bb0240226`, `beta-explorer` only.
+Both annotated checkpoint tags still peel to this commit. Neither tag was changed.
+Main, Legacy Explorer, the provider implementation and all 60 exercise definitions
+are unchanged.
+
+### Participant controls
+
+- **Previous** goes back one question, without a distance limit, and is disabled
+  only on question 1. Click **Question N of 60** for the compact, filterable
+  **Question History** list. It contains every question reached, with its current
+  verdict and a Retried marker. Selection is direct; no intermediate exercises run.
+  Escape, outside pointer press, the counter and selection dismiss the list.
+- Opening an old question is review only. Its **Previous result** remains visible
+  separately from interaction messages. Review does not dispatch cloud operations,
+  reconcile files, clear evidence, or undo previous file changes. Future questions
+  retain the existing Next/Skip progression rules.
+- **Retry** explicitly begins a new attempt, even after PASSED or NOT_TESTED.
+  A draft holds new evidence while the authoritative record keeps the previous
+  result. A matching verified completion replaces exactly that exercise's record.
+  BLOCKED and UNCERTAIN outcomes remain accurate; uncertain evidence never passes.
+  **Cancel attempt**, Skip during a retry, and superseding an unfinished attempt
+  retain the authoritative record. Closing the guide retains the unfinished attempt.
+- **Return to Question N** keeps the first departure position through multiple
+  historical jumps and returns directly without replaying intervening work.
+  The passed count always reduces the 60 current records, never attempt totals.
+
+### State, dependencies and asynchronous evidence
+
+`test-it-history.mjs` is a small session-state helper, not another database or file
+engine. `questionHistory` lives in the existing `betaExplorerTestIt` snapshot:
+highest reached, current `index`, return origin, review mode, active draft/identity,
+compact attempt metadata and relevant partial-interaction state. Existing serialized
+storage writes and working-copy ownership journals are reused. JSON export includes
+one authoritative `records` entry per exercise and separate compact attempts.
+Attempt metadata includes identity, exercise, ordinal, times, result, operation,
+command correlation when available and diagnostic reason. Provider response bodies
+are not copied into each historical attempt. Session restart remains explicit.
+
+Ordinary Explorer commands still perform all file operations. Instructions resolve
+live ledger objects, show their current verified location, and explain missing-copy
+setup. Return exercises retain per-exercise verified return locations, including both
+members of a multi-file move. Rename Back restores its logical-copy prerequisite,
+uses the current name, and explains the already-returned-name case. Learning a
+prerequisite while retrying Rename Back no longer credits a different exercise.
+No file is automatically moved, renamed, deleted or recreated by navigation/Retry.
+Retry may reconcile genuinely unresolved existing journals with targeted reads;
+it does not replay old successful evidence as a new pass.
+
+Operation evidence carries exercise and stable attempt IDs. Explorer captures these
+before Rename/Delete/destination dialogs, batch dispatch, download preflight and
+preview/folder/refresh awaits. Late verified operations can finish their originating
+attempt while another question is viewed or the guide is closed. Canceled or
+superseded attempt callbacks cannot replace newer results. Latest uncertain receipts
+may reconcile to verified evidence only for the same unsuperseded attempt. Pending
+multi-file observations retain their own partial evidence. Queued fallback UI events
+and asynchronous observation checks reject obsolete question generations.
+
+The shared floating guide gains optional Test It history controls; Tour defaults,
+six-dot grip, corners, resizing, modal hosting and placement algorithms remain.
+The list has a bounded scroll area and no permanent sidebar. Long entry names wrap.
+Cancel and direct Return sit below the main action row to retain spacing.
+
+### Verification
+
+- Focused `node --test tests/beta-explorer.test.mjs tests/test-it*.test.mjs`:
+  **180 passed, 0 failed**. Coverage includes the three specified direct jumps,
+  all 59 Previous actions, all visited entries/future gating, inert review, fresh
+  retries, cancellation, accurate failed/uncertain replacement, stale attempts,
+  direct return/multiple jumps, counts, export and storage reload. Actual Explorer
+  handlers, preview predicates, clipboard, multi-file return and ordinary
+  adapter/embedded-Worker regression tests remain in this suite.
+- New historical file-operation fixture performs Copy then historical Rename at
+  the current copy location, verifies replacement, checks every unrelated record,
+  returns directly and parses the export. A separate observation-only historical
+  Grid retry passes. Delayed Rename fixtures cover navigation, cancellation,
+  a newer retry and closing/reopening the guide; stale preview correlation is tested.
+- **240 historical jumps:** zero remote inspections, one guide card, 60 records,
+  no new attempts from review. Local jsdom timing diagnostics are in the focused
+  log, not installed-browser latency measurements. Existing lifecycle tests retain
+  fixed listener sets across 60 transitions and repeated reopen/drag/resize.
+- Full `npm run reliability:check`: **556 tests, 546 passed, 10 failed**, no skips.
+  Syntax, API registry and issue inventory stages pass; architecture freshness fails.
+  An untouched archive of the actual base runs **540 tests, 530 passed, the same
+  10 failure names**. The runner calls three new relative to its older pinned
+  baseline, but the fresh comparison proves they predate this change. Frozen
+  evidence, baseline assertions and the architecture map were not rewritten.
+- Existing local memory benchmark retains six inspections, four critical saves
+  per Copy and one save for 20 coalesced progress calls at 0/20/40/60-copy checkpoints.
+- Installed Chrome: **BLOCKED**, `CHROME_NOT_AVAILABLE_ENOENT`, zero assertions.
+  Live R2: **NOT TESTED**. No authenticated extension/R2 session or real objects
+  were used. No deployment or provider configuration change occurred. The requested
+  installed-Chrome/live-R2 acceptance sequence remains open, including rendered
+  spacing, focus and real network behavior. Memory-provider tests do not close it.
+- Existing limitation remains: outstanding download completion has no durable
+  provider recovery journal across a full page/extension process reload. Attempt
+  identity/results persist, but such a download needs a fresh explicit retry and
+  cannot be inferred successful. Existing uncertain mutation journals still use
+  their established read-only recovery path.
+
+Evidence: [focused log](verification/question-history/focused.log),
+[baseline/final comparison](verification/question-history/verification.json),
+[Chrome result](verification/question-history/installed-chrome.json),
+[memory benchmark](verification/question-history/benchmark.json).

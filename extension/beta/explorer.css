@@ -250,3 +250,14 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 .test-ownership-label{display:inline-block;flex-shrink:0;max-width:100%;margin-left:8px;padding:1px 6px;border-radius:4px;font-size:11px;line-height:1.5;color:var(--muted);background:var(--bg)}
 .test-owned-copy .test-ownership-label{color:#921b36;background:#fce9ee;font-weight:600}
 #files.grid .test-ownership-label{margin-left:0;white-space:normal}
+
+/* Question History stays inside the adaptive floating guide. */
+.test-it-card .question-history-toggle { cursor:pointer; text-align:left; padding:6px 8px; border-radius:8px; }
+.test-it-card [data-question-history] { padding:12px; border:1px solid var(--border, #555); border-radius:10px; margin:8px 0 12px; }
+.test-it-card [data-question-history] label { display:grid; gap:8px; }
+.test-it-card [data-question-options] { display:grid; gap:6px; max-height:190px; overflow:auto; margin-top:10px; }
+.test-it-card [data-question-options] button { text-align:left; white-space:normal; overflow-wrap:anywhere; padding:9px 10px; }
+.test-it-card [data-guide-return] { margin-top:12px; width:100%; }
+.test-it-card [hidden] { display:none !important; }
+.test-it-card .question-history-result { font-size:12px; opacity:.8; margin:0 0 12px; line-height:1.5; }
+.test-it-card [data-guide-cancel] { margin-top:10px; align-self:flex-start; font-size:12px; }

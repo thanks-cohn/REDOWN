@@ -1,0 +1,83 @@
+{
+  "base": "f48001de228fe240f9f4d5ffaa711d2bb0240226",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "node": "v24.22.1",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "focused": {
+    "passed": 180,
+    "failed": 0
+  },
+  "full": {
+    "total": 556,
+    "passed": 546,
+    "failed": 10,
+    "skipped": 0
+  },
+  "baseFull": {
+    "total": 540,
+    "passed": 530,
+    "failed": 10
+  },
+  "sameFailureNames": true,
+  "failures": [
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links"
+    },
+    {
+      "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input"
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready"
+    }
+  ],
+  "chrome": "BLOCKED: CHROME_NOT_AVAILABLE_ENOENT; zero assertions",
+  "liveR2": "NOT TESTED"
+}

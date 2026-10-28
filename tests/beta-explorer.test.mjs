@@ -579,7 +579,7 @@ test('Test It uses the existing guide: sixty contextual targets, X on every exer
  d.querySelector('#test-it-tools-button').click();d.querySelector('#test-it-tools-button').click();assert.equal(JSON.stringify(f.storage.betaExplorerTestIt),progressBefore);
  assert.equal(d.activeElement.id,'test-it-tools-button');
  for(let i=0;i<60;i++){
-   assert.equal(d.querySelector('[data-guide-progress]').textContent,`${i+1} of 60`);
+   assert.equal(d.querySelector('[data-guide-progress]').textContent,`Question ${i+1} of 60`);
    assert.ok(d.querySelector('.guide-highlight'),'Exercise has a real highlight');
    assert.ok(d.querySelector('[data-guide-exit]'));assert.ok(d.querySelector('[data-guide-retry]'));
    if(i<59)d.querySelector('[data-guide-skip]').click();
@@ -589,7 +589,7 @@ test('Test It uses the existing guide: sixty contextual targets, X on every exer
  assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'));
  d.querySelector('[data-guide-exit]').click();assert.equal(d.querySelectorAll('.guide-card,.guide-highlight').length,0);
  assert.ok(f.stored.has('root.txt'));assert.ok(f.stored.has('Photos/one.jpg'));
- d.querySelector('#test-it').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'60 of 60');d.querySelector('[data-guide-exit]').click();
+ d.querySelector('#test-it').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 60 of 60');d.querySelector('[data-guide-exit]').click();
  }finally{f.dom.window.close();}
 });
 test('Test It blocks original deletion and cut through real toolbar handlers',async()=>{
@@ -604,7 +604,7 @@ test('Restart Test It confirms, replaces saved results, reopens exercise one and
  d.querySelector('#test-it-restart').click();await settle(()=>d.querySelector('#dialog').open);
  d.querySelector('#dialog-cancel').click();await settle(()=>!d.querySelector('#dialog').open);assert.equal(f.storage.betaExplorerTestIt.id,oldId);await new Promise(resolve=>setImmediate(resolve));
  d.querySelector('#test-it-restart').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-confirm').click();
- await settle(()=>f.storage.betaExplorerTestIt.id!==oldId&&d.querySelector('[data-guide-progress]')?.textContent==='1 of 60');
+ await settle(()=>f.storage.betaExplorerTestIt.id!==oldId&&d.querySelector('[data-guide-progress]')?.textContent==='Question 1 of 60');
  await settle(()=>f.storage.betaExplorerTestIt?.records.length===60);
  assert.equal(f.storage.betaExplorerTestIt.index,0);assert.ok(f.storage.betaExplorerTestIt.records.every(r=>r.verdict==='NOT_TESTED'&&r.observedGuiInteraction===null));
  assert.deepEqual([...f.stored.keys()],before);assert.ok(f.storage.betaExplorerTestItOwnership);d.querySelector('[data-guide-exit]').click();
@@ -618,7 +618,7 @@ async function approvePracticeSource(f){const {d,w,settle}=f;
 }
 test('Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
- assert.equal(d.querySelector('[data-guide-progress]').textContent,'22 of 60');assert.doesNotMatch(d.querySelector('[data-guide-text]').textContent,/Location [AB]/);assert.equal(d.querySelector('#destination-dialog').open,false);
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 22 of 60');assert.doesNotMatch(d.querySelector('[data-guide-text]').textContent,/Location [AB]/);assert.equal(d.querySelector('#destination-dialog').open,false);
  d.querySelector('#copy').click();assert.equal(d.querySelector('[data-guide-next]').disabled,true,'Toolbar cannot satisfy context-menu exercise');
  const row=d.querySelector('[data-key="root.txt"]');row.dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true,clientX:10,clientY:10}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();
  assert.equal(d.querySelector('[data-guide-next]').disabled,false);await settle(()=>f.storage.betaExplorerTestIt?.records[21].verdict==='PASSED');assert.equal(f.storage.betaExplorerTestIt.records[21].observedGuiInteraction.input.context,true);
@@ -640,7 +640,7 @@ test('Test It observes real Preview arrow transitions and Escape closes Lightbox
  d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
  d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
  d.querySelector('#preview-lightbox').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
- assert.equal(d.querySelector('[data-guide-progress]').textContent,'18 of 60');assert.ok(d.querySelector('#preview-dialog').classList.contains('image-lightbox'));
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 18 of 60');assert.ok(d.querySelector('#preview-dialog').classList.contains('image-lightbox'));
  d.querySelector('[data-guide-exit]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
  assert.ok(d.querySelector('.guide-card'));assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);assert.equal(d.querySelector('[data-guide-next]').disabled,false);
  await settle(()=>f.storage.betaExplorerTestIt?.records[17].verdict==='PASSED');d.querySelector('[data-guide-exit]').click();
@@ -728,7 +728,7 @@ test('ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/d
  d.querySelector('[data-key="Photos/one.jpg"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/one (copy).jpg"].test-owned-copy'));
  const id=f.storage.betaExplorerTestIt.objects.find(o=>!o.deleted).id,originalHash=hash(f.stored.get('Photos/one.jpg').bytes);
  d.querySelector('[data-guide-next]').click();await settle(()=>f.storage.betaExplorerTestIt.records[23].verdict==='PASSED');
- d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'26 of 60');
+ d.querySelector('[data-guide-next]').click();d.querySelector('[data-guide-skip]').click();assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 26 of 60');
  d.querySelector('[data-key="Photos/one (copy).jpg"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='renamed.jpg';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/renamed.jpg"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
  assert.equal(f.storage.betaExplorerTestIt.records[25].verdict,'PASSED');d.querySelector('[data-guide-next]').click();
  d.querySelector('[data-key="Photos/renamed.jpg"]').click();d.querySelector('#rename').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='one (copy).jpg';d.querySelector('#dialog-confirm').click();await settle(()=>f.storage.betaExplorerTestIt.records[26].verdict==='PASSED'&&!d.querySelector('#refresh').disabled);
@@ -787,7 +787,7 @@ test('ordinary GUI and embedded Worker move two Test Copies into a new folder',a
  try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
  d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
  d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="root (copy) (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
- while(d.querySelector('[data-guide-progress]').textContent!=='39 of 60')d.querySelector('[data-guide-skip]').click();
+ while(d.querySelector('[data-guide-progress]').textContent!=='Question 39 of 60')d.querySelector('[data-guide-skip]').click();
  const keys=['root (copy).txt','root (copy) (copy).txt'];d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));
  const ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id);
  d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Batch destination';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
@@ -840,7 +840,7 @@ test('source approval owns focus above guide, and context Copy highlights the fi
 for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Chrome completion, guide exited: '+exitGuide,async()=>{
  let notify;const f=await uiFixture({tourPreferences:{invitationDismissed:true},adapterSetup:(adapter,memory)=>{adapter.download=createR2Adapter({http:{...memory.http,download:async(s,k,n,callback)=>{notify=callback;return 859;}}}).download;}});
  try{const {d,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
- while(d.querySelector('[data-guide-progress]').textContent!=='57 of 60')d.querySelector('[data-guide-skip]').click();
+ while(d.querySelector('[data-guide-progress]').textContent!=='Question 57 of 60')d.querySelector('[data-guide-skip]').click();
  d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#download').click();await settle(()=>Boolean(notify));assert.notEqual(f.storage.betaExplorerTestIt.records[56].verdict,'PASSED');
  if(exitGuide)d.querySelector('[data-guide-exit]').click();
  notify({state:'complete'});await settle(()=>f.storage.betaExplorerTestIt.records[56].verdict==='PASSED');assert.equal(f.storage.betaExplorerTestIt.records[56].providerResponse.downloadId,859);if(exitGuide){d.querySelector('#test-it').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);}
@@ -852,7 +852,7 @@ for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Ch
  try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);d.querySelector('#copy').click();d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="root (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
  d.querySelector('[data-key="root (copy).txt"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="root (copy) (copy).txt"].test-owned-copy')&&!d.querySelector('#refresh').disabled);
  const keys=['root (copy).txt','root (copy) (copy).txt'],ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort();
- while(d.querySelector('[data-guide-progress]').textContent!=='39 of 60')d.querySelector('[data-guide-skip]').click();
+ while(d.querySelector('[data-guide-progress]').textContent!=='Question 39 of 60')d.querySelector('[data-guide-skip]').click();
  d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Photos/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>count===2&&!d.querySelector('#refresh').disabled);
  assert.ok(f.stored.has('Photos/'+keys[0]));assert.ok(!f.stored.has(keys[0]));assert.ok(f.stored.has(keys[1]));assert.ok(!f.stored.has('Photos/'+keys[1]));
  assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');assert.ok(f.stored.has('root.txt'));

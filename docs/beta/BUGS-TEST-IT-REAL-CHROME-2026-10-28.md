@@ -251,3 +251,19 @@ workflow was performed while testing. All 60 original exercise definitions remai
   Unrelated/replaced files, originals, unresolved operations and unsupported provider
   operations retain their existing protections. Production operation success still
   requires the owner's live acceptance run; this document does not claim completion.
+
+## Question history follow-up, 28 October 2026
+
+Implemented on `beta-explorer` from preserved checkpoint `f48001d`: unlimited
+Previous, full visited-question selection inside the counter, explicit historical
+Retry, separate attempt drafts/current results, direct return to departure position,
+persisted navigation and exercise/attempt correlation. Reviewing questions never
+undoes file operations or clears results. A completed verified retry replaces that
+question's current result; canceled work retains prior evidence. Progress and export
+use one current result per exercise. Ordinary Explorer/R2 operations are reused.
+
+Implementation, dependency handling, automated results and acceptance boundaries
+are recorded in [HANDOFF.md](HANDOFF.md#28-october-2026-unlimited-question-history-and-authoritative-retries).
+The existing bug observations above are preserved. **Installed Chrome and live R2
+acceptance remain open**; this follow-up does not turn simulated-provider evidence
+into a live closure of any earlier report.

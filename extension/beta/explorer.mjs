@@ -86,11 +86,11 @@ async function listing(add=false){
   selected=new Set([...selected].filter(k=>items.some(e=>e.key===k)));render();return result.data;
 }
 async function navigate(target,record=true,restore=false,origin=null){
-  const previous=context();
+  const previous=context(),testItCorrelation=practice?.capture();
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   $('accounts').value=next.accountId;paintBuckets(next.accountId);render();
-  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true});}}catch(e){failure(e);}
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -134,15 +134,15 @@ const actions={
   async 'move-to'(){await chooseTransfer('move');},
   copy(){if(busy||!selected.size)return;clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'copy'};guideAction('command',{action:'copy',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items copied to REDOWN clipboard.');controls();},
   cut(){if(busy||!selected.size)return;if(practice?.session?.active)practice.session.assertOwned(context(),chosen());clipboard={source:context(),entries:chosen().map(e=>({...e})),operation:'move'};guideAction('command',{action:'cut',clipboard:{source:clipboard.source,entries:clipboard.entries,operation:clipboard.operation}});status(selected.size+' items ready to move. Sources remain until paste.');controls();},
-  async paste(destination=context(),clip=clipboard,invocation=commandInvocation||{method:'toolbar'}){
-    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste',invocation,entries:clip.entries,source:clip.source,destination,clipboard:{source:clip.source,entries:clip.entries,operation:clip.operation}});const sameFile=clip.operation==='copy'&&sameBucket(clip.source,destination)&&clip.entries.every(e=>e.key===(destination.prefix||'')+e.key.split('/').pop());const conflict=clip.conflict||(practice?.session?.active&&sameFile?'keep':$('conflict').value);
+  async paste(destination=context(),clip=clipboard,invocation=commandInvocation||{method:'toolbar'},testItCorrelation){
+    if(busy||!clip||!destination)return;if(practice?.session?.active&&clip.operation==='move')practice.session.assertOwned(clip.source,clip.entries);guideAction('command',{action:'paste',invocation,entries:clip.entries,source:clip.source,destination,clipboard:{source:clip.source,entries:clip.entries,operation:clip.operation}});testItCorrelation ||= practice?.capture();const sameFile=clip.operation==='copy'&&sameBucket(clip.source,destination)&&clip.entries.every(e=>e.key===(destination.prefix||'')+e.key.split('/').pop());const conflict=clip.conflict||(practice?.session?.active&&sameFile?'keep':$('conflict').value);
     if(conflict==='replace'&&!await dialog('Replace existing destinations?',{input:false,description:'Matching destination files may be overwritten. Other files remain. This cannot be undone.',confirm:'Replace'}))return;
-    await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress});outcome(result);if(clip.operation==='move'&&clip===clipboard){const remaining=clip.entries.filter((e,i)=>result.results[i]?.state!=='completed');clipboard=remaining.length?{...clip,entries:remaining}:null;}});
+    await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress,testItCorrelation});outcome(result);if(clip.operation==='move'&&clip===clipboard){const remaining=clip.entries.filter((e,i)=>result.results[i]?.state!=='completed');clipboard=remaining.length?{...clip,entries:remaining}:null;}});
   },
-  async rename(){const e=chosen()[0],source=context();if(!e||busy)return;guideAction('command',{action:'rename'});const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)})));},
-  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(practice?.session?.active)practice.session.assertOwned(source,entries);guideAction('command',{action:'delete'});if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress})));},
+  async rename(){const e=chosen()[0],source=context();if(!e||busy)return;guideAction('command',{action:'rename'});const testItCorrelation=practice?.capture();const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)},{testItCorrelation})));},
+  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(practice?.session?.active)practice.session.assertOwned(source,entries);guideAction('command',{action:'delete'});const testItCorrelation=practice?.capture();if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress,testItCorrelation})));},
   async mkdir(){const source=context();if(!source||busy)return;const n=await dialog('New folder',{description:'Create a folder in '+source.bucketName+'/'+source.prefix});if(n===null)return;await run(async()=>outcome(await request('mkdir',{source,name:name(n)})));},
-  async download(){const source=context(),entries=chosen();if(!entries.length||entries.some(e=>e.folder)||busy)return;guideAction('command',{action:'download'});await run(async signal=>outcome(await api.batch('download',entries.map(e=>({source,entry:e})),{signal,onProgress:progress})),{refresh:false});},
+  async download(){const source=context(),entries=chosen();if(!entries.length||entries.some(e=>e.folder)||busy)return;guideAction('command',{action:'download'});const testItCorrelation=practice?.capture();await run(async signal=>outcome(await api.batch('download',entries.map(e=>({source,entry:e})),{signal,onProgress:progress,testItCorrelation})),{refresh:false});},
   async properties(){const e=chosen()[0],source=context();if(!e||busy)return;await run(async()=>{const result=e.folder?{key:e.key,type:'Folder prefix',bucket:source.bucketName,...(await request('list',{source:{...source,prefix:e.key}})).data}:(await request('stat',{source,key:e.key})).data.object;if(!result)throw Error('This file is no longer present. Refresh the folder.');await dialog('Properties',{input:false,details:JSON.stringify(result,null,2),confirm:'Close'});},{refresh:false});},
   async remote(){const destination=context();if(!destination||busy)return;const url=await dialog('Send URL to cloud',{description:'Cloudflare fetches the source directly into '+destination.bucketName+'/'+destination.prefix+'. Your computer does not relay the bytes.'});if(!url)return;await run(async()=>{status('Cloudflare is acquiring the remote source…');const result=await request('remoteIngest',{destination,url});status('Remote acquisition confirmed by Worker. Refresh to inspect the saved object.');return result;});}
 };
@@ -232,13 +232,14 @@ async function loadAccounts(preferred=current||lastLocation){
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function refreshConnection(){
-  if(!current){await loadAccounts(lastLocation);if(accounts.length&&listingState!=='failed'&&listingState!=='unauthorized')guideAction('refresh');return;}
+  const testItCorrelation=practice?.capture();
+  if(!current){await loadAccounts(lastLocation);if(accounts.length&&listingState!=='failed'&&listingState!=='unauthorized')guideAction('refresh',{testItCorrelation});return;}
   const target=context();
   try{
     const result=await listing();
     if(!result)return;
     await rememberLocation(target);
-    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);guideAction('refresh');
+    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);guideAction('refresh',{testItCorrelation});
   }catch(error){
     failure(error);
     // Discovery is recovery, not a prerequisite for ordinary folder refresh.
@@ -353,10 +354,11 @@ function syncSideSelection(){
   $('preview-content').textContent=selected.size?'Select one item to preview.':'Select a file or folder to preview.';
 }
 async function showPreview(item,navigation={}){
+  const testItCorrelation=practice?.capture();
   const source=context();if(!source)return;
   const identity=JSON.stringify([source.accountId,source.bucketName,source.prefix,item.key,item.size,item.uploaded,item.last_modified,item.lastModified]);
   presentPreview();
-  if(identity===previewIdentity){const node=$('preview-content').firstElementChild;if(node&&(node.tagName!=='IMG'||node.complete&&node.naturalWidth))guideAction('preview-open',{currentKey:item.key,mode:previewMode,rendered:true});return;}
+  if(identity===previewIdentity){const node=$('preview-content').firstElementChild;if(node&&(node.tagName!=='IMG'||node.complete&&node.naturalWidth))guideAction('preview-open',{currentKey:item.key,mode:previewMode,rendered:true,testItCorrelation});return;}
   closePreview(lightbox);previewIdentity=identity;previewItem={...item,source};lightboxControl();
   $('preview-title').textContent=item.displayName;
   const metadata=[item.folder?'Folder':bytes(item.size),item.folder?'Folder prefix':previewType(item.key)||item.key.split('.').pop().toUpperCase(),source.bucketName+'/'+item.key,item.uploaded||item.last_modified||item.lastModified].filter(Boolean).join(' · ');
@@ -379,7 +381,7 @@ async function showPreview(item,navigation={}){
     if(ticket!==previewEpoch||abort.signal.aborted)return;
     if(node.tagName!=='PRE')node.addEventListener('error',()=>{if(ticket===previewEpoch){setLightbox(false);$('preview-lightbox').disabled=true;$('preview-content').textContent='This file could not be displayed. The content may be damaged or unsupported by your browser.';$('preview-content').append(download());}},{once:true});
     previewUrl=ownedUrl;ownedUrl='';
-    let announced=false;const rendered=()=>{if(announced||ticket!==previewEpoch||abort.signal.aborted||!node.isConnected)return;if(node.tagName==='IMG'&&(!node.complete||!node.naturalWidth))return;announced=true;guideAction('preview-open',{...navigation,currentKey:item.key,mode:previewMode,rendered:true});};
+    let announced=false;const rendered=()=>{if(announced||ticket!==previewEpoch||abort.signal.aborted||!node.isConnected)return;if(node.tagName==='IMG'&&(!node.complete||!node.naturalWidth))return;announced=true;guideAction('preview-open',{...navigation,currentKey:item.key,mode:previewMode,rendered:true,testItCorrelation});};
     if(node.tagName==='IMG')node.addEventListener('load',rendered,{once:true});
     $('preview-content').replaceChildren(node);lightboxControl();if(node.tagName!=='IMG'||node.complete)rendered();$('preview-info').textContent=metadata+' · '+type+(result.data.truncated?' · Text preview truncated at '+bytes(size):'');
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
@@ -401,8 +403,8 @@ $('preview-divider').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'
 window.addEventListener('pagehide',closePreview);
 async function chooseTransfer(operation){
   if(busy||!selected.size)return;const clip={source:context(),entries:chosen().map(e=>({...e})),operation};
-  guideAction('command',{action:operation+'-to'});
-  const target=await chooseDestination(operation);if(target)await actions.paste(target,clip);
+  guideAction('command',{action:operation+'-to'});const testItCorrelation=practice?.capture();
+  const target=await chooseDestination(operation);if(target)await actions.paste(target,clip,undefined,testItCorrelation);
 }
 let destinationEpoch=0;
 async function destinationBuckets(){
