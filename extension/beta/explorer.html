@@ -16,7 +16,7 @@
 <span class="eyebrow">YOUR CLOUD, IN ORDER</span>
 <h1>REDOWN Explorer</h1>
 <p class="intro">A little space.<br>Endless possibilities.</p>
-<label for="accounts">Cloudflare account</label>
+<label id="account-picker-caption" for="accounts">Cloudflare account</label>
 <div id="account-chooser" class="account-chooser" data-state="loading" aria-live="polite">
   <div id="account-standby" class="account-standby" role="status">
     <span class="account-cloud" aria-hidden="true">
@@ -27,6 +27,12 @@
   </div>
   <select id="accounts" aria-label="Cloudflare account" aria-hidden="true" tabindex="-1" disabled>
   </select>
+  <button id="account-picker-trigger" class="account-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="account-picker-menu" aria-labelledby="account-picker-caption account-picker-value" hidden disabled>
+    <span class="account-picker-mark" aria-hidden="true"></span>
+    <span id="account-picker-value" class="account-picker-value">Choose account</span>
+    <svg class="account-picker-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false"><path d="m5 7 5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div id="account-picker-menu" class="account-picker-menu" role="listbox" aria-label="Cloudflare accounts" hidden></div>
   <button id="account-standby-action" class="account-standby-action" type="button" hidden>Connect Cloudflare</button>
 </div>
 <div class="section-title">SAVED DESTINATIONS</div>
@@ -223,6 +229,7 @@
 <script src="sidebar-settings.js"></script>
 <script src="../explorer-theme.js"></script>
 <script src="quick-links.js"></script>
+<script src="account-picker.js"></script>
 <script type="module" src="explorer.mjs">
 </script>
 </body>
