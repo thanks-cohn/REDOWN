@@ -274,3 +274,9 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 #toolbar-mode-feedback{position:absolute;bottom:calc(100% + 8px);right:0;white-space:nowrap;color:#f7f0ff;background:#292138;border-radius:5px;font-size:11px}
 #toolbar-mode-feedback:empty{display:none}
 #toolbar-mode-control:has(#toolbar-mode-menu:not([hidden])) #toolbar-mode-feedback{display:none}
+
+/* Keep launch preference immediately left of the existing Test It dropdown. */
+.bottom-right-controls{position:fixed;right:12px;bottom:12px;z-index:80;display:flex;align-items:flex-end;gap:8px;max-width:calc(100vw - 24px)}
+.bottom-right-controls .test-it-tools-wrap{position:relative;right:auto;bottom:auto;z-index:auto;flex:none}
+.bottom-right-controls #toolbar-mode-control{position:relative;right:auto;bottom:auto;z-index:auto;flex:none}
+@media(max-width:420px){.bottom-right-controls{gap:5px}.bottom-right-controls #toolbar-mode-toggle{padding:7px 6px}}
