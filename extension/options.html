@@ -554,6 +554,14 @@
 
   <nav class="page-nav" aria-label="Dashboard sections"><a href="#connections">Connection</a><a class="connected-link" href="#cloudflare-panel">Buckets</a><a class="requires-storage" href="#right-click-presets">Destinations</a><a class="connected-link requires-storage" href="#upload-zone">Upload</a><a class="connected-link requires-storage" href="#explore-zone">Explore</a><a class="requires-storage" href="#downloads-zone">Downloads</a></nav>
 
+  <section id="toolbar-preferences" class="section">
+    <div class="section-head"><div><h2>Toolbar behavior</h2><div class="section-note">Choose what opens when you click the REDOWN extension icon.</div></div></div>
+    <div class="card"><label for="toolbar-open-mode">Open by default</label>
+      <select id="toolbar-open-mode"><option value="shelf">Shelf (recommended)</option><option value="popup">Compact popup</option></select>
+      <div id="toolbar-mode-status" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
   <section id="cloudflare-panel" class="section" hidden>
     <div class="section-head">
       <div><span class="section-kicker">01 / Storage</span><h2>Cloudflare R2</h2><div class="section-note">Choose an account, then pick or create a bucket.</div></div>
@@ -748,6 +756,7 @@
 <script src="explorer-diagnostics.js"></script>
 <script src="explorer-diagnostics-bridge.js"></script>
 <script src="options.js"></script>
+<script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
 </body>
 </html>
