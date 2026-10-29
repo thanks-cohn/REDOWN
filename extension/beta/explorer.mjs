@@ -8,7 +8,12 @@ const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
-let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0;
+let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0,cloudflareSignedIn=false;
+function paintLogout(auth){
+  cloudflareSignedIn=Boolean(auth?.accessToken);
+  $('session-actions').hidden=!cloudflareSignedIn;
+  $('disconnect').disabled=busy||!cloudflareSignedIn;
+}
 const bucketCache=new Map();
 const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
 function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
@@ -31,7 +36,7 @@ function controls(){
   $('prepare').disabled=locked||!current;$('create-bucket').disabled=locked||!$('accounts').value;
   $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=locked||!clipboard||!current;
-  $('connect').disabled=busy;$('disconnect').disabled=busy;
+  $('connect').disabled=busy;$('disconnect').disabled=busy||!cloudflareSignedIn;
   $('selection').textContent=selected.size?selected.size+' selected · '+bytes(chosen().filter(e=>!e.folder).reduce((n,e)=>n+Number(e.size||0),0)):items.length+' items'+(cursor?' · more available':'');
   $('more').hidden=!cursor;$('more').disabled=locked;
   $('cancel').hidden=!busy;
@@ -248,8 +253,23 @@ async function refreshConnection(){
 }
 $('accounts').onchange=()=>loadBuckets().catch(failure);
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
-$('disconnect').onclick=async()=>{if(!await dialog('Disconnect Cloudflare?',{input:false,description:'Clears the shared Cloudflare session, including the original Explorer. Cloud files remain untouched.',confirm:'Disconnect'}))return;await run(async()=>{await request('disconnect',{});current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();connectionState('disconnected');$('accounts').replaceChildren();$('buckets').replaceChildren();render();status('Cloudflare disconnected.');},{refresh:false});};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+$('disconnect').onclick=async()=>{
+  if(busy||!cloudflareSignedIn)return;
+  if(!await dialog('Log out of Cloudflare?',{
+    input:false,
+    description:'This signs out of Cloudflare across REDOWN, including the original Explorer and Shelf. Cloud files, saved destinations, and transfer history remain untouched.',
+    confirm:'LOG OUT'
+  }))return;
+  await run(async()=>{
+    await request('disconnect',{});
+    paintLogout(null);
+    current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();
+    connectionState('disconnected');
+    $('accounts').replaceChildren();$('buckets').replaceChildren();
+    render();status('Logged out of Cloudflare. Your cloud files remain untouched.');
+  },{refresh:false});
+};
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -436,4 +456,9 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:title==='Practice with this file?'?'Yes, use this file':'Approve',cancel:title==='Practice with this file?'?'No':'Cancel'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
-render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{const saved=await chrome.storage.local?.get('betaExplorerLocation');lastLocation=saved?.betaExplorerLocation||null;}catch{}await loadAccounts(lastLocation);})();
+render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{
+  const saved=await chrome.storage.local?.get(['betaExplorerLocation','cloudflareAuth']);
+  lastLocation=saved?.betaExplorerLocation||null;
+  paintLogout(saved?.cloudflareAuth);
+}catch{}
+await loadAccounts(lastLocation);})();
