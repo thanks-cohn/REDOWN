@@ -119,11 +119,11 @@
 <section class="quick-links-panel" aria-label="Right-click setup and bucket URLs">
   <div class="quick-links-heading"><div><span class="eyebrow">CLOUD CONTROL</span><h2>One click. Your destination.</h2></div><span class="quick-links-mark" aria-hidden="true">✦</span></div>
   <div class="quick-links-tabs" role="tablist" aria-label="Cloud setup">
-    <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="quick-panel-setup" tabindex="0">Right-click setup</button>
-    <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1">Bucket URLs</button>
+    <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="quick-panel-setup" tabindex="0"><span class="quick-tab-number" aria-hidden="true">01</span><span>Right-click setup</span></button>
+    <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1"><span class="quick-tab-number" aria-hidden="true">02</span><span>Bucket URLs</span></button>
   </div>
   <section id="quick-panel-setup" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-setup">
-    <p>Make REDOWN your instant save destination. Your first setup creates or reuses a private Cloudflare R2 bucket named <strong>REDOWN</strong> (stored as <code>redown</code>).</p>
+    <p>Give your right-click menu a destination. First-time setup creates or reuses your private <strong>REDOWN</strong> bucket in Cloudflare R2.</p>
     <div class="quick-links-grid">
       <label>Cloudflare account<select id="quick-setup-account" aria-label="Account for REDOWN bucket"><option value="">Discovering accounts…</option></select></label>
       <label>Menu label<input id="quick-menu-label" type="text" maxlength="60" value="Cloudflare" autocomplete="off" aria-label="Right-click menu label"></label>
@@ -132,12 +132,12 @@
     <p id="quick-setup-feedback" class="quick-links-feedback" role="status" aria-live="polite">Cloudflare permission and Worker setup are required; nothing is created until you choose Set up.</p>
   </section>
   <section id="quick-panel-urls" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-urls" hidden>
-    <p>Choose a bucket and connect a public HTTPS hostname you control. One configured URL base can serve links to every object in that bucket.</p>
+    <p>Attach a domain to a bucket, then use its verified public addresses for the files you save.</p>
     <div class="quick-links-grid quick-links-url-grid">
       <label>Bucket<select id="quick-url-bucket" aria-label="Bucket to receive a public URL"><option value="">Choose a bucket…</option></select></label>
       <label>Public URL<input id="quick-url-input" type="url" inputmode="url" placeholder="https://assets.example.com" aria-label="Public hostname to attach" autocomplete="url"></label>
     </div>
-    <div class="quick-links-action"><span><strong>Make your files linkable</strong><small>Requires an existing REDOWN Worker and a verified Cloudflare domain</small></span><button id="quick-url-add" type="button" disabled>Add URL</button></div>
+    <div class="quick-links-action"><span><strong>Make your files linkable</strong><small>Uses the same Cloudflare domain setup as the original Explorer</small></span><button id="quick-url-add" type="button" disabled>Add URL</button></div>
     <details id="quick-urls-section" class="quick-urls-section" open>
       <summary>URLs <span id="quick-url-count" aria-live="polite">0</span></summary>
       <div id="quick-urls-list" class="quick-urls-list"><div class="quick-urls-empty"><strong>Add Your First URL!</strong><p>Connect a public hostname to your bucket and REDOWN can build a shareable link for each object automatically. Your bucket stays private until you explicitly approve public access.</p></div></div>
