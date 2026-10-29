@@ -346,10 +346,10 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   #clouds-view .cloudflare-hero-label{font-size:9px}
 }
 
-/* Shelf brand tile: original R and dark backdrop by default. Users may opt in
-   to theme-matching backgrounds without recoloring the R or altering Chrome
-   toolbar icons. The SVG follows the same live palette as Shelf Settings. */
+/* Shared R artwork and per-theme colors, with the existing option to keep
+   the dark background. Midnight is always red on black. */
 .brand .brand-mark{display:block;width:38px;height:38px;flex:none;filter:drop-shadow(0 5px 9px rgba(var(--shadow-rgb),.22))}
+.brand .brand-mark svg{display:block;width:100%;height:100%}
 :root{--redown-brand-icon-bg:#0b0712}
 :root[data-shelf-icon-background="theme"][data-shelf-theme="porcelain"]{--redown-brand-icon-bg:#e5dcf4}
 :root[data-shelf-icon-background="theme"][data-shelf-theme="midnight"]{--redown-brand-icon-bg:#b9dcf4}
