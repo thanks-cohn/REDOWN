@@ -48,5 +48,6 @@
   "extension/beta/tour.mjs",
   "extension/beta/lab.mjs",
   "tools/lab/bridge.mjs",
-  "scripts/lab-local-smoke.mjs"
+  "scripts/lab-local-smoke.mjs",
+  "extension/shelf.js"
 ]

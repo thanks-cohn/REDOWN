@@ -119,19 +119,9 @@
 </progress>
 <small id="limitation">Beta: folder downloads and durable transfer recovery are not available yet.</small>
 </section>
-<div class="bottom-right-controls">
-<div id="toolbar-mode-control" aria-label="Extension icon opening mode">
-  <button id="toolbar-mode-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="toolbar-mode-menu">Opens: Shelf ▾</button>
-  <div id="toolbar-mode-menu" role="menu" aria-label="Open extension icon as" hidden>
-    <button type="button" role="menuitemradio" data-toolbar-mode="shelf" aria-checked="true"><span class="mode-check" aria-hidden="true">✓</span> Shelf</button>
-    <button type="button" role="menuitemradio" data-toolbar-mode="popup" aria-checked="false"><span class="mode-check" aria-hidden="true"></span> Popup</button>
-  </div>
-  <span id="toolbar-mode-feedback" role="status" aria-live="polite"></span>
-</div>
 <div class="test-it-tools-wrap">
 <button id="test-it-tools-button" aria-expanded="false" aria-controls="test-it-tools-menu" aria-haspopup="menu">Test It Tools ▲</button>
 <div id="test-it-tools-menu" role="menu" aria-label="Test It Tools" hidden><button id="test-it" role="menuitem" tabindex="-1">Test It</button><button id="test-it-export" role="menuitem" tabindex="-1">Export Test It</button><button id="test-it-restart" role="menuitem" tabindex="-1">Restart Test It</button><button id="test-it-cleanup" role="menuitem" tabindex="-1">Clean Up Practice Copies</button></div>
-</div>
 </div>
 </main>
 <input id="picker" type="file" multiple hidden>
@@ -183,7 +173,6 @@
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>
-<script src="toolbar-mode.js"></script>
 <script type="module" src="explorer.mjs">
 </script>
 </body>
