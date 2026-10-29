@@ -12,6 +12,7 @@
     "alarms",
     "downloads",
     "scripting",
+    "activeTab",
     "sidePanel"
   ],
   "host_permissions": [
