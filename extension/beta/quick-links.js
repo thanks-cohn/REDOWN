@@ -91,9 +91,10 @@
     // Same URL validation, key encoding, eligibility and state as Legacy Explorer.
     const entries=globalThis.RedownPublicAddresses.addresses(snapshot,source,key);
     const unique=[...new Map(entries.map(entry=>[entry.url,entry])).values()];
-    $('quick-url-count').textContent=String(unique.filter(entry=>entry.state==='configured').length);
-    if(!unique.length){container.append(empty());return;}
-    for(const entry of unique){
+    const active=unique.filter(entry=>entry.state==='configured');
+    $('quick-url-count').textContent=String(active.length);
+    if(!active.length){container.append(empty());return;}
+    for(const entry of active){
       const row=document.createElement('div');row.className='quick-url-row';
       const meta=document.createElement('div');meta.className='quick-url-meta';
       const label=document.createElement('strong');label.textContent=entry.label||'Cloudflare URL';
