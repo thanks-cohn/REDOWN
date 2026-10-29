@@ -324,3 +324,24 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 :root[data-shelf-theme="ocean"] .provider[data-provider="google"] #google-state[data-state="connected"],
 :root[data-shelf-theme="neon"] .provider[data-provider="google"] #google-state[data-state="connected"]{color:#8af5bb;border-color:#3c8661;background:#153d32}
 .provider[data-provider="google"] #google-state[data-state="error"]{color:#b6434e;border-color:#d8a3ab}
+
+/* Cloudflare-first release. Applies to the Clouds view only; Shelf header,
+   delivery counter, navigation geometry, themes and Settings stay unchanged. */
+#clouds-view .cloudflare-focus{padding-bottom:12px}
+#clouds-view .cloudflare-hero{padding:20px 18px 18px;overflow:hidden}
+#clouds-view .cloudflare-hero-label{display:flex;align-items:center;gap:8px;margin:0 0 19px;font-size:10px;letter-spacing:.12em;font-weight:800;color:var(--muted)}
+#clouds-view .cloudflare-hero-dot{width:7px;height:7px;flex:none;background:#ed8437;border-radius:50%;box-shadow:0 0 0 4px #ed84371f}
+#clouds-view .cloudflare-hero .provider-heading{align-items:center}
+#clouds-view .cloudflare-hero-copy{margin:16px 0 16px;color:var(--muted);font-size:12px;line-height:1.7;max-width:36ch}
+#clouds-view .cloudflare-hero .card-action{width:100%;min-height:43px;margin-top:4px}
+#clouds-view .cloudflare-flow{display:grid;gap:10px;margin:14px 5px 2px}
+#clouds-view .cloudflare-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
+#clouds-view .cloudflare-step-count{font-size:11px;letter-spacing:.04em;line-height:1.8;font-variant-numeric:tabular-nums;font-weight:800;color:var(--accent)}
+#clouds-view .cloudflare-step strong{display:block;font-size:12px;letter-spacing:.01em;color:var(--text)}
+#clouds-view .cloudflare-step p{margin:3px 0 0;font-size:11px;line-height:1.6;color:var(--muted)}
+#clouds-view .cloudflare-footnote{padding:0 8px;margin:15px 0 0;color:var(--muted);font-size:10px;line-height:1.7}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-step{border-radius:6px}
+@media(max-width:340px){
+  #clouds-view .cloudflare-hero{padding:16px 12px}
+  #clouds-view .cloudflare-hero-label{font-size:9px}
+}

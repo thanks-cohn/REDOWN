@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "REDOWN",
-  "version": "0.5.26",
-  "description": "Send remote files straight to Cloudflare R2 or GitHub without downloading them through your computer.",
+  "name": "REDOWN-Click2Cloud",
+  "version": "0.5.27",
+  "description": "Save supported web files directly to your own Cloudflare R2 buckets and folders.",
   "permissions": [
     "contextMenus",
     "notifications",
@@ -21,14 +21,13 @@
     "https://*.workers.dev/*",
     "https://hitomi.la/*",
     "https://*.r2.dev/*",
-    "http://127.0.0.1/*",
-    "https://www.googleapis.com/*"
+    "http://127.0.0.1/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "REDOWN",
+    "default_title": "REDOWN-Click2Cloud",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -42,11 +41,5 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAue/TphJ8cRWRb1enAQ99He5Iv+/j+hhjwEI97+dAydI5iDadmkbu9fnw8jHKcyL27o5R+MpbtsYMFe9r56srsASJ32Lfc3mhgugL1fQhtcf4yz61XhHZmg4cfk1Ou7tLJI69IjClEzQGJCgT2Bs/8Vvc/kl1qr9gqOPMs/X7O0A44AhgUcntsJpEBmTrYcPB3PHEFpiyfCeo11x5UWvXerSZ7n5y01TB0FcRn+KmmCrMS8vdmUmY3cQtzbdnjwy7/JUPfJVfLfMgDxEjupyP9mhyEZxcbOM1i3xwktWAWHhz7xWjsOvTXZsQWT6QMDb5cpwXb2TnfJ5wCpcCiyzOlwIDAQAB",
-  "oauth2": {
-    "client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/drive.file"
-    ]
-  }
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAue/TphJ8cRWRb1enAQ99He5Iv+/j+hhjwEI97+dAydI5iDadmkbu9fnw8jHKcyL27o5R+MpbtsYMFe9r56srsASJ32Lfc3mhgugL1fQhtcf4yz61XhHZmg4cfk1Ou7tLJI69IjClEzQGJCgT2Bs/8Vvc/kl1qr9gqOPMs/X7O0A44AhgUcntsJpEBmTrYcPB3PHEFpiyfCeo11x5UWvXerSZ7n5y01TB0FcRn+KmmCrMS8vdmUmY3cQtzbdnjwy7/JUPfJVfLfMgDxEjupyP9mhyEZxcbOM1i3xwktWAWHhz7xWjsOvTXZsQWT6QMDb5cpwXb2TnfJ5wCpcCiyzOlwIDAQAB"
 }

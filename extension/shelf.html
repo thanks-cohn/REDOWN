@@ -22,12 +22,34 @@
   <div class="shelf-counter-readout" id="shelf-odometer" role="status" aria-live="off" aria-label="Reading delivery count">······</div>
   <p id="shelf-counter-note" class="shelf-counter-note">Your saved deliveries, all counted.</p>
 </section>
-<nav aria-label="Shelf"><a href="#clouds" id="nav-clouds" aria-current="page">CLOUDS</a><a href="#settings" id="nav-settings">SETTINGS</a></nav>
-<main><div id="clouds-view"><section class="overview">
-  <p class="eyebrow">ONE HOME <span class="eyebrow-dot" aria-hidden="true">·</span> EVERY DAY</p>
-  <h1 class="overview-title"><span class="headline-primary">Your Providers.</span><em class="headline-secondary">Beautifully connected.</em></h1>
-  <p id="connection-summary" class="summary">Checking connections…</p>
-</section><div class="section-heading"><h2>Your providers</h2><span>YOUR SPACES</span></div><div class="providers"><article class="provider" data-provider="google"><div class="provider-heading"><span class="logo"><svg viewBox="0 0 34 34" aria-hidden="true"><path fill="#34a853" d="M8 3h8l10 18h-8z"/><path fill="#fbbc04" d="m8 3 4 7-10 18-4-7z" transform="translate(4 0)"/><path fill="#4285f4" d="M6 21h20l-4 7H2z"/></svg></span><div class="provider-name"><h3>Google Drive</h3><div class="technology">Straight-to-Cloud</div></div><span class="state" id="google-state" data-state="checking">Checking</span></div><button id="google-connect" class="card-action" type="button" disabled>Checking…</button></article><article class="provider" data-provider="dropbox"><div class="provider-heading"><span class="logo"><svg viewBox="0 0 34 34" aria-hidden="true"><path fill="#0061ff" d="m8 3 8 5-8 5-8-5zm16 0 8 5-8 5-8-5zM8 14l8 5-8 5-8-5zm16 0 8 5-8 5-8-5zm-8 7 8 5-8 5-8-5z"/></svg></span><div class="provider-name"><h3>Dropbox</h3><div class="technology">Straight-to-Cloud</div></div><span class="state state-upcoming">Soon</span></div></article><article class="provider" data-provider="onedrive"><div class="provider-heading"><span class="logo"><svg viewBox="0 0 34 34" aria-hidden="true"><path fill="#0364b8" d="M11 23a8 8 0 1 1 2-15 10 10 0 0 1 18 7z"/><path fill="#28a8ea" d="M7 14c5-4 9 0 14 0 12-5 15 13 4 13H8C-2 27-2 16 7 14"/></svg></span><div class="provider-name"><h3>Microsoft OneDrive</h3><div class="technology">Straight-to-Cloud</div></div><span class="state state-upcoming">Soon</span></div></article><article class="provider remote" data-provider="cloudflare"><div class="provider-heading"><span class="logo"><svg viewBox="0 0 34 34" aria-hidden="true"><path fill="#f48120" d="M5 24h22c7 0 7-10 0-10C27 2 9 1 8 14 0 12-2 24 5 24"/><path fill="#fff" d="m17 10-7 9h6l-1 6 9-11h-7z"/></svg></span><div class="provider-name"><h3>Cloudflare R2</h3><div class="technology">TRUE REMOTE</div></div><span class="state" id="cf-state">Checking</span></div><button id="cloudflare" class="card-action" type="button" disabled>LOGIN!</button></article></div>
+<nav aria-label="Shelf"><a href="#clouds" id="nav-clouds" aria-current="page">OUR CLOUD</a><a href="#settings" id="nav-settings">SETTINGS</a></nav>
+<main><div id="clouds-view">
+<section class="overview">
+  <p class="eyebrow">YOUR SPACE <span class="eyebrow-dot" aria-hidden="true">·</span> TRUE REMOTE</p>
+  <h1 class="overview-title"><span class="headline-primary">Our Cloud.</span><em class="headline-secondary">Beautifully yours.</em></h1>
+  <p id="connection-summary" class="summary" aria-live="polite">Checking Cloudflare connection…</p>
+</section>
+<section class="cloudflare-focus" aria-labelledby="cloudflare-heading">
+  <div class="section-heading"><h2 id="cloudflare-heading">Your cloud storage</h2><span>POWERED BY CLOUDFLARE</span></div>
+  <div class="providers">
+    <article class="provider remote cloudflare-hero" data-provider="cloudflare">
+      <div class="cloudflare-hero-label"><span class="cloudflare-hero-dot" aria-hidden="true"></span> CLOUDFLARE R2 · TRUE REMOTE</div>
+      <div class="provider-heading">
+        <span class="logo"><svg viewBox="0 0 34 34" aria-hidden="true"><path fill="#f48120" d="M5 24h22c7 0 7-10 0-10C27 2 9 1 8 14 0 12-2 24 5 24"/><path fill="#fff" d="m17 10-7 9h6l-1 6 9-11h-7z"/></svg></span>
+        <div class="provider-name"><h3>Cloudflare R2</h3><div class="technology">YOUR BUCKETS. YOUR FILES.</div></div>
+        <span class="state" id="cf-state" data-state="checking">Checking</span>
+      </div>
+      <p class="cloudflare-hero-copy">Send supported files from the web directly to your own R2 storage, without downloading them to your computer first.</p>
+      <button id="cloudflare" class="card-action" type="button" disabled>LOGIN!</button>
+    </article>
+  </div>
+  <div class="cloudflare-flow" aria-label="How REDOWN works">
+    <div class="cloudflare-step"><span class="cloudflare-step-count">01</span><div><strong>Connect</strong><p>Authorize your Cloudflare account.</p></div></div>
+    <div class="cloudflare-step"><span class="cloudflare-step-count">02</span><div><strong>Organize</strong><p>Choose your R2 buckets and folders.</p></div></div>
+    <div class="cloudflare-step"><span class="cloudflare-step-count">03</span><div><strong>Send</strong><p>Right-click a supported web file and save it.</p></div></div>
+  </div>
+  <p class="cloudflare-footnote">Your Cloudflare account controls storage and billing. REDOWN provides the connection and file-management tools.</p>
+</section>
 </div>
 <section id="settings-view" hidden aria-labelledby="settings-title"><p class="eyebrow">Make yourself at home</p><h1 id="settings-title">Shelf Settings</h1><p class="intro">A little more your way.</p><fieldset><legend>When I click the REDOWN extension icon</legend><label class="mode-option"><input type="radio" name="toolbar-mode" value="shelf"><span><strong>Shelf</strong><small>Your clouds in Chrome’s native side panel.</small></span><span class="selection" aria-hidden="true">✓</span></label><label class="mode-option"><input type="radio" name="toolbar-mode" value="popup"><span><strong>Popup</strong><small>The compact REDOWN experience.</small></span><span class="selection" aria-hidden="true">✓</span></label></fieldset><fieldset class="theme-fieldset"><legend>Color scheme</legend>
 <div class="theme-options" aria-label="Shelf color scheme">
@@ -42,4 +64,4 @@
 <label class="opening-row" for="open-onedrive"><span>OneDrive<small>After connection</small></span><select id="open-onedrive" data-provider-open="onedrive"><option value="tab">New tab</option><option value="window">New window</option><option value="left">Left side · Split View</option></select></label>
 <p class="opening-hint">Left Side uses Chrome Split View (Chrome 155+). If unavailable, REDOWN opens a new tab. These choices take effect when each provider's connection and saved-file links become available.</p>
 </fieldset>
-<p class="settings-note">Shelf is the default. The Popup’s Settings button opens this same panel.</p><a class="text-link" href="#clouds">← Back to your clouds</a></section></main><p id="status" role="status" aria-live="polite"></p></div><script src="odometer.js"></script><script src="shelf-odometer.js"></script><script src="shelf-theme.js"></script><script src="provider-opening.js"></script><script src="shelf.js"></script><script src="google-drive-auth.js"></script></body></html>
+<p class="settings-note">Shelf is the default. The Popup’s Settings button opens this same panel.</p><a class="text-link" href="#clouds">← Back to your clouds</a></section></main><p id="status" role="status" aria-live="polite"></p></div><script src="odometer.js"></script><script src="shelf-odometer.js"></script><script src="shelf-theme.js"></script><script src="provider-opening.js"></script><script src="shelf.js"></script></body></html>

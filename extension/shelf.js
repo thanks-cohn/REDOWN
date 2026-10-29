@@ -2,10 +2,14 @@ const $ = id => document.getElementById(id);
 const status = message => { $('status').textContent = message || ''; };
 const modes = [...document.querySelectorAll('[name="toolbar-mode"]')];
 function updateConnectionSummary(){
-  const ids=['cf-state','google-state'];
-  const connected=ids.filter(id=>$(id)?.dataset.state==='connected').length;
-  const checking=ids.some(id=>$(id)?.dataset.state==='checking');
-  $('connection-summary').textContent=checking?'Checking connections…':connected+' connected · '+(4-connected)+' integrations';
+  const state=$('cf-state')?.dataset.state;
+  $('connection-summary').textContent=state==='connected'
+    ? 'Cloudflare connected. Your R2 storage is ready to explore.'
+    : state==='checking'
+      ? 'Checking Cloudflare connection…'
+      : state==='error'
+        ? 'Cloudflare needs attention. Check your sign-in.'
+        : 'Connect Cloudflare to make R2 your cloud home.';
 }
 document.addEventListener('redown:provider-connection',updateConnectionSummary);
 function route() {
