@@ -377,3 +377,43 @@ a:hover{color:var(--text)}
 .shelf-settings-launch:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
 :root[data-explorer-theme="neon"] .eyebrow,:root[data-explorer-theme="neon"] .section-title{letter-spacing:.19em}
 @media(prefers-reduced-motion:reduce){body,aside,main,.toolbar,.activity,.action-group,.file,.guide-card,.tour-invitation,#dropzone,#side-preview,dialog,select,input,button,.list-heading{transition:none!important}}
+
+/* In-place account discovery: a living connection tile morphs into the native
+   account selector. Deliberately no fake account values or simulated loading. */
+.account-chooser{position:relative;isolation:isolate;width:100%;min-height:77px;margin:0;overflow:hidden;
+  border:1px solid var(--line);border-radius:13px;background:linear-gradient(120deg,var(--accent-soft),var(--panel) 90%);
+  box-shadow:inset 0 1px 0 #ffffff15,0 5px 13px var(--accent-glow);
+  transition:min-height .44s cubic-bezier(.2,.8,.25,1),background-color .38s,border-color .38s,box-shadow .38s}
+.account-chooser[data-state="ready"]{min-height:44px;background:var(--panel);box-shadow:0 3px 11px var(--accent-glow);border-color:var(--line)}
+.account-standby{display:flex;align-items:center;gap:10px;min-width:0;min-height:77px;padding:12px 11px;
+  opacity:1;transform:translateY(0) scale(1);transition:opacity .26s ease,transform .42s cubic-bezier(.2,.8,.2,1)}
+.account-chooser[data-state="ready"] .account-standby{opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none}
+.account-cloud{display:grid;place-items:center;position:relative;width:37px;height:37px;border-radius:12px;
+  flex:none;background:var(--panel);border:1px solid var(--line);color:#e98536;box-shadow:0 4px 12px var(--accent-glow)}
+.account-cloud svg{width:24px;height:24px;position:relative;z-index:1}
+.account-cloud::before{content:"";position:absolute;inset:-5px;border:1px solid var(--accent);opacity:.35;border-radius:16px}
+.account-chooser[data-state="loading"] .account-cloud::before{animation:account-signal 2.2s ease-in-out infinite}
+.account-standby-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.account-standby-text strong{font-size:11px;line-height:1.4;color:var(--text);font-weight:740;overflow-wrap:anywhere}
+.account-standby-text small{font-size:9.5px;line-height:1.35;color:var(--muted);overflow-wrap:anywhere}
+.account-loading-mark{display:flex;gap:3px;flex:none;align-items:center;justify-content:center;margin-right:1px}
+.account-loading-mark i{display:block;width:3px;height:3px;border-radius:50%;background:var(--accent);animation:account-dots 1.1s ease-in-out infinite}
+.account-loading-mark i:nth-child(2){animation-delay:.16s}.account-loading-mark i:nth-child(3){animation-delay:.32s}
+.account-chooser:not([data-state="loading"]) .account-loading-mark{display:none}
+.account-chooser #accounts{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;min-width:0;
+  margin:0;padding:0 11px;background:var(--panel);color:var(--text);border:0;border-radius:inherit;
+  font-size:11px;font-weight:670;opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;
+  transition:opacity .37s ease .08s,transform .45s cubic-bezier(.2,.8,.25,1);visibility:hidden}
+.account-chooser[data-state="ready"] #accounts{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;visibility:visible}
+.account-chooser #accounts:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.account-chooser[data-state="failed"],.account-chooser[data-state="unauthorized"],.account-chooser[data-state="disconnected"],.account-chooser[data-state="empty"]{min-height:105px}
+.account-standby-action{position:relative;display:block;width:calc(100% - 22px);padding:6px 9px;margin:-8px 11px 11px;
+  color:var(--accent);background:var(--panel);border-color:var(--line);font-size:10px;font-weight:700;z-index:2}
+.account-standby-action[hidden]{display:none!important}
+.account-standby-action:hover:not(:disabled){background:var(--accent-soft)}
+@keyframes account-signal{0%,100%{transform:scale(.97);opacity:.16}50%{transform:scale(1.1);opacity:.55}}
+@keyframes account-dots{0%,60%,100%{opacity:.22;transform:scale(.8)}30%{opacity:1;transform:scale(1.3)}}
+@media(prefers-reduced-motion:reduce){
+  .account-chooser,.account-standby,.account-chooser #accounts{transition:none!important}
+  .account-cloud::before,.account-loading-mark i{animation:none!important}
+}

@@ -14,10 +14,46 @@ function paintLogout(auth){
   $('session-actions').hidden=!cloudflareSignedIn;
   $('disconnect').disabled=busy||!cloudflareSignedIn;
 }
+/* Account discovery indicator is independent of file-list loading. */
+function accountVisual(next,headline='',detail=''){
+  const shell=$('account-chooser');
+  if(!shell)return;
+  shell.dataset.state=next;
+  const ready=next==='ready'&&$('accounts').options.length>0;
+  $('accounts').disabled=!ready||busy;
+  $('accounts').tabIndex=ready?0:-1;
+  $('accounts').setAttribute('aria-hidden',String(!ready));
+  $('account-standby').setAttribute('aria-hidden',String(ready));
+  if(!ready){
+    $('account-standby-heading').textContent=headline||({
+      loading:'Finding your cloud…',
+      unauthorized:'Cloudflare needs sign-in',
+      disconnected:'Your cloud is waiting',
+      failed:'Cloudflare is unavailable',
+      empty:'No accounts found'
+    }[next]||'Finding your cloud…');
+    $('account-standby-detail').textContent=detail||({
+      loading:'Checking your R2 account access',
+      unauthorized:'Reconnect securely to choose an account',
+      disconnected:'Connect to see your Cloudflare accounts',
+      failed:'Your files are untouched. Try again.',
+      empty:'Refresh discovery or reconnect'
+    }[next]||'');
+  }
+  const action=$('account-standby-action');
+  action.hidden=ready||next==='loading';
+  action.textContent=next==='unauthorized'||next==='disconnected'?'Connect Cloudflare':'Try again';
+  shell.setAttribute('aria-label',ready?'Cloudflare account selector':$('account-standby-heading').textContent);
+}
+$('account-standby-action').addEventListener('click',()=>{
+  const state=$('account-chooser').dataset.state;
+  if(state==='unauthorized'||state==='disconnected')$('connect').click();
+  else void loadAccounts(lastLocation).catch(failure);
+});
 const bucketCache=new Map();
 const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
 function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
-function failure(error){const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');render();}
+function failure(error){const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');if(state==='unauthorized'||state==='disconnected')accountVisual(state);render();}
 async function rememberLocation(target){lastLocation={...target};try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
@@ -27,7 +63,7 @@ function controls(){
   const loading=listingState==='loading',locked=busy||loading||Boolean(current&&listingState!=='ready');
   for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','filter','path'])$(id).disabled=locked || (!current&&!['accounts','profiles'].includes(id));
   $('refresh').disabled=busy||loading;
-  $('accounts').disabled=busy;
+  $('accounts').disabled=busy||$('account-chooser').dataset.state!=='ready';
   $('back').disabled=locked||historyIndex<1;$('forward').disabled=locked||historyIndex>=history.length-1;$('up').disabled=locked||!current?.prefix;
   for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=locked||!selected.size;
   for(const id of ['rename','properties','get-url'])$(id).disabled=locked||selected.size!==1;
@@ -216,7 +252,7 @@ async function loadBuckets(){
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function loadAccounts(preferred=current||lastLocation){
-  const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
+  const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';accountVisual('loading');connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
   try{
     const result=await request('accounts',{});if(ticket!==discoveryEpoch)return;
     accounts=result.data.accounts||[];
@@ -229,12 +265,12 @@ async function loadAccounts(preferred=current||lastLocation){
     let restoredPrefix='';try{restoredPrefix=prefix(preferred?.prefix||'');}catch{}
     const target=restored?{...restored,prefix:restoredPrefix}:all.length===1?all[0]:null;
     const accountId=target?.accountId||all[0]?.accountId||accounts[0]?.id||'';
-    $('accounts').value=accountId;paintBuckets(accountId);
+    $('accounts').value=accountId;accountVisual(accounts.length?'ready':'empty');paintBuckets(accountId);
     if(target){if(busy){current={...target};const result=await listing();if(result?.folderExists===false&&target.prefix){current.prefix='';await listing();}await rememberLocation(current);}else await navigate(target,true,Boolean(restored));}
     else{current=null;items=[];cursor='';selected.clear();connectionState(all.length?'choose':errors.length?'failed':'empty-buckets',all.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets were found.');render();}
     if(errors.length){if(!all.length)failure(Error(errors.join(' ')));$('refresh').classList.add('attention');status('Some accounts could not be discovered. '+errors.join(' ')+' Use Refresh to retry or Connect Cloudflare to renew authorization.');}
     try{await loadProfiles();}catch(e){status('Files discovery finished; saved destinations unavailable: '+e.message);}
-  }catch(e){if(ticket===discoveryEpoch)failure(e);}
+  }catch(e){if(ticket===discoveryEpoch){failure(e);if(!['unauthorized','disconnected'].includes($('account-chooser').dataset.state))accountVisual('failed');}}
 }
 async function refreshConnection(){
   const testItCorrelation=practice?.capture();
@@ -265,11 +301,11 @@ $('disconnect').onclick=async()=>{
     paintLogout(null);
     current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();
     connectionState('disconnected');
-    $('accounts').replaceChildren();$('buckets').replaceChildren();
+    $('accounts').replaceChildren();accountVisual('disconnected');$('buckets').replaceChildren();
     render();status('Logged out of Cloudflare. Your cloud files remain untouched.');
   },{refresh:false});
 };
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
