@@ -296,6 +296,55 @@ main:has(.test-it-tools-wrap:not([hidden])){padding-bottom:80px}
 @media(prefers-reduced-motion:reduce){#disconnect.logout-button{transition:none!important}#disconnect.logout-button:hover:not(:disabled){transform:none}}
 @media(max-width:650px){.session-actions{margin-left:auto;align-self:center;padding:0}}
 
+/* Signed-out and signed-in session buttons share one horizontal axis.
+   LOGIN replaces the disconnected diagnostic tile without a second auth path. */
+#account-picker-caption[hidden]{display:none!important}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]){
+  display:grid;place-items:center;min-height:57px;
+  border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;
+  transition:none
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby{
+  display:none
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action{
+  display:inline-flex;justify-content:center;align-items:center;gap:9px;
+  width:128px;min-height:37px;margin:0;padding:7px 15px;
+  border:1px solid #649cc9;border-radius:999px;
+  background:linear-gradient(180deg,#f8fdff 0%,#dceffa 19%,#a5d7fb 50%,#71b9f0 51%,#c3e7fc 100%);
+  color:#194b77;font:800 10.5px/1.4 var(--font);letter-spacing:.13em;
+  text-shadow:0 1px #ffffffb8;
+  box-shadow:inset 0 2px 1px #fff,inset 0 -1px 2px #4589ba60,0 4px 12px #23547a29;
+  transition:transform .17s ease,box-shadow .17s ease,filter .17s ease
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action::before{
+  content:"";display:block;width:9px;height:9px;flex:none;border-radius:50%;
+  background:#3a9bde;box-shadow:inset 0 1px #ffffffca,0 0 0 2px #ffffffa3
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action:hover:not(:disabled){
+  filter:brightness(1.045);transform:translateY(-1px);
+  box-shadow:inset 0 2px 1px #fff,inset 0 -1px 2px #4589ba60,0 6px 17px #318dd65b
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action:active:not(:disabled){
+  transform:none;box-shadow:inset 0 2px 5px #4482b77a
+}
+.account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action:focus-visible{
+  outline:2px solid #6dbff4;outline-offset:3px
+}
+.session-actions{justify-content:center}
+#disconnect.logout-button{min-width:128px}
+@media(max-width:650px){
+  .session-actions{margin-left:0;align-self:stretch;justify-content:center;padding:3px 1px 2px}
+}
+@media(prefers-reduced-motion:reduce){
+  .account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action{
+    transition:none!important
+  }
+  .account-chooser:is([data-state="unauthorized"],[data-state="disconnected"]) .account-standby-action:hover{
+    transform:none!important
+  }
+}
+
 /* The first painted frame must be the saved palette, not Porcelain.
    Suppress only the initial unhydrated Explorer frame, never user-initiated
    theme changes. The pending flag is always released on success or failure. */
