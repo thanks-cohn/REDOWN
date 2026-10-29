@@ -13,8 +13,7 @@ function route() {
 window.addEventListener('hashchange',route); route();
 const openPage = path => chrome.tabs.create({url:chrome.runtime.getURL(path)}).catch(error=>status('Could not open page: '+error.message));
 $('dashboard').addEventListener('click',()=>openPage('beta/explorer.html'));
-$('dashboard-bottom').addEventListener('click',()=>openPage('beta/explorer.html'));
-$('cloudflare').addEventListener('click',()=>openPage('options.html'));
+$('cloudflare').addEventListener('click',()=>openPage('beta/explorer.html'));
 async function refreshPreference() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
   for (const input of modes) input.checked = input.value === (toolbarOpenMode === 'popup' ? 'popup' : 'shelf');
