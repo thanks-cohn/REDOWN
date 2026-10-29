@@ -65,7 +65,20 @@
         tx.onabort=()=>reject(tx.error||Error('History archive read aborted.'));
       });
     }
-    return {append:entry=>write([entry]),importLegacy:entries=>write(Array.isArray(entries)?entries:[]),page};
+    function migrateLegacy(entries){
+      const seen=new Map();
+      return (Array.isArray(entries)?entries:[]).filter(e=>e&&typeof e==='object').map(entry=>{
+        if(entry.id)return entry;
+        // Older entries predate IDs. Derive a stable local identifier so
+        // reopening History does not duplicate the retained same records.
+        const source=JSON.stringify(entry),count=seen.get(source)||0;
+        seen.set(source,count+1);
+        let hash=2166136261;
+        for(let i=0;i<source.length;i++){hash^=source.charCodeAt(i);hash=Math.imul(hash,16777619);}
+        return {...entry,id:'legacy-'+(hash>>>0).toString(36)+'-'+count};
+      });
+    }
+    return {append:entry=>write([entry]),importLegacy:entries=>write(migrateLegacy(entries)),page};
   }
   globalThis.RedownHistoryArchive={create};
 })();
