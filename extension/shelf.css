@@ -317,3 +317,10 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 @media(prefers-reduced-motion:reduce){
   ::view-transition-old(root),::view-transition-new(root){animation:none!important}
 }
+
+/* Drive auth status: Connected only after Google's actual API responds. */
+.provider[data-provider="google"] #google-state[data-state="connected"]{color:#176a43;border-color:#8fc5a5;background:#e6f6ec}
+:root[data-shelf-theme="midnight"] .provider[data-provider="google"] #google-state[data-state="connected"],
+:root[data-shelf-theme="ocean"] .provider[data-provider="google"] #google-state[data-state="connected"],
+:root[data-shelf-theme="neon"] .provider[data-provider="google"] #google-state[data-state="connected"]{color:#8af5bb;border-color:#3c8661;background:#153d32}
+.provider[data-provider="google"] #google-state[data-state="error"]{color:#b6434e;border-color:#d8a3ab}

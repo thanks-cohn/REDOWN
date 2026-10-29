@@ -1,6 +1,13 @@
 const $ = id => document.getElementById(id);
 const status = message => { $('status').textContent = message || ''; };
 const modes = [...document.querySelectorAll('[name="toolbar-mode"]')];
+function updateConnectionSummary(){
+  const ids=['cf-state','google-state'];
+  const connected=ids.filter(id=>$(id)?.dataset.state==='connected').length;
+  const checking=ids.some(id=>$(id)?.dataset.state==='checking');
+  $('connection-summary').textContent=checking?'Checking connections…':connected+' connected · '+(4-connected)+' integrations';
+}
+document.addEventListener('redown:provider-connection',updateConnectionSummary);
 function route() {
   const settings = location.hash === '#settings';
   $('clouds-view').hidden = settings; $('settings-view').hidden = !settings;
@@ -64,7 +71,7 @@ async function refreshConnection() {
   const paint=(state,label)=>{
     if(epoch!==connectionEpoch)return;
     $('cf-state').dataset.state=state; $('cf-state').textContent=label;
-    $('connection-summary').textContent=state==='connected'?'1 connected · 3 integrations':state==='checking'?'Checking connections…':'0 connected · 3 integrations';
+    updateConnectionSummary();
     $('cloudflare').disabled=state==='checking';
     $('cloudflare').textContent=state==='connected'?'Manage Cloudflare ↗':'LOGIN!';
   };
