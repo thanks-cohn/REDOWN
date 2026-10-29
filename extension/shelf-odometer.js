@@ -48,7 +48,7 @@
     reduced
   });
   const render=value=>{
-    if(!ready)return;
+    if(!ready||document.visibilityState==='hidden')return;
     if(!valid(value)){
       roller.cancel();total=null;
       host.removeAttribute('data-rolling');host.removeAttribute('aria-busy');paint(null);
@@ -86,6 +86,15 @@
     loadEpoch++;
     const changed=changes.transferCounter.newValue?.total;
     if(valid(changed))render(changed);else void refresh();
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden'){
+      roller.cancel();
+      saveVisible(); // Do not silently advance a hidden Shelf.
+    }else{
+      total=null; // Force a fresh count after being hidden.
+      void refresh();
+    }
   });
   globalThis.addEventListener('pagehide',()=>{
     roller.cancel();
