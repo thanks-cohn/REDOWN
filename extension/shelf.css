@@ -375,3 +375,11 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .shelf-debug-row input{width:18px;height:18px;flex:none;accent-color:var(--accent)}
 :root[data-shelf-theme="neon"] .explorer-theme-row,:root[data-shelf-theme="neon"] .shelf-debug-row{border-radius:6px}
 @media(max-width:340px){.explorer-theme-row{flex-wrap:wrap}.explorer-theme-row select{width:100%}}
+
+/* Keep the R2 free-tier note inside the action while preserving its actual login. */
+#cloudflare.card-action{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#cloudflare .free-storage-label{flex:none;padding:3px 7px;border:1px solid var(--accent);
+  border-radius:5px;font:700 10px/1.3 "DM Sans",system-ui,sans-serif;
+  letter-spacing:.025em;color:var(--accent);background:var(--surface)}
+:root[data-shelf-theme="neon"] #cloudflare .free-storage-label{
+  border-color:#9ff9eb;color:#9ff9eb;background:#140d2b}
