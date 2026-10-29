@@ -16,10 +16,34 @@
   const behaviorValue=value=>value==='custom'?'custom':'match';
   let snapshot={shelfColorScheme:'porcelain',explorerThemeMode:'match',explorerColorScheme:'midnight',debugModeEnabled:false};
   let revision=0;
+  let themeEpoch=0,ready=false,activeTransition=null;
+  // Explorer has its own ink reveal. Never animate the initial preferences
+  // hydration or a Shelf page; the Shelf owns its existing transition.
+  function paintPalette(selected){
+    if(root.dataset.explorerTheme===selected)return;
+    const epoch=++themeEpoch;
+    const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
+    if(!inExplorer||!ready||reducedMotion||typeof document.startViewTransition!=='function'){
+      activeTransition?.skipTransition?.();
+      root.dataset.explorerTheme=selected;
+      return;
+    }
+    try{
+      activeTransition?.skipTransition?.();
+      const transition=document.startViewTransition(()=>{
+        // A newer palette must win even during rapid changes.
+        if(epoch===themeEpoch)root.dataset.explorerTheme=selected;
+      });
+      activeTransition=transition;
+      void transition.finished.catch(()=>{}).finally(()=>{
+        if(activeTransition===transition)activeTransition=null;
+      });
+    }catch{root.dataset.explorerTheme=selected;}
+  }
   function paint(){
     const mode=behaviorValue(snapshot.explorerThemeMode);
     const selected=palette(mode==='custom'?snapshot.explorerColorScheme:snapshot.shelfColorScheme);
-    root.dataset.explorerTheme=selected;
+    paintPalette(selected);
     if(behavior)behavior.value=mode;
     if(custom)custom.value=palette(snapshot.explorerColorScheme);
     if(customRow)customRow.hidden=mode!=='custom';
@@ -42,6 +66,7 @@
       if(ticket!==revision)return;
       snapshot={...snapshot,...data};
       paint();
+      ready=true;
     }catch{if(feedback)feedback.textContent='Appearance preferences are unavailable. Showing default colors.';}
   }
   function save(key,value){
