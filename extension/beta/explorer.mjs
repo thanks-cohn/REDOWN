@@ -20,6 +20,10 @@ function accountVisual(next,headline='',detail=''){
   const shell=$('account-chooser');
   if(!shell)return;
   shell.dataset.state=next;
+  const loginState=next==='unauthorized'||next==='disconnected';
+  // Authentication uses a single centered button; loading and failure still
+  // expose meaningful status instead of hiding operational errors.
+  $('account-picker-caption').hidden=loginState;
   const ready=next==='ready'&&$('accounts').options.length>0;
   $('accounts').disabled=!ready||busy;
   $('accounts').tabIndex=-1;
@@ -43,7 +47,8 @@ function accountVisual(next,headline='',detail=''){
   }
   const action=$('account-standby-action');
   action.hidden=ready||next==='loading';
-  action.textContent=next==='unauthorized'||next==='disconnected'?'Connect Cloudflare':'Try again';
+  action.textContent=loginState?'LOGIN':'Try again';
+  action.setAttribute('aria-label',loginState?'Log in to Cloudflare securely':'Retry Cloudflare account discovery');
   shell.setAttribute('aria-label',ready?'Cloudflare account selector':$('account-standby-heading').textContent);
   syncAccountPicker();
 }
