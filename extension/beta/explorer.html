@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REDOWN · Beta Explorer</title>
+<title>REDOWN Explorer</title>
 <link rel="icon" href="../icon.svg">
 <link rel="stylesheet" href="explorer.css">
 </head>
@@ -12,8 +12,7 @@
 <a class="brand" href="explorer.html" aria-label="REDOWN Dashboard">
 <img src="../icon.svg" alt="">REDOWN</a>
 <span class="eyebrow">YOUR CLOUD, IN ORDER</span>
-<h1>Beta Explorer<span class="badge">BETA</span>
-</h1>
+<h1>REDOWN Explorer</h1>
 <p class="intro">A little space.<br>Endless possibilities.</p>
 <label for="accounts">Cloudflare account</label>
 <select id="accounts" aria-label="Cloudflare account">
@@ -28,23 +27,7 @@
 <button id="preferences">Transfer preferences</button>
 <button id="transfer-history">Recent transfers</button>
 <button id="connect">Connect Cloudflare</button>
-<details id="sidebar-settings" class="sidebar-settings">
-<summary><span class="sidebar-settings-heading">⚙ Settings</span><span class="sidebar-settings-chevron" aria-hidden="true">⌄</span></summary>
-<div class="sidebar-settings-content">
-<fieldset class="sidebar-settings-options">
-<legend>When I click REDOWN</legend>
-<div class="sidebar-settings-choice">
-<input type="radio" id="sidebar-open-shelf" name="sidebar-toolbar-mode" value="shelf" disabled>
-<label for="sidebar-open-shelf"><span>Shelf</span><span class="sidebar-settings-check" aria-hidden="true">✓</span></label>
-</div>
-<div class="sidebar-settings-choice">
-<input type="radio" id="sidebar-open-popup" name="sidebar-toolbar-mode" value="popup" disabled>
-<label for="sidebar-open-popup"><span>Popup</span><span class="sidebar-settings-check" aria-hidden="true">✓</span></label>
-</div>
-</fieldset>
-<p id="sidebar-settings-status" role="status" aria-live="polite"></p>
-</div>
-</details>
+<button id="open-shelf-settings" class="shelf-settings-launch" type="button" aria-label="Open REDOWN Shelf Settings"><span aria-hidden="true">⚙</span> Settings <span aria-hidden="true" class="shelf-settings-arrow">↗</span></button>
 <div id="session-actions" class="session-actions" hidden>
 <button id="disconnect" class="logout-button" type="button" aria-label="Log out of Cloudflare" title="Log out of Cloudflare" disabled>LOG OUT</button>
 </div>
@@ -135,9 +118,9 @@
 </div>
 <progress id="progress" hidden>
 </progress>
-<small id="limitation">Beta: folder downloads and durable transfer recovery are not available yet.</small>
+<small id="limitation">Folder downloads and durable transfer recovery are not available yet.</small>
 </section>
-<div class="test-it-tools-wrap">
+<div class="test-it-tools-wrap" hidden>
 <button id="test-it-tools-button" aria-expanded="false" aria-controls="test-it-tools-menu" aria-haspopup="menu">Test It Tools ▲</button>
 <div id="test-it-tools-menu" role="menu" aria-label="Test It Tools" hidden><button id="test-it" role="menuitem" tabindex="-1">Test It</button><button id="test-it-export" role="menuitem" tabindex="-1">Export Test It</button><button id="test-it-restart" role="menuitem" tabindex="-1">Restart Test It</button><button id="test-it-cleanup" role="menuitem" tabindex="-1">Clean Up Practice Copies</button></div>
 </div>
@@ -191,6 +174,7 @@
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>
+<script src="../explorer-theme.js"></script>
 <script src="sidebar-settings.js"></script>
 <script type="module" src="explorer.mjs">
 </script>

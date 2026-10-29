@@ -363,3 +363,15 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .icon-background-row select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 :root[data-shelf-theme="neon"] .icon-background-row{border-radius:6px}
 @media(max-width:340px){.brand .brand-mark{width:36px;height:36px}.icon-background-row{flex-wrap:wrap}.icon-background-row select{max-width:100%;width:100%}}
+
+/* Shared Explorer theme preferences and debug switch, in the existing Shelf Settings. */
+.explorer-theme-fieldset,.shelf-debug-fieldset{margin-top:6px}
+.explorer-theme-row,.shelf-debug-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:0 0 8px}
+.explorer-theme-row>span,.shelf-debug-row>span{flex:1;min-width:0;font-size:12px;font-weight:690}
+.explorer-theme-row small,.shelf-debug-row small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:3px;line-height:1.55}
+.explorer-theme-row select{width:min(168px,48%);min-width:0;padding:8px 5px;border-radius:8px;background:var(--subtle);border:1px solid var(--line);color:var(--text);font:11px "DM Sans",system-ui,sans-serif}
+.explorer-theme-row select:focus-visible,.shelf-debug-row input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.shelf-debug-row{cursor:pointer}
+.shelf-debug-row input{width:18px;height:18px;flex:none;accent-color:var(--accent)}
+:root[data-shelf-theme="neon"] .explorer-theme-row,:root[data-shelf-theme="neon"] .shelf-debug-row{border-radius:6px}
+@media(max-width:340px){.explorer-theme-row{flex-wrap:wrap}.explorer-theme-row select{width:100%}}

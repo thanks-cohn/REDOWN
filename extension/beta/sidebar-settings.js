@@ -1,42 +1,29 @@
-// Dashboard-only presentation of the shared Shelf/Popup toolbar preference.
+/* Explorer shortcut to the existing Shelf Settings view. No duplicate
+   dashboard preference controls; the Shelf remains the single settings UI. */
 (() => {
-  const choices = [...document.querySelectorAll('input[name="sidebar-toolbar-mode"]')];
-  const feedback = document.getElementById('sidebar-settings-status');
-  if (choices.length !== 2 || !feedback) return;
-
-  const update = value => {
-    const mode = value === 'popup' ? 'popup' : 'shelf';
-    for (const input of choices) input.checked = input.value === mode;
-  };
-  const enable = value => {
-    for (const input of choices) input.disabled = !value;
-  };
-  const load = async () => {
-    const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
-    update(toolbarOpenMode);
-  };
-
-  for (const choice of choices) {
-    choice.addEventListener('change', async () => {
-      if (!choice.checked) return;
-      enable(false);
-      try {
-        await chrome.storage.local.set({toolbarOpenMode: choice.value});
-        update(choice.value);
-        feedback.textContent = 'Saved. REDOWN will open the ' + (choice.value === 'popup' ? 'Popup.' : 'Shelf.');
-      } catch {
-        feedback.textContent = 'Could not save the preference. Try again.';
-        await load().catch(() => {});
-      } finally {
-        enable(true);
+  const button=document.getElementById('open-shelf-settings');
+  const feedback=document.getElementById('status');
+  if(!button)return;
+  button.addEventListener('click',()=>{
+    // Open the side panel synchronously from the real user gesture.
+    if(!chrome.sidePanel?.open||!chrome.storage.session?.set){
+      if(feedback)feedback.textContent='Shelf Settings is unavailable. Reload REDOWN and try again.';
+      return;
+    }
+    let opening;
+    try{opening=chrome.sidePanel.open({windowId:chrome.windows.WINDOW_ID_CURRENT});}
+    catch(error){if(feedback)feedback.textContent='Could not open Shelf Settings: '+(error?.message||'Unknown error');return;}
+    const intent=chrome.windows.getCurrent().then(win=>{
+      if(!Number.isInteger(win?.id))throw Error('Browser window unavailable');
+      return chrome.storage.session.set({shelfOpenIntent:{
+        view:'settings',windowId:win.id,issuedAt:Date.now(),token:crypto.randomUUID()
+      }});
+    });
+    void Promise.allSettled([opening,intent]).then(results=>{
+      if(results.some(result=>result.status==='rejected')){
+        void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});
+        if(feedback)feedback.textContent='Could not open Shelf Settings. Please try again.';
       }
     });
-  }
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'local' && changes.toolbarOpenMode) update(changes.toolbarOpenMode.newValue);
-  });
-  load().then(() => enable(true)).catch(() => {
-    feedback.textContent = 'Opening preference is unavailable.';
-    enable(false);
   });
 })();

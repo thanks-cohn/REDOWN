@@ -312,3 +312,68 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 #disconnect.logout-button:focus-visible{outline:2px solid #c8323c;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#disconnect.logout-button{transition:none!important}#disconnect.logout-button:hover:not(:disabled){transform:none}}
 @media(max-width:650px){.session-actions{margin-left:auto;align-self:center;padding:0}}
+
+/* REDOWN Explorer: palette-wide presentation, preserving every file API and event. */
+:root{
+  --surface-hover:#fdf8ff;--row-hover:#f8f1f7;--list-head:#fcf9fc;
+  --folder-bg:#f4e8dc;--folder-line:#e2cdb7;--folder-text:#95603a;
+  --accent-glow:#7653a42b;--danger-bg:#fff1ef;--owned-border:#b44f79;
+}
+:root[data-explorer-theme="porcelain"]{
+  color-scheme:light;--bg:#f5f4f8;--panel:#fff;--line:#ded9e8;
+  --text:#262133;--muted:#696377;--accent:#6743a2;--accent-soft:#eee7f7;
+  --danger:#a9294a;--surface-hover:#fbf9ff;--row-hover:#f7f2fc;
+  --list-head:#faf8fd;--folder-bg:#f0e6f6;--folder-line:#dac9e8;
+  --folder-text:#754ca5;--shadow:0 8px 28px #39234a0c;
+  --accent-glow:#6743a22b;--danger-bg:#fcebef;--owned-border:#a84a77;
+}
+:root[data-explorer-theme="midnight"]{
+  color-scheme:dark;--bg:#0c1015;--panel:#1c232c;--line:#3a4654;
+  --text:#f1f5fa;--muted:#b4c1cf;--accent:#9acdf9;--accent-soft:#27425d;
+  --danger:#ffa5b1;--surface-hover:#29333e;--row-hover:#273342;
+  --list-head:#202b38;--folder-bg:#2c3b4b;--folder-line:#51677c;
+  --folder-text:#b9d9ff;--shadow:0 8px 28px #0005;
+  --accent-glow:#9acdf92b;--danger-bg:#532a39;--owned-border:#ff8a98;
+}
+:root[data-explorer-theme="ocean"]{
+  color-scheme:dark;--bg:#061e2c;--panel:#10384b;--line:#467986;
+  --text:#f3faf7;--muted:#b7d6d7;--accent:#ffcb9f;--accent-soft:#245567;
+  --danger:#ffb4b4;--surface-hover:#1c5260;--row-hover:#1a4b59;
+  --list-head:#124354;--folder-bg:#184b59;--folder-line:#5a9299;
+  --folder-text:#f3d7b9;--shadow:0 8px 28px #00182769;
+  --accent-glow:#ffcb9f31;--danger-bg:#57353d;--owned-border:#f8a39b;
+}
+:root[data-explorer-theme="neon"]{
+  color-scheme:dark;--bg:#140d2b;--panel:#252049;--line:#8773bd;
+  --text:#fff9e6;--muted:#d7cee7;--accent:#f9a4de;--accent-soft:#4c346e;
+  --danger:#ffc2cf;--surface-hover:#393065;--row-hover:#382e64;
+  --list-head:#302854;--folder-bg:#37325b;--folder-line:#8b7ccc;
+  --folder-text:#fee0a3;--shadow:0 8px 28px #0b08218c;
+  --accent-glow:#ff88cc44;--danger-bg:#592342;--owned-border:#f9a4de;
+}
+body,aside,main,.toolbar,.activity,.action-group,.provider,.file,.guide-card,.tour-invitation,#dropzone,#side-preview,dialog,
+select,input,button,.list-heading,#preview-content,.icon,.folder .icon,#explorer-menu,#test-it-tools-menu,
+#sidebar-settings{transition:background-color .38s ease,color .38s ease,border-color .38s ease,box-shadow .38s ease}
+aside{background:var(--panel)}
+button:hover:not(:disabled){background:var(--accent-soft);border-color:var(--accent)}
+a:hover{color:var(--text)}
+.list-heading{background:var(--list-head)}
+.file{border-bottom-color:var(--line)}
+.file:hover{background:var(--row-hover)}
+.file[aria-selected=true]{background:var(--accent-soft);box-shadow:inset 3px 0 var(--accent)}
+.icon{background:var(--accent-soft);border-color:var(--line);color:var(--accent)}
+.folder .icon{background:var(--folder-bg);border-color:var(--folder-line);color:var(--folder-text)}
+#side-preview #preview-content{background:var(--bg)}
+.file.drop-target{background:var(--accent-soft)}
+.test-owned-copy .test-ownership-label{background:var(--accent-soft);color:var(--accent)}
+.file.test-owned-copy{outline-color:var(--owned-border)}
+.guide-highlight{box-shadow:0 0 0 6px var(--accent-glow)!important}
+#refresh.attention{background:var(--danger-bg);color:var(--danger);box-shadow:0 0 0 2px var(--danger)}
+.primary{background:var(--accent);color:var(--bg);border-color:transparent}
+.primary:hover:not(:disabled){filter:brightness(1.12);background:var(--accent)}
+#disconnect.logout-button{color:#fff}
+.shelf-settings-launch{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;font-weight:700;background:var(--panel);border-color:var(--line)}
+.shelf-settings-launch .shelf-settings-arrow{margin-left:auto;color:var(--accent)}
+.shelf-settings-launch:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+:root[data-explorer-theme="neon"] .eyebrow,:root[data-explorer-theme="neon"] .section-title{letter-spacing:.19em}
+@media(prefers-reduced-motion:reduce){body,aside,main,.toolbar,.activity,.action-group,.file,.guide-card,.tour-invitation,#dropzone,#side-preview,dialog,select,input,button,.list-heading{transition:none!important}}

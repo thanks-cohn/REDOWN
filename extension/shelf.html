@@ -68,6 +68,10 @@
 </div></fieldset><fieldset class="icon-background-fieldset"><legend>REDOWN icon background</legend>
 <label class="icon-background-row" for="icon-background-mode"><span>Icon appearance<small>Keep the original dark icon or let its background follow the selected Shelf palette.</small></span>
 <select id="icon-background-mode" aria-label="REDOWN icon background"><option value="original">Original</option><option value="theme">Match theme</option></select></label>
+</fieldset><fieldset class="explorer-theme-fieldset">
+<legend>Explorer appearance</legend>
+<label class="explorer-theme-row" for="explorer-theme-mode"><span>Explorer color scheme<small>Follow the Shelf, or give REDOWN Explorer a palette of its own.</small></span><select id="explorer-theme-mode" aria-label="Explorer theme behavior"><option value="match">Match Shelf theme</option><option value="custom">Use a different theme</option></select></label>
+<label class="explorer-theme-row" id="explorer-custom-theme-row" for="explorer-custom-theme" hidden><span>Explorer palette<small>Only affects the Explorer, not your Shelf.</small></span><select id="explorer-custom-theme" aria-label="Independent Explorer palette"><option value="porcelain">Porcelain</option><option value="midnight">Midnight</option><option value="ocean">Ocean</option><option value="neon">NEON</option></select></label>
 </fieldset><fieldset class="provider-opening"><legend>Opening saved files and folders</legend>
 <p class="opening-explanation">Choose how each cloud destination opens after a successful save.</p>
 <label class="opening-row" for="open-google"><span>Google Drive<small>After connection</small></span><select id="open-google" data-provider-open="google"><option value="tab">New tab</option><option value="window">New window</option><option value="left">Left side · Split View</option></select></label>
@@ -75,4 +79,8 @@
 <label class="opening-row" for="open-onedrive"><span>OneDrive<small>After connection</small></span><select id="open-onedrive" data-provider-open="onedrive"><option value="tab">New tab</option><option value="window">New window</option><option value="left">Left side · Split View</option></select></label>
 <p class="opening-hint">Left Side uses Chrome Split View (Chrome 155+). If unavailable, REDOWN opens a new tab. These choices take effect when each provider's connection and saved-file links become available.</p>
 </fieldset>
-<p class="settings-note">Shelf is the default. The Popup’s Settings button opens this same panel.</p><a class="text-link" href="#clouds">← Back to your clouds</a></section></main><p id="status" role="status" aria-live="polite"></p></div><script src="odometer.js"></script><script src="shelf-odometer.js"></script><script src="shelf-theme.js"></script><script src="provider-opening.js"></script><script src="shelf.js"></script></body></html>
+<fieldset class="shelf-debug-fieldset">
+<legend>Developer tools</legend>
+<label class="shelf-debug-row" for="shelf-debug-enabled"><span>Debug Mode<small>Enable diagnostics and show Test It Tools in REDOWN Explorer. Off by default.</small></span><input id="shelf-debug-enabled" type="checkbox" aria-label="Enable Debug Mode"></label>
+</fieldset>
+<p class="settings-note">Shelf is the default. The Popup’s Settings button opens this same panel.</p><a class="text-link" href="#clouds">← Back to your clouds</a></section></main><p id="status" role="status" aria-live="polite"></p></div><script src="odometer.js"></script><script src="shelf-odometer.js"></script><script src="shelf-theme.js"></script><script src="provider-opening.js"></script><script src="explorer-theme.js"></script><script src="shelf.js"></script></body></html>
