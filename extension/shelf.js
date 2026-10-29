@@ -43,13 +43,12 @@ let connectionEpoch=0;
 async function refreshConnection() {
   const epoch=++connectionEpoch;
   const {cloudflareAuth} = await chrome.storage.local.get('cloudflareAuth');
-  const paint=(state,label,detail)=>{
+  const paint=(state,label)=>{
     if(epoch!==connectionEpoch)return;
     $('cf-state').dataset.state=state; $('cf-state').textContent=label;
-    $('cf-detail').textContent=detail;
     $('connection-summary').textContent=state==='connected'?'1 connected · 3 integrations':state==='checking'?'Checking connections…':'0 connected · 3 integrations';
     $('cloudflare').disabled=state==='checking';
-    $('cloudflare').textContent=state==='connected'?'Manage Cloudflare ↗':state==='checking'?'Checking connection…':'Open Cloudflare sign-in ↗';
+    $('cloudflare').textContent=state==='connected'?'Manage Cloudflare ↗':'LOGIN!';
   };
   if(!cloudflareAuth?.accessToken){paint('disconnected','Not connected','Connect Cloudflare to bring TRUE REMOTE to your Shelf.');return;}
   paint('checking','Checking','Saved sign-in found. Checking account access…');
@@ -61,23 +60,10 @@ async function refreshConnection() {
   } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
   finally {clearTimeout(timer);}
 }
-async function refreshDestinations() {
-  const {profiles=[]}=await chrome.storage.local.get('profiles');
-  const destinations=$('destinations');
-  destinations.replaceChildren();
-  const count=(Array.isArray(profiles)?profiles:[]).filter(profile=>profile?.type==='cloudflare-r2').length;
-  if(count){
-    const label=document.createElement('p');
-    label.textContent=count+' saved R2 destination'+(count===1?'':'s')+'.';
-    destinations.append(label);
-  }
-}
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
-  if(changes.profiles)void refreshDestinations().catch(()=>status('Saved destinations unavailable.'));
 });
 void refreshPreference().catch(()=>{for(const input of modes)input.disabled=true;status('Opening preference unavailable. Reopen Settings to retry.');});
 void refreshConnection().catch(()=>status('Connection state unavailable. Reopen Shelf to retry.'));
-void refreshDestinations().catch(()=>status('Saved destinations unavailable.'));
