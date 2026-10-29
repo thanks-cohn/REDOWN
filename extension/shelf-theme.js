@@ -11,6 +11,7 @@
     const mode=validIconBackgroundMode(value);
     document.documentElement.dataset.shelfIconBackground=mode;
     if(iconBackgroundSelect)iconBackgroundSelect.value=mode;
+    globalThis.RedownBrandIcon?.paint(document,document.documentElement.dataset.shelfTheme||'porcelain',mode);
   }
   // Start from the existing icon appearance unless the user opted in.
   paintIconBackgroundMode('original');
@@ -46,6 +47,7 @@
   const apply=value=>{
     const selected=normalize(value);
     document.documentElement.dataset.shelfTheme=selected;
+    globalThis.RedownBrandIcon?.paint(document,selected,document.documentElement.dataset.shelfIconBackground);
     if(darkThemes.has(selected))lastDark=selected;
     for(const input of choices)input.checked=input.value===selected;
     const light=selected==='porcelain';
