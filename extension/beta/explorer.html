@@ -115,6 +115,36 @@
 <div id="preview-divider" role="separator" aria-label="Resize preview" aria-controls="side-preview dropzone" aria-orientation="vertical" aria-valuemin="280" aria-valuemax="720" aria-valuenow="400" tabindex="0" hidden></div>
 <section id="side-preview" aria-label="Side preview" hidden></section>
 </div>
+
+<section class="quick-links-panel" aria-label="Right-click setup and bucket URLs">
+  <div class="quick-links-heading"><div><span class="eyebrow">CLOUD CONTROL</span><h2>One click. Your destination.</h2></div><span class="quick-links-mark" aria-hidden="true">✦</span></div>
+  <div class="quick-links-tabs" role="tablist" aria-label="Cloud setup">
+    <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="quick-panel-setup" tabindex="0">Right-click setup</button>
+    <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1">Bucket URLs</button>
+  </div>
+  <section id="quick-panel-setup" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-setup">
+    <p>Make REDOWN your instant save destination. Your first setup creates or reuses a private Cloudflare R2 bucket named <strong>REDOWN</strong> (stored as <code>redown</code>).</p>
+    <div class="quick-links-grid">
+      <label>Cloudflare account<select id="quick-setup-account" aria-label="Account for REDOWN bucket"><option value="">Discovering accounts…</option></select></label>
+      <label>Menu label<input id="quick-menu-label" type="text" maxlength="60" value="Cloudflare" autocomplete="off" aria-label="Right-click menu label"></label>
+    </div>
+    <div class="quick-links-action"><span><strong>Destination / REDOWN</strong><small>One simple right-click menu, saving to the bucket root</small></span><button id="quick-create" class="primary" type="button" disabled>Set up right-click save</button></div>
+    <p id="quick-setup-feedback" class="quick-links-feedback" role="status" aria-live="polite">Cloudflare permission and Worker setup are required; nothing is created until you choose Set up.</p>
+  </section>
+  <section id="quick-panel-urls" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-urls" hidden>
+    <p>Choose a bucket and connect a public HTTPS hostname you control. One configured URL base can serve links to every object in that bucket.</p>
+    <div class="quick-links-grid quick-links-url-grid">
+      <label>Bucket<select id="quick-url-bucket" aria-label="Bucket to receive a public URL"><option value="">Choose a bucket…</option></select></label>
+      <label>Public URL<input id="quick-url-input" type="url" inputmode="url" placeholder="https://assets.example.com" aria-label="Public hostname to attach" autocomplete="url"></label>
+    </div>
+    <div class="quick-links-action"><span><strong>Make your files linkable</strong><small>Requires an existing REDOWN Worker and a verified Cloudflare domain</small></span><button id="quick-url-add" type="button" disabled>Add URL</button></div>
+    <details id="quick-urls-section" class="quick-urls-section" open>
+      <summary>URLs <span id="quick-url-count" aria-live="polite">0</span></summary>
+      <div id="quick-urls-list" class="quick-urls-list"><div class="quick-urls-empty"><strong>Add Your First URL!</strong><p>Connect a public hostname to your bucket and REDOWN can build a shareable link for each object automatically. Your bucket stays private until you explicitly approve public access.</p></div></div>
+    </details>
+    <p id="quick-url-feedback" class="quick-links-feedback" role="status" aria-live="polite"></p>
+  </section>
+</section>
 <footer>
 <span id="selection">0 items</span>
 <span>Drop files here to upload · F2 rename · Ctrl+C / X / V</span>
@@ -186,6 +216,7 @@
 </script>
 <script src="../explorer-theme.js"></script>
 <script src="sidebar-settings.js"></script>
+<script src="quick-links.js"></script>
 <script type="module" src="explorer.mjs">
 </script>
 </body>
