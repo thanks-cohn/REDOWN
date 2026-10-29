@@ -383,3 +383,27 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   letter-spacing:.025em;color:var(--accent);background:var(--surface)}
 :root[data-shelf-theme="neon"] #cloudflare .free-storage-label{
   border-color:#9ff9eb;color:#9ff9eb;background:#140d2b}
+
+
+/* Cosmetic impact only. A page-originating droplet cannot physically draw
+   through Chrome's side-panel frame; this lightweight glow meets it at the
+   Shelf's inner edge without interfering with the existing theme transition. */
+.shell::before{
+  content:"";position:fixed;z-index:9;left:0;top:29vh;width:124px;height:124px;
+  border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 0% 50%,rgba(var(--accent-rgb),.65) 0%,
+    rgba(var(--accent-rgb),.20) 34%,transparent 72%);
+  transform:translate(-50%,-50%) scale(.1);
+}
+:root[data-save-impact="true"] .shell::before{
+  animation:shelf-save-droplet-impact .78s cubic-bezier(.17,.8,.28,1) both;
+}
+@keyframes shelf-save-droplet-impact{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}
+  16%{opacity:.95;transform:translate(-45%,-50%) scale(.46)}
+  52%{opacity:.7;transform:translate(-40%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-30%,-50%) scale(1.65)}
+}
+@media(prefers-reduced-motion:reduce){
+  :root[data-save-impact="true"] .shell::before{animation:none!important}
+}
