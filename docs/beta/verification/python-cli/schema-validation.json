@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "draft": "2020-12",
+  "validated_records": {
+    "local-real-corpus": 480,
+    "live-blocked": 2
+  },
+  "validator": "Python jsonschema; validation tool only, not runtime dependency"
+}

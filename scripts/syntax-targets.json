@@ -45,5 +45,8 @@
   "extension/beta/dropped-files.mjs",
   "scripts/beta-explorer-preview.mjs",
   "extension/beta/guided-interaction.mjs",
-  "extension/beta/tour.mjs"
+  "extension/beta/tour.mjs",
+  "extension/beta/lab.mjs",
+  "tools/lab/bridge.mjs",
+  "scripts/lab-local-smoke.mjs"
 ]

@@ -1,0 +1,105 @@
+{
+  "scope": "Local repository/transport/production-handler fixtures; no installed Chrome or live R2 acceptance",
+  "corpus_commit": "531546e323577f5c599569851599ad92a4a1bc46",
+  "corpus": {
+    "files": 240,
+    "bytes": 388827943,
+    "lfs_oid_and_size_verified": true
+  },
+  "python": {
+    "command": "python -m unittest discover -s tests -p test_redown_lab.py -v",
+    "passed": 18,
+    "failed": 0
+  },
+  "focused": {
+    "command": "node --test tests/lab-bridge.test.mjs tests/beta-explorer.test.mjs",
+    "passed": 103,
+    "failed": 0
+  },
+  "baseline_full": {
+    "commit": "531546e",
+    "executed": 562,
+    "passed": 552,
+    "failed": 10,
+    "failures": [
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "full finite public coverage inventory resolves strata and all canonical case links",
+      "offline discovery advertises only implemented operations and distinct versions",
+      "original case and proposal Markdown bytes are retained from pinned upstream",
+      "real discovery, case, history, filters and validation are deterministic and honest",
+      "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "successful provisioning refreshes destination editors and inventory before reporting ready"
+    ]
+  },
+  "final_full": {
+    "executed": 570,
+    "passed": 560,
+    "failed": 10,
+    "same_failure_names_as_independent_baseline": true,
+    "failures": [
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "full finite public coverage inventory resolves strata and all canonical case links",
+      "offline discovery advertises only implemented operations and distinct versions",
+      "original case and proposal Markdown bytes are retained from pinned upstream",
+      "real discovery, case, history, filters and validation are deterministic and honest",
+      "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "successful provisioning refreshes destination editors and inventory before reporting ready"
+    ]
+  },
+  "syntax": {
+    "command": "npm run check",
+    "state": "passed"
+  },
+  "reliability": {
+    "command": "npm run reliability:check",
+    "state": "failed",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "architecture",
+        "state": "failed",
+        "exitCode": 0
+      },
+      {
+        "id": "api-registry",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed",
+        "exitCode": 0
+      }
+    ],
+    "known_failures_in_repository_allowlist": 7,
+    "failures_outside_outdated_allowlist": 3,
+    "note": "The independent 531546e baseline reproduces all ten failures; do not call this release green."
+  },
+  "local_real_corpus": {
+    "unique_files": 24,
+    "formats": 24,
+    "fixture_bytes": 10255,
+    "requested": 56,
+    "executed": 56,
+    "passed": 56,
+    "explicit_client_payload_bytes": 20579,
+    "genuine_cloud_uploads": 0,
+    "genuine_cloud_downloads": 0
+  },
+  "live_provider": {
+    "verdict": "BLOCKED",
+    "reason": "No authorized installed extension/provider session available",
+    "requested": 56,
+    "executed": 0
+  }
+}

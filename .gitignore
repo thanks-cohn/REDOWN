@@ -7,3 +7,7 @@ node_modules/
 
 # Agent scratch outputs (durable evidence lives under docs/agent/semantic/verification).
 work/
+
+# Python bytecode (owner CLI/tests).
+__pycache__/
+*.py[cod]

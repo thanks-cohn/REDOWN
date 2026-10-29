@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/thanks-cohn/REDOWN/tools/lab/protocol-1.0.schema.json",
+  "title": "REDOWN loopback Universal File API protocol 1.0",
+  "oneOf": [{"$ref": "#/$defs/command"}, {"$ref": "#/$defs/receipt"}],
+  "$defs": {
+    "scope": {
+      "type": "object", "required": ["accountId", "bucketName", "prefix"],
+      "properties": {
+        "accountId": {"type": "string", "minLength": 1},
+        "bucketName": {"type": "string", "minLength": 1},
+        "prefix": {"type": "string", "pattern": "^redown-test-lab/[a-zA-Z0-9-]+/$"}
+      }, "additionalProperties": false
+    },
+    "command": {
+      "type": "object", "required": ["schema_version", "command_id", "operation", "input", "scope"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "command_id": {"type": "string", "pattern": "^[-a-zA-Z0-9]{1,100}$"},
+        "operation": {"enum": ["capabilities", "connectionStatus", "list", "listRaw", "stat", "upload", "readStream", "mkdir", "copy", "move", "rename", "delete"]},
+        "input": {"type": "object"}, "scope": {"$ref": "#/$defs/scope"}
+      }, "additionalProperties": false
+    },
+    "receipt": {
+      "type": "object", "required": ["schema_version", "command_id", "state"],
+      "properties": {
+        "schema_version": {"const": "1.0"}, "command_id": {"type": "string"},
+        "state": {"enum": ["completed", "partial", "failed", "uncertain", "cancelled", "started"]},
+        "operation": {"type": "string"}, "id": {"type": "string"},
+        "data": {"type": "object"}, "error": {"type": "string"}, "code": {"type": "string"},
+        "recoveryKey": {"type": "string"}, "download_path": {"type": "string"}, "bytes_received": {"type": "integer", "minimum": 0}
+      }, "additionalProperties": false
+    },
+    "verification": {
+      "type": "object", "required": ["scenario_id", "operation", "fixture", "verdict"],
+      "properties": {
+        "scenario_id": {"type": "string"}, "operation": {"type": "string"}, "fixture": {"type": "string"},
+        "verdict": {"enum": ["PASS", "FAIL", "UNSUPPORTED", "BLOCKED", "TIMEOUT", "UNVERIFIED"]}
+      }
+    }
+  }
+}

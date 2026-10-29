@@ -1,0 +1,1478 @@
+
+> remote-asset-ingest@0.1.0 test
+> node --test tests/*.test.mjs
+
+✔ one shared add control targets Simple or Nested and asks which destination when needed (97.1858ms)
+✖ offline discovery advertises only implemented operations and distinct versions (15.887884ms)
+✔ operation descriptions retain exact destination, side effect and coverage limits (28.920851ms)
+✔ errors are deterministic, exact-id and version aware without echoing arbitrary input (150.482252ms)
+✔ unknown Forever mappings never become accepted records or a conformance claim (18.32075ms)
+✔ reference inspection detects content drift, missing anchors/files and unsafe paths (1.063668ms)
+✔ CLI works outside checkout, emits one JSON envelope and uses exit 2 for errors (245.928932ms)
+✖ catalog IDs, evidence labels, source hashes and references are internally consistent (12.5112ms)
+✔ portable request fixtures and JSON envelope contract (91.098628ms)
+✔ M0 inventory covers every literal message branch without inventing handlers (0.901663ms)
+✔ all five native APIs route through qualified discovery with exact native versions and no registry drift (30.606351ms)
+✔ overlapping methods never silently select a namespace; compatibility aliases have explicit owners (1.927751ms)
+✔ delegation preserves historical provenance and freshness, rather than upgrading stale source evidence (57.884481ms)
+✔ read-only boundary rejects mutation, namespace injection, extra arguments and unsupported versions (11.43105ms)
+✔ registry audit detects duplicate operation ownership, dangling aliases and duplicate primary owners (0.996802ms)
+✔ Explorer and passive runtime imports remain isolated and re-sanitized (2.289708ms)
+✔ a malformed namespace bundle cannot break project discovery or another namespace (0.87902ms)
+✔ cold agent can discover, resolve, inspect ownership, plan tests and see release blockers without network access (30.523207ms)
+✔ unified CLI supports namespace routing and explicit runtime import; refuses ambiguous or conflicting inputs (130.92487ms)
+✔ every registered operation has a cold-start fixture and preserves a native result or an explicit evidence boundary (195.066313ms)
+✔ Beta launcher is separate; original Explorer and context-menu pipeline stay in place (73.953564ms)
+✔ new API keeps exact prefix identities and rejects invalid locations/names (0.570557ms)
+✔ bucket, folder, metadata and Unicode content workflows run through the actual production Worker in memory (32.450428ms)
+✔ zero bytes, 50 MiB and 51 MiB binary uploads retain bytes and forward File without client-side whole-file buffering (1439.039456ms)
+✔ conflicts skip, keep both and explicitly replace while preserving accurate bytes (10.043738ms)
+✔ populated folder copy, rename and delete use ordinary prefix operations (4.787975ms)
+✔ TRUE REMOTE forwards only URL and explicit destination to original ingest, never fetches source bytes locally (2.120497ms)
+✔ uncertain upload is never retried and retains recoverable staging identity (1.304103ms)
+✔ batch cancellation stops remaining items and incomplete moves stay partial (0.533189ms)
+✔ download completion requires Chrome completion; folder download fails honestly (1.192061ms)
+✔ upload read-back detects corruption before touching the final destination (0.992054ms)
+✔ actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API (201.1511ms)
+✔ Beta UI disables folder downloads and uses the same API for context menu and keyboard commands (44.47497ms)
+✔ same-folder copy keeps both and never destroys the source (2.184515ms)
+✔ folder drag/drop invokes the same real move API and preserves file bytes (40.946942ms)
+✔ unusable page cursors fail rather than silently hiding files (0.391171ms)
+✔ lost mutation messaging is uncertain and never replayed (0.30598ms)
+✔ provider defaults, session preferences and operation overrides alter real request deadlines in precedence order (4.013014ms)
+✔ unsupported, inactive, invalid and pagination configuration is rejected before dispatch (1.307389ms)
+✔ batch concurrency is effective, keeps input result order, and uncertain outcomes prevent further dispatch (0.871409ms)
+✔ message deadline overrides time out safe reads as failed and ambiguous writes as uncertain, without replay (12.099226ms)
+✔ preview budget overrides affect real streamed reads, preserve bytes, and render HTML as text (3.507308ms)
+✔ 300 MB restriction applies only to direct local upload, never to remote ingestion or download (1.152821ms)
+✔ saved profiles are redacted, public URLs and explicit setup reuse production services (1.045566ms)
+✔ Beta preferences, duplicate, saved destination and preview are working UI interactions (81.901994ms)
+✔ ZIP inspection and individual extraction reuse the real production Worker, preserve paths and reject overwrite (6.880059ms)
+✔ archive dialog and destination chooser route actual extraction and copy through API (86.604127ms)
+✔ verification deadline and inactivity overrides interrupt stalled read-back without replay or final commit (12.509186ms)
+✔ observer exceptions never turn confirmed provider changes into failed operations (0.387775ms)
+✔ dropped directory traversal consumes every reader batch and preserves nested paths without reading payloads (0.554472ms)
+✔ progress frequency preferences change real verification callbacks (5.889036ms)
+✔ text preview defaults are bounded, and the text byte override changes actual returned content (2.056689ms)
+✔ dropping a directory on Beta uploads nested file bytes through the universal API (35.21821ms)
+✔ startup automatically opens the sole bucket and persists folder navigation without provisioning (34.910338ms)
+✔ startup restores an accessible saved bucket and folder (28.649689ms)
+✔ multiple accounts are discovered and a sole bucket in the second account opens automatically (23.942569ms)
+✔ multiple buckets present an immediate choice and Refresh works with no selected bucket (39.98909ms)
+✔ authorization listing errors remain distinct from empty folders and Refresh recovers (35.326065ms)
+✔ missing Worker setup blocks a GUI mutation before any write and Refresh never provisions (44.003507ms)
+✔ a removed saved folder falls back to the live bucket root (42.457831ms)
+✔ Beta refuses missing Worker provisioning while legacy preparation keeps its default behavior (1.009992ms)
+✔ Beta 401 Worker response is not repaired or replayed after readiness changes (1.003352ms)
+✔ unsupported formats do not advertise inline Preview in the context menu (34.323487ms)
+✔ GUI upload, independent fixture SHA-256, rename, copy, nested move, download and deletion reconcile the file list (2200.966836ms)
+✔ sidebar A/B/A, folder Refresh, history, selection and context Download keep the exact bucket (104.116822ms)
+✔ slow bucket success and failure cannot overwrite a newer bucket or its saved location (112.679207ms)
+✔ genuine empty bucket and network/400/403 failures stay distinct and retry in place (123.406559ms)
+✔ Legacy listing envelopes retain folders, metadata and opaque continuation tokens (1.301389ms)
+✔ provider errors retain HTTP/code detail with secret and URL redaction (0.448749ms)
+✔ Refresh updates metadata and prunes deleted selections without account rediscovery (45.553708ms)
+✔ expired listing credentials show authorization detail and connection recovery can retry discovery (34.356054ms)
+✔ session invalidation clears the old bucket and ignores its delayed response (43.361571ms)
+✔ dual preview moves one loaded viewer between window and side without another read (34.286951ms)
+✔ side minimize, close, reopen, expand, resize keyboard, selection and saved settings work (63.510589ms)
+✔ side unsupported file metadata and Download fallback make no preview read (46.101197ms)
+✔ rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked (98.480333ms)
+✔ both modes render images PDF text video audio; side double click and previous/next share renderer (140.215193ms)
+✔ side preview failure remains local, retry works, and corrupt media shows Download (57.465973ms)
+✔ bucket changes and logout invalidate pending side preview including minimized content (71.042771ms)
+✔ pointer divider respects list/pane bounds and persists width; media cleanup revokes only owned URLs (41.180411ms)
+✔ truncation is explicit in shared preview metadata and survives mode changes (30.176921ms)
+✔ side preview stays usable through copy, rename, Refresh and deleted selection pruning (60.783243ms)
+✔ Window arrows skip unsupported files and folders, respect visible sort/filter, boundaries and editable controls (83.662821ms)
+✔ image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel (53.606873ms)
+✔ rapid lightbox arrows abort old reads, revoke late URLs and preserve latest image and mode (84.356722ms)
+✔ tour invitation declines once, remains optional, and manual menu restart resets all steps (60.004344ms)
+✔ every tour card has an X that exits everything immediately, preserving selection and session (218.21146ms)
+✔ tour recognizes completed bucket, selection, view, refresh and preview actions through actual UI handlers (93.903077ms)
+✔ tour completion and Escape clean up without cancelling active preview; no automatic resume (107.616797ms)
+✔ disconnected tour, missing files, narrow viewport and unavailable interactions always allow Skip and X (34.952407ms)
+✔ Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup (182.638764ms)
+✔ Test It blocks original deletion and cut through real toolbar handlers (32.917668ms)
+✔ Restart Test It confirms, replaces saved results, reopens exercise one and preserves files (40.978576ms)
+✔ Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder (158.887195ms)
+✔ Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It (98.127429ms)
+✔ parent breadcrumb observes completed navigation including root parent (44.049202ms)
+✔ parent breadcrumb observes completed navigation including nested click targets (55.332495ms)
+✔ breadcrumb grandparent and non-breadcrumb parent navigation do not pass parent exercise (103.544926ms)
+✔ image buttons await actual load, reject repeated load and error, then recognize next and previous (90.748463ms)
+✔ Test It same-folder Paste creates a distinct remotely verified copy without destination configuration (114.227922ms)
+✔ failed parent listing never completes breadcrumb exercise (44.995529ms)
+✔ Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline (170.799329ms)
+✔ production copy indicators survive List, Grid and refresh; original verifies automatically and ordinary R2 rename and keyboard movement succeed (154.318564ms)
+✔ ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/duplicate/delete/export sequence (319.726979ms)
+✔ Window Preview actual Previous then Next buttons register Next without a cached expected key (90.076012ms)
+✔ production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir (113.385194ms)
+✔ create-only folder Worker rejects marker races and backend rejects file/prefix collisions (2.736959ms)
+✔ ordinary GUI and embedded Worker move two Test Copies into a new folder (219.555341ms)
+✔ old Workers cannot silently accept create-only practice folders or trigger automatic provisioning (1.120403ms)
+✔ delayed Chrome completion resolves the original download operation with its ID (0.945127ms)
+✔ delayed Chrome interruption never counts as completed (0.385906ms)
+✔ source approval owns focus above guide, and context Copy highlights the file then menu item (81.332744ms)
+✔ Test It exercise 57 records delayed Chrome completion, guide exited: false (167.336026ms)
+✔ Test It exercise 57 records delayed Chrome completion, guide exited: true (172.07635ms)
+✔ partial ordinary multi-file Move preserves successful identity and the unresolved copy (158.6795ms)
+✔ compact launcher replaces destination form without exposing experimental GitHub controls (87.807123ms)
+✔ private WEBP preview reads nested keys without a Worker or background messaging (28.482956ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (0.979369ms)
+✔ concurrent expired requests refresh rotating credentials once (1.507971ms)
+✔ 401 refresh retries a private read and denied reads report failure (2.010796ms)
+✔ oversized preview stops without allocating an object URL (1.225903ms)
+✔ preview failure replaces spinner and download rejection ends progress (1.67798ms)
+✔ download reports delayed Chrome interruption and removes its listener (0.824143ms)
+✔ download exposes interruption occurring before onChanged registration (0.694946ms)
+✔ download completion is reported and an interruption racing the initial lookup cannot become success (0.900248ms)
+✔ 403 management read falls back to explicitly enabled public R2 domain for unusual keys (5.406627ms)
+✔ 403 does not fall back for private R2 buckets (1.329891ms)
+✔ unusual-key download uses enabled public URL only following a denied authenticated probe (1.074052ms)
+✔ click creates a visible window before network navigation; repeated clicks focus it (26.621488ms)
+✔ successful callback exchanges PKCE and verifies access before saving token (5.170568ms)
+✔ callback resumes after service worker restart from session state (4.492637ms)
+✔ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (1.703459ms)
+✔ state mismatch fails without token exchange and allows a fresh retry (2.446708ms)
+✔ denied consent and missing authorization code fail cleanly (2.953619ms)
+✔ closed popup releases attempt and stale window is replaced on next click (2.128976ms)
+✔ expired attempt clears secrets, closes popup, and permits retry (2.079941ms)
+✔ failed API verification never stores an access token (2.501422ms)
+✔ duplicate navigation events exchange a code only once (2.1518ms)
+✔ verification network stall aborts and releases the attempt (1.883232ms)
+✔ popup creation errors are returned instead of leaving an in-flight lock (1.517836ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (4.213854ms)
+✔ settings and worker observing the same callback exchange the code once across contexts (2.282429ms)
+✔ two settings contexts share one visible sign-in window (1.742688ms)
+✔ Worker deployments cannot overlap and a failed deployment releases the lock (1.130909ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (1.330552ms)
+✔ runtime adapter gates actual background messages by settings sender and Debug Mode without network (2.260336ms)
+✔ destination folder pages preserve parent prefix, immediate children and continuation (8.468731ms)
+✔ verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests (109.773607ms)
+✔ slow bucket loading does not block locations, Explorer, or connection refresh (39.864052ms)
+✔ an invalidated connection reply cannot replace a newer account view (38.541143ms)
+✔ Cloudflare 403 authentication error refreshes once and retries the read (23.562901ms)
+✔ permission-denied 403 does not renew credentials or repeat the request (1.156247ms)
+✔ expired credentials shared by settings and worker rotate once under the shared lock (2.837312ms)
+✔ invalid refresh grant preserves connection and requests reconnect without disconnect (1.372897ms)
+✔ transient renewal failure retains credentials and can recover on the next refresh (1.489764ms)
+✔ login token storage shares the refresh lock and clears reconnect state (0.823952ms)
+✖ real discovery, case, history, filters and validation are deterministic and honest (14.437732ms)
+✖ original case and proposal Markdown bytes are retained from pinned upstream (0.355741ms)
+✔ archived 0.1 semantic golden, unknown fields and inferred provenance survive JSON round trips (1.179963ms)
+✔ portable structural fixtures and frozen schema assertions match the lightweight evaluator (0.787126ms)
+✔ new unknown optional fields are retained without reinterpreting lifecycle or evidence (1.087503ms)
+✔ missing case, bad requests, unsupported operations/versions have stable sanitized errors (6.476252ms)
+✔ malformed JSON, non-UTF8, blank lines and truncated JSONL never yield partial query success (5.765392ms)
+✔ required fields, types, enum values, bounds and array uniqueness are actually checked (3.813886ms)
+✔ every record format version is rejected explicitly; missing versions are structural failures (1.767115ms)
+✔ duplicate case/event IDs and paths, mismatched case IDs and missing event links are not hidden (2.814347ms)
+✔ recorded chronology and exact physical sequence are validated; dates are never invented or sorted (2.334398ms)
+✔ deterministic list ordering and filter semantics do not depend on manifest order (1.375931ms)
+✔ source hash drift, missing anchors and absence are freshness warnings, not falsified historical claims (3.56653ms)
+✔ path traversal, absolute/Windows paths, NUL and escaping symlinks are rejected for records and evidence (3.554231ms)
+✔ internal symlinks work; directories, unavailable roots/files and oversized records fail deterministically (4.6194ms)
+✔ operation references resolve exactly; Forever mappings remain unknown rather than invented (1.650969ms)
+✔ source confirmation is scoped and requires proof; test pointers never imply test success (2.366597ms)
+✔ hypothesis revisions and counterevidence preserve earlier beliefs and latest projection (1.491827ms)
+✔ closure requires recorded automation and browser outcomes; reopening retains closure evidence (2.516084ms)
+✔ invalid hypothesis, outcome and lifecycle payloads cannot masquerade as verified results (2.365485ms)
+✔ immutable API snapshots avoid rescans and refresh only when a new reader is created (1.183629ms)
+✔ CLI adapter emits one JSON envelope, legible summaries and exact error/validation exits (18.354743ms)
+✔ actual CLI entry point works outside the checkout and exits 2 for invalid corpus validation (125.646208ms)
+✔ queries never modify the canonical corpus or cited historical evidence (5.562844ms)
+✔ explicit nested folder is sent intact and receipt uses actual target bucket and key (2.262178ms)
+✔ history uses explicit bucket/key rather than mistaking public assets route for storage folder (1.693634ms)
+✔ search previews retain result set and use each result account/bucket and exact key (1.250761ms)
+✔ history location opens exact folder and preview without scroll or focus jump (1.36196ms)
+✔ regression ratchet retains explicit debt and rejects new, renamed or changed failure types (0.874759ms)
+✔ incomplete, timed-out and malformed test executions cannot satisfy the gate (0.307357ms)
+✔ unified diagnostics discovers existing namespaces without advertising execution (2.353626ms)
+✔ project map reports current source and explicit coverage gaps without claiming total understanding (1.844674ms)
+✔ single entry point routes operation contracts, test plans, failures and absent evidence honestly (4.221165ms)
+✔ diagnostic CLI rejects unknown flags and malformed bundles without echoing secrets (45.398133ms)
+✔ verification report inspection is read-only, bounded and never certifies a release (0.573001ms)
+✔ download collision preserves originals and returns numbered key and URL (23.702261ms)
+✔ concurrent collision never overwrites or reports a successful download (0.89489ms)
+✔ remote download uses numbered key within requested folder (1.356792ms)
+✔ first collision starts at one and a different folder keeps the original name (5.08709ms)
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (24.920113ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (1.208016ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (0.82953ms)
+✔ missing per-file copy receipts cannot become a successful zero-file copy (1.449603ms)
+✔ forbidden Worker operations report HTTP status without automatic reprovision or replay (1.216459ms)
+✔ v5 preparation refuses unavailable connections instead of redeploying on network failure (1.186904ms)
+✔ conflict retry retains earlier failures rather than presenting partial move as success (1.173183ms)
+✔ incomplete or cyclic folder listings fail before mutation; exact repeated separators are preserved (0.958146ms)
+✔ Paste uses an explicit operation clipboard even when the global clipboard changes (0.734797ms)
+✔ empty clipboard and missing destination produce actionable feedback and no transfer (1.147484ms)
+✔ rejected transfer transport clears working status, preserves clipboard and never replays (0.822129ms)
+✔ directory conflict retry preserves its directory identity and destination root (0.658321ms)
+✔ Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes (63.463086ms)
+✔ current bucket remains available for sibling destinations and same-folder choice is disabled (13.862087ms)
+✔ folder pages append via More folders and closed menus ignore late replies (14.504843ms)
+✔ keyboard arrows navigate menus and Escape returns to parent without changing Explorer (7.522732ms)
+✔ failed lazy folder reads offer retry and never execute a transfer (7.064357ms)
+✔ Copy here is available immediately while child-folder listing is still pending (6.860777ms)
+✔ reopening the same destination reuses a bounded short-lived folder page cache (8.587641ms)
+✔ safe diagnostic fixture: missing-source (10.274554ms)
+✔ safe diagnostic fixture: wrong-key (1.458276ms)
+✔ safe diagnostic fixture: wrong-binding (1.517096ms)
+✔ safe diagnostic fixture: expired-authorization (0.836622ms)
+✔ safe diagnostic fixture: worker-version (1.001242ms)
+✔ safe diagnostic fixture: unsupported-endpoint (1.86866ms)
+✔ safe diagnostic fixture: network-interruption (0.689187ms)
+✔ safe diagnostic fixture: source-read (0.814778ms)
+✔ safe diagnostic fixture: destination-write (0.712704ms)
+✔ safe diagnostic fixture: ambiguous-timeout (0.726414ms)
+✔ safe diagnostic fixture: conflict (0.614695ms)
+✔ safe diagnostic fixture: verification-failed (0.722128ms)
+✔ safe diagnostic fixture: interrupted-move (0.514001ms)
+✔ safe diagnostic fixture: stale-ui (0.585349ms)
+✔ safe diagnostic fixture: cross-account (0.785984ms)
+✔ safe diagnostic fixture: concurrent-source-change (1.42123ms)
+✔ safe diagnostic fixture: nested-key (0.706534ms)
+✔ operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces (1.174575ms)
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (58.781873ms)
+✔ actual reported404 case remains open and separates reports, repository and deployed evidence (3.129085ms)
+✔ Debug inspector selects traces, copies ID, previews redacted bundle before download and clears safely (121.053098ms)
+✔ bridge shares local fingerprint context and keeps concurrent message IDs and parent chains separate (4.554241ms)
+✔ legacy Worker404 is marked as reported evidence rather than invented structured source telemetry (1.312004ms)
+✔ read-only probe button is Debug-only, sends captured file context once and presents redacted checks (40.845304ms)
+✔ message transport failures finish their trace without recording private error text (1.008242ms)
+✔ identity HMAC preserves exact keys, compares only equal scopes and exports no names or secrets (6.358493ms)
+✔ 404 is an observation; deterministic diagnosis compares API successes without inventing a root cause (2.435732ms)
+✔ same-scope key disagreement is confirmed while unrelated scopes cannot establish mismatch (1.194976ms)
+✔ bounded collector rejects malformed and oversized imports atomically, preserving prior observations (1.356241ms)
+✔ retention, event caps, disabled collection and restart interruption are explicit (1.298183ms)
+✔ portable agent API preserves evidence IDs and has no execution or network capabilities (0.690279ms)
+✔ menu actions surface synchronous and asynchronous errors (37.32895ms)
+✔ Copy confirms internal clipboard contents without copying file bytes or moving originals (0.995813ms)
+✔ Properties message reads exact control-plane metadata without preparing a Worker (3.883952ms)
+✔ operation feedback renders untrusted filenames/error text literally (12.063202ms)
+✔ clipboard publication is transactional and returns the exact captured selection (1.071218ms)
+✔ Move to never pastes a previous clipboard when the requested selection is rejected (0.805985ms)
+✔ background Paste retains its opened-menu destination and clipboard after navigation (6.156056ms)
+✔ right-click on Explorer home does not require a selected bucket (3.989784ms)
+✔ send records rejected transport through the existing diagnostic bridge and rethrows once (0.966028ms)
+✔ audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP (6.727374ms)
+✔ audit: inspect 16 MiB boundary checks actual streamed bytes; above metadata budget never reads body (88.573288ms)
+✔ audit: inspect rejects lying metadata once actual stream crosses budget (12.498755ms)
+✔ audit: ordinary copy, download and remote ingest do not inherit inspect/upload gates (2.404685ms)
+✔ audit: preview rejects above configured memory budget and text truncates independently (2.117117ms)
+✔ audit: exact UTF-8 key budget inclusive, path policy narrower than general R2 keys (0.325945ms)
+✔ explicit probe compares provider, API, direct and destination-Worker paths without writes or private export (24.522807ms)
+✔ probe flags incorrect provider bindings and routing configuration; proxy 404 never means automatic missing-object repair (2.865034ms)
+✔ legacy Worker lacks proxy capability explicitly; no speculative transfer or deployment occurs (2.231291ms)
+✔ probe requires Debug, exact bounded file input and configured workers.dev endpoints (1.227416ms)
+✔ probe stops scheduling reads after clear or disable and rejects concurrent invocations (3.108374ms)
+✔ diagnosis does not confuse different files or descendants with identity drift; explicit same-item mismatch is detected (1.615114ms)
+✔ expired diagnoses are unavailable; unknown smoke and connectors cannot imply implemented support (0.52656ms)
+✔ provisioning includes explicit public Worker fetch compatibility without weakening verified transfers (0.648145ms)
+✔ a multi-file 404 cannot borrow an unrelated preview success to imply path divergence (1.770801ms)
+✔ new deployment reads provider routing settings before reporting ready or creating prefix objects (2.241297ms)
+✔ one semantic mapping colors pending, completed, error, mixed and cancelled without trusting message wording (43.352645ms)
+✔ older operation callbacks, stale detail messages and old expiry timers cannot overwrite new feedback (6.69215ms)
+✔ download acceptance stays neutral; only native completion turns green and user cancellation stays neutral (6.598068ms)
+✔ late completion of a previous download leaves a new active download neutral (5.501651ms)
+✔ partial Copy and Delete receipts use amber rather than success or an entirely failed operation (6.710859ms)
+✔ rendered colors have sufficient text contrast for the provided dark and light surface palettes (0.359867ms)
+✔ late folder listing cannot repaint the newer folder or its status (6.962351ms)
+✔ same-bucket transfers stream objects and preserve metadata (29.534876ms)
+✔ cross-bucket transfers stay Worker-to-Worker and keep-both resolves conflicts (5.153051ms)
+✔ folder markers, properties, and batched deletes are real R2 operations (3.133702ms)
+✔ private Explorer reads require auth while explicitly enabled public assets still work (2.39472ms)
+✔ short-lived private preview URLs support ranges for text, PDF, and GLB (6.674734ms)
+✔ ZIP and CBZ archives are listed as virtual folders and selected entries extract safely (4.619821ms)
+✔ archive traversal and malformed archives are rejected (1.873748ms)
+✔ management keeps exact Unicode, punctuation and repeated-slash keys; rename preserves bytes (2.292304ms)
+✔ conditional copies preserve racing destinations and failed verification never reports copied (2.562404ms)
+✔ move deletion rejects changed sources and changed destinations, then confirms exact deletion (2.115295ms)
+✔ large streamed fixture and metadata survive local copy; capabilities reject legacy readiness (256.247498ms)
+✔ archive extraction conflicts preserve existing destination content (2.512198ms)
+✔ background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content (7.388368ms)
+✔ background rejects incomplete/incorrect destination receipts and never deletes original (3.29027ms)
+✔ background folder copy/rename uses exact descendants; explicit conflicts preserve both sides (4.510605ms)
+✔ instrumented cross-Worker copy records exact read/write/verify timeline with no raw keys or seed (12.162354ms)
+✔ wrong source binding fixture produces structured 404 evidence and mismatch without claiming a production cause (6.281056ms)
+✔ read-only source proxy uses HEAD, rejects redirects and never writes/deletes or reads source bytes (1.315279ms)
+✔ directory collision is reported before any child is merged or source is deleted (2.342891ms)
+✔ directory Keep both preserves the entire existing tree and uses one unused sibling for all incoming children (3.706122ms)
+✔ directory Keep both move verifies the new sibling before deleting exact source children (3.808698ms)
+✔ cross-bucket settings drift fails before transfer/deletion with a structured diagnostic code (7.268736ms)
+✔ directory preflight fails closed on incomplete listings and bounds sibling allocation (2.457435ms)
+✔ remote ingest exact-folder capability preserves Unicode, reserved characters and repeated separators (2.310251ms)
+✔ create-only folder marker cannot claim a concurrent existing marker as newly created (1.22436ms)
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (57.081909ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (17.060308ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (7.741886ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (22.196622ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (6.87621ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (13.889369ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (13.914886ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (12.121181ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (9.711609ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (162.430391ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (7.636516ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (15.571073ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (10.084586ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (17.298289ms)
+✔ permission failures remain explained with no false success or leaked provider errors (6.195295ms)
+✔ switching files while enabling cannot reopen the old file or overwrite current choices (7.18544ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (6.510975ms)
+✔ all existing bug sections are indexed and native incidents retain separate provenance (46.235405ms)
+✔ source assessments never close browser-pending issues and stale evidence invalidates the assessment (0.364234ms)
+✔ inventory supports bounded filtering and stable pagination; unknown identifiers and filters fail explicitly (42.993799ms)
+✔ malformed inventory sources do not become a clean empty inventory; unsafe paths are rejected (0.46074ms)
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (14.322357ms)
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (71.311814ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (18.513126ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (13.523863ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (14.153108ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (11.484774ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (31.485449ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (14.376679ms)
+✔ keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries (50.971132ms)
+✔ failed persistence restores original array and DOM order (8.479396ms)
+✔ pointer drop reorders at visible insertion marker and cancellation leaves order unchanged (10.841645ms)
+✔ native Simple context menu follows saved section and additional destination order (14.00905ms)
+✔ drag continues outside grip and gaps are valid insertion targets (8.08649ms)
+✔ Escape cancels lifted drag without saving or leaving compact cards behind (6.73188ms)
+✔ saved moves retain focus so repeated arrow keys move the same branch (6.189266ms)
+✔ selection never fills the new-name field, and preserves an independently typed draft (80.963442ms)
+✔ Add child and Create use the exact parent path; actual dropdown children stay scoped (20.574606ms)
+✔ hiding a nested menu preserves its hierarchy and failed creation preserves the draft (15.968167ms)
+✔ native nested menu targets every verified depth and offers Send here for parents (1.238233ms)
+✔ legacy paths migrate without modifying old configuration or writing remote folders (9.451166ms)
+✔ nested saving retains provisioned worker credentials and new Explorer profiles through autosave (1.853715ms)
+✔ one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN (1.588085ms)
+✔ settings mode checkbox saves only the active mode and keeps both destination configurations (7.206657ms)
+✔ native menu mode checkbox changes the same saved setting without downloading anything (0.930778ms)
+✔ DBG-001: selecting a new deep child enables its next child without bucket reselection (13.828641ms)
+✔ DBG-001: create-new folder enables repeated + Child through five levels (25.363737ms)
+✔ DBG-001: selecting existing child enables + Child after the async save lock releases (11.730028ms)
+✔ reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths (14.412122ms)
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (9.778272ms)
+✔ desktop notifications require explicit opt-in and reflect subsequent changes (1.513469ms)
+✔ notification storage failures do not fail a completed transfer (0.748887ms)
+✔ large roll-ups stay bounded, increase exactly and slow down across the last three single steps (0.973014ms)
+✔ completion clicks once after landing; restart cancels obsolete completion and callbacks (0.879168ms)
+✔ reduced motion, unchanged values and counter resets settle without animation or sound (3.834586ms)
+✔ closing during a roll cancels all remaining updates and sound (0.183383ms)
+✔ debug-only sections start hidden and toggle exists only inside header disclosure (234.087147ms)
+✔ normal mode has inset repair and Debug Mode restores separate controls (161.935808ms)
+✔ normal primary setup does not invoke the independent inset repair (45.952303ms)
+✔ R2 activation is an actionable neutral step, permission failures remain errors (30.956418ms)
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.607183ms)
+✔ normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating (51.925714ms)
+✔ activation stays in connection header; Storage appears only after R2 is available (40.367441ms)
+✔ settings disclosure dismisses outside and Escape restores focus (23.566849ms)
+✔ bucket action keeps its name during setup and blocks duplicate clicks (33.091749ms)
+✔ Beta and Debug are independent, persist separate keys, and do not mutate profiles (82.435101ms)
+✔ cached configuration stays amber until explicit verification, and failures allow retry (26.507923ms)
+✔ newer bucket loads win even across A-B-A account switches (20.400056ms)
+✔ persisted mode combinations restore independently, with Beta off when absent (92.614763ms)
+✔ a late repair cannot overwrite a newer bucket list or unlock its active operation (27.497344ms)
+✔ disabling Debug exits practice without moving focus into hidden diagnostics (25.145339ms)
+✔ primary bucket action opens Explorer at its root after setup; cached selection does not require redeployment (54.279611ms)
+✔ repair, failed setup, refreshed lists and newer Explorer interactions never redirect Explorer (123.229333ms)
+✔ missing inventory is refreshed before navigation and navigation failure does not mark a verified bucket broken (23.591838ms)
+✔ bucket navigation collapses expansion and focuses Explorer before measuring its top (52.679048ms)
+✔ green zero-delivery state reads READY! and Dashboard opens the existing options page (80.334965ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (19.895115ms)
+✔ failed or canceled login stays red and retryable without resetting the total (11.845466ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (21.179039ms)
+✔ late count response cannot overwrite a newer storage count (11.685668ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (10.59927ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (19.487195ms)
+✔ background accepts a discovered unsaved bucket only after read-only existence validation (2.187941ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (14.62467ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (18.856409ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (10.015548ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (10.300647ms)
+✔ unavailable audio never prevents reaching or saving the verified total (9.749477ms)
+✔ background ingest honors explicit root/deep prefixes and preserves the legacy category route (5.312269ms)
+✔ legacy Worker cannot silently normalize an exact destination before capability verification (2.731221ms)
+✔ all address combinations stay contextual and encode full literal object paths (41.393929ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (19.437118ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (6.559776ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (1.195437ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (2.017307ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (14.053578ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (10.464922ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (1.387193ms)
+✔ public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes (2.050589ms)
+✔ read retry never crosses a newly authorized session (21.617386ms)
+✔ safe reads honor bounded Retry-After; writes are never replayed on 503 (6.206411ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (26.519802ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (1.923853ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (0.476296ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (3.244744ms)
+✔ malformed successful listings cannot masquerade as empty buckets (4.662064ms)
+✔ progressive UI retains selection, emits early results and rejects late query responses (3.472326ms)
+✔ local upload does not replay an ambiguous write or write after an unknown preflight (3.043693ms)
+✔ central discovery is deterministic and versions and authority remain separate (1.969604ms)
+✖ real vertical contract resolves intent, three upload invariants, handlers, current source and regression (39.383632ms)
+✔ pagination is sorted, exhaustive and rejects invalid limits or depths (61.276083ms)
+✔ independent DFS agrees with reader bidirectional traversal on cyclic portable golden (4.345114ms)
+✔ reverse direction and supporting/counterevidence remain explicit (58.473293ms)
+✔ exact debug events, unknown optional fields and original provenance survive semantic evidence queries (30.501675ms)
+✔ duplicate IDs, endpoints, aliases, ownership, coverage and forged proof fail closed (17.960175ms)
+✔ traversal attempts, secret-like content and symlinks cannot expose private files (18.143969ms)
+✔ changed bytes and moved anchors yield stale warnings; cached snapshots stay pinned (1.910652ms)
+✔ real change impact is possible and unknown changes never get invented proof (53.363966ms)
+✖ full finite public coverage inventory resolves strata and all canonical case links (28.753134ms)
+✔ lesson is a portable proposal validated by actual upstream reference API, without acceptance (55.43148ms)
+✔ missing normative references fail independent upstream validation and future fields survive (27.938335ms)
+✔ archived graph/golden remains readable; normalization preserves bytes, optional fields and stable identity across rewrite (1.591079ms)
+✔ aliases resolve deterministically, deprecation metadata stays visible and no guessed split (0.738231ms)
+✔ oversized models and graph depths are bounded and errors do not echo unsafe input (34.703278ms)
+✔ workflow is dry-run by default and arbitrary commands cannot be supplied (104.128034ms)
+✔ DOM observer requires independent consent and reads structure only, not values/storage (0.369662ms)
+✔ CLI works from outside checkout, emits one JSON result and rejects malformed flags (177.90752ms)
+✔ innocent internal symlink aliases cannot read excluded credential paths (1.309613ms)
+✔ aggregate frozen-debug corpus has a semantic-reader memory budget before delegation (20.048642ms)
+✔ scoped semantic reads accept native nested paths while retaining containment and exclusions (1.858271ms)
+✔ archived hostile fixtures produce stable errors on the released decoder (4.396323ms)
+✔ replacement relational reader preserves directed depth semantics across rewrite fixtures (7.00295ms)
+✔ replacement evaluation remains partial when browser evidence is absent; failure dominates (0.700643ms)
+✔ large reachable graph stops at visited budget and pagination never hides truncation (35.244828ms)
+✔ frozen APIs/fixtures stay byte-identical and all original incident journal prefixes survive (1.186561ms)
+✔ vendored actual upstream sources and schemas retain pinned hashes (0.492237ms)
+✔ mascot idles, returns on nested scrolling, and hides when page is hidden (44.086309ms)
+✔ tab favicon and toolbar icons point to correctly sized packaged PNGs (4.864003ms)
+✔ Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders (63.362363ms)
+✔ Simple: selecting existing folder does not populate creation draft (11.234104ms)
+✔ Simple: new directory is created under the exact parent only after Create (8.290425ms)
+✔ reconnect refresh retries Simple lookups without clearing drafts or saved selections (12.198948ms)
+✔ Simple: valid names including zero and f create at bucket root (46.150967ms)
+✔ Simple: invalid path segments never send creation requests (34.663238ms)
+✔ Simple: stalled creation releases button and explains uncertain outcome (6.889148ms)
+✔ Simple: refreshing during creation cannot leave a permanent Creating status (9.342161ms)
+✔ Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (2.460414ms)
+✔ Simple blank labels honor bucket fallback without adding a submenu or changing explicit names (1.524073ms)
+✔ Menu Label is default for existing profiles without a saved preference (0.671659ms)
+✔ explicit Simple label wins over the lowest-directory fallback (0.693733ms)
+✔ blank and whitespace Simple labels retain automatic naming under every fallback setting (2.178246ms)
+✔ guided simulation waits for the correct controls, completes, and settles (120.375218ms)
+✔ reset and exit reject old callbacks even if timer cancellation loses a race (46.445413ms)
+✔ simulation executes without Chrome, fetch, messaging, profiles, or authentication (39.303944ms)
+✔ simulation lives only in diagnostics and cannot start while Debug is hidden (27.158075ms)
+✔ pop-out fits the visible window and Escape returns focus without cloud work (29.165744ms)
+✔ initial cached attention stays steady; attention after a user operation is marked fresh (20.639841ms)
+✔ Worker verification requires the actual REDOWN service, secret and storage binding (0.65204ms)
+✔ syntax checks parse files under paths with spaces without executing their code or requiring npm.cmd (77.711395ms)
+✔ syntax command refuses caller-selected targets (32.99029ms)
+✔ context-menu Copy uses scoped approved identities, survives synthetic forwarding and leaves Explorer clipboard usable across navigation (114.578269ms)
+✔ same key in another bucket and mixed or wrong selections cannot satisfy source Copy (77.550211ms)
+✔ Ctrl+C and Ctrl+V retain keyboard evidence through toolbar forwarding (31.352923ms)
+✔ 21–25 progress only after API read-back, preserve original, and preview the same owned copy (40.313144ms)
+✔ missing destinations, existing user filenames, and provider failure never pass Paste or establish ownership (56.823158ms)
+✔ ordinary Explorer Copy still fills clipboard with Test It stopped (19.783271ms)
+✔ context-menu Paste and Ctrl+V complete only after verified API evidence (53.62975ms)
+✔ Restart Test It UI after completed starts exercise 1 only after persistence (28.945579ms)
+✔ Restart Test It UI after clipboard starts exercise 1 only after persistence (20.475171ms)
+✔ Restart Test It UI after verified starts exercise 1 only after persistence (34.194221ms)
+✔ Restart Test It UI after uncertain starts exercise 1 only after persistence (35.252343ms)
+✔ Restart UI storage failure does not report success or replace previous session (37.925441ms)
+✔ Export keeps fresh results and recovery evidence in separate JSON files (27.640868ms)
+✔ Retry starts fresh evidence without replaying the previous verified Paste or inventing keyboard invocation (41.780623ms)
+✔ Rename Back retains the verified name after failure and recognizes a successful prerequisite retry (32.304498ms)
+✔ floating history exposes all 60 questions, review is inert, observation retry replaces result and returns to origin (49.5528ms)
+✔ historical real API rename retry replaces only its question, uses current copy location and exports authoritative results (38.57668ms)
+✔ pending historical rename remains associated with its attempt: navigate (36.71262ms)
+✔ pending historical rename remains associated with its attempt: cancel (33.770352ms)
+✔ pending historical rename remains associated with its attempt: new retry (38.454213ms)
+✔ pending historical rename remains associated with its attempt: close (30.343972ms)
+✔ late preview event from a superseded attempt cannot satisfy another preview question (28.38011ms)
+✔ reload restores reviewed question, highest, origin, revised result and unfinished retry identity (56.776196ms)
+✔ repeated full history navigation creates no remote inspections, attempt growth or extra guide cards (1056.294947ms)
+ℹ Local jsdom milliseconds per 60 history jumps: 269.1, 255.5, 263.2, 252.6. No browser latency claim.
+✔ canceling a historical retry retains a previous pass and Previous is disabled only at question one (178.59101ms)
+✔ direct question jump 60 → 3, full visited set and future gate (0.834484ms)
+✔ direct question jump 55 → 26, full visited set and future gate (0.117069ms)
+✔ direct question jump 30 → 1, full visited set and future gate (0.138612ms)
+✔ 59 Previous actions reach question one without altering results, copies or count; multiple jumps return directly (1.298573ms)
+✔ verified retries replace one authoritative result; counts ignore attempts, canceled work preserves prior pass (2.679752ms)
+✔ old callbacks cannot replace a newer attempt, and active draft/navigation survive JSON reload (0.554257ms)
+✔ exactly sixty practical exercises have unique IDs and real target selectors (1.575906ms)
+✔ copy first, preserve source, track ancestry through rename/move/copy and safely delete (10.359317ms)
+✔ originals, lookalikes, user destinations and mixed multi-selections never become destructive targets (2.416099ms)
+✔ same bytes at the same filename do not restore ownership after an external replacement (1.168664ms)
+✔ unconfirmed writes persist a lock, block dependent writes and are not replayed on Retry (1.058947ms)
+✔ storage failure prevents dispatch and session resume preserves copy identities (1.306725ms)
+✔ unrelated operation classes and folder recursion are blocked during practice (0.344576ms)
+✔ real adapter without atomic ownership support blocks all destructive practice operations (0.442606ms)
+✔ restart replaces results and session ID, preserves ownership, and never mutates remote files (2.557835ms)
+✔ restart archives uncertain operations and old results when reconciliation cannot prove safety (0.907896ms)
+✔ restart storage failure keeps current session and results (0.342873ms)
+✔ restart refuses an operation still in flight without resetting results (0.332128ms)
+✔ no destination setup: same-folder Keep Both and arbitrary folders work without creating folders (1.815783ms)
+✔ cross-bucket destination requires an explicit adapter capability (0.354101ms)
+✔ restart preserves provenance but old-session objects cannot be destructively modified in the fresh session (0.79227ms)
+✔ restart after interrupted rename retains exact evidence and changes no cloud objects (1.19834ms)
+✔ restart after interrupted move retains exact evidence and changes no cloud objects (1.59823ms)
+✔ restart after interrupted delete retains exact evidence and changes no cloud objects (1.101442ms)
+✔ uncertain destination reads are archived, no retry occurs, and old destinations stay reserved (1.953162ms)
+✔ recovery survives reload, repeated restart, ordinary saves and attempted old-object deletion (1.293855ms)
+✔ failed archive persistence preserves pending, ownership and old saved results; retry succeeds (1.48048ms)
+✔ mutations during restart reconciliation are blocked even with practice temporarily inactive (6.887716ms)
+✔ restart preserves uncertain destination evidence when read-only stat fails (0.74001ms)
+✔ capable adapter cross-bucket copy verifies exact destination while unrelated remote objects stay unowned (0.774403ms)
+✔ operation-specific contracts allow rename independently of move/delete and receive exact ownership evidence (2.336457ms)
+✔ terminal copy receipt reconciles actual completed state without replay (1.524788ms)
+✔ terminal move receipt reconciles actual completed state without replay (1.297421ms)
+✔ terminal rename receipt reconciles actual completed state without replay (1.204159ms)
+✔ terminal delete receipt reconciles actual completed state without replay (1.332615ms)
+✔ unknown write quarantines only involved objects, permits unrelated safe work, and survives restart (3.618875ms)
+✔ absent destination is not proof that a dispatched unknown write has stopped (0.522047ms)
+✔ required sequence preserves logical identity, hashes and original in a capable in-memory provider (6.389946ms)
+✔ terminal failed operation reconciles unchanged source and absent destination without claiming success (0.749124ms)
+✔ provider condition rejects source replacement after client checks for rename (0.914135ms)
+✔ provider condition rejects source replacement after client checks for move (0.914597ms)
+✔ provider condition rejects source replacement after client checks for delete (0.897451ms)
+✔ provider destination condition preserves a user object appearing after the destination check (0.942459ms)
+✔ new folders have separate journals, reject collisions, retain exercise, and never own user contents (1.324232ms)
+✔ two independently verified copies move into a newly created folder in a conditioned memory provider (4.186732ms)
+✔ ordinary API batch records first move independently, rejects second ownership race, and retries only incomplete file (2.342847ms)
+✔ GUI progress snapshots coalesce without delaying required mutation journals (0.694541ms)
+✔ new folder journal must persist before dispatch; failed persistence cannot create a folder (0.225655ms)
+✔ ordinary supported contracts without atomic deletion fields allow disposable copy mutations (2.321975ms)
+✔ drop-up reuses unique action buttons, dismisses, and supports keyboard focus without running actions (98.092955ms)
+✔ only gripper moves Test It, pointer offset and step position survive, resize clamps and controls work (57.111596ms)
+✔ Tour has no gripper by default (17.915632ms)
+✔ corner nw resizes independently of grip, clamps viewport and preserves dimensions (29.110265ms)
+✔ corner ne resizes independently of grip, clamps viewport and preserves dimensions (25.53134ms)
+✔ corner sw resizes independently of grip, clamps viewport and preserves dimensions (23.23899ms)
+✔ corner se resizes independently of grip, clamps viewport and preserves dimensions (16.891359ms)
+✔ fullscreen preview bounds cannot shrink Test It and narrow viewport keeps panel dimensions usable (33.634732ms)
+✔ guide follows actual modal opening order rather than HTML order and restores the prior modal (22.716091ms)
+✔ sixty transitions and repeated reopen cycles retain a fixed guide listener set and ignore row mutations (138.968641ms)
+✔ pointer movement uses cached geometry without repeated placement reads (16.860613ms)
+✔ success and failure flash twice, retain alpha and restore exact original art and title (43.838891ms)
+✔ a newer result cancels an old flash and only the newest restores the icon (24.860056ms)
+✔ cosmetic action API failures never reject transfers and still attempt restoration (3.276723ms)
+✔ new installations start at zero and retained history migrates exactly once (3.050868ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (9.094675ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (2.402378ms)
+✔ large counts preserve integer precision and invalid increments are rejected (0.975329ms)
+✔ recording a successful retry retains the previous history cleanup contract (0.811849ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (0.659197ms)
+✔ BUG-014: selecting an existing child does not fill the new-folder input or create a directory (71.853533ms)
+✔ BUG-013: right-side root lists only immediate folders from the selected left bucket (13.520923ms)
+✔ BUG-013: stale earlier bucket results cannot overwrite newly selected bucket (10.678033ms)
+✔ DBG-003 child requests released after bucket switch cannot contaminate current shared cache (76.111534ms)
+✔ DBG-003 late profile completion cannot alter the new bucket view (12.845912ms)
+✔ DBG-003 late creation completion cannot alter the new bucket view (10.215217ms)
+ℹ tests 562
+ℹ suites 0
+ℹ pass 552
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27031.065138
+
+✖ failing tests:
+
+test at tests/agent-api.test.mjs:14:1
+✖ offline discovery advertises only implemented operations and distinct versions (15.887884ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'stale' !== 'current'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/agent-api.test.mjs:16:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'stale',
+    expected: 'current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/agent-api.test.mjs:96:1
+✖ catalog IDs, evidence labels, source hashes and references are internally consistent (12.5112ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     code: 'stale-source',
+  +     path: 'README.md'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'bugs/README.md'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/background.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/cloudflare-api.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/cloudflare-auth.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/manifest.json'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/nested-menu-editor.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/options.html'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/options.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'extension/popup.js'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'package-lock.json'
+  +   },
+  +   {
+  +     code: 'stale-source',
+  +     path: 'package.json'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/manifest.json',
+  +     symbol: '"service_worker"'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'const WORKER_SOURCE'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function createBucket'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'function simpleBucketCreator'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: '$("create-bucket").addEventListener'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function rootRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function createExplorerFolder'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function callBucketWorker'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'body.action === "ensurePrefixes"'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'function beginNewFolder'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function folderRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/explorer-worker.test.mjs',
+  +     symbol: 'folder markers, properties, and batched deletes are real R2 operations'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listFolderChildren'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listObjectsPage'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function fetchUploadBuilderChildren'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/nested-menu-editor.js',
+  +     symbol: 'function folderRow'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/nested-locations.test.mjs',
+  +     symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'chrome.contextMenus.onClicked.addListener'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function ingestCloudflareAtPrefix'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function checkedFetch'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'const WORKER_SOURCE'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/nested-locations.test.mjs',
+  +     symbol: 'native nested menu targets every verified depth and offers Send here for parents'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function goLocation'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function browseWorkspace'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function listObjectsPage'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/cloudflare-api.js',
+  +     symbol: 'async function preview'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'tests/cloudflare-files.test.mjs',
+  +     symbol: 'private WEBP preview reads nested keys without a Worker or background messaging'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function uploadLocalFiles'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function ensureUploadProfile'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function loadUploadLocations'
+  +   },
+  +   {
+  +     code: 'stale-reference',
+  +     path: 'extension/background.js',
+  +     symbol: 'request.headers.get("x-redown-action") === "upload-local"'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/agent-api.test.mjs:98:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'stale-source', path: 'README.md' }, { code: 'stale-source', path: 'bugs/README.md' }, { code: 'stale-source', path: 'extension/background.js' }, { code: 'stale-source', path: 'extension/cloudflare-api.js' }, { code: 'stale-source', path: 'extension/cloudflare-auth.js' }, { code: 'stale-source', path: 'extension/manifest.json' }, { code: 'stale-source', path: 'extension/nested-menu-editor.js' }, { code: 'stale-source', path: 'extension/options.html' }, { code: 'stale-source', path: 'extension/options.js' }, { code: 'stale-source', path: 'extension/popup.js' }, { code: 'stale-source', path: 'package-lock.json' }, { code: 'stale-source', path: 'package.json' }, { code: 'stale-reference', path: 'extension/manifest.json', symbol: '"service_worker"' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'const WORKER_SOURCE' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function createBucket' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'function simpleBucketCreator' }, { code: 'stale-reference', path: 'extension/options.js', symbol: '$("create-bucket").addEventListener' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function rootRow' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function createExplorerFolder' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function callBucketWorker' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'body.action === "ensurePrefixes"' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'function beginNewFolder' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function folderRow' }, { code: 'stale-reference', path: 'tests/explorer-worker.test.mjs', symbol: 'folder markers, properties, and batched deletes are real R2 operations' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listFolderChildren' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listObjectsPage' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function fetchUploadBuilderChildren' }, { code: 'stale-reference', path: 'extension/nested-menu-editor.js', symbol: 'function folderRow' }, { code: 'stale-reference', path: 'tests/nested-locations.test.mjs', symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'chrome.contextMenus.onClicked.addListener' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function ingestCloudflareAtPrefix' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function checkedFetch' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'const WORKER_SOURCE' }, { code: 'stale-reference', path: 'tests/nested-locations.test.mjs', symbol: 'native nested menu targets every verified depth and offers Send here for parents' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function goLocation' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function browseWorkspace' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'async function listObjectsPage' }, { code: 'stale-reference', path: 'extension/cloudflare-api.js', symbol: 'async function preview' }, { code: 'stale-reference', path: 'tests/cloudflare-files.test.mjs', symbol: 'private WEBP preview reads nested keys without a Worker or background messaging' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function uploadLocalFiles' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function ensureUploadProfile' }, { code: 'stale-reference', path: 'extension/options.js', symbol: 'async function loadUploadLocations' }, { code: 'stale-reference', path: 'extension/background.js', symbol: 'request.headers.get("x-redown-action") === "upload-local"' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/debug-api.test.mjs:45:1
+✖ real discovery, case, history, filters and validation are deterministic and honest (14.437732ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   caseCount: 3,
+  -   caseCount: 1,
+      errors: [],
+  +   eventCount: 20,
+  -   eventCount: 9,
+      valid: true,
+  +   warnings: [
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**Agent API M0/M1 audit, subsequently merged:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**Current conclusion:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**DOM-preservation patches:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '**User symptom:**'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: '03efcc07358f64970d6158831884c2d1431ebd66'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: 'Additional code risks; separate investigation required'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md',
+  +       symbol: 'Minimal reproduction and tests to add'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/background.js',
+  +       symbol: 'async function listFolderChildren'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/background.js',
+  +       symbol: 'function addNestedLocations'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'M.setLocation(node,select.value)'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'add.disabled=!parentReady || !node.ready'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'async function run'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'el.disabled=previous[index]'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'function folderRow'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/nested-menu-editor.js',
+  +       symbol: 'node.ready=Boolean(node.name) && known.includes(node.name)'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'extension/options.js',
+  +       symbol: 'Guard the shared cache'
+  +     },
+  +     {
+  +       code: 'stale-reference',
+  +       path: 'tests/nested-locations.test.mjs',
+  +       symbol: 'Add child and Create use the exact parent path; actual dropdown children stay scoped'
+  +     }
+  +   ]
+  -   warnings: []
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/debug-api.test.mjs:53:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      valid: true,
+      errors: [],
+      warnings: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      caseCount: 3,
+      eventCount: 20
+    },
+    expected: { valid: true, errors: [], warnings: [], caseCount: 1, eventCount: 9 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/debug-api.test.mjs:80:1
+✖ original case and proposal Markdown bytes are retained from pinned upstream (0.355741ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'a4e3b488a669bc7d13956f315e9ca5fef074d935'
+  - 'ff3a22e9107292da01985e390ebe0b19eaf0eed3'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/debug-api.test.mjs:81:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'a4e3b488a669bc7d13956f315e9ca5fef074d935',
+    expected: 'ff3a22e9107292da01985e390ebe0b19eaf0eed3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (58.781873ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function showExplorerMenu('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'const goPage=async'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'runExplorerSearch'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type==="cfSearchStart"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'selectExplorerItem'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showWorkspacePreview'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setWorkspacePreviewLightbox'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDownload'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerUploadFiles'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginExplorerRename'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfRenameEntry"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'renameExplorerEntry'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'deleteSelection'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfDeleteObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'deleteExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginNewFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfCreateFolder"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'createExplorerFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showProperties'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjectProperties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'assetCorsControl'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPublicAddresses"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'bucketPublicAddresses'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function enableBucketPublicAccess('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setExplorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'loadExplorerInventory'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfBuckets"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listBuckets'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function loginRequest('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/popup.js',
+  +     symbol: 'async function followLogin('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'ensurePrepared'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPrepareBucket"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'preparedProfile'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'openArchive'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfArchiveEntries"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'callBucketWorker'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-objects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-preview"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-menu"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-properties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-operation"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-status"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspaceTarget'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePrefix'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerSelected'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerNextCursor'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePreviewRequestId'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'presetLocationCache'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDestinationMenus'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerOperation'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/explorer-diagnostic-fixtures.test.mjs:18:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function showExplorerMenu(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'const goPage=async' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'runExplorerSearch' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type==="cfSearchStart"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'selectExplorerItem' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showWorkspacePreview' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setWorkspacePreviewLightbox' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDownload' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerUploadFiles' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginExplorerRename' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfRenameEntry"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'renameExplorerEntry' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'deleteSelection' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfDeleteObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'deleteExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginNewFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfCreateFolder"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'createExplorerFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showProperties' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjectProperties"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'assetCorsControl' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPublicAddresses"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'bucketPublicAddresses' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function enableBucketPublicAccess(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setExplorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'loadExplorerInventory' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfBuckets"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listBuckets' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'async function loginRequest(' }, { code: 'SOURCE_CHANGED', path: 'extension/popup.js', symbol: 'async function followLogin(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'ensurePrepared' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPrepareBucket"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'preparedProfile' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'openArchive' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfArchiveEntries"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'callBucketWorker' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-objects"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-preview"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-menu"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-properties"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-operation"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-status"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspaceTarget' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePrefix' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerSelected' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerNextCursor' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePreviewRequestId' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'presetLocationCache' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDestinationMenus' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerOperation' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/issue-inventory.test.mjs:31:1
+✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (14.322357ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(menu)
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/issue-inventory.test.mjs:32:182)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/nested-locations.test.mjs:225:1
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (9.778272ms)
+  TypeError: Cannot read properties of null (reading 'dispatchEvent')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/nested-locations.test.mjs:229:50)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/options-debug-display.test.mjs:90:1
+✖ successful provisioning refreshes destination editors and inventory before reporting ready (1.607183ms)
+  TypeError: Cannot read properties of undefined (reading 'ok')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/options-debug-display.test.mjs:101:77)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/semantic-api.test.mjs:21:1
+✖ real vertical contract resolves intent, three upload invariants, handlers, current source and regression (39.383632ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'stale' !== 'current'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/semantic-api.test.mjs:22:130)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'stale',
+    expected: 'current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/semantic-api.test.mjs:71:1
+✖ full finite public coverage inventory resolves strata and all canonical case links (28.753134ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1060 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/semantic-api.test.mjs:72:111)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1060,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

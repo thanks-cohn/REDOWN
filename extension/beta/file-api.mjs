@@ -12,7 +12,7 @@ export function name(value) {
   key(value);if(value!==value.trim())throw Error('Leading or trailing spaces in new names are not supported by the existing provider route.');if(value.includes('/') || !value.trim())throw Error('Enter one file or folder name, without slashes.');return value;
 }
 export function entry(value) { return {key:key(value.key),folder:value.folder===true,displayName:value.displayName}; }
-const methods=['connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry','inspect'];
+const methods=['listRaw','readStream','connectionStatus','connect','disconnect','accounts','buckets','list','stat','upload','download','mkdir','copy','move','rename','delete','remoteIngest','preview','publicUrls','createBucket','profiles','prepareBucket','transferHistory','archiveEntries','extractArchiveEntry','inspect'];
 export function createFileApi(adapter) {
   let preferences={},policy=null;
   const api={version:1,crossBucketCopy:adapter.crossBucketCopy===true,conditionalPracticeMutations:adapter.conditionalPracticeMutations===true,practiceMutations:Object.freeze({...adapter.practiceMutations}),capabilities:Object.freeze(methods.filter(method=>typeof adapter[method]==='function')),

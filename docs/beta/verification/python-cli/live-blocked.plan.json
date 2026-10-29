@@ -1,0 +1,62 @@
+{
+  "provider": "cloudflare-r2",
+  "accountId": "NOT_CONFIGURED",
+  "bucketName": "NOT_CONFIGURED",
+  "destination": "redown-test-lab/live-blocked/",
+  "corpus": "/workspace/REDOWN/test-fixtures/real-corpus",
+  "files": [
+    "1-byte.bin",
+    "empty.zip",
+    "minimal-add.wasm",
+    "1x1.gif",
+    "1x1.png",
+    "hello-console.js",
+    "master.m3u8",
+    "3-cues.vtt",
+    "3-cues.srt",
+    "recurring-weekly-rrule.ics",
+    "self-signed-ed25519-cert.der",
+    "vcard4-single.vcf",
+    "config.ini",
+    "self-signed-ed25519-cert.pem",
+    "site.webmanifest",
+    "basic.css",
+    "minimal.pdf",
+    "simple-shapes.svg",
+    "with-inline-css.html",
+    "all-types.json",
+    "config.toml",
+    "placemarks-10.kmz",
+    "multi-member-3.gz",
+    "with-namespaces.xml"
+  ],
+  "operations": [
+    "upload",
+    "download",
+    "copy",
+    "rename",
+    "move",
+    "delete"
+  ],
+  "operation_files": {
+    "copy": [
+      "1-byte.bin",
+      "empty.zip"
+    ],
+    "rename": [
+      "1-byte.bin",
+      "empty.zip"
+    ],
+    "move": [
+      "1-byte.bin",
+      "empty.zip"
+    ],
+    "delete": [
+      "1-byte.bin",
+      "empty.zip"
+    ]
+  },
+  "max_files": 24,
+  "max_bytes": 2400000,
+  "evidence_mode": "LIVE_PROVIDER_BLOCKED_NO_AUTHORIZED_EXTENSION_SESSION"
+}

@@ -1,0 +1,1134 @@
+{
+  "run_id": "local-real-corpus",
+  "scope": {
+    "accountId": "fixture-account",
+    "bucketName": "disposable-fixture",
+    "prefix": "redown-test-lab/local-real-corpus/"
+  },
+  "started_at": 1793248605.2044334,
+  "state": "completed",
+  "requested": 56,
+  "executed": 56,
+  "results": [
+    {
+      "scenario_id": "0:upload",
+      "operation": "upload",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.05478549003601074
+    },
+    {
+      "scenario_id": "0:download",
+      "operation": "download",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "elapsed_seconds": 0.0468292236328125
+    },
+    {
+      "scenario_id": "0:copy",
+      "operation": "copy",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "elapsed_seconds": 0.0680093765258789
+    },
+    {
+      "scenario_id": "0:rename",
+      "operation": "rename",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "elapsed_seconds": 0.06892204284667969
+    },
+    {
+      "scenario_id": "0:move",
+      "operation": "move",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "elapsed_seconds": 0.05751681327819824
+    },
+    {
+      "scenario_id": "0:delete",
+      "operation": "delete",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 0,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.03934669494628906
+    },
+    {
+      "scenario_id": "1:upload",
+      "operation": "upload",
+      "fixture": "1x1.gif",
+      "verdict": "PASS",
+      "expected_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes_transferred": 43,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04532980918884277
+    },
+    {
+      "scenario_id": "1:download",
+      "operation": "download",
+      "fixture": "1x1.gif",
+      "verdict": "PASS",
+      "expected_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes_transferred": 43,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "elapsed_seconds": 0.04151773452758789
+    },
+    {
+      "scenario_id": "2:upload",
+      "operation": "upload",
+      "fixture": "1x1.png",
+      "verdict": "PASS",
+      "expected_sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96",
+      "bytes_transferred": 69,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04578566551208496
+    },
+    {
+      "scenario_id": "2:download",
+      "operation": "download",
+      "fixture": "1x1.png",
+      "verdict": "PASS",
+      "expected_sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96",
+      "bytes_transferred": 69,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96",
+      "elapsed_seconds": 0.0440824031829834
+    },
+    {
+      "scenario_id": "3:upload",
+      "operation": "upload",
+      "fixture": "3-cues.srt",
+      "verdict": "PASS",
+      "expected_sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b",
+      "bytes_transferred": 268,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04308962821960449
+    },
+    {
+      "scenario_id": "3:download",
+      "operation": "download",
+      "fixture": "3-cues.srt",
+      "verdict": "PASS",
+      "expected_sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b",
+      "bytes_transferred": 268,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b",
+      "elapsed_seconds": 0.03847765922546387
+    },
+    {
+      "scenario_id": "4:upload",
+      "operation": "upload",
+      "fixture": "3-cues.vtt",
+      "verdict": "PASS",
+      "expected_sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d",
+      "bytes_transferred": 251,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04232192039489746
+    },
+    {
+      "scenario_id": "4:download",
+      "operation": "download",
+      "fixture": "3-cues.vtt",
+      "verdict": "PASS",
+      "expected_sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d",
+      "bytes_transferred": 251,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d",
+      "elapsed_seconds": 0.04050421714782715
+    },
+    {
+      "scenario_id": "5:upload",
+      "operation": "upload",
+      "fixture": "all-types.json",
+      "verdict": "PASS",
+      "expected_sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf",
+      "bytes_transferred": 708,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04219818115234375
+    },
+    {
+      "scenario_id": "5:download",
+      "operation": "download",
+      "fixture": "all-types.json",
+      "verdict": "PASS",
+      "expected_sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf",
+      "bytes_transferred": 708,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf",
+      "elapsed_seconds": 0.04114699363708496
+    },
+    {
+      "scenario_id": "6:upload",
+      "operation": "upload",
+      "fixture": "basic.css",
+      "verdict": "PASS",
+      "expected_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes_transferred": 579,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04334902763366699
+    },
+    {
+      "scenario_id": "6:download",
+      "operation": "download",
+      "fixture": "basic.css",
+      "verdict": "PASS",
+      "expected_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes_transferred": 579,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "elapsed_seconds": 0.042899131774902344
+    },
+    {
+      "scenario_id": "7:upload",
+      "operation": "upload",
+      "fixture": "config.ini",
+      "verdict": "PASS",
+      "expected_sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502",
+      "bytes_transferred": 468,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.046692848205566406
+    },
+    {
+      "scenario_id": "7:download",
+      "operation": "download",
+      "fixture": "config.ini",
+      "verdict": "PASS",
+      "expected_sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502",
+      "bytes_transferred": 468,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502",
+      "elapsed_seconds": 0.041841745376586914
+    },
+    {
+      "scenario_id": "8:upload",
+      "operation": "upload",
+      "fixture": "config.toml",
+      "verdict": "PASS",
+      "expected_sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599",
+      "bytes_transferred": 751,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04226183891296387
+    },
+    {
+      "scenario_id": "8:download",
+      "operation": "download",
+      "fixture": "config.toml",
+      "verdict": "PASS",
+      "expected_sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599",
+      "bytes_transferred": 751,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599",
+      "elapsed_seconds": 0.041030168533325195
+    },
+    {
+      "scenario_id": "9:upload",
+      "operation": "upload",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 22,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.043035268783569336
+    },
+    {
+      "scenario_id": "9:download",
+      "operation": "download",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 22,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "elapsed_seconds": 0.04047274589538574
+    },
+    {
+      "scenario_id": "9:copy",
+      "operation": "copy",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 22,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "elapsed_seconds": 0.05637335777282715
+    },
+    {
+      "scenario_id": "9:rename",
+      "operation": "rename",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 22,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "elapsed_seconds": 0.06649184226989746
+    },
+    {
+      "scenario_id": "9:move",
+      "operation": "move",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 22,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "elapsed_seconds": 0.06480622291564941
+    },
+    {
+      "scenario_id": "9:delete",
+      "operation": "delete",
+      "fixture": "empty.zip",
+      "verdict": "PASS",
+      "expected_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes_transferred": 0,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.040381669998168945
+    },
+    {
+      "scenario_id": "10:upload",
+      "operation": "upload",
+      "fixture": "hello-console.js",
+      "verdict": "PASS",
+      "expected_sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943",
+      "bytes_transferred": 158,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04043126106262207
+    },
+    {
+      "scenario_id": "10:download",
+      "operation": "download",
+      "fixture": "hello-console.js",
+      "verdict": "PASS",
+      "expected_sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943",
+      "bytes_transferred": 158,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943",
+      "elapsed_seconds": 0.04353785514831543
+    },
+    {
+      "scenario_id": "11:upload",
+      "operation": "upload",
+      "fixture": "master.m3u8",
+      "verdict": "PASS",
+      "expected_sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263",
+      "bytes_transferred": 244,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.05215644836425781
+    },
+    {
+      "scenario_id": "11:download",
+      "operation": "download",
+      "fixture": "master.m3u8",
+      "verdict": "PASS",
+      "expected_sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263",
+      "bytes_transferred": 244,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263",
+      "elapsed_seconds": 0.04818892478942871
+    },
+    {
+      "scenario_id": "12:upload",
+      "operation": "upload",
+      "fixture": "minimal-add.wasm",
+      "verdict": "PASS",
+      "expected_sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba",
+      "bytes_transferred": 41,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04973936080932617
+    },
+    {
+      "scenario_id": "12:download",
+      "operation": "download",
+      "fixture": "minimal-add.wasm",
+      "verdict": "PASS",
+      "expected_sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba",
+      "bytes_transferred": 41,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba",
+      "elapsed_seconds": 0.04981660842895508
+    },
+    {
+      "scenario_id": "13:upload",
+      "operation": "upload",
+      "fixture": "minimal.pdf",
+      "verdict": "PASS",
+      "expected_sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43",
+      "bytes_transferred": 586,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04975628852844238
+    },
+    {
+      "scenario_id": "13:download",
+      "operation": "download",
+      "fixture": "minimal.pdf",
+      "verdict": "PASS",
+      "expected_sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43",
+      "bytes_transferred": 586,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43",
+      "elapsed_seconds": 0.04288983345031738
+    },
+    {
+      "scenario_id": "14:upload",
+      "operation": "upload",
+      "fixture": "multi-member-3.gz",
+      "verdict": "PASS",
+      "expected_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes_transferred": 839,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.03993558883666992
+    },
+    {
+      "scenario_id": "14:download",
+      "operation": "download",
+      "fixture": "multi-member-3.gz",
+      "verdict": "PASS",
+      "expected_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes_transferred": 839,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "elapsed_seconds": 0.03853106498718262
+    },
+    {
+      "scenario_id": "15:upload",
+      "operation": "upload",
+      "fixture": "placemarks-10.kmz",
+      "verdict": "PASS",
+      "expected_sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b",
+      "bytes_transferred": 790,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.03851199150085449
+    },
+    {
+      "scenario_id": "15:download",
+      "operation": "download",
+      "fixture": "placemarks-10.kmz",
+      "verdict": "PASS",
+      "expected_sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b",
+      "bytes_transferred": 790,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b",
+      "elapsed_seconds": 0.03797006607055664
+    },
+    {
+      "scenario_id": "16:upload",
+      "operation": "upload",
+      "fixture": "recurring-weekly-rrule.ics",
+      "verdict": "PASS",
+      "expected_sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67",
+      "bytes_transferred": 318,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04772639274597168
+    },
+    {
+      "scenario_id": "16:download",
+      "operation": "download",
+      "fixture": "recurring-weekly-rrule.ics",
+      "verdict": "PASS",
+      "expected_sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67",
+      "bytes_transferred": 318,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67",
+      "elapsed_seconds": 0.035874366760253906
+    },
+    {
+      "scenario_id": "17:upload",
+      "operation": "upload",
+      "fixture": "self-signed-ed25519-cert.der",
+      "verdict": "PASS",
+      "expected_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes_transferred": 359,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.03493523597717285
+    },
+    {
+      "scenario_id": "17:download",
+      "operation": "download",
+      "fixture": "self-signed-ed25519-cert.der",
+      "verdict": "PASS",
+      "expected_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes_transferred": 359,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "elapsed_seconds": 0.03674817085266113
+    },
+    {
+      "scenario_id": "18:upload",
+      "operation": "upload",
+      "fixture": "self-signed-ed25519-cert.pem",
+      "verdict": "PASS",
+      "expected_sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2",
+      "bytes_transferred": 542,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04442548751831055
+    },
+    {
+      "scenario_id": "18:download",
+      "operation": "download",
+      "fixture": "self-signed-ed25519-cert.pem",
+      "verdict": "PASS",
+      "expected_sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2",
+      "bytes_transferred": 542,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2",
+      "elapsed_seconds": 0.0417933464050293
+    },
+    {
+      "scenario_id": "19:upload",
+      "operation": "upload",
+      "fixture": "simple-shapes.svg",
+      "verdict": "PASS",
+      "expected_sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e",
+      "bytes_transferred": 683,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04112887382507324
+    },
+    {
+      "scenario_id": "19:download",
+      "operation": "download",
+      "fixture": "simple-shapes.svg",
+      "verdict": "PASS",
+      "expected_sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e",
+      "bytes_transferred": 683,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e",
+      "elapsed_seconds": 0.0452876091003418
+    },
+    {
+      "scenario_id": "20:upload",
+      "operation": "upload",
+      "fixture": "site.webmanifest",
+      "verdict": "PASS",
+      "expected_sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f",
+      "bytes_transferred": 542,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.038066864013671875
+    },
+    {
+      "scenario_id": "20:download",
+      "operation": "download",
+      "fixture": "site.webmanifest",
+      "verdict": "PASS",
+      "expected_sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f",
+      "bytes_transferred": 542,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f",
+      "elapsed_seconds": 0.03952169418334961
+    },
+    {
+      "scenario_id": "21:upload",
+      "operation": "upload",
+      "fixture": "vcard4-single.vcf",
+      "verdict": "PASS",
+      "expected_sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540",
+      "bytes_transferred": 384,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04191994667053223
+    },
+    {
+      "scenario_id": "21:download",
+      "operation": "download",
+      "fixture": "vcard4-single.vcf",
+      "verdict": "PASS",
+      "expected_sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540",
+      "bytes_transferred": 384,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540",
+      "elapsed_seconds": 0.04180002212524414
+    },
+    {
+      "scenario_id": "22:upload",
+      "operation": "upload",
+      "fixture": "with-inline-css.html",
+      "verdict": "PASS",
+      "expected_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes_transferred": 696,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.04697608947753906
+    },
+    {
+      "scenario_id": "22:download",
+      "operation": "download",
+      "fixture": "with-inline-css.html",
+      "verdict": "PASS",
+      "expected_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes_transferred": 696,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "elapsed_seconds": 0.04127168655395508
+    },
+    {
+      "scenario_id": "23:upload",
+      "operation": "upload",
+      "fixture": "with-namespaces.xml",
+      "verdict": "PASS",
+      "expected_sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5",
+      "bytes_transferred": 913,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 0.03766512870788574
+    },
+    {
+      "scenario_id": "23:download",
+      "operation": "download",
+      "fixture": "with-namespaces.xml",
+      "verdict": "PASS",
+      "expected_sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5",
+      "bytes_transferred": 913,
+      "api_state": "completed",
+      "code": "",
+      "error": "",
+      "observed_sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5",
+      "elapsed_seconds": 0.042267799377441406
+    }
+  ],
+  "bytes_transferred": 20579,
+  "retry_of": null,
+  "owned": {
+    "redown-test-lab/local-real-corpus/1-byte.bin": {
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes": 1,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/1x1.gif": {
+      "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes": 43,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/1x1.png": {
+      "sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96",
+      "bytes": 69,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/3-cues.srt": {
+      "sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b",
+      "bytes": 268,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/3-cues.vtt": {
+      "sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d",
+      "bytes": 251,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/all-types.json": {
+      "sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf",
+      "bytes": 708,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/basic.css": {
+      "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes": 579,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/config.ini": {
+      "sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502",
+      "bytes": 468,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/config.toml": {
+      "sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599",
+      "bytes": 751,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/empty.zip": {
+      "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "bytes": 22,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/hello-console.js": {
+      "sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943",
+      "bytes": 158,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/master.m3u8": {
+      "sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263",
+      "bytes": 244,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/minimal-add.wasm": {
+      "sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba",
+      "bytes": 41,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/minimal.pdf": {
+      "sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43",
+      "bytes": 586,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/multi-member-3.gz": {
+      "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes": 839,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/placemarks-10.kmz": {
+      "sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b",
+      "bytes": 790,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/recurring-weekly-rrule.ics": {
+      "sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67",
+      "bytes": 318,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.der": {
+      "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes": 359,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.pem": {
+      "sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2",
+      "bytes": 542,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/simple-shapes.svg": {
+      "sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e",
+      "bytes": 683,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/site.webmanifest": {
+      "sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f",
+      "bytes": 542,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/vcard4-single.vcf": {
+      "sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540",
+      "bytes": 384,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/with-inline-css.html": {
+      "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes": 696,
+      "verified": true
+    },
+    "redown-test-lab/local-real-corpus/with-namespaces.xml": {
+      "sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5",
+      "bytes": 913,
+      "verified": true
+    }
+  },
+  "local_before": {
+    "root": "/workspace/REDOWN/test-fixtures/real-corpus",
+    "files": [
+      {
+        "path": "1-byte.bin",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "path": "1x1.gif",
+        "bytes": 43,
+        "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0"
+      },
+      {
+        "path": "1x1.png",
+        "bytes": 69,
+        "sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96"
+      },
+      {
+        "path": "3-cues.srt",
+        "bytes": 268,
+        "sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b"
+      },
+      {
+        "path": "3-cues.vtt",
+        "bytes": 251,
+        "sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d"
+      },
+      {
+        "path": "all-types.json",
+        "bytes": 708,
+        "sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf"
+      },
+      {
+        "path": "basic.css",
+        "bytes": 579,
+        "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972"
+      },
+      {
+        "path": "config.ini",
+        "bytes": 468,
+        "sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502"
+      },
+      {
+        "path": "config.toml",
+        "bytes": 751,
+        "sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599"
+      },
+      {
+        "path": "empty.zip",
+        "bytes": 22,
+        "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85"
+      },
+      {
+        "path": "hello-console.js",
+        "bytes": 158,
+        "sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943"
+      },
+      {
+        "path": "master.m3u8",
+        "bytes": 244,
+        "sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263"
+      },
+      {
+        "path": "minimal-add.wasm",
+        "bytes": 41,
+        "sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba"
+      },
+      {
+        "path": "minimal.pdf",
+        "bytes": 586,
+        "sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43"
+      },
+      {
+        "path": "multi-member-3.gz",
+        "bytes": 839,
+        "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39"
+      },
+      {
+        "path": "placemarks-10.kmz",
+        "bytes": 790,
+        "sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b"
+      },
+      {
+        "path": "recurring-weekly-rrule.ics",
+        "bytes": 318,
+        "sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67"
+      },
+      {
+        "path": "self-signed-ed25519-cert.der",
+        "bytes": 359,
+        "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551"
+      },
+      {
+        "path": "self-signed-ed25519-cert.pem",
+        "bytes": 542,
+        "sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2"
+      },
+      {
+        "path": "simple-shapes.svg",
+        "bytes": 683,
+        "sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e"
+      },
+      {
+        "path": "site.webmanifest",
+        "bytes": 542,
+        "sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f"
+      },
+      {
+        "path": "vcard4-single.vcf",
+        "bytes": 384,
+        "sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540"
+      },
+      {
+        "path": "with-inline-css.html",
+        "bytes": 696,
+        "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2"
+      },
+      {
+        "path": "with-namespaces.xml",
+        "bytes": 913,
+        "sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5"
+      }
+    ],
+    "file_count": 24,
+    "bytes": 10255,
+    "inventory_sha256": "eef38b90ef77bb9cfd81ce81949b0b39195ca680098d3a49b8664a4236fe6c03"
+  },
+  "local_after": {
+    "root": "/workspace/REDOWN/test-fixtures/real-corpus",
+    "files": [
+      {
+        "path": "1-byte.bin",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "path": "1x1.gif",
+        "bytes": 43,
+        "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0"
+      },
+      {
+        "path": "1x1.png",
+        "bytes": 69,
+        "sha256": "c47dd9465c00e9a0c8b85e9ea58d3034a0d23b9cf926113602f3460752a4eb96"
+      },
+      {
+        "path": "3-cues.srt",
+        "bytes": 268,
+        "sha256": "5bb48da561bdf662a782954640db67350200ac1fb8607ba612b8958678cdf21b"
+      },
+      {
+        "path": "3-cues.vtt",
+        "bytes": 251,
+        "sha256": "84b2f43d1df647e43c765e2010812ff80a2a17a0bfcae2f6f03174d64bcf489d"
+      },
+      {
+        "path": "all-types.json",
+        "bytes": 708,
+        "sha256": "ad8102e4fb3e348ccd991bb1426cc8b233e83a4f4568a798f5314fc7001a8baf"
+      },
+      {
+        "path": "basic.css",
+        "bytes": 579,
+        "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972"
+      },
+      {
+        "path": "config.ini",
+        "bytes": 468,
+        "sha256": "886ca94c8f0a4761e944f6fbe8c5842bbecec1d942d1a80b5d62bb52e3593502"
+      },
+      {
+        "path": "config.toml",
+        "bytes": 751,
+        "sha256": "a150205d8b5820503abc0b6f2465e098f4e5657ca4fff251ba531a9739aa0599"
+      },
+      {
+        "path": "empty.zip",
+        "bytes": 22,
+        "sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85"
+      },
+      {
+        "path": "hello-console.js",
+        "bytes": 158,
+        "sha256": "65a874537624bd682428f5c53d2acca15c29e078fec691147ec4aec069bbd943"
+      },
+      {
+        "path": "master.m3u8",
+        "bytes": 244,
+        "sha256": "ce0dbb18638f8ee53469e1c153c17b010e1e8b03163719f482d36d6de8aa6263"
+      },
+      {
+        "path": "minimal-add.wasm",
+        "bytes": 41,
+        "sha256": "f61fd62f57c41269c3c23f360eeaf1090b1db9c38651106674d48bc65dba88ba"
+      },
+      {
+        "path": "minimal.pdf",
+        "bytes": 586,
+        "sha256": "07508e71a1366a3e60af7b58c027fc07ebc774e9feac52e937dd82ab1a1c6e43"
+      },
+      {
+        "path": "multi-member-3.gz",
+        "bytes": 839,
+        "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39"
+      },
+      {
+        "path": "placemarks-10.kmz",
+        "bytes": 790,
+        "sha256": "1912370c5f3ab5d9da84442c589ed3d5032c6000e6d3c261635040080f9f626b"
+      },
+      {
+        "path": "recurring-weekly-rrule.ics",
+        "bytes": 318,
+        "sha256": "e4a3d58c558f217d01d599c488bd1d8c39e82c47dfbc922f0e7323e3cf6ebb67"
+      },
+      {
+        "path": "self-signed-ed25519-cert.der",
+        "bytes": 359,
+        "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551"
+      },
+      {
+        "path": "self-signed-ed25519-cert.pem",
+        "bytes": 542,
+        "sha256": "cbefdc05c831c5f36240181c08344b1387a112507f50f92b90c6bab8920faeb2"
+      },
+      {
+        "path": "simple-shapes.svg",
+        "bytes": 683,
+        "sha256": "55a2a8d63fdef8350da3bd380634b1a9b603e276786736e8f806342129e7924e"
+      },
+      {
+        "path": "site.webmanifest",
+        "bytes": 542,
+        "sha256": "1a837bca38e88fd1f578c324856f16ba89b2ab5efd0ac8bb3d1a85cc18b3381f"
+      },
+      {
+        "path": "vcard4-single.vcf",
+        "bytes": 384,
+        "sha256": "d4445f47c2ac0d2c516d78d09ff92b535e594734635db953f28453dad93a8540"
+      },
+      {
+        "path": "with-inline-css.html",
+        "bytes": 696,
+        "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2"
+      },
+      {
+        "path": "with-namespaces.xml",
+        "bytes": 913,
+        "sha256": "04cd8c9a27b781647ca874f4c3dad82d7119c746bcf4cde532157e6402f948e5"
+      }
+    ],
+    "file_count": 24,
+    "bytes": 10255,
+    "inventory_sha256": "eef38b90ef77bb9cfd81ce81949b0b39195ca680098d3a49b8664a4236fe6c03"
+  },
+  "fixtures_unchanged": true,
+  "finished_at": 1793248608.148684,
+  "evidence_mode": "LOCAL_PROVIDER_EMULATION",
+  "run_verdict": "PASS",
+  "cleanup": null,
+  "recovery": {
+    "without_terminal_receipt": [],
+    "requires_reconciliation": [],
+    "strategy": "inspect current snapshots and recovery keys; never replay ambiguous writes automatically"
+  },
+  "api_calls": {
+    "capabilities": 1,
+    "connectionStatus": 1,
+    "listRaw": 114,
+    "upload": 24,
+    "stat": 62,
+    "readStream": 30,
+    "copy": 2,
+    "rename": 2,
+    "move": 2,
+    "delete": 2
+  },
+  "completed_client_transfers": {
+    "upload": 24,
+    "readStream": 30
+  },
+  "byte_accounting": "Explicit client upload and verification download payloads only; adapter staging read-back and Worker internal copies are additional provider traffic, not measured here",
+  "schema_version": "1.0",
+  "counts": {
+    "PASS": 56,
+    "FAIL": 0,
+    "UNSUPPORTED": 0,
+    "BLOCKED": 0,
+    "TIMEOUT": 0,
+    "UNVERIFIED": 0
+  },
+  "passed_over_requested": 1.0,
+  "elapsed_seconds": 2.9442505836486816
+}

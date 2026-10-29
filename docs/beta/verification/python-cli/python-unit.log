@@ -1,0 +1,23 @@
+test_cleanup_refuses_changed_content (test_redown_lab.LabTests.test_cleanup_refuses_changed_content) ... ok
+test_cleanup_rejects_unverified_intent (test_redown_lab.LabTests.test_cleanup_rejects_unverified_intent) ... ok
+test_cleanup_verifies_absence (test_redown_lab.LabTests.test_cleanup_verifies_absence) ... ok
+test_dry_run_has_no_provider_calls (test_redown_lab.LabTests.test_dry_run_has_no_provider_calls) ... ok
+test_duplicate_selection (test_redown_lab.LabTests.test_duplicate_selection) ... ok
+test_explicit_limits (test_redown_lab.LabTests.test_explicit_limits) ... ok
+test_false_positive_upload_receipt_fails (test_redown_lab.LabTests.test_false_positive_upload_receipt_fails) ... ok
+test_independent_hash_mismatch_fails (test_redown_lab.LabTests.test_independent_hash_mismatch_fails) ... ok
+test_interruption_preserves_ownership_and_reports (test_redown_lab.LabTests.test_interruption_preserves_ownership_and_reports) ... ok
+test_inventory_hash (test_redown_lab.LabTests.test_inventory_hash) ... ok
+test_lfs_pointer_rejected (test_redown_lab.LabTests.test_lfs_pointer_rejected) ... ok
+test_manifest_pin_mismatch (test_redown_lab.LabTests.test_manifest_pin_mismatch) ... ok
+test_owner_choices_required (test_redown_lab.LabTests.test_owner_choices_required) ... ok
+test_path_escape_rejected (test_redown_lab.LabTests.test_path_escape_rejected) ... ok
+test_snapshot_diff (test_redown_lab.LabTests.test_snapshot_diff) ... ok
+test_success_and_artifacts (test_redown_lab.LabTests.test_success_and_artifacts) ... ok
+test_timeout_and_uncertain_verdicts (test_redown_lab.LabTests.test_timeout_and_uncertain_verdicts) ... ok
+test_unsupported_not_omitted (test_redown_lab.LabTests.test_unsupported_not_omitted) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.063s
+
+OK

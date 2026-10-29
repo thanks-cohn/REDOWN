@@ -1,0 +1,31 @@
+{
+  "added": [
+    "redown-test-lab/local-real-corpus/1-byte.bin",
+    "redown-test-lab/local-real-corpus/1x1.gif",
+    "redown-test-lab/local-real-corpus/1x1.png",
+    "redown-test-lab/local-real-corpus/3-cues.srt",
+    "redown-test-lab/local-real-corpus/3-cues.vtt",
+    "redown-test-lab/local-real-corpus/all-types.json",
+    "redown-test-lab/local-real-corpus/basic.css",
+    "redown-test-lab/local-real-corpus/config.ini",
+    "redown-test-lab/local-real-corpus/config.toml",
+    "redown-test-lab/local-real-corpus/empty.zip",
+    "redown-test-lab/local-real-corpus/hello-console.js",
+    "redown-test-lab/local-real-corpus/master.m3u8",
+    "redown-test-lab/local-real-corpus/minimal-add.wasm",
+    "redown-test-lab/local-real-corpus/minimal.pdf",
+    "redown-test-lab/local-real-corpus/multi-member-3.gz",
+    "redown-test-lab/local-real-corpus/placemarks-10.kmz",
+    "redown-test-lab/local-real-corpus/recurring-weekly-rrule.ics",
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.der",
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.pem",
+    "redown-test-lab/local-real-corpus/simple-shapes.svg",
+    "redown-test-lab/local-real-corpus/site.webmanifest",
+    "redown-test-lab/local-real-corpus/vcard4-single.vcf",
+    "redown-test-lab/local-real-corpus/with-inline-css.html",
+    "redown-test-lab/local-real-corpus/with-namespaces.xml"
+  ],
+  "removed": [],
+  "changed": [],
+  "unexpected": []
+}

@@ -139,6 +139,10 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification}));},
     createBucket:({accountId,name:n},o)=>message('cfCreateBucket',{accountId,name:n},o),
     publicUrls:({source},o)=>message('cfPublicAddresses',location(source),o),
+    async listRaw({source,cursor=''},options={}) {
+      const l=location(source),p=await page(l,l.prefix,cursor,'',options);
+      return {entries:p.objects.map(object=>({...object,key:String(object.key||object.name||''),folder:false})),cursor:p.cursor};
+    },
     async list({source,cursor=''},options) {
       const l=location(source),p=await page(l,l.prefix,cursor,'/',options),entries=new Map();
       for(const raw of p.delimited){const k=typeof raw==='string'?raw:raw.prefix;if(k&&k.startsWith(l.prefix))entries.set(k,{key:k,folder:true,displayName:k.slice(l.prefix.length).replace(/\/$/,'')});}
@@ -169,7 +173,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
     rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
     delete:({source,entries},o)=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)},o),
-    async upload({source,file,key:k,conflict='skip'},options={}) {
+    async upload({source,file,key:k,conflict='skip',stagingPrefix='.redown-beta-uploads/'},options={}) {
       options=resolveOptions('upload',{},options);const {signal,onProgress}=options;
       const l=location(source);key(k);
       if(!file || !Number.isSafeInteger(file.size)||file.size<0)throw Error('Choose a local file.');
@@ -178,7 +182,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       // A unique temporary key keeps the original untouched until the proven
       // Worker conditionally commits the final destination. Never replay PUT.
       if(conflict==='skip' && (await stat({source:l,key:k},options)).object)return {state:'partial',conflicts:[{destinationKey:k,status:'conflict'}]};
-      const staging='.redown-beta-uploads/'+crypto.randomUUID()+'/payload';
+      const staging=prefix(stagingPrefix)+crypto.randomUUID()+'/payload';
       let attempted=false;
       try {
         signal?.throwIfAborted();onProgress?.({phase:'uploading',bytes:0,totalBytes:file.size});attempted=true;
@@ -198,6 +202,16 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
         if(attempted)throw Object.assign(new Error((error.message||'Upload interrupted.')+' Temporary upload may remain at '+staging+'. Inspect it before retrying.'),{name:error.name,uncertain:true,recoveryKey:staging,code:error.code,cause:error});
         throw error;
       }
+    },
+    async readStream({source,key:k},{signal,onChunk,requestTimeoutMs}={}) {
+      if(typeof onChunk!=='function')throw Error('A streaming sink is required.');
+      const response=await http.request(base(location(source))+'/'+key(k).split('/').map(encodeURIComponent).join('/'),{signal,timeoutMs:requestTimeoutMs??providerDefaults.requestTimeoutMs});
+      if(!response.ok||!response.body){await response.body?.cancel();throw Object.assign(Error('Object read failed (HTTP '+response.status+').'),{code:'HTTP_'+response.status});}
+      const reader=response.body.getReader();let size=0;
+      try{while(true){signal?.throwIfAborted();const part=await reader.read();if(part.done)break;await onChunk(part.value);size+=part.value.length;}}finally{await reader.cancel();}
+      // Initialize the sink for empty objects too.
+      if(size===0)await onChunk(new Uint8Array());
+      return {size,status:response.status};
     },
     async preview({source,entry:e},options={}) {
       if(e.folder)throw Error('Choose a file to preview.');

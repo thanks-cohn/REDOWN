@@ -1,0 +1,9 @@
+{
+  "scope": {
+    "accountId": "NOT_CONFIGURED",
+    "bucketName": "NOT_CONFIGURED",
+    "prefix": "redown-test-lab/live-blocked/"
+  },
+  "objects": {},
+  "state": "UNVERIFIED"
+}

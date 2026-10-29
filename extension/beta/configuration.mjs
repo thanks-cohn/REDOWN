@@ -8,7 +8,7 @@ export const providerDefaults=Object.freeze({
 const message=['messageTimeoutMs'];
 export const operationOptions=Object.freeze({
   connectionStatus:['messageTimeoutMs','requestTimeoutMs'],archiveEntries:message,extractArchiveEntry:message,profiles:message,prepareBucket:message,transferHistory:message,connect:message,disconnect:message,accounts:message,buckets:message,createBucket:message,
-  list:['requestTimeoutMs'],stat:['requestTimeoutMs'],mkdir:message,copy:message,move:message,rename:message,delete:message,
+  listRaw:['requestTimeoutMs'],readStream:['requestTimeoutMs'],list:['requestTimeoutMs'],stat:['requestTimeoutMs'],mkdir:message,copy:message,move:message,rename:message,delete:message,
   remoteIngest:message,publicUrls:message,
   preview:['requestTimeoutMs','previewMaxBytes','textPreviewMaxBytes'],download:[],
   upload:['messageTimeoutMs','requestTimeoutMs','uploadTimeoutMs','verificationTimeoutMs','verificationIdleTimeoutMs','progressIntervalMs']
@@ -24,8 +24,8 @@ export function validatePreferences(value={}) {
 }
 export function resolveOptions(operation,preferences,options={}) {
   const allowed=operationOptions[operation]||[];
-  const overrides=Object.fromEntries(Object.entries(options).filter(([k])=>!['signal','onProgress'].includes(k)));
+  const overrides=Object.fromEntries(Object.entries(options).filter(([k])=>!['signal','onProgress',...(operation==='readStream'?['onChunk']:[])].includes(k)));
   validatePreferences(overrides);
   for(const k of Object.keys(overrides))if(!allowed.includes(k))throw Error(k+' is not supported for '+operation+'.');
-  return {...Object.fromEntries(allowed.map(k=>[k,options[k]??preferences[k]??providerDefaults[k]])),signal:options.signal,onProgress:options.onProgress};
+  return {...Object.fromEntries(allowed.map(k=>[k,options[k]??preferences[k]??providerDefaults[k]])),signal:options.signal,onProgress:options.onProgress,...(operation==='readStream'?{onChunk:options.onChunk}:{})};
 }

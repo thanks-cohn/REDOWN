@@ -1,0 +1,11 @@
+{
+  "scope": {
+    "accountId": "fixture-account",
+    "bucketName": "disposable-fixture",
+    "prefix": "redown-test-lab/local-real-corpus/"
+  },
+  "observed_at": 1793248605.282533,
+  "objects": {},
+  "pages": 1,
+  "hashes": "not inferred from ETags; see independently downloaded observations"
+}

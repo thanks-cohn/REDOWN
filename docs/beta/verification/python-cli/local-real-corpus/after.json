@@ -1,0 +1,180 @@
+{
+  "scope": {
+    "accountId": "fixture-account",
+    "bucketName": "disposable-fixture",
+    "prefix": "redown-test-lab/local-real-corpus/"
+  },
+  "observed_at": 1793248608.0716496,
+  "objects": {
+    "redown-test-lab/local-real-corpus/1-byte.bin": {
+      "key": "redown-test-lab/local-real-corpus/1-byte.bin",
+      "size": 1,
+      "etag": "93b885adfe0da089cdf634904fd59f71",
+      "uploaded": "2026-10-29T04:36:45.311Z",
+      "version": "6f10f809-a119-4140-9844-fb9e1d6bb4fa"
+    },
+    "redown-test-lab/local-real-corpus/1x1.gif": {
+      "key": "redown-test-lab/local-real-corpus/1x1.gif",
+      "size": 43,
+      "etag": "2c5f182a5005cfdeec4bd4071fad0e39",
+      "uploaded": "2026-10-29T04:36:45.647Z",
+      "version": "81d0a124-cec6-4921-b78d-39f1dea224e1"
+    },
+    "redown-test-lab/local-real-corpus/1x1.png": {
+      "key": "redown-test-lab/local-real-corpus/1x1.png",
+      "size": 69,
+      "etag": "73acd0b4a2391d4bbd9765aca5db19dc",
+      "uploaded": "2026-10-29T04:36:45.739Z",
+      "version": "3edad883-a376-4362-803e-fb4548ee50a5"
+    },
+    "redown-test-lab/local-real-corpus/3-cues.srt": {
+      "key": "redown-test-lab/local-real-corpus/3-cues.srt",
+      "size": 268,
+      "etag": "e3c295c0d2b9081a1241ff63b850fa5a",
+      "uploaded": "2026-10-29T04:36:45.837Z",
+      "version": "01b46965-a69c-4b95-8969-4835b90b6c08"
+    },
+    "redown-test-lab/local-real-corpus/3-cues.vtt": {
+      "key": "redown-test-lab/local-real-corpus/3-cues.vtt",
+      "size": 251,
+      "etag": "f97371ed549ac1f633eba3e3982110a5",
+      "uploaded": "2026-10-29T04:36:45.922Z",
+      "version": "50327ae1-7cde-45fd-a538-243f0399dccb"
+    },
+    "redown-test-lab/local-real-corpus/all-types.json": {
+      "key": "redown-test-lab/local-real-corpus/all-types.json",
+      "size": 708,
+      "etag": "f94a66eca0757766721078d1957fca76",
+      "uploaded": "2026-10-29T04:36:46.009Z",
+      "version": "1d69a14d-26f0-43c4-88d8-7bdb4c47fe8b"
+    },
+    "redown-test-lab/local-real-corpus/basic.css": {
+      "key": "redown-test-lab/local-real-corpus/basic.css",
+      "size": 579,
+      "etag": "5f86946bf5bd2d30ab6f2b6622e10822",
+      "uploaded": "2026-10-29T04:36:46.096Z",
+      "version": "4e80fc4f-65b1-4d09-8ab8-c16758c3432c"
+    },
+    "redown-test-lab/local-real-corpus/config.ini": {
+      "key": "redown-test-lab/local-real-corpus/config.ini",
+      "size": 468,
+      "etag": "37ffa772186d05e336c2ada424935868",
+      "uploaded": "2026-10-29T04:36:46.191Z",
+      "version": "7920bd55-2ca9-4265-abc4-1c0bd8dddf23"
+    },
+    "redown-test-lab/local-real-corpus/config.toml": {
+      "key": "redown-test-lab/local-real-corpus/config.toml",
+      "size": 751,
+      "etag": "630f6a58cd978baa5b40d8602c8bc680",
+      "uploaded": "2026-10-29T04:36:46.280Z",
+      "version": "9e0a209a-8fd5-4919-9f33-3cd96a5eb0d2"
+    },
+    "redown-test-lab/local-real-corpus/empty.zip": {
+      "key": "redown-test-lab/local-real-corpus/empty.zip",
+      "size": 22,
+      "etag": "76cdb2bad9582d23c1f6f4d868218d6c",
+      "uploaded": "2026-10-29T04:36:46.372Z",
+      "version": "66b9ff95-c32b-41e5-834e-bac74b547411"
+    },
+    "redown-test-lab/local-real-corpus/hello-console.js": {
+      "key": "redown-test-lab/local-real-corpus/hello-console.js",
+      "size": 158,
+      "etag": "9a3c780337348f19fe365068c1e4ece9",
+      "uploaded": "2026-10-29T04:36:46.714Z",
+      "version": "a370d109-adf7-437e-81d3-31c6220e081e"
+    },
+    "redown-test-lab/local-real-corpus/master.m3u8": {
+      "key": "redown-test-lab/local-real-corpus/master.m3u8",
+      "size": 244,
+      "etag": "42605c81aa0140f6b81bab8eaecf731d",
+      "uploaded": "2026-10-29T04:36:46.809Z",
+      "version": "70e4a60f-45a3-437e-bbae-b73706bd54c6"
+    },
+    "redown-test-lab/local-real-corpus/minimal-add.wasm": {
+      "key": "redown-test-lab/local-real-corpus/minimal-add.wasm",
+      "size": 41,
+      "etag": "d4ea109a8d24f996be8a2fd0574160dd",
+      "uploaded": "2026-10-29T04:36:46.932Z",
+      "version": "43ad0182-c7f3-4afc-a286-66e2248572f6"
+    },
+    "redown-test-lab/local-real-corpus/minimal.pdf": {
+      "key": "redown-test-lab/local-real-corpus/minimal.pdf",
+      "size": 586,
+      "etag": "6b60a272677de9d0fffb99f5e0cea7ea",
+      "uploaded": "2026-10-29T04:36:47.037Z",
+      "version": "691c91be-472b-4cbb-8f4c-1370eb86347a"
+    },
+    "redown-test-lab/local-real-corpus/multi-member-3.gz": {
+      "key": "redown-test-lab/local-real-corpus/multi-member-3.gz",
+      "size": 839,
+      "etag": "a0066339d36e86c34815e9ab4b014050",
+      "uploaded": "2026-10-29T04:36:47.137Z",
+      "version": "df048a94-5dcf-4517-8bb3-5b3f3fdcf439"
+    },
+    "redown-test-lab/local-real-corpus/placemarks-10.kmz": {
+      "key": "redown-test-lab/local-real-corpus/placemarks-10.kmz",
+      "size": 790,
+      "etag": "54aaf7a6528ce68b51a1904a0d658c29",
+      "uploaded": "2026-10-29T04:36:47.222Z",
+      "version": "a6d45583-1558-4508-928a-91af55e64750"
+    },
+    "redown-test-lab/local-real-corpus/recurring-weekly-rrule.ics": {
+      "key": "redown-test-lab/local-real-corpus/recurring-weekly-rrule.ics",
+      "size": 318,
+      "etag": "e1226594b2de307980b9dd62342d0ff8",
+      "uploaded": "2026-10-29T04:36:47.320Z",
+      "version": "5793ff50-bbcf-4e01-8e17-0fc7b2cf0be8"
+    },
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.der": {
+      "key": "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.der",
+      "size": 359,
+      "etag": "36a18c6436498f0a3c4b1c1af25d9204",
+      "uploaded": "2026-10-29T04:36:47.402Z",
+      "version": "ca48f871-5234-42f7-a714-cd610d704922"
+    },
+    "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.pem": {
+      "key": "redown-test-lab/local-real-corpus/self-signed-ed25519-cert.pem",
+      "size": 542,
+      "etag": "ee6882a2d73444980e4bf7862f6abb3f",
+      "uploaded": "2026-10-29T04:36:47.493Z",
+      "version": "eaae9b27-61a5-4113-8234-1d072d536268"
+    },
+    "redown-test-lab/local-real-corpus/simple-shapes.svg": {
+      "key": "redown-test-lab/local-real-corpus/simple-shapes.svg",
+      "size": 683,
+      "etag": "fe358baced2c6c9e819f21c8b7d8d2af",
+      "uploaded": "2026-10-29T04:36:47.592Z",
+      "version": "7d4c08b2-d595-4d59-8a78-f26b9833f41c"
+    },
+    "redown-test-lab/local-real-corpus/site.webmanifest": {
+      "key": "redown-test-lab/local-real-corpus/site.webmanifest",
+      "size": 542,
+      "etag": "bf9f3024e9dfe8e5aff956ec0c512e65",
+      "uploaded": "2026-10-29T04:36:47.688Z",
+      "version": "a657166f-c180-479b-8ec8-a17f2f47cb84"
+    },
+    "redown-test-lab/local-real-corpus/vcard4-single.vcf": {
+      "key": "redown-test-lab/local-real-corpus/vcard4-single.vcf",
+      "size": 384,
+      "etag": "23ed0ba9886dcd6380621608467accfc",
+      "uploaded": "2026-10-29T04:36:47.785Z",
+      "version": "3a6d32cc-0d39-42d0-b762-e38d8b4388f5"
+    },
+    "redown-test-lab/local-real-corpus/with-inline-css.html": {
+      "key": "redown-test-lab/local-real-corpus/with-inline-css.html",
+      "size": 696,
+      "etag": "75ddd90ce221d23fe474016444066dc8",
+      "uploaded": "2026-10-29T04:36:47.886Z",
+      "version": "70144be2-37a7-480f-9c58-3eb305ef5c5a"
+    },
+    "redown-test-lab/local-real-corpus/with-namespaces.xml": {
+      "key": "redown-test-lab/local-real-corpus/with-namespaces.xml",
+      "size": 913,
+      "etag": "8a249eea177926eaab8021c7b7ad2b10",
+      "uploaded": "2026-10-29T04:36:47.979Z",
+      "version": "c95f6817-3889-4623-afe0-9efa30df4ea1"
+    }
+  },
+  "pages": 1,
+  "hashes": "not inferred from ETags; see independently downloaded observations"
+}
