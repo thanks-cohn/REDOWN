@@ -58,7 +58,7 @@
     const tab=document.getElementById('quick-tab-setup');
     if(!panel||!tab){report('Destination setup is unavailable in this Explorer.');return;}
     tab.click();
-    panel.scrollIntoView({behavior:globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'instant':'smooth',block:'start'});
+    panel.scrollIntoView({behavior:globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'auto':'smooth',block:'start'});
     tab.focus({preventScroll:true});
   });
 })();
