@@ -964,7 +964,7 @@ async function createBucket(accountId, name, locationHint = "") {
 async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
   if(typeof accountId!=="string"||!accountId)throw Error("Choose a Cloudflare account first.");
   const label=String(menuLabel||'').trim();
-  if(!label||label.length>60||/[\\u0000-\\u001f]/.test(label))throw Error('Enter a menu label (1–60 characters).');
+  if(!label||label.length>60||/[\x00-\x1f]/.test(label))throw Error('Enter a menu label (1–60 characters).');
   const accounts=await listCloudflareAccounts();
   const account=accounts.find(item=>item.id===accountId);
   if(!account)throw Error("This Cloudflare account is no longer available.");
