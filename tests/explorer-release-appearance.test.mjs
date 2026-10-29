@@ -10,13 +10,17 @@ const explorer=source('extension/beta/explorer.mjs');
 const shelf=source('extension/shelf.html');
 const themeScript=source('extension/explorer-theme.js');
 
-test('account discovery placeholder is real, accessible, and replaces no account values',()=>{
-  for(const id of ['account-chooser','account-standby','account-standby-heading','account-standby-detail','account-standby-action','accounts']){
+test('Explorer starts with only LOGIN while signed out; no old account-discovery tile',()=>{
+  for(const id of ['account-chooser','account-standby-action','accounts']){
     assert.match(html,new RegExp('id="'+id+'"'));
   }
-  assert.match(explorer,/accountVisual\('loading'\)/);
+  assert.match(html,/id="account-chooser"[^>]*data-state="disconnected"/);
+  assert.match(html,/id="account-standby-action"[^>]*>LOGIN<\/button>/);
+  assert.doesNotMatch(html,/id="account-standby(?:-heading|-detail)?"/);
+  assert.match(html,/id="account-picker-caption"[^>]*hidden/);
+  assert.match(explorer,/if\(!cloudflareSignedIn\)\{\s*accountVisual\('disconnected'\)/);
+  assert.match(explorer,/if\(cloudflareSignedIn\)await loadAccounts\(lastLocation\)/);
   assert.match(explorer,/accountVisual\(accounts\.length\?'ready':'empty'\)/);
-  assert.match(explorer,/accountVisual\('disconnected'\)/);
   assert.match(explorer,/accountVisual\('failed'\)/);
   assert.match(explorer,/\$\('accounts'\)\.tabIndex=-1/);
   assert.match(source('extension/beta/account-picker.js'),/aria-expanded/);
@@ -83,10 +87,10 @@ test('Explorer theme preferences and Debug Mode respond to storage changes',asyn
   assert.equal(document.documentElement.dataset.explorerTheme,'midnight');
 });
 
-test('signed-out Cloudflare session presents one centered classic Mac LOGIN opposite centered LOG OUT',()=>{
-  assert.match(explorer,/action\.textContent=loginState\?'LOGIN':'Try again'/);
-  assert.match(explorer,/\$\('account-picker-caption'\)\.hidden=loginState/);
-  assert.match(css,/\.account-chooser:is\(\[data-state="unauthorized"\],\[data-state="disconnected"\]\) \.account-standby\{\s*display:none/);
+test('LOGIN and LOG OUT remain centered and the Mac-style account slot does not morph',()=>{
+  assert.match(explorer,/action\.textContent=loginState\?'LOGIN':state==='loading'\?'LOADING…':'RETRY'/);
+  assert.match(explorer,/\$\('account-picker-caption'\)\.hidden=!ready/);
+  assert.match(css,/\.account-chooser:not\(\[data-state="ready"\]\)/);
   assert.match(css,/\.session-actions\{justify-content:center\}/);
   assert.match(css,/#disconnect\.logout-button\{min-width:128px\}/);
   assert.match(css,/width:128px;min-height:37px/);
