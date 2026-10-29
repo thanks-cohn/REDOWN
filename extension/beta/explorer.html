@@ -16,15 +16,8 @@
 <span class="eyebrow">YOUR CLOUD, IN ORDER</span>
 <h1>REDOWN Explorer</h1>
 <p class="intro">A little space.<br>Endless possibilities.</p>
-<label id="account-picker-caption" for="accounts">Cloudflare account</label>
-<div id="account-chooser" class="account-chooser" data-state="loading" aria-live="polite">
-  <div id="account-standby" class="account-standby" role="status">
-    <span class="account-cloud" aria-hidden="true">
-      <svg viewBox="0 0 40 40" focusable="false"><path d="M8 29h25c6 0 5-9-1-9-1-14-20-17-23-4-9-1-11 13-1 13Z" fill="currentColor"/><path d="m19 13-7 12h8l-1 7 11-16h-8l2-3Z" fill="var(--panel)"/></svg>
-    </span>
-    <span class="account-standby-text"><strong id="account-standby-heading">Finding your cloud…</strong><small id="account-standby-detail">Connecting to Cloudflare R2</small></span>
-    <span class="account-loading-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-  </div>
+<label id="account-picker-caption" for="accounts" hidden>Cloudflare account</label>
+<div id="account-chooser" class="account-chooser" data-state="disconnected" aria-live="polite">
   <select id="accounts" aria-label="Cloudflare account" aria-hidden="true" tabindex="-1" disabled>
   </select>
   <button id="account-picker-trigger" class="account-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="account-picker-menu" aria-labelledby="account-picker-caption account-picker-value" hidden disabled>
@@ -33,7 +26,7 @@
     <svg class="account-picker-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false"><path d="m5 7 5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
   <div id="account-picker-menu" class="account-picker-menu" role="listbox" aria-label="Cloudflare accounts" hidden></div>
-  <button id="account-standby-action" class="account-standby-action" type="button" hidden>Connect Cloudflare</button>
+  <button id="account-standby-action" class="account-standby-action" type="button" aria-label="Log in to Cloudflare securely">LOGIN</button>
 </div>
 <div class="section-title">SAVED DESTINATIONS</div>
 <select id="profiles" aria-label="Saved destination"><option value="">Choose a saved destination…</option></select>
