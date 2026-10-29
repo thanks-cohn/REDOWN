@@ -47,7 +47,7 @@ async function refreshConnection() {
     if(epoch!==connectionEpoch)return;
     $('cf-state').dataset.state=state; $('cf-state').textContent=label;
     $('cf-detail').textContent=detail;
-    $('connection-summary').textContent=state==='connected'?'1 connected · 3 integrations on the horizon':state==='checking'?'Checking Cloudflare account access…':'0 verified connections · 4 clouds to explore';
+    $('connection-summary').textContent=state==='connected'?'1 connected · 3 integrations':state==='checking'?'Checking connections…':'0 connected · 3 integrations';
     $('cloudflare').disabled=state==='checking';
     $('cloudflare').textContent=state==='connected'?'Manage Cloudflare ↗':state==='checking'?'Checking connection…':'Open Cloudflare sign-in ↗';
   };
