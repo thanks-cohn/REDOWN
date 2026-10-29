@@ -959,6 +959,57 @@ async function createBucket(accountId, name, locationHint = "") {
     method: "POST", body: JSON.stringify(payload)
   });
 }
+// Explicit first-run setup. Cloudflare R2 requires lowercase bucket names.
+// Reuse an existing `redown` bucket; never retry an uncertain create blindly.
+async function setupRedownQuickDestination(accountId){
+  if(typeof accountId!=="string"||!accountId)throw Error("Choose a Cloudflare account first.");
+  const accounts=await listCloudflareAccounts();
+  const account=accounts.find(item=>item.id===accountId);
+  if(!account)throw Error("This Cloudflare account is no longer available.");
+  let buckets=await listBuckets(accountId);
+  if(!buckets.some(item=>item.name==="redown")){
+    await createBucket(accountId,"redown");
+    buckets=await listBuckets(accountId);
+    if(!buckets.some(item=>item.name==="redown"))
+      throw Error("Bucket creation was accepted but not verified. Refresh R2 before retrying; do not create duplicates.");
+  }
+  // Explicit onboarding also installs and verifies the existing R2 Worker.
+  const profile=await provisionCloudflareProfile({
+    accountId,accountName:account.name,bucketName:"redown",profileName:"Cloudflare",
+    folders:{files:"files"},explorerOnly:false
+  });
+  const profiles=await getProfiles(),index=profiles.findIndex(p=>p.id===profile.id);
+  if(index<0)throw Error("REDOWN bucket setup succeeded, but its menu profile could not be found. Refresh and inspect Settings.");
+  // Profile mutations stay scoped to this destination. Preserve unrelated users'
+  // menu entries and any existing simple paths/options on this profile.
+  profiles[index]={...profiles[index],name:"Cloudflare",menuLabel:"Cloudflare",
+    defaultPrefix:profiles[index].defaultPrefix==null?"":profiles[index].defaultPrefix,
+    showInContextMenu:true,explorerManaged:false};
+  // A newly created REDOWN profile defaults to bucket root, not the legacy
+  // uploads/files subfolder. Existing configured destinations are retained.
+  if(!profile.menuLabel&&!profile.defaultPrefix)profiles[index].defaultPrefix="";
+  await setProfiles(profiles);
+  await chrome.storage.local.set({rightClickMode:"simple"});
+  await rebuildMenus();
+  return {accountId,bucketName:"redown",name:"Cloudflare",verified:true};
+}
+// Adding an address is an explicit public-facing Cloudflare configuration change.
+async function addRedownBucketUrl(message,sender){
+  if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html")||message.confirmed!==true)
+    throw Error("Public URL changes require confirmation in REDOWN Explorer.");
+  const {accountId,bucketName}=message;
+  if(typeof accountId!=="string"||!accountId||typeof bucketName!=="string"||!bucketName)
+    throw Error("Choose a bucket first.");
+  const bucketList=await listBuckets(accountId);
+  if(!bucketList.some(b=>b.name===bucketName))throw Error("Bucket was not found. Refresh your account.");
+  const url=new URL(String(message.website||""));
+  if(url.protocol!=="https:"||url.username||url.password||url.port||url.search||url.hash||url.pathname!=="/")
+    throw Error("Enter a clean HTTPS hostname you control, without paths, query parameters, or credentials.");
+  const profiles=await getProfiles();
+  if(!profiles.some(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName===bucketName))
+    throw Error("Set up this bucket's REDOWN Worker first using the existing destination setup. No domain was changed.");
+  return configureAssetDomain(accountId,bucketName,url.origin);
+}
 async function ensureWorkersSubdomain(accountId) {
   let res = await cfFetch(`/accounts/${accountId}/workers/subdomain`);
   if (res.ok) {
@@ -2614,6 +2665,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfAccounts") return sendResponse({ ok:true, accounts:await listCloudflareAccounts() });
       if (message?.type === "cfBuckets") return sendResponse({ ok:true, buckets:await listBuckets(message.accountId) });
       if (message?.type === "cfCreateBucket") return sendResponse({ ok:true, bucket:await createBucket(message.accountId,message.name,message.locationHint) });
+      if(message?.type==="cfSetupRedownQuick") {
+        if(_sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html")||message.confirmed!==true)
+          throw Error("Confirm REDOWN quick setup from Explorer first.");
+        return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId)});
+      }
+      if(message?.type==="cfAddBucketUrl")return sendResponse({ok:true,...(await addRedownBucketUrl(message,_sender))});
       if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message), verification:{workerReachable:true} });
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
