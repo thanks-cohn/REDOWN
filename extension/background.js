@@ -993,23 +993,6 @@ async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
   await rebuildMenus();
   return {accountId,bucketName:"redown",name:label,verified:true};
 }
-// Adding an address is an explicit public-facing Cloudflare configuration change.
-async function addRedownBucketUrl(message,sender){
-  if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html")||message.confirmed!==true)
-    throw Error("Public URL changes require confirmation in REDOWN Explorer.");
-  const {accountId,bucketName}=message;
-  if(typeof accountId!=="string"||!accountId||typeof bucketName!=="string"||!bucketName)
-    throw Error("Choose a bucket first.");
-  const bucketList=await listBuckets(accountId);
-  if(!bucketList.some(b=>b.name===bucketName))throw Error("Bucket was not found. Refresh your account.");
-  const url=new URL(String(message.website||""));
-  if(url.protocol!=="https:"||url.username||url.password||url.port||url.search||url.hash||url.pathname!=="/")
-    throw Error("Enter a clean HTTPS hostname you control, without paths, query parameters, or credentials.");
-  const profiles=await getProfiles();
-  if(!profiles.some(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName===bucketName))
-    throw Error("Set up this bucket's REDOWN Worker first using the existing destination setup. No domain was changed.");
-  return configureAssetDomain(accountId,bucketName,url.origin);
-}
 async function ensureWorkersSubdomain(accountId) {
   let res = await cfFetch(`/accounts/${accountId}/workers/subdomain`);
   if (res.ok) {
@@ -2698,7 +2681,6 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           throw Error("Confirm REDOWN quick setup from Explorer first.");
         return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId,message.menuLabel)});
       }
-      if(message?.type==="cfAddBucketUrl")return sendResponse({ok:true,...(await addRedownBucketUrl(message,_sender))});
       if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message), verification:{workerReachable:true} });
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
