@@ -404,6 +404,79 @@ a:hover{color:var(--text)}
   .account-chooser,.account-standby,.account-chooser #accounts{transition:none!important}
   .account-cloud::before,.account-loading-mark i{animation:none!important}
 }
+/* One premium account surface. #accounts remains the functional source
+   of truth but is never exposed as a second keyboard/native dropdown. */
+.account-chooser[data-state="ready"]{overflow:visible;z-index:3}
+.account-chooser[data-state="ready"][data-menu-open="true"]{z-index:30}
+.account-chooser[data-state="ready"] #accounts{
+  position:absolute;width:1px;height:1px;min-width:0;min-height:0;
+  padding:0;margin:0;border:0;opacity:0;visibility:hidden;
+  clip-path:inset(50%);pointer-events:none;transition:none
+}
+.account-picker-trigger{
+  position:absolute;inset:0;display:flex;align-items:center;gap:10px;
+  width:100%;height:100%;min-width:0;margin:0;padding:0 12px;
+  text-align:left;border:0;border-radius:inherit;box-shadow:none;
+  background:transparent;color:var(--text);font:700 12px/1.4 var(--font);
+  opacity:0;transform:translateY(8px);
+  transition:opacity .28s ease .06s,transform .35s cubic-bezier(.2,.75,.2,1);
+}
+.account-picker-trigger[hidden]{display:none!important}
+.account-chooser[data-state="ready"] .account-picker-trigger{
+  opacity:1;transform:none
+}
+.account-picker-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.account-picker-mark{
+  width:8px;height:8px;flex:none;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)
+}
+.account-picker-value{
+  flex:1;min-width:0;display:block;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap
+}
+.account-picker-chevron{
+  flex:none;width:17px;height:17px;color:var(--accent);
+  transition:transform .2s ease
+}
+.account-chooser[data-menu-open="true"] .account-picker-chevron{transform:rotate(180deg)}
+.account-picker-menu{
+  position:absolute;z-index:6;top:calc(100% + 8px);left:0;right:0;
+  display:grid;gap:4px;max-height:min(272px,45vh);overflow-y:auto;
+  padding:7px;border:1px solid var(--line);border-radius:13px;
+  background:var(--panel);box-shadow:0 14px 34px #00000028,0 0 0 1px var(--accent-glow);
+  scrollbar-width:thin;overscroll-behavior:contain
+}
+.account-picker-menu[hidden]{display:none!important}
+.account-picker-option{
+  display:flex;align-items:center;gap:12px;min-height:40px;
+  padding:9px 11px;border-radius:9px;cursor:pointer;
+  color:var(--text);font:600 12px/1.4 var(--font)
+}
+.account-picker-option:hover,.account-picker-option:focus-visible{
+  background:var(--accent-soft);outline:none
+}
+.account-picker-option:focus-visible{box-shadow:inset 0 0 0 1px var(--accent)}
+.account-picker-option[aria-selected="true"]{
+  color:var(--accent);background:var(--accent-soft)
+}
+.account-picker-option-name{
+  flex:1;min-width:0;overflow:hidden;white-space:nowrap;
+  text-overflow:ellipsis
+}
+.account-picker-check{flex:none;font-size:14px;color:var(--accent);opacity:0}
+.account-picker-option[aria-selected="true"] .account-picker-check{opacity:1}
+:root[data-explorer-theme="neon"] .account-picker-menu{
+  border-color:var(--neon-cyan);border-radius:7px;
+  box-shadow:4px 5px 0 #0b0821,0 7px 20px #80f3fa19
+}
+:root[data-explorer-theme="neon"] .account-picker-option{border-radius:5px}
+:root[data-explorer-theme="neon"] .account-picker-trigger{
+  border:0;box-shadow:none
+}
+@media(prefers-reduced-motion:reduce){
+  .account-picker-trigger,.account-picker-chevron{transition:none!important}
+}
+
 
 
 /* White is a presentation of final NEON geometry, never another palette.
