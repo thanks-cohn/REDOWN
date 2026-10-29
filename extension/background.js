@@ -2133,6 +2133,10 @@ function addMenuControls(mode){
   chrome.contextMenus.create({id:"redown-mode-separator",parentId:ROOT_MENU_ID,type:"separator",contexts});
   chrome.contextMenus.create({id:"redown-nested-mode",parentId:ROOT_MENU_ID,type:"checkbox",title:"Use nested menu",checked:mode==='nested',contexts});
   chrome.contextMenus.create({
+    id:"redown-saved-urls",parentId:ROOT_MENU_ID,title:"View saved object's URLs…",
+    contexts:["link","image","video","audio","page"]
+  });
+  chrome.contextMenus.create({
     id:"redown-manage", parentId:ROOT_MENU_ID, title:"Manage destinations…",
     contexts:["link","image","video","audio","page"]
   });
@@ -2424,6 +2428,24 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await chrome.storage.local.set({rightClickMode:info.checked ? 'nested' : 'simple'});
     return;
   }
+  if(info.menuItemId==="redown-saved-urls"){
+    const url=String(info.srcUrl||info.linkUrl||info.pageUrl||tab?.url||"");
+    const {transferHistory=[]}=await chrome.storage.local.get("transferHistory");
+    const saved=Array.isArray(transferHistory)?transferHistory.find(item=>
+      item?.ok===true&&item.sourceUrl===url&&item.destination?.accountId&&
+      item.destination?.bucketName&&item.destination?.key):null;
+    if(!saved){
+      await chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html?savedUrlMissing=1")});
+      return;
+    }
+    const token=crypto.randomUUID();
+    await chrome.storage.session.set({["redownUrlLookup:"+token]:{
+      accountId:saved.destination.accountId,bucketName:saved.destination.bucketName,
+      key:saved.destination.key,createdAt:Date.now()
+    }});
+    await chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html?savedUrls="+encodeURIComponent(token))});
+    return;
+  }
   if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage") {
     return chrome.runtime.openOptionsPage();
   }
@@ -2473,8 +2495,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const selectedBucket=item.bucketName||profile.bucketName;
       const destinationProfile=profiles.find(p=>p.type==="cloudflare-r2" && p.accountId===profile.accountId && p.bucketName===selectedBucket);
       if(!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
-      const location=await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,prefix,basenameFromUrl(sourceUrl));
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location});
+      const receipt={};
+      const location=await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt);
+      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message||String(error);
@@ -2495,10 +2518,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         ? profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===profile.accountId&&p.bucketName===selectedBucket)
         : profile;
       if(selectedBucket&&!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
-      const location = profile.type === "cloudflare-r2" && profile.defaultPrefix != null
-        ? await ingestCloudflareAtPrefix(destinationProfile, sourceUrl, profile.defaultPrefix, basenameFromUrl(sourceUrl))
+      const receipt={};
+      const location = profile.type === "cloudflare-r2"
+        ? await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,
+            profile.defaultPrefix != null?profile.defaultPrefix:(profile.folders?.[category]||category),
+            basenameFromUrl(sourceUrl),receipt)
         : await ingest(destinationProfile, sourceUrl, category);
-      await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
+      await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
       await notify("REDOWN complete", location);
     } catch (error) {
       const message = error?.message || String(error);
@@ -2547,13 +2573,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   try {
     let location;
+    const receipt={};
     if (profile.type === "cloudflare-r2") {
       const prefix = String(node.prefix ?? "").trim();
       location = await ingestCloudflareAtPrefix(
         profile,
         sourceUrl,
         prefix,
-        basenameFromUrl(sourceUrl)
+        basenameFromUrl(sourceUrl),receipt
       );
     } else if (profile.type === "github") {
       const originalPaths = profile.paths;
@@ -2573,7 +2600,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       profileId:profile.id,
       profileName:profile.name,
       category,
-      location
+      location,
+      ...receipt
     });
     await notify("REDOWN complete", location);
   } catch (error) {
