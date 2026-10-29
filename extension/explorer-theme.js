@@ -10,11 +10,11 @@
   const debug=document.getElementById('shelf-debug-enabled');
   const testTools=document.querySelector('.test-it-tools-wrap');
   const feedback=document.getElementById('status');
-  const keys=['shelfColorScheme','explorerThemeMode','explorerColorScheme','debugModeEnabled'];
+  const keys=['shelfColorScheme','explorerThemeMode','explorerColorScheme','shelfIconBackgroundMode','debugModeEnabled'];
   const palettes=new Set(['porcelain','midnight','ocean','neon']);
   const palette=value=>value==='velvet'?'neon':value==='noir'?'ocean':palettes.has(value)?value:'porcelain';
   const behaviorValue=value=>value==='custom'?'custom':'match';
-  let snapshot={shelfColorScheme:'porcelain',explorerThemeMode:'match',explorerColorScheme:'midnight',debugModeEnabled:false};
+  let snapshot={shelfColorScheme:'porcelain',explorerThemeMode:'match',explorerColorScheme:'midnight',shelfIconBackgroundMode:'original',debugModeEnabled:false};
   let revision=0;
   let themeEpoch=0,ready=false,activeTransition=null;
   let entranceTimer=null,watchdog=null,bootTimer=null,arrival=null;
@@ -140,6 +140,7 @@
     const mode=behaviorValue(snapshot.explorerThemeMode);
     const selected=palette(mode==='custom'?snapshot.explorerColorScheme:snapshot.shelfColorScheme);
     paintPalette(selected);
+    if(inExplorer)globalThis.RedownBrandIcon?.paint(document,selected,mode==='match'?snapshot.shelfIconBackgroundMode:'theme');
     if(behavior)behavior.value=mode;
     if(custom)custom.value=palette(snapshot.explorerColorScheme);
     if(customRow)customRow.hidden=mode!=='custom';
