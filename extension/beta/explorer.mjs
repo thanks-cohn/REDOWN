@@ -24,6 +24,9 @@ function accountVisual(next,headline='',detail=''){
   const state=next==='loading'&&!cloudflareSignedIn?'disconnected':next;
   shell.dataset.state=state;
   const loginState=state==='unauthorized'||state==='disconnected';
+  // Expired sessions may retain a stored token: never display LOGIN and
+  // LOG OUT together while reauthorization is required.
+  $('session-actions').hidden=loginState||!cloudflareSignedIn;
   const ready=state==='ready'&&$('accounts').options.length>0;
   $('account-picker-caption').hidden=!ready;
   $('accounts').disabled=!ready||busy;
