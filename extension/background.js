@@ -974,6 +974,7 @@ async function setupRedownQuickDestination(accountId){
       throw Error("Bucket creation was accepted but not verified. Refresh R2 before retrying; do not create duplicates.");
   }
   // Explicit onboarding also installs and verifies the existing R2 Worker.
+  const former=(await getProfiles()).find(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName==="redown");
   const profile=await provisionCloudflareProfile({
     accountId,accountName:account.name,bucketName:"redown",profileName:"Cloudflare",
     folders:{files:"files"},explorerOnly:false
@@ -983,11 +984,8 @@ async function setupRedownQuickDestination(accountId){
   // Profile mutations stay scoped to this destination. Preserve unrelated users'
   // menu entries and any existing simple paths/options on this profile.
   profiles[index]={...profiles[index],name:"Cloudflare",menuLabel:"Cloudflare",
-    defaultPrefix:profiles[index].defaultPrefix==null?"":profiles[index].defaultPrefix,
+    defaultPrefix:former?.defaultPrefix ?? "",
     showInContextMenu:true,explorerManaged:false};
-  // A newly created REDOWN profile defaults to bucket root, not the legacy
-  // uploads/files subfolder. Existing configured destinations are retained.
-  if(!profile.menuLabel&&!profile.defaultPrefix)profiles[index].defaultPrefix="";
   await setProfiles(profiles);
   await chrome.storage.local.set({rightClickMode:"simple"});
   await rebuildMenus();
