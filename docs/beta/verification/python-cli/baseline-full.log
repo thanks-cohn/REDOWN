@@ -579,9 +579,9 @@
 test at tests/agent-api.test.mjs:14:1
 ✖ offline discovery advertises only implemented operations and distinct versions (15.887884ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   'stale' !== 'current'
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/agent-api.test.mjs:16:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -599,7 +599,7 @@ test at tests/agent-api.test.mjs:96:1
 ✖ catalog IDs, evidence labels, source hashes and references are internally consistent (12.5112ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
   + [
   +   {
   +     code: 'stale-source',
@@ -806,7 +806,7 @@ test at tests/agent-api.test.mjs:96:1
   +   }
   + ]
   - []
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/agent-api.test.mjs:98:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -826,7 +826,7 @@ test at tests/debug-api.test.mjs:45:1
 ✖ real discovery, case, history, filters and validation are deterministic and honest (14.437732ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
     {
   +   caseCount: 3,
   -   caseCount: 1,
@@ -923,7 +923,7 @@ test at tests/debug-api.test.mjs:45:1
   +   ]
   -   warnings: []
     }
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/debug-api.test.mjs:53:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -957,10 +957,10 @@ test at tests/debug-api.test.mjs:80:1
 ✖ original case and proposal Markdown bytes are retained from pinned upstream (0.355741ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + 'a4e3b488a669bc7d13956f315e9ca5fef074d935'
   - 'ff3a22e9107292da01985e390ebe0b19eaf0eed3'
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/debug-api.test.mjs:81:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -980,7 +980,7 @@ test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
 ✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (58.781873ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
   + actual - expected
-  
+
   + [
   +   {
   +     code: 'SOURCE_CHANGED',
@@ -1384,7 +1384,7 @@ test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
   +   }
   + ]
   - []
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/explorer-diagnostic-fixtures.test.mjs:18:39)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -1403,9 +1403,9 @@ test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
 test at tests/issue-inventory.test.mjs:31:1
 ✖ explicit labels are recorded as partly addressed while the omitted-item report stays open (14.322357ms)
   AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
-  
+
     assert.ok(menu)
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/issue-inventory.test.mjs:32:182)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -1438,9 +1438,9 @@ test at tests/options-debug-display.test.mjs:90:1
 test at tests/semantic-api.test.mjs:21:1
 ✖ real vertical contract resolves intent, three upload invariants, handlers, current source and regression (39.383632ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   'stale' !== 'current'
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/semantic-api.test.mjs:22:130)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)
@@ -1459,9 +1459,9 @@ test at tests/semantic-api.test.mjs:21:1
 test at tests/semantic-api.test.mjs:71:1
 ✖ full finite public coverage inventory resolves strata and all canonical case links (28.753134ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   1060 !== 0
-  
+
       at TestContext.<anonymous> (file:///workspace/REDOWN/work/baseline/tests/semantic-api.test.mjs:72:111)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1382:25)

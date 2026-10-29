@@ -101,5 +101,7 @@
     "reason": "No authorized installed extension/provider session available",
     "requested": 56,
     "executed": 0
-  }
+  },
+  "implementation_commit": "374d04828f1f84ae9db43f09e94f51d875395871",
+  "log_format_note": "Baseline text log trailing whitespace normalized; test names, assertions, failures and counts preserved."
 }

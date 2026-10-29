@@ -1,7 +1,7 @@
 # Python CLI ↔ Universal File API: implementation handoff
 
 Branch: **beta-explorer**. Implementation base/corpus commit: **531546e**.
-Implementation commit: recorded below after the implementation checkpoint is committed.
+Implementation commit: **374d04828f1f84ae9db43f09e94f51d875395871**. This commit includes the bridge, CLI, tests, reports and initial handoff. The follow-up handoff checkpoint records this exact implementation identity; resolve the delivery tip with `git rev-parse origin/beta-explorer`.
 
 This handoff covers a working owner-run loopback bridge and test framework. **Live R2 verification is BLOCKED. Genuine cloud uploads: 0. Genuine cloud downloads: 0.** No authorized installed Chrome session or R2 provider credentials were available in this execution environment. Local production-handler tests are not live-provider proof.
 
