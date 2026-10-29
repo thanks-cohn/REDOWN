@@ -5,9 +5,9 @@
   const moon=toggle?.querySelector('.moon-icon');
   const sun=toggle?.querySelector('.sun-icon');
   const status=document.getElementById('status');
-  const darkThemes=new Set(['midnight','noir','velvet']);
+  const darkThemes=new Set(['midnight','noir','neon']);
   const palettes=new Set([...darkThemes,'porcelain']);
-  const normalize=value=>palettes.has(value)?value:'porcelain';
+  const normalize=value=>value==='velvet'?'neon':palettes.has(value)?value:'porcelain';
   let lastDark='midnight';
   let writeEpoch=0;
   const apply=value=>{
@@ -55,7 +55,8 @@
   apply('porcelain');
   void chrome.storage.local.get(['shelfColorScheme','shelfLastDarkTheme'])
     .then(({shelfColorScheme,shelfLastDarkTheme})=>{
-      if(darkThemes.has(shelfLastDarkTheme))lastDark=shelfLastDarkTheme;
+      if(shelfLastDarkTheme==='velvet')lastDark='neon';
+      else if(darkThemes.has(shelfLastDarkTheme))lastDark=shelfLastDarkTheme;
       if(writeEpoch===0)apply(shelfColorScheme);
     })
     .catch(()=>{if(status)status.textContent='Color preference unavailable. Showing Porcelain.';});
