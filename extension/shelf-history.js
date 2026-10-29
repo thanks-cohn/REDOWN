@@ -1,15 +1,22 @@
-/* A read-only projection of transferHistory. No second store or provider calls. */
+/* One minimal History view. Recent days and weeks lead, older dates fold
+   into months > numbered weeks > days. Each page is read from the on-device
+   archive; legacy transferHistory stays the compatibility source, not a
+   second timeline. No provider calls, no unbounded DOM rendering. */
 (() => {
+  'use strict';
   const $=id=>document.getElementById(id);
-  const text=value=>typeof value==='string'?value:'';
+  const PAGE_SIZE=40,RECENT_WEEKS=3;
+  const text=v=>typeof v==='string'?v:'';
+  const sortedEntries=records=>(Array.isArray(records)?records:[])
+    .filter(r=>r&&typeof r==='object')
+    .map((record,index)=>({record,index,ms:Date.parse(record.at||'')}))
+    .sort((a,b)=>(Number.isFinite(b.ms)?b.ms:0)-(Number.isFinite(a.ms)?a.ms:0)||a.index-b.index);
+
+  // Legacy API contract retained for consumers and tests.
   function group(records){
-    const sorted=(Array.isArray(records)?records:[]).filter(item=>item&&typeof item==='object').map((record,index)=>{
-      const time=typeof record.at==='string'?Date.parse(record.at):NaN;
-      return {record,index,time};
-    }).sort((a,b)=>(Number.isFinite(b.time)?b.time:-Infinity)-(Number.isFinite(a.time)?a.time:-Infinity)||a.index-b.index);
     const years=new Map();
-    for(const entry of sorted){
-      const date=Number.isFinite(entry.time)?new Date(entry.time):null;
+    for(const item of sortedEntries(records)){
+      const date=Number.isFinite(item.ms)?new Date(item.ms):null;
       const year=date?String(date.getFullYear()):'Unknown date';
       const month=date?String(date.getMonth()):'unknown';
       const day=date?String(date.getDate()):'unknown';
@@ -18,138 +25,221 @@
       if(!months.has(month))months.set(month,new Map());
       const days=months.get(month);
       if(!days.has(day))days.set(day,[]);
-      days.get(day).push({...entry,date});
+      days.get(day).push({...item,date});
     }
     return years;
   }
   function describe(record){
-    const destination=record.destination||{};
-    const location=text(record.location);
+    const destination=record.destination||{},location=text(record.location);
     let name=text(record.filename)||text(destination.key).split('/').pop();
     if(!name&&location.startsWith('R2: '))name=location.split('/').pop();
     if(!name)try{name=decodeURIComponent(new URL(text(record.sourceUrl)).pathname.split('/').pop());}catch{}
     const delivered=record.ok===true&&/^(https?:\/\/|R2: )/.test(location);
-    const status=record.ok===false?'Failed':delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded';
-    // A retained dispatch acknowledgement must never become proof of delivery.
-    return {name:name||text(record.sourceUrl)||'Transfer',status,state:record.ok===false?'failed':delivered?'success':'unknown',
-      detail:[text(record.provider)||(destination.bucketName||location.startsWith('R2: ')?'Cloudflare R2':''),text(record.profileName),text(destination.bucketName)].filter(Boolean).join(' · ')};
+    return {
+      name:name||text(record.sourceUrl)||'Transfer',
+      status:record.ok===false?'Failed':delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
+      state:record.ok===false?'failed':delivered?'success':'unknown',
+      detail:[text(record.provider)||(destination.bucketName||location.startsWith('R2: ')?'Cloudflare R2':''),text(record.profileName),text(destination.bucketName)].filter(Boolean).join(' · ')
+    };
   }
-  globalThis.RedownShelfHistory={group,describe,open};
+  const startDay=date=>new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const weekStart=date=>{
+    const d=startDay(date);d.setDate(d.getDate()-(d.getDay()+6)%7);return d;
+  };
+  const dateKey=date=>date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+  const ordinalWeek=date=>{
+    const first=new Date(date.getFullYear(),date.getMonth(),1);
+    return Math.floor((date.getDate()-1+(first.getDay()+6)%7)/7)+1;
+  };
+  const ordinal=['','First Week','Second Week','Third Week','Fourth Week','Fifth Week','Sixth Week'];
+  function organize(records,now=new Date()){
+    const years=new Map(),today=startDay(now),monday=weekStart(now);
+    const recentCutoff=new Date(monday);
+    recentCutoff.setDate(recentCutoff.getDate()-RECENT_WEEKS*7);
+    for(const item of sortedEntries(records)){
+      const date=Number.isFinite(item.ms)?new Date(item.ms):null;
+      const year=date?String(date.getFullYear()):'Unknown date';
+      if(!years.has(year))years.set(year,{recent:new Map(),months:new Map()});
+      const node=years.get(year);
+      const addDay=(days,entry)=>{
+        const key=date?dateKey(date):'undated';
+        if(!days.has(key))days.set(key,{date,items:[]});
+        days.get(key).items.push(entry);
+      };
+      const entry={...item,date};
+      if(date&&date>=recentCutoff&&date<=now){
+        const mondayOfDate=weekStart(date);
+        const weeks=Math.round((monday.getTime()-mondayOfDate.getTime())/(7*86400000));
+        let bucket,label;
+        if(date>=today){bucket='today';label='Today · '+date.toLocaleDateString(undefined,{month:'short',day:'numeric'});}
+        else if(weeks===0){bucket='this-week';label='Earlier This Week';}
+        else if(weeks>=1&&weeks<=RECENT_WEEKS){
+          bucket='week-'+weeks;label=['','Last Week','Two Weeks Ago','Three Weeks Ago'][weeks];
+        }
+        if(bucket){
+          if(!node.recent.has(bucket))node.recent.set(bucket,{label,days:new Map()});
+          addDay(node.recent.get(bucket).days,entry);
+          continue;
+        }
+      }
+      const month=date?date.getMonth():'unknown';
+      if(!node.months.has(month))node.months.set(month,{date,weeks:new Map()});
+      const monthNode=node.months.get(month);
+      const week=date?ordinalWeek(date):0;
+      if(!monthNode.weeks.has(week))monthNode.weeks.set(week,new Map());
+      addDay(monthNode.weeks.get(week),entry);
+    }
+    return years;
+  }
+
+  globalThis.RedownShelfHistory={group,describe,organize,open};
   if(!$('history-timeline'))return;
-  let records=[],loaded=false,loading=null,dirty=false,limit=100,epoch=0;
-  // A single expanded year and month makes history navigable even in a
-  // narrow Shelf. Remember the open group on data refresh or pagination.
-  let activeYear=null,yearChosen=false;
-  const activeMonthByYear=new Map();
-  function element(tag,content,className){const node=document.createElement(tag);if(content)node.textContent=content;if(className)node.className=className;return node;}
-  function summary(title,count,unit){
-    const node=element('summary');
-    const heading=element('span',title,'history-group-title');
-    const amount=element('small',count+' '+(count===1?unit:unit+'s'),'history-group-count');
-    node.append(heading,amount);
+  const archive=globalThis.RedownHistoryArchive?.create();
+  let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
+  let legacy=[],pageItems=[],fallback=false;
+  const openGroups=new Map([['root',null]]);
+  const create=(tag,value='',className='')=>{
+    const node=document.createElement(tag);
+    if(value)node.textContent=value;
+    if(className)node.className=className;
     return node;
+  };
+  function section(kind,title,key,parent,items,makeChildren){
+    const details=create('details','', 'history-'+kind);
+    details.dataset.group=key;
+    const summary=create('summary');
+    const label=create('span',title,'history-group-title');
+    const chevron=create('span','⌄','history-chevron');
+    summary.append(label,chevron);
+    details.append(summary);
+    details.open=openGroups.get(parent)===key;
+    summary.addEventListener('click',event=>{
+      event.preventDefault();
+      const expand=!details.open;
+      openGroups.set(parent,expand?key:null);
+      // Only the section currently opened expands. All sibling sections shrink.
+      for(const sibling of details.parentElement?.children||[]){
+        if(sibling!==details&&sibling.tagName==='DETAILS')sibling.open=false;
+      }
+      details.open=expand;
+    });
+    makeChildren(details,items,key);
+    return details;
+  }
+  function dayRows(day,container){
+    const list=create('ol','','history-transfers');
+    for(const item of day.items){
+      const info=describe(item.record),row=create('li','','history-transfer');
+      row.dataset.state=info.state;
+      row.title=[info.status,info.detail].filter(Boolean).join(' · ');
+      const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
+      const body=create('span','','history-transfer-body');
+      body.append(create('strong',info.name));
+      if(info.detail)body.append(create('small',info.detail));
+      const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'');
+      if(day.date)time.dateTime=day.date.toISOString();
+      row.append(dot,body,time);
+      if(item.record.error)row.append(create('small',text(item.record.error),'history-error'));
+      list.append(row);
+    }
+    container.append(list);
+  }
+  function drawDays(parent,days,parentKey){
+    for(const [key,day] of days){
+      const name=day.date?day.date.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'}):'Date unavailable';
+      parent.append(section('day',name,parentKey+':'+key,parentKey,day,dayRows));
+    }
+  }
+  function drawWeek(parent,weekKey,week,yearKey){
+    const key=yearKey+':'+weekKey;
+    parent.append(section('week',week.label,key,yearKey,week.days,drawDays));
   }
   function render(){
-    const timeline=$('history-timeline'),groups=group(records);
-    const entriesCount=records.filter(item=>item&&typeof item==='object').length;
-    const years=[...groups.keys()];
-    // The first transfer after an empty history should expand automatically.
-    // A deliberate user collapse stays collapsed on ordinary refresh.
-    if(!years.length){activeYear=null;yearChosen=false;}
-    else if(!yearChosen || (activeYear!==null&&!groups.has(activeYear))){
-      activeYear=years[0];yearChosen=true;
+    const timeline=$('history-timeline'),years=organize(pageItems),fragment=document.createDocumentFragment();
+    const firstYear=years.keys().next().value;
+    if(!loaded||(!openGroups.get('root')&&!openGroups.has('root-chosen'))){
+      openGroups.set('root',firstYear||null);openGroups.set('root-chosen',true);
     }
-    for(const remembered of activeMonthByYear.keys())if(!groups.has(remembered))activeMonthByYear.delete(remembered);
-    const fragment=document.createDocumentFragment();
-    let rendered=0;
-    for(const [year,months] of groups){
-      if(rendered>=limit)break;
-      const yearNode=element('details',null,'history-year');
-      yearNode.dataset.group=year;
-      yearNode.open=activeYear===year;
-      const yearCount=[...months.values()].reduce((sum,days)=>sum+[...days.values()].reduce((n,items)=>n+items.length,0),0);
-      const yearSummary=summary(year,yearCount,'transfer');
-      yearSummary.addEventListener('click',event=>{
-        event.preventDefault();
-        const next=!yearNode.open;
-        activeYear=next?year:null;
-        // True accordion behavior: the expanded year takes focus, while
-        // other years shrink to headers instead of remaining open.
-        for(const sibling of timeline.children)if(sibling!==yearNode&&sibling.classList.contains('history-year'))sibling.open=false;
-        yearNode.open=next;
-      });
-      yearNode.append(yearSummary);
-      const monthNames=[...months.keys()];
-      if(!activeMonthByYear.has(year))activeMonthByYear.set(year,monthNames[0]||null);
-      else if(activeMonthByYear.get(year)!==null&&!months.has(activeMonthByYear.get(year))){
-        activeMonthByYear.set(year,monthNames[0]||null);
-      }
-      for(const [month,days] of months){
-        if(rendered>=limit)break;
-        const monthNode=element('details',null,'history-month');
-        monthNode.dataset.group=year+'-'+month;
-        monthNode.open=activeMonthByYear.get(year)===month;
-        const first=days.values().next().value[0];
-        const monthCount=[...days.values()].reduce((n,items)=>n+items.length,0);
-        const monthSummary=summary(first.date?first.date.toLocaleDateString(undefined,{month:'long'}):'Undated',monthCount,'transfer');
-        monthSummary.addEventListener('click',event=>{
-          event.preventDefault();
-          const next=!monthNode.open;
-          activeMonthByYear.set(year,next?month:null);
-          // Opening October folds September inside the same year, etc.
-          for(const sibling of yearNode.children)if(sibling!==monthNode&&sibling.classList.contains('history-month'))sibling.open=false;
-          monthNode.open=next;
-        });
-        monthNode.append(monthSummary);
-        for(const entries of days.values()){
-          if(rendered>=limit)break;
-          const section=element('section',null,'history-day');
-          section.append(element('h2',entries[0].date?entries[0].date.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}):'Timestamp unavailable'));
-          const list=element('ol');
-          for(const entry of entries){
-            if(rendered++>=limit)break;
-            const info=describe(entry.record),row=element('li',null,'history-transfer');row.dataset.state=info.state;
-            row.append(element('strong',info.name));
-            const meta=element('p',null,'history-meta');
-            meta.append(element('span',[info.detail,info.status].filter(Boolean).join(' · ')));
-            if(entry.date){const time=element('time',entry.date.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}));time.dateTime=entry.date.toISOString();meta.append(time);}
-            row.append(meta);
-            if(text(entry.record.error))row.append(element('p',entry.record.error,'history-error'));
-            list.append(row);
-          }
-          section.append(list);monthNode.append(section);
+    for(const [year,node] of years){
+      fragment.append(section('year',year,year,'root',node,(yearEl,data,yearKey)=>{
+        // Latest day first, then prior weeks, then months with numbered weeks.
+        for(const recent of ['today','this-week','week-1','week-2','week-3']){
+          const week=data.recent.get(recent);
+          if(!week)continue;
+          if(recent==='today'){
+            for(const [key,day] of week.days){
+              yearEl.append(section('day',week.label,yearKey+':today:'+key,yearKey,day,dayRows));
+            }
+          }else drawWeek(yearEl,recent,week,yearKey);
         }
-        yearNode.append(monthNode);
-      }
-      fragment.append(yearNode);
+        for(const [month,monthNode] of data.months){
+          const name=monthNode.date?monthNode.date.toLocaleDateString(undefined,{month:'long'}):'Undated';
+          yearEl.append(section('month',name,yearKey+':month-'+month,yearKey,monthNode,(monthEl,monthData,monthKey)=>{
+            for(const [number,days] of [...monthData.weeks].sort((a,b)=>a[0]-b[0])){
+              const key=monthKey+':week-'+number;
+              monthEl.append(section('week',ordinal[number]||'Unknown Week',key,monthKey,days,drawDays));
+            }
+          }));
+        }
+      }));
     }
     timeline.replaceChildren(fragment);
-    $('history-status').textContent=entriesCount?`${Math.min(limit,entriesCount)} of ${entriesCount} retained transfers`:'No transfers yet. Your retained activity will appear here.';
-    $('history-more').hidden=entriesCount<=limit;
+    const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+    $('history-status').textContent=fallback?'Recent records only · archive unavailable':
+      total?total+' transfers':'No transfers yet';
+    $('history-pagination').hidden=pages<=1;
+    $('history-page-label').textContent=(pageIndex+1)+' / '+pages;
+    $('history-prev').disabled=pageIndex<=0;
+    $('history-next').disabled=pageIndex>=pages-1;
+    loaded=true;
+  }
+  async function refresh(){
+    const ticket=++requestId;
+    $('history-retry').hidden=true;
+    if(!loaded)$('history-status').textContent='Opening History…';
+    try{
+      const stored=await chrome.storage.local.get('transferHistory');
+      if(ticket!==requestId)return;
+      legacy=Array.isArray(stored.transferHistory)?stored.transferHistory:[];
+      if(archive){
+        try{
+          await archive.importLegacy(legacy);
+          if(ticket!==requestId)return;
+          const page=await archive.page(pageIndex*PAGE_SIZE,PAGE_SIZE);
+          if(ticket!==requestId)return;
+          total=page.total;pageItems=page.items;fallback=false;
+          // When the archive shrinks after a reset, recover valid page bounds.
+          if(pageIndex>0&&!pageItems.length&&total>0){pageIndex=Math.ceil(total/PAGE_SIZE)-1;return refresh();}
+        }catch(error){
+          console.warn('REDOWN history archive unavailable:',error?.message||String(error));
+          fallback=true;total=legacy.length;pageIndex=0;pageItems=legacy.slice(0,PAGE_SIZE);
+        }
+      }else{fallback=true;total=legacy.length;pageIndex=0;pageItems=legacy.slice(0,PAGE_SIZE);}
+      dirty=false;render();
+    }catch{
+      if(ticket!==requestId)return;
+      $('history-status').textContent='History could not be loaded';
+      $('history-retry').hidden=false;
+    }
   }
   async function open(){
-    if(loaded&&!dirty||loading)return loading;
-    const ticket=++epoch;
-    $('history-status').textContent='Reading your transfer history…';$('history-retry').hidden=true;
-    loading=(async()=>{
-      try{
-        const data=await chrome.storage.local.get('transferHistory');
-        if(ticket!==epoch)return;
-        records=Array.isArray(data.transferHistory)?data.transferHistory:[];
-        loaded=true;dirty=false;render();
-      }catch{
-        $('history-status').textContent='Could not read transfer history. Your saved records have not been changed.';
-        $('history-retry').hidden=false;
-      }finally{loading=null;}
-    })();
-    return loading;
+    if(loaded&&!dirty)return;
+    return refresh();
   }
-  $('history-more').addEventListener('click',()=>{limit+=100;render();});
-  $('history-retry').addEventListener('click',()=>{void open();});
+  async function pageTo(next){
+    const max=Math.max(0,Math.ceil(total/PAGE_SIZE)-1);
+    if(next<0||next>max||next===pageIndex)return;
+    pageIndex=next;
+    // Page changes only read one small slice of the local archive.
+    await refresh();
+    $('history-timeline').scrollIntoView?.({behavior:'auto',block:'start'});
+  }
+  $('history-prev').addEventListener('click',()=>void pageTo(pageIndex-1));
+  $('history-next').addEventListener('click',()=>void pageTo(pageIndex+1));
+  $('history-retry').addEventListener('click',()=>void refresh());
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||!changes.transferHistory)return;
-    ++epoch;records=Array.isArray(changes.transferHistory.newValue)?changes.transferHistory.newValue:[];loaded=true;
-    dirty=$('history-view').hidden;
-    if(!dirty)render();
+    dirty=true;pageIndex=0;openGroups.delete('root-chosen');
+    if(!$('history-view').hidden)void refresh();
   });
 })();
