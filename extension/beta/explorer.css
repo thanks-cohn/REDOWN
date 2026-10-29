@@ -417,3 +417,129 @@ a:hover{color:var(--text)}
   .account-chooser,.account-standby,.account-chooser #accounts{transition:none!important}
   .account-cloud::before,.account-loading-mark i{animation:none!important}
 }
+
+
+/* Explorer-only ink flood. The incoming page is revealed through two soft
+   circular masks: bottom-left first, then top-right ~130ms later. No Shelf CSS
+   or JS is altered. The old page stays visible beneath the flood. */
+@property --explorer-ink-bottom-left{
+  syntax:"<length>";inherits:false;initial-value:0px
+}
+@property --explorer-ink-top-right{
+  syntax:"<length>";inherits:false;initial-value:0px
+}
+::view-transition-old(root){animation:none}
+::view-transition-new(root){
+  animation:explorer-dual-ink-reveal 1.55s cubic-bezier(.2,.72,.27,1) both;
+  mask-image:
+    radial-gradient(circle at left bottom,#000 0 var(--explorer-ink-bottom-left),transparent calc(var(--explorer-ink-bottom-left) + 18px)),
+    radial-gradient(circle at right top,#000 0 var(--explorer-ink-top-right),transparent calc(var(--explorer-ink-top-right) + 18px));
+  mask-composite:add;
+}
+@keyframes explorer-dual-ink-reveal{
+  0%{--explorer-ink-bottom-left:0px;--explorer-ink-top-right:0px}
+  8.4%{--explorer-ink-top-right:0px}
+  83%{--explorer-ink-bottom-left:180vmax}
+  100%{--explorer-ink-bottom-left:180vmax;--explorer-ink-top-right:180vmax}
+}
+
+/* The Explorer's NEON personality follows the Shelf's dimensional outlines,
+   cyan / candy-pink / pale gold edges and pixel-signage typography. Keep
+   ordinary file operations and semantic warning/ownership colors intact. */
+@font-face{font-family:"REDOWN Jersey";src:url("../fonts/jersey-10-charted-latin.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"REDOWN Bitcount";src:url("../fonts/bitcount-prop-double-ink-latin.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+:root[data-explorer-theme="neon"]{
+  --neon-pink:#ff94d1;--neon-cyan:#80f3fa;--neon-gold:#ffe49c;
+  --neon-mint:#b7f58b;--line:#9075c3;--accent:#ff9bdc;
+}
+:root[data-explorer-theme="neon"] body{
+  background:
+    radial-gradient(ellipse at 0% 100%,#ff60b521,transparent 44%),
+    radial-gradient(ellipse at 100% 0%,#4be8f224,transparent 46%),var(--bg);
+}
+:root[data-explorer-theme="neon"] .brand,
+:root[data-explorer-theme="neon"] h1{
+  font-family:"REDOWN Jersey",DM,system-ui,sans-serif;
+  font-weight:400;letter-spacing:.05em;
+}
+:root[data-explorer-theme="neon"] .brand{font-size:26px;line-height:1.05}
+:root[data-explorer-theme="neon"] h1{font-size:30px;line-height:1.05}
+:root[data-explorer-theme="neon"] h2,
+:root[data-explorer-theme="neon"] .eyebrow,
+:root[data-explorer-theme="neon"] .section-title,
+:root[data-explorer-theme="neon"] .badge,
+:root[data-explorer-theme="neon"] .list-heading{
+  font-family:"REDOWN Bitcount",DM,system-ui,sans-serif;
+  font-weight:500;letter-spacing:.055em;
+}
+:root[data-explorer-theme="neon"] h2{font-size:31px;color:var(--neon-gold)}
+:root[data-explorer-theme="neon"] .eyebrow,
+:root[data-explorer-theme="neon"] .section-title{font-size:14px;color:var(--neon-cyan)}
+:root[data-explorer-theme="neon"] .badge{color:var(--neon-gold);border:1px solid var(--neon-gold)}
+:root[data-explorer-theme="neon"] aside{
+  border-right:2px solid var(--neon-cyan);
+  background:linear-gradient(145deg,#ff87d10d,transparent 55%),var(--panel);
+  box-shadow:inset -1px 0 #d8fdff3c,5px 0 14px #08041c33;
+}
+:root[data-explorer-theme="neon"] .toolbar,
+:root[data-explorer-theme="neon"] #dropzone,
+:root[data-explorer-theme="neon"] .activity,
+:root[data-explorer-theme="neon"] #side-preview,
+:root[data-explorer-theme="neon"] dialog,
+:root[data-explorer-theme="neon"] #explorer-menu,
+:root[data-explorer-theme="neon"] #test-it-tools-menu{
+  border:2px solid var(--neon-pink);border-radius:7px;
+  background:linear-gradient(135deg,#ff8dce0c,transparent 62%),var(--panel);
+  box-shadow:4px 5px 0 #0b0821,inset 0 1px #ffffff20;
+}
+:root[data-explorer-theme="neon"] .toolbar,
+:root[data-explorer-theme="neon"] #side-preview{border-color:var(--neon-cyan)}
+:root[data-explorer-theme="neon"] .activity{border-color:var(--neon-gold)}
+:root[data-explorer-theme="neon"] .account-chooser,
+:root[data-explorer-theme="neon"] .shelf-settings-launch{
+  border:2px solid var(--neon-mint);border-radius:7px;
+  box-shadow:3px 4px 0 #0b0821,inset 0 1px #ffffff20;
+}
+:root[data-explorer-theme="neon"] button:not(.danger):not(.logout-button),
+:root[data-explorer-theme="neon"] select,
+:root[data-explorer-theme="neon"] input:not([type="checkbox"]){
+  border-color:var(--neon-pink);border-radius:5px;
+}
+:root[data-explorer-theme="neon"] input:not([type="checkbox"]),
+:root[data-explorer-theme="neon"] select{border-color:var(--neon-cyan)}
+:root[data-explorer-theme="neon"] button:hover:not(:disabled),
+:root[data-explorer-theme="neon"] select:hover:not(:disabled){
+  border-color:var(--neon-cyan);
+  box-shadow:0 0 13px #80f3fa2e;
+}
+:root[data-explorer-theme="neon"] .primary{
+  color:#140d2b;border-color:var(--neon-gold)!important;
+  box-shadow:3px 3px 0 #0b0821;
+}
+:root[data-explorer-theme="neon"] .list-heading{
+  background:linear-gradient(90deg,#ffe49c1a,transparent 82%),var(--list-head);
+  color:var(--neon-gold);border-bottom:1px solid var(--neon-gold);
+  font-size:15px;
+}
+:root[data-explorer-theme="neon"] .file:hover{
+  box-shadow:inset 3px 0 var(--neon-cyan);background:var(--row-hover);
+}
+:root[data-explorer-theme="neon"] .grid .file{
+  border:1px solid var(--neon-cyan);border-radius:6px;
+  box-shadow:3px 3px 0 #0b0821;
+}
+:root[data-explorer-theme="neon"] .file[aria-selected="true"]{
+  background:var(--accent-soft);box-shadow:inset 4px 0 var(--neon-gold);
+}
+:root[data-explorer-theme="neon"] .icon{
+  border-color:var(--neon-pink);border-radius:4px;
+}
+:root[data-explorer-theme="neon"] .folder .icon{border-color:var(--neon-mint)}
+:root[data-explorer-theme="neon"] button:focus-visible,
+:root[data-explorer-theme="neon"] input:focus-visible,
+:root[data-explorer-theme="neon"] select:focus-visible{
+  outline:2px solid var(--neon-gold);outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+  ::view-transition-old(root),::view-transition-new(root){animation:none!important;mask-image:none!important}
+}
