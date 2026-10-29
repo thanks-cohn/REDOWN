@@ -7,6 +7,13 @@
   function button(text,action,className='ghost') {
     const el=nodeElement('button',className,text);el.type='button';el.addEventListener('click',event=>{Promise.resolve().then(()=>{if(pending.size)return;return action(event);}).catch(error=>live(error?.message || 'Could not save this change.',true));});return el;
   }
+  function menuControls(item,siblings,profile,refreshRow){
+    const wrap=nodeElement('div','nested-menu-controls');
+    const label=nodeElement('input');label.value=item.label||'';label.maxLength=60;label.placeholder='Menu label (optional)';label.setAttribute('aria-label','Menu label');
+    label.addEventListener('change',()=>{item.label=label.value.trim();save(profile).catch(error=>live(error.message,true));});wrap.append(label);
+    for(const [text,delta] of [['↑',-1],['↓',1]]){const move=button(text,async()=>{const i=siblings.indexOf(item),next=i+delta;if(next<0||next>=siblings.length)return;[siblings[i],siblings[next]]=[siblings[next],siblings[i]];await save(profile);refreshRow();});move.setAttribute('aria-label',delta<0?'Move menu entry up':'Move menu entry down');wrap.append(move);}
+    return wrap;
+  }
   function selectedOption(select,value,text) {const option=nodeElement('option','',text);option.value=value;select.append(option);}
   async function save(profile) { await context.save(profile); }
   function live(text,bad=false) {lastStatus={text,bad};if(!container)return;const status=container.querySelector('.nested-status');status.textContent=text;status.classList.toggle('bad',bad);}
@@ -54,13 +61,14 @@
           root.bucketName=result.bucket?.name || name;root.ready=true;newName.value='';drafts.delete(root.id);
           await save(profile);select.replaceChildren();selectedOption(select,root.bucketName,root.bucketName);select.value=root.bucketName;add.disabled=false;location.textContent=`${root.bucketName} /`;live('Bucket created.');
         },()=>{if(group.isConnected)add.disabled=!root.ready;}), 'secondary');
+        if(context.existingOnly)newName.disabled=true;
         const actions=nodeElement('div','nested-actions');
         const add=button('+ Child',()=>run(root.id,[],async()=>{if(!root.ready)return;const fresh=M.blank();root.children.push(fresh);collapsed.delete(root.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,'',root.ready,0);}));add.disabled=true;add.setAttribute('aria-label','Add a folder inside this bucket');
         const remove=button('Remove',()=>run(root.id,[],async()=>{model.roots=model.roots.filter(item=>item!==root);await save(profile);group.remove();}));remove.setAttribute('aria-label','Remove this bucket from the nested menu only');
         actions.append(add,remove);
-        const choose=nodeElement('div','nested-choice');const fold=button('▾',()=>{collapsed.has(root.id)?collapsed.delete(root.id):collapsed.add(root.id);children.hidden=collapsed.has(root.id);fold.textContent=collapsed.has(root.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));fold.setAttribute('aria-label','Expand or collapse bucket children');fold.textContent=collapsed.has(root.id)?'▸':'▾';choose.append(fold,select);
-        const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
-        row.append(choose,creator,actions);group.append(row);
+        const choose=nodeElement('div','nested-choice');const fold=button('▾',()=>{collapsed.has(root.id)?collapsed.delete(root.id):collapsed.add(root.id);children.hidden=collapsed.has(root.id);if(!children.hidden&&!children.childElementCount)for(const node of root.children)folderRow(root,node,children,'',root.ready,0);fold.textContent=collapsed.has(root.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));fold.setAttribute('aria-label','Expand or collapse bucket children');fold.textContent=collapsed.has(root.id)?'▸':'▾';choose.append(fold,select);
+        const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.hidden=Boolean(context.existingOnly);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
+        row.append(choose,creator,actions);if(context.existingOnly)group.append(menuControls(root,model.roots,profile,refresh));group.append(row);
         const location=nodeElement('div','nested-path',root.bucketName?`${root.bucketName} /`:'Choose an existing bucket or create a new one.');group.append(location);
         const children=nodeElement('div','nested-children');children.hidden=collapsed.has(root.id);group.append(children);roots.append(group);
         select.addEventListener('change',()=>run(root.id,[select,create,newName,add],async()=>{
@@ -101,12 +109,12 @@
           M.setLocation(node,name);newName.value='';drafts.delete(node.id);
           await save(profile);select.replaceChildren();selectedOption(select,name,name);select.value=name;node.ready=true;add.disabled=false;location.textContent=`${root.bucketName}/${M.path(parentPath,name)}/`;live(`Created ${root.bucketName}/${M.path(parentPath,name)}/`);
         },()=>{if(group.isConnected)repaint();}),'secondary');create.disabled=true;
-        const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
-        const add=button('+ Child',()=>run(node.id,[],async()=>{if(!node.ready)return;const fresh=M.blank();node.children.push(fresh);collapsed.delete(node.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,M.path(parentPath,node.name),true,depth+1);fold.disabled=false;}));add.disabled=true;add.setAttribute('aria-label','Add a child inside this folder');
+        const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.hidden=Boolean(context.existingOnly);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
+        const add=button('+ Child',()=>run(node.id,[],async()=>{if(!node.ready)return;if(depth>=7)throw Error('Nested menus support up to eight folder levels.');const fresh=M.blank();node.children.push(fresh);collapsed.delete(node.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,M.path(parentPath,node.name),true,depth+1);fold.disabled=false;}));add.disabled=true;add.setAttribute('aria-label','Add a child inside this folder');
         const remove=button('Remove',()=>run(node.id,[],async()=>{const siblings=findChildren(root,node.id);const index=siblings.indexOf(node);if(index>=0)siblings.splice(index,1);await save(profile);group.remove();}));remove.setAttribute('aria-label','Remove this menu branch without deleting any Cloudflare folders');
         const actions=nodeElement('div','nested-actions');actions.append(add,remove);
-        const choose=nodeElement('div','nested-choice');const fold=button(collapsed.has(node.id)?'▸':'▾',()=>{collapsed.has(node.id)?collapsed.delete(node.id):collapsed.add(node.id);children.hidden=collapsed.has(node.id);fold.textContent=collapsed.has(node.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));fold.setAttribute('aria-label','Expand or collapse folder children');fold.disabled=!node.children.length;choose.append(fold,select);
-        row.append(choose,creator,actions);group.append(row);
+        const choose=nodeElement('div','nested-choice');const fold=button(collapsed.has(node.id)?'▸':'▾',()=>{collapsed.has(node.id)?collapsed.delete(node.id):collapsed.add(node.id);children.hidden=collapsed.has(node.id);if(!children.hidden&&!children.childElementCount)for(const child of node.children)folderRow(root,child,children,node.name?M.path(parentPath,node.name):parentPath,parentReady&&node.ready,depth+1);fold.textContent=collapsed.has(node.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));fold.setAttribute('aria-label','Expand or collapse folder children');fold.disabled=!node.children.length;choose.append(fold,select);
+        row.append(choose,creator,actions);if(context.existingOnly)group.append(menuControls(node,findChildren(root,node.id),profile,refresh));group.append(row);
         const location=nodeElement('div','nested-path');group.append(location);
         const children=nodeElement('div','nested-children');children.hidden=collapsed.has(node.id);group.append(children);parent.append(group);
         const repaint=()=>{
@@ -152,5 +160,5 @@
     const card=Array.from(container.querySelectorAll('.nested-card')).find(el=>el.dataset.menuProfileId===profileId);
     const rows=card?.querySelectorAll('.nested-existing');const last=rows?.[rows.length-1];last?.scrollIntoView?.({block:'nearest'});last?.focus();
   }
-  globalThis.RedownNestedEditor={refresh,addLocation,mount(root,dependencies){container=root;context=dependencies;render(context.profiles());},render};
+  globalThis.RedownNestedEditor={refresh,addLocation,mount(root,dependencies){container=root;context=dependencies;if(context.startCollapsed){const walk=nodes=>{for(const node of nodes||[]){collapsed.add(node.id);walk(node.children);}};for(const p of context.profiles())for(const r of p.nestedMenu?.roots||[]){collapsed.add(r.id);walk(r.children);}}render(context.profiles());},render};
 })();

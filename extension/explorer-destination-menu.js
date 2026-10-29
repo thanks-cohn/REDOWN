@@ -94,7 +94,7 @@
       }
     }
     function attach(root,{operation,accounts,buckets,source,items}){
-      const verb=operation==='move'?'Move':'Copy';
+      const verb=operation==='select'?'Select':operation==='move'?'Move':'Copy';
       const safeSubtree=destination=>destination.accountId!==source.accountId||destination.bucketName!==source.bucketName||!items.some(i=>i.folder&&destination.prefix.startsWith(i.key.replace(/\/$/,'')+'/'));
       const allowed=destination=>{
         if(destination.accountId!==source.accountId||destination.bucketName!==source.bucketName)return true;

@@ -44,13 +44,13 @@
       for(const node of nodes || []) {
         if(!node.ready || !node.name)continue;
         const prefix=path(parent,node.name),chain=[...ids,node.id];
-        result.push({rootId:root.id,bucketName:root.bucketName,nodeId:node.id,ids:chain,prefix,name:node.name});
+        result.push({rootId:root.id,bucketName:root.bucketName,nodeId:node.id,ids:chain,prefix,name:node.label||node.name});
         walk(node.children,root,prefix,chain);
       }
     }
     for(const root of model.roots || []) {
       if(!root.ready || !root.bucketName)continue;
-      result.push({rootId:root.id,bucketName:root.bucketName,nodeId:root.id,ids:[],prefix:'',name:root.bucketName});
+      result.push({rootId:root.id,bucketName:root.bucketName,nodeId:root.id,ids:[],prefix:'',name:root.label||root.bucketName});
       walk(root.children,root,'',[]);
     }
     return result;

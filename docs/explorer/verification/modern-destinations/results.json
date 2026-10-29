@@ -1,0 +1,903 @@
+{
+  "startingCommit": "670fdd9de69c671e8d3f14b02bca0d37e4958312",
+  "branch": "release/cloudflare-true-remote",
+  "protectedBaseline": "BASE-102926",
+  "protectedBaselineCommit": "bd1927696e4e22dd8ee075e361be63485fd907b9",
+  "scope": "Local Node/jsdom and simulated Chrome/provider APIs only; no installed Chrome or live Cloudflare acceptance",
+  "baseline": {
+    "total": 609,
+    "passed": 515,
+    "failed": 94,
+    "skipped": 0,
+    "command": "node --test --test-reporter=./scripts/reliability-reporter.mjs tests/*.test.mjs",
+    "source": "Unmodified starting commit exported with git archive into a temporary directory, sharing installed node_modules"
+  },
+  "fullRegression": {
+    "total": 623,
+    "passed": 530,
+    "failed": 93,
+    "skipped": 0,
+    "command": "node --test --test-reporter=./scripts/reliability-reporter.mjs tests/*.test.mjs",
+    "newFailures": [],
+    "resolvedFailures": [
+      {
+        "type": "fail",
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      }
+    ],
+    "note": "Final UI-only append optimization and legacy automatic-folder display were additionally retested in the final focused run."
+  },
+  "focused": {
+    "total": 67,
+    "passed": 67,
+    "failed": 0,
+    "command": "node --test tests/modern-destinations.test.mjs tests/simple-menu-flat.test.mjs tests/simple-location-rows.test.mjs tests/add-menu-location.test.mjs tests/menu-reorder.test.mjs tests/explorer-destination-menu.test.mjs tests/get-url.test.mjs tests/explorer-first-paint-and-url-cards.test.mjs tests/explorer-account-and-history-navigation.test.mjs tests/destination-search-regression.test.mjs"
+  },
+  "featureTests": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0,
+    "command": "node --test tests/modern-destinations.test.mjs",
+    "note": "Includes final assertion that adding cards preserves existing card DOM identity."
+  },
+  "checks": {
+    "syntax": "passed",
+    "architecture": "available",
+    "apiRegistry": "available",
+    "issueInventory": "available"
+  },
+  "unavailable": [
+    "Installed Chrome right-click interactions: Playwright Chromium executable absent",
+    "Visual screenshot acceptance in Porcelain/Midnight/Ocean/NEON",
+    "Authenticated live Cloudflare discovery and R2 transfers"
+  ],
+  "cloudMutationsDuringVerification": 0,
+  "existingFailureTests": [
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta UI disables folder downloads and uses the same API for context menu and keyboard commands",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "folder drag/drop invokes the same real move API and preserves file bytes",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta preferences, duplicate, saved destination and preview are working UI interactions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "archive dialog and destination chooser route actual extraction and copy through API",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "dropping a directory on Beta uploads nested file bytes through the universal API",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "startup automatically opens the sole bucket and persists folder navigation without provisioning",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "startup restores an accessible saved bucket and folder",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "multiple accounts are discovered and a sole bucket in the second account opens automatically",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "multiple buckets present an immediate choice and Refresh works with no selected bucket",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "authorization listing errors remain distinct from empty folders and Refresh recovers",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "a removed saved folder falls back to the live bucket root",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "unsupported formats do not advertise inline Preview in the context menu",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "GUI upload, independent fixture SHA-256, rename, copy, nested move, download and deletion reconcile the file list",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "sidebar A/B/A, folder Refresh, history, selection and context Download keep the exact bucket",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "slow bucket success and failure cannot overwrite a newer bucket or its saved location",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "genuine empty bucket and network/400/403 failures stay distinct and retry in place",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Refresh updates metadata and prunes deleted selections without account rediscovery",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "expired listing credentials show authorization detail and connection recovery can retry discovery",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "session invalidation clears the old bucket and ignores its delayed response",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "dual preview moves one loaded viewer between window and side without another read",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side unsupported file metadata and Download fallback make no preview read",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "both modes render images PDF text video audio; side double click and previous/next share renderer",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side preview failure remains local, retry works, and corrupt media shows Download",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "bucket changes and logout invalidate pending side preview including minimized content",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "pointer divider respects list/pane bounds and persists width; media cleanup revokes only owned URLs",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "truncation is explicit in shared preview metadata and survives mode changes",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side preview stays usable through copy, rename, Refresh and deleted selection pruning",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Window arrows skip unsupported files and folders, respect visible sort/filter, boundaries and editable controls",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "rapid lightbox arrows abort old reads, revoke late URLs and preserve latest image and mode",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour invitation declines once, remains optional, and manual menu restart resets all steps",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "every tour card has an X that exits everything immediately, preserving selection and session",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour recognizes completed bucket, selection, view, refresh and preview actions through actual UI handlers",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour completion and Escape clean up without cancelling active preview; no automatic resume",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It blocks original deletion and cut through real toolbar handlers",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Restart Test It confirms, replaces saved results, reopens exercise one and preserves files",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "parent breadcrumb observes completed navigation including root parent",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "parent breadcrumb observes completed navigation including nested click targets",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "breadcrumb grandparent and non-breadcrumb parent navigation do not pass parent exercise",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "image buttons await actual load, reject repeated load and error, then recognize next and previous",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It same-folder Paste creates a distinct remotely verified copy without destination configuration",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "failed parent listing never completes breadcrumb exercise",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "production copy indicators survive List, Grid and refresh; original verifies automatically and ordinary R2 rename and keyboard movement succeed",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/duplicate/delete/export sequence",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Window Preview actual Previous then Next buttons register Next without a cached expected key",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "ordinary GUI and embedded Worker move two Test Copies into a new folder",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "source approval owns focus above guide, and context Copy highlights the file then menu item",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It exercise 57 records delayed Chrome completion, guide exited: false",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It exercise 57 records delayed Chrome completion, guide exited: true",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "partial ordinary multi-file Move preserves successful identity and the unresolved copy",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "click creates a visible window before network navigation; repeated clicks focus it",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "successful callback exchanges PKCE and verifies access before saving token",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "callback resumes after service worker restart from session state",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "state mismatch fails without token exchange and allows a fresh retry",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "denied consent and missing authorization code fail cleanly",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "closed popup releases attempt and stale window is replaced on next click",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "expired attempt clears secrets, closes popup, and permits retry",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "failed API verification never stores an access token",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "duplicate navigation events exchange a code only once",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "verification network stall aborts and releases the attempt",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "popup creation errors are returned instead of leaving an in-flight lock",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "settings and worker observing the same callback exchange the code once across contexts",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "large retained histories render in bounded increments and unrelated storage changes do no history work",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/popup-destinations.test.mjs",
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "provider order, pending integrations, verified account state and actual history remain honest",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "existing toolbar implementation applies default Shelf and Popup in both directions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    }
+  ]
+}

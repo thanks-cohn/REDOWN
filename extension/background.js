@@ -903,6 +903,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
+importScripts("destination-config.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
 importScripts("explorer-diagnostics.js");
@@ -1010,7 +1011,7 @@ async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
     defaultPrefix:former?.defaultPrefix ?? "",
     showInContextMenu:true,explorerManaged:false};
   await setProfiles(profiles);
-  await chrome.storage.local.set({rightClickMode:"simple"});
+  // Setup must preserve the user's selected layout and both configurations.
   await rebuildMenus();
   return {accountId,bucketName:"redown",name:label,verified:true};
 }
@@ -2025,14 +2026,14 @@ function sanitizeMenuId(value) {
   return String(value).replace(/[^a-zA-Z0-9_-]/g, "_");
 }
 
-function addPresetTree(profile, nodes, parentId, pathPrefix = []) {
+function addPresetTree(profile, nodes, parentId, pathPrefix = [],create=item=>chrome.contextMenus.create(item)) {
   for (const node of nodes || []) {
     const nodeId = sanitizeMenuId(node.id || crypto.randomUUID());
     const fullPath = [...pathPrefix, nodeId];
     const menuId = `tree:${profile.id}:${fullPath.join(".")}`;
     const isLeaf = !Array.isArray(node.children) || node.children.length === 0;
 
-    chrome.contextMenus.create({
+    create({
       id: menuId,
       parentId,
       title: node.label || node.name || node.prefix || "Destination",
@@ -2040,12 +2041,12 @@ function addPresetTree(profile, nodes, parentId, pathPrefix = []) {
     });
 
     if (!isLeaf) {
-      addPresetTree(profile, node.children, menuId, fullPath);
+      addPresetTree(profile, node.children, menuId, fullPath,create);
     }
   }
 }
 
-function addNestedLocations(profile){
+function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item)){
   const locations=RedownNestedLocations.destinations(profile.nestedMenu);
   if(!locations.length)return;
   const parent=ROOT_MENU_ID;
@@ -2054,10 +2055,37 @@ function addNestedLocations(profile){
     const id=`nested:${profile.id}:${item.rootId}:${item.nodeId}`;
     const parentNode=item.ids.length>1?item.ids.at(-2):item.rootId;
     const parentId=item.ids.length?`nested:${profile.id}:${item.rootId}:${parentNode}`:parent;
-    chrome.contextMenus.create({id,parentId,title:item.name,contexts});
+    create({id,parentId,title:item.name,contexts});
     if(locations.some(child=>child.rootId===item.rootId && child.ids.length===item.ids.length+1 && (item.ids.length===0 || child.ids.at(-2)===item.nodeId)))
-      chrome.contextMenus.create({id:`${id}:send`,parentId:id,title:"Send here",contexts});
+      create({id:`${id}:send`,parentId:id,title:"Send here",contexts});
   }
+}
+
+// One save lane; optimistic comparison prevents stale Explorer windows overwriting edits.
+let destinationSaveQueue=Promise.resolve();
+function saveDestinationConfig(message,sender){
+  const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
+    if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html"))throw Error("Open Destinations in Explorer to save.");
+    const stored=await chrome.storage.local.get(["profiles","rightClickMode"]);
+    const profiles=stored.profiles||[],mode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
+    if(message.expected!==RedownDestinationConfig.signature(profiles,mode))throw Error("Destinations changed in another window. Reload the editor before saving.");
+    if(!["simple","nested"].includes(message.mode))throw Error("Choose Simple or Nested.");
+    const patches=message.profiles;
+    if(!Array.isArray(patches))throw Error("Invalid destination configuration.");
+    const patchIds=new Set();
+    for(const patch of patches){
+      if(patchIds.has(patch.id))throw Error("Duplicate profile update.");patchIds.add(patch.id);
+      const profile=profiles.find(p=>p.id===patch.id&&p.type==="cloudflare-r2");
+      if(!profile)throw Error("This account profile is no longer available. Reload the editor.");
+      for(const field of RedownDestinationConfig.fields){if(Object.hasOwn(patch,field))profile[field]=patch[field];else delete profile[field];}
+    }
+    RedownDestinationConfig.validate(profiles,message.mode);
+    await chrome.storage.local.set({profiles,rightClickMode:message.mode});
+    const signature=RedownDestinationConfig.signature(profiles,message.mode);
+    try{await rebuildMenus();return {ok:true,signature,menuUpdated:true};}
+    catch{ return {ok:true,signature,menuUpdated:false,error:"Saved, but Chrome could not update its menu. Retry Save to rebuild."}; }
+  });
+  destinationSaveQueue=operation;return operation;
 }
 
 let menuRebuildQueue=Promise.resolve();
@@ -2068,8 +2096,14 @@ async function rebuildMenus() {
   menuRebuildQueue=operation;return operation;
 }
 async function buildMenus() {
+  const pending=[],errors=[];
+  const create=item=>{
+    if(!chrome.runtime?.id)return chrome.contextMenus.create(item);
+    pending.push(new Promise(resolve=>{const timer=setTimeout(()=>{errors.push('Chrome menu update timed out.');resolve();},5000);try{chrome.contextMenus.create(item,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;if(error)errors.push(error.message);resolve();});}catch(error){clearTimeout(timer);errors.push(error.message);resolve();}}));
+  };
+  const finish=async()=>{await Promise.all(pending);if(errors.length)throw Error('Chrome menu rebuild failed. Retry Save.');};
   await chrome.contextMenus.removeAll();
-  chrome.contextMenus.create({
+  create({
     id: ROOT_MENU_ID, title: "REDOWN", contexts: ["link","image","video","audio","page"]
   });
 
@@ -2086,25 +2120,26 @@ async function buildMenus() {
     .sort((a,b) => (a.menuOrder ?? 999) - (b.menuOrder ?? 999));
 
   if (!presets.length) {
-    chrome.contextMenus.create({
+    create({
       id:"redown-setup", parentId:ROOT_MENU_ID, title:"Set up a destination…",
       contexts:["link","image","video","audio","page"]
     });
-    addMenuControls(mode);return;
+    addMenuControls(mode,create);await finish();return;
   }
 
+  const simpleEntries=[];
   for (const p of presets) {
     const title = p.menuLabel || p.name || p.bucketName || p.repository || "Destination";
 
     if(mode==='nested' && p.nestedMenu){
-      addNestedLocations(p);
+      addNestedLocations(p,create);
     } else if ((mode==='nested' || p.type==='github') && Array.isArray(p.menuTree) && p.menuTree.length) {
       const parentId = `preset:${p.id}`;
-      chrome.contextMenus.create({
+      create({
         id: parentId, parentId: ROOT_MENU_ID, title,
         contexts:["link","image","video","audio","page"]
       });
-      addPresetTree(p, p.menuTree, parentId);
+      addPresetTree(p, p.menuTree, parentId,[],create);
     } else if(mode==='simple' && p.type==='cloudflare-r2'){
       // Simple means one menu level regardless of R2 directory depth.
       // Keep stable IDs for click routing; labels are presentation only.
@@ -2115,36 +2150,37 @@ async function buildMenus() {
         if(explicit)return explicit;
         return labelFallback==="bucket" ? (bucket||segments.at(-1)||"Destination") : (segments.at(-1)||bucket||"Destination");
       };
-      chrome.contextMenus.create({
+      if(p.simplePrimaryEnabled!==false)simpleEntries.push({
         id:`quick:${p.id}`,parentId:ROOT_MENU_ID,
-        title:displayName(p.menuLabel,p.defaultPrefix,p.simpleBucketName||p.bucketName),contexts
+        title:displayName(p.menuLabel,p.defaultPrefix,p.simpleBucketName||p.bucketName),contexts,order:p.simplePrimaryOrder??999999
       });
       for(const item of p.simpleOptions||[]){
         if(!item?.id || typeof item.prefix!=="string")continue;
-        chrome.contextMenus.create({
-          id:`simple-option:${p.id}:${item.id}`,parentId:ROOT_MENU_ID,
-          title:displayName(item.label,item.prefix,item.bucketName||p.bucketName),contexts
-        });
+        simpleEntries.push({id:`simple-option:${p.id}:${item.id}`,parentId:ROOT_MENU_ID,
+          title:displayName(item.label,item.prefix,item.bucketName||p.bucketName),contexts,order:item.order??999999});
       }
     } else {
-      chrome.contextMenus.create({
+      create({
         id:`quick:${p.id}`, parentId:ROOT_MENU_ID, title,
         contexts:["link","image","video","audio","page"]
       });
     }
   }
 
-  addMenuControls(mode);
+  for(const {order,...entry} of simpleEntries.sort((a,b)=>a.order-b.order))create(entry);
+  addMenuControls(mode,create);
+  await finish();
 }
 function addMenuControls(mode){
+  const create=arguments[1]|| (item=>chrome.contextMenus.create(item));
   const contexts=["link","image","video","audio","page"];
-  chrome.contextMenus.create({id:"redown-mode-separator",parentId:ROOT_MENU_ID,type:"separator",contexts});
-  chrome.contextMenus.create({id:"redown-nested-mode",parentId:ROOT_MENU_ID,type:"checkbox",title:"Use nested menu",checked:mode==='nested',contexts});
-  chrome.contextMenus.create({
+  create({id:"redown-mode-separator",parentId:ROOT_MENU_ID,type:"separator",contexts});
+  create({id:"redown-nested-mode",parentId:ROOT_MENU_ID,type:"checkbox",title:"Use nested menu",checked:mode==='nested',contexts});
+  create({
     id:"redown-saved-urls",parentId:ROOT_MENU_ID,title:"View saved object's URLs…",
     contexts:["link","image","video","audio","page"]
   });
-  chrome.contextMenus.create({
+  create({
     id:"redown-manage", parentId:ROOT_MENU_ID, title:"Manage destinations…",
     contexts:["link","image","video","audio","page"]
   });
@@ -2351,7 +2387,7 @@ void applyToolbarOpenMode().catch(console.error);
 chrome.runtime.onInstalled.addListener(rebuildMenus);
 chrome.runtime.onStartup.addListener(rebuildMenus);
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes.profiles || changes.rightClickMode || changes.simpleLabelFallback)) rebuildMenus();
+  if (area === "local" && (changes.profiles || changes.rightClickMode || changes.simpleLabelFallback)) rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2455,7 +2491,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
   if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage") {
-    return chrome.runtime.openOptionsPage();
+    return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 
   if(/^(quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
@@ -2808,6 +2844,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ ok:true });
       }
       if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
+      if (message?.type === "saveDestinationConfig") return sendResponse(await saveDestinationConfig(message,_sender));
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
         const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");
