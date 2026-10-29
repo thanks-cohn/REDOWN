@@ -46,7 +46,7 @@ $('connection').addEventListener('click',async()=>{
     loginDeadline=Date.now()+5*60*1000;await followLogin();
   }catch(error){connectionBusy=false;paintConnection('disconnected','Open Cloudflare login');setStatus(error.message);}
 });
-$('dashboard').addEventListener('click',()=>Promise.resolve(chrome.runtime.openOptionsPage()).catch(()=>setStatus('Dashboard could not open. Please try again.')));
+$('dashboard').addEventListener('click',()=>Promise.resolve(chrome.tabs.create({url:chrome.runtime.getURL('beta/explorer.html')})).catch(()=>setStatus('Dashboard could not open. Please try again.')));
 function paintCount(total){
   if(total!==null&&(typeof total!=='string'||!/^(0|[1-9]\d*)$/.test(total)))throw Error('Invalid delivery count');
   const host=$('odometer'),login=connectionState==='disconnected',working=connectionState==='checking'||(!preferencesReady&&!login),ready=total==='0'&&!host.hasAttribute('data-rolling');
@@ -143,4 +143,4 @@ if(chrome.storage.session?.get)chrome.storage.session.get('cloudflareLogin').the
   }
 }).catch(()=>{});
 
-$("beta-explorer")?.addEventListener("click",()=>chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html")}));
+
