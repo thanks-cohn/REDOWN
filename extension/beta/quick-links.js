@@ -95,7 +95,7 @@
       ? 'Exact URLs for '+key+' · generated using the same source and object key as Get URL.'
       : 'Bucket URL prefixes, not file links. Select one file above to reveal its full address.';
     // Same URL validation, key encoding, eligibility and state as Legacy Explorer.
-    const entries=globalThis.RedownPublicAddresses.addresses(snapshot,source,key);
+    const entries=globalThis.RedownPublicAddresses.addresses(snapshot,source,exact?key:undefined);
     const unique=[...new Map(entries.map(entry=>[entry.url,entry])).values()];
     const active=unique.filter(entry=>entry.state==='configured');
     $('quick-url-count').textContent=String(active.length);
