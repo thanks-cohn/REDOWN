@@ -17,7 +17,7 @@ test('Shelf defaults to Shelf; both choices persist and survive reopening withou
 });
 test('provider order, pending integrations, verified account state and actual history remain honest',async()=>{
  const s=await shelf({cloudflareAuth:{accessToken:'fixture'},transferHistory:[{ok:false,profileName:'Failed fixture',at:'2026-10-29T00:00:00Z'}]});
- assert.deepEqual([...s.doc.querySelectorAll('h3')].map(x=>x.textContent),['Google Drive','Dropbox','Microsoft OneDrive','Cloudflare R2']);assert.equal(s.doc.getElementById('cf-state').textContent,'Connected');assert.match(s.doc.getElementById('recent-transfers').textContent,/Failed · Failed fixture/);assert.equal(s.doc.querySelectorAll('.state').length,4);s.dom.window.close();
+ assert.deepEqual([...s.doc.querySelectorAll('h3')].map(x=>x.textContent),['Google Drive','Dropbox','Microsoft OneDrive','Cloudflare R2']);assert.equal(s.doc.getElementById('cf-state').textContent,'Connected');s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));await s.dom.window.RedownShelfHistory.open();assert.match(s.doc.getElementById('history-timeline').textContent,/Failed fixture/);assert.equal(s.doc.querySelectorAll('.state').length,4);s.dom.window.close();
  const bad=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});assert.equal(bad.doc.getElementById('cf-state').textContent,'Check sign-in');bad.dom.window.close();
 });
 test('Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape',()=>{
