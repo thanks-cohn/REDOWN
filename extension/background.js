@@ -887,7 +887,8 @@ async function cfJson(path, options = {}) {
 importScripts("history-archive.js");
 importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
-const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,RedownHistoryArchive.create());
+const transferArchive=RedownHistoryArchive.create();
+const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
 void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
   toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
   toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
@@ -1909,7 +1910,11 @@ async function renameTransferHistoryItem(id, newFilename) {
   if (!profile || profile.type !== "cloudflare-r2") throw new Error("Inline rename is currently available for Cloudflare R2 downloads");
   const renamed = await renameCloudflareTransfer(profile, item.location, newFilename, item.destination?.key);
   if(item.destination)item.destination={...item.destination,key:renamed.key,prefix:renamed.key.split("/").slice(0,-1).join("/")};
-  history[index] = { ...item, location: renamed.publicUrl || publicAssetUrl(profile, renamed.key), renamedAt: new Date().toISOString() };
+  history[index] = { ...item, filename: newFilename, location: renamed.publicUrl || publicAssetUrl(profile, renamed.key), renamedAt: new Date().toISOString() };
+  // Keep the durable archive and compatibility window consistent. The remote
+  // rename has already succeeded, so archive failures must not undo the UI.
+  try { await transferArchive.append(history[index]); }
+  catch(error){console.warn('REDOWN history archive rename update unavailable:',error?.message||String(error));}
   await chrome.storage.local.set({ transferHistory: history });
   return history[index];
 }
