@@ -13,7 +13,20 @@ function route() {
 window.addEventListener('hashchange',route); route();
 const openPage = path => chrome.tabs.create({url:chrome.runtime.getURL(path)}).catch(error=>status('Could not open page: '+error.message));
 $('dashboard').addEventListener('click',()=>openPage('beta/explorer.html'));
-$('cloudflare').addEventListener('click',()=>openPage('beta/explorer.html'));
+$('cloudflare').addEventListener('click',async()=>{
+  const state=$('cf-state').dataset.state;
+  if(state==='connected'){void openPage('beta/explorer.html');return;}
+  if(state==='checking')return;
+  $('cloudflare').disabled=true;
+  status('Opening Cloudflare sign-in…');
+  try {
+    const result=await chrome.runtime.sendMessage({type:'cfConnect'});
+    if(!result?.ok)throw Error(result?.error||'Could not start Cloudflare sign-in.');
+    status('Finish Cloudflare sign-in in the window that opens.');
+    void refreshConnection().catch(()=>{});
+  } catch(error) { status(error?.message||'Cloudflare sign-in could not start.'); }
+  finally { $('cloudflare').disabled=false; }
+});
 async function refreshPreference() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
   for (const input of modes) input.checked = input.value === (toolbarOpenMode === 'popup' ? 'popup' : 'shelf');
@@ -61,7 +74,7 @@ async function refreshActivity() {
   }
   const destinations=$('destinations');destinations.replaceChildren();
   const saved=(Array.isArray(profiles)?profiles:[]).filter(p=>p?.type==='cloudflare-r2');
-  if(saved.length){const p=document.createElement('p');p.textContent=saved.length+' saved R2 destination'+(saved.length===1?'':'s')+'. ';const a=document.createElement('a');a.href='beta/explorer.html';a.target='_blank';a.textContent='Choose in Dashboard ↗';p.append(a);destinations.append(p);}
+  if(saved.length){const p=document.createElement('p');p.textContent=saved.length+' saved R2 destination'+(saved.length===1?'':'s')+'.';destinations.append(p);}
 }
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
