@@ -37,22 +37,66 @@
   globalThis.RedownShelfHistory={group,describe,open};
   if(!$('history-timeline'))return;
   let records=[],loaded=false,loading=null,dirty=false,limit=100,epoch=0;
+  // A single expanded year and month makes history navigable even in a
+  // narrow Shelf. Remember the open group on data refresh or pagination.
+  let activeYear=null,yearChosen=false;
+  const activeMonthByYear=new Map();
   function element(tag,content,className){const node=document.createElement(tag);if(content)node.textContent=content;if(className)node.className=className;return node;}
+  function summary(title,count,unit){
+    const node=element('summary');
+    const heading=element('span',title,'history-group-title');
+    const amount=element('small',count+' '+(count===1?unit:unit+'s'),'history-group-count');
+    node.append(heading,amount);
+    return node;
+  }
   function render(){
-    const timeline=$('history-timeline');
-    // Preserve collapse choices while receiving new real records or paging.
-    const closed=new Set([...timeline.querySelectorAll('details:not([open])')].map(node=>node.dataset.group));
+    const timeline=$('history-timeline'),groups=group(records);
+    const entriesCount=records.filter(item=>item&&typeof item==='object').length;
+    const years=[...groups.keys()];
+    if(!yearChosen || (activeYear!==null&&!groups.has(activeYear))){
+      activeYear=years[0]||null;yearChosen=true;
+    }
     const fragment=document.createDocumentFragment();
-    let rendered=0,total=records.filter(item=>item&&typeof item==='object').length;
-    for(const [year,months] of group(records)){
+    let rendered=0;
+    for(const [year,months] of groups){
       if(rendered>=limit)break;
-      const yearNode=element('details',null,'history-year');yearNode.dataset.group=year;yearNode.open=!closed.has(year);
-      yearNode.append(element('summary',year));
+      const yearNode=element('details',null,'history-year');
+      yearNode.dataset.group=year;
+      yearNode.open=activeYear===year;
+      const yearCount=[...months.values()].reduce((sum,days)=>sum+[...days.values()].reduce((n,items)=>n+items.length,0),0);
+      const yearSummary=summary(year,yearCount,'transfer');
+      yearSummary.addEventListener('click',event=>{
+        event.preventDefault();
+        const next=!yearNode.open;
+        activeYear=next?year:null;
+        // True accordion behavior: the expanded year takes focus, while
+        // other years shrink to headers instead of remaining open.
+        for(const sibling of timeline.children)if(sibling!==yearNode&&sibling.classList.contains('history-year'))sibling.open=false;
+        yearNode.open=next;
+      });
+      yearNode.append(yearSummary);
+      const monthNames=[...months.keys()];
+      if(!activeMonthByYear.has(year))activeMonthByYear.set(year,monthNames[0]||null);
+      else if(activeMonthByYear.get(year)!==null&&!months.has(activeMonthByYear.get(year))){
+        activeMonthByYear.set(year,monthNames[0]||null);
+      }
       for(const [month,days] of months){
         if(rendered>=limit)break;
-        const monthNode=element('details',null,'history-month');monthNode.dataset.group=year+'-'+month;monthNode.open=!closed.has(year+'-'+month);
+        const monthNode=element('details',null,'history-month');
+        monthNode.dataset.group=year+'-'+month;
+        monthNode.open=activeMonthByYear.get(year)===month;
         const first=days.values().next().value[0];
-        monthNode.append(element('summary',first.date?first.date.toLocaleDateString(undefined,{month:'long'}):'Undated'));
+        const monthCount=[...days.values()].reduce((n,items)=>n+items.length,0);
+        const monthSummary=summary(first.date?first.date.toLocaleDateString(undefined,{month:'long'}):'Undated',monthCount,'transfer');
+        monthSummary.addEventListener('click',event=>{
+          event.preventDefault();
+          const next=!monthNode.open;
+          activeMonthByYear.set(year,next?month:null);
+          // Opening October folds September inside the same year, etc.
+          for(const sibling of yearNode.children)if(sibling!==monthNode&&sibling.classList.contains('history-month'))sibling.open=false;
+          monthNode.open=next;
+        });
+        monthNode.append(monthSummary);
         for(const entries of days.values()){
           if(rendered>=limit)break;
           const section=element('section',null,'history-day');
@@ -76,8 +120,8 @@
       fragment.append(yearNode);
     }
     timeline.replaceChildren(fragment);
-    $('history-status').textContent=total?`${Math.min(limit,total)} of ${total} retained transfers`:'No transfers yet. Your retained activity will appear here.';
-    $('history-more').hidden=total<=limit;
+    $('history-status').textContent=entriesCount?`${Math.min(limit,entriesCount)} of ${entriesCount} retained transfers`:'No transfers yet. Your retained activity will appear here.';
+    $('history-more').hidden=entriesCount<=limit;
   }
   async function open(){
     if(loaded&&!dirty||loading)return loading;
