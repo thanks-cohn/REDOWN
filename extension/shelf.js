@@ -4,7 +4,7 @@ const modes = [...document.querySelectorAll('[name="toolbar-mode"]')];
 function updateConnectionSummary(){
   const state=$('cf-state')?.dataset.state;
   $('connection-summary').textContent=state==='connected'
-    ? 'Cloudflare connected. Your R2 storage is ready to explore.'
+    ? 'Download Direct-2-Cloud! Nothing Downloads Directly!'
     : state==='checking'
       ? 'Checking Cloudflare connection…'
       : state==='error'
