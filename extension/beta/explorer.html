@@ -29,7 +29,23 @@
 <button id="transfer-history">Recent transfers</button>
 <button id="connect">Connect Cloudflare</button>
 <button id="disconnect">Disconnect</button>
-<a href="../options.html">Original Explorer & settings ↗</a>
+<details id="sidebar-settings" class="sidebar-settings">
+<summary><span class="sidebar-settings-heading">⚙ Settings</span><span class="sidebar-settings-chevron" aria-hidden="true">⌄</span></summary>
+<div class="sidebar-settings-content">
+<fieldset class="sidebar-settings-options">
+<legend>When I click REDOWN</legend>
+<div class="sidebar-settings-choice">
+<input type="radio" id="sidebar-open-shelf" name="sidebar-toolbar-mode" value="shelf" disabled>
+<label for="sidebar-open-shelf"><span>Shelf</span><span class="sidebar-settings-check" aria-hidden="true">✓</span></label>
+</div>
+<div class="sidebar-settings-choice">
+<input type="radio" id="sidebar-open-popup" name="sidebar-toolbar-mode" value="popup" disabled>
+<label for="sidebar-open-popup"><span>Popup</span><span class="sidebar-settings-check" aria-hidden="true">✓</span></label>
+</div>
+</fieldset>
+<p id="sidebar-settings-status" role="status" aria-live="polite"></p>
+</div>
+</details>
 <p>Cloudflare R2 · Your storage, your rules</p>
 </div>
 </aside>
@@ -173,6 +189,7 @@
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>
+<script src="sidebar-settings.js"></script>
 <script type="module" src="explorer.mjs">
 </script>
 </body>
