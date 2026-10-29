@@ -7,7 +7,7 @@
   if(!setup||!urls)return;
   const account=$('quick-setup-account'),bucket=$('quick-url-bucket');
   const setupStatus=$('quick-setup-feedback'),urlStatus=$('quick-url-feedback');
-  let accounts=[],buckets=[],selectedAccount='',generation=0,busy=false,lookup=null;
+  let accounts=[],buckets=[],selectedAccount='',accountEpoch=0,bucketEpoch=0,urlEpoch=0,busy=false,lookup=null;
 
   async function send(type,details={}){
     const answer=await chrome.runtime.sendMessage({type,...details});
@@ -25,7 +25,6 @@
       const el=$(id);el.setAttribute('aria-selected',String(active));el.tabIndex=active?0:-1;
       if(active&&focus)el.focus();
     }
-    if(onUrls&&account.value)void loadBuckets(account.value);
   }
   for(const which of ['setup','urls']){
     const el=$('quick-tab-'+which);
@@ -36,26 +35,26 @@
     });
   }
   async function loadAccounts(preferred=''){
-    const ticket=++generation;
+    const ticket=++accountEpoch;
     account.replaceChildren(new Option('Checking Cloudflare accounts…',''));
     account.disabled=true;bucket.replaceChildren(new Option('Choose a bucket…',''));
     setBusy(true);
     try{
       accounts=(await send('cfAccounts')).accounts||[];
-      if(ticket!==generation)return;
+      if(ticket!==accountEpoch)return;
       account.replaceChildren(new Option('Select an account…',''),...accounts.map(a=>new Option(a.name||a.id,a.id)));
       account.value=accounts.some(a=>a.id===preferred)?preferred:accounts[0]?.id||'';
       account.disabled=false;selectedAccount=account.value;
       await loadBuckets(account.value);
       if(!accounts.length)textStatus(setupStatus,'Connect Cloudflare to discover an account and enable right-click setup.');
     }catch(error){
-      if(ticket!==generation)return;
+      if(ticket!==accountEpoch)return;
       account.replaceChildren(new Option('Cloudflare sign-in needed',''));selectedAccount='';
       textStatus(setupStatus,error.message);
-    }finally{if(ticket===generation)setBusy(false);}
+    }finally{if(ticket===accountEpoch)setBusy(false);}
   }
   async function loadBuckets(accountId){
-    const ticket=++generation;
+    const ticket=++bucketEpoch;
     selectedAccount=accountId;
     const old=bucket.value;
     bucket.replaceChildren(new Option(accountId?'Loading buckets…':'Select an account first',''));
@@ -63,7 +62,7 @@
     if(!accountId){setBusy(false);return;}
     try{
       const result=await send('cfBuckets',{accountId});
-      if(ticket!==generation)return;
+      if(ticket!==bucketEpoch)return;
       buckets=result.buckets||[];
       bucket.replaceChildren(new Option('Choose a bucket…',''),...buckets.map(b=>new Option(b.name==='redown'?'REDOWN · redown':b.name,b.name)));
       bucket.value=buckets.some(b=>b.name===old)?old:buckets.some(b=>b.name==='redown')?'redown':buckets[0]?.name||'';
@@ -72,7 +71,7 @@
       if(ticket!==generation)return;
       bucket.replaceChildren(new Option('Bucket lookup failed',''));
       textStatus(urlStatus,'Could not discover buckets: '+error.message);
-    }finally{if(ticket===generation)setBusy(false);}
+    }finally{if(ticket===bucketEpoch)setBusy(false);}
   }
   function publicObjectUrl(base,key){
     const url=new URL(base);
@@ -118,17 +117,17 @@
   async function loadUrls(objectKey=null){
     const accountId=selectedAccount,bucketName=bucket.value;
     if(!accountId||!bucketName){$('quick-url-count').textContent='0';$('quick-urls-list').replaceChildren(drawEmpty());return;}
-    const ticket=++generation;
+    const ticket=++urlEpoch;
     textStatus(urlStatus,'Reading Cloudflare public URL configuration…');
     try{
       const result=await send('cfPublicAddresses',{accountId,bucketName});
-      if(ticket!==generation||account.value!==accountId||bucket.value!==bucketName)return;
+      if(ticket!==urlEpoch||account.value!==accountId||bucket.value!==bucketName)return;
       renderUrls(result,objectKey);
       textStatus(urlStatus,result.errors?.length?'Some Cloudflare addresses could not be checked. Refresh before copying.':'Configured addresses are displayed below. A configured address does not prove individual files are accessible.');
-    }catch(error){if(ticket===generation){$('quick-urls-list').replaceChildren(drawEmpty());textStatus(urlStatus,'Could not verify public URLs: '+error.message);}}
+    }catch(error){if(ticket===urlEpoch){$('quick-urls-list').replaceChildren(drawEmpty());textStatus(urlStatus,'Could not verify public URLs: '+error.message);}}
   }
 
-  account.addEventListener('change',()=>{void loadBuckets(account.value);setBusy(false);});
+  account.addEventListener('change',()=>{void loadBuckets(account.value);});
   bucket.addEventListener('change',()=>{setBusy(false);void loadUrls();});
   $('quick-create').addEventListener('click',async()=>{
     if(busy||!account.value)return;
