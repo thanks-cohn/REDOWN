@@ -430,24 +430,26 @@ a:hover{color:var(--text)}
 }
 ::view-transition-old(root){animation:none}
 ::view-transition-new(root){
-  animation:explorer-dual-ink-reveal 1.55s cubic-bezier(.2,.72,.27,1) both;
+  animation:explorer-dual-ink-reveal 4.1s cubic-bezier(.18,.67,.24,1) both;
   mask-image:
-    radial-gradient(circle at left bottom,#000 0 var(--explorer-ink-bottom-left),transparent calc(var(--explorer-ink-bottom-left) + 18px)),
-    radial-gradient(circle at right top,#000 0 var(--explorer-ink-top-right),transparent calc(var(--explorer-ink-top-right) + 18px));
+    radial-gradient(circle at left bottom,#000 0 var(--explorer-ink-bottom-left),transparent calc(var(--explorer-ink-bottom-left) + 48px)),
+    radial-gradient(circle at right top,#000 0 var(--explorer-ink-top-right),transparent calc(var(--explorer-ink-top-right) + 48px));
   mask-composite:add;
 }
 @keyframes explorer-dual-ink-reveal{
   0%{--explorer-ink-bottom-left:0px;--explorer-ink-top-right:0px}
-  8.4%{--explorer-ink-top-right:0px}
-  83%{--explorer-ink-bottom-left:180vmax}
+  7%{--explorer-ink-bottom-left:5vmax;--explorer-ink-top-right:0px}
+  18%{--explorer-ink-bottom-left:22vmax;--explorer-ink-top-right:0px}
+  28%{--explorer-ink-bottom-left:42vmax;--explorer-ink-top-right:7vmax}
+  44%{--explorer-ink-bottom-left:63vmax;--explorer-ink-top-right:36vmax}
+  63%{--explorer-ink-bottom-left:86vmax;--explorer-ink-top-right:68vmax}
+  79%{--explorer-ink-bottom-left:115vmax;--explorer-ink-top-right:101vmax}
   100%{--explorer-ink-bottom-left:180vmax;--explorer-ink-top-right:180vmax}
 }
 
 /* The Explorer's NEON personality follows the Shelf's dimensional outlines,
-   cyan / candy-pink / pale gold edges and pixel-signage typography. Keep
+   cyan / candy-pink / pale gold edges without importing Shelf-only fonts. Keep
    ordinary file operations and semantic warning/ownership colors intact. */
-@font-face{font-family:"REDOWN Jersey";src:url("../fonts/jersey-10-charted-latin.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
-@font-face{font-family:"REDOWN Bitcount";src:url("../fonts/bitcount-prop-double-ink-latin.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
 :root[data-explorer-theme="neon"]{
   --neon-pink:#ff94d1;--neon-cyan:#80f3fa;--neon-gold:#ffe49c;
   --neon-mint:#b7f58b;--line:#9075c3;--accent:#ff9bdc;
@@ -456,11 +458,6 @@ a:hover{color:var(--text)}
   background:
     radial-gradient(ellipse at 0% 100%,#ff60b521,transparent 44%),
     radial-gradient(ellipse at 100% 0%,#4be8f224,transparent 46%),var(--bg);
-}
-:root[data-explorer-theme="neon"] .brand,
-:root[data-explorer-theme="neon"] h1{
-  font-family:"REDOWN Jersey",DM,system-ui,sans-serif;
-  font-weight:400;letter-spacing:.05em;
 }
 :root[data-explorer-theme="neon"] .brand{font-size:26px;line-height:1.05}
 :root[data-explorer-theme="neon"] h1{font-size:30px;line-height:1.05}
