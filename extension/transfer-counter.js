@@ -1,6 +1,6 @@
 /* Local lifetime delivery count. No URLs, names or credentials in counter state. */
 (() => {
-  function create(storage, locks) {
+  function create(storage, locks, archive) {
     let queue=Promise.resolve();
     const serial=task=>{
       const run=()=>locks?.request?locks.request('redown-transfer-history',task):task();
@@ -26,7 +26,14 @@
           if(item?.ok||item?.sourceUrl!==entry.sourceUrl||entry.profileId&&item?.profileId&&item.profileId!==entry.profileId)return true;
           const age=Math.abs(Date.now()-new Date(item?.at||0).getTime());return !Number.isFinite(age)||age>5*60*1000;
         }):history;
-        const next=[{id:crypto.randomUUID(),at:now,...entry},...cleaned].slice(0,50);
+        const saved={...entry,id:crypto.randomUUID(),at:now};
+        // Archive before truncating the legacy 50-row compatibility window.
+        // Archival failure must not misreport a completed upload as a failure;
+        // the visible window and lifetime count still persist as before.
+        if(archive)try{await archive.append(saved);}catch(error){
+          console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
+        }
+        const next=[saved,...cleaned].slice(0,50);
         await storage.set({transferHistory:next,transferCounter:increment(counter,delivered(entry)?1:0)});
       })
     };
