@@ -96,7 +96,7 @@
   if(!$('history-timeline'))return;
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
-  let legacy=[],pageItems=[],fallback=false;
+  let legacy=[],pageItems=[],fallback=false,legacyImported=false;
   const openGroups=new Map([['root',null]]);
   const create=(tag,value='',className='')=>{
     const node=document.createElement(tag);
@@ -198,13 +198,18 @@
     $('history-retry').hidden=true;
     if(!loaded)$('history-status').textContent='Opening History…';
     try{
-      const stored=await chrome.storage.local.get('transferHistory');
-      if(ticket!==requestId)return;
-      legacy=Array.isArray(stored.transferHistory)?stored.transferHistory:[];
+      if(!loaded||dirty){
+        const stored=await chrome.storage.local.get('transferHistory');
+        if(ticket!==requestId)return;
+        legacy=Array.isArray(stored.transferHistory)?stored.transferHistory:[];
+      }
       if(archive){
         try{
-          await archive.importLegacy(legacy);
-          if(ticket!==requestId)return;
+          if(!legacyImported){
+            await archive.importLegacy(legacy);
+            if(ticket!==requestId)return;
+            legacyImported=true;
+          }
           const page=await archive.page(pageIndex*PAGE_SIZE,PAGE_SIZE);
           if(ticket!==requestId)return;
           total=page.total;pageItems=page.items;fallback=false;
@@ -230,6 +235,9 @@
     const max=Math.max(0,Math.ceil(total/PAGE_SIZE)-1);
     if(next<0||next>max||next===pageIndex)return;
     pageIndex=next;
+    // Reveal the first year represented on the new page, not a stale year
+    // selected on a previous page.
+    openGroups.delete('root-chosen');
     // Page changes only read one small slice of the local archive.
     await refresh();
     $('history-timeline').scrollIntoView?.({behavior:'auto',block:'start'});
@@ -239,7 +247,7 @@
   $('history-retry').addEventListener('click',()=>void refresh());
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||!changes.transferHistory)return;
-    dirty=true;pageIndex=0;openGroups.delete('root-chosen');
+    dirty=true;legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
     if(!$('history-view').hidden)void refresh();
   });
 })();
