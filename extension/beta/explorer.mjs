@@ -15,13 +15,14 @@ function paintLogout(auth){
   $('disconnect').disabled=busy||!cloudflareSignedIn;
 }
 /* Account discovery indicator is independent of file-list loading. */
+function syncAccountPicker(){globalThis.RedownAccountPicker?.sync();}
 function accountVisual(next,headline='',detail=''){
   const shell=$('account-chooser');
   if(!shell)return;
   shell.dataset.state=next;
   const ready=next==='ready'&&$('accounts').options.length>0;
   $('accounts').disabled=!ready||busy;
-  $('accounts').tabIndex=ready?0:-1;
+  $('accounts').tabIndex=-1;
   $('accounts').setAttribute('aria-hidden',String(!ready));
   $('account-standby').setAttribute('aria-hidden',String(ready));
   if(!ready){
@@ -44,6 +45,7 @@ function accountVisual(next,headline='',detail=''){
   action.hidden=ready||next==='loading';
   action.textContent=next==='unauthorized'||next==='disconnected'?'Connect Cloudflare':'Try again';
   shell.setAttribute('aria-label',ready?'Cloudflare account selector':$('account-standby-heading').textContent);
+  syncAccountPicker();
 }
 $('account-standby-action').addEventListener('click',()=>{
   const state=$('account-chooser').dataset.state;
@@ -88,6 +90,7 @@ function controls(){
   $('more').hidden=!cursor;$('more').disabled=locked;
   $('cancel').hidden=!busy;
   document.querySelectorAll('#buckets button').forEach(b=>b.disabled=busy);
+  syncAccountPicker();
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
 function render(){
@@ -141,7 +144,7 @@ async function navigate(target,record=true,restore=false,origin=null){
   const previous=context(),testItCorrelation=practice?.capture();
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
-  $('accounts').value=next.accountId;paintBuckets(next.accountId);render();
+  $('accounts').value=next.accountId;syncAccountPicker();paintBuckets(next.accountId);render();
   try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
@@ -270,7 +273,7 @@ async function loadAccounts(preferred=current||lastLocation){
     const discoveries=await Promise.allSettled(accounts.map(async a=>({id:a.id,buckets:(await request('buckets',{accountId:a.id})).data.buckets||[]})));
     if(ticket!==discoveryEpoch)return;bucketCache.clear();const errors=[];
     discoveries.forEach((r,i)=>{if(r.status==='fulfilled')bucketCache.set(r.value.id,r.value.buckets);else errors.push((accounts[i].name||accounts[i].id)+': '+r.reason.message);});
-    $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=(a.name||a.id)+(bucketCache.has(a.id)?'':' · unavailable');return o;}));
+    $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));
     const all=accounts.flatMap(a=>(bucketCache.get(a.id)||[]).map(b=>({accountId:a.id,accountName:a.name||'',bucketName:b.name,prefix:''})));
     const restored=all.find(b=>sameBucket(b,preferred));
     let restoredPrefix='';try{restoredPrefix=prefix(preferred?.prefix||'');}catch{}
@@ -298,7 +301,7 @@ async function refreshConnection(){
     if(['HTTP_401','HTTP_404'].includes(error.code))await loadAccounts(target);
   }
 }
-$('accounts').onchange=()=>loadBuckets().catch(failure);
+$('accounts').onchange=()=>{syncAccountPicker();return loadBuckets().catch(failure);};
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
 $('disconnect').onclick=async()=>{
   if(busy||!cloudflareSignedIn)return;
@@ -324,7 +327,7 @@ async function loadProfiles(){
   const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a saved destination…';
   $('profiles').replaceChildren(placeholder,...savedProfiles.map((p,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=(p.name||p.bucketName)+' /'+p.prefix;return o;}));
 }
-$('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
+$('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;syncAccountPicker();await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
 $('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');},{checkWorker:false});};
 
