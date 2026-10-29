@@ -11,7 +11,7 @@ function fixture(){
   const dom=new JSDOM(html,{url:'https://extension.test/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true});
   const {window:w}=dom,d=w.document,select=d.getElementById('accounts'),shell=d.getElementById('account-chooser');
   select.replaceChildren(...[
-    ['a','Officialmahasbiz@gmail.com\'s Account'],
+    ['a','VeryLongCloudflareMember@example.com\'s Account'],
     ['b','Another Cloudflare Team'],
     ['c','A very long third organizational account']
   ].map(([id,name])=>{const option=d.createElement('option');option.value=id;option.textContent=name;return option;}));
@@ -30,9 +30,9 @@ test('Explorer uses a native selector as state, with premium visual trigger rath
 test('selected account displays only the name and retains full value for access',()=>{
   const f=fixture();try{
     assert.equal(f.trigger.hidden,false);
-    assert.equal(f.trigger.textContent.replace(/\s/g,'').includes('Officialmahasbiz@gmail.com\'sAccount'),true);
-    assert.equal(f.d.getElementById('account-picker-value').textContent,'Officialmahasbiz@gmail.com\'s Account');
-    assert.equal(f.trigger.title,'Officialmahasbiz@gmail.com\'s Account');
+    assert.equal(f.trigger.textContent.replace(/\s/g,'').includes('VeryLongCloudflareMember@example.com\'sAccount'),true);
+    assert.equal(f.d.getElementById('account-picker-value').textContent,'VeryLongCloudflareMember@example.com\'s Account');
+    assert.equal(f.trigger.title,'VeryLongCloudflareMember@example.com\'s Account');
     assert.equal(f.select.value,'a');
     assert.equal(f.select.tabIndex,-1);
     assert.equal(f.select.getAttribute('aria-hidden'),'true');
@@ -46,7 +46,7 @@ test('keyboard and pointer account selection updates the original select exactly
     assert.equal(f.trigger.getAttribute('aria-expanded'),'true');
     assert.equal(f.menu.hidden,false);
     assert.equal(f.menu.querySelectorAll('[role="option"]').length,3);
-    assert.equal(f.menu.querySelector('[aria-selected="true"]').textContent.includes('Officialmahasbiz'),true);
+    assert.equal(f.menu.querySelector('[aria-selected="true"]').textContent.includes('VeryLongCloudflareMember'),true);
     f.menu.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));
     f.menu.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
     assert.equal(f.select.value,'b');
