@@ -32,3 +32,14 @@ Date: 2026-10-29
 7. Keep store submission a separate explicit release action; no publish/deploy happened in this checkpoint.
 
 The original branch and the pre-redesign bookmark must not be rebased or force-pushed to absorb release experiments.
+
+## Theme-linked logo background (subsequent release change)
+
+Shelf Settings now has an **Icon appearance** dropdown with exactly two values:
+`Original` (default, existing black background) and `Match theme`.
+With Match theme enabled, the same REDOWN R artwork uses background colors
+from Porcelain (soft lavender), Midnight (powder blue), Ocean (sea-glass teal)
+and NEON (light pink). The selection is persisted to
+`chrome.storage.local.shelfIconBackgroundMode`, and changes react to live
+Shelf theme selection. This affects the Shelf header icon only; the browser
+toolbar and packaged PNG icons intentionally remain unchanged.

@@ -3,6 +3,32 @@
   const choices=[...document.querySelectorAll('input[name="shelf-theme"]')];
   const toggle=document.getElementById('theme-toggle');
   const status=document.getElementById('status');
+  const iconBackgroundSelect=document.getElementById('icon-background-mode');
+  const iconBackgroundKey='shelfIconBackgroundMode';
+  const validIconBackgroundMode=value=>value==='theme'?'theme':'original';
+  let iconBackgroundVersion=0,iconBackgroundWriteQueue=Promise.resolve();
+  function paintIconBackgroundMode(value){
+    const mode=validIconBackgroundMode(value);
+    document.documentElement.dataset.shelfIconBackground=mode;
+    if(iconBackgroundSelect)iconBackgroundSelect.value=mode;
+  }
+  // Start from the existing icon appearance unless the user opted in.
+  paintIconBackgroundMode('original');
+  iconBackgroundSelect?.addEventListener('change',()=>{
+    const chosen=validIconBackgroundMode(iconBackgroundSelect.value);
+    const previous=document.documentElement.dataset.shelfIconBackground;
+    const version=++iconBackgroundVersion;
+    paintIconBackgroundMode(chosen);
+    iconBackgroundWriteQueue=iconBackgroundWriteQueue.catch(()=>{}).then(()=>chrome.storage.local.set({[iconBackgroundKey]:chosen})).catch(()=>{
+      if(version===iconBackgroundVersion){
+        paintIconBackgroundMode(previous);
+        if(status)status.textContent='Could not save the icon background preference.';
+      }
+    });
+  });
+  void chrome.storage.local.get(iconBackgroundKey).then(data=>{
+    if(iconBackgroundVersion===0)paintIconBackgroundMode(data[iconBackgroundKey]);
+  }).catch(()=>{/* Original remains the safe default. */});
   const darkThemes=new Set(['midnight','ocean','neon']);
   const palettes=new Set([...darkThemes,'porcelain']);
   const normalize=value=>value==='velvet'?'neon':value==='noir'?'ocean':palettes.has(value)?value:'porcelain';
@@ -80,6 +106,13 @@
   });
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
+    if(changes[iconBackgroundKey]){
+      const incoming=validIconBackgroundMode(changes[iconBackgroundKey].newValue);
+      if(incoming!==document.documentElement.dataset.shelfIconBackground){
+        iconBackgroundVersion++;
+        paintIconBackgroundMode(incoming);
+      }
+    }
     if(changes.shelfLastDarkTheme&&darkThemes.has(changes.shelfLastDarkTheme.newValue)){
       lastDark=changes.shelfLastDarkTheme.newValue;
     }

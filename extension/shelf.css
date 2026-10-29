@@ -345,3 +345,21 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   #clouds-view .cloudflare-hero{padding:16px 12px}
   #clouds-view .cloudflare-hero-label{font-size:9px}
 }
+
+/* Shelf brand tile: original R and dark backdrop by default. Users may opt in
+   to theme-matching backgrounds without recoloring the R or altering Chrome
+   toolbar icons. The SVG follows the same live palette as Shelf Settings. */
+.brand .brand-mark{display:block;width:38px;height:38px;flex:none;filter:drop-shadow(0 5px 9px rgba(var(--shadow-rgb),.22))}
+:root{--redown-brand-icon-bg:#0b0712}
+:root[data-shelf-icon-background="theme"][data-shelf-theme="porcelain"]{--redown-brand-icon-bg:#e5dcf4}
+:root[data-shelf-icon-background="theme"][data-shelf-theme="midnight"]{--redown-brand-icon-bg:#b9dcf4}
+:root[data-shelf-icon-background="theme"][data-shelf-theme="ocean"]{--redown-brand-icon-bg:#a6dcd9}
+:root[data-shelf-icon-background="theme"][data-shelf-theme="neon"]{--redown-brand-icon-bg:#f4c4e5}
+.icon-background-fieldset{margin-top:6px}
+.icon-background-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.icon-background-row>span{flex:1;min-width:0;font-weight:690;font-size:12px}
+.icon-background-row small{display:block;margin-top:3px;font-weight:400;font-size:11px;line-height:1.55;color:var(--muted)}
+.icon-background-row select{min-width:128px;max-width:48%;padding:8px;border-radius:8px;background:var(--subtle);border:1px solid var(--line);color:var(--text);font:11px "DM Sans",system-ui,sans-serif}
+.icon-background-row select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:root[data-shelf-theme="neon"] .icon-background-row{border-radius:6px}
+@media(max-width:340px){.brand .brand-mark{width:36px;height:36px}.icon-background-row{flex-wrap:wrap}.icon-background-row select{max-width:100%;width:100%}}

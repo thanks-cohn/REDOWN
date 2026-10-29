@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REDOWN Shelf</title><link rel="icon" href="icons/icon32.png"><link rel="stylesheet" href="shelf.css"></head>
-<body><div class="shell"><header><a class="brand" href="#clouds" aria-label="REDOWN clouds"><img src="icon.svg" alt=""><span><strong>REDOWN</strong><small>Your cloud companion</small></span></a><div class="header-tools"><button id="theme-toggle" class="theme-toggle" type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
+<body><div class="shell"><header><a class="brand" href="#clouds" aria-label="REDOWN clouds"><svg class="brand-mark" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="shelf-r-g" x1="12" y1="108" x2="112" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#5323b9"/><stop offset=".48" stop-color="#7443ef"/><stop offset="1" stop-color="#d7a5ff"/></linearGradient>
+  <linearGradient id="shelf-r-h" x1="42" y1="92" x2="95" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#351078"/><stop offset="1" stop-color="#8b57ff"/></linearGradient>
+</defs>
+<rect width="128" height="128" rx="30" fill="var(--redown-brand-icon-bg, #0b0712)"/>
+<path d="M31 99V28h35c23 0 36 11 36 29 0 13-8 23-21 27l24 15H81L59 84H49v15H31Zm18-31h17c11 0 17-4 17-11 0-7-6-11-17-11H49v22Z" fill="url(#shelf-r-g)"/>
+<path d="M62 84h21l22 15H81L59 84h3Z" fill="url(#shelf-r-h)" opacity=".92"/>
+</svg><span><strong>REDOWN</strong><small>Your cloud companion</small></span></a><div class="header-tools"><button id="theme-toggle" class="theme-toggle" type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
 <svg class="luminary" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
   <defs>
     <clipPath id="shelf-luminary-disc"><circle cx="16" cy="16" r="10"/></clipPath>
@@ -57,7 +65,10 @@
 <label class="theme-option"><input type="radio" name="shelf-theme" value="ocean"><span class="theme-swatch swatch-ocean" aria-hidden="true"></span><span class="theme-text"><strong>Ocean</strong><small>Tide & coral</small></span><span class="theme-tick" aria-hidden="true">✓</span></label>
 <label class="theme-option"><input type="radio" name="shelf-theme" value="neon"><span class="theme-swatch swatch-neon" aria-hidden="true"></span><span class="theme-text"><strong>NEON</strong><small>Jersey + Bitcount</small></span><span class="theme-tick" aria-hidden="true">✓</span></label>
 <label class="theme-option"><input type="radio" name="shelf-theme" value="porcelain"><span class="theme-swatch swatch-porcelain" aria-hidden="true"></span><span class="theme-text"><strong>Porcelain</strong><small>Default · Light</small></span><span class="theme-tick" aria-hidden="true">✓</span></label>
-</div></fieldset><fieldset class="provider-opening"><legend>Opening saved files and folders</legend>
+</div></fieldset><fieldset class="icon-background-fieldset"><legend>REDOWN icon background</legend>
+<label class="icon-background-row" for="icon-background-mode"><span>Icon appearance<small>Keep the original dark icon or let its background follow the selected Shelf palette.</small></span>
+<select id="icon-background-mode" aria-label="REDOWN icon background"><option value="original">Original</option><option value="theme">Match theme</option></select></label>
+</fieldset><fieldset class="provider-opening"><legend>Opening saved files and folders</legend>
 <p class="opening-explanation">Choose how each cloud destination opens after a successful save.</p>
 <label class="opening-row" for="open-google"><span>Google Drive<small>After connection</small></span><select id="open-google" data-provider-open="google"><option value="tab">New tab</option><option value="window">New window</option><option value="left">Left side · Split View</option></select></label>
 <label class="opening-row" for="open-dropbox"><span>Dropbox<small>After connection</small></span><select id="open-dropbox" data-provider-open="dropbox"><option value="tab">New tab</option><option value="window">New window</option><option value="left">Left side · Split View</option></select></label>
