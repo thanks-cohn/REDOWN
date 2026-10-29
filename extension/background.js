@@ -2290,6 +2290,84 @@ chrome.runtime.onStartup.addListener(rebuildMenus);
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && (changes.profiles || changes.rightClickMode || changes.simpleLabelFallback)) rebuildMenus();
 });
+/* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
+   No persistent page injection, tracking, or new host permissions. Chrome does
+   not let page DOM paint across its sidebar chrome: the orb ends at the page's
+   right edge and a separate Shelf impact pulse completes the illusion. */
+function launchSaveDroplet(info,tab){
+  if(!Number.isInteger(tab?.id))return;
+  const sources={
+    src:String(info.srcUrl||"").slice(0,2048),
+    link:String(info.linkUrl||"").slice(0,2048)
+  };
+  void chrome.scripting.executeScript({
+    target:{tabId:tab.id},
+    world:"ISOLATED",
+    args:[sources],
+    func:(clicked)=>{
+      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+      if(!document.documentElement||!document.body)return;
+      void chrome.storage.local.get('shelfColorScheme').then(data=>{
+        const colors={
+          porcelain:['#bda3f4','#6743a2'],midnight:['#c0e6ff','#82c4fc'],
+          ocean:['#9cf4e6','#2ccfc9'],neon:['#ff9ddb','#81fff0']
+        };
+        const theme=colors[data.shelfColorScheme]||colors.porcelain;
+        let startX=Math.round(innerWidth*.56),startY=Math.round(innerHeight*.42);
+        // Context-menu APIs omit cursor coordinates. Prefer the matching image
+        // or link's visible center, never pretend to know an exact mouse point.
+        if(clicked.src||clicked.link){
+          const candidates=document.querySelectorAll('img[src],video[src],a[href]');
+          const count=Math.min(candidates.length,800);
+          for(let i=0;i<count;i++){
+            const item=candidates[i];
+            const url=String(item.currentSrc||item.href||item.src||'');
+            if(url!==clicked.src&&url!==clicked.link)continue;
+            const rect=item.getBoundingClientRect();
+            if(rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight&&rect.right>0&&rect.left<innerWidth){
+              startX=Math.max(12,Math.min(innerWidth-12,rect.left+rect.width/2));
+              startY=Math.max(12,Math.min(innerHeight-12,rect.top+rect.height/2));
+              break;
+            }
+          }
+        }
+        const endX=innerWidth-10,endY=Math.max(65,Math.round(innerHeight*.29));
+        const dx=endX-startX,dy=endY-startY;
+        const orb=document.createElement('span');
+        orb.setAttribute('aria-hidden','true');
+        orb.style.cssText='position:fixed;pointer-events:none;z-index:2147483647;'+
+          'left:'+startX+'px;top:'+startY+'px;width:18px;height:18px;'+
+          'margin:-9px 0 0 -9px;border-radius:50%;'+
+          'background:radial-gradient(circle at 33% 29%,#fff 0%, '+theme[0]+' 36%, '+theme[1]+' 78%);'+
+          'box-shadow:0 0 16px '+theme[0]+',0 0 31px '+theme[1]+';'+
+          'will-change:transform,opacity;';
+        document.documentElement.appendChild(orb);
+        const motion=orb.animate([
+          {offset:0,opacity:0,transform:'translate3d(0,0,0) scale(.4)'},
+          {offset:.12,opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+          {offset:.55,opacity:1,transform:'translate3d('+(dx*.52)+'px,'+(dy*.43-76)+'px,0) scale(1.15)'},
+          {offset:.88,opacity:1,transform:'translate3d('+(dx*.97)+'px,'+(dy*.96)+'px,0) scale(.8)'},
+          {offset:.94,opacity:.9,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(1.7,.4)'},
+          {offset:1,opacity:0,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(.05)'}
+        ],{duration:860,easing:'cubic-bezier(.25,.65,.35,1)',fill:'forwards'});
+        void motion.finished.then(()=>{
+          orb.remove();
+          const impact=document.createElement('span');
+          impact.setAttribute('aria-hidden','true');
+          impact.style.cssText='position:fixed;pointer-events:none;z-index:2147483647;left:'+(endX-15)+
+            'px;top:'+(endY-15)+'px;width:30px;height:30px;border-radius:50%;border:2px solid '+theme[0]+';';
+          document.documentElement.appendChild(impact);
+          const ring=impact.animate([
+            {opacity:.9,transform:'scale(.45)'},{opacity:0,transform:'scale(2.6)'}
+          ],{duration:420,easing:'ease-out',fill:'forwards'});
+          void ring.finished.finally(()=>impact.remove());
+          void chrome.storage.local.set({redownShelfImpact:Date.now()}).catch(()=>{});
+        }).catch(()=>orb.remove());
+      }).catch(()=>{});
+    }
+  }).catch(()=>{/* Restricted tabs and browser pages deliberately skip the effect. */});
+}
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(info.menuItemId==='redown-nested-mode'){
     await chrome.storage.local.set({rightClickMode:info.checked ? 'nested' : 'simple'});
@@ -2299,6 +2377,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return chrome.runtime.openOptionsPage();
   }
 
+  if(/^(quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
   const profiles = await getProfiles();
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
