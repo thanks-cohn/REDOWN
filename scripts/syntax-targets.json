@@ -52,5 +52,7 @@
   "extension/shelf.js",
   "extension/shelf-history.js",
   "extension/destination-config.js",
-  "extension/beta/destinations.js"
+  "extension/beta/destinations.js",
+  "extension/shelf-celestial.js",
+  "scripts/shelf-celestial-preview.mjs"
 ]

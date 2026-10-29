@@ -44,12 +44,14 @@
     clearTimeout(morphTimer);
     morphTimer=setTimeout(()=>toggle.removeAttribute('data-morphing'),1510);
   };
+  let celestial;
   const apply=value=>{
     const selected=normalize(value);
     document.documentElement.dataset.shelfTheme=selected;
     globalThis.RedownBrandIcon?.paint(document,selected,document.documentElement.dataset.shelfIconBackground);
     if(darkThemes.has(selected))lastDark=selected;
     for(const input of choices)input.checked=input.value===selected;
+    celestial?.refresh();
     const light=selected==='porcelain';
     if(toggle){
       const label=light?'Switch to dark mode':'Switch to light mode';
@@ -100,11 +102,14 @@
     }
   };
   for(const input of choices)input.addEventListener('change',()=>{
-    if(input.checked)void setTheme(input.value);
+    if(input.checked){celestial?.cancel();void setTheme(input.value);}
   });
+  if(toggle&&globalThis.RedownCelestial)celestial=globalThis.RedownCelestial({toggle,current:()=>document.documentElement.dataset.shelfTheme||'porcelain',commit:setTheme,reducedMotion});
   toggle?.addEventListener('click',()=>{
+    if(celestial?.consumeTouch())return;
     const current=pendingSelection||document.documentElement.dataset.shelfTheme;
-    void setTheme(current==='porcelain'?lastDark:'porcelain');
+    const target=current==='porcelain'?lastDark:'porcelain';
+    if(celestial)void celestial.select(target,toggle,true);else void setTheme(target);
   });
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
@@ -123,6 +128,7 @@
       if(incoming!==pendingSelection){
         // Other pages can change the saved preference; honor those changes.
         if(activeTransition)activeTransition.skipTransition?.();
+        celestial?.cancel();
         writeEpoch++;
         pendingSelection=null;
         apply(incoming);

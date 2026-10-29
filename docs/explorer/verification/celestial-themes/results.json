@@ -1,0 +1,168 @@
+{
+  "scope": "Local repository fixtures, mocked browser/provider interfaces. No installed Chrome or live Cloudflare verification.",
+  "startingCommit": "284d83079f4be52757cfc1e1caf40f47fc241af1",
+  "protectedTag": "bd1927696e4e22dd8ee075e361be63485fd907b9",
+  "focused": {
+    "command": "node --test tests/shelf-celestial.test.mjs tests/modern-destinations.test.mjs",
+    "tests": 21,
+    "pass": 21,
+    "fail": 0
+  },
+  "menuAuth": {
+    "command": "node --test tests/modern-destinations.test.mjs tests/explorer-destination-menu.test.mjs tests/cloudflare-login.test.mjs tests/nested-locations.test.mjs",
+    "changed": {
+      "tests": 54,
+      "pass": 37,
+      "fail": 17
+    },
+    "unchanged": {
+      "tests": 54,
+      "pass": 37,
+      "fail": 17
+    }
+  },
+  "unchangedFullSuite": {
+    "tests": 623,
+    "pass": 530,
+    "fail": 93
+  },
+  "reliability": {
+    "command": "npm run reliability:check",
+    "state": "failed",
+    "release": "blocked",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "passed": 536,
+    "failed": 93,
+    "incomplete": false,
+    "failureNamesAbsentFromUnchangedCheckout": [],
+    "note": "The recorded reliability baseline recognizes seven of the 93 failures; its other 86 failures also reproduce on the unchanged checkout."
+  },
+  "browser": {
+    "command": "node scripts/shelf-celestial-preview.mjs",
+    "state": "blocked",
+    "reason": "Chromium executable is absent at /usr/lib/chromium/chromium; browser launch failed before page creation."
+  },
+  "performance": {
+    "measuredBrowserPerformance": false,
+    "structuralProperties": [
+      "one temporary overlay",
+      "bounded Web Animations",
+      "one pause after exit",
+      "no permanent animation loop",
+      "endpoint geometry reads only",
+      "animation and listener cleanup tested"
+    ]
+  },
+  "unchangedCheckoutFailureNames": [
+    "Beta UI disables folder downloads and uses the same API for context menu and keyboard commands",
+    "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+    "Beta preferences, duplicate, saved destination and preview are working UI interactions",
+    "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+    "GUI upload, independent fixture SHA-256, rename, copy, nested move, download and deletion reconcile the file list",
+    "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+    "Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline",
+    "Refresh updates metadata and prunes deleted selections without account rediscovery",
+    "Restart Test It confirms, replaces saved results, reopens exercise one and preserves files",
+    "Test It blocks original deletion and cut through real toolbar handlers",
+    "Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder",
+    "Test It exercise 57 records delayed Chrome completion, guide exited: false",
+    "Test It exercise 57 records delayed Chrome completion, guide exited: true",
+    "Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It",
+    "Test It same-folder Paste creates a distinct remotely verified copy without destination configuration",
+    "Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup",
+    "Window Preview actual Previous then Next buttons register Next without a cached expected key",
+    "Window arrows skip unsupported files and folders, respect visible sort/filter, boundaries and editable controls",
+    "Worker deployments cannot overlap and a failed deployment releases the lock",
+    "a removed saved folder falls back to the live bucket root",
+    "actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API",
+    "archive dialog and destination chooser route actual extraction and copy through API",
+    "authorization listing errors remain distinct from empty folders and Refresh recovers",
+    "both modes render images PDF text video audio; side double click and previous/next share renderer",
+    "breadcrumb grandparent and non-breadcrumb parent navigation do not pass parent exercise",
+    "bucket changes and logout invalidate pending side preview including minimized content",
+    "callback resumes after service worker restart from session state",
+    "catalog IDs, evidence labels, source hashes and references are internally consistent",
+    "click creates a visible window before network navigation; repeated clicks focus it",
+    "closed popup releases attempt and stale window is replaced on next click",
+    "denied consent and missing authorization code fail cleanly",
+    "destination folder pages preserve parent prefix, immediate children and continuation",
+    "dropping a directory on Beta uploads nested file bytes through the universal API",
+    "dual preview moves one loaded viewer between window and side without another read",
+    "duplicate navigation events exchange a code only once",
+    "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+    "every tour card has an X that exits everything immediately, preserving selection and session",
+    "existing toolbar implementation applies default Shelf and Popup in both directions",
+    "expired attempt clears secrets, closes popup, and permits retry",
+    "expired listing credentials show authorization detail and connection recovery can retry discovery",
+    "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+    "failed API verification never stores an access token",
+    "failed parent listing never completes breadcrumb exercise",
+    "folder drag/drop invokes the same real move API and preserves file bytes",
+    "full finite public coverage inventory resolves strata and all canonical case links",
+    "genuine empty bucket and network/400/403 failures stay distinct and retry in place",
+    "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+    "image buttons await actual load, reject repeated load and error, then recognize next and previous",
+    "image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel",
+    "large retained histories render in bounded increments and unrelated storage changes do no history work",
+    "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+    "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+    "multiple accounts are discovered and a sole bucket in the second account opens automatically",
+    "multiple buckets present an immediate choice and Refresh works with no selected bucket",
+    "offline discovery advertises only implemented operations and distinct versions",
+    "ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/duplicate/delete/export sequence",
+    "ordinary GUI and embedded Worker move two Test Copies into a new folder",
+    "original case and proposal Markdown bytes are retained from pinned upstream",
+    "parent breadcrumb observes completed navigation including nested click targets",
+    "parent breadcrumb observes completed navigation including root parent",
+    "partial ordinary multi-file Move preserves successful identity and the unresolved copy",
+    "pointer divider respects list/pane bounds and persists width; media cleanup revokes only owned URLs",
+    "popup creation errors are returned instead of leaving an in-flight lock",
+    "production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir",
+    "production copy indicators survive List, Grid and refresh; original verifies automatically and ordinary R2 rename and keyboard movement succeed",
+    "provider order, pending integrations, verified account state and actual history remain honest",
+    "rapid lightbox arrows abort old reads, revoke late URLs and preserve latest image and mode",
+    "rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked",
+    "real discovery, case, history, filters and validation are deterministic and honest",
+    "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+    "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+    "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+    "session invalidation clears the old bucket and ignores its delayed response",
+    "settings and worker observing the same callback exchange the code once across contexts",
+    "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+    "side preview failure remains local, retry works, and corrupt media shows Download",
+    "side preview stays usable through copy, rename, Refresh and deleted selection pruning",
+    "side unsupported file metadata and Download fallback make no preview read",
+    "sidebar A/B/A, folder Refresh, history, selection and context Download keep the exact bucket",
+    "slow bucket success and failure cannot overwrite a newer bucket or its saved location",
+    "source approval owns focus above guide, and context Copy highlights the file then menu item",
+    "startup automatically opens the sole bucket and persists folder navigation without provisioning",
+    "startup restores an accessible saved bucket and folder",
+    "state mismatch fails without token exchange and allows a fresh retry",
+    "successful callback exchanges PKCE and verifies access before saving token",
+    "successful provisioning refreshes destination editors and inventory before reporting ready",
+    "tour completion and Escape clean up without cancelling active preview; no automatic resume",
+    "tour invitation declines once, remains optional, and manual menu restart resets all steps",
+    "tour recognizes completed bucket, selection, view, refresh and preview actions through actual UI handlers",
+    "truncation is explicit in shared preview metadata and survives mode changes",
+    "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+    "unsupported formats do not advertise inline Preview in the context menu",
+    "verification network stall aborts and releases the attempt"
+  ]
+}

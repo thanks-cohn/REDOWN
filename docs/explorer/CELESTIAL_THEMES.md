@@ -1,0 +1,29 @@
+# Celestial Shelf theme selection
+
+Implemented on `release/cloudflare-true-remote`, extending destination-studio commit `284d83079f4be52757cfc1e1caf40f47fc241af1`. `BASE-102926` remains `bd1927696e4e22dd8ee075e361be63485fd907b9`.
+
+## Destination foundation reused
+
+The existing modern Right-click setup tab, Simple/Nested switch, local draft cards, `simpleOptions`, `nestedMenu`, `RedownNestedEditor`, shared destination validation and serialized `rebuildMenus()` remain authoritative. The destination implementation is documented in [MODERN_DESTINATIONS.md](MODERN_DESTINATIONS.md). This change does not replace that engine or introduce provider mutations. The Destinations dock and native Manage destinations route remain modern Explorer routes.
+
+## Animation ownership
+
+`shelf-celestial.js` installs adjacent theme buttons around the existing moon. The three alternatives always exclude the applied palette. Pointer hover and keyboard focus expose the tray; Escape dismisses it. Touch first reveals the tray, and a subsequent moon activation toggles light/dark. Buttons remain siblings, never nested controls. The moon describes the current palette to assistive technology.
+
+The bounded director captures the target palette before starting. It removes the source ring, creates one pointer-transparent fixed overlay, and animates a colored core using Web Animations. Moon activation uses an SVG crescent, a narrow gradient sweep clipped to that exact shape, temporary red illumination, and a normalized circumference stroke. The moon's original control keeps its layout position.
+
+The active view supplies the actual inline target: Future in Remote Cloud, PERSONAL in History, HOME in the existing small Settings eyebrow. One `getBoundingClientRect()` per endpoint supplies travel geometry. A two-stage accelerating fall intersects the word's real position; only that word receives a two-pixel compression and color flash, with a bounded horizontal streak. The object continues below the viewport. After a 110 ms pause and overlay cleanup, the director calls the existing `setTheme()` path. Existing view transitions, saved dark preference, icon styling and Explorer-follow behavior remain in `shelf-theme.js` and `explorer-theme.js`.
+
+Reduced motion and missing animation APIs commit directly. Additional clicks during a sequence are ignored. Settings palette choices and external saved-theme updates invalidate an older sequence so it cannot overwrite them. Resize, visual viewport resize, route changes or backgrounding terminate decoration and finish the captured selection; pagehide cancels without a delayed commit. Geometry is not recalculated every frame. Missing or offscreen titles skip the decorative impact. Every temporary animation, overlay, transient event listener and pause timer is cancelled or removed. Storage failures use the existing rollback/status mechanism. Independent Explorer palette fields are never written by this feature.
+
+## Verification boundaries
+
+- `node --test tests/shelf-celestial.test.mjs tests/modern-destinations.test.mjs`: 21 passed, zero failed. Tests execute production director/theme scripts and the destination page/save/menu functions with mocked browser/provider interfaces.
+- Seven new tests cover all three target words, commit ordering, alternative palettes, keyboard dismissal, shape-clipped lunar shimmer and tracing, bounded re-entry, interruption/supersession, cleanup, reduced motion, absent APIs, independent Explorer settings, remembered dark palette, storage rollback, touch reveal, view changes and page closure.
+- The broader menu/auth selection executes 54 tests: 37 passed, 17 failed, identical to the unchanged `284d830` checkout. Failures include stale importScripts harness assumptions and the removed Nested drag-handle expectation. These do not establish live authentication or transfer success.
+- The existing Shelf suite has three failures on both changed and unchanged source: obsolete provider order, obsolete Explorer controls and toolbar side-panel expectations.
+- The unchanged full suite executes 623 tests: 530 pass and 93 fail. `npm run reliability:check` executes the updated suite with 536 pass and the same 93 failure names; syntax, architecture, API registry and issue inventory stages pass. Its overall result is failed/release blocked, because its older recorded baseline recognizes only seven of those existing failures. The seventh new scenario was added afterward and passes in the 21-test focused run. Exact evidence is in `verification/celestial-themes/results.json`.
+- `npm run check` passes. Direct syntax checks cover the director, theme integration and browser preview script.
+- `scripts/shelf-celestial-preview.mjs` prepares a nine-case ordinary Chromium fixture at 320/390/480 px across all views, checking tray bounds, target impact, overlay removal before persistence and zero remaining animations. Its attempted execution failed at browser launch because `/usr/lib/chromium/chromium` is absent. No screenshots, visual acceptance, browser performance measurements, installed-extension native context-menu verification or live Cloudflare transfers are claimed.
+
+Performance is structurally bounded: one temporary overlay, short transform/opacity/SVG animations, a fixed set of geometry reads, no animation framework, no permanent requestAnimationFrame loop, and no ongoing decorative work after cleanup. Low-end hardware responsiveness and aesthetic timing still require real Chrome review. Fixture results are not a release certificate.
