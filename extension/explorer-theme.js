@@ -103,6 +103,8 @@
     paint();
     finishInitialPaint();
   });
-  paint();
+  // Do not style Explorer twice on startup. The first palette paint uses
+  // saved preferences; there is no transient Porcelain DOM/layout state.
+  if(!inExplorer)paint();
   void refresh();
 })();
