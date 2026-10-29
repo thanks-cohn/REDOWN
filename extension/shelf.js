@@ -89,12 +89,23 @@ async function refreshConnection() {
   } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
   finally {clearTimeout(timer);}
 }
+let saveImpactTimer=null;
+function pulseSaveImpact(){
+  if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+  const root=document.documentElement;
+  root.removeAttribute('data-save-impact');
+  void root.offsetWidth; // Allow consecutive saves to retrigger the small impact.
+  root.dataset.saveImpact='true';
+  clearTimeout(saveImpactTimer);
+  saveImpactTimer=setTimeout(()=>root.removeAttribute('data-save-impact'),850);
+}
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==='session'&&changes.shelfOpenIntent){
     void useShelfOpenIntent(changes.shelfOpenIntent.newValue).catch(()=>{});
     return;
   }
   if(area!=='local')return;
+  if(changes.redownShelfImpact && Date.now()-Number(changes.redownShelfImpact.newValue)<3000) pulseSaveImpact();
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
 });
