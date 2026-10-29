@@ -155,11 +155,19 @@
     if(working||!account.value||!bucket.value)return;
     const website=$('quick-url-input').value.trim();
     if(!website){report(urlStatus,'Enter a domain you control.');return;}
-    if(!confirm('Attach '+website+' to '+bucket.value+' using the existing REDOWN Worker? If configured for public delivery, anyone with an object URL may access that object. Continue only if you intend to publish this bucket.'))return;
-    working=true;buttons();report(urlStatus,'Attaching your domain through Cloudflare…');
+    if(!confirm('Attach '+website+' to '+bucket.value+'? REDOWN may need to prepare this bucket using its existing Cloudflare Worker setup. If public delivery is enabled, anyone with a file URL may access the object. Continue only if you intend to publish this bucket.'))return;
+    working=true;buttons();report(urlStatus,'Checking the existing Cloudflare destination…');
     try{
+      const accountId=account.value,bucketName=bucket.value;
+      const saved=await request('profiles');
+      const prepared=(saved.profiles||[]).some(p=>p.type==='cloudflare-r2'&&p.accountId===accountId&&p.bucketName===bucketName);
+      if(!prepared){
+        report(urlStatus,'Preparing the selected bucket with the original REDOWN Worker setup…');
+        await request('cfProvision',{accountId,bucketName,profileName:bucketName,folders:{},explorerOnly:true});
+      }
+      report(urlStatus,'Attaching your domain through Cloudflare…');
       // Exactly the same operation as Legacy Explorer's "Use domain".
-      const result=await request('cfSetAssetDomain',{accountId:account.value,bucketName:bucket.value,website});
+      const result=await request('cfSetAssetDomain',{accountId,bucketName,website});
       await loadUrls();
       $('quick-urls-section').open=true;
       if(result.state!=='verified')report(urlStatus,result.message||'Cloudflare has not verified this domain yet. Check DNS and public URL setup.');
