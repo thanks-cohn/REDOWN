@@ -5,3 +5,4 @@
 *.woff binary
 *.zip binary
 *.exe binary
+test-fixtures/real-corpus/** filter=lfs diff=lfs merge=lfs -text
