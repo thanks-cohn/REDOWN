@@ -17,6 +17,17 @@
   let snapshot={shelfColorScheme:'porcelain',explorerThemeMode:'match',explorerColorScheme:'midnight',debugModeEnabled:false};
   let revision=0;
   let themeEpoch=0,ready=false,activeTransition=null;
+  // Initial hydration is not an animated theme change. Release the first
+  // visible frame only after real storage preferences have been applied.
+  function finishInitialPaint(){
+    if(ready)return;
+    ready=true;
+    if(inExplorer){
+      const reveal=()=>root.removeAttribute('data-explorer-boot');
+      if(typeof requestAnimationFrame==='function')requestAnimationFrame(reveal);
+      else reveal();
+    }
+  }
   // Explorer has its own ink reveal. Never animate the initial preferences
   // hydration or a Shelf page; the Shelf owns its existing transition.
   function paintPalette(selected){
@@ -66,8 +77,13 @@
       if(ticket!==revision)return;
       snapshot={...snapshot,...data};
       paint();
-      ready=true;
-    }catch{if(feedback)feedback.textContent='Appearance preferences are unavailable. Showing default colors.';}
+      finishInitialPaint();
+    }catch{
+      if(feedback)feedback.textContent='Appearance preferences are unavailable. Showing default colors.';
+      // Storage failures must never leave Explorer hidden or unusable.
+      paint();
+      finishInitialPaint();
+    }
   }
   function save(key,value){
     snapshot={...snapshot,[key]:value};
@@ -85,6 +101,7 @@
     ++revision;
     snapshot={...snapshot,...Object.fromEntries(keys.filter(key=>changes[key]).map(key=>[key,changes[key].newValue]))};
     paint();
+    finishInitialPaint();
   });
   paint();
   void refresh();
