@@ -18,7 +18,8 @@ test('account discovery placeholder is real, accessible, and replaces no account
   assert.match(explorer,/accountVisual\(accounts\.length\?'ready':'empty'\)/);
   assert.match(explorer,/accountVisual\('disconnected'\)/);
   assert.match(explorer,/accountVisual\('failed'\)/);
-  assert.match(explorer,/tabIndex=ready\?0:-1/);
+  assert.match(explorer,/\$\('accounts'\)\.tabIndex=-1/);
+  assert.match(source('extension/beta/account-picker.js'),/aria-expanded/);
   assert.match(css,/prefers-reduced-motion:reduce/);
 });
 test('release Explorer has a permanent name and one Shelf Settings entrypoint',()=>{
