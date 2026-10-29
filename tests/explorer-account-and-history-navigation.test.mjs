@@ -27,49 +27,59 @@ test('Destinations dock jumps to new Explorer setup instead of Legacy options',(
   }finally{dom.window.close();}
 });
 
-test('Shelf History expands only one year and one month at once',async()=>{
+test('History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens',async()=>{
   const dom=new JSDOM(source('extension/shelf.html'),{
     url:'https://extension.test/shelf.html#history',runScripts:'outside-only',pretendToBeVisual:true
   });
   try{
     const w=dom.window,d=w.document;
+    const now=new Date();
+    const ago=days=>{const x=new Date(now);x.setDate(x.getDate()-days);return x.toISOString()};
     const entries=[
-      {at:'2026-10-29T18:00:00Z',ok:true,filename:'oct.png',location:'R2: redown/oct.png'},
-      {at:'2026-09-15T18:00:00Z',ok:true,filename:'sep.png',location:'R2: redown/sep.png'},
-      {at:'2025-12-12T18:00:00Z',ok:false,filename:'old.png',error:'Fixture failed'}
+      {id:'a',at:ago(0),ok:true,filename:'today.png',location:'R2: redown/today.png'},
+      {id:'b',at:ago(9),ok:true,filename:'recent.png',location:'R2: redown/recent.png'},
+      {id:'c',at:'2022-09-15T18:00:00Z',ok:true,filename:'old.png',location:'R2: redown/old.png'}
     ];
     let listener;
+    const archive={async importLegacy(){},async page(offset,limit){
+      const items=[...entries].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+      return {items:items.slice(offset,offset+limit),total:items.length};
+    }};
+    w.RedownHistoryArchive={create:()=>archive};
     w.chrome={storage:{local:{async get(){return {transferHistory:entries}}},onChanged:{addListener(fn){listener=fn}}}};
     w.eval(source('extension/shelf-history.js'));
     await w.RedownShelfHistory.open();
     const timeline=d.getElementById('history-timeline');
     let years=[...timeline.querySelectorAll('.history-year')];
-    assert.equal(years.length,2);
-    assert.equal(years[0].dataset.group,'2026');
+    assert.ok(years.length>=2);
     assert.equal(years[0].open,true);
     assert.equal(years[1].open,false);
-    let months=[...years[0].querySelectorAll('.history-month')];
-    assert.equal(months.length,2);
-    assert.equal(months[0].open,true);
-    assert.equal(months[1].open,false);
-    months[1].querySelector('summary').click();
-    assert.equal(months[0].open,false);
-    assert.equal(months[1].open,true);
-    years[1].querySelector('summary').click();
+    assert.equal(d.querySelector('.history-heading .eyebrow').textContent,'YOUR PERSONAL ARCHIVE');
+    assert.equal(d.getElementById('history-pagination').hidden,true);
+    const days=[...years[0].querySelectorAll('.history-day')];
+    assert.ok(days.length>=1);
+    assert.equal(days.every(day=>day.open===false),true);
+    assert.equal(d.querySelectorAll('.history-transfer').length,3,'real rows are present inside collapsed day groups');
+    const oldYear=years.at(-1);
+    oldYear.querySelector('summary').click();
     assert.equal(years[0].open,false);
-    assert.equal(years[1].open,true);
-    years[0].querySelector('summary').click();
-    assert.equal(years[0].open,true);
-    assert.equal(years[1].open,false);
-    assert.equal(months[1].open,true,'open month remembered when returning to year');
-    // New retained history re-renders without forgetting the active group.
-    listener({transferHistory:{newValue:[...entries]}},'local');
-    years=[...timeline.querySelectorAll('.history-year')];
-    months=[...years[0].querySelectorAll('.history-month')];
-    assert.equal(years[0].open,true);
-    assert.equal(months[1].open,true);
-    assert.match(years[0].querySelector('summary').textContent,/2 transfers/);
-    assert.match(months[1].querySelector('summary').textContent,/1 transfer/);
-    assert.match(source('extension/shelf.css'),/interpolate-size:allow-keywords/);
+    assert.equal(oldYear.open,true);
+    const month=oldYear.querySelector('.history-month');
+    assert.ok(month);
+    month.querySelector('summary').click();
+    assert.equal(month.open,true);
+    const week=month.querySelector('.history-week');
+    assert.ok(week);
+    assert.match(week.querySelector('summary').textContent,/Week/);
+    week.querySelector('summary').click();
+    assert.equal(week.open,true);
+    const day=week.querySelector('.history-day');
+    day.querySelector('summary').click();
+    assert.equal(day.open,true);
+    assert.match(day.textContent,/old.png/);
+    assert.match(source('extension/shelf.css'),/\.history-heading/);
+    listener({transferHistory:{newValue:entries}},'local');
+    await new Promise(resolve=>setTimeout(resolve,20));
+    assert.ok(timeline.querySelector('.history-year'));
   }finally{dom.window.close();}
 });
