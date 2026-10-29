@@ -57,6 +57,7 @@ test('after authentication, the same slot loads and switches to the real account
   try{
     const action=f.d.getElementById('account-standby-action');
     f.paint('loading');
+    assert.equal(f.d.getElementById('session-actions').hidden,false);
     assert.equal(action.textContent,'LOADING…');
     assert.equal(action.disabled,true);
     assert.equal(f.d.getElementById('account-picker-caption').hidden,true);
@@ -67,7 +68,11 @@ test('after authentication, the same slot loads and switches to the real account
     assert.equal(f.d.getElementById('account-chooser').dataset.state,'ready');
     assert.equal(action.hidden,true);
     assert.equal(f.d.getElementById('account-picker-caption').hidden,false);
+    assert.equal(f.d.getElementById('session-actions').hidden,false);
     assert.equal(select.disabled,false);
+    f.paint('unauthorized');
+    assert.equal(f.d.getElementById('account-standby-action').textContent,'LOGIN');
+    assert.equal(f.d.getElementById('session-actions').hidden,true,'no LOGIN and LOG OUT together');
     assert.ok(f.syncs>0);
   }finally{f.dom.window.close();}
 });
