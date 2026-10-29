@@ -3,11 +3,11 @@
   const choices=[...document.querySelectorAll('input[name="shelf-theme"]')];
   const toggle=document.getElementById('theme-toggle');
   const status=document.getElementById('status');
-  const darkThemes=new Set(['midnight','noir','neon']);
+  const darkThemes=new Set(['midnight','ocean','neon']);
   const palettes=new Set([...darkThemes,'porcelain']);
-  const normalize=value=>value==='velvet'?'neon':palettes.has(value)?value:'porcelain';
+  const normalize=value=>value==='velvet'?'neon':value==='noir'?'ocean':palettes.has(value)?value:'porcelain';
   let lastDark='midnight';
-  let writeEpoch=0,morphTimer=null;
+  let writeEpoch=0,morphTimer=null,activeTransition=null;
   const morph=()=>{
     if(!toggle||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
     toggle.removeAttribute('data-morphing');
@@ -15,7 +15,7 @@
     void toggle.offsetWidth;
     toggle.dataset.morphing='true';
     clearTimeout(morphTimer);
-    morphTimer=setTimeout(()=>toggle.removeAttribute('data-morphing'),850);
+    morphTimer=setTimeout(()=>toggle.removeAttribute('data-morphing'),1510);
   };
   const apply=value=>{
     const selected=normalize(value);
@@ -30,12 +30,26 @@
       toggle.dataset.mode=light?'light':'dark';
     }
   };
+  const reducedMotion=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
+  const animateTheme=selected=>{
+    if(reducedMotion()||typeof document.startViewTransition!=='function'){
+      apply(selected);return;
+    }
+    try {
+      activeTransition?.skipTransition?.();
+      const transition=document.startViewTransition(()=>apply(selected));
+      activeTransition=transition;
+      void transition.finished.catch(()=>{}).finally(()=>{
+        if(activeTransition===transition)activeTransition=null;
+      });
+    } catch {apply(selected);}
+  };
   const setTheme=async selected=>{
     const before=document.documentElement.dataset.shelfTheme;
     const previousDark=lastDark;
     if(toggle)toggle.dataset.ready='true';
     if((before==='porcelain')!==(normalize(selected)==='porcelain'))morph();
-    apply(selected);
+    animateTheme(selected);
     const epoch=++writeEpoch;
     try {
       await chrome.storage.local.set({shelfColorScheme:selected,shelfLastDarkTheme:lastDark});
@@ -64,6 +78,7 @@
   void chrome.storage.local.get(['shelfColorScheme','shelfLastDarkTheme'])
     .then(({shelfColorScheme,shelfLastDarkTheme})=>{
       if(shelfLastDarkTheme==='velvet')lastDark='neon';
+      else if(shelfLastDarkTheme==='noir')lastDark='ocean';
       else if(darkThemes.has(shelfLastDarkTheme))lastDark=shelfLastDarkTheme;
       if(writeEpoch===0)apply(shelfColorScheme);
     })
