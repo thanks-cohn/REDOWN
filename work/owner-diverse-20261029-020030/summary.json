@@ -1,0 +1,1030 @@
+{
+  "evidence_mode": "OWNER_PROVIDER_SESSION",
+  "run_id": "owner-diverse-20261029-020030",
+  "scope": {
+    "accountId": "40439992e793a00d8f33b19f898fa0c2",
+    "bucketName": "test-1-new",
+    "prefix": "redown-test-lab/owner-diverse-20261029-020030/"
+  },
+  "started_at": 1793257243.226908,
+  "state": "completed",
+  "requested": 48,
+  "executed": 48,
+  "results": [
+    {
+      "scenario_id": "0:upload",
+      "operation": "upload",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.163460493087769
+    },
+    {
+      "scenario_id": "0:download",
+      "operation": "download",
+      "fixture": "1-byte.bin",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes_transferred": 1,
+      "code": "",
+      "error": "",
+      "observed_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "elapsed_seconds": 3.907557249069214
+    },
+    {
+      "scenario_id": "1:upload",
+      "operation": "upload",
+      "fixture": "1x1.gif",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes_transferred": 43,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.088064670562744
+    },
+    {
+      "scenario_id": "1:download",
+      "operation": "download",
+      "fixture": "1x1.gif",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes_transferred": 43,
+      "code": "",
+      "error": "",
+      "observed_sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "elapsed_seconds": 3.275132656097412
+    },
+    {
+      "scenario_id": "2:upload",
+      "operation": "upload",
+      "fixture": "24bit-256x256.bmp",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30",
+      "bytes_transferred": 196662,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.565181016921997
+    },
+    {
+      "scenario_id": "2:download",
+      "operation": "download",
+      "fixture": "24bit-256x256.bmp",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30",
+      "bytes_transferred": 196662,
+      "code": "",
+      "error": "",
+      "observed_sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30",
+      "elapsed_seconds": 4.642056226730347
+    },
+    {
+      "scenario_id": "3:upload",
+      "operation": "upload",
+      "fixture": "3-text-files.7z",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d",
+      "bytes_transferred": 1356,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.408672332763672
+    },
+    {
+      "scenario_id": "3:download",
+      "operation": "download",
+      "fixture": "3-text-files.7z",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d",
+      "bytes_transferred": 1356,
+      "code": "",
+      "error": "",
+      "observed_sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d",
+      "elapsed_seconds": 3.8030073642730713
+    },
+    {
+      "scenario_id": "4:upload",
+      "operation": "upload",
+      "fixture": "3s.aiff",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610",
+      "bytes_transferred": 529254,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.952077865600586
+    },
+    {
+      "scenario_id": "4:download",
+      "operation": "download",
+      "fixture": "3s.aiff",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610",
+      "bytes_transferred": 529254,
+      "code": "",
+      "error": "",
+      "observed_sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610",
+      "elapsed_seconds": 4.082666635513306
+    },
+    {
+      "scenario_id": "5:upload",
+      "operation": "upload",
+      "fixture": "640x480.avif",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681",
+      "bytes_transferred": 1284,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.177636384963989
+    },
+    {
+      "scenario_id": "5:download",
+      "operation": "download",
+      "fixture": "640x480.avif",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681",
+      "bytes_transferred": 1284,
+      "code": "",
+      "error": "",
+      "observed_sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681",
+      "elapsed_seconds": 4.120448589324951
+    },
+    {
+      "scenario_id": "6:upload",
+      "operation": "upload",
+      "fixture": "640x480.heic",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7",
+      "bytes_transferred": 5066,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.652486801147461
+    },
+    {
+      "scenario_id": "6:download",
+      "operation": "download",
+      "fixture": "640x480.heic",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7",
+      "bytes_transferred": 5066,
+      "code": "",
+      "error": "",
+      "observed_sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7",
+      "elapsed_seconds": 4.045922756195068
+    },
+    {
+      "scenario_id": "7:upload",
+      "operation": "upload",
+      "fixture": "adts-30s.aac",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23",
+      "bytes_transferred": 490385,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 9.721927642822266
+    },
+    {
+      "scenario_id": "7:download",
+      "operation": "download",
+      "fixture": "adts-30s.aac",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23",
+      "bytes_transferred": 490385,
+      "code": "",
+      "error": "",
+      "observed_sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23",
+      "elapsed_seconds": 5.40767765045166
+    },
+    {
+      "scenario_id": "8:upload",
+      "operation": "upload",
+      "fixture": "all-types.arrow",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691",
+      "bytes_transferred": 4810,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.399355888366699
+    },
+    {
+      "scenario_id": "8:download",
+      "operation": "download",
+      "fixture": "all-types.arrow",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691",
+      "bytes_transferred": 4810,
+      "code": "",
+      "error": "",
+      "observed_sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691",
+      "elapsed_seconds": 3.2724297046661377
+    },
+    {
+      "scenario_id": "9:upload",
+      "operation": "upload",
+      "fixture": "basic.css",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes_transferred": 579,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 10.012123107910156
+    },
+    {
+      "scenario_id": "9:download",
+      "operation": "download",
+      "fixture": "basic.css",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes_transferred": 579,
+      "code": "",
+      "error": "",
+      "observed_sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "elapsed_seconds": 7.616964817047119
+    },
+    {
+      "scenario_id": "10:upload",
+      "operation": "upload",
+      "fixture": "epub3-3chapters.epub",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090",
+      "bytes_transferred": 4871,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 9.538860559463501
+    },
+    {
+      "scenario_id": "10:download",
+      "operation": "download",
+      "fixture": "epub3-3chapters.epub",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090",
+      "bytes_transferred": 4871,
+      "code": "",
+      "error": "",
+      "observed_sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090",
+      "elapsed_seconds": 4.30866003036499
+    },
+    {
+      "scenario_id": "11:upload",
+      "operation": "upload",
+      "fixture": "lorem-1mb.txt.bz2",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd",
+      "bytes_transferred": 151824,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.211111307144165
+    },
+    {
+      "scenario_id": "11:download",
+      "operation": "download",
+      "fixture": "lorem-1mb.txt.bz2",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd",
+      "bytes_transferred": 151824,
+      "code": "",
+      "error": "",
+      "observed_sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd",
+      "elapsed_seconds": 5.364919662475586
+    },
+    {
+      "scenario_id": "12:upload",
+      "operation": "upload",
+      "fixture": "multi-member-3.gz",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes_transferred": 839,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 6.773499250411987
+    },
+    {
+      "scenario_id": "12:download",
+      "operation": "download",
+      "fixture": "multi-member-3.gz",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes_transferred": 839,
+      "code": "",
+      "error": "",
+      "observed_sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "elapsed_seconds": 3.0003960132598877
+    },
+    {
+      "scenario_id": "13:upload",
+      "operation": "upload",
+      "fixture": "people-10.csv",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b",
+      "bytes_transferred": 2679,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 6.273460149765015
+    },
+    {
+      "scenario_id": "13:download",
+      "operation": "download",
+      "fixture": "people-10.csv",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b",
+      "bytes_transferred": 2679,
+      "code": "",
+      "error": "",
+      "observed_sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b",
+      "elapsed_seconds": 3.478645086288452
+    },
+    {
+      "scenario_id": "14:upload",
+      "operation": "upload",
+      "fixture": "people-1000.arrows",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb",
+      "bytes_transferred": 259816,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.288405895233154
+    },
+    {
+      "scenario_id": "14:download",
+      "operation": "download",
+      "fixture": "people-1000.arrows",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb",
+      "bytes_transferred": 259816,
+      "code": "",
+      "error": "",
+      "observed_sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb",
+      "elapsed_seconds": 3.3165488243103027
+    },
+    {
+      "scenario_id": "15:upload",
+      "operation": "upload",
+      "fixture": "people-1000.avro",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978",
+      "bytes_transferred": 109157,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 10.719735622406006
+    },
+    {
+      "scenario_id": "15:download",
+      "operation": "download",
+      "fixture": "people-1000.avro",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978",
+      "bytes_transferred": 109157,
+      "code": "",
+      "error": "",
+      "observed_sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978",
+      "elapsed_seconds": 5.986285448074341
+    },
+    {
+      "scenario_id": "16:upload",
+      "operation": "upload",
+      "fixture": "plain-text.eml",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8",
+      "bytes_transferred": 1531,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 9.532432794570923
+    },
+    {
+      "scenario_id": "16:download",
+      "operation": "download",
+      "fixture": "plain-text.eml",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8",
+      "bytes_transferred": 1531,
+      "code": "",
+      "error": "",
+      "observed_sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8",
+      "elapsed_seconds": 2.8094425201416016
+    },
+    {
+      "scenario_id": "17:upload",
+      "operation": "upload",
+      "fixture": "points-100.geojson",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5",
+      "bytes_transferred": 35344,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 10.140497922897339
+    },
+    {
+      "scenario_id": "17:download",
+      "operation": "download",
+      "fixture": "points-100.geojson",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5",
+      "bytes_transferred": 35344,
+      "code": "",
+      "error": "",
+      "observed_sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5",
+      "elapsed_seconds": 4.601402521133423
+    },
+    {
+      "scenario_id": "18:upload",
+      "operation": "upload",
+      "fixture": "self-signed-ed25519-cert.der",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes_transferred": 359,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.3473005294799805
+    },
+    {
+      "scenario_id": "18:download",
+      "operation": "download",
+      "fixture": "self-signed-ed25519-cert.der",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes_transferred": 359,
+      "code": "",
+      "error": "",
+      "observed_sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "elapsed_seconds": 3.967832326889038
+    },
+    {
+      "scenario_id": "19:upload",
+      "operation": "upload",
+      "fixture": "simple-3-requests.har",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38",
+      "bytes_transferred": 3636,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 6.954648971557617
+    },
+    {
+      "scenario_id": "19:download",
+      "operation": "download",
+      "fixture": "simple-3-requests.har",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38",
+      "bytes_transferred": 3636,
+      "code": "",
+      "error": "",
+      "observed_sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38",
+      "elapsed_seconds": 4.234523296356201
+    },
+    {
+      "scenario_id": "20:upload",
+      "operation": "upload",
+      "fixture": "sine-440hz-30s.flac",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842",
+      "bytes_transferred": 411820,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 7.423820734024048
+    },
+    {
+      "scenario_id": "20:download",
+      "operation": "download",
+      "fixture": "sine-440hz-30s.flac",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842",
+      "bytes_transferred": 411820,
+      "code": "",
+      "error": "",
+      "observed_sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842",
+      "elapsed_seconds": 3.8071086406707764
+    },
+    {
+      "scenario_id": "21:upload",
+      "operation": "upload",
+      "fixture": "track-100-points.gpx",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f",
+      "bytes_transferred": 12873,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 9.36051344871521
+    },
+    {
+      "scenario_id": "21:download",
+      "operation": "download",
+      "fixture": "track-100-points.gpx",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f",
+      "bytes_transferred": 12873,
+      "code": "",
+      "error": "",
+      "observed_sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f",
+      "elapsed_seconds": 5.8623011112213135
+    },
+    {
+      "scenario_id": "22:upload",
+      "operation": "upload",
+      "fixture": "with-inline-css.html",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes_transferred": 696,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 8.386381149291992
+    },
+    {
+      "scenario_id": "22:download",
+      "operation": "download",
+      "fixture": "with-inline-css.html",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes_transferred": 696,
+      "code": "",
+      "error": "",
+      "observed_sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "elapsed_seconds": 3.7126035690307617
+    },
+    {
+      "scenario_id": "23:upload",
+      "operation": "upload",
+      "fixture": "with-table.docx",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f",
+      "bytes_transferred": 37092,
+      "code": "",
+      "error": "",
+      "elapsed_seconds": 9.000702381134033
+    },
+    {
+      "scenario_id": "23:download",
+      "operation": "download",
+      "fixture": "with-table.docx",
+      "verdict": "PASS",
+      "api_state": "completed",
+      "expected_sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f",
+      "bytes_transferred": 37092,
+      "code": "",
+      "error": "",
+      "observed_sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f",
+      "elapsed_seconds": 5.72480034828186
+    }
+  ],
+  "bytes_transferred": 4523954,
+  "retry_of": null,
+  "owned": {
+    "redown-test-lab/owner-diverse-20261029-020030/1-byte.bin": {
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "bytes": 1,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/1x1.gif": {
+      "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0",
+      "bytes": 43,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/24bit-256x256.bmp": {
+      "sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30",
+      "bytes": 196662,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/3-text-files.7z": {
+      "sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d",
+      "bytes": 1356,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/3s.aiff": {
+      "sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610",
+      "bytes": 529254,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/640x480.avif": {
+      "sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681",
+      "bytes": 1284,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/640x480.heic": {
+      "sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7",
+      "bytes": 5066,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/adts-30s.aac": {
+      "sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23",
+      "bytes": 490385,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/all-types.arrow": {
+      "sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691",
+      "bytes": 4810,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/basic.css": {
+      "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972",
+      "bytes": 579,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/epub3-3chapters.epub": {
+      "sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090",
+      "bytes": 4871,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/lorem-1mb.txt.bz2": {
+      "sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd",
+      "bytes": 151824,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/multi-member-3.gz": {
+      "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39",
+      "bytes": 839,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/people-10.csv": {
+      "sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b",
+      "bytes": 2679,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/people-1000.arrows": {
+      "sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb",
+      "bytes": 259816,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/people-1000.avro": {
+      "sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978",
+      "bytes": 109157,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/plain-text.eml": {
+      "sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8",
+      "bytes": 1531,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/points-100.geojson": {
+      "sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5",
+      "bytes": 35344,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/self-signed-ed25519-cert.der": {
+      "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551",
+      "bytes": 359,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/simple-3-requests.har": {
+      "sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38",
+      "bytes": 3636,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/sine-440hz-30s.flac": {
+      "sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842",
+      "bytes": 411820,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/track-100-points.gpx": {
+      "sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f",
+      "bytes": 12873,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/with-inline-css.html": {
+      "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2",
+      "bytes": 696,
+      "verified": true
+    },
+    "redown-test-lab/owner-diverse-20261029-020030/with-table.docx": {
+      "sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f",
+      "bytes": 37092,
+      "verified": true
+    }
+  },
+  "local_before": {
+    "root": "C:\\Users\\jg202\\Desktop\\Extension\\remote-download-2-cloudfare\\test-fixtures\\real-corpus",
+    "files": [
+      {
+        "path": "1-byte.bin",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "path": "1x1.gif",
+        "bytes": 43,
+        "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0"
+      },
+      {
+        "path": "24bit-256x256.bmp",
+        "bytes": 196662,
+        "sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30"
+      },
+      {
+        "path": "3-text-files.7z",
+        "bytes": 1356,
+        "sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d"
+      },
+      {
+        "path": "3s.aiff",
+        "bytes": 529254,
+        "sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610"
+      },
+      {
+        "path": "640x480.avif",
+        "bytes": 1284,
+        "sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681"
+      },
+      {
+        "path": "640x480.heic",
+        "bytes": 5066,
+        "sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7"
+      },
+      {
+        "path": "adts-30s.aac",
+        "bytes": 490385,
+        "sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23"
+      },
+      {
+        "path": "all-types.arrow",
+        "bytes": 4810,
+        "sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691"
+      },
+      {
+        "path": "basic.css",
+        "bytes": 579,
+        "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972"
+      },
+      {
+        "path": "epub3-3chapters.epub",
+        "bytes": 4871,
+        "sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090"
+      },
+      {
+        "path": "lorem-1mb.txt.bz2",
+        "bytes": 151824,
+        "sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd"
+      },
+      {
+        "path": "multi-member-3.gz",
+        "bytes": 839,
+        "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39"
+      },
+      {
+        "path": "people-10.csv",
+        "bytes": 2679,
+        "sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b"
+      },
+      {
+        "path": "people-1000.arrows",
+        "bytes": 259816,
+        "sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb"
+      },
+      {
+        "path": "people-1000.avro",
+        "bytes": 109157,
+        "sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978"
+      },
+      {
+        "path": "plain-text.eml",
+        "bytes": 1531,
+        "sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8"
+      },
+      {
+        "path": "points-100.geojson",
+        "bytes": 35344,
+        "sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5"
+      },
+      {
+        "path": "self-signed-ed25519-cert.der",
+        "bytes": 359,
+        "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551"
+      },
+      {
+        "path": "simple-3-requests.har",
+        "bytes": 3636,
+        "sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38"
+      },
+      {
+        "path": "sine-440hz-30s.flac",
+        "bytes": 411820,
+        "sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842"
+      },
+      {
+        "path": "track-100-points.gpx",
+        "bytes": 12873,
+        "sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f"
+      },
+      {
+        "path": "with-inline-css.html",
+        "bytes": 696,
+        "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2"
+      },
+      {
+        "path": "with-table.docx",
+        "bytes": 37092,
+        "sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f"
+      }
+    ],
+    "file_count": 24,
+    "bytes": 2261977,
+    "inventory_sha256": "b05b30c3ba6075ab109e227d7a6e9f9bd341a73ad871deacd500fff46035c212"
+  },
+  "final_observation": "PASS",
+  "unexpected_changes": [],
+  "local_after": {
+    "root": "C:\\Users\\jg202\\Desktop\\Extension\\remote-download-2-cloudfare\\test-fixtures\\real-corpus",
+    "files": [
+      {
+        "path": "1-byte.bin",
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "path": "1x1.gif",
+        "bytes": 43,
+        "sha256": "52aa9dc78b0daa1ea5bdec0d17e8acd7a4ea0c237d5c5a2398fcf530a62e9ff0"
+      },
+      {
+        "path": "24bit-256x256.bmp",
+        "bytes": 196662,
+        "sha256": "f6030a36778514f5f7bcb74a2266d24a3614730668e104cfb58b970ad0fd8a30"
+      },
+      {
+        "path": "3-text-files.7z",
+        "bytes": 1356,
+        "sha256": "096f365bcb768719ba75f2059c07085f29275cbdbda5c762b56e54bb329dc17d"
+      },
+      {
+        "path": "3s.aiff",
+        "bytes": 529254,
+        "sha256": "adb6ccfcc326d079189b74ac88b7da5ea1dca42b556db47d29e300c45829e610"
+      },
+      {
+        "path": "640x480.avif",
+        "bytes": 1284,
+        "sha256": "c8e3c01650f906bed2073056b23fdaf3f7373b23bbb4ad006d8b06ef30d7c681"
+      },
+      {
+        "path": "640x480.heic",
+        "bytes": 5066,
+        "sha256": "61aace709cfad9d9155e2b57b484097f77737536e34932075160fc3da6f87fe7"
+      },
+      {
+        "path": "adts-30s.aac",
+        "bytes": 490385,
+        "sha256": "025d763833640583eb310b7c016b4e1beefc884c57c3faafd92111f2d3d8da23"
+      },
+      {
+        "path": "all-types.arrow",
+        "bytes": 4810,
+        "sha256": "72e206e0e13e82bf02160413a053220ee12ce883c9ef35269a2a558b5604f691"
+      },
+      {
+        "path": "basic.css",
+        "bytes": 579,
+        "sha256": "8473e4d88c5f179f138ee8d35c711dbe5f3f0eb77714eb442f921d37d2242972"
+      },
+      {
+        "path": "epub3-3chapters.epub",
+        "bytes": 4871,
+        "sha256": "a4e177da44becedc8cfe1016d37b4b0a7c3e447b892842d9814c9cbecfc18090"
+      },
+      {
+        "path": "lorem-1mb.txt.bz2",
+        "bytes": 151824,
+        "sha256": "dd76e4d5e02c249359f9f9a89b97f9e0f9faba7a9f071785f33b80f6df22d4cd"
+      },
+      {
+        "path": "multi-member-3.gz",
+        "bytes": 839,
+        "sha256": "2d2e7dbef7362d34a0c8c7369b836e509a4dda12bdcc838a79131251001faa39"
+      },
+      {
+        "path": "people-10.csv",
+        "bytes": 2679,
+        "sha256": "5b51c9c031ef0c7d098909ce79cd573300e75cb922ffe485bc47ebb8c8ea118b"
+      },
+      {
+        "path": "people-1000.arrows",
+        "bytes": 259816,
+        "sha256": "3d2c942be23cb55e60a170c5d422bc5138087f30ac40c43bcb624643f6a6a8fb"
+      },
+      {
+        "path": "people-1000.avro",
+        "bytes": 109157,
+        "sha256": "5222ff857db756363624c0e5ccd80578865b8dfb2155d3dabda89f9ebb979978"
+      },
+      {
+        "path": "plain-text.eml",
+        "bytes": 1531,
+        "sha256": "3e56b059b9255395a67a74d341fab5b72a6e5b3e5682e9d3e9fc71c021ad44f8"
+      },
+      {
+        "path": "points-100.geojson",
+        "bytes": 35344,
+        "sha256": "ed1a30ef9c8987db652a901a2eaa1c3170a89b06213a89b1712e0a7469c332a5"
+      },
+      {
+        "path": "self-signed-ed25519-cert.der",
+        "bytes": 359,
+        "sha256": "6a8241d991bef7242d2dce1dcb55bf4509a1949ddb4c107ad8424d5c1a18c551"
+      },
+      {
+        "path": "simple-3-requests.har",
+        "bytes": 3636,
+        "sha256": "7cc7125995effea6924dc1002299b710e8b1b0b09ac93619ecdc6cbb6bb7da38"
+      },
+      {
+        "path": "sine-440hz-30s.flac",
+        "bytes": 411820,
+        "sha256": "9af664bced907c264292baf3e61e0d6e64d3c63ecf16d2ac26be80a9ece5a842"
+      },
+      {
+        "path": "track-100-points.gpx",
+        "bytes": 12873,
+        "sha256": "143bd0b1690ae9ab674233ec510a9fd06e173d37b37cbc3d0fa01821fdb3188f"
+      },
+      {
+        "path": "with-inline-css.html",
+        "bytes": 696,
+        "sha256": "025f933b4f2d4219651eebea1ef6ccc6fff9221c8e8b4285b27b2a570cd85fc2"
+      },
+      {
+        "path": "with-table.docx",
+        "bytes": 37092,
+        "sha256": "8d3f871d805825bf26ed9cb92ff05b8b196aa29d14f93531db5c4787ee57844f"
+      }
+    ],
+    "file_count": 24,
+    "bytes": 2261977,
+    "inventory_sha256": "b05b30c3ba6075ab109e227d7a6e9f9bd341a73ad871deacd500fff46035c212"
+  },
+  "fixtures_unchanged": true,
+  "finished_at": 1793257600.2185538,
+  "run_verdict": "PASS",
+  "cleanup": null,
+  "recovery": {
+    "without_terminal_receipt": [],
+    "requires_reconciliation": [],
+    "strategy": "inspect current snapshots and recovery keys; never replay ambiguous writes automatically"
+  },
+  "api_calls": {
+    "capabilities": 1,
+    "connectionStatus": 1,
+    "listRaw": 98,
+    "upload": 24,
+    "stat": 48,
+    "readStream": 24
+  },
+  "completed_client_transfers": {
+    "upload": 24,
+    "readStream": 24
+  },
+  "byte_accounting": "Explicit client upload and verification download payloads only; adapter staging read-back and Worker internal copies are additional provider traffic, not measured here",
+  "schema_version": "1.0",
+  "counts": {
+    "PASS": 48,
+    "FAIL": 0,
+    "UNSUPPORTED": 0,
+    "BLOCKED": 0,
+    "TIMEOUT": 0,
+    "UNVERIFIED": 0
+  },
+  "passed_over_requested": 1.0,
+  "elapsed_seconds": 356.9916458129883
+}
