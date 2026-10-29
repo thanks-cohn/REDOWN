@@ -12,11 +12,15 @@ The existing modern Right-click setup tab, Simple/Nested switch, local draft car
 
 The bounded director captures the target palette before starting. It removes the source ring, creates one pointer-transparent fixed overlay, and animates a colored core using Web Animations. Moon activation uses an SVG crescent, a narrow gradient sweep clipped to that exact shape, temporary red illumination, and a normalized circumference stroke. The moon's original control keeps its layout position.
 
-The active view supplies the actual inline target: Future in Remote Cloud, PERSONAL in History, HOME in the existing small Settings eyebrow. One `getBoundingClientRect()` per endpoint supplies travel geometry. Two sampled curved trajectories (a tangent-matched cubic pair for the approach and a cubic for departure) provide an 840 ms approach and a 1,020 ms rebound/departure. The approach lands with the bottom of the object at the top of the rendered word. A 120 ms contact pose widens the sphere by 12% and compresses it by 14%; only the target word compresses by 2.5 pixels, accompanied by a horizontal glint. Rebound control points provide a visible apex and continued lateral travel through the final offscreen frame, without a vertical exit segment. Subtle stretch returns to neutral at each endpoint. After a 150 ms pause and overlay cleanup, the director calls the existing `setTheme()` path. Existing view transitions, saved dark preference, icon styling and Explorer-follow behavior remain in `shelf-theme.js` and `explorer-theme.js`.
+The active view supplies the actual inline target: Future in Remote Cloud, PERSONAL in History, HOME in the existing small Settings eyebrow. Endpoint rectangles are read before flight. `flightModel()` integrates vertical position and velocity analytically with 560 px/s² downward gravity. It replaces all cubic trajectory control points and global path easing. A small first rise has a one-pixel, 100 px/s² apex band; the rebound uses a maximum five-pixel, 45 px/s² apex band. Velocity stays continuous at band boundaries and passes through zero at both apexes. This explicit artistic gravity adjustment creates suspension without frozen frames. Outside those tiny regions, both falls accelerate under constant gravity.
+
+The rebound energy is bounded by a 0.68 restitution factor and available headroom. The bottom of the 24 px object meets the measured word top. A 105 ms contact pose compresses the object by 12%, widens it by 9%, and shifts its center slightly to keep its lower edge against the reacting word. Word displacement and the glint start at the same exact document-timeline collision epoch as the flight's contact frame. The word reaches maximum displacement at maximum ball compression. Horizontal guidance is smooth and calculated in advance; rebound drift is modest. The final fall reaches a center 40 px below the viewport before a cancellable 150 ms pause, overlay cleanup, and the existing `setTheme()` call. A representative 390×780 geometry takes about 4.29 seconds of flight/contact, plus preparation and the final pause. Timing adapts to actual distances rather than fixed path playback durations.
+
+Both objects use this same model. Lunar shimmer/red illumination (520 ms) and circumference tracing (540 ms) are preserved. Playback uses one precomputed transform animation, sampled at 120 Hz with exact segment/apex/contact boundaries, plus two bounded collision effects. There is no physics dependency or permanent rendering loop. Existing view transitions, saved dark preference, icon styling and Explorer-follow behavior remain in `shelf-theme.js` and `explorer-theme.js`.
 
 Reduced motion and missing animation APIs commit directly. Additional clicks during a sequence are ignored. Settings palette choices and external saved-theme updates invalidate an older sequence so it cannot overwrite them. Resize, visual viewport resize, route changes or backgrounding terminate decoration and finish the captured selection; pagehide cancels without a delayed commit. Geometry is not recalculated every frame. Missing or offscreen titles skip the decorative impact. Every temporary animation, overlay, transient event listener and pause timer is cancelled or removed. Storage failures use the existing rollback/status mechanism. Independent Explorer palette fields are never written by this feature.
 
-## Verification boundaries
+## Historical verification before gravity repair
 
 - `node --test tests/shelf-celestial.test.mjs tests/modern-destinations.test.mjs`: 21 passed, zero failed. Tests execute production director/theme scripts and the destination page/save/menu functions with mocked browser/provider interfaces.
 - Seven new tests cover all three target words, commit ordering, alternative palettes, keyboard dismissal, shape-clipped lunar shimmer and tracing, bounded re-entry, interruption/supersession, cleanup, reduced motion, absent APIs, independent Explorer settings, remembered dark palette, storage rollback, touch reveal, view changes and page closure.
@@ -29,7 +33,7 @@ Reduced motion and missing animation APIs commit directly. Additional clicks dur
 Performance is structurally bounded: one temporary overlay, short transform/opacity/SVG animations, a fixed set of geometry reads, no animation framework, no permanent requestAnimationFrame loop, and no ongoing decorative work after cleanup. Low-end hardware responsiveness and aesthetic timing still require real Chrome review. Fixture results are not a release certificate.
 
 
-## Two-arc refinement, 29 October 2026
+## Historical two-arc refinement, 29 October 2026 (superseded and rejected)
 
 The sphere and crescent share the same geometry and lifecycle. The approach crest is constrained to remain inside the top of the viewport. Rebound direction points toward the roomier half of the Shelf; lateral travel adapts to its width. Each curve has 61 transform keyframes, generated once. No physics dependency or permanent rendering loop was added. Lunar shimmer/illumination now takes 520 ms, followed by a 540 ms circumference trace, before either arc begins. Existing menu, Cloudflare, theme persistence and Explorer independence implementations are untouched.
 
@@ -37,3 +41,28 @@ Focused production-script tests: 22/22 pass, including the existing Simple/Neste
 
 
 The refinement reliability run completed with 537 passing tests and 93 failures. Syntax, architecture, API registry and issue inventory stages passed. The failure count matches the earlier documented 93-failure checkpoint, but no fresh unchanged-branch comparison was run; this does not prove every failure is baseline. The regression policy classifies 86 as outside its old seven-failure baseline, so overall reliability remains failed/release blocked. Final curve polishing and the additional dimension test were validated with a fresh 22-test focused run and syntax checks after that broader run.
+
+
+## Gravity repair, 29 October 2026
+
+Repaired in place from `9d0fa0fffc70db238cae2a59496d29ced3964023`. Protected tags remain `BASE-102926` → `bd1927696e4e22dd8ee075e361be63485fd907b9` and `PRE-CELESTIAL-ARCS-102926` → `c22102159d0dbd834f60aa72cf4acbbbb693975e`. No destination editor, provider/account code, HTML, CSS, or theme engine changes.
+
+Fresh focused verification: `node --test tests/shelf-celestial.test.mjs tests/modern-destinations.test.mjs`: **23 pass, 0 fail**. `npm run check`, direct preview-script syntax, and `git diff --check` pass. Production-model tests check downward acceleration, zero apex velocities, continuous ascent/descent around the longer apex, measured impact, downward/upward reversal, bounded restitution, offscreen exit, and widths 320/390/480 with heights 520/780/900. Director tests check shared animation epoch/delays, exact collision frame, persistence ordering, cancellation during flight and the post-exit pause, cleanup, reduced motion, touch, route/page interruption, lunar preparation, and independent Explorer preferences/storage rollback. These tests do not establish aesthetic acceptance.
+
+**Real Chrome was not used. Aesthetic acceptance remains unverified.** The local browser fixture fails to launch because no browser binary is installed. A Playwright Chromium installation was attempted and failed with invalid/truncated ZIP archives. No screenshot/video/performance success is claimed.
+
+### Reproducible visual review
+
+With Playwright available to Node (installed locally or through `CODEX_PRIMARY_RUNTIME_NODE_MODULES`), run:
+
+```sh
+# Optional when a local browser is already installed:
+CHROMIUM_PATH=/absolute/path/to/chrome node scripts/shelf-celestial-preview.mjs
+# Or install Playwright's browser first, then:
+node scripts/shelf-celestial-preview.mjs
+```
+
+The ordinary-browser fixture uses actual Shelf HTML/CSS/director/theme scripts and mocked storage only. It prepares **18 cases**: both orb and crescent on FUTURE/PERSONAL/HOME at 320/390/480 px. Each case records a WebM and selector/fall screenshots in `work/celestial-preview/`, checks collision-frame alignment and post-cleanup persistence, then checks no animations remain. Watch each recording at normal speed to judge both suspensions, fall acceleration, contact, rebound, final exit and overall charm. This workflow has not completed here; it is not installed-extension or live-provider verification.
+
+
+Broader `npm run reliability:check`: **539 pass, 93 fail**, completed without timeout. Syntax, architecture, API registry and issue inventory stages pass; overall reliability fails and release remains blocked. The failure count matches earlier documentation, but no fresh unchanged-checkout comparison was performed, so identical baseline failure membership is not claimed. The focused suite was rerun after final assertion/geometry hardening and still passes 23/23. Exact failure names and scope are recorded in [gravity-results.json](verification/celestial-themes/gravity-results.json).

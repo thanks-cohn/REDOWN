@@ -1,18 +1,54 @@
 /* Bounded decorative prelude. Palette persistence belongs exclusively to shelf-theme.js. */
 (() => {
-  // Sample cubic curves once per selection; WAAPI owns playback, with no render loop.
-  function curveFrames(points, origin, rebound=false){
-    return Array.from({length:61},(_,i)=>{
-      const progress=i/60;
-      // The approach has two tangent-matched halves so its visible apex stays
-      // inside the narrow header, even when the word is much farther below.
-      const split=points.length===7;
-      const t=split?(progress<=.5?progress*2:(progress-.5)*2):progress,u=1-t;
-      const segment=split?points.slice(progress<=.5?0:3,progress<=.5?4:7):points;
-      const coordinate=axis=>u*u*u*segment[0][axis]+3*u*u*t*segment[1][axis]+3*u*t*t*segment[2][axis]+t*t*t*segment[3][axis];
-      const stretch=rebound?Math.sin(Math.PI*progress)*.035:Math.sin(Math.PI*progress)*.02;
-      return {offset:progress,transform:`translate(${coordinate(0)-origin[0]}px,${coordinate(1)-origin[1]}px) scale(${1-stretch},${1+stretch})`};
+  // Piecewise constant gravity, integrated analytically. Lower gravity in a tiny
+  // apex band gives continuous velocity and a living suspension, never a hold.
+  function flightModel({sx,sy,x,hitY,height,width}){
+    const gravity=560, contactDuration=.105;
+    function flight(from,apex,to,band,softGravity){
+      band=Math.min(band,from-apex,to-apex);
+      const edge=apex+band, slowSpeed=Math.sqrt(2*softGravity*band);
+      const launchSpeed=Math.sqrt(slowSpeed**2+2*gravity*(from-edge));
+      const segments=[];let time=0;
+      function add(y,v,g,duration){
+        if(duration>0){segments.push({time,duration,y,v,g});time+=duration;}
+      }
+      add(from,-launchSpeed,gravity,(launchSpeed-slowSpeed)/gravity);
+      const apexTime=time+slowSpeed/softGravity;
+      add(edge,-slowSpeed,softGravity,2*slowSpeed/softGravity);
+      const endSpeed=Math.sqrt(slowSpeed**2+2*gravity*(to-edge));
+      add(edge,slowSpeed,gravity,(endSpeed-slowSpeed)/gravity);
+      return {duration:time,apexTime,launchSpeed,endSpeed,segments,
+        at(t){const segment=segments.find(s=>t<=s.time+s.duration)||segments.at(-1);
+          const dt=Math.max(0,Math.min(segment.duration,t-segment.time));
+          return {y:segment.y+segment.v*dt+.5*segment.g*dt*dt,vy:segment.v+segment.g*dt,g:segment.g};}};
+    }
+    const firstApex=Math.max(14,Math.min(sy-14,hitY-18));
+    const approach=flight(sy,firstApex,hitY,1,100);
+    // Restitution bounds the rebound's energy; keep its apex inside the Shelf.
+    const reboundHeight=Math.min(Math.max(0,hitY-18),approach.endSpeed**2*.68**2/(2*gravity));
+    const reboundApex=hitY-Math.max(2,reboundHeight);
+    const rebound=flight(hitY,reboundApex,height+40,Math.min(5,reboundHeight*.3),45);
+    const impact=approach.duration, release=impact+contactDuration;
+    const duration=release+rebound.duration;
+    const drift=(x<width/2?1:-1)*Math.min(14,(width-x-16)/Math.max(1,rebound.duration), (x-16)/Math.max(1,rebound.duration));
+    function at(t){
+      if(t<=impact){const state=approach.at(t),u=Math.min(1,t/impact);
+        // Smooth guidance is solved before playback, with no late correction.
+        return {...state,x:sx+(x-sx)*(u*u*(3-2*u)),scaleX:1,scaleY:1};}
+      if(t<release){const u=(t-impact)/contactDuration,squash=Math.sin(Math.PI*u);
+        return {x,y:hitY+1.5*squash,vy:0,g:0,scaleX:1+.09*squash,scaleY:1-.12*squash};}
+      const state=rebound.at(t-release),stretch=Math.min(.025,Math.abs(state.vy)/24000);
+      return {...state,x:x+drift*(t-release),scaleX:1-stretch,scaleY:1+stretch};
+    }
+    // Include all physical boundaries exactly; regular samples approximate only
+    // the browser's interpolation, never the trajectory or the collision time.
+    const times=new Set([0,impact,release,duration,approach.apexTime,release+rebound.apexTime,impact+contactDuration/2]);
+    for(const [base,part] of [[0,approach],[release,rebound]])for(const s of part.segments){times.add(base+s.time);times.add(base+s.time+s.duration);}
+    for(let t=0;t<duration;t+=1/120)times.add(t);
+    const frames=[...new Set([...times].map(t=>Math.min(duration,Math.max(0,t))))].sort((a,b)=>a-b).map(t=>{
+      const state=at(t);return {offset:t/duration,transform:`translate(${state.x-sx}px,${state.y-sy}px) scale(${state.scaleX},${state.scaleY})`};
     });
+    return {frames,duration,impact,release,contactDuration,approach,rebound,at};
   }
   globalThis.RedownCelestial = function({toggle, current, commit, reducedMotion}) {
     const host=document.createElement('div');host.className='celestial-selector';
@@ -77,31 +113,22 @@
           const target=view?.querySelector('[data-celestial-target]');
           const bounds=target?.getBoundingClientRect();
           const sx=start.left+start.width/2,sy=start.top+start.height/2;
-          const canHit=bounds&&bounds.width>0&&bounds.height>0&&bounds.top<innerHeight;
+          const canHit=bounds&&bounds.width>0&&bounds.height>0&&bounds.top>30&&sy>14&&bounds.top<innerHeight;
           if(!canHit)throw Error('No visible springboard');
           const x=bounds.left+bounds.width/2,hitY=bounds.top-12;
-          const origin=[sx,sy],hit=[x,hitY],dx=x-sx;
-          const lift=Math.min(110,Math.max(42,Math.abs(dx)*.28));
-          const crest=Math.max(14,Math.min(sy,hitY)-lift);
-          const apexX=sx+dx*.48;
-          const approach=[origin,[sx+dx*.12,crest],[apexX-dx*.14,crest],[apexX,crest],
-            [apexX+dx*.14,crest],[x-dx*.12,hitY-Math.max(24,Math.abs(hitY-sy)*.3)],hit];
-          await animate(object,curveFrames(approach,origin),{duration:840,easing:'cubic-bezier(.3,0,.65,1)'});
-          if(controller.signal.aborted)throw Error('Interrupted');
-          // Contact is isolated to the word and object; surrounding layout never changes.
-          void animate(target,[{transform:'translateY(0) scaleY(1)'},{transform:'translateY(2.5px) scaleY(.95)',offset:.3},{transform:'translateY(0) scaleY(1)'}],{duration:280,easing:'ease-out'}).catch(()=>{});
+          const model=flightModel({sx,sy,x,hitY,height:innerHeight,width:innerWidth});
           const streak=document.createElement('div');streak.className='celestial-streak';
-          Object.assign(streak.style,{left:`${bounds.left}px`,top:`${bounds.top+Math.min(bounds.height/2,10)}px`,width:`${bounds.width}px`});overlay.append(streak);
-          void animate(streak,[{transform:'scaleX(0)',opacity:0},{transform:'scaleX(1)',opacity:.9,offset:.45},{transform:'scaleX(1)',opacity:0}],{duration:300}).catch(()=>{});
-          const contact=`translate(${x-sx}px,${hitY-sy}px)`;
-          await animate(object,[{transform:contact+' scale(1,1)'},{transform:contact+' scale(1.12,.86)',offset:.45},{transform:contact+' scale(1,1)'}],{duration:120,easing:'ease-out'});
-          // Keep lateral velocity through the final frame. No vertical exit segment.
-          const direction=x<innerWidth/2?1:-1;
-          const travel=Math.min(100,innerWidth*.24);
-          const rise=Math.min(100,Math.max(48,hitY*.5));
-          const departure=[hit,[x+direction*travel*.24,hitY-rise*2.3],
-            [x+direction*travel*.68,hitY-rise*1.4],[x+direction*travel,innerHeight+40]];
-          await animate(object,curveFrames(departure,origin,true),{duration:1020,easing:'cubic-bezier(.18,.12,.65,1)'});
+          Object.assign(streak.style,{left:`${bounds.left}px`,top:`${bounds.top+Math.min(bounds.height/2,10)}px`,width:`${bounds.width}px`,opacity:'0'});overlay.append(streak);
+          // All three effects use one document-timeline epoch. Contact begins
+          // on the exact flight keyframe, independent of promise/task latency.
+          const epoch=document.timeline?.currentTime;
+          const common={easing:'linear',...(epoch==null?{}:{timeline:document.timeline})};
+          const flight=animate(object,model.frames,{...common,duration:model.duration*1000});
+          void animate(target,[{transform:'translateY(0) scaleY(1)'},{transform:'translateY(2.5px) scaleY(.96)',offset:model.contactDuration/.28/2},{transform:'translateY(0) scaleY(1)'}],{...common,delay:model.impact*1000,duration:280}).catch(()=>{});
+          void animate(streak,[{transform:'translateX(-20%) scaleX(0)',opacity:0},{transform:'translateX(0) scaleX(1)',opacity:.9,offset:.18},{transform:'translateX(20%) scaleX(.7)',opacity:0}],{...common,delay:model.impact*1000,duration:280}).catch(()=>{});
+          if(epoch!=null)for(const animation of animations)if(animation.playState!=='finished'&&animation.playState!=='idle')animation.startTime=epoch;
+          await flight;
+          if(controller.signal.aborted)throw Error('Interrupted');
           // One cancellable pause, after departure and before the existing transition.
           await new Promise(resolve=>{const timer=setTimeout(resolve,150);controller.signal.addEventListener('abort',()=>{clearTimeout(timer);resolve();},{once:true});});
         }
@@ -126,4 +153,5 @@
     refresh();
     return {refresh,cancel,select,consumeTouch(){const reveal=toggle.dataset.touchReveal;delete toggle.dataset.touchReveal;return !!reveal;}};
   };
+  globalThis.RedownCelestial.flightModel=flightModel;
 })();
