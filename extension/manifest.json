@@ -11,7 +11,8 @@
     "webNavigation",
     "alarms",
     "downloads",
-    "scripting"
+    "scripting",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://api.github.com/*",
