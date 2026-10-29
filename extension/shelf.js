@@ -77,7 +77,7 @@ async function refreshConnection() {
     $('cf-state').dataset.state=state; $('cf-state').textContent=label;
     updateConnectionSummary();
     $('cloudflare').disabled=state==='checking';
-    $('cloudflare').textContent=state==='connected'?'Manage Cloudflare ↗':'LOGIN!';
+    $('cloudflare-label').textContent=state==='connected'?'Manage Cloudflare ↗':'LOGIN!';
   };
   if(!cloudflareAuth?.accessToken){paint('disconnected','Not connected','Connect Cloudflare to bring TRUE REMOTE to your Shelf.');return;}
   paint('checking','Checking','Saved sign-in found. Checking account access…');
