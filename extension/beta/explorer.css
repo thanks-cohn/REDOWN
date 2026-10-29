@@ -313,6 +313,15 @@ main:has(.test-it-tools-wrap:not([hidden])){padding-bottom:80px}
 @media(prefers-reduced-motion:reduce){#disconnect.logout-button{transition:none!important}#disconnect.logout-button:hover:not(:disabled){transform:none}}
 @media(max-width:650px){.session-actions{margin-left:auto;align-self:center;padding:0}}
 
+/* The first painted frame must be the saved palette, not Porcelain.
+   Suppress only the initial unhydrated Explorer frame, never user-initiated
+   theme changes. The pending flag is always released on success or failure. */
+html[data-explorer-boot="pending"] body{visibility:hidden}
+html[data-explorer-boot="pending"] body,
+html[data-explorer-boot="pending"] body *,
+html[data-explorer-boot="pending"] body *::before,
+html[data-explorer-boot="pending"] body *::after{transition:none!important;animation:none!important}
+
 /* REDOWN Explorer: palette-wide presentation, preserving every file API and event. */
 :root{
   --surface-hover:#fdf8ff;--row-hover:#f8f1f7;--list-head:#fcf9fc;
