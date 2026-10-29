@@ -786,23 +786,28 @@ async function getProfiles() {
 async function setProfiles(profiles) {
   await chrome.storage.local.set({ profiles });
 }
-// Toolbar feedback is cosmetic and independent of desktop notification preferences.
+// Toolbar status flashes tint the shared icon, then restore its live palette.
+// No extra PNG source and no separate R design.
+let toolbarBrandPalette='porcelain',toolbarBrandBackground='original',toolbarBrandGeneration=0;
+async function paintToolbarBrand(){
+  const generation=++toolbarBrandGeneration;
+  try{
+    const imageData=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
+    if(generation===toolbarBrandGeneration&&imageData)await chrome.action.setIcon({imageData});
+  }catch(error){console.warn('REDOWN toolbar icon fallback:',error?.message||String(error));}
+}
+globalThis.redownRestoreToolbarIcon=paintToolbarBrand;
 function createToolbarFeedback(api, loadPixels = async size => {
-  const response = await fetch(chrome.runtime.getURL(`icons/icon${size}.png`));
-  const bitmap = await createImageBitmap(await response.blob());
-  try {
-    const canvas = new OffscreenCanvas(size,size), context = canvas.getContext("2d");
-    context.drawImage(bitmap,0,0,size,size);
-    return context.getImageData(0,0,size,size);
-  } finally { bitmap.close(); }
+  return globalThis.RedownBrandIcon.imageData(toolbarBrandPalette,toolbarBrandBackground,[size])[size];
 }, pause = ms => new Promise(resolve=>setTimeout(resolve,ms))) {
-  let generation=0, pixelsPromise;
+  let generation=0,pixelsPromise,pixelsTheme='';
   const sizes=[16,32,48], colors={success:[45,205,144],failure:[239,82,107]};
-  const originalPaths=Object.fromEntries(sizes.map(size=>[size,`icons/icon${size}.png`]));
   return async state => {
     if(!api?.setIcon || !colors[state])return;
     const ticket=++generation;
     try {
+      const key=toolbarBrandPalette+':'+toolbarBrandBackground;
+      if(key!==pixelsTheme){pixelsTheme=key;pixelsPromise=null;}
       pixelsPromise ||= Promise.all(sizes.map(async size=>[size,await loadPixels(size)])).then(Object.fromEntries).catch(error=>{pixelsPromise=null;throw error;});
       const original=await pixelsPromise;
       if(ticket!==generation)return;
@@ -816,10 +821,10 @@ function createToolbarFeedback(api, loadPixels = async size => {
         images[size]=new ImageData(data,size,size);
       }
       await api.setTitle?.({title:state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard"});
-      // A short, two-hit palette flash, like a sprite effect, then exact original art.
+      // A short, two-hit status flash without switching to mismatched PNG artwork.
       for(const [tinted,hold] of [[true,120],[false,160],[true,120]]){
         if(ticket!==generation)return;
-        await api.setIcon(tinted?{imageData:images}:{path:originalPaths});
+        await api.setIcon({imageData:tinted?images:original});
         if(ticket!==generation)return;
         await pause(hold);
       }
@@ -839,7 +844,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
     } catch { /* Toolbar rendering must never change transfer results. */ }
     finally {
       if(ticket===generation){
-        try { await api.setIcon({path:originalPaths}); } catch {}
+        try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
         if(ticket===generation)try { await api.setTitle?.({title:"REDOWN"}); } catch {}
       }
     }
@@ -880,8 +885,20 @@ async function cfJson(path, options = {}) {
   return body.result ?? body;
 }
 importScripts("history-archive.js");
+importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,RedownHistoryArchive.create());
+void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
+  toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
+  toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
+  return paintToolbarBrand();
+}).catch(()=>void paintToolbarBrand());
+chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area!=='local')return;
+  if(changes.shelfColorScheme)toolbarBrandPalette=RedownBrandIcon.normalize(changes.shelfColorScheme.newValue);
+  if(changes.shelfIconBackgroundMode)toolbarBrandBackground=changes.shelfIconBackgroundMode.newValue==='theme'?'theme':'original';
+  if(changes.shelfColorScheme||changes.shelfIconBackgroundMode)void paintToolbarBrand();
+});
 importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
