@@ -26,7 +26,7 @@ test('each rendered word shares the flight collision epoch; persistence waits fo
   assert.equal(title.options.delay,glint.options.delay);assert.ok([flight,title,glint].every(a=>a.startTime===1234));
   const collision=flight.frames.find(f=>Math.abs(f.offset*flight.options.duration-title.options.delay)<1e-6);
   const xy=collision.transform.match(/translate\(([-.\d]+)px,([-.\d]+)px/).slice(1).map(Number);assert.ok(Math.abs(xy[0]+175)<1e-7&&Math.abs(xy[1]-153)<1e-7);
-  assert.ok(flight.options.duration>2500);assert.equal(flight.options.easing,'linear');
+  assert.ok(flight.options.duration>=1700&&flight.options.duration<=2300);assert.equal(flight.options.easing,'linear');
   assert.equal(h.events.length,0);flight.resolve();await tick();assert.equal(h.events.length,0);
   await task;assert.deepEqual(h.events,['neon']);assert.equal(h.w.document.querySelector('.celestial-overlay'),null);
  }finally{h.dom.window.close();}}
@@ -84,8 +84,9 @@ test('analytical gravity, apex velocity, rebound energy and exit remain valid ac
    assert.ok(Math.abs(m.at(m.impact).x-90)<1e-7);assert.ok(Math.abs(m.at(m.impact).y-hitY)<1e-7);
    const compressed=m.at(m.impact+m.contactDuration/2);assert.ok(compressed.scaleY<1);assert.ok(compressed.scaleX>1);
    const apex=m.release+m.rebound.apexTime;
-   assert.ok(Math.abs(m.at(apex-.3).y-m.at(apex).y)<3);
-   assert.ok(Math.abs(m.at(apex+.3).y-m.at(apex).y)<3);
+   assert.ok(m.duration>=1.7&&m.duration<=2.3+1e-10);
+   assert.ok(m.at(apex-.025).y>m.at(apex).y);
+   assert.ok(m.at(apex+.025).y>m.at(apex).y);
    assert.ok(m.at(apex-.1).vy<0);assert.ok(m.at(apex+.1).vy>0);
    assert.ok(m.at(m.duration).y>=height+39.99);
    assert.equal(m.frames.at(-1).offset,1);
@@ -101,4 +102,26 @@ test('cancellation during flight and the post-exit pause cleans up and cannot pe
   assert.deepEqual(h.events,[]);assert.ok(h.animations.every(a=>a.cancelled));assert.equal(h.w.document.querySelector('.celestial-overlay'),null);
   assert.equal(h.toggle.classList.contains('celestial-selected'),false);
  }finally{h.dom.window.close();}}
+});
+
+test('lunar flight has smooth gravity bands and continuous contact and drift velocities',()=>{
+ const h=fixture();try{
+  for(const height of [520,780,900])for(const hitY of [80,188,270]){
+   const m=h.w.RedownCelestial.flightModel({sx:335,sy:35,x:90,hitY,height,width:390}),eps=1e-7;
+   for(const part of [m.approach,m.rebound])for(const segment of part.segments.slice(1)){
+    const a=part.at(segment.time-eps),b=part.at(segment.time+eps);
+    assert.ok(Math.abs(a.y-b.y)<.001);assert.ok(Math.abs(a.vy-b.vy)<.001);assert.ok(Math.abs(a.g-b.g)<.02);
+   }
+   for(const t of [m.impact,m.release]){
+    const a=m.at(t-eps),b=m.at(t+eps);
+    assert.ok(Math.abs(a.y-b.y)<.001);assert.ok(Math.abs(a.vy-b.vy)<.02);
+    const left=(m.at(t).x-m.at(t-1e-5).x)/1e-5,right=(m.at(t+1e-5).x-m.at(t).x)/1e-5;
+    assert.ok(Math.abs(left-right)<.02);
+   }
+   // Measure time within half a pixel of the apex: a moving, brief suspension.
+   const near=part=>{let n=0;for(let t=0;t<part.duration;t+=.001)if(part.at(t).y-part.at(part.apexTime).y<.5)n++;return n*.001;};
+   const first=near(m.approach),second=near(m.rebound);
+   assert.ok(first>.01&&first<.15);assert.ok(second>first&&second<.2);
+  }
+ }finally{h.dom.window.close();}
 });

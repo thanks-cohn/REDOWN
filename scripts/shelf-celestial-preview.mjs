@@ -39,12 +39,13 @@ try{
   const flights=result.samples.filter(x=>String(x.class).includes('celestial-falling')&&x.frames.length>100);
   assert.equal(flights.length,1);
   const flight=flights[0];assert.equal(flight.options.easing,'linear');
+  assert.ok(flight.options.duration>=1700&&flight.options.duration<=2300,'lunar flight timing excludes prelude');
   const xy=flight.frames.map(f=>f.transform.match(/translate\(([-.\d]+)px,([-.\d]+)px/).slice(1).map(Number));
   assert.ok(xy.at(-1)[1]>700);
   assert.ok(flight.frames.some(f=>Math.abs(f.offset*flight.options.duration-impact.options.delay)<.001));
   assert.ok(impact,`impact ${view} at ${width}`);assert.equal(impact.text,view==='clouds'?'Future':view==='history'?'PERSONAL':'HOME');
   assert.equal(result.overlays,0);assert.equal(result.commits.find(x=>x.data.shelfColorScheme).overlay,false);
-  assert.ok(result.scrollWidth<=width);report.cases.push({width,view,lunar,geometry,palette:result.palette,impact:impact.text,commitAfterOverlayRemoval:true});
+  assert.ok(result.scrollWidth<=width);report.cases.push({width,view,lunar,geometry,palette:result.palette,impact:impact.text,commitAfterOverlayRemoval:true,flightMs:flight.options.duration});
   await page.waitForTimeout(1700);assert.equal(await page.evaluate(()=>document.getAnimations().length),0);
   const video=page.video();await page.close();await video.saveAs(`${output}/${width}-${view}-${lunar?'moon':'orb'}.webm`);
  }

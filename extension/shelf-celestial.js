@@ -1,44 +1,70 @@
 /* Bounded decorative prelude. Palette persistence belongs exclusively to shelf-theme.js. */
 (() => {
-  // Piecewise constant gravity, integrated analytically. Lower gravity in a tiny
-  // apex band gives continuous velocity and a living suspension, never a hold.
+  // Analytical lunar-inspired gravity: acceleration eases through each apex,
+  // while position, velocity and acceleration match at the band boundaries.
   function flightModel({sx,sy,x,hitY,height,width}){
-    const gravity=560, contactDuration=.105;
+    const gravity=1100, contactDuration=.04;
     function flight(from,apex,to,band,softGravity){
       band=Math.min(band,from-apex,to-apex);
-      const edge=apex+band, slowSpeed=Math.sqrt(2*softGravity*band);
+      const edge=apex+band;
+      const halfTime=Math.sqrt(12*band/(gravity+5*softGravity));
+      const slowSpeed=halfTime*(gravity+2*softGravity)/3;
       const launchSpeed=Math.sqrt(slowSpeed**2+2*gravity*(from-edge));
-      const segments=[];let time=0;
-      function add(y,v,g,duration){
-        if(duration>0){segments.push({time,duration,y,v,g});time+=duration;}
-      }
-      add(from,-launchSpeed,gravity,(launchSpeed-slowSpeed)/gravity);
-      const apexTime=time+slowSpeed/softGravity;
-      add(edge,-slowSpeed,softGravity,2*slowSpeed/softGravity);
+      const riseTime=(launchSpeed-slowSpeed)/gravity;
+      const apexTime=riseTime+halfTime;
       const endSpeed=Math.sqrt(slowSpeed**2+2*gravity*(to-edge));
-      add(edge,slowSpeed,gravity,(endSpeed-slowSpeed)/gravity);
-      return {duration:time,apexTime,launchSpeed,endSpeed,segments,
-        at(t){const segment=segments.find(s=>t<=s.time+s.duration)||segments.at(-1);
-          const dt=Math.max(0,Math.min(segment.duration,t-segment.time));
-          return {y:segment.y+segment.v*dt+.5*segment.g*dt*dt,vy:segment.v+segment.g*dt,g:segment.g};}};
+      const duration=riseTime+2*halfTime+(endSpeed-slowSpeed)/gravity;
+      const segments=[{time:0,duration:riseTime},
+        {time:riseTime,duration:2*halfTime},
+        {time:riseTime+2*halfTime,duration:duration-riseTime-2*halfTime}];
+      return {duration,apexTime,launchSpeed,endSpeed,segments,
+        at(t){
+          t=Math.max(0,Math.min(duration,t));
+          if(t<riseTime)return {y:from-launchSpeed*t+.5*gravity*t*t,vy:-launchSpeed+gravity*t,g:gravity};
+          if(t<=riseTime+2*halfTime){
+            const dt=t-apexTime,k=(gravity-softGravity)/(12*halfTime**2);
+            return {y:apex+.5*softGravity*dt*dt+k*dt**4,
+              vy:softGravity*dt+4*k*dt**3,g:softGravity+12*k*dt*dt};
+          }
+          const dt=t-riseTime-2*halfTime;
+          return {y:edge+slowSpeed*dt+.5*gravity*dt*dt,vy:slowSpeed+gravity*dt,g:gravity};
+        }};
     }
     const firstApex=Math.max(14,Math.min(sy-14,hitY-18));
-    const approach=flight(sy,firstApex,hitY,1,100);
+    const rawApproach=flight(sy,firstApex,hitY,.65,450);
     // Restitution bounds the rebound's energy; keep its apex inside the Shelf.
-    const reboundHeight=Math.min(Math.max(0,hitY-18),approach.endSpeed**2*.68**2/(2*gravity));
+    const reboundHeight=Math.min(Math.max(0,hitY-18),rawApproach.endSpeed**2*.68**2/(2*gravity));
     const reboundApex=hitY-Math.max(2,reboundHeight);
-    const rebound=flight(hitY,reboundApex,height+40,Math.min(5,reboundHeight*.3),45);
+    const rawRebound=flight(hitY,reboundApex,height+40,Math.min(1.8,reboundHeight*.2),250);
+    // Scale both flights together, preserving their relative physics and energy.
+    // Taller Shelves get more time, without a separate final-fall handoff.
+    const targetDuration=Math.max(1.7,Math.min(2.3,1.95+(height-780)*.0005+(hitY-188)*.0003));
+    const rate=(rawApproach.duration+rawRebound.duration)/(targetDuration-contactDuration);
+    function retime(part){return {...part,duration:part.duration/rate,apexTime:part.apexTime/rate,
+      launchSpeed:part.launchSpeed*rate,endSpeed:part.endSpeed*rate,
+      segments:part.segments.map(s=>({time:s.time/rate,duration:s.duration/rate})),
+      at(t){const state=part.at(t*rate);return {...state,vy:state.vy*rate,g:state.g*rate*rate};}};}
+    const approach=retime(rawApproach),rebound=retime(rawRebound);
     const impact=approach.duration, release=impact+contactDuration;
     const duration=release+rebound.duration;
-    const drift=(x<width/2?1:-1)*Math.min(14,(width-x-16)/Math.max(1,rebound.duration), (x-16)/Math.max(1,rebound.duration));
+    const drift=(x<width/2?1:-1)*Math.max(0,Math.min(14,(width-x-16)/Math.max(1,rebound.duration), (x-16)/Math.max(1,rebound.duration)));
     function at(t){
       if(t<=impact){const state=approach.at(t),u=Math.min(1,t/impact);
         // Smooth guidance is solved before playback, with no late correction.
-        return {...state,x:sx+(x-sx)*(u*u*(3-2*u)),scaleX:1,scaleY:1};}
-      if(t<release){const u=(t-impact)/contactDuration,squash=Math.sin(Math.PI*u);
-        return {x,y:hitY+1.5*squash,vy:0,g:0,scaleX:1+.09*squash,scaleY:1-.12*squash};}
-      const state=rebound.at(t-release),stretch=Math.min(.025,Math.abs(state.vy)/24000);
-      return {...state,x:x+drift*(t-release),scaleX:1-stretch,scaleY:1+stretch};
+        return {...state,x:sx+(x-sx)*(u**3*(10+u*(-15+6*u))),scaleX:1,scaleY:1};}
+      if(t<release){
+        const u=(t-impact)/contactDuration,vIn=approach.endSpeed,vOut=-rebound.launchSpeed;
+        // Hermite contact carries incoming velocity through compression into
+        // the outgoing spring impulse. Neither endpoint freezes or snaps.
+        const y=hitY+contactDuration*(vIn*u*(1-u)**2-vOut*u*u*(1-u));
+        const vy=vIn*(1-4*u+3*u*u)-vOut*(2*u-3*u*u);
+        const g=(vIn*(-4+6*u)-vOut*(2-6*u))/contactDuration;
+        const squash=Math.sin(Math.PI*u)**2;
+        return {x,y,vy,g,scaleX:1+.05*squash,scaleY:1-.07*squash};
+      }
+      const dt=t-release,state=rebound.at(dt);
+      // Drift starts at zero lateral speed, matching the contact endpoint.
+      return {...state,x:x+drift*(dt-.12*(1-Math.exp(-dt/.12))),scaleX:1,scaleY:1};
     }
     // Include all physical boundaries exactly; regular samples approximate only
     // the browser's interpolation, never the trajectory or the collision time.
