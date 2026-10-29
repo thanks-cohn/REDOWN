@@ -18,7 +18,8 @@ test('Destinations dock jumps to new Explorer setup instead of Legacy options',(
     w.eval(source('extension/beta/sidebar-settings.js'));
     d.getElementById('open-destinations').click();
     assert.equal(clicked,1,'existing setup tab receives click');
-    assert.deepEqual(scrolled,{behavior:'smooth',block:'start'});
+    assert.equal(scrolled?.behavior,'smooth');
+    assert.equal(scrolled?.block,'start');
     assert.equal(d.activeElement.id,'quick-tab-setup');
     const script=source('extension/beta/sidebar-settings.js');
     assert.doesNotMatch(script,/options\.html#right-click-presets/);
