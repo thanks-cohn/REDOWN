@@ -22,7 +22,8 @@
           const dt=Math.max(0,Math.min(segment.duration,t-segment.time));
           return {y:segment.y+segment.v*dt+.5*segment.g*dt*dt,vy:segment.v+segment.g*dt,g:segment.g};}};
     }
-    const firstApex=Math.max(14,Math.min(sy-14,hitY-18));
+    // Give the object as much visible upward lift as the Shelf header allows.
+    const firstApex=Math.max(13,Math.min(sy-20,hitY-18));
     const approach=flight(sy,firstApex,hitY,1,100);
     // Restitution bounds the rebound's energy; keep its apex inside the Shelf.
     const reboundHeight=Math.min(Math.max(0,hitY-18),approach.endSpeed**2*.68**2/(2*gravity));
@@ -31,10 +32,20 @@
     const impact=approach.duration, release=impact+contactDuration;
     const duration=release+rebound.duration;
     const drift=(x<width/2?1:-1)*Math.min(14,(width-x-16)/Math.max(1,rebound.duration), (x-16)/Math.max(1,rebound.duration));
+    // Only the launch provides lateral force. A brief, continuous impulse
+    // builds horizontal speed; then the ball coasts at constant X velocity.
+    // Gravity governs Y, with no sideways steering or braking in midair.
+    const launchImpulse=Math.min(.14,impact*.18);
+    const lateralVelocity=(x-sx)/(impact-launchImpulse/2);
+    function horizontal(t){
+      const elapsed=Math.min(impact,Math.max(0,t));
+      return sx+(elapsed<launchImpulse
+        ?lateralVelocity*elapsed*elapsed/(2*launchImpulse)
+        :lateralVelocity*(elapsed-launchImpulse/2));
+    }
     function at(t){
-      if(t<=impact){const state=approach.at(t),u=Math.min(1,t/impact);
-        // Smooth guidance is solved before playback, with no late correction.
-        return {...state,x:sx+(x-sx)*(u*u*(3-2*u)),scaleX:1,scaleY:1};}
+      if(t<=impact){const state=approach.at(t);
+        return {...state,x:horizontal(t),scaleX:1,scaleY:1};}
       if(t<release){const u=(t-impact)/contactDuration,squash=Math.sin(Math.PI*u);
         return {x,y:hitY+1.5*squash,vy:0,g:0,scaleX:1+.09*squash,scaleY:1-.12*squash};}
       const state=rebound.at(t-release),stretch=Math.min(.025,Math.abs(state.vy)/24000);

@@ -102,3 +102,21 @@ test('cancellation during flight and the post-exit pause cleans up and cannot pe
   assert.equal(h.toggle.classList.contains('celestial-selected'),false);
  }finally{h.dom.window.close();}}
 });
+
+test('opening lift comes before a brief lateral impulse, then X momentum stays constant without midair steering',()=>{
+ const h=fixture();try{
+  for(const width of [320,390,480])for(const height of [520,780,900])for(const {sx,x} of [{sx:width-55,x:90},{sx:30,x:width-70}]){
+   const m=h.w.RedownCelestial.flightModel({sx,sy:35,x,hitY:height*.3,height,width});
+   const early=m.at(.06);
+   assert.ok(35-early.y>Math.abs(early.x-sx), 'release should rise mostly upward');
+   assert.ok(m.approach.at(m.approach.apexTime).y<=15.01, 'rise remains visible inside the header');
+   const dt=.025,t=m.impact*.45;
+   const mid=m.at(t+dt).x-m.at(t).x;
+   const later=m.at(t+2*dt).x-m.at(t+dt).x;
+   const atImpact=m.at(m.impact).x-m.at(m.impact-dt).x;
+   assert.ok(Math.abs(mid-later)<1e-7, 'horizontal speed must not accelerate in flight');
+   assert.ok(Math.abs(mid-atImpact)<1e-7, 'horizontal speed must not brake before impact');
+   assert.ok(Math.abs(m.at(m.impact).x-x)<1e-7, 'title collision still lands exactly');
+  }
+ }finally{h.dom.window.close();}
+});
