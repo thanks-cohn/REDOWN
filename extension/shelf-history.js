@@ -53,9 +53,13 @@
     const timeline=$('history-timeline'),groups=group(records);
     const entriesCount=records.filter(item=>item&&typeof item==='object').length;
     const years=[...groups.keys()];
-    if(!yearChosen || (activeYear!==null&&!groups.has(activeYear))){
-      activeYear=years[0]||null;yearChosen=true;
+    // The first transfer after an empty history should expand automatically.
+    // A deliberate user collapse stays collapsed on ordinary refresh.
+    if(!years.length){activeYear=null;yearChosen=false;}
+    else if(!yearChosen || (activeYear!==null&&!groups.has(activeYear))){
+      activeYear=years[0];yearChosen=true;
     }
+    for(const remembered of activeMonthByYear.keys())if(!groups.has(remembered))activeMonthByYear.delete(remembered);
     const fragment=document.createDocumentFragment();
     let rendered=0;
     for(const [year,months] of groups){
