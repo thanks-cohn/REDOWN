@@ -8,6 +8,7 @@
   if(!account||!bucket||!globalThis.RedownPublicAddresses)return;
   const setupStatus=$('quick-setup-feedback'),urlStatus=$('quick-url-feedback');
   let accounts=[],buckets=[],accountVersion=0,bucketVersion=0,urlVersion=0,working=false;
+  let selectedObject=null,lastAddressSnapshot=null,lastAddressIdentity="";
 
   async function request(type,fields={}){
     const result=await chrome.runtime.sendMessage({type,...fields});
@@ -72,6 +73,7 @@
       buckets=result.buckets||[];
       bucket.replaceChildren(option('','Choose a bucket…'),...buckets.map(b=>option(b.name,b.name==='redown'?'REDOWN':b.name)));
       bucket.value=buckets.some(b=>b.name===preferred)?preferred:buckets.some(b=>b.name==='redown')?'redown':buckets[0]?.name||'';
+      selectedObject=null;lastAddressSnapshot=null;lastAddressIdentity='';
       await loadUrls();
     }catch(error){
       if(version!==bucketVersion)return;
@@ -88,6 +90,10 @@
   };
   function renderAddresses(snapshot,source,key){
     const container=$('quick-urls-list');container.replaceChildren();
+    const exact=typeof key==='string'&&key.length>0;
+    $('quick-url-context').textContent=exact
+      ? 'Exact URLs for '+key+' · generated using the same source and object key as Get URL.'
+      : 'Bucket URL prefixes, not file links. Select one file above to reveal its full address.';
     // Same URL validation, key encoding, eligibility and state as Legacy Explorer.
     const entries=globalThis.RedownPublicAddresses.addresses(snapshot,source,key);
     const unique=[...new Map(entries.map(entry=>[entry.url,entry])).values()];
@@ -100,12 +106,12 @@
       const label=document.createElement('strong');label.textContent=entry.label||'Cloudflare URL';
       const url=document.createElement('code');url.textContent=entry.url;url.title=entry.url;
       const state=document.createElement('small');
-      state.textContent=entry.state==='configured'?'Configured · file access not individually verified':
+      state.textContent=entry.state==='configured'?(exact?'Exact object address · public access not individually verified':'Bucket prefix · not a downloadable file URL'):
         entry.state==='restricted'?'Public access is disabled':
         entry.state==='needs-setup'?'Domain ownership, DNS or SSL needs setup':'Configuration could not be verified';
       meta.append(label,url,state);row.append(meta);
       if(entry.state==='configured'){
-        const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';
+        const copy=document.createElement('button');copy.type='button';copy.textContent=exact?'Copy URL':'Copy prefix';
         copy.onclick=async()=>{try{
           await navigator.clipboard.writeText(entry.url);
           report(urlStatus,'URL copied. Actual file accessibility still depends on Cloudflare.');
@@ -115,7 +121,7 @@
       container.append(row);
     }
   }
-  async function loadUrls(key){
+  async function loadUrls(key=selectedObject){
     const version=++urlVersion,accountId=account.value,bucketName=bucket.value;
     const source={accountId,bucketName};
     $('quick-url-count').textContent='0';
@@ -124,6 +130,7 @@
     try{
       const snapshot=await request('cfPublicAddresses',source);
       if(version!==urlVersion||account.value!==accountId||bucket.value!==bucketName)return;
+      lastAddressSnapshot=snapshot;lastAddressIdentity=JSON.stringify([accountId,bucketName]);
       renderAddresses(snapshot,source,key);
       report(urlStatus,snapshot.errors?.length?'Some addresses could not be checked. Try refreshing the bucket.':
         key?'Showing URL candidates for the saved object. Public access is not guaranteed.':
@@ -134,8 +141,23 @@
       report(urlStatus,'Could not verify URL configuration: '+error.message);
     }
   }
-  account.onchange=()=>{void loadBuckets();};
-  bucket.onchange=()=>{buttons();void loadUrls();};
+  account.onchange=()=>{selectedObject=null;void loadBuckets();};
+  bucket.onchange=()=>{selectedObject=null;lastAddressSnapshot=null;lastAddressIdentity='';buttons();void loadUrls();};
+  // File selection and right-click Get URL now share the exact R2 key.
+  // Reuse the last read-only Cloudflare snapshot rather than hitting the API
+  // on each selection or scrolling interaction.
+  document.addEventListener('redown:explorer-url-selection',event=>{
+    const source=event.detail?.source;
+    if(!source||source.accountId!==account.value||source.bucketName!==bucket.value)return;
+    const next=typeof event.detail.key==='string'?event.detail.key:null;
+    if(selectedObject===next)return;
+    selectedObject=next;
+    if(lastAddressSnapshot&&lastAddressIdentity===JSON.stringify([source.accountId,source.bucketName])){
+      renderAddresses(lastAddressSnapshot,source,selectedObject);
+    }else{
+      void loadUrls();
+    }
+  });
   $('quick-create').onclick=async()=>{
     if(working||!account.value)return;
     const menuLabel=$('quick-menu-label').value.trim();
@@ -168,6 +190,7 @@
       report(urlStatus,'Attaching your domain through Cloudflare…');
       // Exactly the same operation as Legacy Explorer's "Use domain".
       const result=await request('cfSetAssetDomain',{accountId,bucketName,website});
+      lastAddressSnapshot=null;lastAddressIdentity='';
       await loadUrls();
       $('quick-urls-section').open=true;
       if(result.state!=='verified')report(urlStatus,result.message||'Cloudflare has not verified this domain yet. Check DNS and public URL setup.');
@@ -198,6 +221,7 @@
       account.value=lookup.accountId;
       await loadBuckets(lookup.bucketName);
       if(bucket.value!==lookup.bucketName)return;
+      selectedObject=lookup.key;
       selectTab('urls');
       $('quick-urls-section').open=true;
       await loadUrls(lookup.key);
