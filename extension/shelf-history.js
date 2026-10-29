@@ -217,9 +217,9 @@
           if(pageIndex>0&&!pageItems.length&&total>0){pageIndex=Math.ceil(total/PAGE_SIZE)-1;return refresh();}
         }catch(error){
           console.warn('REDOWN history archive unavailable:',error?.message||String(error));
-          fallback=true;total=legacy.length;pageIndex=0;pageItems=legacy.slice(0,PAGE_SIZE);
+          fallback=true;total=legacy.length;pageItems=legacy.slice(pageIndex*PAGE_SIZE,(pageIndex+1)*PAGE_SIZE);
         }
-      }else{fallback=true;total=legacy.length;pageIndex=0;pageItems=legacy.slice(0,PAGE_SIZE);}
+      }else{fallback=true;total=legacy.length;pageItems=legacy.slice(pageIndex*PAGE_SIZE,(pageIndex+1)*PAGE_SIZE);}
       dirty=false;render();
     }catch{
       if(ticket!==requestId)return;
