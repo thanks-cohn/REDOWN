@@ -51,7 +51,7 @@
 </div>
 <nav class="sidebar-dock" aria-label="REDOWN navigation">
 <button id="transfer-history" type="button" data-dock-icon="history"><span>History</span></button>
-<button id="open-destinations" type="button" data-dock-icon="destinations"><span>Destinations</span></button>
+<button id="open-destinations" type="button" data-dock-icon="destinations" aria-controls="quick-panel-setup" title="Jump to Destinations in Explorer"><span>Destinations</span></button>
 <button id="open-shelf-settings" type="button" data-dock-icon="settings" aria-label="Open REDOWN Shelf Settings"><span>Settings</span></button>
 </nav>
 </aside>
@@ -127,7 +127,7 @@
 <section id="side-preview" aria-label="Side preview" hidden></section>
 </div>
 
-<section class="quick-links-panel" aria-label="Right-click setup and bucket URLs">
+<section class="quick-links-panel" id="explorer-destinations" aria-label="Right-click setup and bucket URLs">
   <div class="quick-links-heading"><div><span class="eyebrow">CLOUD CONTROL</span><h2>One click. Your destination.</h2></div><span class="quick-links-mark" aria-hidden="true">✦</span></div>
   <div class="quick-links-tabs" role="tablist" aria-label="Cloud setup">
     <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="quick-panel-setup" tabindex="0"><span class="quick-tab-number" aria-hidden="true">01</span><span>Right-click setup</span></button>
