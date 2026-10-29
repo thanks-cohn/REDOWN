@@ -43,3 +43,28 @@ and NEON (light pink). The selection is persisted to
 `chrome.storage.local.shelfIconBackgroundMode`, and changes react to live
 Shelf theme selection. This affects the Shelf header icon only; the browser
 toolbar and packaged PNG icons intentionally remain unchanged.
+
+## Explorer customer-facing experience
+
+- The Cloudflare account selector now begins as an animated, accessible connection
+  tile in the exact account-selector location. Successful account discovery smoothly
+  reveals the *native* account dropdown. Expired authorization, disconnection,
+  failed discovery and no-account results display explicit recovery controls; no
+  dummy accounts are inserted.
+- The customer-facing window/heading is **REDOWN Explorer**. The internal path
+  `beta/explorer.html` remains unchanged to preserve existing links and handlers.
+- Explorer follows the saved Shelf color scheme by default:
+  Porcelain, Midnight, Ocean, NEON. In Shelf Settings, `Explorer color scheme`
+  can be set to `Match Shelf theme` (default) or `Use a different theme`;
+  the latter exposes an independent palette dropdown. The preference keys are
+  `explorerThemeMode` and `explorerColorScheme`.
+- The Explorer bottom-left Settings button launches the existing Chrome Shelf
+  with its Settings view using the short-lived, window-scoped
+  `shelfOpenIntent`. The redundant inline Shelf/Popup settings panel is removed.
+- The Shelf's last Settings section now controls the existing
+  `debugModeEnabled` preference. The Explorer's existing Test It Tools menu is
+  *absent* from normal mode and displayed only in Debug Mode. Turning Debug off
+  closes its open menu without touching customer files or deleting a test session.
+  Hidden test controls no longer reserve the bottom padding.
+- Source presence, syntax and state-transition checks were performed remotely.
+  Native Chrome visual and live Cloudflare acceptances remain **not run**.
