@@ -58,30 +58,26 @@ async function refreshConnection() {
     const response=await Promise.race([chrome.runtime.sendMessage({type:'cfAccounts'}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('timeout')),12000);})]);
     if(!response?.ok||!Array.isArray(response.accounts))throw Error('unavailable');
     paint('connected','Connected','Account access verified. Manage your connection and destinations in Dashboard.');
-  } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Open Cloudflare settings to reconnect or check access.');}
+  } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
   finally {clearTimeout(timer);}
 }
-async function refreshActivity() {
-  const {transferHistory=[],profiles=[]} = await chrome.storage.local.get(['transferHistory','profiles']);
-  const list=$('recent-transfers');list.replaceChildren();
-  const items=(Array.isArray(transferHistory)?transferHistory:[]).filter(item=>item&&typeof item==='object').slice().sort((a,b)=>new Date(b.at)-new Date(a.at)).slice(0,3);
-  if(!items.length){const li=document.createElement('li');li.className='empty';li.textContent='Your next save starts with a right click. Recent transfers will appear here.';list.append(li);}
-  for(const item of items){
-    const li=document.createElement('li'),meta=document.createElement('small');
-    li.textContent=(item.ok===true?'Completed':item.ok===false?'Failed':'Recorded')+' · '+(item.profileName||'Cloud transfer');
-    const date=new Date(item.at);meta.textContent=Number.isNaN(date.getTime())?'Date unavailable':date.toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-    li.append(meta);list.append(li);
+async function refreshDestinations() {
+  const {profiles=[]}=await chrome.storage.local.get('profiles');
+  const destinations=$('destinations');
+  destinations.replaceChildren();
+  const count=(Array.isArray(profiles)?profiles:[]).filter(profile=>profile?.type==='cloudflare-r2').length;
+  if(count){
+    const label=document.createElement('p');
+    label.textContent=count+' saved R2 destination'+(count===1?'':'s')+'.';
+    destinations.append(label);
   }
-  const destinations=$('destinations');destinations.replaceChildren();
-  const saved=(Array.isArray(profiles)?profiles:[]).filter(p=>p?.type==='cloudflare-r2');
-  if(saved.length){const p=document.createElement('p');p.textContent=saved.length+' saved R2 destination'+(saved.length===1?'':'s')+'.';destinations.append(p);}
 }
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
-  if(changes.transferHistory||changes.profiles)void refreshActivity().catch(()=>status('Saved activity unavailable.'));
+  if(changes.profiles)void refreshDestinations().catch(()=>status('Saved destinations unavailable.'));
 });
 void refreshPreference().catch(()=>{for(const input of modes)input.disabled=true;status('Opening preference unavailable. Reopen Settings to retry.');});
 void refreshConnection().catch(()=>status('Connection state unavailable. Reopen Shelf to retry.'));
-void refreshActivity().catch(()=>{$('recent-transfers').textContent='Saved activity unavailable.';});
+void refreshDestinations().catch(()=>status('Saved destinations unavailable.'));
