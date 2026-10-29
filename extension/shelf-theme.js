@@ -7,7 +7,7 @@
   const palettes=new Set([...darkThemes,'porcelain']);
   const normalize=value=>value==='velvet'?'neon':value==='noir'?'ocean':palettes.has(value)?value:'porcelain';
   let lastDark='midnight';
-  let writeEpoch=0,morphTimer=null,activeTransition=null;
+  let writeEpoch=0,morphTimer=null,activeTransition=null,pendingSelection=null;
   const morph=()=>{
     if(!toggle||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
     toggle.removeAttribute('data-morphing');
@@ -31,31 +31,42 @@
     }
   };
   const reducedMotion=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
-  const animateTheme=selected=>{
+  const animateTheme=(selected,epoch)=>{
     if(reducedMotion()||typeof document.startViewTransition!=='function'){
-      apply(selected);return;
+      apply(selected);pendingSelection=null;return;
     }
     try {
       activeTransition?.skipTransition?.();
-      const transition=document.startViewTransition(()=>apply(selected));
+      const transition=document.startViewTransition(()=>{
+        // A superseded transition must not repaint an older palette.
+        if(epoch===writeEpoch)apply(selected);
+      });
       activeTransition=transition;
       void transition.finished.catch(()=>{}).finally(()=>{
-        if(activeTransition===transition)activeTransition=null;
+        if(activeTransition===transition){
+          activeTransition=null;
+          if(pendingSelection===selected)pendingSelection=null;
+        }
       });
-    } catch {apply(selected);}
+    } catch {apply(selected);pendingSelection=null;}
   };
   const setTheme=async selected=>{
-    const before=document.documentElement.dataset.shelfTheme;
+    const requested=normalize(selected);
+    const before=pendingSelection||document.documentElement.dataset.shelfTheme;
+    if(requested===before)return;
     const previousDark=lastDark;
-    if(toggle)toggle.dataset.ready='true';
-    if((before==='porcelain')!==(normalize(selected)==='porcelain'))morph();
-    animateTheme(selected);
     const epoch=++writeEpoch;
+    pendingSelection=requested;
+    if(darkThemes.has(requested))lastDark=requested;
+    if(toggle)toggle.dataset.ready='true';
+    if((before==='porcelain')!==(requested==='porcelain'))morph();
+    animateTheme(requested,epoch);
     try {
-      await chrome.storage.local.set({shelfColorScheme:selected,shelfLastDarkTheme:lastDark});
+      await chrome.storage.local.set({shelfColorScheme:requested,shelfLastDarkTheme:lastDark});
     } catch {
       if(epoch===writeEpoch){
-        lastDark=previousDark;apply(before);
+        activeTransition?.skipTransition?.();
+        pendingSelection=null;lastDark=previousDark;apply(before);
         if(status)status.textContent='Could not save your color scheme.';
       }
     }
@@ -64,7 +75,7 @@
     if(input.checked)void setTheme(input.value);
   });
   toggle?.addEventListener('click',()=>{
-    const current=document.documentElement.dataset.shelfTheme;
+    const current=pendingSelection||document.documentElement.dataset.shelfTheme;
     void setTheme(current==='porcelain'?lastDark:'porcelain');
   });
   chrome.storage.onChanged.addListener((changes,area)=>{
@@ -72,7 +83,16 @@
     if(changes.shelfLastDarkTheme&&darkThemes.has(changes.shelfLastDarkTheme.newValue)){
       lastDark=changes.shelfLastDarkTheme.newValue;
     }
-    if(changes.shelfColorScheme)apply(changes.shelfColorScheme.newValue);
+    if(changes.shelfColorScheme){
+      const incoming=normalize(changes.shelfColorScheme.newValue);
+      if(incoming!==pendingSelection){
+        // Other pages can change the saved preference; honor those changes.
+        if(activeTransition)activeTransition.skipTransition?.();
+        writeEpoch++;
+        pendingSelection=null;
+        apply(incoming);
+      }
+    }
   });
   apply('porcelain');
   void chrome.storage.local.get(['shelfColorScheme','shelfLastDarkTheme'])
