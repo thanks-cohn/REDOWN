@@ -126,7 +126,7 @@
     makeChildren(details,items,key);
     return details;
   }
-  function dayRows(day,container){
+  function dayRows(container,day){
     const list=create('ol','','history-transfers');
     for(const item of day.items){
       const info=describe(item.record),row=create('li','','history-transfer');
