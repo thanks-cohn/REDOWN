@@ -11,6 +11,24 @@ function route() {
   }
 }
 window.addEventListener('hashchange',route); route();
+// One-time request to navigate the existing Shelf to Settings, scoped to the
+// Popup's browser window. No new settings page or tab is needed.
+let consumedShelfIntent=null;
+async function useShelfOpenIntent(intent){
+  if(intent?.view!=='settings'||typeof intent.token!=='string'||
+     !Number.isInteger(intent.windowId)||!Number.isFinite(intent.issuedAt)||
+     Date.now()-intent.issuedAt>15000||intent.issuedAt>Date.now()+1000||
+     consumedShelfIntent===intent.token)return;
+  const win=await chrome.windows.getCurrent();
+  if(win?.id!==intent.windowId)return;
+  consumedShelfIntent=intent.token;
+  location.hash='#settings';
+  route();
+  void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});
+}
+void chrome.storage.session?.get('shelfOpenIntent')
+  .then(data=>useShelfOpenIntent(data?.shelfOpenIntent))
+  .catch(()=>{});
 const openPage = path => chrome.tabs.create({url:chrome.runtime.getURL(path)}).catch(error=>status('Could not open page: '+error.message));
 $('dashboard').addEventListener('click',()=>openPage('beta/explorer.html'));
 $('cloudflare').addEventListener('click',async()=>{
@@ -61,6 +79,10 @@ async function refreshConnection() {
   finally {clearTimeout(timer);}
 }
 chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area==='session'&&changes.shelfOpenIntent){
+    void useShelfOpenIntent(changes.shelfOpenIntent.newValue).catch(()=>{});
+    return;
+  }
   if(area!=='local')return;
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));

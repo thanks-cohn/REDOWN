@@ -47,6 +47,27 @@ $('connection').addEventListener('click',async()=>{
   }catch(error){connectionBusy=false;paintConnection('disconnected','Open Cloudflare login');setStatus(error.message);}
 });
 $('dashboard').addEventListener('click',()=>Promise.resolve(chrome.tabs.create({url:chrome.runtime.getURL('beta/explorer.html')})).catch(()=>setStatus('Dashboard could not open. Please try again.')));
+// Settings opens the existing Shelf; the toolbar preference stays on Popup.
+$('shelf-settings').addEventListener('click',()=>{
+  if(!chrome.sidePanel?.open||!chrome.storage.session?.set){
+    setStatus('Shelf Settings is unavailable. Please reload REDOWN.');return;
+  }
+  // Invoke during the click gesture, before any asynchronous Chrome calls.
+  let opened;
+  try { opened=chrome.sidePanel.open({windowId:chrome.windows.WINDOW_ID_CURRENT}); }
+  catch(error) { setStatus('Could not open Shelf Settings: '+(error?.message||'Unknown error'));return; }
+  const request=chrome.windows.getCurrent().then(win=>{
+    if(!Number.isInteger(win?.id))throw Error('Browser window unavailable');
+    return chrome.storage.session.set({shelfOpenIntent:{
+      view:'settings',windowId:win.id,issuedAt:Date.now(),token:crypto.randomUUID()
+    }});
+  });
+  void Promise.allSettled([opened,request]).then(results=>{
+    if(results.every(result=>result.status==='fulfilled')){window.close();return;}
+    void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});
+    setStatus('Could not open Shelf Settings. Please try again.');
+  });
+});
 function paintCount(total){
   if(total!==null&&(typeof total!=='string'||!/^(0|[1-9]\d*)$/.test(total)))throw Error('Invalid delivery count');
   const host=$('odometer'),login=connectionState==='disconnected',working=connectionState==='checking'||(!preferencesReady&&!login),ready=total==='0'&&!host.hasAttribute('data-rolling');

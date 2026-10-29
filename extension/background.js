@@ -2268,7 +2268,8 @@ async function handleHitomiCaptureMessage(message,sender) {
 async function applyToolbarOpenMode() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
   const mode = toolbarOpenMode === 'popup' ? 'popup' : 'shelf';
-  await chrome.sidePanel.setOptions({path:'shelf.html',enabled:mode==='shelf'});
+  // Popup mode still opens the toolbar Popup, but Settings needs the Shelf available.
+  await chrome.sidePanel.setOptions({path:'shelf.html',enabled:true});
   await chrome.action.setPopup({popup:mode==='popup'?'popup.html':''});
 }
 chrome.action.onClicked.addListener(tab => {
