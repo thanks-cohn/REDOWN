@@ -2264,6 +2264,26 @@ async function handleHitomiCaptureMessage(message,sender) {
   }finally{hitomiIntents.delete(tabId);}
 }
 
+// Toolbar presentation: Shelf by default, compact popup on explicit preference.
+async function applyToolbarOpenMode() {
+  const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
+  const mode = toolbarOpenMode === 'popup' ? 'popup' : 'shelf';
+  await chrome.sidePanel.setOptions({path:'shelf.html',enabled:mode==='shelf'});
+  await chrome.action.setPopup({popup:mode==='popup'?'popup.html':''});
+}
+chrome.action.onClicked.addListener(async tab => {
+  const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
+  if(toolbarOpenMode==='popup')return;
+  try { await chrome.sidePanel.open({windowId:tab.windowId}); }
+  catch(error) { console.warn('REDOWN Shelf could not open:',error); }
+});
+chrome.runtime.onInstalled.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
+chrome.runtime.onStartup.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
+chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area==='local'&&changes.toolbarOpenMode)void applyToolbarOpenMode().catch(console.error);
+});
+void applyToolbarOpenMode().catch(console.error);
+
 chrome.runtime.onInstalled.addListener(rebuildMenus);
 chrome.runtime.onStartup.addListener(rebuildMenus);
 chrome.storage.onChanged.addListener((changes, area) => {
