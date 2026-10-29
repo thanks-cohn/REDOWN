@@ -2,14 +2,21 @@
 (() => {
   const choices=[...document.querySelectorAll('input[name="shelf-theme"]')];
   const toggle=document.getElementById('theme-toggle');
-  const moon=toggle?.querySelector('.moon-icon');
-  const sun=toggle?.querySelector('.sun-icon');
   const status=document.getElementById('status');
   const darkThemes=new Set(['midnight','noir','neon']);
   const palettes=new Set([...darkThemes,'porcelain']);
   const normalize=value=>value==='velvet'?'neon':palettes.has(value)?value:'porcelain';
   let lastDark='midnight';
-  let writeEpoch=0;
+  let writeEpoch=0,morphTimer=null;
+  const morph=()=>{
+    if(!toggle||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+    toggle.removeAttribute('data-morphing');
+    // Restart the same slosh for light→dark and dark→light.
+    void toggle.offsetWidth;
+    toggle.dataset.morphing='true';
+    clearTimeout(morphTimer);
+    morphTimer=setTimeout(()=>toggle.removeAttribute('data-morphing'),850);
+  };
   const apply=value=>{
     const selected=normalize(value);
     document.documentElement.dataset.shelfTheme=selected;
@@ -20,13 +27,14 @@
       const label=light?'Switch to dark mode':'Switch to light mode';
       toggle.title=label;toggle.setAttribute('aria-label',label);
       toggle.setAttribute('aria-pressed',String(!light));
+      toggle.dataset.mode=light?'light':'dark';
     }
-    if(moon)moon.hidden=!light;
-    if(sun)sun.hidden=light;
   };
   const setTheme=async selected=>{
     const before=document.documentElement.dataset.shelfTheme;
     const previousDark=lastDark;
+    if(toggle)toggle.dataset.ready='true';
+    if((before==='porcelain')!==(normalize(selected)==='porcelain'))morph();
     apply(selected);
     const epoch=++writeEpoch;
     try {
@@ -59,5 +67,7 @@
       else if(darkThemes.has(shelfLastDarkTheme))lastDark=shelfLastDarkTheme;
       if(writeEpoch===0)apply(shelfColorScheme);
     })
-    .catch(()=>{if(status)status.textContent='Color preference unavailable. Showing Porcelain.';});
+    .catch(()=>{if(status)status.textContent='Color preference unavailable. Showing Porcelain.';})
+    .finally(()=>{if(toggle)toggle.dataset.ready='true';});
+  globalThis.addEventListener('pagehide',()=>clearTimeout(morphTimer));
 })();
