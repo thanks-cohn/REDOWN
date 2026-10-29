@@ -82,3 +82,15 @@ test('Explorer theme preferences and Debug Mode respond to storage changes',asyn
   listeners.forEach(fn=>fn({shelfColorScheme:{newValue:'midnight'}},'local'));
   assert.equal(document.documentElement.dataset.explorerTheme,'midnight');
 });
+
+test('signed-out Cloudflare session presents one centered classic Mac LOGIN opposite centered LOG OUT',()=>{
+  assert.match(explorer,/action\.textContent=loginState\?'LOGIN':'Try again'/);
+  assert.match(explorer,/\$\('account-picker-caption'\)\.hidden=loginState/);
+  assert.match(css,/\.account-chooser:is\(\[data-state="unauthorized"\],\[data-state="disconnected"\]\) \.account-standby\{\s*display:none/);
+  assert.match(css,/\.session-actions\{justify-content:center\}/);
+  assert.match(css,/#disconnect\.logout-button\{min-width:128px\}/);
+  assert.match(css,/width:128px;min-height:37px/);
+  assert.match(explorer,/\$\('connect'\)\.click\(\)/);
+  assert.match(html,/id="account-standby-action"/);
+  assert.match(html,/id="disconnect"/);
+});
