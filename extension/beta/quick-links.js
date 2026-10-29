@@ -145,7 +145,7 @@
     report(setupStatus,'Configuring your existing REDOWN storage and right-click menu…');
     try{
       const result=await request('cfSetupRedownQuick',{accountId:account.value,menuLabel,confirmed:true});
-      report(setupStatus,result.setup?.verified?'Ready. Right-click a supported file → '+menuLabel+' → REDOWN.':'Setup needs verification; refresh Cloudflare before retrying.');
+      report(setupStatus,result.setup?.verified?'Ready. Right-click a supported file → REDOWN → '+menuLabel+'.':'Setup needs verification; refresh Cloudflare before retrying.');
       await loadBuckets('redown');
     }catch(error){
       report(setupStatus,'Setup not fully confirmed: '+error.message+' Check Cloudflare before retrying.');
