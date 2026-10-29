@@ -975,11 +975,13 @@ async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
     if(!buckets.some(item=>item.name==="redown"))
       throw Error("Bucket creation was accepted but not verified. Refresh R2 before retrying; do not create duplicates.");
   }
-  // Explicit onboarding also installs and verifies the existing R2 Worker.
+  // Reuse the original Legacy Worker and profile whenever already healthy.
+  // A menu-label change alone must not redeploy Cloudflare infrastructure.
   const former=(await getProfiles()).find(p=>p.type==="cloudflare-r2"&&p.accountId===accountId&&p.bucketName==="redown");
-  const profile=await provisionCloudflareProfile({
+  const ready=former?.workerVersion>=6 && await workerAcceptsProfile(former).catch(()=>false);
+  const profile=ready?former:await provisionCloudflareProfile({
     accountId,accountName:account.name,bucketName:"redown",profileName:"Cloudflare",
-    folders:{files:"files"},explorerOnly:false
+    folders:former?.folders||{},explorerOnly:former?.explorerManaged??true
   });
   const profiles=await getProfiles(),index=profiles.findIndex(p=>p.id===profile.id);
   if(index<0)throw Error("REDOWN bucket setup succeeded, but its menu profile could not be found. Refresh and inspect Settings.");
