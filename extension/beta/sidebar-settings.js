@@ -1,4 +1,4 @@
-/* One dock, existing Shelf routes and the original destination manager. */
+/* One dock, Shelf navigation, and the current Explorer destination panel. */
 (() => {
   const feedback=document.getElementById('status');
   const report=text=>{if(feedback)feedback.textContent=text;};
@@ -52,6 +52,13 @@
   document.getElementById('open-shelf-settings')?.addEventListener('click',()=>openShelf('settings'));
   document.getElementById('transfer-history')?.addEventListener('click',()=>openShelf('history'));
   document.getElementById('open-destinations')?.addEventListener('click',()=>{
-    void openPage('options.html#right-click-presets').catch(()=>report('Could not open Destinations. Please try again.'));
+    // Destinations belongs to the new Explorer workspace, not Legacy options.
+    // Reuse the existing tab controller rather than duplicating setup logic.
+    const panel=document.querySelector('.quick-links-panel');
+    const tab=document.getElementById('quick-tab-setup');
+    if(!panel||!tab){report('Destination setup is unavailable in this Explorer.');return;}
+    tab.click();
+    panel.scrollIntoView({behavior:globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'instant':'smooth',block:'start'});
+    tab.focus({preventScroll:true});
   });
 })();
