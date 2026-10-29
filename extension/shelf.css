@@ -407,3 +407,28 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 @media(prefers-reduced-motion:reduce){
   :root[data-save-impact="true"] .shell::before{animation:none!important}
 }
+
+/* Personal archive, native theme tokens and compact chronology. */
+.history-note{font-size:11px;color:var(--muted);line-height:1.65;max-width:55ch}
+#history-status{font-size:11px;color:var(--muted);margin:22px 0 14px}
+.history-year>summary{font-size:28px;font-weight:650;letter-spacing:-.04em;border-bottom:1px solid var(--line);padding:9px 0}
+.history-year summary{cursor:pointer;list-style:none}
+.history-year summary::-webkit-details-marker{display:none}
+.history-year summary::after{content:'+';float:right;color:var(--accent);font-size:17px;font-weight:400}
+.history-year[open]>summary::after,.history-month[open]>summary::after{content:'−'}
+.history-month{margin:15px 0 22px 8px;padding-left:15px;border-left:1px solid var(--line)}
+.history-month>summary{font-size:15px;font-weight:650;color:var(--accent);padding:5px 0}
+.history-day h2{font:600 11px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.02em;color:var(--muted);margin:22px 0 6px}
+.history-day ol{list-style:none;margin:0;padding:0}
+.history-transfer{position:relative;padding:11px 0 11px 13px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.history-transfer::before{content:'';position:absolute;left:0;top:18px;width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.history-transfer[data-state="success"]::before{background:var(--accent)}
+.history-transfer[data-state="failed"]::before{background:#e9788c}
+.history-transfer>strong{display:block;font-size:12px;font-weight:600}
+.history-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 10px;margin:4px 0 0;font-size:10px;color:var(--muted)}
+.history-meta time{white-space:nowrap;font-variant-numeric:tabular-nums}
+.history-error{font-size:11px;color:var(--muted);margin:6px 0 0}
+.history-control{padding:9px 12px;border:1px solid var(--line);border-radius:9px;color:var(--text);background:var(--surface);margin:10px 0}
+#history-view>.text-link{display:block;margin-top:22px}
+:root[data-shelf-theme="neon"] .history-year>summary{font-family:"Jersey 10 Charted",sans-serif;font-size:38px;letter-spacing:.02em}
+:root[data-shelf-theme="neon"] .history-month>summary{font-family:"Bitcount Prop Double Ink",monospace}

@@ -49,5 +49,6 @@
   "extension/beta/lab.mjs",
   "tools/lab/bridge.mjs",
   "scripts/lab-local-smoke.mjs",
-  "extension/shelf.js"
+  "extension/shelf.js",
+  "extension/shelf-history.js"
 ]

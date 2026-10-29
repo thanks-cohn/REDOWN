@@ -13,29 +13,30 @@ function updateConnectionSummary(){
 }
 document.addEventListener('redown:provider-connection',updateConnectionSummary);
 function route() {
-  const settings = location.hash === '#settings';
-  $('clouds-view').hidden = settings; $('settings-view').hidden = !settings;
-  for (const name of ['clouds','settings']) {
-    const active = (name === 'settings') === settings;
-    if (active) $('nav-'+name).setAttribute('aria-current','page');
+  const view=['settings','history'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
+  for (const name of ['clouds','history','settings']) {
+    $(name+'-view').hidden=name!==view;
+    if(name===view)$('nav-'+name).setAttribute('aria-current','page');
     else $('nav-'+name).removeAttribute('aria-current');
   }
+  if(view==='history')void globalThis.RedownShelfHistory?.open();
 }
 window.addEventListener('hashchange',route); route();
-// One-time request to navigate the existing Shelf to Settings, scoped to the
-// Popup's browser window. No new settings page or tab is needed.
-let consumedShelfIntent=null;
+// One-time History/Settings navigation, scoped to the requesting browser window.
+let consumedShelfIntent=null,shelfIntentEpoch=0;
 async function useShelfOpenIntent(intent){
-  if(intent?.view!=='settings'||typeof intent.token!=='string'||
+  if(!['settings','history'].includes(intent?.view)||typeof intent.token!=='string'||
      !Number.isInteger(intent.windowId)||!Number.isFinite(intent.issuedAt)||
      Date.now()-intent.issuedAt>15000||intent.issuedAt>Date.now()+1000||
      consumedShelfIntent===intent.token)return;
+  const ticket=++shelfIntentEpoch;
   const win=await chrome.windows.getCurrent();
-  if(win?.id!==intent.windowId)return;
+  if(ticket!==shelfIntentEpoch||win?.id!==intent.windowId)return;
   consumedShelfIntent=intent.token;
-  location.hash='#settings';
+  location.hash='#'+intent.view;
   route();
-  void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});
+  const current=await chrome.storage.session.get('shelfOpenIntent');
+  if(current?.shelfOpenIntent?.token===intent.token)void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});
 }
 void chrome.storage.session?.get('shelfOpenIntent')
   .then(data=>useShelfOpenIntent(data?.shelfOpenIntent))
