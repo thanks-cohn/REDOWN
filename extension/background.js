@@ -879,8 +879,9 @@ async function cfJson(path, options = {}) {
   }
   return body.result ?? body;
 }
+importScripts("history-archive.js");
 importScripts("transfer-counter.js");
-const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks);
+const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,RedownHistoryArchive.create());
 importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
