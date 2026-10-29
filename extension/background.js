@@ -961,8 +961,10 @@ async function createBucket(accountId, name, locationHint = "") {
 }
 // Explicit first-run setup. Cloudflare R2 requires lowercase bucket names.
 // Reuse an existing `redown` bucket; never retry an uncertain create blindly.
-async function setupRedownQuickDestination(accountId){
+async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
   if(typeof accountId!=="string"||!accountId)throw Error("Choose a Cloudflare account first.");
+  const label=String(menuLabel||'').trim();
+  if(!label||label.length>60||/[\\u0000-\\u001f]/.test(label))throw Error('Enter a menu label (1–60 characters).');
   const accounts=await listCloudflareAccounts();
   const account=accounts.find(item=>item.id===accountId);
   if(!account)throw Error("This Cloudflare account is no longer available.");
@@ -983,13 +985,13 @@ async function setupRedownQuickDestination(accountId){
   if(index<0)throw Error("REDOWN bucket setup succeeded, but its menu profile could not be found. Refresh and inspect Settings.");
   // Profile mutations stay scoped to this destination. Preserve unrelated users'
   // menu entries and any existing simple paths/options on this profile.
-  profiles[index]={...profiles[index],name:"Cloudflare",menuLabel:"Cloudflare",
+  profiles[index]={...profiles[index],name:"Cloudflare",menuLabel:label,
     defaultPrefix:former?.defaultPrefix ?? "",
     showInContextMenu:true,explorerManaged:false};
   await setProfiles(profiles);
   await chrome.storage.local.set({rightClickMode:"simple"});
   await rebuildMenus();
-  return {accountId,bucketName:"redown",name:"Cloudflare",verified:true};
+  return {accountId,bucketName:"redown",name:label,verified:true};
 }
 // Adding an address is an explicit public-facing Cloudflare configuration change.
 async function addRedownBucketUrl(message,sender){
@@ -2666,7 +2668,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if(message?.type==="cfSetupRedownQuick") {
         if(_sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html")||message.confirmed!==true)
           throw Error("Confirm REDOWN quick setup from Explorer first.");
-        return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId)});
+        return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId,message.menuLabel)});
       }
       if(message?.type==="cfAddBucketUrl")return sendResponse({ok:true,...(await addRedownBucketUrl(message,_sender))});
       if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message), verification:{workerReachable:true} });
