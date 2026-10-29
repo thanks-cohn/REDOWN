@@ -19,37 +19,25 @@ function syncAccountPicker(){globalThis.RedownAccountPicker?.sync();}
 function accountVisual(next,headline='',detail=''){
   const shell=$('account-chooser');
   if(!shell)return;
-  shell.dataset.state=next;
-  const loginState=next==='unauthorized'||next==='disconnected';
-  // Authentication uses a single centered button; loading and failure still
-  // expose meaningful status instead of hiding operational errors.
-  $('account-picker-caption').hidden=loginState;
-  const ready=next==='ready'&&$('accounts').options.length>0;
+  // The signed-out layout is LOGIN from the first visible frame, never the
+  // old discovery tile. An authenticated fetch uses the same compact slot.
+  const state=next==='loading'&&!cloudflareSignedIn?'disconnected':next;
+  shell.dataset.state=state;
+  const loginState=state==='unauthorized'||state==='disconnected';
+  const ready=state==='ready'&&$('accounts').options.length>0;
+  $('account-picker-caption').hidden=!ready;
   $('accounts').disabled=!ready||busy;
   $('accounts').tabIndex=-1;
-  $('accounts').setAttribute('aria-hidden',String(!ready));
-  $('account-standby').setAttribute('aria-hidden',String(ready));
-  if(!ready){
-    $('account-standby-heading').textContent=headline||({
-      loading:'Finding your cloud…',
-      unauthorized:'Cloudflare needs sign-in',
-      disconnected:'Your cloud is waiting',
-      failed:'Cloudflare is unavailable',
-      empty:'No accounts found'
-    }[next]||'Finding your cloud…');
-    $('account-standby-detail').textContent=detail||({
-      loading:'Checking your R2 account access',
-      unauthorized:'Reconnect securely to choose an account',
-      disconnected:'Connect to see your Cloudflare accounts',
-      failed:'Your files are untouched. Try again.',
-      empty:'Refresh discovery or reconnect'
-    }[next]||'');
-  }
+  $('accounts').setAttribute('aria-hidden','true');
   const action=$('account-standby-action');
-  action.hidden=ready||next==='loading';
-  action.textContent=loginState?'LOGIN':'Try again';
-  action.setAttribute('aria-label',loginState?'Log in to Cloudflare securely':'Retry Cloudflare account discovery');
-  shell.setAttribute('aria-label',ready?'Cloudflare account selector':$('account-standby-heading').textContent);
+  action.hidden=ready;
+  action.disabled=busy||state==='loading';
+  action.textContent=loginState?'LOGIN':state==='loading'?'LOADING…':'RETRY';
+  action.setAttribute('aria-label',loginState?'Log in to Cloudflare securely':
+    state==='loading'?'Loading Cloudflare accounts':'Retry Cloudflare account discovery');
+  // Keep diagnostic context accessible without introducing visible layout.
+  action.title=detail||headline||'';
+  shell.setAttribute('aria-label',ready?'Cloudflare account selector':action.getAttribute('aria-label'));
   syncAccountPicker();
 }
 $('account-standby-action').addEventListener('click',()=>{
@@ -271,6 +259,13 @@ async function loadBuckets(){
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function loadAccounts(preferred=current||lastLocation){
+  // Never call Cloudflare accounts while signed out: keep only LOGIN visible.
+  if(!cloudflareSignedIn){
+    accountVisual('disconnected');
+    connectionState('disconnected');
+    render();
+    return;
+  }
   const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';accountVisual('loading');connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
   try{
     const result=await request('accounts',{});if(ticket!==discoveryEpoch)return;
@@ -516,4 +511,11 @@ render();void (async()=>{try{const preferences=await chrome.storage.local?.get('
   lastLocation=saved?.betaExplorerLocation||null;
   paintLogout(saved?.cloudflareAuth);
 }catch{}
-await loadAccounts(lastLocation);})();
+// Once the saved session is known, only authenticated sessions discover
+// accounts; no old intermediate tile is ever shown for signed-out sessions.
+if(cloudflareSignedIn)await loadAccounts(lastLocation);
+else{
+  accountVisual('disconnected');
+  connectionState('disconnected');
+  render();
+}})();
