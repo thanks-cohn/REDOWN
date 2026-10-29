@@ -138,9 +138,10 @@
       <label>Public URL<input id="quick-url-input" type="url" inputmode="url" placeholder="https://assets.example.com" aria-label="Public hostname to attach" autocomplete="url"></label>
     </div>
     <div class="quick-links-action"><span><strong>Make your files linkable</strong><small>Uses the same Cloudflare domain setup as the original Explorer</small></span><button id="quick-url-add" type="button" disabled>Add URL</button></div>
+    <p id="quick-url-context" class="quick-url-context">These are bucket URL prefixes. Select a file in Explorer to see its exact, shareable object addresses.</p>
     <details id="quick-urls-section" class="quick-urls-section" open>
       <summary>URLs <span id="quick-url-count" aria-live="polite">0</span></summary>
-      <div id="quick-urls-list" class="quick-urls-list"><div class="quick-urls-empty"><strong>Add Your First URL!</strong><p>Connect a public hostname to your bucket and REDOWN can build a shareable link for each object automatically. Your bucket stays private until you explicitly approve public access.</p></div></div>
+      <div id="quick-urls-list" class="quick-urls-list"><div class="quick-urls-empty"><strong>Add Your First URL!</strong><p>Connect your domain once. REDOWN will show exact file links whenever you select an object.</p></div></div>
     </details>
     <p id="quick-url-feedback" class="quick-links-feedback" role="status" aria-live="polite"></p>
   </section>
