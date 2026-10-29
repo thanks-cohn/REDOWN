@@ -6,7 +6,7 @@
   if(!host||!note||!globalThis.RedownOdometer)return;
   const valid=value=>typeof value==='string' && /^(0|[1-9]\d*)$/.test(value);
   const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
-  let total=null,shown=null,displayed='',loadEpoch=0,ready=false,lastSeen=null;
+  let total=null,shown=null,displayed='',loadEpoch=0,ready=false,lastSeen='0';
   let saveQueue=Promise.resolve();
   const saveVisible=()=>{
     if(!valid(shown))return;
