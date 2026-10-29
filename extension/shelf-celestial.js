@@ -1,5 +1,19 @@
 /* Bounded decorative prelude. Palette persistence belongs exclusively to shelf-theme.js. */
 (() => {
+  // Sample cubic curves once per selection; WAAPI owns playback, with no render loop.
+  function curveFrames(points, origin, rebound=false){
+    return Array.from({length:61},(_,i)=>{
+      const progress=i/60;
+      // The approach has two tangent-matched halves so its visible apex stays
+      // inside the narrow header, even when the word is much farther below.
+      const split=points.length===7;
+      const t=split?(progress<=.5?progress*2:(progress-.5)*2):progress,u=1-t;
+      const segment=split?points.slice(progress<=.5?0:3,progress<=.5?4:7):points;
+      const coordinate=axis=>u*u*u*segment[0][axis]+3*u*u*t*segment[1][axis]+3*u*t*t*segment[2][axis]+t*t*t*segment[3][axis];
+      const stretch=rebound?Math.sin(Math.PI*progress)*.035:Math.sin(Math.PI*progress)*.02;
+      return {offset:progress,transform:`translate(${coordinate(0)-origin[0]}px,${coordinate(1)-origin[1]}px) scale(${1-stretch},${1+stretch})`};
+    });
+  }
   globalThis.RedownCelestial = function({toggle, current, commit, reducedMotion}) {
     const host=document.createElement('div');host.className='celestial-selector';
     toggle.before(host);host.append(toggle);
@@ -54,32 +68,42 @@
           overlay.append(object);document.body.append(overlay);
           if(lunar){
             const moon=object.querySelector('.celestial-moon');
-            void animate(object.querySelector('.celestial-glint'),[{transform:'translateX(0)'},{transform:'translateX(48px)'}],{duration:240}).catch(()=>{});
-            await animate(moon,[{color:'var(--accent)'},{color:'#fff1fa',offset:.35},{color:'#ff474f'}],{duration:240});
-            await animate(object.querySelector('.celestial-seal'),[{strokeDashoffset:1,opacity:0},{strokeDashoffset:0,opacity:1}],{duration:260,easing:'ease-out'});
+            void animate(object.querySelector('.celestial-glint'),[{transform:'translateX(0)'},{transform:'translateX(48px)'}],{duration:520}).catch(()=>{});
+            await animate(moon,[{color:'var(--accent)'},{color:'#fff1fa',offset:.35},{color:'#ff474f'}],{duration:520});
+            await animate(object.querySelector('.celestial-seal'),[{strokeDashoffset:1,opacity:0},{strokeDashoffset:0,opacity:1}],{duration:540,easing:'ease-out'});
           } else await animate(object,[{opacity:.65,scale:'.8'},{opacity:1,scale:'1'}],{duration:110});
           if(controller.signal.aborted)throw Error('Interrupted');
           const view=document.querySelector(location.hash==='#history'?'#history-view':location.hash==='#settings'?'#settings-view':'#clouds-view');
           const target=view?.querySelector('[data-celestial-target]');
           const bounds=target?.getBoundingClientRect();
           const sx=start.left+start.width/2,sy=start.top+start.height/2;
-          const canHit=bounds&&bounds.width>0&&bounds.top>sy&&bounds.top<innerHeight;
-          const x=canHit?bounds.left+bounds.width/2:sx;
-          const hitY=canHit?bounds.top+Math.min(bounds.height/2,10):sy;
-          const bottom=innerHeight+40, distance=Math.max(1,bottom-sy);
-          const fraction=canHit?Math.sqrt(Math.max(0,(hitY-sy)/distance)):0;
-          if(canHit){
-            await animate(object,[{transform:'translate(0,0)'},{transform:`translate(${x-sx}px,${hitY-sy}px)`}],{duration:650*fraction,easing:'cubic-bezier(.45,0,1,1)'});
-            if(controller.signal.aborted)throw Error('Interrupted');
-            // Inline-block transform touches only the designated word, without layout writes.
-            void animate(target,[{transform:'translateY(0) scaleY(1)',color:'inherit'},{transform:'translateY(2px) scaleY(.94)',color:lunar?'#ff474f':colors[palette],offset:.25},{transform:'translateY(0) scaleY(1)',color:'inherit'}],{duration:230}).catch(()=>{});
-            const streak=document.createElement('div');streak.className='celestial-streak';
-            Object.assign(streak.style,{left:`${bounds.left}px`,top:`${hitY}px`,width:`${bounds.width}px`});overlay.append(streak);
-            void animate(streak,[{transform:'scaleX(0)',opacity:1},{transform:'scaleX(1)',opacity:.8,offset:.4},{transform:'scaleX(1)',opacity:0}],{duration:210}).catch(()=>{});
-          }
-          await animate(object,[{transform:`translate(${x-sx}px,${canHit?hitY-sy:0}px)`},{transform:`translate(${x-sx}px,${bottom-sy}px)`}],{duration:650*(1-fraction),easing:'ease-in'});
+          const canHit=bounds&&bounds.width>0&&bounds.height>0&&bounds.top<innerHeight;
+          if(!canHit)throw Error('No visible springboard');
+          const x=bounds.left+bounds.width/2,hitY=bounds.top-12;
+          const origin=[sx,sy],hit=[x,hitY],dx=x-sx;
+          const lift=Math.min(110,Math.max(42,Math.abs(dx)*.28));
+          const crest=Math.max(14,Math.min(sy,hitY)-lift);
+          const apexX=sx+dx*.48;
+          const approach=[origin,[sx+dx*.12,crest],[apexX-dx*.14,crest],[apexX,crest],
+            [apexX+dx*.14,crest],[x-dx*.12,hitY-Math.max(24,Math.abs(hitY-sy)*.3)],hit];
+          await animate(object,curveFrames(approach,origin),{duration:840,easing:'cubic-bezier(.3,0,.65,1)'});
+          if(controller.signal.aborted)throw Error('Interrupted');
+          // Contact is isolated to the word and object; surrounding layout never changes.
+          void animate(target,[{transform:'translateY(0) scaleY(1)'},{transform:'translateY(2.5px) scaleY(.95)',offset:.3},{transform:'translateY(0) scaleY(1)'}],{duration:280,easing:'ease-out'}).catch(()=>{});
+          const streak=document.createElement('div');streak.className='celestial-streak';
+          Object.assign(streak.style,{left:`${bounds.left}px`,top:`${bounds.top+Math.min(bounds.height/2,10)}px`,width:`${bounds.width}px`});overlay.append(streak);
+          void animate(streak,[{transform:'scaleX(0)',opacity:0},{transform:'scaleX(1)',opacity:.9,offset:.45},{transform:'scaleX(1)',opacity:0}],{duration:300}).catch(()=>{});
+          const contact=`translate(${x-sx}px,${hitY-sy}px)`;
+          await animate(object,[{transform:contact+' scale(1,1)'},{transform:contact+' scale(1.12,.86)',offset:.45},{transform:contact+' scale(1,1)'}],{duration:120,easing:'ease-out'});
+          // Keep lateral velocity through the final frame. No vertical exit segment.
+          const direction=x<innerWidth/2?1:-1;
+          const travel=Math.min(100,innerWidth*.24);
+          const rise=Math.min(100,Math.max(48,hitY*.5));
+          const departure=[hit,[x+direction*travel*.24,hitY-rise*2.3],
+            [x+direction*travel*.68,hitY-rise*1.4],[x+direction*travel,innerHeight+40]];
+          await animate(object,curveFrames(departure,origin,true),{duration:1020,easing:'cubic-bezier(.18,.12,.65,1)'});
           // One cancellable pause, after departure and before the existing transition.
-          await new Promise(resolve=>{const timer=setTimeout(resolve,110);controller.signal.addEventListener('abort',()=>{clearTimeout(timer);resolve();},{once:true});});
+          await new Promise(resolve=>{const timer=setTimeout(resolve,150);controller.signal.addEventListener('abort',()=>{clearTimeout(timer);resolve();},{once:true});});
         }
       } catch {/* Interrupted or unsupported decoration still permits the captured choice. */}
       finally {

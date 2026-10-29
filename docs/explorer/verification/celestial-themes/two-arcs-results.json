@@ -1,0 +1,38 @@
+{
+  "scope": "Local Node/JSDOM, no installed Chrome or live provider calls",
+  "focused": {
+    "tests": 22,
+    "passed": 22,
+    "failed": 0
+  },
+  "syntax": "passed",
+  "reliability": {
+    "state": "failed",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "passed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "passed": 537,
+    "failed": 93,
+    "freshBaselineComparison": false
+  },
+  "browser": {
+    "state": "blocked",
+    "reason": "No Chrome binary; Playwright browser install failed with invalid archives"
+  },
+  "visualAcceptance": "pending"
+}

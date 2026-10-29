@@ -31,11 +31,18 @@ try{
    Element.prototype.animate=function(frames,options){samples.push({class:this.className?.baseVal??this.className,text:this.textContent,frames,options,time:performance.now()});return base.call(this,frames,options);};
   });
   if(view==='history')await page.locator('#theme-toggle').click();else await page.locator('[data-palette="neon"]').click();
-  await page.waitForTimeout(view==='history'?850:400);
+  await page.waitForTimeout(view==='history'?1550:550);
   await page.screenshot({path:`${output}/${width}-${view}-fall.png`});
   await page.waitForFunction(()=>commits.some(x=>x.data.shelfColorScheme));
   const result=await page.evaluate(()=>({samples,commits,overlays:document.querySelectorAll('.celestial-overlay').length,animations:document.getAnimations().length,palette:document.documentElement.dataset.shelfTheme,scrollWidth:document.documentElement.scrollWidth}));
   const impact=result.samples.find(x=>String(x.class).includes('')&&['Future','PERSONAL','HOME'].includes(x.text));
+  const arcs=result.samples.filter(x=>String(x.class).includes('celestial-falling')&&x.frames.length===61);
+  assert.equal(arcs.length,2);
+  for(const arc of arcs){
+   const xy=arc.frames.map(f=>f.transform.match(/translate\(([-.\d]+)px,([-.\d]+)px/).slice(1).map(Number));
+   assert.ok(Math.min(...xy.map(p=>p[1]))<Math.min(xy[0][1],xy.at(-1)[1]));
+   assert.ok(Math.abs(xy.at(-1)[0]-xy.at(-2)[0])>.1);
+  }
   assert.ok(impact,`impact ${view} at ${width}`);assert.equal(impact.text,view==='clouds'?'Future':view==='history'?'PERSONAL':'HOME');
   assert.equal(result.overlays,0);assert.equal(result.commits.find(x=>x.data.shelfColorScheme).overlay,false);
   assert.ok(result.scrollWidth<=width);report.cases.push({width,view,geometry,palette:result.palette,impact:impact.text,commitAfterOverlayRemoval:true});
