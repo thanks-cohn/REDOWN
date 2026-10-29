@@ -2271,11 +2271,11 @@ async function applyToolbarOpenMode() {
   await chrome.sidePanel.setOptions({path:'shelf.html',enabled:mode==='shelf'});
   await chrome.action.setPopup({popup:mode==='popup'?'popup.html':''});
 }
-chrome.action.onClicked.addListener(async tab => {
-  const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
-  if(toolbarOpenMode==='popup')return;
-  try { await chrome.sidePanel.open({windowId:tab.windowId}); }
-  catch(error) { console.warn('REDOWN Shelf could not open:',error); }
+chrome.action.onClicked.addListener(tab => {
+  // Invoke open during the toolbar-click gesture; await would risk losing it.
+  void chrome.sidePanel.open({windowId:tab.windowId}).catch(error=>{
+    console.warn('REDOWN Shelf could not open:',error);
+  });
 });
 chrome.runtime.onInstalled.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
 chrome.runtime.onStartup.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
