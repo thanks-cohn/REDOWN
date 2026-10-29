@@ -57,6 +57,17 @@ function failure(error){const message=error.message||'Request failed.';const sta
 async function rememberLocation(target){lastLocation={...target};try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
+let lastUrlSelectionFingerprint='';
+function announceUrlSelection(){
+  const source=context(),one=chosen();
+  const key=one.length===1&&!one[0].folder?one[0].key:null;
+  const fingerprint=JSON.stringify([source?.accountId,source?.bucketName,key]);
+  if(fingerprint===lastUrlSelectionFingerprint)return;
+  lastUrlSelectionFingerprint=fingerprint;
+  document.dispatchEvent(new CustomEvent('redown:explorer-url-selection',{
+    detail:{source:source?{accountId:source.accountId,bucketName:source.bucketName}:null,key}
+  }));
+}
 function status(text){$('status').textContent=text;}
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=handler;return b;}
 function controls(){
@@ -100,12 +111,12 @@ function render(){
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
   $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''},true,false,'breadcrumb')));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target},true,false,'breadcrumb')));}}
-  controls();syncSideSelection();practice?.paintOwnership();
+  controls();syncSideSelection();practice?.paintOwnership();announceUrlSelection();
 }
 let commandInvocation=null;
 function invokeCommand(id,method,input={}){commandInvocation={method,...input};try{$(id).click();}finally{commandInvocation=null;}}
 function guideAction(action,detail={}){if(action==='command')detail={commandId:crypto.randomUUID(),invocation:commandInvocation||{method:'toolbar'},entries:chosen().map(e=>({...e})),source:context(),...detail};document.dispatchEvent(new CustomEvent('redown:gui',{detail:{...detail,commandAction:detail.action,action}}));}
-function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
+function paintSelection(){document.querySelectorAll('.file').forEach(row=>row.setAttribute('aria-selected',String(selected.has(row.dataset.key))));controls();syncSideSelection();announceUrlSelection();if(chosen().some(e=>!e.folder))guideAction('select-file');}
 function progress(event){
   if(event.phase==='item'){$('progress').hidden=false;$('progress').max=event.total;$('progress').value=event.index;status(`Processing item ${event.index+1} of ${event.total}…`);}
   if(event.phase==='uploading')status('Uploading file bytes… Keep this page open.');
