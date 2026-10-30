@@ -1015,9 +1015,9 @@ a:hover{color:var(--text)}
 @keyframes destination-enter{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.destination-card,.nested-card{animation:none}#destination-mode i{transition:none}}
 
-/* First-run activation: one subtle, SNES-style stepped outline beside Refresh.
-   Colors stay independent of the currently selected Explorer theme. */
-.toolbar #prepare.bucket-activation{
+/* Persistent bucket activation beside Grid View. The state is reflected in
+   the button treatment, never by removing the control from the toolbar. */
+.actions #prepare.bucket-activation{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
   white-space:nowrap;min-height:32px;padding:5px 12px;
   font-size:11px;font-weight:800;letter-spacing:.035em;
@@ -1026,26 +1026,40 @@ a:hover{color:var(--text)}
   color:#b9ffce;box-shadow:inset 0 1px 0 #b9ffd52e,0 0 0 1px #78ec9640;
   transition:background .14s ease,border-color .14s ease;
 }
-.toolbar #prepare.bucket-activation[data-state="needed"]{
+.actions #prepare.bucket-activation[data-state="needed"]{
   animation:redown-bucket-activation 2.6s steps(4,end) infinite;
 }
-.toolbar #prepare.bucket-activation[data-state="unknown"]{
+.actions #prepare.bucket-activation[data-state="unknown"]{
   animation:none;color:#f7d996;border-color:#be9d56;background:#372e1a;
   box-shadow:0 0 0 1px #c9a65a38;
 }
-.toolbar #prepare.bucket-activation[data-state="checking"],
-.toolbar #prepare.bucket-activation[data-state="activating"]{animation:none;opacity:.8}
-.toolbar #prepare.bucket-activation:disabled{cursor:progress}
-.toolbar #prepare.bucket-activation:hover:not(:disabled){background:#215337;border-color:#9af6ab}
-.toolbar #prepare.bucket-activation:focus-visible{outline:2px solid #a8f9b8;outline-offset:3px}
+.actions #prepare.bucket-activation[data-state="unselected"],
+.actions #prepare.bucket-activation[data-state="idle"]{
+  animation:none;
+  color:var(--text);border-color:var(--line);background:var(--panel);
+  box-shadow:inset 0 1px 0 #ffffff0a;
+}
+.actions #prepare.bucket-activation[data-state="ready"]{
+  animation:none;
+  color:#b9ffce;border-color:#3d965b;background:linear-gradient(180deg,#173b27,#123522);
+}
+.actions #prepare.bucket-activation[data-state="unselected"]:hover:not(:disabled),
+.actions #prepare.bucket-activation[data-state="idle"]:hover:not(:disabled){
+  background:var(--accent-soft);border-color:var(--accent);
+}
+.actions #prepare.bucket-activation[data-state="checking"],
+.actions #prepare.bucket-activation[data-state="activating"]{animation:none;opacity:.8}
+.actions #prepare.bucket-activation:disabled{cursor:progress}
+.actions #prepare.bucket-activation:hover:not(:disabled){background:#215337;border-color:#9af6ab}
+.actions #prepare.bucket-activation:focus-visible{outline:2px solid #a8f9b8;outline-offset:3px}
 .bucket-activation-glyph{font-size:12px;line-height:1;color:#a8ffd0}
 @keyframes redown-bucket-activation{
   0%,100%{box-shadow:inset 0 1px 0 #b9ffd52e,0 0 0 1px #75db9369,0 0 7px #54c47725}
   45%{box-shadow:inset 0 1px 0 #b9ffd54d,0 0 0 2px #9cffbfa3,0 0 12px #4be47770}
   55%{box-shadow:inset 0 1px 0 #b9ffd54d,0 0 0 2px #9cffbfa3,0 0 12px #4be47770}
 }
-@media(max-width:650px){.toolbar #prepare.bucket-activation{order:1;flex:1}}
-@media(prefers-reduced-motion:reduce){.toolbar #prepare.bucket-activation[data-state="needed"]{animation:none!important;box-shadow:inset 0 1px 0 #b9ffd52e,0 0 0 2px #8fffb1b3}}
+@media(max-width:650px){.actions #prepare.bucket-activation{order:1;flex:1}}
+@media(prefers-reduced-motion:reduce){.actions #prepare.bucket-activation[data-state="needed"]{animation:none!important;box-shadow:inset 0 1px 0 #b9ffd52e,0 0 0 2px #8fffb1b3}}
 
 /* Explicit public-access decision in Get URL. Never style No as a secondary
    activation path; it simply keeps the current bucket private. */
