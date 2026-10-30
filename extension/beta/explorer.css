@@ -312,3 +312,23 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 #disconnect.logout-button:focus-visible{outline:2px solid #c8323c;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#disconnect.logout-button{transition:none!important}#disconnect.logout-button:hover:not(:disabled){transform:none}}
 @media(max-width:650px){.session-actions{margin-left:auto;align-self:center;padding:0}}
+
+/* Readable, reversible URL provenance in Beta transfer History. */
+.transfer-history-dialog{width:min(820px,calc(100vw - 24px));max-width:100%;max-height:90vh;padding:24px;border:1px solid var(--line);border-radius:16px;overflow:auto}
+.transfer-history-header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.transfer-history-header h2{margin:3px 0}
+.transfer-history-note{color:var(--muted);font-size:12px;line-height:1.6}
+.transfer-history-list{display:grid;gap:10px;max-height:65vh;overflow:auto;padding:2px}
+.transfer-history-entry{min-width:0;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.transfer-history-entry-top{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px}
+.transfer-history-ok{color:#146b49}.transfer-history-fail,.transfer-history-error{color:var(--danger)}
+.transfer-history-destination,.transfer-history-error{font-size:12px;overflow-wrap:anywhere;word-break:break-word;margin:6px 0}
+.transfer-history-sources{margin-top:9px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);min-width:0}
+.transfer-history-sources summary{cursor:pointer;font-weight:750;color:var(--accent);font-size:12px;outline-offset:4px}
+.transfer-history-sources[open] summary{margin-bottom:9px}
+.transfer-history-url-row{display:grid;grid-template-columns:124px minmax(0,1fr) auto;align-items:start;gap:8px;padding:9px 0;border-top:1px solid var(--line)}
+.transfer-history-url-label{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.transfer-history-url-text{min-width:0;font-size:12px;line-height:1.55;overflow-wrap:anywhere;word-break:break-word;white-space:normal;color:var(--text)}
+a.transfer-history-url-text{text-decoration:underline;text-underline-offset:2px}
+.transfer-history-url-row button{font-size:11px;min-height:30px;padding:4px 9px;white-space:normal}
+@media(max-width:560px){.transfer-history-dialog{padding:14px}.transfer-history-url-row{grid-template-columns:minmax(0,1fr) auto}.transfer-history-url-label{grid-column:1 / -1}}
