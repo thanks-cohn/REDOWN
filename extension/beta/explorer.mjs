@@ -200,6 +200,52 @@ async function droppedFiles(event,target=context()){
 }
 $('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remove('drag');if(listingState!=='ready')return;if(dragState){const clip={...dragState,operation:event.ctrlKey||event.metaKey?'copy':'move'};void actions.paste(context(),clip,{method:'drop'}).catch(e=>status(e.message));}else void droppedFiles(event);};
 $('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>refreshConnection(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
+// Only the explicit button can configure a Worker. Refresh and discovery never do so.
+$('activate-buckets').onclick=async()=>{
+  if(busy)return;
+  try{
+    if(!knownBucketTargets().length)await loadAccounts(current||lastLocation);
+    if(!activationInventoryLoaded)await loadProfiles();
+  }catch(error){status('Could not discover buckets for activation: '+(error.message||String(error))+'. Use Refresh or reconnect.');return;}
+  const targets=activationOrder(knownBucketTargets(),bucketPreference);
+  if(!targets.length){status('No accessible R2 buckets found. Refresh the connection or create a bucket in Settings.');return;}
+  const preview=targets.slice(0,5).map(t=>t.accountName+'/'+t.bucketName).join(', ')+(targets.length>5?', and '+(targets.length-5)+' more':'');
+  const confirmed=await dialog('Activate REDOWN buckets?',{
+    input:false,confirm:'Activate buckets',cancel:'Not now',
+    description:'REDOWN will check '+targets.length+' accessible bucket(s), prioritizing your chosen startup bucket. Any bucket that needs setup may receive a REDOWN Worker and a right-click destination: '+preview+'. This does NOT turn on public URL access. Continue?'
+  });
+  if(!confirmed)return;
+  activationRunning=true;paintActivation();
+  try{
+    await run(async signal=>{
+      const errors=[];let ready=0,prepared=0;
+      for(let i=0;i<targets.length;i++){
+        signal.throwIfAborted();
+        const target=targets[i],identity=bucketIdentity(target);
+        status('Checking REDOWN bucket '+(i+1)+'/'+targets.length+': '+target.bucketName+'…');
+        try{
+          let check=await request('connectionStatus',{source:target},{signal});
+          if(!check.data.ready){
+            status('Preparing REDOWN destination for '+target.bucketName+'…');
+            await request('prepareBucket',{source:target},{signal});
+            prepared++;
+            check=await request('connectionStatus',{source:target},{signal});
+          }
+          if(!check.data.ready)throw Error(check.data.reason||'Worker setup was not verified.');
+          bucketReadiness.set(identity,'ready');ready++;
+        }catch(error){
+          if(signal.aborted)throw error;
+          bucketReadiness.set(identity,'failed');
+          errors.push(target.bucketName+': '+(error.message||String(error)));
+        }
+        paintActivation();
+      }
+      try{await loadProfiles();}catch(e){errors.push('Saved destinations could not be refreshed: '+e.message);}
+      status(errors.length?'Verified '+ready+'/'+targets.length+' accessible buckets. '+errors.join(' ')+' Retry Activate Buckets after resolving the errors.':
+        'Verified '+ready+' accessible REDOWN bucket(s)'+(prepared?' and prepared '+prepared+' destination(s)':'')+'. Right-click destinations should now be available. Public URLs remain unchanged.');
+    },{refresh:false,checkWorker:false});
+  }finally{activationRunning=false;paintActivation();}
+};
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';guideAction('switch-view');};
@@ -311,6 +357,9 @@ $('disconnect').onclick=async()=>{
     render();status('Logged out of Cloudflare. Your cloud files remain untouched.');
   },{refresh:false});
 };
+chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area==='local'&&changes.profiles&&!busy&&accounts.length)void loadProfiles().catch(error=>status('Could not refresh saved bucket readiness: '+error.message));
+});
 chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
