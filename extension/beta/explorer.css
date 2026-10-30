@@ -352,3 +352,7 @@ a.transfer-history-url-text{text-decoration:underline;text-underline-offset:2px}
 @keyframes bucket-snes-alert{0%,100%{filter:brightness(1);transform:translateY(0)}33%{filter:brightness(1.17);box-shadow:0 0 0 3px #f3ab42,0 0 16px #ffca57}66%{filter:brightness(1.06);box-shadow:0 0 0 2px #ffd58f,0 0 9px #e5a634}}
 @media(max-width:650px){#activate-buckets.bucket-activation{white-space:normal;text-align:center}.sidebar-settings-options #buckets{flex-direction:column;max-height:170px}}
 @media(prefers-reduced-motion:reduce){#activate-buckets[data-state="attention"].attention-flash{animation:none!important}}
+
+.transfer-history-export-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:15px;margin-top:12px;border-top:1px solid var(--line)}
+.transfer-history-export-footer p{flex:1;min-width:210px;font-size:11px;line-height:1.55;color:var(--muted);margin:0;overflow-wrap:anywhere}
+#beta-history-export-status{font-size:11px;color:var(--muted);overflow-wrap:anywhere;margin-top:9px}
