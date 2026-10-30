@@ -1047,6 +1047,70 @@ a:hover{color:var(--text)}
 @media(max-width:650px){.actions #prepare.bucket-activation{order:1;flex:1}}
 @media(prefers-reduced-motion:reduce){.actions #prepare.bucket-activation[data-state="needed"]{animation:none!important;box-shadow:inset 0 1px 0 #b9ffd52e,0 0 0 2px #8fffb1b3}}
 
+/* Activation motion: one warm-to-cool glow on press, slow luminous
+   response while work is pending, then a graceful verified finish.
+   This is purely visual and never determines the Cloudflare result. */
+.actions #prepare.bucket-activation{
+  isolation:isolate;position:relative;
+  transition:background-color .45s ease,border-color .45s ease,color .45s ease,
+    box-shadow .65s cubic-bezier(.2,.8,.2,1),transform .35s ease,opacity .25s ease;
+}
+.actions #prepare.bucket-activation[data-state="needed"]{
+  animation:none;color:#f8dfae;background:linear-gradient(180deg,#42311e,#31281f);
+  border-color:#a88b56;box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #cbaa6633;
+}
+.actions #prepare.bucket-activation[data-state="checking"],
+.actions #prepare.bucket-activation[data-state="activating"]{opacity:1}
+.actions #prepare.bucket-activation[data-effect="checking"],
+.actions #prepare.bucket-activation[data-effect="working"]{
+  color:#e4f9ff;border-color:#7ee3f1;
+  background:linear-gradient(110deg,#1d3445,#184d53,#204943);
+  animation:rd-activation-working 2.1s ease-in-out infinite;
+}
+.actions #prepare.bucket-activation[data-effect="success"]{
+  color:#e4ffe9;background:linear-gradient(150deg,#236947,#135132);
+  border-color:#a9ffbd;
+  animation:rd-activation-success 1.12s cubic-bezier(.2,.8,.2,1) both;
+}
+.actions #prepare.bucket-activation[data-effect="confirm"]{
+  color:#fff1d4;background:linear-gradient(145deg,#63452b,#49341e);
+  border-color:#ffd69a;animation:rd-activation-confirm 1.12s ease-out both;
+}
+.actions #prepare.bucket-activation[data-effect="attention"]{
+  color:#fff1d4;background:linear-gradient(145deg,#63452b,#49341e);
+  border-color:#e8b774;animation:rd-activation-attention 1.12s ease-out both;
+}
+.actions #prepare.bucket-activation[data-effect="success"] .bucket-activation-glyph,
+.actions #prepare.bucket-activation[data-effect="working"] .bucket-activation-glyph,
+.actions #prepare.bucket-activation[data-effect="checking"] .bucket-activation-glyph{color:inherit}
+@keyframes rd-activation-working{
+  0%,100%{box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #74dfe845,0 0 9px #60cae826;filter:saturate(1)}
+  50%{box-shadow:inset 0 1px 0 #fff5,0 0 0 2px #9aeeedb8,0 0 17px #58d9db85;filter:saturate(1.22)}
+}
+@keyframes rd-activation-success{
+  0%{box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #6fe8ce55,0 0 6px #4bda9740;filter:saturate(1.05)}
+  34%{box-shadow:inset 0 1px 0 #fff6,0 0 0 2px #b8ffd6ec,0 0 23px #63f29ca8;filter:saturate(1.3)}
+  100%{box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #78ec9640,0 0 0 #54c47700;filter:saturate(1)}
+}
+@keyframes rd-activation-confirm{
+  0%{box-shadow:0 0 0 #edba7600}
+  40%{box-shadow:inset 0 1px 0 #fff3,0 0 0 2px #ffcf9488,0 0 14px #efaa6480}
+  100%{box-shadow:0 0 0 #edba7600}
+}
+@keyframes rd-activation-attention{
+  0%{box-shadow:0 0 0 #e9b46f00}
+  45%{box-shadow:0 0 0 2px #e8b774aa,0 0 12px #e8b77466}
+  100%{box-shadow:0 0 0 #e9b46f00}
+}
+@media(prefers-reduced-motion:reduce){
+  .actions #prepare.bucket-activation,
+  .actions #prepare.bucket-activation[data-effect]{animation:none!important;transition:none!important;filter:none!important}
+  .actions #prepare.bucket-activation[data-effect="success"]{box-shadow:inset 0 1px 0 #fff2,0 0 0 2px #7bda9d99}
+  .actions #prepare.bucket-activation[data-effect="checking"],
+  .actions #prepare.bucket-activation[data-effect="working"]{box-shadow:inset 0 1px 0 #fff2,0 0 0 2px #7ee3f180}
+  .actions #prepare.bucket-activation[data-effect="attention"]{box-shadow:0 0 0 2px #e8b7748c}
+}
+
 /* Explicit public-access decision in Get URL. Never style No as a secondary
    activation path; it simply keeps the current bucket private. */
 .url-popover-consent{
