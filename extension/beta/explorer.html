@@ -18,19 +18,31 @@
 <label for="accounts">Cloudflare account</label>
 <select id="accounts" aria-label="Cloudflare account">
 </select>
-<div class="section-title">SAVED DESTINATIONS</div>
-<select id="profiles" aria-label="Saved destination"><option value="">Choose a saved destination…</option></select>
-<div class="section-title section-row"><span>STORAGE BUCKETS</span><button id="create-bucket" aria-label="Create bucket" title="Create bucket">+</button></div>
-<nav id="buckets" aria-label="Buckets">
-</nav>
 <div class="aside-bottom">
-<button id="prepare">Set up right-click destination</button>
 <button id="preferences">Transfer preferences</button>
 <button id="transfer-history">Recent transfers</button>
 <button id="connect">Connect Cloudflare</button>
 <details id="sidebar-settings" class="sidebar-settings">
 <summary><span class="sidebar-settings-heading">⚙ Settings</span><span class="sidebar-settings-chevron" aria-hidden="true">⌄</span></summary>
 <div class="sidebar-settings-content">
+<fieldset class="sidebar-settings-options">
+<legend>Initial activation</legend>
+<label for="initial-bucket">Preferred bucket at startup</label>
+<select id="initial-bucket" aria-label="Preferred initial activation bucket">
+<option value="">Automatically choose an accessible bucket</option>
+</select>
+<p id="initial-bucket-status" class="sidebar-hint" role="status">Refresh to discover buckets. This choice does not make storage public.</p>
+</fieldset>
+<fieldset class="sidebar-settings-options">
+<legend>Saved destinations</legend>
+<select id="profiles" aria-label="Saved destination"><option value="">Choose a saved destination…</option></select>
+</fieldset>
+<fieldset class="sidebar-settings-options">
+<legend>Available storage buckets</legend>
+<div class="section-title section-row"><span>BUCKETS</span><button id="create-bucket" aria-label="Create bucket" title="Create bucket">+</button></div>
+<nav id="buckets" aria-label="Buckets"></nav>
+<button id="prepare" type="button">Set up selected right-click destination</button>
+</fieldset>
 <fieldset class="sidebar-settings-options">
 <legend>When I click REDOWN</legend>
 <div class="sidebar-settings-choice">
@@ -68,6 +80,7 @@
 <button id="forward" title="Forward" aria-label="Forward">→</button>
 <button id="up" title="Parent folder" aria-label="Parent folder">↑</button>
 <button id="refresh" title="Refresh" aria-label="Refresh">↻</button>
+<button id="activate-buckets" type="button" class="bucket-activation" data-state="loading" title="Prepare accessible REDOWN buckets; public access stays private" aria-label="Activate Buckets">✦ Activate Buckets <span id="activation-count" hidden></span></button>
 <button id="path" title="Go to a folder path" aria-label="Go to a folder path">/</button>
 <nav id="crumbs" aria-label="Breadcrumb">
 </nav>
