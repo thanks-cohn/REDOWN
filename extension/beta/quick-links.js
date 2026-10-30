@@ -198,7 +198,7 @@
     if(!menuLabel||menuLabel.length>60){report(setupStatus,'Enter a menu label (1–60 characters).');return;}
     if(!confirm('Create or reuse the private Cloudflare R2 bucket named REDOWN and configure its right-click destination? Cloudflare may charge for usage above its free allowance.'))return;
     working=true;buttons();
-    report(setupStatus,'Configuring your existing REDOWN storage and right-click menu…');
+    report(setupStatus,'Preparing the optional redown bucket and right-click destination…');
     try{
       const result=await request('cfSetupRedownQuick',{accountId:account.value,menuLabel,confirmed:true});
       report(setupStatus,result.setup?.verified?'Ready. Right-click a supported file → REDOWN → '+menuLabel+'. Add more Simple destinations above.':'Setup needs verification; check Cloudflare before retrying.');
