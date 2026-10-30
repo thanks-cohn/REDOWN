@@ -66,6 +66,32 @@ Do **not** invent file totals or simulate fake successful transfers. Display ani
 
 Make surprise variations possible: occasional sunglasses, tiny money bag, shocked reaction, or special sparkle. The base 100/minute moment remains visually recognizable, while the rare variants increase replay / shareability. Keep all variants tasteful and avoid clutter.
 
+## 4A. Casino cash-dispensing energy + $100-bill-counting machine tactility
+
+**Owner refinement, 2026-10-30.** The existing odometer, animations, and sound should communicate the *mechanical sensation* of a casino machine dispensing money **and** the fast, satisfying sound of the industrial machines that count stacks of $100 bills. These references describe tactile excitement and audio identity, not actual payouts or gambling mechanics.
+
+### Audio progression
+
+- **One verified save:** a short polished coin-like confirmation, tiny metallic register tick or precisely counted-note sound.
+- **Several saves in succession:** an accelerating, crisp, papery *tick-tick-tick / flutter* reminiscent of physical banknotes feeding into a bill counter.
+- **Fast stream:** a controlled spinning-motor whirr and rhythmic mechanical chatter that increase in apparent speed. Layer concise, coherent notes above the mechanism so it remains musical rather than noisy.
+- **Milestone:** a dispenser-like mechanical clunk, bell, reel stop or short cash-register flourish. At very high throughput, an original, classy jackpot-style flourish; never impersonate a real casino machine recording or payment-app sound.
+- **OVERDRIVE:** briefly wind up the virtual machine, let the bill-counting flutter reach a peak, use a beat of silence, then an original cash-dispensing / reel-stop finale. The wheels land on the real verified saved-file total, and the mascot returns with **WOW!**.
+- Dynamically compress/aggregate high-rate sounds. Cap loudness, polyphony, duration and repetition; preserve a satisfying experience without a flood of audio. Default quiet, with independent mute and volume controls.
+
+### Physical-mechanical odometer animation
+
+- Numbers behave like precision connected **reels / flywheels**: believable acceleration, inertia, rapid counting, subtle vibration, bounded overshoot and a final ratchet into the correct position.
+- Glossy chrome, a luminous banknote-counting aperture or dispenser-like accent, measured lighting and anticipatory pulses can evoke a premium money-counting machine without transforming the dashboard into a gaudy casino.
+- More real saved files per minute -> quicker, richer response; not fake counts or arbitrary animation. The recorded total remains exactly tied to existing trustworthy completion evidence, with deterministic catch-up through bursts, interruptions and retries.
+- A brief OVERDRIVE animation may celebrate the result, but must not obstruct file actions, create fake money imagery, imply REDOWN pays the user, or delay actual transfers.
+
+### Brand signature
+
+Think **luxury mechanical instrument + banknote counter + exciting casino payout moment**, filtered through REDOWN's high-end midnight-blue, chrome and tasteful lighting aesthetic. Make the sounds and reel behavior recognizably REDOWN, not an imitation of a named application's audio or a gambling game. Preserve reduced-motion and sound-free alternatives.
+
+**Related playful interaction:** The mascot can also become a physics toy with a humorous cursor-biting retaliation; document it in [Follow the Arrows / Interactive Mascot Toy Mode](./IMPORTANT_FOLLOW_THE_ARROWS_STATE_AWARE_SETUP_TREASURE_HUNT.md). This is separate from genuine verified-save accounting.
+
 ## 5. Product and technical guardrails
 
 - **No fake rewards:** Trigger only from trustworthy existing transfer lifecycle success evidence, respecting REDOWN's multi-provider architecture and receipt verification. Do not add parallel save accounting; audit the existing canonical counters/events first.
