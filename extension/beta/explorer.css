@@ -154,7 +154,9 @@ h2{font-size:29px;letter-spacing:-.035em;font-weight:650;margin:5px 0}
 #empty{padding:80px 20px;text-align:center;color:var(--muted);font-size:17px}
 #empty small{display:block;margin-top:10px;font-size:12px}
 #more{margin:15px 22px}
-footer{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px;margin:14px 3px}
+footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;column-gap:20px;row-gap:8px;color:var(--muted);font-size:11px;margin:14px 3px}
+footer #selection{font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0}
+footer .explorer-shortcuts{min-width:0;line-height:1.6;overflow-wrap:anywhere}
 .activity{padding:20px 24px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-top:26px}
 .activity>div{display:flex;align-items:center;gap:10px}
 .activity p{margin:0;overflow-wrap:anywhere;flex:1}
