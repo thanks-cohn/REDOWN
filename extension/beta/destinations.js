@@ -3,7 +3,7 @@
   'use strict';
   const $=id=>document.getElementById(id),C=RedownDestinationConfig,M=RedownNestedLocations;
   if(!$('destination-mode'))return;
-  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0;
+  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,firstSetupDisclosureInitialized=false;
   const bucketCache=new Map();let unassigned=[];
   const status=text=>$('destination-status').textContent=text;
   const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -22,12 +22,20 @@
     if(saving)return;if(dirty&&!confirm('Discard unsaved menu edits and reload?'))return;
     const version=++epoch;
     const stored=await chrome.storage.local.get(['profiles','rightClickMode']);
+    // The background is authoritative. Another Explorer tab may have just
+    // provisioned a bucket before its local storage event reaches this page.
+    let latest;try{latest=(await request('profiles')).profiles;}catch{}
     if(version!==epoch)return;
-    unassigned=[];profiles=structuredClone(stored.profiles||[]);$('destination-legacy-fallback').hidden=!profiles.some(p=>p.type==='github');mode=M.menuMode(stored.rightClickMode,profiles);expected=C.signature(profiles,mode);dirty=false;mounted=false;
+    unassigned=[];profiles=structuredClone(latest||stored.profiles||[]);$('destination-legacy-fallback').hidden=!profiles.some(p=>p.type==='github');mode=M.menuMode(stored.rightClickMode,profiles);expected=C.signature(profiles,mode);dirty=false;mounted=false;
     // Idempotent in-memory migration. It is persisted only on explicit Save.
     for(const p of usable())p.nestedMenu||=M.fromLegacy(p);
     const selector=$('destination-profile');selector.replaceChildren(...usable().map(p=>new Option((p.accountName||p.accountId)+' / '+p.bucketName,p.id)));
-    renderSimple();setMode();status('Choose a layout and design your right-click menu.');
+    renderSimple();setMode();
+    if(!firstSetupDisclosureInitialized){
+      firstSetupDisclosureInitialized=true;
+      $('destination-first-setup').open=usable().length===0;
+    }
+    status(usable().length?'Choose a layout and design your right-click menu.':'Choose an existing Cloudflare bucket, then Activate Buckets beside Refresh, or prepare REDOWN storage below.');
     try{accounts=(await request('cfAccounts')).accounts||[];}catch(error){status('Saved destinations loaded. '+error.message);}
   }
   async function save(){
@@ -56,7 +64,7 @@
   }
   function renderSimple(onlyId){
     const host=$('destination-simple');if(!onlyId){for(const b of host.querySelectorAll('button'))b._picker?.close();host.replaceChildren();}else host.querySelector('.destination-empty')?.remove();
-    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','Add a location to an existing prepared account, or prepare REDOWN storage below.'));
+    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','Choose your existing Cloudflare bucket, then click Activate Buckets by Refresh. After activation, + Location adds Simple menu destinations.'));
     for(const row of list){
       const card=el('article','destination-card');card.dataset.destinationId=row.id;
       const head=el('div','destination-card-head');
@@ -87,7 +95,7 @@
       });
       const root=button('Bucket root',()=>{choose._picker?.close();folders.hidden=true;update(row,'prefix','');destination.textContent=row.bucket+'/';});
       const loadBuckets=async()=>{
-        if(!row.p.accountId){bucket.replaceChildren(new Option('Prepare storage below',''));choose.disabled=true;root.disabled=true;return;}
+        if(!row.p.accountId){bucket.replaceChildren(new Option('Activate a bucket to add locations',''));choose.disabled=true;root.disabled=true;return;}
         const version=epoch;bucket.replaceChildren(new Option('Loading buckets…',''));bucket.disabled=true;
         try{let cached=bucketCache.get(row.p.accountId);if(!cached){cached=request('cfBuckets',{accountId:row.p.accountId}).catch(error=>{bucketCache.delete(row.p.accountId);throw error;});bucketCache.set(row.p.accountId,cached);}const result=await cached;if(version!==epoch||!card.isConnected)return;
           bucket.replaceChildren();for(const b of result.buckets||[]){const option=new Option(b.name,b.name);option.disabled=!usable().some(p=>p.accountId===row.p.accountId&&p.bucketName===b.name);if(option.disabled)option.textContent+=' · setup required';bucket.add(option);}
@@ -104,7 +112,28 @@
   }
   $('destination-mode').onclick=()=>{if(saving)return;mode=mode==='simple'?'nested':'simple';changed();setMode();};
   $('destination-add').onclick=async()=>{
-    if(saving)return;const available=usable();if(!available.length){if(mode==='nested'){status('Prepare REDOWN storage below before adding a nested bucket.');return;}const id=crypto.randomUUID();unassigned.push({draft:true,id,p:{id:'draft',accountId:'',bucketName:''},item:{id,label:'',prefix:'',bucketName:''},label:'',bucket:'',prefix:''});changed();renderSimple(id);return;}
+    if(saving)return;
+    // Adopt the original Cloudflare-created destination if it was prepared
+    // in the other Explorer, without requiring a second REDOWN bucket.
+    if(!usable().length&&!dirty)try{await load();}catch{}
+    if(!usable().length){
+      const accountId=$('accounts')?.value||'';
+      const bucketName=$('buckets')?.querySelector('button[aria-current]')?.dataset.bucket||'';
+      if(!accountId||!bucketName){
+        status('Choose a bucket in the Storage Buckets sidebar first. Then click Activate Buckets next to Refresh. No new bucket is required.');
+        $('destination-first-setup').open=true;return;
+      }
+      if(!confirm('Activate your existing Cloudflare bucket '+bucketName+' for REDOWN right-click destinations? This deploys or updates its private REDOWN Worker. It does not enable public file URLs.'))return;
+      status('Activating '+bucketName+' so you can add Simple menu locations…');
+      try{
+        await request('cfProvision',{accountId,bucketName,profileName:bucketName,folders:{},explorerOnly:false});
+        document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId,bucketName}}));
+        await load();
+      }catch(error){status('Could not activate '+bucketName+': '+error.message+'. Your Cloudflare bucket was not deleted.');return;}
+      if(!usable().some(p=>p.accountId===accountId&&p.bucketName===bucketName)){status('Activation was not reflected in saved destinations. Check Cloudflare before trying again.');return;}
+      $('destination-profile').value=usable().find(p=>p.accountId===accountId&&p.bucketName===bucketName).id;
+    }
+    const available=usable();
     if(mode==='nested'){
       const p=available.find(p=>p.id===$('destination-profile').value)||available[0];p.explorerManaged=false;p.nestedMenu||=M.fromLegacy(p);p.nestedMenu.enabled=true;
       if(!mounted)mountNested();await RedownNestedEditor.addLocation(p.id);changed();return;
@@ -113,12 +142,13 @@
     if(p.explorerManaged||p.showInContextMenu===false)p.simplePrimaryEnabled=false;
     p.explorerManaged=false;p.showInContextMenu=true;
     rows().forEach((r,i)=>{if(r.base)r.p.simplePrimaryOrder=i;else r.item.order=i;});
-    const id=crypto.randomUUID();(p.simpleOptions||=[]).push({id,label:'',bucketName:p.bucketName,prefix:'',order:rows().length});
+    const id=crypto.randomUUID();(p.simpleOptions||=[]).push({id,label:'New location',bucketName:p.bucketName,prefix:'',order:rows().length});
     changed();renderSimple(id);const last=$('destination-simple').lastElementChild;last?.querySelector('input')?.focus();last?.scrollIntoView?.({block:'nearest'});
   };
   $('destination-save').onclick=()=>save().catch(error=>status(error.message));
   $('destination-reload').onclick=()=>load().catch(error=>status(error.message));
   document.addEventListener('click',event=>{if(!event.target.closest('.destination-card'))for(const b of $('destination-simple').querySelectorAll('button'))b._picker?.close();});
+  document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving)void load().catch(error=>status('Refresh destinations: '+error.message));});
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||saving)return;
     if(changes.profiles||changes.rightClickMode){if(dirty){status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
