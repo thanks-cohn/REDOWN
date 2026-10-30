@@ -14,6 +14,17 @@
 6. Retain URL fields only for the explicit user-initiated save, scoped to local History; never dump unredacted URLs to Debug diagnostic bundles. Navigation should use secure link-handling precautions (no implicit external requests, avoid referrers, safe protocols).
 7. If a later browsing surface cannot retrieve metadata for an old entry, show what was recorded at the time rather than reconstructing a speculative page/source relationship.
 
+## Source implementation on beta-explorer (October 30, 2026)
+
+The immediate provenance/History request has now been coded in the following files:
+
+- `extension/background.js`: capture all available right-click URL fields and persist them on ordinary transfer successes/failures, including queued gallery capture provenance.
+- `extension/options.js` and `extension/options.html`: Legacy Activity History shows collapsible, wrapped, clickable/copyable source links for successes and failures, parent page first.
+- `extension/beta/explorer.mjs`, `extension/beta/explorer.html`, `extension/beta/explorer.css`: Beta Transfer History now has a dedicated interactive dialog instead of a raw JSON dump; it displays the same links in the same order with the same expand/collapse behavior.
+- `tests/history-provenance.test.mjs`: focused source/URL-order/partial-context/legacy-history/Beta-parity tests added.
+
+**Verification boundary:** syntax compilation and focused source/helper scenarios were checked after committing. The repository's Node test suite, installed Chrome extension, and live Cloudflare R2 transfer behavior were **not run or verified** here. The old 50-record retention bound remains. The Bookmarks tab/JSON archival concept below is **still a proposal**, not implemented.
+
 ## Next: Bookmarks for websites and their interaction history
 
 The owner wants a lightweight **Bookmarks** tab: save/bookmark a website or tab, then review all REDOWN interactions and saved links originating from that parent page.
