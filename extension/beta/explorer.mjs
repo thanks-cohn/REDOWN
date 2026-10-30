@@ -381,9 +381,9 @@ $('prepare').onclick=async()=>{const source=context();if(!source||busy)return;
   activationState='activating';paintActivation();
   await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();
     document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:source.accountId,bucketName:source.bucketName}}));
-    status(result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
+    status(result.data.menuUpdated===false?(result.data.menuError||'Bucket activated, but Chrome could not update its menu. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
   if(sameBucket(current,source))await checkActivation(source);
-  if(activationState==='ready')status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
+  if(activationState==='ready'&&!$('status').textContent.includes('menu'))status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
   else if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
 };
 
