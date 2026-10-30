@@ -140,28 +140,34 @@
       }
       const canEnable=eligible===0&&enable&&snapshot.accountId===context.source.accountId&&snapshot.bucketName===context.source.bucketName&&snapshot.managedPublicAccess==="disabled";
       if(canEnable){
-        const action=document.createElement('button');action.type='button';action.className='url-popover-row';if(anchor)action.setAttribute('role','menuitem');
-        const label=document.createElement('strong');label.textContent='Enable public URL…';
-        const explanation=document.createElement('span');explanation.className='url-popover-state';explanation.textContent='Enable this bucket’s Cloudflare r2.dev address';action.append(label,explanation);list.append(action);
-        const cancel=document.createElement('button');cancel.type='button';cancel.className='url-popover-row';cancel.textContent='Cancel';cancel.hidden=true;if(anchor)cancel.setAttribute('role','menuitem');list.append(cancel);
-        let confirmed=false;action.disabled=enabling;
-        if(enabling)explanation.textContent='A public-access change is still being verified. Reopen URL choices when it finishes.';
-        cancel.onclick=()=>{confirmed=false;cancel.hidden=true;label.textContent='Enable public URL…';explanation.textContent='Enable this bucket’s Cloudflare r2.dev address';action.focus();};
-        action.onclick=async()=>{
+        const question=document.createElement('div');question.className='url-popover-consent';
+        const title=document.createElement('strong');title.textContent='Give Bucket Public URL?';
+        const explanation=document.createElement('span');explanation.className='url-popover-state';
+        explanation.textContent='Yes enables Cloudflare’s r2.dev address for the entire bucket. Anyone with a file URL may then access that file. No keeps your bucket private.';
+        const choices=document.createElement('div');choices.className='url-popover-consent-actions';
+        const yes=document.createElement('button');yes.type='button';yes.className='url-popover-consent-yes';yes.textContent='Yes, enable URL';
+        const no=document.createElement('button');no.type='button';no.textContent='No, keep private';
+        if(anchor){yes.setAttribute('role','menuitem');no.setAttribute('role','menuitem');}
+        choices.append(yes,no);question.append(title,explanation,choices);list.append(question);
+        no.onclick=()=>{if(current()&&!enabling){state('Bucket remains private.','partial');close({restoreFocus:true});}};
+        yes.onclick=async()=>{
           if(!current()||enabling)return;
-          if(!confirmed){confirmed=true;label.textContent='Enable for entire bucket';explanation.textContent='Every file in this bucket will be publicly accessible to anyone with its URL. Enable public access?';cancel.hidden=false;place();return;}
-          enabling=true;action.disabled=true;cancel.hidden=true;label.textContent='Enabling and verifying…';state('Enabling and verifying bucket public access…','running');emit(context,'api.request','started',{endpoint:'api.domains'});
+          enabling=true;yes.disabled=true;no.disabled=true;yes.textContent='Activating…';
+          state('Enabling and verifying bucket public access…','running');emit(context,'api.request','started',{endpoint:'api.domains'});
           try{
             const result=await enable(context.source);
             if(!current())return;
-            if(!result?.ok){const code=['EXPLORER_PERMISSION_DENIED','EXPLORER_AUTH_EXPIRED','EXPLORER_RESULT_UNCONFIRMED'].includes(result?.code)?result.code:'EXPLORER_RESULT_UNCONFIRMED';
-              feedback.textContent=code==='EXPLORER_PERMISSION_DENIED'?'Cloudflare denied this change. Check this login’s R2 bucket permissions.':code==='EXPLORER_AUTH_EXPIRED'?'Cloudflare rejected the login. Reconnect and try again.':'Public access was not verified. Reopen URL choices before retrying; the setting may have changed.';
-              state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code});return;}
+            if(!result?.ok){
+              const code=['EXPLORER_PERMISSION_DENIED','EXPLORER_AUTH_EXPIRED','EXPLORER_RESULT_UNCONFIRMED'].includes(result?.code)?result.code:'EXPLORER_RESULT_UNCONFIRMED';
+              feedback.textContent=code==='EXPLORER_PERMISSION_DENIED'?'Cloudflare denied the change. Check this account’s R2 permissions.':code==='EXPLORER_AUTH_EXPIRED'?'Cloudflare login expired. Reconnect and try again.':'Public access was not verified. Check the bucket in Cloudflare before retrying.';
+              state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code});return;
+            }
             emit(context,'api.response','confirmed',{endpoint:'api.domains'});
             enabling=false;
             await show({source:context.source,key,name,point,returnFocus,anchor,isCurrent});
-          }catch{if(current()){feedback.textContent='Public access was not verified. Reopen URL choices before retrying; the setting may have changed.';state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code:'EXPLORER_RESULT_UNCONFIRMED'});}}
-          finally{enabling=false;}
+          }catch{
+            if(current()){feedback.textContent='Public access was not verified. Check Cloudflare before retrying; the setting may have changed.';state(feedback.textContent,'failed');emit(context,'api.response','failed',{endpoint:'api.domains',code:'EXPLORER_RESULT_UNCONFIRMED'});}
+          }finally{enabling=false;if(current()){yes.disabled=false;no.disabled=false;yes.textContent='Yes, enable URL';}}
         };
       }
       let copySequence=0;
