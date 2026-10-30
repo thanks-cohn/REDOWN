@@ -6,6 +6,9 @@ import vm from "node:vm";
 const background=await readFile(new URL("../extension/background.js",import.meta.url),"utf8");
 const legacy=await readFile(new URL("../extension/options.js",import.meta.url),"utf8");
 const html=await readFile(new URL("../extension/options.html",import.meta.url),"utf8");
+const beta=await readFile(new URL("../extension/beta/explorer.mjs",import.meta.url),"utf8");
+const betaHtml=await readFile(new URL("../extension/beta/explorer.html",import.meta.url),"utf8");
+const betaCss=await readFile(new URL("../extension/beta/explorer.css",import.meta.url),"utf8");
 
 function isolateFunction(source,name){
   const start=source.indexOf("function "+name+"(");
@@ -74,4 +77,21 @@ test("all normal menu receipt branches and asynchronous gallery receipts retain 
   assert.ok(background.includes("contextUrls,tabId:tab.id"));
   assert.ok(background.includes("...intent.contextUrls,ok:true"));
   assert.ok(background.includes("...intent.contextUrls,ok:false"));
+});
+
+test("Legacy and Beta History show the same available URL roles in the same order",()=>{
+  const betaLinks=isolateFunction(beta,"betaHistorySourceLinks");
+  const cases=[
+    {pageUrl:"https://example.test",srcUrl:"https://cdn.example.test/image.png",frameUrl:"https://frame.example.test",linkUrl:"https://publisher.test",sourceUrl:"https://cdn.example.test/image.png"},
+    {pageUrl:"https://example.test",linkUrl:"https://download.test/a.zip",sourceUrl:"https://download.test/a.zip"},
+    {sourceUrl:"https://legacy.test/file"},
+    {pageUrl:"https://only-parent.test"}
+  ];
+  for(const record of cases)assert.deepEqual(native(betaLinks(record)),native(ordered(record)));
+  assert.match(betaHtml,/id="transfer-history-dialog"/);
+  assert.match(betaHtml,/id="transfer-history-list"/);
+  assert.match(beta,/details\.addEventListener\('toggle'/);
+  assert.match(beta,/address\.rel='noopener noreferrer'/);
+  assert.match(beta,/address\.referrerPolicy='no-referrer'/);
+  assert.match(betaCss,/\.transfer-history-url-text\{[^}]*overflow-wrap:anywhere/);
 });
