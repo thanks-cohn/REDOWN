@@ -1,0 +1,207 @@
+{
+  "case": "P1",
+  "fullHistorical": [
+    {
+      "id": "redown",
+      "title": "REDOWN",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "quick:p",
+      "parentId": "redown",
+      "title": "Art",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "simple-option:p:added",
+      "parentId": "redown",
+      "title": "art",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-mode-separator",
+      "parentId": "redown",
+      "type": "separator",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-nested-mode",
+      "parentId": "redown",
+      "type": "checkbox",
+      "title": "Use nested menu",
+      "checked": false,
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-saved-urls",
+      "parentId": "redown",
+      "title": "View saved object's URLs\u2026",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-manage",
+      "parentId": "redown",
+      "title": "Manage destinations\u2026",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    }
+  ],
+  "fullModern": [
+    {
+      "id": "redown",
+      "title": "REDOWN",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "quick:p",
+      "parentId": "redown",
+      "title": "Art",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "simple-option:p:a268a866-6e1d-4eae-bd40-a08145270359",
+      "parentId": "redown",
+      "title": "New location",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-mode-separator",
+      "parentId": "redown",
+      "type": "separator",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-nested-mode",
+      "parentId": "redown",
+      "type": "checkbox",
+      "title": "Use nested menu",
+      "checked": false,
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-saved-urls",
+      "parentId": "redown",
+      "title": "View saved object's URLs\u2026",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    },
+    {
+      "id": "redown-manage",
+      "parentId": "redown",
+      "title": "Manage destinations\u2026",
+      "contexts": [
+        "link",
+        "image",
+        "video",
+        "audio",
+        "page"
+      ]
+    }
+  ],
+  "differences": [
+    {
+      "position": 2,
+      "historical": {
+        "id": "simple-option:p:added",
+        "parentId": "redown",
+        "title": "art",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      "modern": {
+        "id": "simple-option:p:a268a866-6e1d-4eae-bd40-a08145270359",
+        "parentId": "redown",
+        "title": "New location",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    }
+  ],
+  "reason": "Added extra identity is generated independently; historical blank label fallback vs Modern New location; all other descriptors compare exactly in this fixture. Targets are retained in parity.json."
+}

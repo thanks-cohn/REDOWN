@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tests/modern-destinations.test.mjs",
+    "tests/nested-locations.test.mjs",
+    "tests/simple-menu-flat.test.mjs",
+    "tests/menu-reorder.test.mjs",
+    "tests/popup-destinations.test.mjs",
+    "tests/explorer-destination-menu.test.mjs",
+    "tests/destination-search-regression.test.mjs"
+  ],
+  "exit": 1,
+  "seconds": 2.8962349891662598
+}

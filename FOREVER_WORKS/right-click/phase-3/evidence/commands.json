@@ -1,0 +1,60 @@
+[
+  {
+    "command": [
+      "node",
+      "FOREVER_WORKS/tools/query.mjs",
+      "describe"
+    ],
+    "exit": 0,
+    "seconds": 0.36,
+    "log": "onboarding-0.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "getStartGuide"
+    ],
+    "exit": 0,
+    "seconds": 0.49,
+    "log": "onboarding-1.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "validateRegistry"
+    ],
+    "exit": 0,
+    "seconds": 0.4,
+    "log": "onboarding-2.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "listIssues"
+    ],
+    "exit": 0,
+    "seconds": 0.38,
+    "log": "onboarding-3.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "getReleaseReadiness"
+    ],
+    "exit": 0,
+    "seconds": 0.34,
+    "log": "onboarding-4.log"
+  }
+]

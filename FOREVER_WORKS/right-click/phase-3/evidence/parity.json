@@ -1,0 +1,1696 @@
+{
+  "revision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "scope": "Synthetic actual-source VM/jsdom. No Chrome installed or providers contacted.",
+  "observations": [
+    {
+      "case": "P1 actual Legacy/current choose bucket + nested folder + add extra + remove original extra",
+      "legacy": {
+        "profiles": [
+          {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "accountName": "Account",
+            "bucketName": "art",
+            "workerUrl": "https://fixture.test",
+            "token": "fixture",
+            "menuLabel": "Art",
+            "defaultPrefix": "photos/final",
+            "showInContextMenu": true,
+            "simpleOptions": [
+              {
+                "id": "added",
+                "label": "",
+                "bucketName": "art",
+                "prefix": ""
+              }
+            ],
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "n",
+                      "name": "photos",
+                      "ready": true,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "simpleBucketName": "art"
+          }
+        ],
+        "writeCount": 3,
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "simple-option:p:added",
+            "parentId": "redown",
+            "title": "art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": false,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ]
+      },
+      "modern": {
+        "profiles": [
+          {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "accountName": "Account",
+            "bucketName": "art",
+            "workerUrl": "https://fixture.test",
+            "token": "fixture",
+            "menuLabel": "Art",
+            "defaultPrefix": "photos/final",
+            "showInContextMenu": true,
+            "simpleOptions": [
+              {
+                "id": "a268a866-6e1d-4eae-bd40-a08145270359",
+                "label": "New location",
+                "bucketName": "art",
+                "prefix": "",
+                "order": 2
+              }
+            ],
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "n",
+                      "name": "photos",
+                      "ready": true,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "menuConfigVersion": 1,
+            "simplePrimaryOrder": 0,
+            "explorerManaged": false
+          }
+        ],
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "simple-option:p:a268a866-6e1d-4eae-bd40-a08145270359",
+            "parentId": "redown",
+            "title": "New location",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": false,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ],
+            "target": {
+              "owner": "p",
+              "account": "a",
+              "bucket": "art",
+              "prefix": "photos/final"
+            }
+          },
+          {
+            "id": "simple-option:p:a268a866-6e1d-4eae-bd40-a08145270359",
+            "parentId": "redown",
+            "title": "New location",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ],
+            "target": {
+              "owner": "p",
+              "account": "a",
+              "bucket": "art",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "comparison": "Primary quick:p, parent redown and exact a/art/photos/final match. Added UUID and default label differ by editor; full descriptors retained. Legacy autosaves; Modern requires Save."
+    },
+    {
+      "case": "P2 removeAll failure",
+      "result": {
+        "ok": true,
+        "signature": "[\"simple\",[{\"id\":\"p\",\"accountId\":\"a\",\"bucketName\":\"art\",\"menuConfigVersion\":1,\"menuLabel\":\"persisted despite removeAll\",\"defaultPrefix\":\"\",\"simpleOptions\":[{\"id\":\"extra\",\"label\":\"Photos\",\"bucketName\":\"art\",\"prefix\":\"photos\"}],\"showInContextMenu\":true,\"nestedMenu\":{\"version\":1,\"enabled\":true,\"roots\":[{\"id\":\"r\",\"bucketName\":\"art\",\"ready\":true,\"children\":[{\"id\":\"n\",\"name\":\"photos\",\"ready\":true,\"children\":[]}]}]}}]]",
+        "menuUpdated": false,
+        "error": "Saved, but Chrome could not update its menu. Retry Save to rebuild."
+      },
+      "state": {
+        "profiles": [
+          {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "accountName": "Account",
+            "bucketName": "art",
+            "workerUrl": "https://fixture.test",
+            "token": "fixture",
+            "menuLabel": "persisted despite removeAll",
+            "defaultPrefix": "",
+            "showInContextMenu": true,
+            "simpleOptions": [
+              {
+                "id": "extra",
+                "label": "Photos",
+                "bucketName": "art",
+                "prefix": "photos"
+              }
+            ],
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "n",
+                      "name": "photos",
+                      "ready": true,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "menuConfigVersion": 1
+          }
+        ],
+        "rightClickMode": "simple",
+        "menuConfigurationBackupV1": {
+          "version": 1,
+          "profiles": [
+            {
+              "id": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "menuLabel": "Art",
+              "defaultPrefix": "",
+              "simpleOptions": [
+                {
+                  "id": "extra",
+                  "label": "Photos",
+                  "bucketName": "art",
+                  "prefix": "photos"
+                }
+              ],
+              "showInContextMenu": true,
+              "nestedMenu": {
+                "version": 1,
+                "enabled": true,
+                "roots": [
+                  {
+                    "id": "r",
+                    "bucketName": "art",
+                    "ready": true,
+                    "children": [
+                      {
+                        "id": "n",
+                        "name": "photos",
+                        "ready": true,
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "legacy": [
+            {
+              "id": "p",
+              "menuTree": []
+            }
+          ],
+          "mode": "simple"
+        }
+      },
+      "created": []
+    },
+    {
+      "case": "P3 disabled group stale ID",
+      "target": null,
+      "descriptors": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-setup",
+          "parentId": "redown",
+          "title": "Set up a destination…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": true,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "P4 actual historical deep flattening versus immediate current ancestry",
+      "historical": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:r",
+          "parentId": "redown",
+          "title": "art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:r:send",
+          "parentId": "nested:p:r:r",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:one",
+          "parentId": "nested:p:r:r",
+          "title": "one",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:one:send",
+          "parentId": "nested:p:r:one",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:two",
+          "parentId": "nested:p:r:one",
+          "title": "two",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:three",
+          "parentId": "nested:p:r:one",
+          "title": "two / three",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": true,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "current": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:r",
+          "parentId": "redown",
+          "title": "art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:r:send",
+          "parentId": "nested:p:r:r",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:one",
+          "parentId": "nested:p:r:r",
+          "title": "one",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:one:send",
+          "parentId": "nested:p:r:one",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:two",
+          "parentId": "nested:p:r:one",
+          "title": "two",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:two:send",
+          "parentId": "nested:p:r:two",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "nested:p:r:three",
+          "parentId": "nested:p:r:two",
+          "title": "three",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": true,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "id": "nested:p:r:r",
+          "parentId": "redown",
+          "title": "art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:r:send",
+          "parentId": "nested:p:r:r",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:one",
+          "parentId": "nested:p:r:r",
+          "title": "one",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "one"
+          }
+        },
+        {
+          "id": "nested:p:r:one:send",
+          "parentId": "nested:p:r:one",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "one"
+          }
+        },
+        {
+          "id": "nested:p:r:two",
+          "parentId": "nested:p:r:one",
+          "title": "two",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "one/two"
+          }
+        },
+        {
+          "id": "nested:p:r:two:send",
+          "parentId": "nested:p:r:two",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "one/two"
+          }
+        },
+        {
+          "id": "nested:p:r:three",
+          "parentId": "nested:p:r:two",
+          "title": "three",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "one/two/three"
+          }
+        }
+      ]
+    },
+    {
+      "case": "P5 stale signature",
+      "error": "Destinations changed in another window. Reload the editor before saving.",
+      "storedLabel": "first"
+    },
+    {
+      "case": "P6 option IDs may equal profile IDs without collision",
+      "targets": [
+        {
+          "id": "simple-option:p:p",
+          "parentId": "redown",
+          "title": "Photos",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "photos"
+          }
+        }
+      ]
+    },
+    {
+      "case": "P7 versioned empty, delete all, repeat build",
+      "first": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-setup",
+          "parentId": "redown",
+          "title": "Set up a destination…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": false,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "second": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-setup",
+          "parentId": "redown",
+          "title": "Set up a destination…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": false,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "oldTreeRetained": [
+        {
+          "id": "old",
+          "prefix": "ghost"
+        }
+      ]
+    },
+    {
+      "case": "P8 eight levels then branch removal",
+      "full": [
+        {
+          "id": "nested:p:r:r",
+          "parentId": "redown",
+          "title": "art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:r:send",
+          "parentId": "nested:p:r:r",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:d1",
+          "parentId": "nested:p:r:r",
+          "title": "level1",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1"
+          }
+        },
+        {
+          "id": "nested:p:r:d1:send",
+          "parentId": "nested:p:r:d1",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1"
+          }
+        },
+        {
+          "id": "nested:p:r:d2",
+          "parentId": "nested:p:r:d1",
+          "title": "level2",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2"
+          }
+        },
+        {
+          "id": "nested:p:r:d2:send",
+          "parentId": "nested:p:r:d2",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2"
+          }
+        },
+        {
+          "id": "nested:p:r:d3",
+          "parentId": "nested:p:r:d2",
+          "title": "level3",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3"
+          }
+        },
+        {
+          "id": "nested:p:r:d3:send",
+          "parentId": "nested:p:r:d3",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3"
+          }
+        },
+        {
+          "id": "nested:p:r:d4",
+          "parentId": "nested:p:r:d3",
+          "title": "level4",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4"
+          }
+        },
+        {
+          "id": "nested:p:r:d4:send",
+          "parentId": "nested:p:r:d4",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4"
+          }
+        },
+        {
+          "id": "nested:p:r:d5",
+          "parentId": "nested:p:r:d4",
+          "title": "level5",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5"
+          }
+        },
+        {
+          "id": "nested:p:r:d5:send",
+          "parentId": "nested:p:r:d5",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5"
+          }
+        },
+        {
+          "id": "nested:p:r:d6",
+          "parentId": "nested:p:r:d5",
+          "title": "level6",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5/level6"
+          }
+        },
+        {
+          "id": "nested:p:r:d6:send",
+          "parentId": "nested:p:r:d6",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5/level6"
+          }
+        },
+        {
+          "id": "nested:p:r:d7",
+          "parentId": "nested:p:r:d6",
+          "title": "level7",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5/level6/level7"
+          }
+        },
+        {
+          "id": "nested:p:r:d7:send",
+          "parentId": "nested:p:r:d7",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5/level6/level7"
+          }
+        },
+        {
+          "id": "nested:p:r:d8",
+          "parentId": "nested:p:r:d7",
+          "title": "level8",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1/level2/level3/level4/level5/level6/level7/level8"
+          }
+        }
+      ],
+      "after": [
+        {
+          "id": "nested:p:r:r",
+          "parentId": "redown",
+          "title": "art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:r:send",
+          "parentId": "nested:p:r:r",
+          "title": "Send here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "nested:p:r:d1",
+          "parentId": "nested:p:r:r",
+          "title": "level1",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "level1"
+          }
+        }
+      ]
+    },
+    {
+      "case": "P9 duplicate titles distinct targets; missing preparation; malformed/stale IDs",
+      "sameTitle": [
+        {
+          "id": "quick:p",
+          "parentId": "redown",
+          "title": "Art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "simple-option:p:extra",
+          "parentId": "redown",
+          "title": "Photos",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "p",
+            "account": "a",
+            "bucket": "art",
+            "prefix": "photos"
+          }
+        },
+        {
+          "id": "quick:other",
+          "parentId": "redown",
+          "title": "Art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ],
+          "target": {
+            "owner": "other",
+            "account": "a",
+            "bucket": "second",
+            "prefix": ""
+          }
+        }
+      ],
+      "invalidPreparedTarget": null
+    },
+    {
+      "case": "P10 actual click listener all required contexts and deleted target",
+      "calls": [
+        {
+          "account": "a",
+          "bucket": "art",
+          "prefix": "photos",
+          "url": "https://source.invalid/page",
+          "filename": "page"
+        },
+        {
+          "account": "a",
+          "bucket": "art",
+          "prefix": "photos",
+          "url": "https://source.invalid/link",
+          "filename": "link"
+        },
+        {
+          "account": "a",
+          "bucket": "art",
+          "prefix": "photos",
+          "url": "https://source.invalid/image.jpg",
+          "filename": "image.jpg"
+        },
+        {
+          "account": "a",
+          "bucket": "art",
+          "prefix": "photos",
+          "url": "https://source.invalid/movie.mp4",
+          "filename": "movie.mp4"
+        }
+      ],
+      "history": [
+        {
+          "pageUrl": "https://source.invalid/page",
+          "ok": true,
+          "sourceUrl": "https://source.invalid/page",
+          "profileId": "p",
+          "category": "files",
+          "location": "mock-receipt",
+          "destination": {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "key": "photos/page"
+          }
+        },
+        {
+          "pageUrl": "https://source.invalid/page",
+          "ok": true,
+          "sourceUrl": "https://source.invalid/link",
+          "profileId": "p",
+          "category": "files",
+          "location": "mock-receipt",
+          "destination": {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "key": "photos/link"
+          }
+        },
+        {
+          "pageUrl": "https://source.invalid/page",
+          "ok": true,
+          "sourceUrl": "https://source.invalid/image.jpg",
+          "profileId": "p",
+          "category": "files",
+          "location": "mock-receipt",
+          "destination": {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "key": "photos/image.jpg"
+          }
+        },
+        {
+          "pageUrl": "https://source.invalid/page",
+          "ok": true,
+          "sourceUrl": "https://source.invalid/movie.mp4",
+          "profileId": "p",
+          "category": "files",
+          "location": "mock-receipt",
+          "destination": {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "key": "photos/movie.mp4"
+          }
+        }
+      ],
+      "notices": [
+        [
+          "REDOWN complete",
+          "mock-receipt"
+        ],
+        [
+          "REDOWN complete",
+          "mock-receipt"
+        ],
+        [
+          "REDOWN complete",
+          "mock-receipt"
+        ],
+        [
+          "REDOWN complete",
+          "mock-receipt"
+        ],
+        [
+          "REDOWN",
+          "That destination is inactive or was removed. Open Right-click setup in Explorer."
+        ]
+      ]
+    },
+    {
+      "case": "P11 actual historical/current native quick listener same target",
+      "output": [
+        {
+          "version": "legacy",
+          "calls": [
+            {
+              "account": "a",
+              "bucket": "art",
+              "prefix": "photos/final",
+              "url": "https://source.invalid/photo.jpg",
+              "filename": "photo.jpg"
+            }
+          ],
+          "history": [
+            {
+              "pageUrl": "https://source.invalid/page",
+              "ok": true,
+              "sourceUrl": "https://source.invalid/photo.jpg",
+              "profileId": "p",
+              "category": "files",
+              "location": "mock-provider",
+              "destination": {
+                "accountId": "a",
+                "bucketName": "art",
+                "prefix": "photos/final",
+                "key": "photos/final/photo.jpg"
+              }
+            }
+          ]
+        },
+        {
+          "version": "modern",
+          "calls": [
+            {
+              "account": "a",
+              "bucket": "art",
+              "prefix": "photos/final",
+              "url": "https://source.invalid/photo.jpg",
+              "filename": "photo.jpg"
+            }
+          ],
+          "history": [
+            {
+              "pageUrl": "https://source.invalid/page",
+              "ok": true,
+              "sourceUrl": "https://source.invalid/photo.jpg",
+              "profileId": "p",
+              "category": "files",
+              "location": "mock-provider",
+              "destination": {
+                "accountId": "a",
+                "bucketName": "art",
+                "prefix": "photos/final",
+                "key": "photos/final/photo.jpg"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

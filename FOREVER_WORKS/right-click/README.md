@@ -48,3 +48,7 @@ Start with [main Legacy-success/Modern-failure differential](FORENSIC_LEGACY_VS_
 - [Phase 2 Audit Handoff](PHASE_2_AUDIT_HANDOFF.md)
 - [Owner Direction 2026 10 30](OWNER_DIRECTION_2026_10_30.md)
 - [Phase 2 Source Index.Json](PHASE_2_SOURCE_INDEX.json)
+
+## Phase 3 wiring contract and reconstruction audit
+
+[Phase 3 entry](phase-3/README.md) → [UI-to-wiring contract](phase-3/UI_TO_WIRING_CONTRACT.md), [current control census](phase-3/CURRENT_MODERN_END_TO_END.md), [new parity evidence](phase-3/evidence/parity.json) and [handoff](phase-3/HANDOFF_LATEST.md). Audit-only, source pinned to b717844; installed/native/live acceptance remains PARTIAL. Previous phases and canonical authority remain unchanged.

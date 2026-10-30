@@ -1,0 +1,600 @@
+TAP version 13
+# Subtest: explicit nested folder is sent intact and receipt uses actual target bucket and key
+ok 1 - explicit nested folder is sent intact and receipt uses actual target bucket and key
+  ---
+  duration_ms: 4.814883
+  type: 'test'
+  ...
+# Subtest: history uses explicit bucket/key rather than mistaking public assets route for storage folder
+ok 2 - history uses explicit bucket/key rather than mistaking public assets route for storage folder
+  ---
+  duration_ms: 1.601735
+  type: 'test'
+  ...
+# Subtest: search previews retain result set and use each result account/bucket and exact key
+ok 3 - search previews retain result set and use each result account/bucket and exact key
+  ---
+  duration_ms: 2.725142
+  type: 'test'
+  ...
+# Subtest: history location opens exact folder and preview without scroll or focus jump
+ok 4 - history location opens exact folder and preview without scroll or focus jump
+  ---
+  duration_ms: 2.775776
+  type: 'test'
+  ...
+# Subtest: Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes
+ok 5 - Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes
+  ---
+  duration_ms: 138.556631
+  type: 'test'
+  ...
+# Subtest: current bucket remains available for sibling destinations and same-folder choice is disabled
+ok 6 - current bucket remains available for sibling destinations and same-folder choice is disabled
+  ---
+  duration_ms: 34.436075
+  type: 'test'
+  ...
+# Subtest: folder pages append via More folders and closed menus ignore late replies
+ok 7 - folder pages append via More folders and closed menus ignore late replies
+  ---
+  duration_ms: 41.433379
+  type: 'test'
+  ...
+# Subtest: keyboard arrows navigate menus and Escape returns to parent without changing Explorer
+ok 8 - keyboard arrows navigate menus and Escape returns to parent without changing Explorer
+  ---
+  duration_ms: 22.530148
+  type: 'test'
+  ...
+# Subtest: failed lazy folder reads offer retry and never execute a transfer
+ok 9 - failed lazy folder reads offer retry and never execute a transfer
+  ---
+  duration_ms: 29.162329
+  type: 'test'
+  ...
+# Subtest: Copy here is available immediately while child-folder listing is still pending
+ok 10 - Copy here is available immediately while child-folder listing is still pending
+  ---
+  duration_ms: 16.340176
+  type: 'test'
+  ...
+# Subtest: reopening the same destination reuses a bounded short-lived folder page cache
+ok 11 - reopening the same destination reuses a bounded short-lived folder page cache
+  ---
+  duration_ms: 22.929039
+  type: 'test'
+  ...
+# Subtest: keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries
+ok 12 - keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries
+  ---
+  duration_ms: 129.534137
+  type: 'test'
+  ...
+# Subtest: failed persistence restores original array and DOM order
+ok 13 - failed persistence restores original array and DOM order
+  ---
+  duration_ms: 24.037288
+  type: 'test'
+  ...
+# Subtest: pointer drop reorders at visible insertion marker and cancellation leaves order unchanged
+ok 14 - pointer drop reorders at visible insertion marker and cancellation leaves order unchanged
+  ---
+  duration_ms: 25.590422
+  type: 'test'
+  ...
+# Subtest: native Simple context menu follows saved section and additional destination order
+ok 15 - native Simple context menu follows saved section and additional destination order
+  ---
+  duration_ms: 7.461943
+  type: 'test'
+  ...
+# Subtest: drag continues outside grip and gaps are valid insertion targets
+ok 16 - drag continues outside grip and gaps are valid insertion targets
+  ---
+  duration_ms: 22.128252
+  type: 'test'
+  ...
+# Subtest: Escape cancels lifted drag without saving or leaving compact cards behind
+ok 17 - Escape cancels lifted drag without saving or leaving compact cards behind
+  ---
+  duration_ms: 16.051545
+  type: 'test'
+  ...
+# Subtest: saved moves retain focus so repeated arrow keys move the same branch
+ok 18 - saved moves retain focus so repeated arrow keys move the same branch
+  ---
+  duration_ms: 13.667796
+  type: 'test'
+  ...
+# Subtest: Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save
+ok 19 - Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save
+  ---
+  duration_ms: 371.707941
+  type: 'test'
+  ...
+# Subtest: mode switches persist immediately, preserve both configurations, and reload restores active layout
+ok 20 - mode switches persist immediately, preserve both configurations, and reload restores active layout
+  ---
+  duration_ms: 126.635399
+  type: 'test'
+  ...
+# Subtest: existing folder picker routes exact prefix without creating folders or provisioning
+ok 21 - existing folder picker routes exact prefix without creating folders or provisioning
+  ---
+  duration_ms: 92.232135
+  type: 'test'
+  ...
+# Subtest: collapsed Nested nodes load lazily, labels do not alter paths, and sibling moves persist
+ok 22 - collapsed Nested nodes load lazily, labels do not alter paths, and sibling moves persist
+  ---
+  duration_ms: 91.472893
+  type: 'test'
+  ...
+# Subtest: stale concurrent saves reject rather than overwrite newer changes; storage failures leave old config intact
+ok 23 - stale concurrent saves reject rather than overwrite newer changes; storage failures leave old config intact
+  ---
+  duration_ms: 3.981125
+  type: 'test'
+  ...
+# Subtest: native Chrome callback errors preserve saved configuration and successful retry rebuilds it
+ok 24 - native Chrome callback errors preserve saved configuration and successful retry rebuilds it
+  ---
+  duration_ms: 3.732252
+  type: 'test'
+  ...
+# Subtest: invalid paths, duplicate IDs, unprepared buckets and excessive hierarchy fail before persistence
+ok 25 - invalid paths, duplicate IDs, unprepared buckets and excessive hierarchy fail before persistence
+  ---
+  duration_ms: 5.107547
+  type: 'test'
+  ...
+# Subtest: primary removal only suppresses its menu and keeps profile and remote routing credentials
+ok 26 - primary removal only suppresses its menu and keeps profile and remote routing credentials
+  ---
+  duration_ms: 2.746993
+  type: 'test'
+  ...
+# Subtest: modern menu navigation and quick setup preserve selected mode in source
+ok 27 - modern menu navigation and quick setup preserve selected mode in source
+  ---
+  duration_ms: 1.002413
+  type: 'test'
+  ...
+# Subtest: Add Location without a prepared bucket explains activation instead of creating unusable draft cards
+ok 28 - Add Location without a prepared bucket explains activation instead of creating unusable draft cards
+  ---
+  duration_ms: 47.018062
+  type: 'test'
+  ...
+# Subtest: Add Location can activate an existing Cloudflare bucket without creating another R2 bucket
+ok 29 - Add Location can activate an existing Cloudflare bucket without creating another R2 bucket
+  ---
+  duration_ms: 41.807214
+  type: 'test'
+  ...
+# Subtest: account edits retain the destination identifier and route it through that account’s prepared profile
+ok 30 - account edits retain the destination identifier and route it through that account’s prepared profile
+  ---
+  duration_ms: 54.793285
+  type: 'test'
+  ...
+# Subtest: production click listener resolves exact active account, bucket and prefix and rejects stale IDs
+ok 31 - production click listener resolves exact active account, bucket and prefix and rejects stale IDs
+  ---
+  duration_ms: 3.721162
+  type: 'test'
+  ...
+# Subtest: large Simple configurations share one bucket discovery and render without per-card observers
+ok 32 - large Simple configurations share one bucket discovery and render without per-card observers
+  ---
+  duration_ms: 349.336069
+  type: 'test'
+  ...
+# Subtest: inactive invalid legacy hierarchy is preserved while saving valid Simple changes
+ok 33 - inactive invalid legacy hierarchy is preserved while saving valid Simple changes
+  ---
+  duration_ms: 28.493607
+  type: 'test'
+  ...
+# Subtest: Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels
+ok 34 - Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels
+  ---
+  duration_ms: 74.035401
+  type: 'test'
+  ...
+# Subtest: Nested plus exposes focused inline creation and keeps siblings while saving the verified child
+ok 35 - Nested plus exposes focused inline creation and keeps siblings while saving the verified child
+  ---
+  duration_ms: 72.837844
+  type: 'test'
+  ...
+# Subtest: mode switch persists without committing a dirty destination label; external mode-only changes preserve and rebase draft
+ok 36 - mode switch persists without committing a dirty destination label; external mode-only changes preserve and rebase draft
+  ---
+  duration_ms: 65.931221
+  type: 'test'
+  ...
+# Subtest: deep native menu preserves every immediate parent, concise labels and exact paths
+ok 37 - deep native menu preserves every immediate parent, concise labels and exact paths
+  ---
+  duration_ms: 4.80783
+  type: 'test'
+  ...
+# Subtest: Nested full-group removal, Undo, final-root removal and save/reload preserve storage and intentional emptiness
+ok 38 - Nested full-group removal, Undo, final-root removal and save/reload preserve storage and intentional emptiness
+  ---
+  duration_ms: 162.031546
+  type: 'test'
+  ...
+# Subtest: child, parent and distinct same-account groups remove only their stable definitions
+ok 39 - child, parent and distinct same-account groups remove only their stable definitions
+  ---
+  duration_ms: 92.509717
+  type: 'test'
+  ...
+# Subtest: Simple and Nested native builds exclude obsolete trees and legacy-only accounts
+ok 40 - Simple and Nested native builds exclude obsolete trees and legacy-only accounts
+  ---
+  duration_ms: 3.937403
+  type: 'test'
+  ...
+# Subtest: versioned migration is repeat-safe and its menu-only backup preserves original definitions
+ok 41 - versioned migration is repeat-safe and its menu-only backup preserves original definitions
+  ---
+  duration_ms: 4.218506
+  type: 'test'
+  ...
+# Subtest: legacy preference writes share the modern save lane and cannot rewrite or remove menu profiles
+ok 42 - legacy preference writes share the modern save lane and cannot rewrite or remove menu profiles
+  ---
+  duration_ms: 9.163887
+  type: 'test'
+  ...
+# Subtest: native creations await parent callbacks and later rebuild wins over an older snapshot
+ok 43 - native creations await parent callbacks and later rebuild wins over an older snapshot
+  ---
+  duration_ms: 36.58288
+  type: 'test'
+  ...
+# Subtest: deleting all Simple rows remains empty with legacy data through rebuild and readdition
+ok 44 - deleting all Simple rows remains empty with legacy data through rebuild and readdition
+  ---
+  duration_ms: 8.132564
+  type: 'test'
+  ...
+# Subtest: external profile changes preserve unsaved edits and stale saves still fail
+ok 45 - external profile changes preserve unsaved edits and stale saves still fail
+  ---
+  duration_ms: 53.991078
+  type: 'test'
+  ...
+# Subtest: blank Nested rows cannot be saved as apparently configured destinations
+ok 46 - blank Nested rows cannot be saved as apparently configured destinations
+  ---
+  duration_ms: 1.815111
+  type: 'test'
+  ...
+# Subtest: storage provisioning cannot seed destinations without modern Explorer activation
+ok 47 - storage provisioning cannot seed destinations without modern Explorer activation
+  ---
+  duration_ms: 1.928973
+  type: 'test'
+  ...
+# Subtest: delayed Worker/domain persistence cannot resurrect a deleted menu or discard other profiles
+ok 48 - delayed Worker/domain persistence cannot resurrect a deleted menu or discard other profiles
+  ---
+  duration_ms: 4.105797
+  type: 'test'
+  ...
+# Subtest: eight-level shared plan preserves immediate parents, parent save actions and preview parity
+ok 49 - eight-level shared plan preserves immediate parents, parent save actions and preview parity
+  ---
+  duration_ms: 6.658004
+  type: 'test'
+  ...
+# Subtest: pre-redesign right-click selection toolbar is restored without rolling back shared menu authority
+ok 50 - pre-redesign right-click selection toolbar is restored without rolling back shared menu authority
+  ---
+  duration_ms: 48.978625
+  type: 'test'
+  ...
+# Subtest: contextual operations stay accessible through named native disclosures
+ok 51 - contextual operations stay accessible through named native disclosures
+  ---
+  duration_ms: 52.713125
+  type: 'test'
+  ...
+# Subtest: removed parent send actions no longer resolve after their last child is removed
+ok 52 - removed parent send actions no longer resolve after their last child is removed
+  ---
+  duration_ms: 2.617111
+  type: 'test'
+  ...
+# Subtest: right-click editor uses product-facing status and keeps dedicated bucket setup optional
+not ok 53 - right-click editor uses product-facing status and keeps dedicated bucket setup optional
+  ---
+  duration_ms: 36.287381
+  type: 'test'
+  location: '/workspace/scratch/5867a883ac13/REDOWN/tests/modern-destinations.test.mjs:308:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Right-click layout updated/. Input:
+
+    'Unsaved changes · Save menu to apply them.'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Unsaved changes · Save menu to apply them.'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5867a883ac13/REDOWN/tests/modern-destinations.test.mjs:314:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: Simple and Nested cards expose immediate red X without tooltips or cloud deletion
+ok 54 - Simple and Nested cards expose immediate red X without tooltips or cloud deletion
+  ---
+  duration_ms: 84.976199
+  type: 'test'
+  ...
+# Subtest: card X is permanently visible, red, carefully positioned, and motion-safe
+ok 55 - card X is permanently visible, red, carefully positioned, and motion-safe
+  ---
+  duration_ms: 2.141778
+  type: 'test'
+  ...
+# Subtest: selection never fills the new-name field, and preserves an independently typed draft
+ok 56 - selection never fills the new-name field, and preserves an independently typed draft
+  ---
+  duration_ms: 207.42525
+  type: 'test'
+  ...
+# Subtest: Add child and Create use the exact parent path; actual dropdown children stay scoped
+ok 57 - Add child and Create use the exact parent path; actual dropdown children stay scoped
+  ---
+  duration_ms: 69.090783
+  type: 'test'
+  ...
+# Subtest: hiding a nested menu preserves its hierarchy and failed creation preserves the draft
+ok 58 - hiding a nested menu preserves its hierarchy and failed creation preserves the draft
+  ---
+  duration_ms: 35.412482
+  type: 'test'
+  ...
+# Subtest: native nested menu targets every verified depth and offers Send here for parents
+ok 59 - native nested menu targets every verified depth and offers Send here for parents
+  ---
+  duration_ms: 3.022724
+  type: 'test'
+  ...
+# Subtest: legacy paths migrate without modifying old configuration or writing remote folders
+ok 60 - legacy paths migrate without modifying old configuration or writing remote folders
+  ---
+  duration_ms: 27.256598
+  type: 'test'
+  ...
+# Subtest: legacy Nested save is read-only and ordinary preferences delegate to the serialized background
+ok 61 - legacy Nested save is read-only and ordinary preferences delegate to the serialized background
+  ---
+  duration_ms: 8.18738
+  type: 'test'
+  ...
+# Subtest: one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN
+ok 62 - one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN
+  ---
+  duration_ms: 3.431894
+  type: 'test'
+  ...
+# Subtest: legacy settings mode controls remain read-only and preserve destination configurations
+ok 63 - legacy settings mode controls remain read-only and preserve destination configurations
+  ---
+  duration_ms: 14.823935
+  type: 'test'
+  ...
+# Subtest: native menu mode checkbox changes the same saved setting without downloading anything
+ok 64 - native menu mode checkbox changes the same saved setting without downloading anything
+  ---
+  duration_ms: 1.812166
+  type: 'test'
+  ...
+# Subtest: DBG-001: selecting a new deep child enables its next child without bucket reselection
+ok 65 - DBG-001: selecting a new deep child enables its next child without bucket reselection
+  ---
+  duration_ms: 49.763812
+  type: 'test'
+  ...
+# Subtest: DBG-001: create-new folder enables repeated + Child through five levels
+ok 66 - DBG-001: create-new folder enables repeated + Child through five levels
+  ---
+  duration_ms: 55.50437
+  type: 'test'
+  ...
+# Subtest: DBG-001: selecting existing child enables + Child after the async save lock releases
+ok 67 - DBG-001: selecting existing child enables + Child after the async save lock releases
+  ---
+  duration_ms: 31.804735
+  type: 'test'
+  ...
+# Subtest: reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths
+ok 68 - reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths
+  ---
+  duration_ms: 32.530616
+  type: 'test'
+  ...
+# Subtest: Nested drag-handle keyboard move saves sibling order with descendants and paths intact
+not ok 69 - Nested drag-handle keyboard move saves sibling order with descendants and paths intact
+  ---
+  duration_ms: 21.77878
+  type: 'test'
+  location: '/workspace/scratch/5867a883ac13/REDOWN/tests/nested-locations.test.mjs:218:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of null (reading 'dispatchEvent')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5867a883ac13/REDOWN/tests/nested-locations.test.mjs:222:50)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: removing a parent deletes its menu descendants while retaining its bucket and cloud storage
+ok 70 - removing a parent deletes its menu descendants while retaining its bucket and cloud storage
+  ---
+  duration_ms: 27.566288
+  type: 'test'
+  ...
+# Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'create')]
+#     at reportException (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+#     at innerInvokeEventListeners (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+#     at invokeEventListeners (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+#     at HTMLButtonElementImpl._dispatch (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+#     at fireAnEvent (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+#     at HTMLButtonElementImpl.click (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+#     at HTMLButtonElement.click (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+#     at TestContext.<anonymous> (file:///workspace/scratch/5867a883ac13/REDOWN/tests/popup-destinations.test.mjs:15:234)
+#     at async Test.run (node:internal/test_runner/test:1409:7)
+#     at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) TypeError: Cannot read properties of undefined (reading 'create')
+#     at HTMLButtonElement.eval (eval at open (file:///workspace/scratch/5867a883ac13/REDOWN/tests/popup-destinations.test.mjs:11:21), <anonymous>:49:73)
+#     at HTMLButtonElement.callTheUserObjectsOperation (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+#     at innerInvokeEventListeners (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+#     at invokeEventListeners (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+#     at HTMLButtonElementImpl._dispatch (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+#     at fireAnEvent (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+#     at HTMLButtonElementImpl.click (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+#     at HTMLButtonElement.click (/workspace/scratch/5867a883ac13/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+#     at TestContext.<anonymous> (file:///workspace/scratch/5867a883ac13/REDOWN/tests/popup-destinations.test.mjs:15:234)
+#     at async Test.run (node:internal/test_runner/test:1409:7)
+# Subtest: green zero-delivery state reads READY! and Dashboard opens the existing options page
+not ok 71 - green zero-delivery state reads READY! and Dashboard opens the existing options page
+  ---
+  duration_ms: 187.106066
+  type: 'test'
+  location: '/workspace/scratch/5867a883ac13/REDOWN/tests/popup-destinations.test.mjs:14:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5867a883ac13/REDOWN/tests/popup-destinations.test.mjs:15:264)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: red connection shows LOGIN in the same odometer and clicking it starts direct sign-in
+ok 72 - red connection shows LOGIN in the same odometer and clicking it starts direct sign-in
+  ---
+  duration_ms: 47.904419
+  type: 'test'
+  ...
+# Subtest: failed or canceled login stays red and retryable without resetting the total
+ok 73 - failed or canceled login stays red and retryable without resetting the total
+  ---
+  duration_ms: 27.53075
+  type: 'test'
+  ...
+# Subtest: odometer carries digits, expands beyond six places and retains exact large totals
+ok 74 - odometer carries digits, expands beyond six places and retains exact large totals
+  ---
+  duration_ms: 52.736873
+  type: 'test'
+  ...
+# Subtest: late count response cannot overwrite a newer storage count
+ok 75 - late count response cannot overwrite a newer storage count
+  ---
+  duration_ms: 33.55123
+  type: 'test'
+  ...
+# Subtest: reopening during OAuth resumes background login without opening duplicate windows
+ok 76 - reopening during OAuth resumes background login without opening duplicate windows
+  ---
+  duration_ms: 22.331639
+  type: 'test'
+  ...
+# Subtest: count failure never invents a zero count or hides the disconnected LOGIN action
+ok 77 - count failure never invents a zero count or hides the disconnected LOGIN action
+  ---
+  duration_ms: 38.863758
+  type: 'test'
+  ...
+# Subtest: background accepts a discovered unsaved bucket only after read-only existence validation
+ok 78 - background accepts a discovered unsaved bucket only after read-only existence validation
+  ---
+  duration_ms: 4.090637
+  type: 'test'
+  ...
+# Subtest: reopening starts at the last seen count, rolls to the current total and remembers completion
+ok 79 - reopening starts at the last seen count, rolls to the current total and remembers completion
+  ---
+  duration_ms: 35.204897
+  type: 'test'
+  ...
+# Subtest: a newer total interrupts an old roll and final persistence never rolls back
+ok 80 - a newer total interrupts an old roll and final persistence never rolls back
+  ---
+  duration_ms: 36.890988
+  type: 'test'
+  ...
+# Subtest: reduced motion immediately shows the verified total and the sound preference persists
+ok 81 - reduced motion immediately shows the verified total and the sound preference persists
+  ---
+  duration_ms: 23.928658
+  type: 'test'
+  ...
+# Subtest: the final settled number emits one quiet click and mute suppresses subsequent clicks
+ok 82 - the final settled number emits one quiet click and mute suppresses subsequent clicks
+  ---
+  duration_ms: 31.1878
+  type: 'test'
+  ...
+# Subtest: unavailable audio never prevents reaching or saving the verified total
+ok 83 - unavailable audio never prevents reaching or saving the verified total
+  ---
+  duration_ms: 14.624513
+  type: 'test'
+  ...
+# Subtest: Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu
+ok 84 - Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu
+  ---
+  duration_ms: 10.893925
+  type: 'test'
+  ...
+# Subtest: Legacy bucket-label preference cannot override modern path-derived labels or explicit names
+ok 85 - Legacy bucket-label preference cannot override modern path-derived labels or explicit names
+  ---
+  duration_ms: 2.959668
+  type: 'test'
+  ...
+# Subtest: Menu Label is default for existing profiles without a saved preference
+ok 86 - Menu Label is default for existing profiles without a saved preference
+  ---
+  duration_ms: 1.677145
+  type: 'test'
+  ...
+# Subtest: explicit Simple label wins over the lowest-directory fallback
+ok 87 - explicit Simple label wins over the lowest-directory fallback
+  ---
+  duration_ms: 1.732308
+  type: 'test'
+  ...
+# Subtest: blank and whitespace Simple labels retain automatic naming under every fallback setting
+ok 88 - blank and whitespace Simple labels retain automatic naming under every fallback setting
+  ---
+  duration_ms: 7.789638
+  type: 'test'
+  ...
+1..88
+# tests 88
+# suites 0
+# pass 85
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2779.379638

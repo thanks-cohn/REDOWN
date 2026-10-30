@@ -1,0 +1,13 @@
+{
+  "sourceRevision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "branch": "release/cloudflare-true-remote",
+  "tagObject": "bd69e3082f7544cc21254ce066d8820467a955df",
+  "tagTarget": "49560812534428f79a52ac126d18e94dcc073545",
+  "chapters": 12,
+  "sourceAnchors": 76,
+  "parityObservations": 11,
+  "linksJsonAnchorsErrors": [],
+  "productionTrackedDiff": "",
+  "diffCheck": 0,
+  "diffCheckScope": "All new documentary files after trailing-only log whitespace normalization; staged check repeated before commit."
+}

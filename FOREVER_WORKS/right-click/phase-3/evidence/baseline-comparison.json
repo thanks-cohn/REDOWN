@@ -1,0 +1,9 @@
+{
+  "priorRevision": "2e65ba137a35e1656b691fd2fdbf95082a0cdf4e",
+  "sourceRevision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "priorFailureCount": 52,
+  "currentFailureCount": 52,
+  "newNames": [],
+  "noLongerFailing": [],
+  "sourceDiffExtensionTestsEmpty": true
+}
