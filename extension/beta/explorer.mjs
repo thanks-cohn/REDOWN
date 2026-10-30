@@ -14,6 +14,21 @@ const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n
 let archivePreviewMode="reader",readerSession=null;
 let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0,cloudflareSignedIn=false;
 let activationState='idle',activationSource=null,activationReason='',activationEpoch=0;
+let activationGlowTimer=null;
+function clearActivationGlow(){
+  if(activationGlowTimer!==null){clearTimeout(activationGlowTimer);activationGlowTimer=null;}
+  $('prepare').removeAttribute('data-effect');
+}
+function showActivationGlow(effect,{ongoing=false}={}){
+  clearActivationGlow();
+  const action=$('prepare');
+  void action.offsetWidth;
+  action.dataset.effect=effect;
+  if(!ongoing)activationGlowTimer=setTimeout(()=>{
+    if(action.dataset.effect===effect)action.removeAttribute('data-effect');
+    activationGlowTimer=null;
+  },1150);
+}
 function paintActivation(){
   const action=$('prepare'),label=action.querySelector('.bucket-activation-label');
   const selected=Boolean(current&&activationSource&&sameBucket(current,activationSource));
@@ -22,6 +37,7 @@ function paintActivation(){
   // State affects its message and appearance, never its visibility.
   action.hidden=false;
   action.dataset.state=state;
+  action.setAttribute('aria-busy',String(state==='checking'||state==='activating'));
   action.disabled=busy||state==='checking'||state==='activating';
   if(label)label.textContent=state==='checking'?'Checking bucket…':state==='activating'?'Activating…':'Activate Buckets';
   const glyph=action.querySelector('.bucket-activation-glyph');
@@ -33,7 +49,7 @@ function paintActivation(){
   action.setAttribute('aria-label',!current?'Activate Buckets: choose a storage bucket first'
     :(state==='ready'?'REDOWN already activated for ':'Activate REDOWN for ')+current.bucketName);
 }
-function resetActivation(){activationEpoch++;activationState='idle';activationSource=null;activationReason='';paintActivation();}
+function resetActivation(){activationEpoch++;clearActivationGlow();activationState='idle';activationSource=null;activationReason='';paintActivation();}
 async function checkActivation(source){
   if(!source||!sameBucket(current,source)){resetActivation();return null;}
   const ticket=++activationEpoch;
@@ -470,28 +486,48 @@ $('prepare').onclick=async()=>{
   const source=context();
   if(busy)return;
   if(!source){
+    showActivationGlow('attention');
     status('Choose an existing bucket under Storage Buckets before activating REDOWN.');
     const storage=$('sidebar-storage');if(storage){storage.open=true;storage.scrollIntoView?.({block:'nearest'});}
     return;
   }
-  // Never reprovision an already-ready bucket. If status is not yet known,
-  // check first and require an explicit activation confirmation if needed.
   if(activationState==='idle'||activationState==='unknown'||!activationSource||!sameBucket(source,activationSource)){
+    showActivationGlow('checking',{ongoing:true});
     await checkActivation(source);
+    if(!sameBucket(current,source)){clearActivationGlow();return;}
   }
-  if(activationState==='ready'){status(source.bucketName+' is already activated for REDOWN.');return;}
+  if(activationState==='ready'){
+    showActivationGlow('success');
+    status(source.bucketName+' is already activated for REDOWN.');
+    return;
+  }
   if(activationState!=='needed'){
+    showActivationGlow('attention');
     status('Bucket setup could not be verified. Reconnect or Refresh before activating.');
     return;
   }
+  showActivationGlow('confirm');
   if(!await dialog('Activate '+source.bucketName+' for REDOWN?',{input:false,description:'Sets up or updates the REDOWN Worker for this R2 bucket, saves its destination, and prepares default folders. Existing settings are retained. This changes Cloudflare resources; it does not make the bucket public.',confirm:'Activate Buckets'}))return;
-  activationState='activating';paintActivation();
-  await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();
+  if(!sameBucket(current,source)){clearActivationGlow();status('Bucket selection changed. No activation was sent.');return;}
+  activationState='activating';paintActivation();showActivationGlow('working',{ongoing:true});
+  let operationCompleted=false,menuUpdated=true;
+  await run(async signal=>{
+    const result=await request('prepareBucket',{source},{signal});
+    operationCompleted=true;menuUpdated=result.data.menuUpdated!==false;
+    await loadProfiles();
     document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:source.accountId,bucketName:source.bucketName}}));
-    status(result.data.menuUpdated===false?(result.data.menuError||'Bucket activated, but the REDOWN right-click menu could not be updated. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
-  if(sameBucket(current,source))await checkActivation(source);
-  if(activationState==='ready'&&!$('status').textContent.includes('menu'))status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
-  else if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
+    status(!menuUpdated?(result.data.menuError||'Bucket activated, but the REDOWN right-click menu could not be updated. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');
+  },{checkWorker:false});
+  if(!sameBucket(current,source)){clearActivationGlow();return;}
+  await checkActivation(source);
+  if(!sameBucket(current,source)){clearActivationGlow();return;}
+  if(operationCompleted&&menuUpdated&&activationState==='ready'){
+    showActivationGlow('success');
+    status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
+  }else{
+    showActivationGlow('attention');
+    if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
+  }
 };
 
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
