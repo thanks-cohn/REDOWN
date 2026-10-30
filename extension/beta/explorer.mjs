@@ -284,7 +284,17 @@ document.addEventListener('keydown',event=>{
 });
 function paintBuckets(accountId){
   const buckets=bucketCache.get(accountId)||[];
-  $('buckets').replaceChildren(...buckets.map(bucket=>{const target={accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};const b=button('▱  '+bucket.name,()=>navigate(target));b.dataset.bucket=bucket.name;b.toggleAttribute('aria-current',sameBucket(current,target));return b;}));
+  $('buckets').replaceChildren(...buckets.map(bucket=>{
+    const target={accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};
+    const b=button(bucket.name,()=>navigate(target));
+    const icon=document.createElement('span');
+    icon.className='sidebar-bucket-icon';icon.setAttribute('aria-hidden','true');
+    // Fixed icon markup only; bucket names are inserted as text, never HTML.
+    icon.innerHTML='<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="4.5" rx="6.5" ry="2.5"/><path d="M3.5 4.5v10.5c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5V4.5M3.5 10c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5"/></svg>';
+    const label=document.createElement('span');label.className='sidebar-bucket-name';label.textContent=bucket.name;
+    b.replaceChildren(icon,label);b.dataset.bucket=bucket.name;
+    b.toggleAttribute('aria-current',sameBucket(current,target));return b;
+  }));
   controls();
 }
 async function loadBuckets(){
