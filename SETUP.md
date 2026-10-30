@@ -22,14 +22,23 @@ Developer mode -> Load unpacked -> extension/
 3. A separate Cloudflare sign-in window opens immediately. Sign in and authorize the requested R2 and Worker permissions.
 4. Choose a Cloudflare account.
 5. Choose an existing R2 bucket or create a new one.
-6. Click the bucket to prepare it for REDOWN.
-7. Configure that bucket's right-click preset.
+6. Open the bucket in **REDOWN Explorer**. When its REDOWN Worker is not prepared, the green, stepped-outline **Activate Buckets** button appears beside **Refresh**. Select **Activate Buckets** and approve the private Worker setup. This does **not** make files public.
+7. Open **Destinations → Right-click setup**. The **Prepare REDOWN storage** section is expanded for first-time users without a prepared profile. After preparation, **+ Location** can use your existing prepared Cloudflare bucket in Simple mode. Select **Save menu** to update Chrome's right-click locations.
 
 If you close the sign-in window or sign-in takes longer than five minutes, REDOWN restores the Connect button so you can retry. Clicking Connect from another settings tab focuses the current sign-in window instead of opening duplicates. Settings opens Cloudflare and completes OAuth directly, without waiting for a background-service message. Login progress survives the extension background worker going idle; closing the browser clears the temporary attempt. Network requests during verification time out after 30 seconds.
 
 Version 0.5.9 uses a shared login controller in settings and the background worker. Cross-context locks prevent duplicate windows or token exchanges. Version 0.5.8 added `webNavigation` to capture only the exact OAuth callback from the sign-in tab, and `alarms` to expire stalled attempts. The extension ID, callback URL, scopes, PKCE, and state checks remain unchanged. After updating an unpacked install, reload REDOWN in `chrome://extensions` and reopen settings to load the new permissions and scripts.
 
-REDOWN automatically provisions the per-bucket Worker required for true remote transfer.
+REDOWN only provisions or updates a per-bucket Worker after an explicit setup/activation action. **Refresh** reloads Cloudflare folder contents and never activates storage or changes Cloudflare permissions. A bucket can be browsed while its Worker is not yet prepared for file changes.
+
+## First-use behavior and privacy
+
+- A selected bucket with missing Worker setup shows a gentle green **Activate Buckets** cue beside Refresh. Unverifiable setup and Cloudflare authorization errors are reported separately, not as a false "needs activation" success.
+- Activating an existing bucket should rebuild Chrome's right-click menu immediately. If Chrome rejects a menu update, REDOWN reports it; **Save menu** retries the rebuild without creating a second R2 bucket.
+- New Explorer users start with **Side Preview**. Returning users retain a saved Window Preview choice.
+- **Keep Both** is the default for new conflicting uploads and file transfers. Skip and Replace remain explicit options. Rename operations retain exact-destination safety protections.
+- **Get URL** and **Bucket URLs** show **Give Bucket Public URL? Yes / No** only when managed public access is known to be disabled and there are no configured usable addresses. **No** leaves the bucket private. **Yes** intentionally enables bucket-wide Cloudflare `r2.dev` access, reads it back, and then refreshes address choices. A configured URL is not proof that any individual object can be downloaded. Uncertain changes require inspection before retrying.
+- Shelf **History** opens the current day's records by default when present. It shows the original source URL and the hosting page captured from Chrome's right-click context when available. Legacy transfers may not have a hosting page to display. URLs use ordinary clickable HTTP(S) links; long records are folded by default and errors use a compact **Error: URL** heading with details available on expansion.
 
 ## Configure a bucket preset
 
