@@ -78,7 +78,17 @@
       const label=el('input');label.value=row.label;label.maxLength=60;label.placeholder='Menu label';label.setAttribute('aria-label','Menu label');label.oninput=()=>update(row,'label',label.value);
       const move=delta=>{const entries=rows(),i=entries.findIndex(r=>r.id===row.id),j=i+delta;if(j<0||j>=entries.length)return;[entries[i],entries[j]]=[entries[j],entries[i]];entries.forEach((r,index)=>{if(r.base)r.p.simplePrimaryOrder=index;else r.item.order=index;});changed();renderSimple();};
       const options=el('details','destination-entry-options');options.append(el('summary','','Entry options'));
-      head.append(label);options.append(button('↑',()=>move(-1),'Move destination up'),button('↓',()=>move(1),'Move destination down'),button('Remove from menu',()=>{if(row.base)row.p.simplePrimaryEnabled=false;else if(row.draft)unassigned=unassigned.filter(r=>r!==row);else row.p.simpleOptions=row.p.simpleOptions.filter(i=>i!==row.item);changed();renderSimple();},'Remove menu destination'));
+      // Keep deletion visible on every card, never buried in Entry options.
+      // The X edits the right-click menu draft only; it never deletes R2 data.
+      const remove=button('×',()=>{
+        if(row.base)row.p.simplePrimaryEnabled=false;
+        else if(row.draft)unassigned=unassigned.filter(r=>r!==row);
+        else row.p.simpleOptions=row.p.simpleOptions.filter(i=>i!==row.item);
+        changed();renderSimple();
+      },'Remove menu destination');
+      remove.className='destination-remove-x';
+      head.append(label,remove);
+      options.append(button('↑',()=>move(-1),'Move destination up'),button('↓',()=>move(1),'Move destination down'));
       const fields=el('div','destination-card-fields');
       const account=el('select');account.setAttribute('aria-label','Cloudflare account');
       const choices=[...new Map([...accounts.map(a=>[a.id,a]),...usable().map(p=>[p.accountId,{id:p.accountId,name:accounts.find(a=>a.id===p.accountId)?.name||p.accountName||p.accountId}])]).values()];
