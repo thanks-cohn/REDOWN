@@ -280,7 +280,70 @@ async function loadProfiles(){
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
 $('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');},{checkWorker:false});};
-$('transfer-history').onclick=()=>run(async()=>{const result=await request('transferHistory',{});await dialog('Recent transfers',{input:false,details:JSON.stringify(result.data.history,null,2),confirm:'Close',description:'Original transfer history. Local Beta uploads and copies are not included.'});},{refresh:false});
+function betaHistorySourceLinks(item){
+  const links=[];
+  const add=(label,url)=>{if(typeof url==='string'&&url.trim())links.push({label,url:url.trim()});};
+  add('Parent webpage',item?.pageUrl);
+  if(item?.srcUrl)add('Direct image / media URL',item.srcUrl);
+  else if(item?.linkUrl)add('Direct link URL',item.linkUrl);
+  else add('Download source URL',item?.sourceUrl);
+  add('Frame URL',item?.frameUrl);
+  if(item?.srcUrl)add('Link URL',item?.linkUrl);
+  if(typeof item?.sourceUrl==='string'&&item.sourceUrl.trim()&&!links.some(link=>link.url===item.sourceUrl.trim()))add('Transfer source URL',item.sourceUrl);
+  return links;
+}
+const collapsedBetaHistory=new Set();
+function paintTransferHistory(entries){
+  const host=$('transfer-history-list');host.replaceChildren();
+  if(!entries?.length){const empty=document.createElement('p');empty.textContent='No saved transfers yet.';host.append(empty);return;}
+  const ordered=[...entries].sort((a,b)=>(Date.parse(b?.at)||0)-(Date.parse(a?.at)||0));
+  for(const item of ordered){
+    const card=document.createElement('article');card.className='transfer-history-entry';
+    const top=document.createElement('div');top.className='transfer-history-entry-top';
+    const badge=document.createElement('strong');badge.className=item?.ok?'transfer-history-ok':'transfer-history-fail';badge.textContent=item?.ok?'Saved':'Error';
+    const date=document.createElement('span');
+    const stamp=new Date(item?.at||'');
+    date.textContent=Number.isNaN(stamp.getTime())?'Unknown date':stamp.toLocaleString();
+    top.append(badge,date);card.append(top);
+    if(item?.location){
+      const destination=document.createElement('p');destination.className='transfer-history-destination';destination.textContent='Saved to: '+item.location;card.append(destination);
+    }
+    if(item?.error){
+      const error=document.createElement('p');error.className='transfer-history-error';error.textContent=String(item.error);card.append(error);
+    }
+    const links=betaHistorySourceLinks(item);
+    if(links.length){
+      const details=document.createElement('details');details.className='transfer-history-sources';
+      const key=String(item?.id||[item?.at,item?.sourceUrl,item?.location].join('|'));
+      details.open=!collapsedBetaHistory.has(key);
+      const summary=document.createElement('summary');
+      const update=()=>{summary.textContent=(details.open?'Hide':'Show')+' source URLs ('+links.length+')';};
+      update();details.append(summary);
+      details.addEventListener('toggle',()=>{if(details.open)collapsedBetaHistory.delete(key);else collapsedBetaHistory.add(key);update();});
+      for(const {label,url} of links){
+        const line=document.createElement('div');line.className='transfer-history-url-row';
+        const kind=document.createElement('span');kind.className='transfer-history-url-label';kind.textContent=label;
+        let address;
+        try{const parsed=new URL(url);if(['http:','https:'].includes(parsed.protocol)&&!parsed.username&&!parsed.password){
+          address=document.createElement('a');address.href=parsed.href;address.target='_blank';address.rel='noopener noreferrer';address.referrerPolicy='no-referrer';
+        }}catch{}
+        if(!address)address=document.createElement('code');
+        address.className='transfer-history-url-text';address.textContent=url;address.title=url;
+        const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.setAttribute('aria-label','Copy '+label);
+        copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(url);copy.textContent='Copied';}catch{copy.textContent='Copy unavailable';}});
+        line.append(kind,address,copy);details.append(line);
+      }
+      card.append(details);
+    }
+    host.append(card);
+  }
+}
+$('transfer-history').onclick=()=>run(async()=>{
+  const result=await request('transferHistory',{});
+  paintTransferHistory(result.data.history);
+  openModal($('transfer-history-dialog'));
+},{refresh:false});
+$('transfer-history-close').onclick=()=>$('transfer-history-dialog').close();
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
 $('preferences').onclick=()=>{paintPreferences();openModal($('preferences-dialog'));};
