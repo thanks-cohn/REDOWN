@@ -22,7 +22,7 @@ async function ui(preset){
   const b=background(),calls=[];if(preset)b.state.profiles=preset;
   const dom=new JSDOM(html,{url:'https://fixture.test/beta/explorer.html',runScripts:'outside-only'}),w=dom.window;
   w.structuredClone=structuredClone;w.confirm=()=>true;
-  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='profiles')return {ok:true,profiles:structuredClone(b.state.profiles)};if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:['photos']};if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
+  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='cfProvision'){b.state.profiles.push({...initial()[0],id:'adopted-existing',accountId:m.accountId,bucketName:m.bucketName,menuLabel:m.bucketName,simpleOptions:[]});return {ok:true};}if(m.type==='profiles')return {ok:true,profiles:structuredClone(b.state.profiles)};if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:['photos']};if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
   for(const source of [model,config,nested,picker,editor])w.eval(source);await settle();return {b,calls,dom,w,d:w.document};
 }
 test('Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save',async()=>{
@@ -84,6 +84,19 @@ test('Add Location without a prepared bucket explains activation instead of crea
     assert.equal(h.calls.filter(c=>c.type==='cfProvision').length,0);
     assert.equal(h.calls.filter(c=>c.type==='saveDestinationConfig').length,0);
     assert.equal(h.d.getElementById('destination-first-setup').open,true);
+  }finally{h.dom.window.close();}
+});
+test('Add Location can activate an existing Cloudflare bucket without creating another R2 bucket',async()=>{
+  const h=await ui([]);try{
+    const {d,w}=h;
+    const accounts=d.getElementById('accounts');accounts.add(new w.Option('Account','a'));accounts.value='a';
+    const existing=d.createElement('button');existing.dataset.bucket='art';existing.setAttribute('aria-current','');d.getElementById('buckets').append(existing);
+    d.getElementById('destination-add').click();await settle();
+    assert.equal(h.calls.filter(c=>c.type==='cfProvision').length,1);
+    assert.equal(h.calls.filter(c=>c.type==='cfCreateBucket').length,0);
+    assert.ok(d.querySelector('.destination-card'));
+    assert.ok(h.b.state.profiles.some(p=>p.bucketName==='art'));
+    assert.match(d.getElementById('destination-status').textContent,/Unsaved changes/);
   }finally{h.dom.window.close();}
 });
 test('account edits retain the destination identifier and route it through that account’s prepared profile',async()=>{
