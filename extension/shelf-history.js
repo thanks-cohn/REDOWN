@@ -126,21 +126,67 @@
     makeChildren(details,items,key);
     return details;
   }
+  function safeWebUrl(raw){
+    try{
+      const value=text(raw),url=new URL(value);
+      return ['https:','http:'].includes(url.protocol)&&!url.username&&!url.password?url.href:null;
+    }catch{return null;}
+  }
+  function addProvenance(parent,record,info){
+    const details=create('div','','history-entry-provenance');
+    const addLink=(caption,raw)=>{
+      const value=text(raw);if(!value)return;
+      const line=create('div','','history-entry-url');
+      line.append(create('span',caption,'history-entry-url-label'));
+      const href=safeWebUrl(value);
+      if(href){
+        const link=create('a',value,'history-entry-link');
+        link.href=href;link.target='_blank';link.rel='noopener noreferrer';
+        link.title=value;line.append(link);
+      }else line.append(create('span',value,'history-entry-url-text'));
+      details.append(line);
+    };
+    addLink('Source URL',record.sourceUrl);
+    // Chrome supplies the page the user actually right-clicked. A direct
+    // URL or typed input has no independently known parent; do not infer one.
+    if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
+    if(info.detail)details.append(create('small',info.detail,'history-entry-provider'));
+    if(record.ok===false&&record.error){
+      const technical=create('details','','history-technical-details');
+      const summary=create('summary','Error details');
+      technical.append(summary,create('small',text(record.error),'history-error'));
+      details.append(technical);
+    }
+    if(details.childElementCount)parent.append(details);
+  }
   function dayRows(container,day){
     const list=create('ol','','history-transfers');
     for(const item of day.items){
-      const info=describe(item.record),row=create('li','','history-transfer');
-      row.dataset.state=info.state;
-      row.title=[info.status,info.detail].filter(Boolean).join(' · ');
+      const info=describe(item.record),record=item.record;
+      const row=create('li','','history-transfer');row.dataset.state=info.state;
       const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
-      const body=create('span','','history-transfer-body');
-      body.append(create('strong',info.name));
-      if(info.detail)body.append(create('small',info.detail));
+      const body=create('div','','history-transfer-body');
+      const error=record.ok===false;
+      const title=error?'Error: '+(text(record.sourceUrl)||'Source unavailable'):info.name;
+      const src=text(record.sourceUrl),parentUrl=text(record.pageUrl);
+      const isLong=title.length>66||src.length>90||parentUrl.length>90||text(record.error).length>125;
+      const header=create('div','','history-entry-head');
+      header.append(create('strong',isLong&&title.length>66?title.slice(0,62)+'…':title));
       const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'');
-      if(day.date)time.dateTime=day.date.toISOString();
-      row.append(dot,body,time);
-      if(item.record.error)row.append(create('small',text(item.record.error),'history-error'));
-      list.append(row);
+      if(day.date&&Number.isFinite(item.ms))time.dateTime=new Date(item.ms).toISOString();
+      header.append(time);
+      if(isLong){
+        const disclosure=create('details','','history-entry-details');
+        const summary=create('summary');
+        summary.append(header);
+        disclosure.append(summary);
+        addProvenance(disclosure,record,info);
+        body.append(disclosure);
+      }else{
+        body.append(header);
+        addProvenance(body,record,info);
+      }
+      row.append(dot,body);list.append(row);
     }
     container.append(list);
   }
@@ -227,9 +273,22 @@
       $('history-retry').hidden=false;
     }
   }
+  function expandToday(){
+    const now=new Date(),year=String(now.getFullYear());
+    const bucket=organize(pageItems,now).get(year)?.recent.get('today');
+    if(!bucket)return false;
+    const day=bucket.days.keys().next().value;
+    if(!day)return false;
+    openGroups.set('root',year);
+    openGroups.set('root-chosen',true);
+    openGroups.set(year,year+':today:'+day);
+    return true;
+  }
   async function open(){
-    if(loaded&&!dirty)return;
-    return refresh();
+    // Every time History is opened, expose today's transfers immediately
+    // instead of requiring the user to expand Year then Today manually.
+    if(!loaded||dirty)await refresh();
+    if(loaded&&expandToday())render();
   }
   async function pageTo(next){
     const max=Math.max(0,Math.ceil(total/PAGE_SIZE)-1);
