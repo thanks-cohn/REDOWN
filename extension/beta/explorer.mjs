@@ -25,6 +25,13 @@ async function checkActivation(source){
   if(!source||!sameBucket(current,source)){resetActivation();return null;}
   const ticket=++activationEpoch;
   activationSource={accountId:source.accountId,bucketName:source.bucketName};
+  if(listingState!=='ready'){
+    activationState='unknown';
+    activationReason=['unauthorized','disconnected'].includes(listingState)
+      ? 'Cloudflare authorization needs attention. Reconnect or check R2 permissions before activating.'
+      : 'Bucket files could not be checked. Refresh and verify Cloudflare access first.';
+    paintActivation();return null;
+  }
   activationState='checking';activationReason='Checking the REDOWN Worker configuration for '+source.bucketName;paintActivation();
   const result=await api.run('connectionStatus',{source});
   if(ticket!==activationEpoch||!sameBucket(current,source))return null;
@@ -176,7 +183,7 @@ async function navigate(target,record=true,restore=false,origin=null){
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
   try{if(checkWorker&&current)await ensureWorker(context(),controller.signal);controller.signal.throwIfAborted();await task(controller.signal);if(refresh&&current){const outcomeText=$('status').textContent;try{await listing();status(outcomeText);}catch(error){failure(Error(outcomeText+' Folder refresh failed: '+error.message));}}}
-  catch(e){status(e.message||'Operation failed. Refresh before retrying.');$('refresh').classList.add('attention');}
+  catch(e){status(e.message||'Operation failed. Refresh before retrying.');if(activationState!=='needed')$('refresh').classList.add('attention');}
   finally{busy=false;controller=null;$('progress').hidden=true;controls();}
 }
 async function ensureWorker(source,signal){
@@ -332,7 +339,7 @@ async function refreshConnection(){
     await rememberLocation(target);
     status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);if(activationState==='unknown'||activationState==='needed')void checkActivation(target);guideAction('refresh',{testItCorrelation});
   }catch(error){
-    failure(error);
+    failure(error);void checkActivation(target);
     // Discovery is recovery, not a prerequisite for ordinary folder refresh.
     if(['HTTP_401','HTTP_404'].includes(error.code))await loadAccounts(target);
   }
