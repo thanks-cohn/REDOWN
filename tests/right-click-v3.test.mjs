@@ -127,3 +127,45 @@ test('tree Home End arrows and selection use roving focus independently of inclu
  const h=await view('v3'),tree=h.$('outline'),first=tree.querySelector('[role=treeitem]');first.focus();first.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'End'}));
  assert.equal(h.w.document.activeElement.dataset.key,'root');assert.equal(tree.querySelectorAll('[tabindex="0"]').length,1);assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').length,0);h.dom.window.close();
 });
+
+test('inline add controls retain click focus and own keys without selecting the tree',async()=>{
+ const h=await view('v3');h.$('outline').querySelector('[aria-label="Add destination in bucket"]').click();
+ const bucket=h.$('outline').querySelector('[data-key="bucket:p"]');
+ assert.equal(bucket.getAttribute('aria-selected'),'true');
+ for(const id of ['label','prefix','profile','parent']){
+  const input=h.$(id);input.focus();input.click();assert.equal(h.w.document.activeElement,input,id+' click focus');
+  const e=new h.w.KeyboardEvent('keydown',{key:'r',bubbles:true,cancelable:true});input.dispatchEvent(e);
+  assert.equal(e.defaultPrevented,false,id+' native key ownership');assert.equal(h.w.document.activeElement,input);
+ }
+ h.$('label').value='Multi character';h.$('prefix').value='new/path';
+ h.$('add').dispatchEvent(new h.w.Event('submit',{cancelable:true,bubbles:true}));await settle();
+ const created=h.w.document.activeElement;assert.equal(created.getAttribute('role'),'treeitem');assert.match(created.getAttribute('aria-label'),/^Multi character/);
+ assert.equal(created.getAttribute('aria-selected'),'true');assert.match(h.$('status').textContent,/Unable to update Chrome/);
+ h.dom.window.close();
+});
+test('contextual plus selects its owner and Escape restores that row without saving',async()=>{
+ const h=await view('v3'),root=h.$('outline').querySelector('[data-key=root]');
+ root.querySelector('[aria-label="Add child destination to root"]').click();assert.equal(h.$('parent').value,'root');
+ h.$('label').focus();h.$('label').click();assert.equal(h.w.document.activeElement,h.$('label'));
+ h.$('label').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+ assert.equal(h.$('add').hidden,true);assert.equal(h.w.document.activeElement,root);
+ assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').length,0);h.dom.window.close();
+});
+test('folder redraw preserves inline draft focus and anchor, checkbox redraw preserves its control',async()=>{
+ const h=await view('v3');h.$('outline').querySelector('[aria-label="Add destination in bucket"]').click();
+ let release;const send=h.w.chrome.runtime.sendMessage;
+ h.w.chrome.runtime.sendMessage=async m=>{if(m.type==='cfDestinationFolders')await new Promise(r=>release=r);return send(m);};
+ h.$('outline').querySelector('[aria-label="Load folders in bucket"]').click();
+ h.$('label').focus();h.$('label').value='Draft';h.$('label').setSelectionRange(2,2);release();await settle();
+ assert.equal(h.w.document.activeElement,h.$('label'));assert.equal(h.$('label').value,'Draft');assert.equal(h.$('label').selectionStart,2);
+ assert.equal(h.$('add').parentElement.dataset.key,'bucket:p');h.$('cancel').click();
+ let check=h.$('outline').querySelector('[aria-label="Include root in Chrome"]');check.focus();check.click();await settle();
+ check=h.$('outline').querySelector('[aria-label="Include root in Chrome"]');assert.equal(h.w.document.activeElement,check);assert.equal(check.checked,false);
+ h.dom.window.close();
+});
+test('tree shortcuts require actual tree focus and ignore composition and modified keys',async()=>{
+ const h=await view('v3'),root=h.$('outline').querySelector('[data-key=root]');
+ h.$('search').focus();root.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'F2',bubbles:true}));assert.equal(h.$('outline').querySelector('[data-edit]'),null);
+ root.focus();for(const flags of [{isComposing:true},{ctrlKey:true},{metaKey:true},{altKey:true}])root.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'F2',bubbles:true,...flags}));
+ assert.equal(h.$('outline').querySelector('[data-edit]'),null);assert.equal(h.w.document.activeElement,root);h.dom.window.close();
+});
