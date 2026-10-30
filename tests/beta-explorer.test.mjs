@@ -10,6 +10,7 @@ import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
 import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
+import {accessibleBuckets,activationAppearance,activationOrder,bucketIdentity,firstAvailableBucket,matchesBucket} from '../extension/beta/bucket-activation.mjs';
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const source={accountId:'fixture-account',bucketName:'disposable-fixture',prefix:''};
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -73,7 +74,9 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;
+  Object.assign(w,{accessibleBuckets,activationAppearance,activationOrder,bucketIdentity,firstAvailableBucket,matchesBucket});
+  w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
@@ -814,3 +817,27 @@ for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Ch
  assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');assert.ok(f.stored.has('root.txt'));
  }finally{f.dom.window.close();}
  });
+
+test('Activate Buckets is explicit, verifies readiness, and preserves independent Refresh',async()=>{
+ let prepared=0,probes=0;
+ const f=await uiFixture({adapterSetup:adapter=>{
+   adapter.connectionStatus=async()=>({ready:probes++>0,reason:'REDOWN Worker needs setup'});
+   adapter.prepareBucket=async()=>{prepared++;return {verification:{workerReachable:true}};};
+ }});
+ const {d,w,settle}=f;
+ try{
+   assert.ok(d.querySelector('#activate-buckets'));
+   assert.equal(prepared,0,'discovery must never provision a Worker');
+   assert.ok(d.querySelector('#sidebar-settings #profiles'),'saved destinations moved into Settings');
+   assert.ok(d.querySelector('#sidebar-settings #buckets'),'bucket selector moved into Settings');
+   assert.ok(d.querySelector('#sidebar-settings #initial-bucket'),'initial activation selector exists');
+   assert.equal(d.querySelector('#refresh').disabled,false,'Refresh remains independent');
+   d.querySelector('#activate-buckets').click();
+   assert.ok(d.querySelector('#dialog').open,'Cloud provisioning requires a visible confirmation');
+   assert.equal(prepared,0,'opening the confirmation cannot modify cloud storage');
+   d.querySelector('#dialog-confirm').click();
+   await settle(()=>d.querySelector('#activate-buckets').dataset.state==='ready');
+   assert.equal(prepared,1,'one unprepared bucket was explicitly configured');
+   assert.equal(d.querySelector('#refresh').disabled,false);
+ }finally{f.dom.window.close();}
+});
