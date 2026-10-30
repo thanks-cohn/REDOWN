@@ -332,3 +332,23 @@ main:has(.test-it-tools-wrap){padding-bottom:80px}
 a.transfer-history-url-text{text-decoration:underline;text-underline-offset:2px}
 .transfer-history-url-row button{font-size:11px;min-height:30px;padding:4px 9px;white-space:normal}
 @media(max-width:560px){.transfer-history-dialog{padding:14px}.transfer-history-url-row{grid-template-columns:minmax(0,1fr) auto}.transfer-history-url-label{grid-column:1 / -1}}
+
+/* Explicit one-click REDOWN bucket setup. Does not activate public URLs. */
+.sidebar-settings-options+.sidebar-settings-options{margin-top:12px;padding-top:9px;border-top:1px solid var(--line)}
+.sidebar-settings-options>select,.sidebar-settings-options>#prepare{width:100%;margin-top:5px}
+.sidebar-settings-options .section-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sidebar-settings-options .section-row #create-bucket{padding:4px 9px}
+.sidebar-settings-options #buckets{max-height:170px;overflow:auto;margin:8px 0}
+.sidebar-settings-options #buckets button{font-size:12px;border-radius:8px}
+.sidebar-hint{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:8px 0 4px}
+#activate-buckets.bucket-activation{flex-shrink:0;min-height:36px;padding:7px 11px;border:1.5px solid #bdafba;border-radius:10px;background:#fff;color:#594756;box-shadow:inset 0 1px #fff;letter-spacing:.01em;font-size:12px;font-weight:800;position:relative}
+#activate-buckets #activation-count{font-size:10px;background:#a86825;color:white;border-radius:99px;padding:1px 6px;margin-left:4px}
+#activate-buckets[data-state="attention"]{color:#81511b;border-color:#d79536;background:linear-gradient(165deg,#fffef5,#fff1d7);box-shadow:0 0 0 2px #ffd99766,inset 0 1px #fff,0 0 14px #efae5477}
+#activate-buckets[data-state="working"]{color:#174b81;border-color:#5c9fda;background:#f0f8ff;box-shadow:0 0 0 2px #9accfa99,0 0 12px #68a6d355}
+#activate-buckets[data-state="configured"]{color:#61576a;border-color:#9d8da7;background:#f9f6fb}
+#activate-buckets[data-state="ready"]{color:#216b47;border-color:#67b28d;background:#edfff4;box-shadow:inset 0 1px #fff,0 0 8px #67b28d55}
+#activate-buckets[data-state="error"]{color:#9b2c2a;border-color:#cf635a;background:#fff3f2;box-shadow:0 0 0 2px #e87f7655}
+#activate-buckets[data-state="attention"].attention-flash{animation:bucket-snes-alert .8s steps(3,end) 2}
+@keyframes bucket-snes-alert{0%,100%{filter:brightness(1);transform:translateY(0)}33%{filter:brightness(1.17);box-shadow:0 0 0 3px #f3ab42,0 0 16px #ffca57}66%{filter:brightness(1.06);box-shadow:0 0 0 2px #ffd58f,0 0 9px #e5a634}}
+@media(max-width:650px){#activate-buckets.bucket-activation{white-space:normal;text-align:center}.sidebar-settings-options #buckets{flex-direction:column;max-height:170px}}
+@media(prefers-reduced-motion:reduce){#activate-buckets[data-state="attention"].attention-flash{animation:none!important}}
