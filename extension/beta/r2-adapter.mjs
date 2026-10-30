@@ -10,7 +10,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     options.signal?.throwIfAborted();
     let timer,abort,dispatched=false;const writes=['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfCreateBucket','cfProvision','cfExtractArchive'].includes(type);
     try {
-      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input,...(['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfArchiveEntries','cfExtractArchive'].includes(type)?{betaNoProvision:true}:{})});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
+      const transport=Promise.resolve().then(()=>{options.signal?.throwIfAborted();dispatched=true;return send({type,...input,...(['cfTransferObjects','cfRenameEntry','cfDeleteObjects','cfCreateFolder','ingest','cfArchiveEntries','cfArchiveEntryUrl','cfExtractArchive'].includes(type)?{betaNoProvision:true}:{})});}).catch(error=>{if(writes&&dispatched)throw Object.assign(new Error('Connection lost before a final result. Refresh both locations before retrying.'),{uncertain:true,cause:error});throw error;});
       const result=await Promise.race([transport,new Promise((_,reject)=>{
         timer=setTimeout(()=>reject(Object.assign(Error(writes?'No final response. Refresh both locations before retrying; the operation may have changed files.':'No final response. Refresh and try the read again.'),{uncertain:writes&&dispatched})),options.messageTimeoutMs??providerDefaults.messageTimeoutMs);
         abort=()=>reject(Object.assign(new Error(writes&&dispatched?'Cancellation requested after dispatch. The cloud operation may still complete; inspect before retrying.':'Operation cancelled.'),{name:'AbortError',uncertain:writes&&dispatched}));
@@ -129,6 +129,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     connect:(_,o)=>message('cfConnect',{},o),disconnect:(_,o)=>message('cfDisconnect',{},o),
     accounts:(_,o)=>message('cfAccounts',{},o),buckets:({accountId},o)=>message('cfBuckets',{accountId},o),
     archiveEntries:({source,key:k},o)=>message('cfArchiveEntries',{...location(source),key:key(k)},o),
+    archiveEntryUrl:({source,key:k,entry:archiveEntry,contentType},o)=>message('cfArchiveEntryUrl',{...location(source),key:key(k),entry:key(archiveEntry),contentType},o),
     async extractArchiveEntry({source,key:k,entry:archiveEntry,destinationPrefix=''},o){
       const result=await message('cfExtractArchive',{...location(source),key:key(k),entries:[key(archiveEntry)],destinationPrefix:prefix(destinationPrefix)},o);
       if(!Array.isArray(result.results)||result.results.length!==1)throw Object.assign(Error('Archive extraction was not confirmed. Inspect the destination before retrying.'),{uncertain:true});
