@@ -4,6 +4,7 @@ import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
+import {accessibleBuckets,activationAppearance,activationOrder,bucketIdentity,firstAvailableBucket,matchesBucket} from './bucket-activation.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
@@ -14,7 +15,30 @@ function paintLogout(auth){
   $('session-actions').hidden=!cloudflareSignedIn;
   $('disconnect').disabled=busy||!cloudflareSignedIn;
 }
-const bucketCache=new Map();
+const bucketCache=new Map(),bucketReadiness=new Map();
+let bucketPreference=null,activationInventoryLoaded=false,activationRunning=false;
+const knownBucketTargets=()=>accessibleBuckets(accounts,bucketCache);
+function paintInitialBucketChoices(){
+  const select=$('initial-bucket'),all=knownBucketTargets(),value=bucketPreference?bucketIdentity(bucketPreference):'';
+  const auto=document.createElement('option');auto.value='';auto.textContent='Automatically select an accessible bucket';
+  const opts=all.map(target=>{const o=document.createElement('option');o.value=bucketIdentity(target);o.textContent=(target.accountName||target.accountId)+' / '+target.bucketName;return o;});
+  if(value&&!opts.some(o=>o.value===value)){const unavailable=document.createElement('option');unavailable.value=value;unavailable.textContent='Saved bucket unavailable (will use another)';opts.unshift(unavailable);}
+  select.replaceChildren(auto,...opts);select.value=value;
+  select.disabled=busy||!all.length;
+}
+function paintActivation(){
+  const all=knownBucketTargets(),appearance=activationAppearance(all,savedProfiles,bucketReadiness,activationInventoryLoaded);
+  const el=$('activate-buckets'),next=activationRunning?'working':appearance.state,previous=el.dataset.state;
+  el.dataset.state=next;
+  const pending=$('activation-count');pending.hidden=!appearance.pending;pending.textContent=String(appearance.pending);
+  el.disabled=busy||listingState==='loading'||(!all.length&&!cloudflareSignedIn);
+  el.title=appearance.message+'; activation never enables public URLs.';
+  el.setAttribute('aria-label','Activate Buckets. '+appearance.message);
+  if(next==='attention'&&previous!=='attention'){el.classList.remove('attention-flash');void el.offsetWidth;el.classList.add('attention-flash');}
+  if(next!=='attention')el.classList.remove('attention-flash');
+}
+function syncActivationControls(){paintInitialBucketChoices();paintActivation();}
+
 const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
 function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
 function failure(error){const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');render();}
@@ -41,6 +65,8 @@ function controls(){
   $('more').hidden=!cursor;$('more').disabled=locked;
   $('cancel').hidden=!busy;
   document.querySelectorAll('#buckets button').forEach(b=>b.disabled=busy);
+  $('initial-bucket').disabled=busy||!knownBucketTargets().length;
+  paintActivation();
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
 function render(){
@@ -100,14 +126,14 @@ async function navigate(target,record=true,restore=false,origin=null){
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
   try{if(checkWorker&&current)await ensureWorker(context(),controller.signal);controller.signal.throwIfAborted();await task(controller.signal);if(refresh&&current){const outcomeText=$('status').textContent;try{await listing();status(outcomeText);}catch(error){failure(Error(outcomeText+' Folder refresh failed: '+error.message));}}}
-  catch(e){status(e.message||'Operation failed. Refresh before retrying.');$('refresh').classList.add('attention');}
+  catch(e){status(e.message||'Operation failed. Refresh before retrying.');if(checkWorker)$('refresh').classList.add('attention');}
   finally{busy=false;controller=null;$('progress').hidden=true;controls();}
 }
 async function ensureWorker(source,signal){
   const result=await request('connectionStatus',{source},{signal});
   if(result.data.ready)return;
-  $('refresh').classList.add('attention');
-  throw Error(result.data.reason+' No file changes were sent.');
+  bucketReadiness.set(bucketIdentity(source),'needs-activation');paintActivation();
+  throw Error(result.data.reason+' Click Activate Buckets to prepare storage. No file changes were sent.');
 }
 function outcome(result){
   const list=result.results || [result],bad=list.filter(r=>r.state!=='completed'&&r.state!=='started');
