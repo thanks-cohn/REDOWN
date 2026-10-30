@@ -1,0 +1,1352 @@
+{
+  "scope": "Local required reliability run; no installed-extension or live-provider evidence. The run preceded the final packaging-allowlist assertion and allowlist edit; both received focused checks separately.",
+  "startedAt": "2026-10-30T12:10:31.437Z",
+  "finishedAt": "2026-10-30T12:13:32.959Z",
+  "state": "failed",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed",
+      "exitCode": 0
+    },
+    {
+      "id": "architecture",
+      "state": "failed",
+      "exitCode": 0
+    },
+    {
+      "id": "api-registry",
+      "state": "passed",
+      "exitCode": 0
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed",
+      "exitCode": 0
+    }
+  ],
+  "passed": 550,
+  "knownFailures": [
+    {
+      "type": "fail",
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    }
+  ],
+  "newFailures": [
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "a fresh user gets Side Preview by default, while an existing Window preference remains respected",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta UI disables folder downloads and uses the same API for context menu and keyboard commands",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "same-folder copy keeps both and never destroys the source",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "folder drag/drop invokes the same real move API and preserves file bytes",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta preferences, duplicate, saved destination and preview are working UI interactions",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "archive dialog and destination chooser route actual extraction and copy through API",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "dropping a directory on Beta uploads nested file bytes through the universal API",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "startup automatically opens the sole bucket and persists folder navigation without provisioning",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "startup restores an accessible saved bucket and folder",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "multiple accounts are discovered and a sole bucket in the second account opens automatically",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "multiple buckets present an immediate choice and Refresh works with no selected bucket",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "authorization listing errors remain distinct from empty folders and Refresh recovers",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "a removed saved folder falls back to the live bucket root",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "unsupported formats do not advertise inline Preview in the context menu",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "GUI upload, independent fixture SHA-256, rename, copy, nested move, download and deletion reconcile the file list",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "sidebar A/B/A, folder Refresh, history, selection and context Download keep the exact bucket",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "slow bucket success and failure cannot overwrite a newer bucket or its saved location",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "genuine empty bucket and network/400/403 failures stay distinct and retry in place",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Refresh updates metadata and prunes deleted selections without account rediscovery",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "expired listing credentials show authorization detail and connection recovery can retry discovery",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "session invalidation clears the old bucket and ignores its delayed response",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "dual preview moves one loaded viewer between window and side without another read",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side unsupported file metadata and Download fallback make no preview read",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "both modes render images PDF text video audio; side double click and previous/next share renderer",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side preview failure remains local, retry works, and corrupt media shows Download",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "bucket changes and logout invalidate pending side preview including minimized content",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "pointer divider respects list/pane bounds and persists width; media cleanup revokes only owned URLs",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "truncation is explicit in shared preview metadata and survives mode changes",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side preview stays usable through copy, rename, Refresh and deleted selection pruning",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Window arrows skip unsupported files and folders, respect visible sort/filter, boundaries and editable controls",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "rapid lightbox arrows abort old reads, revoke late URLs and preserve latest image and mode",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour invitation declines once, remains optional, and manual menu restart resets all steps",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "every tour card has an X that exits everything immediately, preserving selection and session",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour recognizes completed bucket, selection, view, refresh and preview actions through actual UI handlers",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "tour completion and Escape clean up without cancelling active preview; no automatic resume",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It uses the existing guide: sixty contextual targets, X on every exercise, all-result export state and no exit cleanup",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It blocks original deletion and cut through real toolbar handlers",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Restart Test It confirms, replaces saved results, reopens exercise one and preserves files",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It context Copy commits clipboard, preserves method requirement, survives navigation and independently verifies Paste into a chosen folder",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "parent breadcrumb observes completed navigation including root parent",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "parent breadcrumb observes completed navigation including nested click targets",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "breadcrumb grandparent and non-breadcrumb parent navigation do not pass parent exercise",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "image buttons await actual load, reject repeated load and error, then recognize next and previous",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It same-folder Paste creates a distinct remotely verified copy without destination configuration",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "failed parent listing never completes breadcrumb exercise",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "production copy indicators survive List, Grid and refresh; original verifies automatically and ordinary R2 rename and keyboard movement succeed",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "ordinary Explorer adapter and embedded Worker copy/rename/Cut/Paste/back/duplicate/delete/export sequence",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Window Preview actual Previous then Next buttons register Next without a cached expected key",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "ordinary GUI and embedded Worker move two Test Copies into a new folder",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "source approval owns focus above guide, and context Copy highlights the file then menu item",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It exercise 57 records delayed Chrome completion, guide exited: false",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Test It exercise 57 records delayed Chrome completion, guide exited: true",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "partial ordinary multi-file Move preserves successful identity and the unresolved copy",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/brand-and-paginated-history.test.mjs",
+      "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "click creates a visible window before network navigation; repeated clicks focus it",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "successful callback exchanges PKCE and verifies access before saving token",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "callback resumes after service worker restart from session state",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "state mismatch fails without token exchange and allows a fresh retry",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "denied consent and missing authorization code fail cleanly",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "closed popup releases attempt and stale window is replaced on next click",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "expired attempt clears secrets, closes popup, and permits retry",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "failed API verification never stores an access token",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "duplicate navigation events exchange a code only once",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "verification network stall aborts and releases the attempt",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "popup creation errors are returned instead of leaving an in-flight lock",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "settings and worker observing the same callback exchange the code once across contexts",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-account-and-history-navigation.test.mjs",
+      "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "large retained histories render in bounded increments and unrelated storage changes do no history work",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/explorer-parity-audit.test.mjs",
+      "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/get-url.test.mjs",
+      "name": "switching files while enabling cannot reopen the old file or overwrite current choices",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "production Simple and Nested click branches hand the exact account, bucket and prefix to the existing transfer engine",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/popup-destinations.test.mjs",
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/shelf.test.mjs",
+      "name": "provider order, pending integrations, verified account state and actual history remain honest",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/shelf.test.mjs",
+      "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "type": "fail",
+      "file": "tests/shelf.test.mjs",
+      "name": "existing toolbar implementation applies default Shelf and Popup in both directions",
+      "nesting": 0,
+      "skipped": false,
+      "todo": false,
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    }
+  ],
+  "incomplete": false,
+  "execution": {
+    "exitCode": 1,
+    "error": null,
+    "stderr": ""
+  }
+}

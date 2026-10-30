@@ -1,6 +1,8 @@
 # PROPOSAL: Expandable Ordered Breadcrumb Hierarchy
 
-**Status:** PROPOSAL ONLY, NOT IMPLEMENTED
+**Status:** Core implementation locally verified; browser acceptance pending. See [implementation and handoff](../docs/explorer/BREADCRUMB_NAVIGATION_HANDOFF.md).
+
+The approved October 30 implementation brief supersedes conflicting proposal details below: full row names navigate, separate minus controls collapse, and only the second directory starts with its first word. The original proposal is retained for context.
 **Origin:** Earlier October 30 discussion, included here so all current Explorer presentation proposals live together.
 **Problem:** Long directory names and Chrome's wide Shelf leave the modern Explorer breadcrumb control wrapping into disconnected lines and colliding visually with navigation and filter controls.
 

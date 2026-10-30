@@ -125,6 +125,24 @@ function controls(){
   syncAccountPicker();
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
+
+// Presentation owns display state; Explorer alone owns current location/history.
+const navigationKey='betaExplorerNavigation_expandableHierarchy';
+let navigationSettings={expandBeforeNavigating:true,expandedIds:[]},navigationRevision=0;
+let navigationPathKey='',navigationHierarchy=[];
+function navigationContract(){
+  const pathKey=JSON.stringify([current?.accountId,current?.bucketName,current?.prefix]);
+  if(pathKey!==navigationPathKey){navigationPathKey=pathKey;navigationHierarchy=RedownNavigation.model(current);}
+  return {current:context(),hierarchy:navigationHierarchy,
+  settings:navigationSettings,themeTokens:'inherited CSS custom properties',
+  onNavigate(entry){if(!busy&&listingState==='ready'&&current)void navigate({...context(),prefix:entry.prefix},true,false,'breadcrumb');},
+  onPreferencesChange(next){navigationRevision++;navigationSettings=next;void chrome.storage.local.set({[navigationKey]:next}).catch(()=>status('Navigation preferences could not be saved.'));}
+};}
+const navigationSlot=RedownNavigation.createSlot($('crumbs'),navigationContract());
+function updateNavigation(){navigationSlot.update(navigationContract());}
+void chrome.storage.local.get(navigationKey).then(saved=>{if(!navigationRevision&&saved[navigationKey]){navigationSettings=saved[navigationKey];updateNavigation();}}).catch(()=>{});
+window.addEventListener('pagehide',event=>{if(!event.persisted)navigationSlot.destroy();});
+
 function render(){
   const shown=visible();$('files').replaceChildren(...shown.map((item,index)=>{
     const row=document.createElement('div');row.className='file'+(item.folder?' folder':'');row.dataset.key=item.key;row.setAttribute('role','option');row.setAttribute('aria-selected',String(selected.has(item.key)));row.tabIndex=0;
@@ -145,7 +163,7 @@ function render(){
   }));
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
-  $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''},true,false,'breadcrumb')));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target},true,false,'breadcrumb')));}}
+  updateNavigation();
   controls();syncSideSelection();practice?.paintOwnership();announceUrlSelection();
 }
 let commandInvocation=null;
@@ -266,7 +284,7 @@ function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
 document.addEventListener('keydown',event=>{
-  if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap'))return;
+  if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap,.rd-bc'))return;
   if(event.key==='Escape'){$('context').hidden=true;return;}
   if(event.target.closest?.('input,select,textarea,dialog')||busy)return;
   const modified=event.ctrlKey||event.metaKey,k=event.key.toLowerCase();

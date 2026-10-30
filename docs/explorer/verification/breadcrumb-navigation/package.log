@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/2c2bb045585a/REDOWN/scripts/package_chrome_store.py", line 76, in <module>
+    build()
+  File "/workspace/scratch/2c2bb045585a/REDOWN/scripts/package_chrome_store.py", line 37, in build
+    manifest['action']['default_popup']]
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'default_popup'

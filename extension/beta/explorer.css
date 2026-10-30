@@ -128,8 +128,6 @@ h2{font-size:29px;letter-spacing:-.035em;font-weight:650;margin:5px 0}
 .toolbar{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:var(--radius);padding:12px;background:var(--panel);box-shadow:var(--shadow)}
 .toolbar>button{padding:5px 10px}
 .toolbar input{margin-left:auto;width:210px}
-#crumbs{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
-#crumbs button{background:transparent;border-color:transparent;padding:4px 6px;overflow-wrap:anywhere}
 .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:22px 0}
 .actions button{font-size:12px;padding:8px 11px;background:transparent}
 .actions select{font-size:11px;margin-left:0;padding:8px}

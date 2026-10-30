@@ -1,0 +1,38 @@
+✔ default compression, exact prefixes and duplicate Unicode identities (79.89995ms)
+✔ out-of-order expansion stays ordered, first click expands, second navigates, collapse is independent (54.796323ms)
+✔ disabled expand-first setting navigates directly and explicit expansion remains available (17.122715ms)
+✔ hover does not mutate navigation, focus keyboard is scoped and DOM is retained on unrelated updates (22.572607ms)
+✔ rows retain independent scroll positions and preferences survive a replacement (32.821824ms)
+✔ deep paths have linear segment ownership, stable order, and no duplicate descendants (17.098891ms)
+✔ CSS selectors are component scoped with no global keyframes, resets or important overrides (0.576525ms)
+✔ reduced motion bypasses row animations and lifecycle releases observers/listeners (14.11837ms)
+✔ malformed saved expansion data cannot break navigation (10.730444ms)
+✔ HTML loads isolated assets before Explorer and packaging includes both runtime assets (0.605668ms)
+✔ first DOM frame shows only the centered LOGIN, not the old Cloudflare loading tile (132.682801ms)
+✔ unauthenticated discovery attempts cannot replace LOGIN with an interim tile (59.21745ms)
+✔ after authentication, the same slot loads and switches to the real account chooser (30.69146ms)
+✔ Explorer starts with only LOGIN while signed out; no old account-discovery tile (1.361596ms)
+✔ release Explorer has a permanent name and one Shelf Settings entrypoint (0.301342ms)
+✔ Test It Tools are not rendered in normal mode or reserve invisible padding (0.144021ms)
+✔ Shelf exposes independent Explorer palettes without changing the original palette controls (0.282924ms)
+✔ Explorer theme preferences and Debug Mode respond to storage changes (6.866068ms)
+✔ LOGIN and LOG OUT remain centered and the Mac-style account slot does not morph (0.275914ms)
+✔ left storage accordion and Bucket Tools do not collapse into a narrow scrollbar (126.379618ms)
+✔ the three left-sidebar controls use one header and chevron layout (58.981465ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 643.877512
+✔ modular breadcrumbs expand without listing, navigate exact paths through Explorer and preserve history (291.986693ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 639.172629

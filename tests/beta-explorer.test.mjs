@@ -74,7 +74,7 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
+async function uiFixture({authenticated=false,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
@@ -84,10 +84,11 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={cloudflareAuth:authenticated?{accessToken:"fixture-only",sessionId:"fixture"}:null,betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
+  w.eval(await readFile(new URL('../extension/beta/breadcrumb-navigation.js',import.meta.url),'utf8'));
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
@@ -834,3 +835,28 @@ for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Ch
  assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');assert.ok(f.stored.has('root.txt'));
  }finally{f.dom.window.close();}
  });
+
+
+test('modular breadcrumbs expand without listing, navigate exact paths through Explorer and preserve history',async()=>{
+ const f=await uiFixture({authenticated:true});const {d,w,settle}=f;
+ try{
+  const path='Architectural Projects/Modern Buildings/Brutalism/Personal Collections/Final Portfolio/';
+  await f.bucket.put(path+'proof.txt','breadcrumb fixture');
+  d.querySelector('#path').click();d.querySelector('#dialog-input').value=path;d.querySelector('#dialog-confirm').click();
+  await settle(()=>d.querySelector('[data-key="'+path+'proof.txt"]'));
+  assert.equal(d.querySelector('.rd-bc-current').textContent,'Final Portfolio');
+  const expand=[...d.querySelectorAll('.rd-bc-abbreviation')].find(b=>b.getAttribute('aria-label')==='Expand Brutalism');
+  const files=d.querySelector('#files').firstChild;expand.click();
+  assert.equal(d.querySelector('#files').firstChild,files,'expansion must not render file list');
+  assert.equal(d.querySelector('.rd-bc-current').textContent,'Final Portfolio');
+  const open=[...d.querySelectorAll('.rd-bc-anchor button')].find(b=>b.getAttribute('aria-label')==='Open Brutalism');open.click();
+  await settle(()=>d.querySelector('.rd-bc-current')?.textContent==='Brutalism'&&!d.querySelector('#upload').disabled);
+  assert.equal(f.storage.betaExplorerLocation.prefix,'Architectural Projects/Modern Buildings/Brutalism/');
+  d.querySelector('#back').click();await settle(()=>d.querySelector('.rd-bc-current')?.textContent==='Final Portfolio'&&!d.querySelector('#upload').disabled);
+  assert.ok([...d.querySelectorAll('.rd-bc-anchor button')].some(b=>b.getAttribute('aria-label')==='Collapse Brutalism'));
+  const selected=d.querySelectorAll('.file[aria-selected=true]').length;
+  d.querySelector('.rd-bc-anchor button').dispatchEvent(new w.KeyboardEvent('keydown',{key:'a',ctrlKey:true,bubbles:true,cancelable:true}));
+  assert.equal(d.querySelectorAll('.file[aria-selected=true]').length,selected,'breadcrumb keys must not select file list');
+  assert.ok(f.storage.betaExplorerNavigation_expandableHierarchy.expandedIds.length);
+ }finally{f.dom.window.close();}
+});
