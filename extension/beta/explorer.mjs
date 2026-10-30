@@ -153,7 +153,7 @@ function controls(){
   for(const id of ['rename','properties'])$(id).disabled=locked||selected.size!==1;
   $('get-url').disabled=locked||selected.size!==1||Boolean(chosen()[0]?.folder);
   $('archive').disabled=locked||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
-  $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(chosen()[0]?.folder||(!previewType(chosen()[0]?.key||'')&&!/\.(zip|cbz)$/i.test(chosen()[0]?.key||''))));
+  $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(!chosen()[0]?.folder&&!previewType(chosen()[0]?.key||'')&&!/\.(zip|cbz)$/i.test(chosen()[0]?.key||'')));
   paintActivation();$('create-bucket').disabled=locked||!$('accounts').value;
   $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=locked||!clipboard||!current;
@@ -179,6 +179,7 @@ function render(){
       else if(event.ctrlKey||event.metaKey){selected.has(item.key)?selected.delete(item.key):selected.add(item.key);anchor=index;}
       else {selected=new Set([item.key]);anchor=index;}
       paintSelection();
+      row.focus({preventScroll:true});
       if(previewMode==='window'&&selected.size===1&&!event.shiftKey&&!event.ctrlKey&&!event.metaKey&&!item.folder&&/\.(zip|cbz)$/i.test(item.key))void actions.archive();
     };
     row.ondblclick=()=>{if(!busy&&listingState==='ready'){if(item.folder)void navigate({...context(),prefix:item.key});else {selected=new Set([item.key]);void (/\.(zip|cbz)$/i.test(item.key)?actions.archive():previewType(item.key)?actions.preview():actions.download());}}};
@@ -640,9 +641,10 @@ async function showPreview(item,navigation={}){
     $('preview-content').append(button('Browse archive →',()=>{if(!busy)void actions.archive({classic:true});}));
     return;
   }
-  if(item.folder||!previewType(item.key)){
-    $('preview-content').textContent=item.folder?'Folder in '+source.bucketName+'/'+item.key:'Inline preview is unavailable for this format.';
-    if(!item.folder)$('preview-content').append(download());return;
+  if(item.folder){await openDirectoryReader(item,source);return;}
+  if(!previewType(item.key)){
+    $('preview-content').textContent='Inline preview is unavailable for this format.';
+    $('preview-content').append(download());return;
   }
   $('preview-content').textContent='Loading preview…';
   const ticket=previewEpoch,abort=new AbortController();previewController=abort;let ownedUrl='';
@@ -665,7 +667,7 @@ async function showPreview(item,navigation={}){
 }
 async function openArchiveReader(item,source){
   const ticket=previewEpoch,abort=new AbortController();previewController=abort;
-  const a={source,key:item.key,entries:[],index:0,ticket:0};readerSession=a;
+  const a={kind:'archive',source,key:item.key,entries:[],index:0,ticket:0};readerSession=a;
   $('preview-content').textContent='Reading archive index…';
   $('preview-previous').disabled=true;$('preview-next').disabled=true;
   try{
@@ -705,7 +707,7 @@ async function showReaderPage(a,index){
   }catch(error){if(active())failed(error.message||'Could not load this page.');}
 }
 async function adjacentPreview(direction,key){if(busy||!previewItem)return;
-  if(readerSession){const a=readerSession,next=a.index+direction;if(next>=0&&next<a.entries.length)await showReaderPage(a,next);return;}
+  if(readerSession){const a=readerSession,next=a.index+direction;if(next>=0&&next<a.entries.length)await (a.kind==='folder'?showDirectoryPage(a,next):showReaderPage(a,next));return;}
   if(!previewItem.folder&&/\.(zip|cbz)$/i.test(previewItem.key)){if($('preview-dialog').open)$('preview-dialog').close();void actions.archive({startAtEnd:direction<0});return;}
   const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,invocation:key?'keyboard':'button'});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
