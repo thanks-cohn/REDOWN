@@ -155,19 +155,19 @@
     </section>
     <section class="destination-section" aria-labelledby="destination-preview-title">
       <h3 id="destination-preview-title">04 / Preview and commit</h3>
-      <p class="destination-hint">Active destinations only, in Chrome order. Excluded groups remain in your draft above. Chrome also adds its standard settings and layout controls.</p>
-      <div id="destination-preview" aria-label="Proposed Chrome destinations"></div>
+      <p class="destination-hint">This is how your saved REDOWN destinations will appear in the right-click menu. Hidden groups stay saved until you remove them.</p>
+      <div id="destination-preview" aria-label="REDOWN right-click destination preview"></div>
       <div class="destination-commit"><button id="destination-save" class="primary" type="button">Save menu</button><button id="destination-reload" type="button">Reload / discard edits</button></div>
       <p id="destination-status" role="status" aria-live="polite">Loading your destinations…</p>
     </section>
-    <details id="destination-first-setup" class="destination-first-setup" open><summary>Prepare REDOWN storage</summary>
-    <p>Give your right-click menu a destination. First-time setup creates or reuses your private <strong>REDOWN</strong> bucket in Cloudflare R2.</p>
+    <details id="destination-first-setup" class="destination-first-setup"><summary>Optional: Dedicated REDOWN bucket</summary>
+    <p>You can use any existing R2 bucket through <strong>Activate Buckets</strong>. Or use this optional setup to create or reuse a separate private bucket named <strong>redown</strong>.</p>
     <div class="quick-links-grid">
       <label>Cloudflare account<select id="quick-setup-account" aria-label="Account for REDOWN bucket"><option value="">Discovering accounts…</option></select></label>
       <label>Menu label<input id="quick-menu-label" type="text" maxlength="60" value="Cloudflare" autocomplete="off" aria-label="Right-click menu label"></label>
     </div>
-    <div class="quick-links-action"><span><strong>Destination / REDOWN</strong><small>One simple right-click menu, saving to the bucket root</small></span><button id="quick-create" class="primary" type="button" disabled>Set up right-click save</button></div>
-    <p id="quick-setup-feedback" class="quick-links-feedback" role="status" aria-live="polite">Cloudflare permission and Worker setup are required; nothing is created until you choose Set up.</p>
+    <div class="quick-links-action"><span><strong>Dedicated redown bucket</strong><small>Optional private storage for a simple right-click destination</small></span><button id="quick-create" class="primary" type="button" disabled>Create or use dedicated bucket</button></div>
+    <p id="quick-setup-feedback" class="quick-links-feedback" role="status" aria-live="polite">Nothing is created until you choose the button and confirm. Existing R2 buckets remain untouched.</p>
     </details>
     <a id="destination-legacy-fallback" href="../options.html" hidden>Manage experimental GitHub destinations</a>
   </section>
@@ -193,7 +193,7 @@
 </section>
 <footer>
 <span id="selection">0 items</span>
-<span>Drop files here to upload · F2 rename · Ctrl+C / X / V</span>
+<span class="explorer-shortcuts">Drop files here to upload <span aria-hidden="true">·</span> F2 Rename <span aria-hidden="true">·</span> Ctrl+C / X / V</span>
 </footer>
 <section class="activity" aria-label="Operation progress">
 <div>
@@ -204,7 +204,7 @@
 </div>
 <progress id="progress" hidden>
 </progress>
-<small id="limitation">Folder downloads and durable transfer recovery are not available yet.</small>
+<!-- Feature-specific limitations are reported by the action that needs them, not as permanent warnings. -->
 </section>
 <div class="test-it-tools-wrap" hidden>
 <button id="test-it-tools-button" aria-expanded="false" aria-controls="test-it-tools-menu" aria-haspopup="menu">Test It Tools ▲</button>
