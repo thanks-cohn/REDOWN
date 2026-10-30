@@ -8,7 +8,7 @@
   if(!account||!bucket||!globalThis.RedownPublicAddresses)return;
   const setupStatus=$('quick-setup-feedback'),urlStatus=$('quick-url-feedback');
   let accounts=[],buckets=[],accountVersion=0,bucketVersion=0,urlVersion=0,working=false;
-  let selectedObject=null,lastAddressSnapshot=null,lastAddressIdentity="";
+  let selectedObject=null,lastAddressSnapshot=null,lastAddressIdentity="",dismissedPublicConsent="";
 
   async function request(type,fields={}){
     const result=await chrome.runtime.sendMessage({type,...fields});
@@ -20,6 +20,8 @@
   function buttons(){
     $('quick-create').disabled=working||!account.value;
     $('quick-url-add').disabled=working||!account.value||!bucket.value;
+    $('quick-url-yes').disabled=working;
+    $('quick-url-no').disabled=working;
     account.disabled=working||!accounts.length;
     bucket.disabled=working||!buckets.length;
   }
@@ -98,6 +100,10 @@
     const entries=globalThis.RedownPublicAddresses.addresses(snapshot,source,exact?key:undefined);
     const unique=[...new Map(entries.map(entry=>[entry.url,entry])).values()];
     const active=unique.filter(entry=>entry.state==='configured');
+    const identity=JSON.stringify([source.accountId,source.bucketName]);
+    const showConsent=!active.length&&snapshot.managedPublicAccess==='disabled'&&
+      !(snapshot.errors||[]).length&&dismissedPublicConsent!==identity;
+    $('quick-url-consent').hidden=!showConsent;
     $('quick-url-count').textContent=String(active.length);
     if(!active.length){container.append(empty());return;}
     for(const entry of active){
@@ -125,6 +131,7 @@
     const version=++urlVersion,accountId=account.value,bucketName=bucket.value;
     const source={accountId,bucketName};
     $('quick-url-count').textContent='0';
+    $('quick-url-consent').hidden=true;
     if(!accountId||!bucketName){$('quick-urls-list').replaceChildren(empty());return;}
     report(urlStatus,'Checking configured Cloudflare URLs…');
     try{
@@ -141,8 +148,35 @@
       report(urlStatus,'Could not verify URL configuration: '+error.message);
     }
   }
-  account.onchange=()=>{selectedObject=null;void loadBuckets();};
-  bucket.onchange=()=>{selectedObject=null;lastAddressSnapshot=null;lastAddressIdentity='';buttons();void loadUrls();};
+  account.onchange=()=>{selectedObject=null;dismissedPublicConsent='';void loadBuckets();};
+  bucket.onchange=()=>{selectedObject=null;lastAddressSnapshot=null;lastAddressIdentity='';dismissedPublicConsent='';buttons();void loadUrls();};
+  $('quick-url-no').onclick=()=>{
+    dismissedPublicConsent=JSON.stringify([account.value,bucket.value]);
+    $('quick-url-consent').hidden=true;
+    report(urlStatus,'This bucket remains private. No public URL was enabled.');
+  };
+  $('quick-url-yes').onclick=async()=>{
+    if(working||!account.value||!bucket.value)return;
+    const source={accountId:account.value,bucketName:bucket.value};
+    const identity=JSON.stringify([source.accountId,source.bucketName]);
+    if(lastAddressIdentity!==identity||lastAddressSnapshot?.managedPublicAccess!=='disabled'||(lastAddressSnapshot?.errors||[]).length){
+      report(urlStatus,'Bucket public-access status changed or could not be verified. Reload the bucket URL panel before proceeding.');return;
+    }
+    working=true;buttons();report(urlStatus,'Enabling and verifying Cloudflare r2.dev access for '+source.bucketName+'…');
+    try{
+      const result=await chrome.runtime.sendMessage({type:'cfEnablePublicAccess',...source,confirmed:true});
+      if(!result?.ok)throw Error(result?.error||'Cloudflare could not confirm public access. Recheck before retrying.');
+      dismissedPublicConsent=identity;
+      lastAddressSnapshot=null;lastAddressIdentity='';
+      await loadUrls();
+      report(urlStatus,'Cloudflare verified the public bucket setting. Test an individual file URL before sharing it.');
+    }catch(error){
+      report(urlStatus,'Public access not confirmed: '+error.message+' Check Cloudflare before retrying.');
+      // The write may have succeeded: do not offer an immediate replay.
+      dismissedPublicConsent=identity;
+      $('quick-url-consent').hidden=true;
+    }finally{working=false;buttons();}
+  };
   // File selection and right-click Get URL now share the exact R2 key.
   // Reuse the last read-only Cloudflare snapshot rather than hitting the API
   // on each selection or scrolling interaction.
