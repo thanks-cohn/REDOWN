@@ -1,0 +1,28 @@
+✔ V3 domain projects parent-first exact IDs and resolves branch Send here only (4.209916ms)
+✔ V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect (1.267621ms)
+✔ V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8 (1.024422ms)
+✔ actual background switch/save/register/resolve persists independent engines across restart (13.409438ms)
+✔ actual background stale and unauthorized commits reject; concurrent saves serialize (2.108401ms)
+✔ actual Chrome create/remove failures distinguish saved settings from registration (4.903888ms)
+✔ tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data (237.874892ms)
+✔ contextual addition auto persists, search finds destination and registration retry uses acknowledged revision (65.633442ms)
+✔ actual click listener waits for V3 read-back before recording completion and never falls back (2.755537ms)
+✔ active HTML/CSS/JS and packaging contain no retired setup mounts/imports/hooks (7.020383ms)
+✔ Legacy pre-v1 tree remains executable without restoring its setup or mutating profiles (2.217725ms)
+✔ actual V3 ingest preserves the existing transport and URL contract with an exact non-provisioning target (2.506006ms)
+✔ package closure includes V3, Legacy and Settings and excludes all retired setup code (192.069741ms)
+✔ setup snapshot is sender-gated and exposes no credential or legacy menu state (3.083755ms)
+✔ storage preferences retain every literal DOM dependency after old setup removal (167.531102ms)
+✔ real shared tabs, engine events and reload can only return to the single V3 setup (63.612614ms)
+✔ Settings applies only the engine message and preserves restart-visible registration failure (17.996696ms)
+✔ rapid edits serialize snapshots and advance only acknowledged revisions (29.007133ms)
+✔ stale revision never automatically retries or drops retained edit (33.781725ms)
+✔ tree Home End arrows and selection use roving focus independently of inclusion (39.548853ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1436.198659

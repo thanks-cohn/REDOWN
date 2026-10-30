@@ -1,71 +1,65 @@
-/* Single V3 setup mount. View state is private; all writes go through background. */
+/* V3 tree editor. Canonical configuration and all writes remain background-owned. */
 (() => {
-  'use strict';
-  const host=document.getElementById('v3-setup');if(!host)return;
-  const $=id=>host.querySelector('#v3-'+id);
-  let config,profiles=[],engine='legacy',busy=false,dirty=false,epoch=0,undo=null;
-  const request=async(type,fields={})=>{let timer;try{const r=await Promise.race([chrome.runtime.sendMessage({type,...fields}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Outcome unknown: request timed out. Reload and inspect saved settings before retrying.')),120000);})]);if(!r?.ok)throw Error(r?.error||'Request not confirmed. Reload before retrying.');return r;}finally{clearTimeout(timer);}};
-  const status=text=>{$('status').textContent=text;};
-  const node=(tag,text)=>{const el=document.createElement(tag);if(text!==undefined)el.textContent=text;return el;};
-  function button(text,action,label=text){const el=node('button',text);el.type='button';el.setAttribute('aria-label',label);el.onclick=action;return el;}
-  function note(){ $('engine').textContent=engine==='legacy'?'Legacy Right-click is active. V3 edits are saved separately and do not control Chrome until you select New Right-click in Settings.':'New Right-click (V3) controls Chrome. Save to apply destination edits.'; }
-  function changed(){dirty=true;status('Unsaved V3 changes.');}
-  function lock(value){busy=value;for(const el of host.querySelectorAll('button,input,select'))el.disabled=value;}
-  function draw(){
-    note();const outline=$('outline');outline.replaceChildren();
-    const query=$('search').value.toLowerCase(),visible=new Set();
-    for(const d of config.destinations){if((d.label+' '+d.prefix+' '+d.bucketName+' '+d.accountId).toLowerCase().includes(query)){let p=d;while(p&&!visible.has(p.id)){visible.add(p.id);p=config.destinations.find(x=>x.id===p.parentId);}}}
-    function rows(parentId,container,identity=null){
-      for(const d of config.destinations.filter(d=>d.parentId===parentId&&visible.has(d.id)&&(!identity||(d.accountId===identity.accountId&&d.bucketName===identity.bucket)))){
-        const branch=node('details');branch.open=true;branch.className='v3-branch';
-        const summary=node('summary',d.label+' · /'+d.prefix);branch.append(summary);
-        const row=node('div');row.className='v3-row';
-        const included=node('input');included.type='checkbox';included.checked=d.enabled;included.setAttribute('aria-label','Include '+d.label);included.onchange=()=>{d.enabled=included.checked;changed();};
-        const label=node('input');label.value=d.label;label.maxLength=60;label.setAttribute('aria-label','Menu label for '+d.id);label.oninput=()=>{d.label=label.value;summary.textContent=d.label+' · /'+d.prefix;changed();};
-        const path=node('code','/'+d.prefix);
-        const child=button('Add child',()=>{ $('profile').value=d.profileId;$('parent').value=d.id;$('prefix').value=d.prefix?d.prefix+'/':'';$('prefix').focus(); });
-        const up=button('↑',()=>move(d,-1),'Move '+d.label+' up'),down=button('↓',()=>move(d,1),'Move '+d.label+' down');
-        const del=button('Delete',()=>{undo=structuredClone(config);config=RedownRightClickV3.remove(config,d.id);changed();draw();$('undo').focus();},'Delete '+d.label+' and its menu descendants');del.className='v3-delete';
-        row.append(included,label,path,child,up,down,del);branch.append(row);rows(d.id,branch);container.append(branch);
-      }
-    }
-    for(const accountId of new Set(config.destinations.map(d=>d.accountId))){
-      const account=node('section');account.className='v3-account';
-      account.append(node('h3',profiles.find(p=>p.accountId===accountId)?.accountName||accountId));
-      for(const bucket of new Set(config.destinations.filter(d=>d.accountId===accountId).map(d=>d.bucketName))){
-        const group=node('section');group.className='v3-bucket';group.append(node('h4',bucket));
-        rows(null,group,{accountId,bucket});
-        if(group.children.length>1)account.append(group);
-      }
-      if(account.children.length>1)outline.append(account);
-    }
-    if(!outline.children.length)outline.append(node('p',config.destinations.length?'No matching destinations.':'Add a prepared bucket and folder below. Activate Buckets in Explorer first if none are available.'));
-    const parent=$('parent'),previous=parent.value;parent.replaceChildren(new Option('Top level',''));
-    for(const d of config.destinations)parent.append(new Option(d.label+' · '+d.bucketName+' /'+d.prefix,d.id));parent.value=previous;
-    $('undo').hidden=!undo;
-  }
-  function move(d,step){const siblings=config.destinations.filter(x=>x.parentId===d.parentId&&x.profileId===d.profileId),other=siblings[siblings.indexOf(d)+step];if(!other)return;const a=config.destinations.indexOf(d),b=config.destinations.indexOf(other);[config.destinations[a],config.destinations[b]]=[config.destinations[b],config.destinations[a]];changed();draw();}
-  async function load(){const version=++epoch;lock(true);try{const r=await request('rightClickV3Snapshot');if(version!==epoch)return;config=r.config;profiles=r.profiles;engine=r.engine;dirty=false;undo=null;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));draw();status('Loaded saved V3 destinations.');}catch(e){status(e.message);}finally{if(version===epoch)lock(false);}}
-  $('search').oninput=()=>{if(config)draw();};
-  $('reload').onclick=()=>{if(!dirty||confirm('Discard unsaved V3 changes?'))void load();};
-  $('undo').onclick=()=>{if(undo){config=undo;undo=null;changed();draw();}};
-  $('add').onsubmit=e=>{e.preventDefault();if(busy||!config)return;try{
-    const p=profiles.find(p=>p.id===$('profile').value);if(!p)throw Error('Activate a bucket in Explorer first.');
-    const next=structuredClone(config);next.destinations.push({id:crypto.randomUUID(),profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,parentId:$('parent').value||null,prefix:$('prefix').value,label:$('label').value,enabled:true});
-    // Validate identity with private readiness placeholders, never persisted credentials.
-    RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));
-    config=next;changed();draw();$('label').value='';
-  }catch(error){status(error.message);}};
-  $('save').onclick=async()=>{if(busy||!config)return;lock(true);try{const r=await request('saveRightClickV3',{expected:config.revision,destinations:config.destinations});config.revision=r.revision;engine=r.engine;dirty=false;note();status(r.menuUpdated?(engine==='v3'?'Saved. Chrome acknowledged V3 menu registration.':'Saved V3 configuration. Legacy still controls Chrome.'):r.error);}catch(e){status(e.message);}finally{lock(false);}};
-  $('browse').onclick=async()=>{if(busy)return;const p=profiles.find(p=>p.id===$('profile').value);if(!p)return status('Activate a bucket first.');lock(true);const version=epoch;try{
-    const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix:$('prefix').value,cursor:$('folders').dataset.cursor||undefined});
-    if(version!==epoch)return;
-    const list=$('folders');if(!list.dataset.cursor)list.replaceChildren();
-    for(const folder of r.folders||[]){const prefix=typeof folder==='string'?folder:folder.prefix; if(typeof prefix!=='string')continue;list.append(button(prefix,()=>{$('prefix').value=prefix.replace(/\/$/,'');list.replaceChildren();list.dataset.cursor='';}));}
-    list.dataset.cursor=r.cursor||'';status(r.cursor?'More folders available. Browse again to load the next page.':'Folders loaded. Selecting a folder does not create or publish it.');
-  }catch(e){status(e.message);}finally{lock(false);}};
-  for(const id of ['profile','prefix'])$(id).addEventListener('change',()=>{$('folders').replaceChildren();$('folders').dataset.cursor='';});
-  chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickEngine){engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!busy)status('V3 configuration changed in another window. Reload before saving.');if(changes.profiles)status('Storage profiles changed. Reload V3 Setup to refresh prepared buckets.');});
-  window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
-  void load();
+'use strict';
+const host=document.getElementById('v3-setup');if(!host)return;
+const $=id=>host.querySelector('#v3-'+id),el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
+let config,profiles=[],engine='legacy',selected='',undo=null,pending=false,saving=false,blocked=false,editing=null;
+const expanded=new Set(),folders=new Map();
+const status=t=>{$('status').textContent=t;};
+const request=async(type,fields={})=>{let timer;try{const r=await Promise.race([chrome.runtime.sendMessage({type,...fields}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Outcome unknown: request timed out.')),30000);})]);if(!r?.ok)throw Error(r?.error||'Request not acknowledged.');return r;}finally{clearTimeout(timer);}};
+function button(text,label,fn){const b=el('button',text);b.type='button';b.setAttribute('aria-label',label);b.onclick=e=>{e.stopPropagation();fn();};return b;}
+function note(){$('engine').textContent=engine==='v3'?'New Right-click (V3) controls Chrome.':'Legacy Right-click is active. V3 edits do not control Chrome until selected in Settings.';}
+function validate(next){RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));}
+function change(fn){try{const next=structuredClone(config);fn(next);validate(next);undo=structuredClone(config.destinations);config=next;pending=true;sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));draw();void flush();}catch(e){status(e.message);}}
+async function flush(){if(saving||blocked||!pending)return;saving=true;pending=false;const snapshot=structuredClone(config.destinations);status('Saving… Updating Chrome…');try{
+ const r=await request('saveRightClickV3',{expected:config.revision,destinations:snapshot});config.revision=r.revision;if(!pending)sessionStorage.removeItem('redown-v3-recovery');else sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));engine=r.engine;note();
+ status(r.menuUpdated?(engine==='v3'?'Saved and ready':'Saved. Legacy controls Chrome.'):'Configuration saved. Unable to update Chrome. Retry.');$('retry').hidden=r.menuUpdated;
+}catch(e){pending=true;blocked=true;status(e.message+' Changes retained in this window. Reload to reconcile before retrying.');}finally{saving=false;if(pending&&!blocked)void flush();}}
+function focusSelected(){const row=[...$('outline').querySelectorAll('[role=treeitem]')].find(n=>n.dataset.key===selected);row?.focus();}
+function select(key){selected=key;for(const row of $('outline').querySelectorAll('[role=treeitem]')){row.tabIndex=row.dataset.key===key?0:-1;row.setAttribute('aria-selected',String(row.dataset.key===key));}}
+function rename(d){editing=d.id;draw();const input=$('outline').querySelector('input[data-edit]');input?.focus();input?.select();}
+function remove(d){const count=config.destinations.length-RedownRightClickV3.remove(config,d.id).destinations.length;if(count>1&&!confirm('Remove '+d.label+' and '+(count-1)+' child destinations from the menu? Cloud folders are kept.'))return;change(next=>{next.destinations=RedownRightClickV3.remove(next,d.id).destinations;});$('undo').focus();}
+function move(d,step){const siblings=config.destinations.filter(x=>x.parentId===d.parentId&&x.profileId===d.profileId),other=siblings[siblings.indexOf(d)+step];if(!other)return;change(next=>{const a=next.destinations.findIndex(x=>x.id===d.id),b=next.destinations.findIndex(x=>x.id===other.id);[next.destinations[a],next.destinations[b]]=[next.destinations[b],next.destinations[a]];});focusSelected();}
+function add(p,d=null,path=''){editing=null;$('add').hidden=false;$('profile').value=p.id;$('parent').value=d?.id||'';$('prefix').value=path|| (d?.prefix?d.prefix+'/':'');$('label').value='';$('folders').replaceChildren();const anchor=[...$('outline').querySelectorAll('[role=treeitem]')].find(n=>n.dataset.key===(d?.id||'bucket:'+p.id));anchor?.append($('add'));$('prefix').focus();}
+async function browse(p,prefix='',cursor){const key=p.id+':'+prefix;try{status('Loading folders…');const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix,cursor});const values=(r.folders||[]).map(f=>(typeof f==='string'?f:f.prefix)?.replace(/\/$/, '')).filter(Boolean);folders.set(key,{values:cursor?[...(folders.get(key)?.values||[]),...values]:values,cursor:r.cursor});draw();status('Folders loaded.');}catch(e){status(e.message);}}
+function draw(){
+ note();if($('add'))host.append($('add'));const outline=$('outline');outline.replaceChildren();outline.setAttribute('role','tree');const query=$('search').value.trim().toLowerCase();
+ const parent=$('parent'),oldParent=parent.value;parent.replaceChildren(new Option('Bucket root',''));for(const d of config.destinations)parent.append(new Option(d.label+' /'+d.prefix,d.id));parent.value=oldParent;
+ const matches=d=>(d.label+' '+d.prefix+' '+d.bucketName+' '+d.accountId).toLowerCase().includes(query);
+ function row(key,label,path,container,children,actions,d=null){
+ const item=el('div');item.setAttribute('role','treeitem');item.dataset.key=key;item.tabIndex=-1;item.setAttribute('aria-label',label+(path?' · '+path:''));item.setAttribute('aria-selected',String(selected===key));
+ if(children)item.setAttribute('aria-expanded',String(expanded.has(key)||!!query));
+ const line=el('div');line.className='v3-row';const toggle=button(children?(expanded.has(key)||query?'⌄':'›'):'·','Expand or collapse '+label,()=>{expanded.has(key)?expanded.delete(key):expanded.add(key);draw();focusSelected();if(expanded.has(key)&&key.startsWith('folder:')){const profile=profiles.find(p=>key.startsWith('folder:'+p.id+':'));const prefix=key.slice(('folder:'+profile.id+':').length);if(!folders.has(profile.id+':'+prefix))void browse(profile,prefix);}});toggle.tabIndex=-1;line.append(toggle,el('span','📁'));
+ if(d){const check=el('input');check.type='checkbox';check.checked=d.enabled;check.setAttribute('aria-label','Include '+label+' in Chrome');check.onchange=()=>change(next=>{next.destinations.find(x=>x.id===d.id).enabled=check.checked;});check.onclick=e=>e.stopPropagation();line.append(check);}
+ if(d&&editing===d.id){const input=el('input');input.dataset.edit='';input.value=d.label;input.maxLength=60;input.setAttribute('aria-label','Rename '+label);input.onclick=e=>e.stopPropagation();const confirm=()=>{const value=input.value;try{const next=structuredClone(config);next.destinations.find(x=>x.id===d.id).label=value;validate(next);}catch(e){status(e.message);input.focus();return;}editing=null;change(next=>{next.destinations.find(x=>x.id===d.id).label=value;});focusSelected();};input.onkeydown=e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();confirm();}if(e.key==='Escape'){editing=null;draw();focusSelected();}};line.append(input,button('✓','Confirm rename',confirm),button('×','Cancel rename',()=>{editing=null;draw();focusSelected();}));}
+ else {const title=el('span',label);title.className='v3-name';title.title=path||label;line.append(title);}
+ const ops=el('span');ops.className='v3-actions';const primary=actions.filter((a,i)=>i===0||a.className==='v3-delete'||a.textContent==='Browse folders');const secondary=actions.filter(a=>!primary.includes(a));for(const action of primary)ops.append(action);if(secondary.length){const more=el('details'),summary=el('summary','More');summary.setAttribute('aria-label','More actions for '+label);more.append(summary,...secondary);more.onclick=e=>e.stopPropagation();ops.append(more);}line.append(ops);item.append(line);if(path){const full=el('small',path);full.className='v3-path';full.title=path;item.append(full);}
+ item.onclick=e=>{e.stopPropagation();select(key);item.focus();};item.onkeydown=e=>{
+ if(e.target!==item)return;const rows=[...outline.querySelectorAll('[role=treeitem]')],i=rows.indexOf(item);let target;
+ if(e.key==='ArrowDown')target=rows[i+1];if(e.key==='ArrowUp')target=rows[i-1];if(e.key==='Home')target=rows[0];if(e.key==='End')target=rows.at(-1);
+ if(e.key==='ArrowRight'&&children){if(!expanded.has(key)){expanded.add(key);draw();focusSelected();}else target=rows[i+1];}
+ if(e.key==='ArrowLeft'){if(expanded.has(key)){expanded.delete(key);draw();focusSelected();}else target=item.parentElement.closest('[role=treeitem]');}
+ if(d&&e.key==='F2'){rename(d);}if(d&&e.key==='Delete')remove(d);if(d&&e.key===' '){change(next=>{const n=next.destinations.find(x=>x.id===d.id);n.enabled=!n.enabled;});focusSelected();}
+ if(e.key.length===1&&e.key!==' '){target=rows.slice(i+1).concat(rows.slice(0,i)).find(n=>n.getAttribute('aria-label').toLowerCase().startsWith(e.key.toLowerCase()));}
+ if(target){select(target.dataset.key);target.focus();}if(target||['ArrowRight','ArrowLeft','F2','Delete',' '].includes(e.key))e.preventDefault();};
+ container.append(item);const group=el('div');group.setAttribute('role','group');if(children&&(expanded.has(key)||query)){item.append(group);return group;}return null;
+ }
+ for(const accountId of new Set(profiles.map(p=>p.accountId))){const accountProfiles=profiles.filter(p=>p.accountId===accountId);const ak='account:'+accountId;const ag=row(ak,accountProfiles[0].accountName||accountId,'',outline,true,[]);if(!ag)continue;
+ for(const p of accountProfiles){const bk='bucket:'+p.id;const bg=row(bk,p.bucketName,'',ag,true,[button('+','Add destination in '+p.bucketName,()=>add(p)),button('Browse folders','Load folders in '+p.bucketName,()=>browse(p))]);if(!bg)continue;
+ function destinations(parentId,container){for(const d of config.destinations.filter(x=>x.profileId===p.id&&x.parentId===parentId)){if(query&&!matches(d)&&!config.destinations.some(x=>x.prefix.startsWith(d.prefix+'/')&&matches(x)))continue;const del=button('Delete','Delete '+d.label+' and its menu descendants',()=>remove(d));del.className='v3-delete';const group=row(d.id,d.label,p.bucketName+'/'+d.prefix,container,config.destinations.some(x=>x.parentId===d.id),[button('+','Add child destination to '+d.label,()=>add(p,d)),button('Rename','Rename '+d.label,()=>rename(d)),button('↑','Move '+d.label+' up',()=>move(d,-1)),button('↓','Move '+d.label+' down',()=>move(d,1)),del],d);if(group)destinations(d.id,group);}}
+ destinations(null,bg);
+ function cloud(prefix,container){const data=folders.get(p.id+':'+prefix);if(!data)return;for(const path of data.values){if(path===prefix)continue;if(query&&!path.toLowerCase().includes(query))continue;const key='folder:'+p.id+':'+path;const cg=row(key,path.split('/').at(-1),p.bucketName+'/'+path,container,true,[button('+','Use '+path+' as destination',()=>add(p,null,path)),button('↻','Load subfolders of '+path,()=>browse(p,path))]);if(cg)cloud(path,cg);}if(data.cursor)container.append(button('Load more','Load more folders',()=>browse(p,prefix,data.cursor)));}cloud('',bg);
+ }}
+ if(!profiles.length)outline.append(el('p','Activate a bucket in Explorer to add destinations.'));
+ const rows=[...outline.querySelectorAll('[role=treeitem]')];if(!rows.some(n=>n.dataset.key===selected))selected=rows[0]?.dataset.key||'';select(selected);$('undo').hidden=!undo;
+}
+async function load(){if(saving)return;try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;engine=r.engine;pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'Saved configuration loaded. Chrome readiness has not been checked.');}catch(e){status(e.message);}}
+$('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load();}};
+$('undo').onclick=()=>{if(!undo)return;const previous=undo;undo=null;change(next=>{next.destinations=previous;});};
+$('retry').onclick=()=>{if(blocked)return status('Reload to reconcile retained changes first.');pending=true;void flush();};
+$('cancel').onclick=()=>{$('add').hidden=true;focusSelected();};$('add').onkeydown=e=>{if(e.key==='Escape'){$('add').hidden=true;focusSelected();}};
+$('add').onsubmit=e=>{e.preventDefault();const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;const before=config;change(next=>{next.destinations.push({id:crypto.randomUUID(),profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,parentId:$('parent').value||null,prefix:$('prefix').value.replace(/\/$/,''),label:$('label').value,enabled:true});});if(config!==before){$('add').hidden=true;focusSelected();}};
+$('browse').onclick=async()=>{const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;try{const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix:$('prefix').value});$('folders').replaceChildren();const filter=el('input');filter.type='search';filter.placeholder='Filter folders…';filter.setAttribute('aria-label','Filter existing folders');filter.oninput=()=>{for(const choice of $('folders').querySelectorAll('button'))choice.hidden=!choice.textContent.toLowerCase().includes(filter.value.toLowerCase());};$('folders').append(filter);for(const f of r.folders||[]){const path=(typeof f==='string'?f:f.prefix).replace(/\/$/,'');$('folders').append(button(path,'Choose '+path,()=>{$('prefix').value=path;$('label').value||=path.split('/').at(-1)||p.bucketName;}));}status(r.cursor?'More folders exist. Enter a narrower path to browse.':'Folders loaded.');}catch(e){status(e.message);}};
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickEngine){engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
+window.addEventListener('beforeunload',e=>{if(pending||saving){e.preventDefault();e.returnValue='';}});void load();
 })();

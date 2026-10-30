@@ -49,14 +49,26 @@ async function view(engine='legacy'){
  let current=store();w.chrome={runtime:{sendMessage:async m=>{calls.push(structuredClone(m));if(m.type==='rightClickV3Snapshot')return {ok:true,engine,config:structuredClone(current),profiles:[profile]};if(m.type==='saveRightClickV3'){current={...current,revision:current.revision+1,destinations:m.destinations};return {ok:true,revision:current.revision,engine,menuUpdated:false,error:'Saved; registration failed.'};}if(m.type==='cfDestinationFolders')return {ok:true,folders:[{prefix:'one/two/'}],cursor:''};throw Error(m.type);}},storage:{onChanged:{addListener:f=>listeners.push(f)}}};
  w.eval(domain);w.eval(ui);await settle();return {dom,w,calls,listeners,$:id=>w.document.getElementById('v3-'+id)};
 }
-test('new UI mounts one fresh outline in both engines; deleting ancestor has undo and zero provider writes',async()=>{
- for(const engine of ['legacy','v3']){const h=await view(engine);assert.equal(h.w.document.querySelectorAll('#v3-setup').length,1);assert.equal(h.$('outline').querySelectorAll('.v3-branch').length,3);assert.match(h.$('engine').textContent,engine==='legacy'?/do not control Chrome/:/controls Chrome/);h.$('outline').querySelector('[aria-label="Delete child and its menu descendants"]').click();assert.equal(h.$('outline').querySelectorAll('.v3-branch').length,1);h.$('undo').click();assert.equal(h.$('outline').querySelectorAll('.v3-branch').length,3);assert.deepEqual(h.calls.map(c=>c.type),['rightClickV3Snapshot']);h.dom.window.close();}
+test('tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data',async()=>{
+ const h=await view('v3');
+ const expand=id=>h.$('outline').querySelector('[data-key="'+id+'"] button').click();
+ expand('root');expand('child');
+ assert.equal(h.$('outline').querySelectorAll('[role=treeitem]').length,5);
+ const row=h.$('outline').querySelector('[data-key=child]');row.click();row.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'F2',bubbles:true}));
+ let edit=h.$('outline').querySelector('[data-edit]');edit.value='Cancelled';edit.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+ assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').length,0);
+ h.$('outline').querySelector('[aria-label="Delete child and its menu descendants"]').click();await settle();
+ assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').at(-1).destinations.length,1);
+ h.$('undo').click();await settle();assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').at(-1).destinations.length,3);
+ assert.ok(h.calls.every(c=>['rightClickV3Snapshot','saveRightClickV3'].includes(c.type)));h.dom.window.close();
 });
-test('new UI add, search, exact folder discovery and failed-registration receipt retain revision',async()=>{
- const h=await view('v3');h.$('label').value='Another';h.$('prefix').value='more';h.$('add').dispatchEvent(new h.w.Event('submit',{cancelable:true}));assert.equal(h.$('outline').querySelectorAll('.v3-branch').length,4);
- h.$('search').value='Another';h.$('search').dispatchEvent(new h.w.Event('input'));assert.equal(h.$('outline').querySelectorAll('.v3-branch').length,1);
- h.$('save').click();await settle();assert.match(h.$('status').textContent,/registration failed/);h.$('save').click();await settle();assert.deepEqual(h.calls.filter(c=>c.type==='saveRightClickV3').map(c=>c.expected),[0,1]);
- h.$('prefix').value='';h.$('browse').click();await settle();h.$('folders').querySelector('button').click();assert.equal(h.$('prefix').value,'one/two');h.dom.window.close();
+test('contextual addition auto persists, search finds destination and registration retry uses acknowledged revision',async()=>{
+ const h=await view('v3');h.$('outline').querySelector('[aria-label="Add destination in bucket"]').click();
+ h.$('label').value='Another';h.$('prefix').value='more';h.$('add').dispatchEvent(new h.w.Event('submit',{cancelable:true}));await settle();
+ assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').at(-1).destinations.length,4);
+ h.$('search').value='Another';h.$('search').dispatchEvent(new h.w.Event('input'));assert.ok(h.$('outline').textContent.includes('Another'));
+ assert.match(h.$('status').textContent,/Unable to update Chrome/);h.$('retry').click();await settle();assert.deepEqual(h.calls.filter(c=>c.type==='saveRightClickV3').map(c=>c.expected),[0,1]);
+ h.$('browse').click();await settle();h.$('folders').querySelector('button').click();assert.equal(h.$('prefix').value,'one/two');h.dom.window.close();
 });
 test('actual click listener waits for V3 read-back before recording completion and never falls back',async()=>{
  const start=bg.indexOf('chrome.contextMenus.onClicked.addListener(async (info, tab) => {'),end=bg.indexOf('\nchrome.runtime.onMessage.addListener',start),source=bg.slice(start,end);
@@ -99,4 +111,19 @@ test('real shared tabs, engine events and reload can only return to the single V
 });
 test('Settings applies only the engine message and preserves restart-visible registration failure',async()=>{
  const dom=new JSDOM(await read('extension/shelf.html'),{runScripts:'outside-only'}),calls=[];dom.window.chrome={storage:{local:{get:async()=>({rightClickEngine:'v3',rightClickMenuStatus:{state:'failed',error:'Previous registration failed.'}})},onChanged:{addListener(){}}},runtime:{sendMessage:async m=>{calls.push(m);return {ok:true,engine:m.engine,menuUpdated:false,error:'Saved; registration failed.'};}}};dom.window.eval(await read('extension/right-click-engine-settings.js'));await settle();const d=dom.window.document;assert.equal(d.getElementById('right-click-engine').value,'v3');assert.match(d.getElementById('right-click-engine-status').textContent,/Previous registration failed/);d.getElementById('right-click-engine').value='legacy';d.getElementById('right-click-engine-apply').click();await settle();assert.equal(calls.length,1);assert.equal(calls[0].type,'setRightClickEngine');assert.equal(calls[0].engine,'legacy');assert.match(d.getElementById('right-click-engine-status').textContent,/registration failed/);assert.equal(d.querySelector('#v3-setup,#destination-simple'),null);dom.window.close();
+});
+test('rapid edits serialize snapshots and advance only acknowledged revisions',async()=>{
+ const h=await view('v3');let release;const send=h.w.chrome.runtime.sendMessage;let first=true;
+ h.w.chrome.runtime.sendMessage=async m=>{if(m.type==='saveRightClickV3'&&first){first=false;await new Promise(r=>release=r);}return send(m);};
+ const check=()=>h.$('outline').querySelector('[aria-label="Include root in Chrome"]');check().click();check().click();release();await settle();
+ const calls=h.calls.filter(c=>c.type==='saveRightClickV3');assert.deepEqual(calls.map(c=>c.expected),[0,1]);assert.equal(calls[0].destinations[0].enabled,false);assert.equal(calls[1].destinations[0].enabled,true);h.dom.window.close();
+});
+test('stale revision never automatically retries or drops retained edit',async()=>{
+ const h=await view('v3');h.w.chrome.runtime.sendMessage=async()=>{throw Error('V3 destinations changed. Reload before saving.');};
+ h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();await settle();
+ assert.match(h.$('status').textContent,/Changes retained/);assert.equal(JSON.parse(h.w.sessionStorage.getItem('redown-v3-recovery')).destinations[0].enabled,false);h.dom.window.close();
+});
+test('tree Home End arrows and selection use roving focus independently of inclusion',async()=>{
+ const h=await view('v3'),tree=h.$('outline'),first=tree.querySelector('[role=treeitem]');first.focus();first.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'End'}));
+ assert.equal(h.w.document.activeElement.dataset.key,'root');assert.equal(tree.querySelectorAll('[tabindex="0"]').length,1);assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').length,0);h.dom.window.close();
 });

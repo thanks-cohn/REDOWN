@@ -138,14 +138,14 @@
   </div>
   <section id="v3-setup" role="tabpanel" aria-labelledby="quick-tab-setup">
       <h3>Right-click Setup · V3</h3><p id="v3-engine" role="status"></p>
-      <div class="v3-toolbar"><input id="v3-search" type="search" aria-label="Search V3 destinations" placeholder="Find a destination…"><button id="v3-save" type="button">Save V3 menu</button><button id="v3-reload" type="button">Reload</button><button id="v3-undo" type="button" hidden>Undo deletion</button></div>
+      <div class="v3-toolbar"><input id="v3-search" type="search" aria-label="Search V3 destinations" placeholder="Find a folder or destination…"><button id="v3-retry" type="button" hidden>Retry</button><button id="v3-reload" type="button">Reload</button><button id="v3-undo" type="button" hidden>Undo deletion</button></div>
       <div id="v3-outline" aria-label="Account, bucket and folder outline"></div>
-      <form id="v3-add" aria-label="Add V3 destination">
+      <form id="v3-add" aria-label="Add V3 destination" hidden>
         <label>Activated account and bucket<select id="v3-profile" required></select></label>
         <label>Outline parent<select id="v3-parent"><option value="">Top level</option></select></label>
         <label>Menu label<input id="v3-label" maxlength="60" required autocomplete="off"></label>
         <label>Exact folder path (empty for bucket root)<input id="v3-prefix" autocomplete="off"></label>
-        <button id="v3-browse" type="button">Browse existing folders</button><button type="submit">Add destination</button>
+        <button id="v3-browse" type="button">Browse existing folders</button><button type="submit">✓ Confirm destination</button><button id="v3-cancel" type="button">× Cancel</button>
       </form><div id="v3-folders" aria-label="Existing folders"></div>
       <p id="v3-status" role="status" aria-live="polite">Loading V3 destinations…</p>
   </section>
