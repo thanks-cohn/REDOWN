@@ -155,6 +155,11 @@
     </div>
     <div class="quick-links-action"><span><strong>Make your files linkable</strong><small>Uses the same Cloudflare domain setup as the original Explorer</small></span><button id="quick-url-add" type="button" disabled>Add URL</button></div>
     <p id="quick-url-context" class="quick-url-context">These are bucket URL prefixes. Select a file in Explorer to see its exact, shareable object addresses.</p>
+    <section id="quick-url-consent" class="quick-url-consent" aria-label="Enable a bucket public URL" hidden>
+      <strong>Give Bucket Public URL?</strong>
+      <p>Yes enables a Cloudflare r2.dev URL for the <strong>entire selected bucket</strong>. Anyone with a file URL may access that file. No keeps your bucket private.</p>
+      <div class="quick-url-consent-actions"><button id="quick-url-yes" type="button">Yes, enable URL</button><button id="quick-url-no" type="button">No, keep private</button></div>
+    </section>
     <details id="quick-urls-section" class="quick-urls-section" open>
       <summary>URLs <span id="quick-url-count" aria-live="polite">0</span></summary>
       <div id="quick-urls-list" class="quick-urls-list"><div class="quick-urls-empty"><strong>Add Your First URL!</strong><p>Connect your domain once. REDOWN will show exact file links whenever you select an object.</p></div></div>
