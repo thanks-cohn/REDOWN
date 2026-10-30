@@ -182,6 +182,12 @@
     .downloads-head{padding:0 8px 8px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid #21172f}
     .history-row{padding:11px 8px;border-bottom:1px solid #21172f;transition:background .12s ease}
     .history-row:last-child{border-bottom:0}
+    .history-export-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding:16px 8px 8px}
+    .history-export-footer>div{flex:1;min-width:220px}
+    .history-export-footer strong{font-size:13px;color:var(--text)}
+    .history-export-footer p{font-size:11px;color:var(--muted);margin:4px 0;line-height:1.55;overflow-wrap:anywhere}
+    #export-history{flex-shrink:0}
+    #history-export-status{padding:0 8px 6px;overflow-wrap:anywhere}
     .history-row:hover{background:rgba(255,255,255,.018)}
     .download-date,.download-type{font-size:12px;color:#cfc6d9;white-space:nowrap}
     .download-location{min-width:0;color:#bca9d5;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
@@ -718,6 +724,11 @@
       <button id="refresh-history" class="ghost">Refresh</button>
     </div>
     <div id="history" class="card"></div>
+    <div class="history-export-footer">
+      <div><strong>Keep your History</strong><p>Saved locally beyond Chrome's regular cache and browsing history. For protection against an extension uninstall or profile loss, save this independent JSON backup. It may contain private URLs.</p></div>
+      <button id="export-history" class="ghost" type="button">Export History (JSON)</button>
+    </div>
+    <p id="history-export-status" class="meta" role="status" aria-live="polite"></p>
   </section>
 
 
@@ -767,6 +778,7 @@
 <script src="explorer-status.js"></script>
 <script src="explorer-diagnostics.js"></script>
 <script src="explorer-diagnostics-bridge.js"></script>
+<script src="history-export.js"></script>
 <script src="options.js"></script>
 <script src="toolbar-preferences.js"></script>
 <script src="explorer-diagnostics-ui.js"></script>
