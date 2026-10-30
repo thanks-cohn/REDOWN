@@ -665,6 +665,89 @@ async function showPreview(item,navigation={}){
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
+// A directory is a read-only preview collection. We never navigate the
+// Explorer path, create files, or download folder contents to preview them.
+async function openDirectoryReader(item,source){
+  const epochTicket=previewEpoch,abort=new AbortController();previewController=abort;
+  const a={kind:'folder',source:{...source,prefix:item.key},key:item.key,entries:[],index:0,ticket:0};
+  readerSession=a;
+  $('preview-content').textContent='Reading folder contents…';
+  $('preview-previous').disabled=true;$('preview-next').disabled=true;
+  try{
+    let cursor='',pages=0,truncated=false;const entries=[];
+    do {
+      const result=await request('list',{source:a.source,cursor},{signal:abort.signal});
+      if(epochTicket!==previewEpoch||abort.signal.aborted||readerSession!==a)return;
+      for(const entry of result.data.entries||[]){
+        if(!entry.folder&&previewType(entry.key))entries.push(entry);
+      }
+      const next=result.data.cursor||'';
+      pages++;
+      truncated=Boolean(next&&entries.length>=2000);
+      if(!next||next===cursor||truncated||pages>=30)break;
+      cursor=next;
+    }while(true);
+    if(epochTicket!==previewEpoch||abort.signal.aborted||readerSession!==a)return;
+    const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:'base'});
+    a.entries=entries.sort((x,y)=>collator.compare(x.displayName||x.key,y.displayName||y.key));
+    a.truncated=truncated||pages>=30;
+    if(!a.entries.length){
+      $('preview-content').textContent='No previewable files in this folder. Double-click the folder to open it.';
+      $('preview-info').textContent='Folder · No previewable files';
+      return;
+    }
+    await showDirectoryPage(a,0);
+  }catch(error){
+    if(epochTicket===previewEpoch&&!abort.signal.aborted&&readerSession===a){
+      $('preview-content').textContent=error.message||'Could not read folder contents.';
+      $('preview-content').append(button('Retry folder preview',()=>void openDirectoryReader(item,source)));
+    }
+  }
+}
+async function showDirectoryPage(a,index){
+  if(readerSession!==a||index<0||index>=a.entries.length)return;
+  previewController?.abort();
+  const abort=new AbortController();previewController=abort;
+  const ticket=++a.ticket,epochTicket=previewEpoch,item=a.entries[index];
+  a.index=index;
+  const active=()=>readerSession===a&&ticket===a.ticket&&epochTicket===previewEpoch&&!abort.signal.aborted;
+  const previousUrl=previewUrl;previewUrl='';
+  if(previousUrl)URL.revokeObjectURL(previousUrl);
+  stopPreviewMedia(true);
+  $('preview-previous').disabled=index===0;
+  $('preview-next').disabled=index===a.entries.length-1;
+  $('preview-info').textContent='File '+(index+1)+' of '+a.entries.length+' · '+(item.displayName||item.key)+(a.truncated?' · More files may be available':'');
+  $('preview-content').textContent='Loading file preview…';
+  const fail=message=>{
+    if(!active())return;
+    $('preview-content').textContent=message;
+    $('preview-content').append(button('Retry preview',()=>void showDirectoryPage(a,index)));
+  };
+  let ownedUrl='';
+  try{
+    const result=await request('preview',{source:a.source,entry:item},{signal:abort.signal});
+    if(!active())return;
+    ownedUrl=result.data.url;
+    const type=result.data.type||previewType(item.key)||'';
+    let node;
+    if(type.startsWith('image/')){node=document.createElement('img');node.alt=item.displayName||item.key;node.src=ownedUrl;}
+    else if(type.startsWith('video/')||type.startsWith('audio/')){
+      node=document.createElement(type.startsWith('video/')?'video':'audio');
+      node.controls=true;node.preload='metadata';node.src=ownedUrl;
+    }else if(type.startsWith('text/')){
+      node=document.createElement('pre');
+      node.textContent=(await (await fetch(ownedUrl,{signal:abort.signal})).text()).slice(0,1048576);
+    }else{
+      node=document.createElement('iframe');node.title=item.displayName||item.key;
+      node.referrerPolicy='no-referrer';node.src=ownedUrl;
+    }
+    if(!active())return;
+    if(node.tagName!=='PRE')node.addEventListener('error',()=>fail('This file could not be displayed. Continue to another item or retry.'),{once:true});
+    previewUrl=ownedUrl;ownedUrl='';
+    $('preview-content').replaceChildren(node);lightboxControl();
+  }catch(error){if(active())fail(error.message||'Could not preview this folder entry.');}
+  finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(active())previewController=null;}
+}
 async function openArchiveReader(item,source){
   const ticket=previewEpoch,abort=new AbortController();previewController=abort;
   const a={kind:'archive',source,key:item.key,entries:[],index:0,ticket:0};readerSession=a;
