@@ -25,6 +25,7 @@ test('setup attention and success are separate from a configured but unverified 
  assert.equal(activationAppearance(all,profiles).pending,2);
  const saved=all.map(x=>({...x}));
  assert.equal(activationAppearance(all,saved).state,'configured');
+ assert.equal(activationAppearance(all,[...saved.map(p=>({...p,ownerBucketName:p.bucketName,bucketName:'preferred-destination'}))]).state,'configured','worker-owning bucket remains configured even if a profile defaults elsewhere');
  const verified=new Map(all.map(x=>[bucketIdentity(x),'ready']));
  assert.equal(activationAppearance(all,saved,verified).state,'ready');
  verified.set(bucketIdentity(all[1]),'failed');
