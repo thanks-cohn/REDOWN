@@ -3,7 +3,7 @@
   'use strict';
   const $=id=>document.getElementById(id),C=RedownDestinationConfig,M=RedownNestedLocations;
   if(!$('destination-mode'))return;
-  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,firstSetupDisclosureInitialized=false,activatingLocation=false;
+  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,activatingLocation=false;
   const bucketCache=new Map();let unassigned=[];
   const status=text=>{$('destination-status').textContent=text;renderPreview();};
   function renderPreview(){
@@ -22,7 +22,7 @@
   const request=async(type,fields={})=>{const r=await chrome.runtime.sendMessage({type,...fields});if(!r?.ok)throw Error(r?.error||'Request failed. Retry.');return r;};
   const usable=()=>profiles.filter(p=>p.type==='cloudflare-r2'&&p.accountId);
   const included=()=>usable().filter(p=>!p.explorerManaged&&p.showInContextMenu!==false).sort((a,b)=>(a.menuOrder??999)-(b.menuOrder??999));
-  function changed(){dirty=true;status('Unsaved changes · Save menu to update Chrome.');}
+  function changed(){dirty=true;status('Unsaved changes · Save menu to apply them.');}
   function setMode(){const nested=mode==='nested';$('destination-mode').setAttribute('aria-pressed',String(nested));$('destination-mode').setAttribute('aria-label','Switch to '+(nested?'Simple':'Nested'));$('destination-simple').hidden=nested;$('destination-nested').hidden=!nested;if(nested&&!mounted)mountNested();}
   function mountNested(){mounted=true;RedownNestedEditor.mount($('destination-nested'),{
     profiles:()=>profiles,existingOnly:true,allowFolderCreation:true,startCollapsed:true,
@@ -42,10 +42,6 @@
     for(const p of usable()){M.initialize(p);p.defaultPrefix??='';}
     const selector=$('destination-profile');selector.replaceChildren(...usable().map(p=>new Option((p.accountName||'Account')+' · '+p.accountId+' / '+p.bucketName,p.id)));
     renderSimple();setMode();
-    if(!firstSetupDisclosureInitialized){
-      firstSetupDisclosureInitialized=true;
-      $('destination-first-setup').open=usable().length===0;
-    }
     status(usable().length?'Choose a layout and design your right-click menu.':'Choose an existing Cloudflare bucket, then Activate Buckets beside Grid view, or prepare REDOWN storage below.');
     try{accounts=(await request('cfAccounts')).accounts||[];}catch(error){status('Saved destinations loaded. '+error.message);}
   }
@@ -54,12 +50,12 @@
     if(reads){status('Locations are still being checked. Try Save again when loading finishes.');return;}if(unassigned.length)throw Error('Assign a prepared account to every new card before saving.');C.validate(profiles,mode);saving=true;
     // Freeze all editor controls for the bounded save. No in-flight keystroke can be lost.
     const locked=[...$('quick-panel-setup').querySelectorAll('button,input,select')],disabled=locked.map(n=>n.disabled);locked.forEach(n=>n.disabled=true);
-    status('Saving and updating Chrome’s menu…');
+    status('Saving your REDOWN right-click menu…');
     try{
       const snapshot=C.project(profiles);
       const result=await request('saveDestinationConfig',{expected,mode,profiles:snapshot});
       expected=result.signature;dirty=false;
-      status(result.menuUpdated?'Saved · Chrome’s right-click menu is up to date.':result.error);
+      status(result.menuUpdated?'Saved · REDOWN right-click menu updated.':result.error);
     }catch(error){status('Not saved: '+error.message+' Your draft is still here.');}
     finally{saving=false;locked.forEach((n,i)=>{if(n.isConnected)n.disabled=disabled[i];});}
   }
@@ -139,7 +135,7 @@
           const check=await request('cfFolderChildren',{...target,parentPrefix:target.prefix});
           if(!(check.children||[]).includes(child))throw Error('Creation was not verified. Refresh before retrying.');
           update(row,'prefix',M.path(target.prefix,child));destination.textContent=row.bucket+'/'+row.prefix;
-          choose._picker?.close();folders.hidden=true;input.value='';creator.hidden=true;status('Folder verified. Save menu to add this destination to Chrome.');
+          choose._picker?.close();folders.hidden=true;input.value='';creator.hidden=true;status('Folder created. Save menu to add this destination.');
         }catch(error){feedback.textContent=error.message;}
         finally{reads--;locked.forEach((n,i)=>{if(n.isConnected)n.disabled=previous[i];});}
       };
@@ -152,7 +148,7 @@
     try{
       const result=await request('saveDestinationConfig',{expected,mode:next,profiles:[]});
       expected=result.signature;mode=next;setMode();
-      status(result.menuUpdated?(dirty?'Layout updated in Chrome. Your unsaved destination edits are preserved.':'Layout updated in Chrome.'):result.error);
+      status(result.menuUpdated?(dirty?'Right-click layout updated. Unsaved destination changes are preserved.':'Right-click layout updated.'):result.error);
     }catch(error){status('Layout was not changed: '+error.message+' Your draft is preserved.');}
     finally{saving=false;$('destination-mode').disabled=false;}
   };
@@ -198,7 +194,7 @@
   document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving&&!activatingLocation)void load().catch(error=>status('Refresh destinations: '+error.message));});
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||saving||activatingLocation)return;
-    if(changes.profiles||changes.rightClickMode){if(dirty){if(changes.rightClickMode&&!changes.profiles){const before=JSON.parse(expected);mode=M.menuMode(changes.rightClickMode.newValue,profiles);expected=JSON.stringify([mode,before[1]]);setMode();status('Layout updated from Chrome. Your unsaved destination edits are preserved.');return;}status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
+    if(changes.profiles||changes.rightClickMode){if(dirty){if(changes.rightClickMode&&!changes.profiles){const before=JSON.parse(expected);mode=M.menuMode(changes.rightClickMode.newValue,profiles);expected=JSON.stringify([mode,before[1]]);setMode();status('Right-click layout changed in another window. Your unsaved edits are preserved.');return;}status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
   });
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
   void load().catch(error=>status('Could not load destinations: '+error.message));
