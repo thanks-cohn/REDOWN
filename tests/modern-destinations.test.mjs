@@ -266,18 +266,21 @@ test('eight-level shared plan preserves immediate parents, parent save actions a
   assert.equal(target.prefix,Array.from({length:depth},(_,i)=>'folder'+(i+1)).join('/'));
  }
 });
-test('preview uses the native description for draft edits, removals and active layout',async()=>{
- const h=await ui();try{const {d,w}=h;
- const label=d.querySelector('[data-destination-id="extra"] input');label.value='Draft preview';label.dispatchEvent(new w.Event('input'));
- assert.match(d.querySelector('#destination-preview').textContent,/Draft preview/);
- assert.equal(h.b.state.profiles[0].simpleOptions[0].label,'Photos');
- d.querySelector('#destination-mode').click();await settle();
- assert.equal(d.querySelector('#destination-preview li span').textContent,'art');
- assert.match(d.querySelector('#destination-preview').textContent,/Send here/);
- d.querySelector('.nested-remove').click();await settle();assert.match(d.querySelector('#destination-preview').textContent,/No active destinations/);
+test('pre-redesign right-click selection toolbar is restored without rolling back shared menu authority',async()=>{
+ const h=await ui();try{
+  const {d,w,b}=h;
+  assert.ok(d.querySelector('#quick-panel-setup > .destination-toolbar'));
+  assert.equal(d.querySelector('#destination-preview'),null,'the new multi-stage preview is not part of the restored selector');
+  assert.ok(d.querySelector('#destination-add'));
+  const label=d.querySelector('[data-destination-id="extra"] input');
+  label.value='Restored editor';label.dispatchEvent(new w.Event('input'));
+  assert.match(d.querySelector('#destination-status').textContent,/Unsaved changes/);
+  assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos','drafts do not mutate saved routing');
+  d.querySelector('#destination-save').click();await settle();
+  assert.equal(b.state.profiles[0].simpleOptions[0].label,'Restored editor');
+  assert.ok(b.created.some(x=>x.title==='Restored editor'),'the restored selector still determines the actual menu');
  }finally{h.dom.window.close();}
 });
-
 
 test('contextual operations stay accessible through named native disclosures',async()=>{
  const h=await ui();try{const {d,w}=h;
