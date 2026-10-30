@@ -2746,7 +2746,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           throw Error("Confirm REDOWN quick setup from Explorer first.");
         return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId,message.menuLabel)});
       }
-      if (message?.type === "cfProvision") return sendResponse({ ok:true, profile:await provisionCloudflareProfile(message), verification:{workerReachable:true} });
+      if (message?.type === "cfProvision") {
+        const profile=await provisionCloudflareProfile(message);
+        // Explicit activation prepares the bucket and updates Chrome's menu now,
+        // not after an unrelated Save or extension restart.
+        let menuUpdated=true,menuError="";
+        if(!message.explorerOnly){
+          try{await rebuildMenus();}catch(error){menuUpdated=false;menuError="Storage prepared, but Chrome could not update its right-click menu. Click Save menu to retry.";}
+        }
+        return sendResponse({ok:true,profile,verification:{workerReachable:true},menuUpdated,menuError});
+      }
       if (message?.type === "cfSetAssetCors" || message?.type === "cfSetAssetDomain") {
         return sendResponse({ ok:true, ...(await configureAssetDomain(message.accountId,message.bucketName,message.website)) });
       }
