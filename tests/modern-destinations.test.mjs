@@ -31,7 +31,7 @@ test('Simple additions are exactly one local card per click; no cloud mutation, 
     const cards=[...d.querySelectorAll('.destination-card')],last=cards.at(-1),id=last.dataset.destinationId;
     const input=last.querySelector('input');input.value='Final art';input.dispatchEvent(new w.Event('input'));
     last.querySelector('[aria-label="Move destination up"]').click();await settle();
-    d.getElementById('destination-save').click();await settle();assert.match(d.getElementById('destination-status').textContent,/up to date/);
+    d.getElementById('destination-save').click();await settle();assert.match(d.getElementById('destination-status').textContent,/right-click menu updated/i);
     assert.equal(b.state.profiles[0].simpleOptions.length,3);assert.equal(b.state.profiles[0].simpleOptions.find(x=>x.id===id).label,'Final art');
     assert.ok(b.created.some(x=>x.id==='simple-option:p:'+id&&x.title==='Final art'));
     assert.ok(calls.every(c=>['profiles','cfAccounts','cfBuckets','saveDestinationConfig'].includes(c.type)));
@@ -78,6 +78,7 @@ test('modern menu navigation and quick setup preserve selected mode in source',(
 });
 test('Add Location without a prepared bucket explains activation instead of creating unusable draft cards',async()=>{
   const h=await ui([]);try{
+    assert.equal(h.d.getElementById('destination-first-setup').open,false,'optional setup stays collapsed until user asks');
     h.d.getElementById('destination-add').click();h.d.getElementById('destination-add').click();await settle();
     assert.equal(h.d.querySelectorAll('.destination-card').length,0);
     assert.match(h.d.getElementById('destination-status').textContent,/Choose a bucket|Activate Buckets/);
@@ -146,7 +147,7 @@ test('mode switch persists without committing a dirty destination label; externa
  const h=await ui();try{const {d,w,b}=h;const label=d.querySelector('[data-destination-id="extra"] input');label.value='Draft label';label.dispatchEvent(new w.Event('input'));
  d.querySelector('#destination-mode').click();await settle();assert.equal(b.state.rightClickMode,'nested');assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos');
  b.state.rightClickMode='simple';h.change({rightClickMode:{oldValue:'nested',newValue:'simple'}});await settle();assert.equal(d.querySelector('#destination-mode').getAttribute('aria-pressed'),'false');assert.equal(label.value,'Draft label');
- d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/up to date/);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Draft label');
+ d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/right-click menu updated/i);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Draft label');
  }finally{h.dom.window.close();}
 });
 test('deep native menu preserves every immediate parent, concise labels and exact paths',async()=>{
@@ -299,4 +300,15 @@ test('removed parent send actions no longer resolve after their last child is re
  const next=b.snapshot();next.profiles[0].nestedMenu.roots[0].children=[];await b.save(next);
  assert.equal(b.ctx.RedownDestinationConfig.resolve('nested:p:r:r:send',b.state.profiles,'nested'),null);
  assert.ok(!b.created.some(x=>x.id==='nested:p:r:r:send'));
+});
+
+test('right-click editor uses product-facing status and keeps dedicated bucket setup optional',async()=>{
+ const h=await ui();try{
+  const {d}=h;
+  assert.equal(d.getElementById('destination-first-setup').open,false);
+  assert.match(d.getElementById('destination-first-setup').querySelector('summary').textContent,/Optional: Dedicated REDOWN bucket/);
+  d.getElementById('destination-mode').click();await settle();
+  assert.match(d.getElementById('destination-status').textContent,/Right-click layout updated/);
+  assert.doesNotMatch(d.getElementById('destination-status').textContent,/Chrome/);
+ }finally{h.dom.window.close();}
 });
