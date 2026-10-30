@@ -586,9 +586,10 @@
   <section id="right-click-presets" class="section requires-storage">
     <div class="section-head">
       <div><span class="section-kicker">02 / Destinations</span><h2>Right-click setup</h2><div class="section-note">Use Explorer to configure the native Chrome menu.</div></div>
-      <button id="refresh-menu-locations" class="ghost" type="button">Refresh locations</button>
+      <a class="secondary" href="beta/explorer.html#explorer-destinations">Explorer → Right-click Setup</a>
     </div>
-    <div class="right-click-mode" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+    <div hidden inert aria-hidden="true"><button id="refresh-menu-locations" type="button">Refresh locations</button>
+    <div class="right-click-mode">
       <label class="toggle"><input id="use-simple-menu" type="checkbox" aria-describedby="right-click-mode-status">Use Simple Menu</label>
       <label class="toggle"><input id="use-nested-menu" type="checkbox" aria-describedby="right-click-mode-status">Use Nested Menu</label>
       <button id="add-menu-location" type="button" class="ghost" style="margin-left:auto">+ Add new location</button>
@@ -604,11 +605,12 @@
         </div>
       </form>
     </dialog>
+    </div>
     <div id="right-click-mode-status" class="meta" role="status" style="margin-bottom:12px"></div>
     <div id="menu-location-status" class="status" role="status" aria-live="polite"></div>
 
     <div id="simple-menu-editor">
-      <h3>Simple · Quick send</h3>
+      <h3>Storage preferences</h3>
       <div id="profiles"></div>
       <div id="profiles-empty" class="empty">No destinations yet. Connect Cloudflare or add GitHub above.</div>
     </div>

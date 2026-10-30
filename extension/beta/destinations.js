@@ -5,7 +5,18 @@
   if(!$('destination-mode'))return;
   let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,firstSetupDisclosureInitialized=false,activatingLocation=false;
   const bucketCache=new Map();let unassigned=[];
-  const status=text=>$('destination-status').textContent=text;
+  const status=text=>{$('destination-status').textContent=text;renderPreview();};
+  function renderPreview(){
+    const host=$('destination-preview');if(!host)return;
+    host.replaceChildren();const root=el('ul','destination-preview-tree'),parents=new Map([['redown',root]]);
+    root.setAttribute('aria-label','REDOWN');host.append(root);
+    try{for(const entry of M.menuEntries(profiles,mode,'redown')){
+      const li=el('li'),caption=el('span','',entry.title),children=el('ul');
+      li.append(caption,children);(parents.get(entry.parentId)||root).append(li);parents.set(entry.id,children);
+      const target=C.resolve(entry.id,profiles,mode);if(target)caption.title=target.profile.accountId+' / '+target.profile.bucketName+'/'+target.prefix;
+    }if(!root.childElementCount)root.append(el('li','','No active destinations.'));
+    }catch{host.textContent='Complete the destination selections to preview this draft.';}
+  }
   const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
   const button=(text,action,label=text)=>{const n=el('button','',text);n.type='button';n.setAttribute('aria-label',label);n.onclick=()=>Promise.resolve().then(action).catch(error=>status(error.message));return n;};
   const request=async(type,fields={})=>{const r=await chrome.runtime.sendMessage({type,...fields});if(!r?.ok)throw Error(r?.error||'Request failed. Retry.');return r;};
@@ -29,7 +40,7 @@
     unassigned=[];profiles=structuredClone(latest||stored.profiles||[]);$('destination-legacy-fallback').hidden=true;mode=M.menuMode(stored.rightClickMode,profiles);expected=C.signature(profiles,mode);dirty=false;mounted=false;
     // Idempotent in-memory migration. It is persisted only on explicit Save.
     for(const p of usable()){M.initialize(p);p.defaultPrefix??='';}
-    const selector=$('destination-profile');selector.replaceChildren(...usable().map(p=>new Option((p.accountName||p.accountId)+' / '+p.bucketName,p.id)));
+    const selector=$('destination-profile');selector.replaceChildren(...usable().map(p=>new Option((p.accountName||'Account')+' · '+p.accountId+' / '+p.bucketName,p.id)));
     renderSimple();setMode();
     if(!firstSetupDisclosureInitialized){
       firstSetupDisclosureInitialized=true;
@@ -70,12 +81,13 @@
       const head=el('div','destination-card-head');
       const label=el('input');label.value=row.label;label.maxLength=60;label.placeholder='Menu label';label.setAttribute('aria-label','Menu label');label.oninput=()=>update(row,'label',label.value);
       const move=delta=>{const entries=rows(),i=entries.findIndex(r=>r.id===row.id),j=i+delta;if(j<0||j>=entries.length)return;[entries[i],entries[j]]=[entries[j],entries[i]];entries.forEach((r,index)=>{if(r.base)r.p.simplePrimaryOrder=index;else r.item.order=index;});changed();renderSimple();};
-      head.append(label,button('↑',()=>move(-1),'Move destination up'),button('↓',()=>move(1),'Move destination down'),button('×',()=>{if(row.base)row.p.simplePrimaryEnabled=false;else if(row.draft)unassigned=unassigned.filter(r=>r!==row);else row.p.simpleOptions=row.p.simpleOptions.filter(i=>i!==row.item);changed();renderSimple();},'Remove menu destination'));
+      const options=el('details','destination-entry-options');options.append(el('summary','','Entry options'));
+      head.append(label);options.append(button('↑',()=>move(-1),'Move destination up'),button('↓',()=>move(1),'Move destination down'),button('Remove from menu',()=>{if(row.base)row.p.simplePrimaryEnabled=false;else if(row.draft)unassigned=unassigned.filter(r=>r!==row);else row.p.simpleOptions=row.p.simpleOptions.filter(i=>i!==row.item);changed();renderSimple();},'Remove menu destination'));
       const fields=el('div','destination-card-fields');
       const account=el('select');account.setAttribute('aria-label','Cloudflare account');
       const choices=[...new Map([...accounts.map(a=>[a.id,a]),...usable().map(p=>[p.accountId,{id:p.accountId,name:accounts.find(a=>a.id===p.accountId)?.name||p.accountName||p.accountId}])]).values()];
       if(row.draft)account.add(new Option('Choose account…',''));
-      for(const a of choices)account.add(new Option(a.name,a.id));account.value=row.p.accountId;
+      for(const a of choices)account.add(new Option(a.name+' · '+a.id,a.id));account.value=row.p.accountId;
       const bucket=el('select');bucket.setAttribute('aria-label','Bucket');
       // Prepared profiles are required by the original transfer engine. Discovery is read-only.
       const bucketLabel=el('label','', 'Bucket');bucketLabel.append(bucket);
@@ -110,10 +122,10 @@
       const creator=el('form','destination-inline-create');creator.hidden=true;
       const input=el('input');input.placeholder='New folder name…';input.setAttribute('aria-label','New folder inside this destination');input.required=true;input.autocomplete='off';
       const feedback=el('span');feedback.setAttribute('role','status');
-      const create=el('button','','✓');create.type='submit';create.setAttribute('aria-label','Create folder');
+      const create=el('button','','Create folder');create.type='submit';create.setAttribute('aria-label','Create folder');
       const cancel=button('×',()=>{creator.hidden=true;input.value='';feedback.textContent='';},'Cancel folder creation');
       creator.append(input,create,cancel,feedback);
-      const plus=button('+',()=>{creator.hidden=false;input.focus();},'Create folder inside '+row.bucket+'/'+row.prefix);
+      const plus=button('Create folder',()=>{creator.hidden=false;input.focus();},'Create folder inside '+row.bucket+'/'+row.prefix);
       creator.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancel.click();plus.focus();}};
       creator.onsubmit=async event=>{
         event.preventDefault();if(saving||reads)return;
@@ -131,7 +143,7 @@
         }catch(error){feedback.textContent=error.message;}
         finally{reads--;locked.forEach((n,i)=>{if(n.isConnected)n.disabled=previous[i];});}
       };
-      fields.append(accountLabel,bucketLabel,choose,root,plus);card.append(head,fields,destination,creator,folders);host.append(card);void loadBuckets();
+      fields.append(accountLabel,bucketLabel,choose);options.append(root,plus);card.append(head,fields,destination,options,creator,folders);host.append(card);void loadBuckets();
     }
   }
   $('destination-mode').onclick=async()=>{

@@ -149,10 +149,10 @@ test('mode switch persists without committing a dirty destination label; externa
  d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/up to date/);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Draft label');
  }finally{h.dom.window.close();}
 });
-test('deep native menu stays at capped flyout depth while retaining stable IDs and exact paths',async()=>{
+test('deep native menu preserves every immediate parent, concise labels and exact paths',async()=>{
  const b=background();let children=b.state.profiles[0].nestedMenu.roots[0].children[0].children;for(let i=0;i<5;i++){const node={id:'deep'+i,name:'level'+i,ready:true,children:[]};children.push(node);children=node.children;}
  const draft=b.snapshot();draft.mode='nested';assert.equal((await b.save(draft)).menuUpdated,true);
- const deepest=b.created.find(x=>x.id==='nested:p:r:deep4');assert.equal(deepest.parentId,'nested:p:r:n');assert.match(deepest.title,/level0 \/ level1 \/ level2 \/ level3 \/ level4/);
+ const deepest=b.created.find(x=>x.id==='nested:p:r:deep4');assert.equal(deepest.parentId,'nested:p:r:deep3');assert.equal(deepest.title,'level4');
  assert.equal(b.ctx.RedownNestedLocations.destinations(b.state.profiles[0].nestedMenu).find(x=>x.nodeId==='deep4').prefix,'photos/level0/level1/level2/level3/level4');
 });
 
@@ -182,8 +182,8 @@ test('child, parent and distinct same-account groups remove only their stable de
  const h=await ui(presets);try{const {d,b}=h;d.querySelector('#destination-mode').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,2);assert.match(d.querySelector('[data-menu-profile-id="second"] .meta').textContent,/unprepared/);
  const first=d.querySelector('[data-menu-profile-id="p"]');first.querySelector('.nested-collapse').click();await settle();first.querySelector('[data-node-id="n"] .nested-collapse').click();await settle();
  // Discovery marks an absent studio unavailable, but its definition stays removable.
- d.querySelector('[data-node-id="studio"] .nested-actions button:last-child').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].children.length,0);
- d.querySelector('[data-node-id="n"] .nested-actions button:last-child').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,0);assert.equal(b.state.profiles[1].nestedMenu.roots.length,1);
+ d.querySelector('[data-node-id="studio"] .nested-menu-controls [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].children.length,0);
+ d.querySelector('[data-node-id="n"] .nested-menu-controls [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,0);assert.equal(b.state.profiles[1].nestedMenu.roots.length,1);
  d.querySelector('[data-menu-profile-id="p"] .nested-remove').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,1);d.querySelector('[data-menu-profile-id="second"] .nested-remove').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles.length,2);assert.ok(b.state.profiles.every(p=>p.token==='fixture'&&!p.nestedMenu.roots.length));
  }finally{h.dom.window.close();}
 });
@@ -248,4 +248,55 @@ test('delayed Worker/domain persistence cannot resurrect a deleted menu or disca
  b.state.profiles.push({...initial()[0],id:'new-authorization',explorerManaged:true});
  const start=bg.indexOf('async function setProfiles('),end=bg.indexOf('// Toolbar status flashes',start);vm.runInContext(bg.slice(start,end),b.ctx);
  await b.ctx.setProfiles(stale);assert.equal(b.state.profiles[0].nestedMenu.roots.length,0);assert.equal(b.state.profiles[0].simpleOptions.length,0);assert.equal(b.state.profiles[0].simplePrimaryEnabled,false);assert.equal(b.state.profiles[0].workerUrl,'https://new-worker.test');assert.equal(b.state.profiles.length,2);
+});
+
+
+test('eight-level shared plan preserves immediate parents, parent save actions and preview parity',async()=>{
+ const b=background();let node=b.state.profiles[0].nestedMenu.roots[0];
+ for(let depth=1;depth<=8;depth++){node.children=[{id:'level'+depth,name:'folder'+depth,ready:true,children:[]}];node=node.children[0];}
+ const draft=b.snapshot();draft.mode='nested';assert.equal((await b.save(draft)).menuUpdated,true);
+ const plan=b.ctx.RedownNestedLocations.menuEntries(b.state.profiles,'nested','redown');
+ assert.deepEqual(JSON.parse(JSON.stringify(plan)),JSON.parse(JSON.stringify(b.created.filter(x=>x.id.startsWith('nested:')))));
+ for(let depth=1;depth<=8;depth++){
+  const item=b.created.find(x=>x.id==='nested:p:r:level'+depth);
+  assert.equal(item.parentId,depth===1?'nested:p:r:r':'nested:p:r:level'+(depth-1));assert.equal(item.title,'folder'+depth);
+  assert.equal(Boolean(b.created.find(x=>x.id===item.id+':send')),depth<8);
+  const target=b.ctx.RedownDestinationConfig.resolve(item.id,b.state.profiles,'nested');
+  assert.equal(target.prefix,Array.from({length:depth},(_,i)=>'folder'+(i+1)).join('/'));
+ }
+});
+test('preview uses the native description for draft edits, removals and active layout',async()=>{
+ const h=await ui();try{const {d,w}=h;
+ const label=d.querySelector('[data-destination-id="extra"] input');label.value='Draft preview';label.dispatchEvent(new w.Event('input'));
+ assert.match(d.querySelector('#destination-preview').textContent,/Draft preview/);
+ assert.equal(h.b.state.profiles[0].simpleOptions[0].label,'Photos');
+ d.querySelector('#destination-mode').click();await settle();
+ assert.equal(d.querySelector('#destination-preview li span').textContent,'art');
+ assert.match(d.querySelector('#destination-preview').textContent,/Send here/);
+ d.querySelector('.nested-remove').click();await settle();assert.match(d.querySelector('#destination-preview').textContent,/No active destinations/);
+ }finally{h.dom.window.close();}
+});
+
+
+test('contextual operations stay accessible through named native disclosures',async()=>{
+ const h=await ui();try{const {d,w}=h;
+ const options=d.querySelector('.destination-entry-options');assert.equal(options.open,false);options.open=true;
+ assert.ok(options.querySelector('[aria-label="Remove menu destination"]'));
+ d.querySelector('#destination-mode').click();await settle();d.querySelector('.nested-collapse').click();await settle();
+ const group=d.querySelector('[data-node-id="n"]'),details=group.querySelector('.nested-menu-controls');
+ assert.equal(details.tagName,'DETAILS');assert.equal(details.open,false);details.open=true;
+ [...details.querySelectorAll('button')].find(x=>x.textContent==='Create folder at this level').click();await settle();
+ assert.equal(group.querySelector('.nested-create').hidden,false);assert.equal(d.activeElement,group.querySelector('.nested-new'));
+ group.querySelector('.nested-new').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));await settle();
+ assert.equal(group.querySelector('.nested-create').hidden,true);assert.equal(h.calls.filter(x=>x.type==='cfCreateFolder').length,0);
+ }finally{h.dom.window.close();}
+});
+
+
+test('removed parent send actions no longer resolve after their last child is removed',async()=>{
+ const b=background(),draft=b.snapshot();draft.mode='nested';await b.save(draft);
+ assert.ok(b.ctx.RedownDestinationConfig.resolve('nested:p:r:r:send',b.state.profiles,'nested'));
+ const next=b.snapshot();next.profiles[0].nestedMenu.roots[0].children=[];await b.save(next);
+ assert.equal(b.ctx.RedownDestinationConfig.resolve('nested:p:r:r:send',b.state.profiles,'nested'),null);
+ assert.ok(!b.created.some(x=>x.id==='nested:p:r:r:send'));
 });

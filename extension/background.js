@@ -2047,19 +2047,7 @@ function sanitizeMenuId(value) {
 }
 
 function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item)){
-  const locations=RedownNestedLocations.destinations(profile.nestedMenu);
-  if(!locations.length)return;
-  const parent=ROOT_MENU_ID;
-  const contexts=["link","image","video","audio","page"];
-  for(const item of locations){
-    const id=`nested:${profile.id}:${item.rootId}:${item.nodeId}`;
-    const parentNode=item.ids.length>1?item.ids.at(-2):item.rootId;
-    const parentId=item.ids.length?`nested:${profile.id}:${item.rootId}:${item.ids.length>1?item.ids[0]:parentNode}`:parent;
-    const title=item.ids.length>1 ? item.prefix.split('/').slice(1).join(' / ')+(item.name!==item.prefix.split('/').at(-1)?' · '+item.name:'') : item.name;
-    create({id,parentId,title,contexts});
-    if(item.ids.length<=1 && locations.some(child=>child.rootId===item.rootId && child.ids.length===item.ids.length+1 && (item.ids.length===0 || child.ids.at(-2)===item.nodeId)))
-      create({id:`${id}:send`,parentId:id,title:"Send here",contexts});
-  }
+  for(const item of RedownNestedLocations.nestedEntries(profile,ROOT_MENU_ID))create(item);
 }
 
 // One save lane; optimistic comparison prevents stale Explorer windows overwriting edits.
@@ -2157,50 +2145,11 @@ async function buildMenus() {
   const profiles = await getProfiles();
   const menuSettings=await chrome.storage.local.get(["rightClickMode"]);
   const storedMode=menuSettings.rightClickMode;
-  const labelFallback="deepest"; // Blank labels use the same path-derived name as the modern editor.
   const mode=RedownNestedLocations.menuMode(storedMode,profiles);
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
-  const presets = profiles
-    .filter(p => p.type==='cloudflare-r2' && !p.explorerManaged && (mode==='nested'
-      ? p.nestedMenu?.enabled && p.nestedMenu.roots?.length
-      : p.showInContextMenu !== false))
-    .sort((a,b) => (a.menuOrder ?? 999) - (b.menuOrder ?? 999));
-
-  if (!presets.length) {
-    create({
-      id:"redown-setup", parentId:ROOT_MENU_ID, title:"Set up a destination…",
-      contexts:["link","image","video","audio","page"]
-    });
-    addMenuControls(mode,create);await finish();return;
-  }
-
-  const simpleEntries=[];
-  for (const p of presets) {
-    if(mode==='nested' && p.nestedMenu){
-      addNestedLocations(p,create);
-    } else if(mode==='simple' && p.type==='cloudflare-r2'){
-      // Simple means one menu level regardless of R2 directory depth.
-      // Keep stable IDs for click routing; labels are presentation only.
-      const contexts=["link","image","video","audio","page"];
-      const displayName=(label,prefix,bucket)=>{
-        const explicit=String(label||"").trim();
-        const segments=String(prefix||"").split("/").filter(Boolean);
-        if(explicit)return explicit;
-        return labelFallback==="bucket" ? (bucket||segments.at(-1)||"Destination") : (segments.at(-1)||bucket||"Destination");
-      };
-      if(p.simplePrimaryEnabled!==false)simpleEntries.push({
-        id:`quick:${p.id}`,parentId:ROOT_MENU_ID,
-        title:displayName(p.menuLabel,p.defaultPrefix,p.simpleBucketName||p.bucketName),contexts,order:p.simplePrimaryOrder??999999
-      });
-      for(const item of p.simpleOptions||[]){
-        if(!item?.id || typeof item.prefix!=="string")continue;
-        simpleEntries.push({id:`simple-option:${p.id}:${item.id}`,parentId:ROOT_MENU_ID,
-          title:displayName(item.label,item.prefix,item.bucketName||p.bucketName),contexts,order:item.order??999999});
-      }
-    }
-  }
-
-  for(const {order,...entry} of simpleEntries.sort((a,b)=>a.order-b.order))create(entry);
+  const entries=RedownNestedLocations.menuEntries(profiles,mode,ROOT_MENU_ID);
+  if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
+  for(const entry of entries)create(entry);
   addMenuControls(mode,create);
   await finish();
 }

@@ -27,8 +27,11 @@
       if(id===`quick:${p.id}`&&p.simplePrimaryEnabled!==false){bucket=p.simpleBucketName||p.bucketName;prefixValue=p.defaultPrefix;}
       else {const item=(p.simpleOptions||[]).find(x=>id===`simple-option:${p.id}:${x.id}`);if(!item)return null;bucket=item.bucketName||p.bucketName;prefixValue=item.prefix;}
     }else if(mode==='nested'){
-      const item=RedownNestedLocations.destinations(p.nestedMenu).find(x=>id===`nested:${p.id}:${x.rootId}:${x.nodeId}`||id===`nested:${p.id}:${x.rootId}:${x.nodeId}:send`);
-      if(!item)return null;bucket=item.bucketName;prefixValue=item.prefix;
+      const locations=RedownNestedLocations.destinations(p.nestedMenu);
+      const item=locations.find(x=>id===`nested:${p.id}:${x.rootId}:${x.nodeId}`||id===`nested:${p.id}:${x.rootId}:${x.nodeId}:send`);
+      if(!item)return null;
+      if(id.endsWith(':send')&&!locations.some(child=>child.rootId===item.rootId&&child.ids.length===item.ids.length+1&&(item.ids.length===0||child.ids.at(-2)===item.nodeId)))return null;
+      bucket=item.bucketName;prefixValue=item.prefix;
     }else return null;
     const target=profiles.find(q=>q.type==='cloudflare-r2'&&q.accountId===p.accountId&&q.bucketName===bucket&&q.workerUrl&&q.token);
     if(!target)return null;

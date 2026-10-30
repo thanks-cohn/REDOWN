@@ -53,6 +53,7 @@ test('native Simple context menu follows saved section and additional destinatio
     {id:'b',type:'cloudflare-r2',bucketName:'beta',menuLabel:'Beta',menuOrder:0}
   ];
   const ctx=vm.createContext({ROOT_MENU_ID:'REDOWN',getProfiles:async()=>profiles,RedownNestedLocations:{menuMode:()=> 'simple'},addMenuControls:()=>{},chrome:{contextMenus:{removeAll:async()=>{},create:x=>created.push(x)},storage:{local:{get:async()=>({rightClickMode:'simple',simpleLabelFallback:'menu'})}}}});
+  vm.runInContext(await readFile(new URL('../extension/nested-locations.js',import.meta.url),'utf8'),ctx);
   vm.runInContext(background.slice(background.indexOf('async function buildMenus() {'),background.indexOf('function addMenuControls(mode)')),ctx);
   await vm.runInContext('buildMenus()',ctx);
   assert.deepEqual(created.filter(x=>x.id!=='REDOWN').map(x=>x.title),['Beta','Alpha','Second','First']);

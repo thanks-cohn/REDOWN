@@ -1,0 +1,172 @@
+{
+  "commit": "2018b6bd269fd79d4a9f14cdba6da1ac13d07df2",
+  "method": "git archive of starting commit in /tmp/redown-baseline; shared installed dependencies; no source edits",
+  "scope": "local tests, no installed browser or cloud",
+  "passed": 632,
+  "failures": [
+    {
+      "file": "agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions"
+    },
+    {
+      "file": "agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+    },
+    {
+      "file": "beta-explorer.test.mjs",
+      "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place"
+    },
+    {
+      "file": "beta-explorer.test.mjs",
+      "name": "same-folder copy keeps both and never destroys the source"
+    },
+    {
+      "file": "beta-explorer.test.mjs",
+      "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling"
+    },
+    {
+      "file": "brand-and-paginated-history.test.mjs",
+      "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "click creates a visible window before network navigation; repeated clicks focus it"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "successful callback exchanges PKCE and verifies access before saving token"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "callback resumes after service worker restart from session state"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "state mismatch fails without token exchange and allows a fresh retry"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "denied consent and missing authorization code fail cleanly"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "closed popup releases attempt and stale window is replaced on next click"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "expired attempt clears secrets, closes popup, and permits retry"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "failed API verification never stores an access token"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "duplicate navigation events exchange a code only once"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "verification network stall aborts and releases the attempt"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "popup creation errors are returned instead of leaving an in-flight lock"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "settings and worker observing the same callback exchange the code once across contexts"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "Worker deployments cannot overlap and a failed deployment releases the lock"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network"
+    },
+    {
+      "file": "cloudflare-login.test.mjs",
+      "name": "destination folder pages preserve parent prefix, immediate children and continuation"
+    },
+    {
+      "file": "debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest"
+    },
+    {
+      "file": "debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+    },
+    {
+      "file": "explorer-account-and-history-navigation.test.mjs",
+      "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens"
+    },
+    {
+      "file": "explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input"
+    },
+    {
+      "file": "explorer-neon-history.test.mjs",
+      "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes"
+    },
+    {
+      "file": "explorer-neon-history.test.mjs",
+      "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed"
+    },
+    {
+      "file": "explorer-neon-history.test.mjs",
+      "name": "large retained histories render in bounded increments and unrelated storage changes do no history work"
+    },
+    {
+      "file": "explorer-neon-history.test.mjs",
+      "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager"
+    },
+    {
+      "file": "explorer-parity-audit.test.mjs",
+      "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP"
+    },
+    {
+      "file": "get-url.test.mjs",
+      "name": "switching files while enabling cannot reopen the old file or overwrite current choices"
+    },
+    {
+      "file": "issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open"
+    },
+    {
+      "file": "nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+    },
+    {
+      "file": "options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready"
+    },
+    {
+      "file": "popup-destinations.test.mjs",
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page"
+    },
+    {
+      "file": "semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+    },
+    {
+      "file": "semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links"
+    },
+    {
+      "file": "shelf.test.mjs",
+      "name": "provider order, pending integrations, verified account state and actual history remain honest"
+    },
+    {
+      "file": "shelf.test.mjs",
+      "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape"
+    },
+    {
+      "file": "shelf.test.mjs",
+      "name": "existing toolbar implementation applies default Shelf and Popup in both directions"
+    }
+  ]
+}
