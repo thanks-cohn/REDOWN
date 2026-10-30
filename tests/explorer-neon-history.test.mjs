@@ -71,8 +71,12 @@ test('real history is sorted by timestamps with year/month/day hierarchy and fai
   const records=[{at:'2025-01-01T15:00:00Z',filename:'old',ok:true,location:'R2: bucket/old'},{at:'2026-10-28T15:00:00Z',filename:'failed',ok:false,error:'Denied'},{at:'2026-10-29T15:00:00Z',filename:'dispatch',ok:true,location:'repo → file'},{at:'2026-09-01T15:00:00Z',filename:'sep'}, {at:'invalid',filename:'undated'}];
   const s=await archive(records);assert.equal(s.doc.getElementById('history-view').hidden,false);
   assert.deepEqual([...s.doc.querySelectorAll('.history-year>summary')].map(x=>x.textContent),['2026','2025','Unknown date']);
-  assert.deepEqual([...s.doc.querySelectorAll('.history-transfer>strong')].map(x=>x.textContent),['dispatch','failed','sep','old','undated']);
-  assert.match(s.doc.querySelector('.history-transfer').textContent,/Accepted · completion unverified/);assert.match(s.doc.querySelector('[data-state=failed]').textContent,/Failed.*Denied/);
+  assert.deepEqual([...s.doc.querySelectorAll('.history-transfer .history-entry-head strong')].map(x=>x.textContent),['dispatch','Error: Source unavailable','sep','old','undated']);
+  assert.match(s.doc.querySelector('.history-transfer').textContent,/Accepted · completion unverified/);
+  const failure=s.doc.querySelector('[data-state=failed]');
+  assert.match(failure.querySelector('.history-entry-head').textContent,/Error: Source unavailable/);
+  assert.match(failure.querySelector('.history-technical-details').textContent,/Denied/);
+  assert.equal(failure.querySelector('.history-technical-details').open,false);
   assert.ok(s.doc.querySelector('.history-year').open);assert.equal(records.length,5);s.dom.window.close();
 });
 test('calendar grouping uses local dates near midnight, not UTC date slicing',async()=>{
