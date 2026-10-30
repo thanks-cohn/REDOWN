@@ -7,6 +7,20 @@
 **Priority:** P0: regain working current functionality quickly; everything else follows.  
 **Status:** Owner direction and implementation request, NOT proof of implemented behavior or accepted Forever Works intent.
 
+## ABSOLUTE OWNER REQUIREMENT: CLEAN-ROOM RIGHT-CLICK SETUP UI
+
+**All UI belonging to the old Legacy and old Modern Right-click Setup systems must be GONE from the active application. Start the V3 Right-click Setup UI from scratch.**
+
+- Do not reuse, render, embed, wrap, transplant, restyle, conditionally hide, or maintain compatibility display paths for previous setup panels, cards, nested menu editors, dialogs, CSS classes/stylesheets, DOM construction paths, UI state machines, component trees, event handlers, or UI-specific configuration adapters. No legacy remnants, duplicated controls, unintended shared listeners, stale selectors, CSS collisions, or parallel mounts.
+- Audit every entry point and import, including old setup tabs, routing, conditional rendering, old stylesheet selectors, background/UI messages and event subscriptions. Remove old UI from the **active build/runtime paths** (while preserving historical checkpoints and the independently executable Legacy **context-menu engine**). Identify any old UI-only source files that become unreachable; retire them safely with tests, without destroying historical evidence.
+- The **only preserved UX concept** from old setup is the **folder outline** (account → bucket → folder structure). Reimplement it with new V3 components, styles, scoped selectors and isolated state. Do not carry over the old folder-outline DOM/CSS implementation merely because its concept is retained.
+- The existing **URL system remains untouched and operating**. Its interface and contracts are NOT legacy right-click-setup UI and must not be removed by broad CSS/DOM cleanup.
+- In Settings, the Legacy/New selector controls **runtime Chrome menu behavior only**. Selecting Legacy must never resurrect its old setup screen. If an engine needs old saved configuration for correct fallback, preserve it in an engine-only storage boundary and give users clear status messaging in V3 Setup.
+- Provide explicit audit evidence: list every old right-click setup mount/import/style/event hook and disposition (removed from active bundle, isolated engine-only, or preserved shared/non-UI contract), plus a build-level or automated test that catches old UI remnants/collisions and proves the new UI is the only mounted setup view.
+- Never claim the old UI is gone merely because it is hidden with CSS or gated by a toggle. Prove it is absent from active setup rendering and cannot be reactivated through settings, navigation, refresh or restart.
+
+**Definition of done:** fresh UI architecture and styling, one V3 setup surface, no obsolete right-click setup UI dependencies or conflicts, functional Legacy runtime engine as fallback, preserved URL system, newly implemented folder outline, Chrome registration and transfer parity.
+
 ## Mission
 
 Build a new REDOWN foundation and NEW Right-click engine with the shortest safe path to today's functional Cloudflare REDOWN. Do **not** keep patching Modern's broken right-click wiring or transplant its old configuration UI. Treat Legacy and current source as behavioral evidence; treat `FOREVER_WORKS` as the primary accumulated evidence and requirements corpus, differentiating source-confirmed facts, owner requirements, proposals, mock tests, actual installed-Chrome tests, and live Cloudflare outcomes.
