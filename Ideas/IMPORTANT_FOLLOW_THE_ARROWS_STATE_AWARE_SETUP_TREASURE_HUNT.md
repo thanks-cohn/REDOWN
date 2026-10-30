@@ -124,6 +124,55 @@ The design must be **provider-aware and provider-agnostic**: future Google Drive
 **Related vision:** [Money Machine, OVERDRIVE & Gamified Odometer](./IMPORTANT_MONEY_MACHINE_OVERDRIVE_GAMIFIED_ODOMETER_AND_CREATOR_SHOWCASE.md). Distinguish the playful waiting game from the verified-save gamification system.
 
 
+## Future interactive mascot: Desktop Toy Mode / The Little Troublemaker
+
+**Owner refinements, 2026-10-30.** Beyond Bucket Brigade, REDOWN's existing mascot should eventually become a tiny interactive, physics-driven character, like the playful desktop pets and character toys popular in earlier internet and PC eras. Users can **pick it up, hold it, drag it, flick it, lob it, toss it, bounce it, and affectionately poke or smack it in exaggerated cartoon fashion**. It should feel alive, expressive, and a little mischievous. No actual files, provider accounts, or transfer state are altered by these interactions.
+
+### Interaction and physics ideas
+
+- Click/hold the mascot to pick it up. It wiggles, dangles or looks indignant; release gently to set it down, or release with velocity to send it tumbling.
+- Lightweight spring-based motion, momentum, friction, collisions with safe decorative screen boundaries, squash-and-stretch, and recovery poses. The mascot springs upright with distinct reactions.
+- Short *boop*, bounce, surprised squeak and landing sounds (original, volume-controlled); rare face changes, mock anger, dizzy stars or small comic gestures.
+- Respect the actual interface layout: don't obscure upload progress, the primary action, menu controls, file tiles, or drag-and-drop zones. Decorative collision boundaries are not physical controls.
+- The user can disable interaction or choose a restrained idle mascot in Settings.
+
+### The best Easter egg: IT BITES BACK
+
+**Owner's specific joke:** After enough repeated jostling or mischievous treatment, the little mascot *finally fights back*. It lunges toward the pointer and **bites down onto the cursor**! For a beat, it looks as though moving the mouse takes effort because the mascot is clamped onto it. The user can **shake / wiggle the mouse a lot to pull free**, press a clearly communicated keyboard shortcut, or trigger a short cutscene where the mascot refuses to let go before relenting.
+
+Possible beat-by-beat gag:
+
+1. After several playful tosses, its expressions progress from amused -> annoyed -> furious. The counter is based on explicit playful interactions, never routine clicks or necessary workflows.
+2. It fixes its gaze on the cursor, shakes with comic indignation and makes a tiny warning noise.
+3. **CHOMP!** It catches a *visual cursor surrogate or elastic tether* within its toy interaction region. Its whole body pulls backward when the user moves the pointer; the animation creates a delightful **illusion of resistance**.
+4. A visible hint appears: **"SHAKE ME OFF!"** with an alternative **"ESC to release"** (or a remappable, accessible action). The user can rapidly wiggle to reach a small bounded shake threshold, triggering a dramatic elastic *pop!*; a funny alternate release cutscene can play.
+5. The mascot tumbles backward, shakes itself off, then looks sheepishly victorious or smug. Return to normal, and apply a long cooldown so the joke remains rare.
+
+**Critical safety/UX invariant:** This is **simulated resistance only**, not actual interference with the system pointer, browser shortcuts, mouse movement, keyboard, drag-and-drop, ability to exit, accessibility software, or normal app usage. The true OS cursor and clicks must remain responsive. No real cursor locking, browser-wide trapping, pointer speed manipulation, or forced struggle. Implement elastic mascot/cursor-*visual* motion inside a clearly optional local play surface, not a system-wide mouse grab. On Esc, focus change, pointer leaving the play surface, a real transfer requiring attention, or setting disabled, release instantly. Provide both wiggle and non-wiggle exit paths, and never require vigorous physical mouse motion.
+
+### Settings, states, and guardrails
+
+- Suggested Settings toggle: **Interactive Mascot** (off by default for major movement; possibly a separate "Mischief Mode" toggle for cursor-biting Easter eggs).
+- Optional intensity tiers: Just Cute / Playful Physics / Full Mischief. Full Mischief enables the rare mock retaliation gag, not sabotage.
+- All physical play remains distinct from **Bucket Brigade** and the **Money Machine**; no toy score counts as a verified file save or successful cloud operation.
+- Idle/waiting is the ideal time to play. Avoid activating cutscenes during authentication, sensitive consent, errors, active typing, dragging actual files, or other consequential work.
+- Limit frame rates and resource costs during transfers. Respect reduced-motion, touch, keyboard control, mute and sound settings.
+- For touch and keyboard access, provide equivalent explicit Pick Up / Toss / Release or Play actions, and a universal predictable escape route. Never make use of real upload controls depend on playing.
+- Use original character animation and audio, not copied copyrighted desktop-pet characters, sound effects or game assets.
+
+### Acceptance candidates
+
+1. Mascot is fun to pick up, toss and flick, with physically legible momentum and correct settling.
+2. It never blocks ordinary Explorer controls, provider setup, file transfers or navigation.
+3. Repeated explicit play interactions can unlock a rare **bite-back** response with clear buildup and comic timing.
+4. Pointer movement and actual clicking remain completely normal even during the fake "resistance" animation.
+5. Both wiggle-to-escape and a keyboard/accessible immediate release work; Escape must always release.
+6. Reduced motion and disable-interactive-mascot turn off all nonessential effects.
+7. Hidden, unfocused or high-load windows pause play without affecting transfers.
+8. Mascot's expressions, audio and reactions fit the existing premium REDOWN identity.
+
+**Product promise:** REDOWN's little companion isn't just decoration. It has personality and, eventually, a sense of comic self-defense.
+
 ## Product principle
 
 **"The buttons themselves show you where to go next."**
