@@ -82,6 +82,48 @@ The design must be **provider-aware and provider-agnostic**: future Google Drive
 7. Ensure guidance disappears immediately when state changes, and never reports authentication, activation or successful transfers without actual confirmation.
 8. Add visual test cases documenting how multiple arrows converge without cluttering the toolbar.
 
+## Optional future Settings: Magnetic Buttons / Follow the Cursor
+
+**Owner's idea (2026-10-30):** Let users enable a playful setting where the existing toolbar buttons respond to the mouse. While uploading, waiting on a transfer, following setup guidance, or while a button would otherwise be inactive, its *visual presentation* can lean toward, trail, or gently follow the cursor. It should feel like a little family of responsive, expressive objects rather than an ordinary static toolbar.
+
+### Configurable behaviors
+
+- **Playful Buttons**: master toggle in Settings, opt-in by default.
+- **When active**: selectable triggers, e.g. During Uploads, Inactive Buttons, and Guided Setup. Only choose states for which activity is actually safe.
+- **Motion style**: Magnetic Lean (subtle), Follow / Trail (a small eased offset), or playful Cluster / Orbit (experimental). A magnetic cursor effect can make the button appear to follow without relocating its real clickable target.
+- **Intensity**: Low / Medium / High with bounded displacement, reduced-motion support, and an obvious way to turn the feature off.
+- **Return home**: on upload completion, user intent to click, keyboard focus, login change, or a newly usable action, the visual face settles smoothly into its canonical location.
+
+### Important rules
+
+- Never move the *actual hit box*, tab order, focus indicator, screen-reader identity, or layout anchor out from under the user. Prefer a separate decorative face or small bounded transform, leaving true controls in their original positions.
+- Keep critical actions, progress, cancel, login, refresh and activation stable and reachable. Do not animate a button away from a user's pointer while they try to click it.
+- Preserve visibility, meaning and accessibility. Button labels and hover/focus tooltips must remain understandable, and users can disable this whimsy.
+- At most a few inactive buttons should react at once; avoid visual chaos or collisions. Responsive placement, z-index, and edge conditions must remain polished.
+- This is independent from honest transfer state and the "Follow the Arrows" guidance. A button pointing to a prerequisite should never lose its directional meaning merely to chase the mouse.
+- Avoid sustained CPU/GPU use; pause when the page is unfocused, hidden or under heavy workload. Never impair transfers.
+- Acceptance should cover pointer movement, pointer clicks, keyboard, hover, focus, reduced motion, screen widths, both slow and fast uploads, loading and error states, and reactivation of controls.
+
+**Desired feeling:** The buttons come alive when they are otherwise waiting, but retain all their real utility.
+
+## Future Waiting-Time Mini-Game (distinct from Chrome Dino)
+
+**Owner's idea (2026-10-30):** Consider a genuinely fun, optional little game for the moments when users are waiting for uploads, cloud preparation, or transfers to complete. The Chrome offline dinosaur is a reference for the *tiny, delightful surprise*, **not** a request to copy an endless-runner or its design. REDOWN should invent something with its own mascot, visual language and personality.
+
+**Working title: "Bucket Brigade."** A miniature, original one-screen dexterity/puzzle game: REDOWN's mascot receives playful parcel/file icons and aims them into matching cloud buckets. Gradually build light combos, visual effects, and charming reactions, with subtle nods to the Money Machine audio language. Optional variations: sort by color, catch falling parcels, or connect a short path through whimsical storage destinations. Keep it clearly fictional and separate from actual account files or data. Refine exact mechanics through prototypes.
+
+- **Entry:** an unobtrusive "Play while you wait" invitation in genuine waiting/progress areas, or an optional Settings toggle. Never launch automatically into a full-screen game.
+- **Exit:** instant return to Explorer, with real upload progress always visible or one action away; completion notification remains unmissable and can gently end a round.
+- **Integrity:** game points, mascot parcel counts and fictional buckets are **never** real file counts, upload status, Money Machine verified saves, destinations or data operations.
+- **Performance:** no material CPU, memory, network, audio or transfer-performance impact. Pause on tab backgrounding, inactive window, low-resource mode, interruptions or real errors. Do not intentionally create, extend or simulate waiting.
+- **Input:** mouse/touch and keyboard support; clear pause/restart/exit, accessible instructions and color-independent cues. Honor reduced motion and sound preferences.
+- **Appearance:** compact, glossy, polished, immediately understandable, consistent with REDOWN's existing mascot and midnight-blue aesthetic, not an iframe ad or intrusive modal.
+- **Achievement connection:** optional *cosmetic-only* unlocks (e.g. mascot reactions or decorative trails), never paywalled transfer reliability or misleading save-speed badges.
+- **Scope:** future concept only; determine whether to include after core transfers and setup are reliable. Gameplay should add delight, not hide an unresolved stall or error.
+
+**Related vision:** [Money Machine, OVERDRIVE & Gamified Odometer](./IMPORTANT_MONEY_MACHINE_OVERDRIVE_GAMIFIED_ODOMETER_AND_CREATOR_SHOWCASE.md). Distinguish the playful waiting game from the verified-save gamification system.
+
+
 ## Product principle
 
 **"The buttons themselves show you where to go next."**
