@@ -150,6 +150,7 @@
     // Chrome supplies the page the user actually right-clicked. A direct
     // URL or typed input has no independently known parent; do not infer one.
     if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
+    if(record.ok!==false)details.append(create('small',info.status,'history-entry-outcome'));
     if(info.detail)details.append(create('small',info.detail,'history-entry-provider'));
     if(record.ok===false&&record.error){
       const technical=create('details','','history-technical-details');
