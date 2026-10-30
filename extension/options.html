@@ -124,20 +124,10 @@
     .page-nav a{flex:1;min-width:100px;text-align:center;padding:10px 12px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:#b8c6e0}
     .page-nav a:hover,.page-nav a:focus-visible{background:#293751;color:white}
     body:has(#local-tools[hidden]) .page-nav .connected-link{display:none}
-    .reorder-handle{flex:0 0 32px;width:32px;min-height:36px;padding:4px;background:transparent;color:var(--muted);border:1px solid var(--line);font-size:21px;cursor:grab;touch-action:none;user-select:none}
-    .reorder-handle:active{cursor:grabbing}.reorder-handle:hover{color:var(--purple2);border-color:var(--purple)}
-    .reorder-list-dragging>.reorder-item{max-height:100px;overflow:hidden;transition:none}
-    .reorder-list-dragging>.nested-group{max-height:none}
-    .reorder-list-dragging>.nested-group>.nested-children,.reorder-list-dragging>.nested-group>.nested-path{display:none}
-    .reorder-ghost{position:fixed;z-index:2147483647;max-width:min(250px,calc(100vw - 16px));padding:12px 18px;border:1px solid var(--purple2);border-radius:12px;background:#353657;color:var(--text);box-shadow:0 18px 45px #0008;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:650}
-    .reordering{opacity:.6}.reorder-before{box-shadow:0 -3px 0 var(--purple2)!important}.reorder-after{box-shadow:0 3px 0 var(--purple2)!important}
-    .card-top>div:first-of-type,.nested-heading>div:first-of-type{flex:1;min-width:0}
+    .reordering{opacity:.6}
+    .card-top>div:first-of-type{flex:1;min-width:0}
     .section-kicker{display:block;margin-bottom:7px;color:#b9a4f1;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
     .grid.profile-fields{grid-template-columns:1fr}
-    .profile-fields>.default-location-builder{grid-column:1/-1;grid-row:2;padding:18px;border:1px solid #35445f;border-radius:12px;background:#18243a}
-    .grid.simple-option-controls{grid-template-columns:auto minmax(0,1fr) auto;align-items:end}
-    .grid.simple-option-destination{grid-template-columns:1fr}
-    .simple-option-controls button{white-space:nowrap}
     .section :is(input,select){min-width:0}
     .section :is(h3,p){overflow-wrap:anywhere}
     .section-head .ghost{flex-shrink:0}
@@ -170,7 +160,6 @@
     .bucket-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:20px;margin-top:28px}
     .bucket{position:relative;min-width:0;border-radius:18px}
     .status{margin-top:12px;min-height:20px;color:var(--muted);font-size:12px}
-    #menu-location-status:empty{display:none}
     .status.ok{color:var(--green)} .status.bad{color:var(--red)}
     .empty{border:1px dashed var(--line);border-radius:16px;padding:22px;text-align:center;color:var(--muted)}
     .toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:#d5cce0}
@@ -199,30 +188,10 @@
     .error-title{color:var(--red);font-weight:800;overflow-wrap:anywhere}
     .error-meta{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
     @media(max-width:760px){.downloads-head{display:none}.history-row{grid-template-columns:92px 1fr}.download-location,.download-type{grid-column:2}.download-name-cell{grid-column:2}.error-row{grid-template-columns:92px 1fr}}
-    .tree-editor{margin-top:18px;border-top:1px solid rgba(121,88,166,.22);padding-top:18px}
-    .tree-heading{display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .tree-note{font-size:11px;color:#9f93ad;margin:12px 0 14px;padding:10px 12px;border-radius:12px;background:linear-gradient(180deg,rgba(139,92,246,.045),rgba(255,255,255,.012));border:1px solid rgba(105,76,143,.26)}
-    .tree-root{position:relative;margin:12px 0 8px;padding:2px 0}
-    .tree-node{position:relative}
-    .tree-node>.tree-children{position:relative;margin-left:22px;padding-left:16px;border-left:1px solid rgba(126,105,160,.28)}
-    .tree-node>.tree-children:before{content:"";position:absolute;left:-1px;top:0;width:15px;border-top:1px solid rgba(126,105,160,.28)}
-    .tree-row{position:relative;display:grid;grid-template-columns:22px minmax(165px,.8fr) minmax(330px,1.5fr) 38px 38px;gap:8px;align-items:center;margin:8px 0;padding:8px 8px 8px calc(var(--depth) * 8px);border:1px solid rgba(73,52,96,.48);border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));transition:border-color .14s ease,background .14s ease,transform .14s ease}
-    .tree-row:hover{border-color:rgba(126,88,190,.52);background:linear-gradient(180deg,rgba(139,92,246,.045),rgba(255,255,255,.012))}
-    .tree-row:focus-within{border-color:rgba(139,92,246,.78);box-shadow:0 0 0 3px rgba(139,92,246,.08)}
-    .tree-branch{color:#8e73b3;text-align:center;font-size:12px}
-    .tree-label,.tree-target,.tree-location-suggest{height:38px;border-radius:9px;background:#0e1728;border-color:#3a4a66}
-    .tree-label{font-weight:760;color:#eee7f5}
-    .tree-target{padding:8px 10px;color:#d9d0e2}
-    .tree-target-wrap{display:grid;grid-template-columns:minmax(150px,.62fr) minmax(190px,1fr);gap:8px;align-items:center}
-    .tree-location-suggest{padding:7px 9px;min-width:0;color:#cfc3dc}
-    .tree-location-suggest:hover,.tree-label:hover,.tree-target:hover{border-color:#4b3564}
     .mini{min-height:36px;padding:8px 9px;border-radius:9px;background:#26334c;color:#ddd1ea;border:1px solid var(--line);font-size:12px;white-space:nowrap;transition:transform .12s ease,border-color .12s ease,background .12s ease}
     .mini:hover:not(:disabled){transform:translateY(-1px);border-color:#60468a;background:#34445f}
-    .tree-add,.tree-remove{width:38px;min-width:38px;height:38px;padding:0;font-size:18px;font-weight:800}
-    .tree-add{background:linear-gradient(180deg,#26183a,#1b1228);border-color:#4b3567;color:#e7daf8}
     .mini.danger{background:#291c2a;color:#d99aa5;border-color:#3b1c28}
     .mini.danger:hover{background:#261018;border-color:#643044;color:#ffc1cb}
-    .tree-target:disabled{opacity:.34;cursor:not-allowed}
     .dropzone{margin-top:12px;border:1px dashed #604191;border-radius:16px;padding:26px;text-align:center;background:linear-gradient(180deg,rgba(139,92,246,.07),rgba(255,255,255,.015));transition:.16s ease;cursor:pointer}
     .dropzone.drag{border-color:var(--purple2);background:rgba(139,92,246,.14);transform:translateY(-1px)}
     .dropzone strong{display:block;font-size:15px;margin-bottom:4px}
@@ -308,12 +277,8 @@
     .explorer-page-gap{padding:0 4px;color:#9889a5}
     .explorer-page-hint{color:#9889a5;font-size:10px}
 
-    .upload-location-picker select{min-width:0}.upload-location-picker .meta{margin-top:0}.upload-destination-grid{align-items:start}.default-location-builder{display:grid;gap:8px}.location-levels{display:grid;gap:7px}.location-level-row{display:grid;grid-template-columns:minmax(150px,.9fr) minmax(170px,1.1fr) auto auto;gap:7px;align-items:center}.location-level-row select,.location-level-row input{min-width:0}.location-level-remove{min-width:34px}@media(max-width:800px){.location-level-row{grid-template-columns:1fr 1fr}.location-level-row .mini{width:100%}}/* Simple folder levels: all five controls stay on the same compact row. */
-    .location-level-row.simple-location-row{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) max-content max-content 32px;gap:5px;align-items:center;min-width:0}
-    .simple-location-row .location-level-select,.simple-location-row .location-level-input{width:100%;min-width:0;box-sizing:border-box;padding-inline:9px}
-    .simple-location-row .mini{width:auto;min-width:0;padding:0 8px;white-space:nowrap;font-size:11px;height:36px}
-    .simple-location-row .location-level-remove{grid-column:5;justify-self:end;width:32px;min-width:32px;height:36px;padding:0;border-radius:8px}
-    @media(max-width:650px){.location-level-row.simple-location-row{grid-template-columns:minmax(0,1fr) auto auto 32px;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px}.simple-location-row .location-level-select,.simple-location-row .location-level-input{grid-column:1/-1}.simple-location-row .location-level-remove{grid-column:4}.simple-location-row .mini{width:100%;padding-inline:10px}}
+    .upload-location-picker select{min-width:0}.upload-location-picker .meta{margin-top:0}.upload-destination-grid{align-items:start}.location-levels{display:grid;gap:7px}.location-level-row{display:grid;grid-template-columns:minmax(150px,.9fr) minmax(170px,1.1fr) auto auto;gap:7px;align-items:center}.location-level-row select,.location-level-row input{min-width:0}.location-level-remove{min-width:34px}@media(max-width:800px){.location-level-row{grid-template-columns:1fr 1fr}.location-level-row .mini{width:100%}}
+    @media(max-width:650px){}
     .preview-title{font-weight:850;word-break:break-all}.preview-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.preview-arrow{min-width:38px;font-size:18px;line-height:1}body.preview-lightbox-open{overflow:hidden}
     .preview-lightbox-layer{position:fixed;inset:0;z-index:120;display:grid;place-items:center;color:#f4f0e9;animation:gallery-enter .2s ease-out}
     .preview-lightbox-backdrop{position:absolute;inset:0;border:0;border-radius:0;background:rgba(15,14,17,.96);backdrop-filter:blur(18px);cursor:zoom-out}
@@ -346,7 +311,7 @@
     .preview-details div:nth-child(even){word-break:break-all}
     .preview-url{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;word-break:break-all;color:#cfc6d9}
     .text-preview{width:100%;max-height:500px;overflow:auto;margin:0;padding:14px;white-space:pre-wrap;word-break:break-word;background:#0a111e;color:#e8e1ef;border-radius:10px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;text-align:left}
-    @media(max-width:900px){.tree-row{grid-template-columns:20px minmax(140px,.75fr) minmax(220px,1.25fr) 38px 38px}.tree-target-wrap{grid-template-columns:1fr}.tree-row .mini{grid-column:auto}}
+    @media(max-width:900px){}
     @media(max-width:760px){.grid,.grid.two,.workspace-grid{grid-template-columns:1fr}}
 
     .explorer-heading{align-items:center}.explorer{position:relative;border:1px solid #35465f;border-radius:16px;background:#0e1728;box-shadow:0 18px 55px rgba(0,0,0,.25);overflow:hidden;outline:none}
@@ -366,33 +331,14 @@
     @media(max-width:1000px){.explorer-body{grid-template-columns:170px minmax(0,1fr)}.explorer-preview{display:none}}
     @media(max-width:760px){.explorer-toolbar{grid-template-columns:auto 1fr}.explorer-actions{display:flex;justify-content:flex-end}.breadcrumbs{display:none}.explorer-search{grid-column:1/-1}.explorer-body{display:block}.explorer-sidebar{display:none}.location-mobile{display:block;padding:10px}.file-head,.file-row{grid-template-columns:minmax(160px,1fr) 75px 105px}.file-head>*:last-child,.file-row>*:last-child{display:none}}
 
-    @media(max-width:520px){.file-head,.file-row{grid-template-columns:minmax(0,1fr) 65px}.file-head>*:nth-child(n+3),.file-row>*:nth-child(n+3){display:none}.file-cell{padding-inline:9px}.nested-footer{flex-wrap:wrap}.preview-head{flex-wrap:wrap}}
-
-    .right-click-mode{padding:6px;border:1px solid #405170;border-radius:12px;background:#0e1728;margin:0 0 12px;width:fit-content;max-width:100%}.right-click-mode .toggle{margin:0;padding:12px 18px;border:1px solid transparent;border-radius:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px}.right-click-mode .toggle:has(input:checked){background:#302e50;border-color:#77639f;color:#e9e2ff}.right-click-mode .meta{margin-top:8px}
-    .nested-section-head{margin:24px 0 16px;padding-top:0}
-    .nested-section-head h3{margin:0 0 6px}.nested-section-head p{margin:0;color:var(--muted);max-width:760px}
-    .nested-card{padding:22px;border:1px solid #35445f;border-radius:14px;background:#10192a;margin:16px 0}
-    .nested-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.nested-heading h3{margin:0 0 4px}
-    .nested-columns,.nested-location-row{display:grid;grid-template-columns:minmax(160px,1fr) minmax(190px,1fr) 150px;gap:14px;align-items:center}
-    .nested-columns{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-bottom:12px}
-    .nested-group{margin-bottom:16px}.nested-location-row{padding:12px;border:1px solid #293b56;border-radius:12px;background:#17233a}.nested-choice,.nested-create,.nested-actions{display:flex;gap:8px;min-width:0;align-items:center}
-    .nested-existing,.nested-new{min-width:0;flex:1;width:100%}.nested-collapse{padding:6px;width:24px;flex-shrink:0}
-    .nested-create button{flex-shrink:0}.nested-actions button{font-size:12px;padding:8px 10px;white-space:nowrap}
-    .nested-path{margin:6px 0 12px 32px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
-    .nested-children{margin-left:18px;padding-left:12px;border-left:1px solid var(--line)}
-    .nested-children .nested-children .nested-children{margin-left:6px;padding-left:6px}
-    .nested-import-note{padding:10px 12px;background:var(--panel2);border-radius:8px;color:var(--muted);font-size:12px;margin-bottom:16px}
-    .nested-footer{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--line)}.nested-status:empty{display:none}
-    .nested-card :is(input,select,button):focus-visible{outline:2px solid var(--purple2);outline-offset:3px}
-    @media(max-width:800px){.nested-location-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.nested-actions{grid-column:1/-1;margin-left:32px}.nested-columns{grid-template-columns:1fr 1fr}.nested-columns span:last-child{display:none}.nested-card{padding:14px}.nested-heading{align-items:flex-start;flex-direction:column}}
-    @media(max-width:520px){.nested-location-row{grid-template-columns:minmax(0,1fr)}.nested-create{margin-left:32px}.nested-columns{display:none}.nested-children{margin-left:6px;padding-left:6px}}
+    @media(max-width:520px){.file-head,.file-row{grid-template-columns:minmax(0,1fr) 65px}.file-head>*:nth-child(n+3),.file-row>*:nth-child(n+3){display:none}.file-cell{padding-inline:9px}.preview-head{flex-wrap:wrap}}select,button):focus-visible{outline:2px solid var(--purple2);outline-offset:3px}
+    @media(max-width:800px){}
+    @media(max-width:520px){}
     @media(max-width:760px){
       .grid.profile-fields{grid-template-columns:1fr}
       .wrap{padding:20px 14px 32px}header{align-items:flex-start}.brand img{width:42px;height:42px}.sub{font-size:11px}.pill{font-size:10px;padding:6px 8px}
       .section,.hero{padding:20px;border-radius:16px}.section-head{align-items:flex-start;flex-wrap:wrap}.section h2{font-size:19px}.page-nav{gap:3px}.page-nav a{min-width:80px;padding:9px}
-      .profile-fields>.default-location-builder{grid-row:auto;padding:12px}
       .section-head>div{flex:1 1 220px}.section-head>button{flex:0 0 auto}
-      .grid.simple-option-controls{grid-template-columns:auto minmax(0,1fr)}.simple-option-controls>:last-child{grid-column:1/-1}.simple-option-controls button{padding-inline:6px;font-size:11px;white-space:normal}
       .row-actions>*{flex:1}.row-actions .toggle{flex-basis:100%}.connects button{flex:1}
     }
       /* Shared gallery treatment: the file remains the visual focus. */
@@ -552,7 +498,7 @@
     <div id="hero-status" class="status"></div>
   </section>
 
-  <nav class="page-nav" aria-label="Dashboard sections"><a href="#connections">Connection</a><a class="connected-link" href="#cloudflare-panel">Buckets</a><a class="requires-storage" href="#right-click-presets">Destinations</a><a class="connected-link requires-storage" href="#upload-zone">Upload</a><a class="connected-link requires-storage" href="#explore-zone">Explore</a><a class="requires-storage" href="#downloads-zone">Downloads</a></nav>
+  <nav class="page-nav" aria-label="Dashboard sections"><a href="#connections">Connection</a><a class="connected-link" href="#cloudflare-panel">Buckets</a><a class="requires-storage" href="beta/explorer.html#explorer-destinations">Destinations</a><a class="connected-link requires-storage" href="#upload-zone">Upload</a><a class="connected-link requires-storage" href="#explore-zone">Explore</a><a class="requires-storage" href="#downloads-zone">Downloads</a></nav>
 
   <section id="toolbar-preferences" class="section">
     <div class="section-head"><div><h2>Toolbar behavior</h2><div class="section-note">Choose what opens when you click the REDOWN extension icon.</div></div></div>
@@ -583,40 +529,15 @@
       <div class="storage-training-controls"><button id="refresh-storage" class="ghost" type="button">Refresh buckets</button></div>
   </section>
 
-  <section id="right-click-presets" class="section requires-storage">
+  <section id="storage-preferences" class="section requires-storage">
     <div class="section-head">
-      <div><span class="section-kicker">02 / Destinations</span><h2>Right-click setup</h2><div class="section-note">Use Explorer to configure the native Chrome menu.</div></div>
+      <div><span class="section-kicker">02 / Destinations</span><h2>Storage preferences</h2><div class="section-note">Domains and storage preferences. Right-click Setup lives in Explorer.</div></div>
       <a class="secondary" href="beta/explorer.html#explorer-destinations">Explorer → Right-click Setup</a>
     </div>
-    <div hidden inert aria-hidden="true"><button id="refresh-menu-locations" type="button">Refresh locations</button>
-    <div class="right-click-mode">
-      <label class="toggle"><input id="use-simple-menu" type="checkbox" aria-describedby="right-click-mode-status">Use Simple Menu</label>
-      <label class="toggle"><input id="use-nested-menu" type="checkbox" aria-describedby="right-click-mode-status">Use Nested Menu</label>
-      <button id="add-menu-location" type="button" class="ghost" style="margin-left:auto">+ Add new location</button>
-    </div>
-    <dialog id="add-location-dialog" style="max-width:calc(100vw - 28px);width:380px">
-      <form method="dialog" id="add-location-form">
-        <h3>Add new location</h3>
-        <label for="add-location-profile">Destination</label>
-        <select id="add-location-profile"></select>
-        <div class="row-actions" style="margin-top:16px">
-          <button type="button" id="add-location-cancel" class="ghost">Cancel</button>
-          <button type="submit" class="secondary">Add location</button>
-        </div>
-      </form>
-    </dialog>
-    </div>
-    <div id="right-click-mode-status" class="meta" role="status" style="margin-bottom:12px"></div>
-    <div id="menu-location-status" class="status" role="status" aria-live="polite"></div>
-
-    <div id="simple-menu-editor">
+    <div>
       <h3>Storage preferences</h3>
       <div id="profiles"></div>
       <div id="profiles-empty" class="empty">No destinations yet. Connect Cloudflare or add GitHub above.</div>
-    </div>
-    <div id="nested-menu-editor-panel" hidden>
-      <div class="nested-section-head"><h3>Nested · Cloudflare locations</h3><p>Select existing buckets and folders. Create adds a new location at that row’s level; + Child adds a row inside the selected location.</p></div>
-      <div id="nested-profiles"></div>
     </div>
   </section>
 
@@ -748,9 +669,6 @@
 <script type="module" src="model-viewer.min.js"></script>
 <script src="cloudflare-auth.js"></script>
 <script src="cloudflare-api.js"></script>
-<script src="nested-locations.js"></script>
-<script src="menu-reorder.js"></script>
-<script src="nested-menu-editor.js"></script>
 <script src="explorer-destination-menu.js"></script>
 <script src="storage-signals.js"></script>
 <script src="public-addresses.js"></script>

@@ -1,0 +1,37 @@
+✔ Bucket URLs asks Yes or No only when public managed access is verifiably disabled (199.585449ms)
+✔ Bucket URLs Yes explicitly enables once, reads verified configuration and offers a URL (68.918315ms)
+✔ Cloudflare denial does not claim public URL success or immediately retry a possibly changed setting (67.434467ms)
+✔ all address combinations stay contextual and encode full literal object paths (50.17875ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (23.72663ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (7.460632ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (1.529711ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (2.421532ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (18.164574ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (13.364523ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (1.734709ms)
+✔ public enable accepts only authorized Explorer pages and explicit confirmation; rejects denied or unverified changes (3.390951ms)
+✔ V3 domain projects parent-first exact IDs and resolves branch Send here only (3.475829ms)
+✔ V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect (0.981827ms)
+✔ V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8 (1.027426ms)
+✔ actual background switch/save/register/resolve persists independent engines across restart (6.657013ms)
+✔ actual background stale and unauthorized commits reject; concurrent saves serialize (1.937294ms)
+✔ actual Chrome create/remove failures distinguish saved settings from registration (2.97182ms)
+✔ new UI mounts one fresh outline in both engines; deleting ancestor has undo and zero provider writes (191.497487ms)
+✔ new UI add, search, exact folder discovery and failed-registration receipt retain revision (68.033053ms)
+✔ actual click listener waits for V3 read-back before recording completion and never falls back (2.651408ms)
+✔ active HTML/CSS/JS and packaging contain no retired setup mounts/imports/hooks (8.00418ms)
+✔ Legacy pre-v1 tree remains executable without restoring its setup or mutating profiles (3.462058ms)
+✔ actual V3 ingest preserves the existing transport and URL contract with an exact non-provisioning target (2.447292ms)
+✔ package closure includes V3, Legacy and Settings and excludes all retired setup code (168.001023ms)
+✔ setup snapshot is sender-gated and exposes no credential or legacy menu state (1.545795ms)
+✔ storage preferences retain every literal DOM dependency after old setup removal (55.036969ms)
+✔ real shared tabs, engine events and reload can only return to the single V3 setup (37.033697ms)
+✔ Settings applies only the engine message and preserves restart-visible registration failure (19.066071ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2238.699451

@@ -8,6 +8,7 @@
 <link rel="preload" href="../fonts/dm-sans-latin-variable.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="explorer.css">
 <link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="right-click-v3.css">
 </head>
 <body>
 <aside>
@@ -59,7 +60,7 @@
 </div>
 <nav class="sidebar-dock" aria-label="REDOWN navigation">
 <button id="transfer-history" type="button" data-dock-icon="history"><span>History</span></button>
-<button id="open-destinations" type="button" data-dock-icon="destinations" aria-controls="quick-panel-setup" title="Jump to Destinations in Explorer"><span>Destinations</span></button>
+<button id="open-destinations" type="button" data-dock-icon="destinations" aria-controls="v3-setup" title="Jump to Destinations in Explorer"><span>Destinations</span></button>
 <button id="open-shelf-settings" type="button" data-dock-icon="settings" aria-label="Open REDOWN Shelf Settings"><span>Settings</span></button>
 </nav>
 </aside>
@@ -132,31 +133,24 @@
 <section class="quick-links-panel" id="explorer-destinations" aria-label="Right-click setup and bucket URLs">
   <div class="quick-links-heading"><div><span class="eyebrow">CLOUD CONTROL</span><h2>One click. Your destination.</h2></div><span class="quick-links-mark" aria-hidden="true">✦</span></div>
   <div class="quick-links-tabs" role="tablist" aria-label="Cloud setup">
-    <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="quick-panel-setup" tabindex="0"><span class="quick-tab-number" aria-hidden="true">01</span><span>Right-click setup</span></button>
+    <button id="quick-tab-setup" type="button" role="tab" aria-selected="true" aria-controls="v3-setup" tabindex="0"><span class="quick-tab-number" aria-hidden="true">01</span><span>Right-click setup</span></button>
     <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1"><span class="quick-tab-number" aria-hidden="true">02</span><span>Bucket URLs</span></button>
   </div>
-  <section id="quick-panel-setup" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-setup">
-    <div class="destination-toolbar">
-      <div class="destination-mode" role="group" aria-label="Right-click menu layout"><span>Simple</span><button id="destination-mode" type="button" aria-label="Switch to Nested" aria-pressed="false"><span aria-hidden="true">≡</span><span aria-hidden="true">⑂</span><i></i></button><span>Nested</span></div>
-      <select id="destination-profile" aria-label="Account and prepared bucket for new locations"></select>
-      <button id="destination-add" type="button" aria-label="Add destination">+ <span>Location</span></button>
-      <button id="destination-save" class="primary" type="button">Save menu</button>
-      <button id="destination-reload" type="button">Reload</button>
-    </div>
-    <p id="destination-status" role="status" aria-live="polite">Loading your destinations…</p>
-    <div class="destination-stage"><div id="destination-simple"></div><div id="destination-nested" hidden></div></div>
-    <details id="destination-first-setup" class="destination-first-setup"><summary>Optional: Dedicated REDOWN bucket</summary>
-    <p>You can use any existing R2 bucket through <strong>Activate Buckets</strong>. Or use this optional setup to create or reuse a separate private bucket named <strong>redown</strong>.</p>
-    <div class="quick-links-grid">
-      <label>Cloudflare account<select id="quick-setup-account" aria-label="Account for REDOWN bucket"><option value="">Discovering accounts…</option></select></label>
-      <label>Menu label<input id="quick-menu-label" type="text" maxlength="60" value="Cloudflare" autocomplete="off" aria-label="Right-click menu label"></label>
-    </div>
-    <div class="quick-links-action"><span><strong>Dedicated redown bucket</strong><small>Optional private storage for a simple right-click destination</small></span><button id="quick-create" class="primary" type="button" disabled>Create or use dedicated bucket</button></div>
-    <p id="quick-setup-feedback" class="quick-links-feedback" role="status" aria-live="polite">Nothing is created until you choose the button and confirm. Existing R2 buckets remain untouched.</p>
-    </details>
-    <a id="destination-legacy-fallback" href="../options.html" hidden>Manage experimental GitHub destinations</a>
+  <section id="v3-setup" role="tabpanel" aria-labelledby="quick-tab-setup">
+      <h3>Right-click Setup · V3</h3><p id="v3-engine" role="status"></p>
+      <div class="v3-toolbar"><input id="v3-search" type="search" aria-label="Search V3 destinations" placeholder="Find a destination…"><button id="v3-save" type="button">Save V3 menu</button><button id="v3-reload" type="button">Reload</button><button id="v3-undo" type="button" hidden>Undo deletion</button></div>
+      <div id="v3-outline" aria-label="Account, bucket and folder outline"></div>
+      <form id="v3-add" aria-label="Add V3 destination">
+        <label>Activated account and bucket<select id="v3-profile" required></select></label>
+        <label>Outline parent<select id="v3-parent"><option value="">Top level</option></select></label>
+        <label>Menu label<input id="v3-label" maxlength="60" required autocomplete="off"></label>
+        <label>Exact folder path (empty for bucket root)<input id="v3-prefix" autocomplete="off"></label>
+        <button id="v3-browse" type="button">Browse existing folders</button><button type="submit">Add destination</button>
+      </form><div id="v3-folders" aria-label="Existing folders"></div>
+      <p id="v3-status" role="status" aria-live="polite">Loading V3 destinations…</p>
   </section>
   <section id="quick-panel-urls" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-urls" hidden>
+    <label>Cloudflare account<select id="quick-setup-account" aria-label="Cloudflare account for bucket URLs"></select></label>
     <p>Attach a domain to a bucket, then use its verified public addresses for the files you save.</p>
     <div class="quick-links-grid quick-links-url-grid">
       <label>Bucket<select id="quick-url-bucket" aria-label="Bucket to receive a public URL"><option value="">Choose a bucket…</option></select></label>
@@ -272,11 +266,9 @@
 </script>
 <script src="sidebar-settings.js"></script>
 <script src="../brand-icon.js"></script><script src="../explorer-theme.js"></script>
-<script src="../nested-locations.js"></script>
-<script src="../destination-config.js"></script>
-<script src="../nested-menu-editor.js"></script>
 <script src="../explorer-destination-menu.js"></script>
-<script src="destinations.js"></script>
+<script src="../right-click-v3.js"></script>
+<script src="right-click-v3-ui.js"></script>
 <script src="quick-links.js"></script>
 <script src="account-picker.js"></script>
 <script type="module" src="explorer.mjs">

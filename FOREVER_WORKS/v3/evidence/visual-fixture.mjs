@@ -1,0 +1,20 @@
+const importedPlaywright=await import(process.env.REDOWN_PLAYWRIGHT_MODULE||'playwright');
+const playwright=importedPlaywright.default||importedPlaywright;
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {JSDOM} from 'jsdom';
+import assert from 'node:assert/strict';
+const html=await readFile('extension/beta/explorer.html','utf8'),css=await readFile('extension/beta/explorer.css','utf8'),scoped=await readFile('extension/beta/right-click-v3.css','utf8');
+const setup=new JSDOM(html).window.document.getElementById('v3-setup').outerHTML;
+await mkdir('work/v3',{recursive:true});
+const browser=await playwright.chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const results=[];
+try{for(const width of [1100,390]){
+ const page=await browser.newPage({viewport:{width,height:950}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setContent('<style>'+css+'\n'+scoped+'\nbody{display:block;padding:18px}main{margin:0;max-width:100%;padding:0}</style><main>'+setup+'</main>');
+ await page.evaluate(()=>{window.chrome={runtime:{sendMessage:async m=>{if(m.type==='rightClickV3Snapshot')return {ok:true,engine:'v3',config:{version:1,revision:0,destinations:[{id:'root',profileId:'p',accountId:'account',bucketName:'photographs',parentId:null,prefix:'',label:'Photographs',enabled:true},{id:'child',profileId:'p',accountId:'account',bucketName:'photographs',parentId:'root',prefix:'Archive/2026',label:'Archive 2026',enabled:true}]},profiles:[{id:'p',accountId:'account',accountName:'Personal Cloudflare',bucketName:'photographs'}]};throw Error(m.type);}},storage:{onChanged:{addListener(){}}}};});
+ await page.addScriptTag({content:await readFile('extension/right-click-v3.js','utf8')});await page.addScriptTag({content:await readFile('extension/beta/right-click-v3-ui.js','utf8')});
+ await page.locator('.v3-branch').first().waitFor();
+ const metrics=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:innerWidth,deleteColor:getComputedStyle(document.querySelector('.v3-delete')).color,mounts:document.querySelectorAll('#v3-setup').length}));
+ assert.ok(metrics.scroll<=width,JSON.stringify(metrics));assert.equal(metrics.mounts,1);assert.deepEqual(errors,[]);
+ await page.screenshot({path:'work/v3/setup-'+width+'.png',fullPage:true});results.push({width,metrics,errors});await page.close();
+}}finally{await browser.close();}await writeFile('work/v3/visual.json',JSON.stringify(results,null,2)+'\n');console.log(JSON.stringify(results));

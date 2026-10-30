@@ -1,0 +1,34 @@
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (67.259289ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (18.609561ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (9.348221ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (27.492072ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (12.669126ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (17.048433ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (15.121175ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (14.195512ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (12.925226ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (177.064423ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (9.612289ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (24.071267ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (12.003265ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (23.274979ms)
+✔ permission failures remain explained with no false success or leaked provider errors (7.890568ms)
+✖ switching files while enabling cannot reopen the old file or overwrite current choices (10.366693ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (9.838689ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 811.955188
+
+✖ failing tests:
+
+test at tests/get-url.test.mjs:89:1
+✖ switching files while enabling cannot reopen the old file or overwrite current choices (10.366693ms)
+  TypeError: Cannot read properties of null (reading 'disabled')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/get-url.test.mjs:90:492)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

@@ -917,6 +917,8 @@ importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("destination-config.js");
+importScripts("right-click-v3.js");
+importScripts("right-click-legacy.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
 importScripts("explorer-diagnostics.js");
@@ -2003,6 +2005,8 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
   const key=String(body.key||"");
   const actualFolder=key.split("/").slice(0,-1).join("/");
   if(!key||actualFolder!==folder)throw new Error("Destination verification failed: Worker returned a different folder. The file may have been written; check storage before retrying.");
+  // V3 verifies this existing Worker receipt without changing transport or URL return values.
+  if(receipt)receipt.bytes=body.bytes;
   if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
   return body.publicUrl || publicAssetUrl(prepared, key);
 }
@@ -2069,41 +2073,57 @@ function saveStoragePreferences(message,sender){
   });
   destinationSaveQueue=operation;return operation;
 }
-function saveDestinationConfig(message,sender){
+// Engine selection and V3 commits share the existing serialized persistence lane.
+function v3MenuTransaction(message,sender){
   const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
-    if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html"))throw Error("Open Destinations in Explorer to save.");
-    const stored=await chrome.storage.local.get(["profiles","rightClickMode","menuConfigurationBackupV1"]);
-    const profiles=stored.profiles||[],mode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
-    if(message.expected!==RedownDestinationConfig.signature(profiles,mode))throw Error("Destinations changed in another window. Reload the editor before saving.");
-    if(!["simple","nested"].includes(message.mode))throw Error("Choose Simple or Nested.");
-    const patches=message.profiles;
-    if(!Array.isArray(patches))throw Error("Invalid destination configuration.");
-    const before=structuredClone(profiles);
-    const patchIds=new Set();
-    for(const patch of patches){
-      if(patchIds.has(patch.id))throw Error("Duplicate profile update.");patchIds.add(patch.id);
-      const profile=profiles.find(p=>p.id===patch.id&&p.type==="cloudflare-r2");
-      if(!profile)throw Error("This account profile is no longer available. Reload the editor.");
-      for(const field of RedownDestinationConfig.fields){if(Object.hasOwn(patch,field))profile[field]=patch[field];else delete profile[field];}
-      profile.menuConfigVersion=1;
-      profile.nestedMenu||={version:1,enabled:false,roots:[]};
+    const page=sender?.url?.split(/[?#]/)[0];
+    const explorer=chrome.runtime.getURL('beta/explorer.html');
+    if(![explorer,chrome.runtime.getURL('shelf.html'),chrome.runtime.getURL('options.html')].includes(page))throw Error('Open REDOWN Settings or V3 Setup.');
+    const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles']);
+    const config=stored.rightClickV3||RedownRightClickV3.empty();
+    let engine=stored.rightClickEngine==='v3'?'v3':'legacy',next=config;
+    if(message.type==='saveRightClickV3'){
+      if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
+      if(message.expected!==config.revision)throw Error('V3 destinations changed. Reload before saving.');
+      next={version:1,revision:config.revision+1,destinations:Array.isArray(message.destinations)&&message.destinations.length<=200?message.destinations.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','parentId','prefix','label','enabled'].map(k=>[k,d?.[k]]))):null};
+      RedownRightClickV3.validate(next,stored.profiles||[]);
+      await chrome.storage.local.set({rightClickV3:next});
+    }else{
+      if(!['legacy','v3'].includes(message.engine))throw Error('Choose Legacy or New Right-click.');
+      engine=message.engine;
+      if(engine==='v3')RedownRightClickV3.validate(config,stored.profiles||[]);
+      await chrome.storage.local.set({rightClickEngine:engine});
     }
-    RedownDestinationConfig.validate(profiles,message.mode);
-    // Snapshot menu fields only, never duplicate authorization secrets.
-    const backup=stored.menuConfigurationBackupV1||{version:1,profiles:RedownDestinationConfig.project(before),legacy:before.map(p=>({id:p.id,menuTree:p.menuTree||[]})),mode:stored.rightClickMode};
-    await chrome.storage.local.set({profiles,rightClickMode:message.mode,menuConfigurationBackupV1:backup});
-    const signature=RedownDestinationConfig.signature(profiles,message.mode);
-    try{await rebuildMenus();return {ok:true,signature,menuUpdated:true};}
-    catch{ return {ok:true,signature,menuUpdated:false,error:"Saved, but Chrome could not update its menu. Retry Save to rebuild."}; }
+    try{await rebuildMenus();return {ok:true,revision:next.revision,engine,menuUpdated:true};}
+    catch{return {ok:true,revision:next.revision,engine,menuUpdated:false,error:'Settings saved; Chrome menu registration failed. Retry Apply or Save.'};}
   });
   destinationSaveQueue=operation;return operation;
+}
+async function rightClickV3Snapshot(sender){
+  if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('beta/explorer.html'))throw Error('Open V3 Setup in Explorer.');
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles']);
+  return {ok:true,engine:s.rightClickEngine==='v3'?'v3':'legacy',config:s.rightClickV3||RedownRightClickV3.empty(),
+    profiles:(s.profiles||[]).filter(p=>p.type==='cloudflare-r2'&&p.workerUrl&&p.token).map(p=>({id:p.id,accountId:p.accountId,accountName:p.accountName||p.accountId,bucketName:p.bucketName}))};
+}
+async function resolveActiveRightClick(id,profiles){
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode']);
+  return s.rightClickEngine==='v3'?RedownRightClickV3.resolve(id,s.rightClickV3||RedownRightClickV3.empty(),profiles):RedownRightClickLegacy.resolve(id,profiles,RedownNestedLocations.menuMode(s.rightClickMode,profiles));
 }
 
 let menuRebuildQueue=Promise.resolve();
 async function rebuildMenus() {
   // Location verification can save several rows together. Chrome menu rebuilds
   // must finish in order so another removeAll cannot delete a pending parent.
-  const operation=menuRebuildQueue.catch(()=>{}).then(buildMenus);
+  const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
+    try{
+      const receipt=await buildMenus();
+      await chrome.storage.local.set({rightClickMenuStatus:{state:'registered',...receipt}});
+      return receipt;
+    }catch(error){
+      await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
+      throw error;
+    }
+  });
   menuRebuildQueue=operation;return operation;
 }
 async function buildMenus() {
@@ -2119,8 +2139,8 @@ async function buildMenus() {
     // Retain exact identity and operation in the plan; Chrome receives only
     // presentation fields. Clicks independently revalidate the saved identity.
     for(const item of description){
-      if(!/^(quick:|simple-option:|nested:)/.test(item.id))continue;
-      const target=globalThis.RedownDestinationConfig?.resolve(item.id,profiles,mode);
+      if(!/^(v3:|quick:|simple-option:|nested:|tree:)/.test(item.id))continue;
+      const target=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.resolve(item.id,menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles):RedownRightClickLegacy.resolve(item.id,profiles,mode);
       if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
     }
     await chrome.contextMenus.removeAll();
@@ -2143,15 +2163,16 @@ async function buildMenus() {
   });
 
   const profiles = await getProfiles();
-  const menuSettings=await chrome.storage.local.get(["rightClickMode"]);
+  const menuSettings=await chrome.storage.local.get(["rightClickMode","rightClickEngine","rightClickV3"]);
   const storedMode=menuSettings.rightClickMode;
   const mode=RedownNestedLocations.menuMode(storedMode,profiles);
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
-  const entries=RedownNestedLocations.menuEntries(profiles,mode,ROOT_MENU_ID);
+  const entries=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.entries(menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles,ROOT_MENU_ID):RedownRightClickLegacy.entries(profiles,mode,ROOT_MENU_ID);
   if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
   for(const entry of entries)create(entry);
-  addMenuControls(mode,create);
+  addMenuControls(mode,item=>{if(menuSettings.rightClickEngine!=='v3'||item.id!=='redown-nested-mode')create(item);});
   await finish();
+  return {engine:menuSettings.rightClickEngine==='v3'?'v3':'legacy',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
 }
 function addMenuControls(mode){
   const create=arguments[1]|| (item=>chrome.contextMenus.create(item));
@@ -2216,7 +2237,7 @@ function hitomiDestination(menuId, profiles, mode='simple') {
 }
 async function initiateHitomiCapture(info, tab, profiles,existingJobId=null) {
   const settings=await chrome.storage.local.get('rightClickMode');
-  const target=hitomiDestination(info.menuItemId,profiles,RedownNestedLocations.menuMode(settings.rightClickMode,profiles));
+  const target=await resolveActiveRightClick(info.menuItemId,profiles);
   if(!target)throw new Error("Choose a prepared Cloudflare R2 destination");
   if(!tab?.id)throw new Error("No source tab found");
   const existing=hitomiIntents.get(tab.id);
@@ -2340,7 +2361,7 @@ void applyToolbarOpenMode().catch(console.error);
 chrome.runtime.onInstalled.addListener(rebuildMenus);
 chrome.runtime.onStartup.addListener(rebuildMenus);
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes.profiles || changes.rightClickMode)) rebuildMenus().catch(()=>{});
+  if (area === "local" && (changes.profiles || changes.rightClickMode || changes.rightClickEngine || changes.rightClickV3)) rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2422,6 +2443,7 @@ function launchSaveDroplet(info,tab){
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(info.menuItemId==='redown-nested-mode'){
+    if((await chrome.storage.local.get('rightClickEngine')).rightClickEngine==='v3')return;
     // Share the save lane with Dashboard transactions so a stale save cannot
     // overwrite a native mode switch after its revision check.
     const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
@@ -2454,11 +2476,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 
-  if(/^(quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
+  if(/^(v3:|quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
   const profiles = await getProfiles();
-  const settings=await chrome.storage.local.get('rightClickMode');
-  const activeMode=RedownNestedLocations.menuMode(settings.rightClickMode,profiles);
-  const resolved=RedownDestinationConfig.resolve(info.menuItemId,profiles,activeMode);
+  const resolved=await resolveActiveRightClick(info.menuItemId,profiles);
   if(!resolved)return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
@@ -2470,7 +2490,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const onHitomiGallery=/^https:\/\/hitomi\.la\//i.test(pageUrl);
   const isGalleryDocument=/^https:\/\/hitomi\.la\/(?:imageset|doujinshi|manga|cg|gamecg|artistcg|galleries|reader|tag|series|character|group|type)\//i.test(pageUrl) &&
     !/\/(?:index|popular|search)\.html(?:[?#]|$)/i.test(pageUrl);
-  const chosenDestination=/^(quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId));
+  const chosenDestination=/^(v3:|quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId));
   if(onHitomiGallery && isGalleryDocument && chosenDestination && !info.srcUrl){
     try { await initiateHitomiCapture(info,tab,profiles); }
     catch(error){
@@ -2494,14 +2514,22 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   // Resolve from the active saved model at click time, never from a legacy
   // default or the previous native-menu snapshot.
   const {profile,owner,prefix}=resolved;
+  const receipt={};
   try{
-    const receipt={};
-    const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt);
+    const v3=String(info.menuItemId).startsWith('v3:');
+    if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
+    const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt,v3);
+    if(v3){
+      const result=await callBucketWorker(profile,{action:'headObject',key:receipt.destination?.key},false);
+      const object=result.object;
+      if(!object||object.key!==receipt.destination?.key||!Number.isSafeInteger(receipt.bytes)||object.size!==receipt.bytes||!object.etag||object.customMetadata?.sourceUrl!==sourceUrl)throw Error('Save completion unconfirmed. Inspect the destination before retrying.');
+      receipt.verified=true;
+    }
     await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
     const message=error?.message||String(error);
-    await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message});
+    await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message,...receipt});
     await notify("REDOWN failed",message);
   }
 });
@@ -2701,7 +2729,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
       if (message?.type === "saveStoragePreferences") return sendResponse(await saveStoragePreferences(message,_sender));
-      if (message?.type === "saveDestinationConfig") return sendResponse(await saveDestinationConfig(message,_sender));
+      if (message?.type === 'rightClickV3Snapshot') return sendResponse(await rightClickV3Snapshot(_sender));
+      if (['saveRightClickV3','setRightClickEngine'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
         const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");

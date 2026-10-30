@@ -3,7 +3,6 @@
   "extension/cloudflare-auth.js",
   "extension/background.js",
   "extension/nested-locations.js",
-  "extension/nested-menu-editor.js",
   "extension/menu-reorder.js",
   "extension/settings-mascot.js",
   "extension/popup.js",
@@ -52,10 +51,13 @@
   "extension/shelf.js",
   "extension/shelf-history.js",
   "extension/destination-config.js",
-  "extension/beta/destinations.js",
   "extension/shelf-celestial.js",
   "scripts/shelf-celestial-preview.mjs",
   "extension/beta/standard-breadcrumbs.mjs",
   "extension/beta/url-list.mjs",
-  "extension/beta/remote-dialog.mjs"
+  "extension/beta/remote-dialog.mjs",
+  "extension/right-click-v3.js",
+  "extension/right-click-engine-settings.js",
+  "extension/beta/right-click-v3-ui.js",
+  "extension/right-click-legacy.js"
 ]

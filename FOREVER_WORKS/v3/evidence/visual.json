@@ -1,0 +1,22 @@
+[
+  {
+    "width": 1100,
+    "metrics": {
+      "scroll": 1100,
+      "width": 1100,
+      "deleteColor": "rgb(197, 34, 50)",
+      "mounts": 1
+    },
+    "errors": []
+  },
+  {
+    "width": 390,
+    "metrics": {
+      "scroll": 390,
+      "width": 390,
+      "deleteColor": "rgb(197, 34, 50)",
+      "mounts": 1
+    },
+    "errors": []
+  }
+]

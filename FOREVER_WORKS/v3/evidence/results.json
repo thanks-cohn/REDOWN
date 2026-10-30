@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-30",
+  "node": "v24.19.0",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "baseline": {
+    "passed": 632,
+    "failed": 54,
+    "skipped": 0,
+    "incomplete": false,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "architecture",
+        "state": "failed",
+        "exitCode": 0
+      },
+      {
+        "id": "api-registry",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "final": {
+    "passed": 584,
+    "failed": 69,
+    "skipped": 0,
+    "incomplete": true,
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "architecture",
+        "state": "failed",
+        "exitCode": 0
+      },
+      {
+        "id": "api-registry",
+        "state": "passed",
+        "exitCode": 0
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed",
+        "exitCode": 0
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": "npm ci --cache /workspace/.npm-cache --no-audit --no-fund",
+      "exitCode": 0
+    },
+    {
+      "command": "node FOREVER_WORKS/tools/query.mjs describe; npm run diagnostics -- getStartGuide; npm run diagnostics -- validateRegistry; npm run diagnostics -- listIssues; npm run diagnostics -- getReleaseReadiness",
+      "exitCode": 0
+    },
+    {
+      "command": "node --test tests/right-click-v3.test.mjs tests/public-addresses.test.mjs tests/beta-bucket-url-consent.test.mjs",
+      "exitCode": 0,
+      "passed": 29,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/simple-menu-flat.test.mjs tests/menu-reorder.test.mjs",
+      "exitCode": 0,
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/get-url.test.mjs",
+      "exitCode": 1,
+      "scope": "existing baseline stale-enable failure remains; raw log retained"
+    },
+    {
+      "command": "npm run check",
+      "exitCode": 0
+    },
+    {
+      "command": "python scripts/package_chrome_store.py --audit-only",
+      "exitCode": 0,
+      "scope": "75 runtime files; release blocked"
+    },
+    {
+      "command": "node work/v3/visual.mjs",
+      "exitCode": 0,
+      "scope": "ordinary webpage fixture only; synthetic profiles; 1100px and 390px"
+    },
+    {
+      "command": "npm run reliability:check",
+      "exitCode": 1,
+      "scope": "full recorded report; incomplete because old UI suite cannot enumerate its recorded baseline case"
+    }
+  ],
+  "introducedFailureNames": [
+    {
+      "file": "tests/add-menu-location.test.mjs",
+      "name": "one shared add control targets Simple or Nested and asks which destination when needed"
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "M0 inventory covers every literal message branch without inventing handlers"
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "regular Explorer hides stale limitations and keeps new bucket setup optional"
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "slow bucket loading does not block locations, Explorer, or connection refresh"
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests"
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "queries never modify the canonical corpus or cited historical evidence"
+    },
+    {
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "tests/modern-destinations.test.mjs"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "tests/nested-locations.test.mjs"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "debug-only sections start hidden and toggle exists only inside header disclosure"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating"
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "persisted mode combinations restore independently, with Beta off when absent"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: invalid path segments never send creation requests"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: new directory is created under the exact parent only after Create"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: refreshing during creation cannot leave a permanent Creating status"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: selecting existing folder does not populate creation draft"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: stalled creation releases button and explains uncertain outcome"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: valid names including zero and f create at bucket root"
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections"
+    }
+  ],
+  "noLongerFailingNames": [
+    {
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "production click listener resolves exact active account, bucket and prefix and rejects stale IDs",
+      "qualification": "not proof of resolution; obsolete UI suites no longer enumerate normally"
+    },
+    {
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "right-click editor uses product-facing status and keeps dedicated bucket setup optional",
+      "qualification": "not proof of resolution; obsolete UI suites no longer enumerate normally"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "qualification": "not proof of resolution; obsolete UI suites no longer enumerate normally"
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "native menu mode checkbox changes the same saved setting without downloading anything",
+      "qualification": "not proof of resolution; obsolete UI suites no longer enumerate normally"
+    }
+  ],
+  "notTested": [
+    "installed Chrome registration/rendered menus",
+    "true MV3 lifecycle and multi-window races",
+    "live Cloudflare source/destination bytes",
+    "installed History and Explorer confirmation",
+    "full-app accessibility/theme matrix"
+  ],
+  "protection": {
+    "startingCommit": "bfbca3b185e1e81b81910c2fb2df7a7d3d99f79e",
+    "rightClickShitsTagObject": "bd69e3082f7544cc21254ce066d8820467a955df",
+    "releaseBranchBefore": "2582c05d2253f3063e55404bb9ff6b97275f8ac1",
+    "scopeCorrectionAdopted": "244138c6602de4276db5adc4df079e221cc4d9f4"
+  }
+}

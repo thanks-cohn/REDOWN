@@ -1,4 +1,4 @@
-/* Nested menu locations share the same hierarchy in settings and background. */
+/* Legacy runtime hierarchy and menu projection; no setup state or migration. */
 (() => {
   function name(value) {
     const clean=String(value || '').trim();
@@ -6,44 +6,6 @@
     return clean;
   }
   function path(parent,child) { return [String(parent || '').replace(/^\/+|\/+$/g,''),name(child)].filter(Boolean).join('/'); }
-  function blank() { return {id:crypto.randomUUID(),name:'',ready:false,children:[]}; }
-  function invalidate(node) {
-    node.ready=false;node.needsSelection=true;
-    for(const child of node.children || []) invalidate(child);
-  }
-  function setLocation(node,value) {
-    if(node.name!==value) for(const child of node.children || []) invalidate(child);
-    node.name=value; node.ready=true;delete node.needsSelection;
-  }
-  function fromLegacy(profile) {
-    const roots=[];
-    function convert(items,parent='') {
-      return (items || []).map(old => {
-        const full=String(old.prefix || '').trim().replace(/^\/+|\/+$/g,'');
-        // Preserve explicit descendant paths; old bare names become actual children.
-        const relative=parent && full.startsWith(parent+'/') ? full.slice(parent.length+1) : full;
-        const segments=relative.split('/').filter(Boolean);
-        if(!segments.length) return {...blank(),previousLabel:old.label || '',children:convert(old.children,parent)};
-        let first=null,last=null,current=parent;
-        for(const segment of segments) {
-          const entry={...blank(),name:segment,previousLabel:old.label || ''};
-          if(last)last.children.push(entry);else first=entry;
-          last=entry; current=path(current,segment);
-        }
-        last.children=convert(old.children,current);
-        return first;
-      });
-    }
-    if(profile.bucketName && profile.menuTree?.length) roots.push({id:crypto.randomUUID(),bucketName:profile.bucketName,ready:false,children:convert(profile.menuTree)});
-    return {version:1,enabled:Boolean(profile.menuTree?.length),roots,imported:Boolean(profile.menuTree?.length)};
-  }
-  // Versioned draft migration. An existing model, including empty roots, wins.
-  function initialize(profile) {
-    if(!profile.nestedMenu)profile.nestedMenu=profile.menuConfigVersion>=1
-      ? {version:1,enabled:false,roots:[]} : fromLegacy(profile);
-    profile.menuConfigVersion=1;
-    return profile.nestedMenu;
-  }
   function destinations(model) {
     if(!model?.enabled)return [];
     const result=[];
@@ -92,5 +54,5 @@
     return profiles.some(profile=>profile.type==='cloudflare-r2' && !profile.explorerManaged &&
       profile.nestedMenu?.enabled) ? 'nested' : 'simple';
   }
-  globalThis.RedownNestedLocations={name,path,blank,invalidate,setLocation,fromLegacy,initialize,destinations,nestedEntries,menuEntries,menuMode};
+  globalThis.RedownNestedLocations={name,path,destinations,nestedEntries,menuEntries,menuMode};
 })();

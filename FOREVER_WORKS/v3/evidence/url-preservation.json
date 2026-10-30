@@ -1,0 +1,120 @@
+{
+  "base": "bfbca3b185e1e81b81910c2fb2df7a7d3d99f79e",
+  "scope": "complete shared files and named background functions; quick-links shared tab plumbing has documented minimal setup-removal changes",
+  "comparisons": [
+    {
+      "file": "extension/public-addresses.js",
+      "before": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69",
+      "after": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69",
+      "identical": true
+    },
+    {
+      "file": "extension/cloudflare-api.js",
+      "before": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "after": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "identical": true
+    },
+    {
+      "file": "extension/beta/explorer.mjs",
+      "before": "651f3fdfd6738fda2f310d8c4f2a12d588d5fd269c947eaa58b0bd37ccf3b0b1",
+      "after": "651f3fdfd6738fda2f310d8c4f2a12d588d5fd269c947eaa58b0bd37ccf3b0b1",
+      "identical": true
+    },
+    {
+      "file": "extension/explorer-status.js",
+      "before": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+      "after": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+      "identical": true
+    },
+    {
+      "file": "extension/manifest.json",
+      "before": "c8cdc047130d24397af15f30ee1598fe48c3005d7a8328aaa3e6cab884599ef1",
+      "after": "c8cdc047130d24397af15f30ee1598fe48c3005d7a8328aaa3e6cab884599ef1",
+      "identical": true
+    },
+    {
+      "file": "extension/cloudflare-auth.js",
+      "before": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+      "after": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789",
+      "identical": true
+    },
+    {
+      "file": "extension/transfer-counter.js",
+      "before": "261fef8564c5cbfeab41ac3fc184c6d9e11a83980490cd8fa705396f529de9ad",
+      "after": "261fef8564c5cbfeab41ac3fc184c6d9e11a83980490cd8fa705396f529de9ad",
+      "identical": true
+    },
+    {
+      "file": "extension/history-archive.js",
+      "before": "de6d0acdbe2588fc1ddc08d9621b7b661263ed73250566add2e20f664bd3185b",
+      "after": "de6d0acdbe2588fc1ddc08d9621b7b661263ed73250566add2e20f664bd3185b",
+      "identical": true
+    },
+    {
+      "file": "extension/shelf-history.js",
+      "before": "02ed05c929109a3afadbef9d3617273d11cc1dd2f37c635c73425f1f735fac83",
+      "after": "02ed05c929109a3afadbef9d3617273d11cc1dd2f37c635c73425f1f735fac83",
+      "identical": true
+    },
+    {
+      "file": "extension/beta/r2-adapter.mjs",
+      "before": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+      "after": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+      "identical": true
+    },
+    {
+      "file": "extension/beta/file-api.mjs",
+      "before": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66",
+      "after": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66",
+      "identical": true
+    },
+    {
+      "file": "extension/beta/remote-dialog.mjs",
+      "before": "47d545ada40e86c7243f0d4b28e2c0f18e590dd4f00063098fccb8c1a671dafa",
+      "after": "47d545ada40e86c7243f0d4b28e2c0f18e590dd4f00063098fccb8c1a671dafa",
+      "identical": true
+    },
+    {
+      "file": "worker/src/index.js",
+      "before": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+      "after": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4",
+      "identical": true
+    },
+    {
+      "function": "configureAssetDomain",
+      "before": "2eaa16ba5beab60465e00dd6e22e78a8d1c0b9ceaad93502ba0ca8f382ccaf50",
+      "after": "2eaa16ba5beab60465e00dd6e22e78a8d1c0b9ceaad93502ba0ca8f382ccaf50",
+      "identical": true
+    },
+    {
+      "function": "bucketPublicAddresses",
+      "before": "de70c8cecca6c093dcc193751ce884b9f76e8d3ea38c807ae17ff7caeb650d9f",
+      "after": "de70c8cecca6c093dcc193751ce884b9f76e8d3ea38c807ae17ff7caeb650d9f",
+      "identical": true
+    },
+    {
+      "function": "enableBucketPublicAccess",
+      "before": "86ddcc23b113f1270f62923b0e9a4589a326c69d1353c2464f2400ebd43d5be9",
+      "after": "86ddcc23b113f1270f62923b0e9a4589a326c69d1353c2464f2400ebd43d5be9",
+      "identical": true
+    },
+    {
+      "function": "publicAssetUrl",
+      "before": "b2dc288954a92823c374a8225ec061cda23410222fdf4fb01bfc59fd8d4366e7",
+      "after": "b2dc288954a92823c374a8225ec061cda23410222fdf4fb01bfc59fd8d4366e7",
+      "identical": true
+    },
+    {
+      "component": "embedded STORAGE Worker source",
+      "before": "34e8a1bc45f7d4ebc34faca6d840c33540a97778c20e55f231b06f820660b5bf",
+      "after": "34e8a1bc45f7d4ebc34faca6d840c33540a97778c20e55f231b06f820660b5bf",
+      "identical": true
+    },
+    {
+      "component": "existing remote ingest function excluding documented additive internal byte receipt",
+      "before": "48e404f1ed4677de1ebf17cf97676f62cb79cf29a4e6f0a9914ba18d5da79a88",
+      "after": "48e404f1ed4677de1ebf17cf97676f62cb79cf29a4e6f0a9914ba18d5da79a88",
+      "identical": true
+    }
+  ]
+}

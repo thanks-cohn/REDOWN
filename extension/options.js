@@ -1,6 +1,5 @@
 const $=id=>document.getElementById(id);
 let profiles=[];
-let rightClickMode="simple";
 let debugModeEnabled=false;
 let betaModeEnabled=false;
 let storageTraining=null;
@@ -16,8 +15,6 @@ let workspacePreviewLightbox=false;
 let workspacePreviewRequestId=0;
 let workspacePreviewUrl="";
 let workspacePreviewAbort=null;
-const defaultLocationPrefixCache=new Map();
-const presetLocationCache=new Map();
 let uploadLocationPrefixes=[];
 let uploadLocationSegments=[""];
 let uploadLocationLoadVersion=0;
@@ -54,30 +51,11 @@ async function saveProfiles(){
   const result=await send({type:'saveStoragePreferences',profiles});
   if(!result?.ok)throw Error(result?.error||'Could not save storage preferences.');
 }
-let nestedSaveQueue=Promise.resolve();
-async function saveNestedMenu(){throw Error('Manage right-click destinations in Explorer → Right-click setup.');}
 function displayName(p){return p.name||p.bucketName||p.repository||"Destination";}
 let saveTimer=null;
 function scheduleSave(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>saveProfiles(),180);
-}
-function makeNode(label="New section"){
-  return {id:uid(),label,category:"files",prefix:"",path:"",children:[]};
-}
-function findNode(nodes,id){
-  for(const node of nodes||[]){
-    if(node.id===id)return node;
-    const found=findNode(node.children,id);
-    if(found)return found;
-  }
-  return null;
-}
-function removeNode(nodes,id){
-  const index=(nodes||[]).findIndex(n=>n.id===id);
-  if(index>=0){nodes.splice(index,1);return true;}
-  for(const node of nodes||[]) if(removeNode(node.children,id)) return true;
-  return false;
 }
 async function ensureProfileMenuPrefixes(profile, prefixes) {
   if (profile?.type !== "cloudflare-r2") return;
@@ -94,259 +72,6 @@ async function ensureProfileMenuPrefixes(profile, prefixes) {
   });
   if (!result?.ok) throw new Error(result?.error || "Could not create remote folder");
 }
-function leafMenuPrefixes(nodes) {
-  const out = [];
-  const walk = (items) => {
-    for (const node of items || []) {
-      if (node.children?.length) walk(node.children);
-      else if (node.prefix != null) out.push(node.prefix);
-    }
-  };
-  walk(nodes);
-  return out;
-}
-function presetCacheKey(profile){
-  return `${profile?.accountId||""}:${profile?.bucketName||""}`;
-}
-async function refreshPresetLocations(profile,{rerender=true}={}){
-  if(profile?.type!=="cloudflare-r2")return [];
-  const key=presetCacheKey(profile);
-  const known=new Set([
-    ...(presetLocationCache.get(presetCacheKey(profile))||[]),
-    ...Object.values(profile.folders||{}),
-    ...leafMenuPrefixes(profile.menuTree||[])
-  ].map((value)=>String(value||"").trim().replace(/^\/+|\/+$/g,"")).filter(Boolean));
-
-  try{
-    const root=await send({
-      type:"cfFolderChildren",
-      accountId:profile.accountId,
-      bucketName:profile.bucketName,
-      parentPrefix:"",
-      limit:250
-    });
-    if(root?.ok){
-      for(const child of root.children||[])known.add(String(child||"").replace(/^\/+|\/+$/g,""));
-    }
-  }catch{}
-
-  presetLocationCache.set(key,known);
-  if(rerender)renderProfiles();
-  return Array.from(known);
-}
-
-
-function renderTree(profile){
-  const wrap=document.createElement("div");
-  wrap.className="tree-editor";
-
-  const heading=document.createElement("div");
-  heading.className="tree-heading";
-  const copy=document.createElement("div");
-  const strong=document.createElement("strong");
-  strong.textContent="Right-click behavior";
-  const small=document.createElement("div");
-  small.className="meta";
-  small.textContent=(profile.menuTree?.length)
-    ?"Nested menu: each leaf sends to its exact saved location."
-    :"Quick send: clicking this preset immediately uses the free-form default location above.";
-  copy.append(strong,small);
-
-  const controls=document.createElement("div");
-  controls.className="row-actions";
-  const refreshLocations=document.createElement("button");
-  refreshLocations.className="ghost";
-  refreshLocations.type="button";
-  refreshLocations.textContent="Refresh locations";
-  refreshLocations.title="Reload available R2 locations for this preset";
-  refreshLocations.addEventListener("click",async()=>{
-    refreshLocations.disabled=true;
-    const previous=refreshLocations.textContent;
-    refreshLocations.textContent="Refreshing…";
-    try{await refreshPresetLocations(profile,{rerender:true});}
-    finally{
-      refreshLocations.disabled=false;
-      refreshLocations.textContent=previous;
-    }
-  });
-  const quick=document.createElement("button");
-  quick.className=profile.menuTree?.length?"ghost":"secondary";
-  quick.textContent="Quick send";
-  quick.addEventListener("click",()=>{
-    profile.menuTree=[];
-    scheduleSave();
-    renderProfiles();
-  });
-  const nested=document.createElement("button");
-  nested.className=profile.menuTree?.length?"secondary":"ghost";
-  nested.textContent="Nested menu";
-  nested.addEventListener("click",()=>{
-    if(!profile.menuTree?.length){
-      profile.menuTree=[
-        {id:uid(),label:"3D",category:"3d",prefix:"3d",path:"assets/3d",children:[]},
-        {id:uid(),label:"2D",category:"2d",prefix:"2d",path:"assets/2d",children:[]},
-        {id:uid(),label:"Videos",category:"videos",prefix:"videos",path:"assets/videos",children:[]},
-        {id:uid(),label:"Files",category:"files",prefix:"files",path:"assets/files",children:[]}
-      ];
-      if(profile.type!=="cloudflare-r2")ensureProfileMenuPrefixes(profile, leafMenuPrefixes(profile.menuTree)).catch(()=>{});
-    }
-    scheduleSave();
-    renderProfiles();
-  });
-  controls.append(refreshLocations,quick,nested);
-  heading.append(copy,controls);
-  wrap.append(heading);
-
-  if(!profile.menuTree?.length) return wrap;
-
-  const note=document.createElement("div");
-  note.className="tree-note";
-  note.textContent="3D, 2D, Videos, and Files are starter suggestions only. Rename, remove, or add any destination you want. Each leaf uses its exact path.";
-  wrap.append(note);
-
-  const treeRoot=document.createElement("div");
-  treeRoot.className="tree-root";
-  for(const node of profile.menuTree) treeRoot.append(renderTreeNode(profile,node,0));
-  wrap.append(treeRoot);
-
-  const addRoot=document.createElement("button");
-  addRoot.className="ghost";
-  addRoot.textContent="+ Add top-level item";
-  addRoot.addEventListener("click",()=>{
-    profile.menuTree.push(makeNode("New destination"));
-    scheduleSave();
-    renderProfiles();
-  });
-  wrap.append(addRoot);
-  return wrap;
-}
-function renderTreeNode(profile,node,depth){
-  node.children??=[];
-  const item=document.createElement("div");
-  item.className="tree-node";
-  item.style.setProperty("--depth",String(depth));
-
-  const row=document.createElement("div");
-  row.className="tree-row";
-
-  const branch=document.createElement("div");
-  branch.className="tree-branch";
-  branch.textContent=node.children.length?"▾":"•";
-
-  const labelInput=document.createElement("input");
-  labelInput.className="tree-label";
-  labelInput.value=node.label||"";
-  labelInput.placeholder="Menu item";
-  labelInput.title="The label shown in REDOWN's right-click menu";
-  labelInput.addEventListener("input",()=>{node.label=labelInput.value;scheduleSave();});
-
-  const targetWrap=document.createElement("div");
-  targetWrap.className="tree-target-wrap";
-
-  const suggestions=document.createElement("select");
-  suggestions.className="tree-location-suggest";
-  suggestions.title="Suggested or existing destination";
-  const choose=document.createElement("option");
-  choose.value="";
-  choose.textContent="Suggested location…";
-  suggestions.append(choose);
-
-  const known=new Set([
-    ...Object.values(profile.folders||{}),
-    ...(profile.menuTree||[]).flatMap(function collect(entry){
-      return [
-        entry.prefix,
-        ...(entry.children||[]).flatMap(collect)
-      ];
-    })
-  ].map((value)=>String(value||"").trim().replace(/^\/+|\/+$/g,"")).filter(Boolean));
-
-  for(const value of known){
-    const option=document.createElement("option");
-    option.value=value;
-    option.textContent="/"+value;
-    suggestions.append(option);
-  }
-
-  const target=document.createElement("input");
-  target.className="tree-target";
-  target.value=profile.type==="cloudflare-r2"?(node.prefix??""):(node.path??"");
-  target.placeholder=profile.type==="cloudflare-r2"?"Location, e.g. Historical/Letters":"Path, e.g. assets/history/letters";
-  target.disabled=node.children.length>0;
-  target.title=node.children.length
-    ?"This is a parent menu item. Its child entries choose the final destination."
-    :"Exact destination. Type any path or choose a suggestion.";
-
-  suggestions.addEventListener("change",()=>{
-    if(!suggestions.value)return;
-    target.value=suggestions.value;
-    if(profile.type==="cloudflare-r2")node.prefix=suggestions.value;
-    else node.path=suggestions.value;
-    scheduleSave();
-    materializeTarget();
-  });
-
-  target.addEventListener("input",()=>{
-    if(profile.type==="cloudflare-r2")node.prefix=target.value;
-    else node.path=target.value;
-    scheduleSave();
-  });
-
-  const materializeTarget=async()=>{
-    if(profile.type!=="cloudflare-r2"||node.children.length)return;
-    try{
-      await saveProfiles();
-      await ensureProfileMenuPrefixes(profile,[node.prefix]);
-      const clean=String(node.prefix||"").trim().replace(/^\/+|\/+$/g,"");
-      if(clean){
-        const key=presetCacheKey(profile);
-        const known=new Set(presetLocationCache.get(key)||[]);
-        known.add(clean);
-        presetLocationCache.set(key,known);
-      }
-      await refreshPresetLocations(profile,{rerender:false});
-      renderProfiles();
-    }catch(error){
-      console.warn("REDOWN could not materialize menu prefix:",error?.message||String(error));
-    }
-  };
-  target.addEventListener("change",materializeTarget);
-  target.addEventListener("blur",materializeTarget);
-  targetWrap.append(suggestions,target);
-
-  const add=document.createElement("button");
-  add.className="mini tree-add";
-  add.textContent="+";
-  add.title="Add a child destination under this menu item";
-  add.setAttribute("aria-label","Add child destination");
-  add.addEventListener("click",()=>{
-    node.children.push(makeNode("New destination"));
-    scheduleSave();
-    renderProfiles();
-  });
-
-  const remove=document.createElement("button");
-  remove.className="mini danger tree-remove";
-  remove.textContent="×";
-  remove.title="Remove this menu entry only. This never deletes the R2 folder.";
-  remove.addEventListener("click",()=>{
-    removeNode(profile.menuTree,node.id);
-    scheduleSave();
-    renderProfiles();
-  });
-
-  row.append(branch,labelInput,targetWrap,add,remove);
-  item.append(row);
-
-  if(node.children.length){
-    const children=document.createElement("div");
-    children.className="tree-children";
-    for(const child of node.children)children.append(renderTreeNode(profile,child,depth+1));
-    item.append(children);
-  }
-  return item;
-}
-
 function assetCorsControl(profile){
   const wrap=document.createElement("div");
   wrap.style.gridColumn="1 / -1";
@@ -415,295 +140,8 @@ function assetCorsControl(profile){
   return wrap;
 }
 
-function renderRightClickMode(){
-  for(const id of ["use-simple-menu","use-nested-menu","add-menu-location","refresh-menu-locations"])if($(id))$(id).disabled=true;
-  $("simple-menu-editor").hidden=false;
-  $("nested-menu-editor-panel").hidden=true;
-  $("right-click-mode-status").className="meta";
-  $("right-click-mode-status").textContent="Right-click destinations are managed in Explorer. Legacy menu settings are read-only.";
-}
-async function chooseRightClickMode(){renderRightClickMode();}
-$("use-simple-menu").addEventListener("change",()=>chooseRightClickMode());
-$("use-nested-menu").addEventListener("change",()=>chooseRightClickMode());
-
-// Simple destinations share one path editor: dropdowns are selections, inputs are drafts.
-// Removing a level preserves lower rows as blank, reusable selectors; no R2 deletion.
-async function addMenuLocation(profileId){
-  if(rightClickMode==="nested")return RedownNestedEditor.addLocation(profileId);
-  const host=Array.from(document.querySelectorAll("[data-simple-location-profile]")).find(el=>el.dataset.simpleLocationProfile===profileId);
-  if(!host)throw new Error("Refresh destinations and try again.");
-  host.addLocation();
-}
-$("add-menu-location").addEventListener("click",async()=>{
-  const available=profiles.filter(p=>p.type==="cloudflare-r2"&&!p.explorerManaged);
-  if(!available.length)return setStatus("menu-location-status","Use a storage bucket first.");
-  try{
-    if(available.length===1){await addMenuLocation(available[0].id);return;}
-    const select=$("add-location-profile");select.replaceChildren();
-    for(const profile of available){const option=document.createElement("option");option.value=profile.id;option.textContent=[displayName(profile),profile.accountName].filter(Boolean).join(" · ");select.append(option);}
-    $("add-location-dialog").showModal();select.focus();
-  }catch(error){setStatus("menu-location-status",error.message||"Could not add location.","bad");}
-});
-$("add-location-cancel").addEventListener("click",()=>$("add-location-dialog").close());
-$("add-location-form").addEventListener("submit",async event=>{
-  event.preventDefault();
-  try{await addMenuLocation($("add-location-profile").value);$("add-location-dialog").close();}
-  catch(error){setStatus("menu-location-status",error.message||"Could not add location.","bad");}
-});
-function simpleFolderPathEditor(profile, host, message, bucketName, initialPrefix, persist){
-  let parts=String(initialPrefix||"").split("/").filter(Boolean);
-  if(!parts.length)parts=[""];
-  let generation=0;
-  const drafts=new Map();
-  const option=(select,value,label)=>{const o=document.createElement("option");o.value=value;o.textContent=label;select.append(o);};
-  const prefix=()=>{const valid=[];for(const part of parts){if(!part)break;valid.push(part);}return valid.join("/");};
-  const commit=()=>persist(prefix());
-  const draw=async(from=0)=>{
-    const token=++generation;
-    if(from===0)host.replaceChildren();
-    else while(host.children.length>from)host.lastElementChild.remove();
-    for(let index=from;index<parts.length;index++){
-      if(token!==generation)return;
-      const row=document.createElement("div");row.className="location-level-row simple-location-row";
-      const selected=document.createElement("select");selected.className="location-level-select";
-      const input=document.createElement("input");input.type="text";input.className="location-level-input";
-      input.placeholder="New directory name";input.value=drafts.get(index)||"";
-      input.setAttribute("aria-label","New directory name at level "+(index+1));
-      input.addEventListener("input",()=>drafts.set(index,input.value));
-      const create=document.createElement("button");create.type="button";create.className="mini";
-      create.textContent="Create";create.title="Create a new directory under the selected parent";
-      const add=document.createElement("button");add.type="button";add.className="mini";
-      add.textContent="+ Child";add.title="Add a location level";
-      const remove=document.createElement("button");remove.type="button";remove.className="mini danger location-level-remove";
-      remove.textContent="×";remove.title="Clear this location and its dependent selections; no Cloudflare files are deleted";
-      remove.setAttribute("aria-label","Clear location level "+(index+1));
-      row.append(selected,input,create,add,remove);host.append(row);
-      const parent=parts.slice(0,index);
-      const parentReady=index===0||parent.every(Boolean);
-      const bucket=bucketName();
-      option(selected,"",parentReady?"Loading folders…":"Choose a parent first…");
-      selected.disabled=true;create.disabled=!parentReady;add.disabled=!parts[index];
-      const invalidateBelow=()=>{for(let k=index+1;k<parts.length;k++)parts[k]="";commit();};
-      selected.addEventListener("change",()=>{
-        parts[index]=selected.value;
-        invalidateBelow();
-        add.disabled=!parts[index];
-        message.textContent=parts[index]?"Selected /"+prefix():"Choose a location to continue.";
-        draw(index+1);
-      });
-      remove.addEventListener("click",()=>{
-        parts[index]="";invalidateBelow();draw(index);
-        message.textContent="Location cleared. Lower rows are ready for new selections; nothing was deleted from R2.";
-      });
-      add.addEventListener("click",()=>{
-        if(!parts[index]){message.textContent="Choose or create this location first.";return;}
-        parts.splice(index+1,0,"");draw(index+1);
-      });
-      create.addEventListener("click",async()=>{
-        const name=input.value.trim();
-        if(!name||name==="."||name===".."||/[\/\\\x00-\x1f\x7f]/.test(name)){
-          message.textContent="Enter one valid folder name, without slashes.";return;
-        }
-        if(!parentReady){message.textContent="Choose a parent first.";return;}
-        if(create.disabled)return;
-        create.disabled=true;message.textContent="Creating directory…";
-        let creationTimer;
-        try{
-          const response=await Promise.race([
-            send({type:"cfCreateFolder",accountId:profile.accountId,bucketName:bucket,accountName:profile.accountName,prefix:parent.join("/"),name}),
-            new Promise((_,reject)=>{creationTimer=setTimeout(()=>reject(new Error("Folder creation has not been confirmed. Refresh locations to check whether it was created before retrying.")),60000);})
-          ]);
-          if(!response?.ok)throw new Error(response?.error||"Folder creation failed.");
-          if(token!==generation||bucket!==bucketName()||parent.join("/")!==parts.slice(0,index).join("/")||!row.isConnected){
-            if(message.textContent==="Creating directory…")message.textContent="Directory created in the previous location. Refresh locations to see it.";
-            return;
-          }
-          if(!Array.from(selected.options).some(o=>o.value===name))option(selected,name,name);
-          selected.value=name;selected.disabled=false;
-          parts[index]=name;drafts.delete(index);input.value="";
-          invalidateBelow();add.disabled=false;message.textContent="Directory created: /"+prefix();
-          draw(index+1);
-        }catch(error){message.textContent=error?.message||"Could not create directory.";}
-        finally{clearTimeout(creationTimer);if(row.isConnected)create.disabled=false;}
-      });
-      if(!parentReady){option(selected,"","Select an ancestor first");continue;}
-      try{
-        const response=await send({type:"cfFolderChildren",accountId:profile.accountId,bucketName:bucket,parentPrefix:parent.join("/"),limit:100000});
-        if(token!==generation||bucket!==bucketName())return;
-        if(!response?.ok)throw new Error(response?.error||"Could not load folders.");
-        selected.replaceChildren();option(selected,"",index===0?"/ (bucket root)":"Choose existing child…");
-        for(const name of response.children||[])option(selected,name,name);
-        const saved=parts[index];
-        if(saved&&!(response.children||[]).includes(saved)){
-          parts[index]="";invalidateBelow();
-          message.textContent="Previously selected directory is not available under this parent.";
-        }
-        selected.value=parts[index]||"";selected.disabled=false;add.disabled=!parts[index];
-      }catch(error){
-        if(token!==generation)return;
-        selected.replaceChildren();option(selected,"","Folder lookup failed");
-        message.textContent=error?.message||"Folder lookup failed.";
-      }
-    }
-  };
-  const reset=(newPrefix="")=>{parts=String(newPrefix||"").split("/").filter(Boolean);if(!parts.length)parts=[""];drafts.clear();draw();};
-  host.classList.add("cloudflare-location-refresh");
-  host.refreshCloudflareLocations=()=>{message.textContent="";return draw();};
-  draw();return {reset};
-}
-function simplePrimaryLocationField(profile){
-  const wrap=document.createElement("div");wrap.className="default-location-builder";
-  const label=document.createElement("label");label.textContent="Bucket and location";
-  const fields=document.createElement("div");fields.className="location-levels";
-  const bucket=document.createElement("select");bucket.setAttribute("aria-label","Bucket for default Simple destination");
-  const children=document.createElement("div");children.className="location-levels";
-  const status=document.createElement("div");status.className="meta";
-  fields.append(bucket,children);wrap.append(label,fields,status);
-  const name=()=>profile.simpleBucketName||profile.bucketName;
-  const editor=simpleFolderPathEditor(profile,children,status,name,profile.defaultPrefix,prefix=>{
-    profile.defaultPrefix=prefix;scheduleSave();
-  });
-  bucket.addEventListener("change",()=>{profile.simpleBucketName=bucket.value;profile.defaultPrefix="";scheduleSave();editor.reset();});
-  let bucketLoadVersion=0;
-  const loadBuckets=async()=>{
-    const version=++bucketLoadVersion;
-    bucket.replaceChildren();
-    bucket.disabled=true;const o=document.createElement("option");o.textContent="Loading buckets…";bucket.append(o);
-    const res=await send({type:"cfBuckets",accountId:profile.accountId}).catch(e=>({ok:false,error:e.message}));
-    if(!wrap.isConnected||version!==bucketLoadVersion)return;
-    bucket.replaceChildren();
-    if(!res?.ok){const fail=document.createElement("option");fail.textContent=res?.error||"Bucket lookup failed";bucket.append(fail);return;}
-    for(const entry of res.buckets||[]){const opt=document.createElement("option");opt.value=entry.name;opt.textContent=entry.name;bucket.append(opt);}
-    bucket.value=name();bucket.disabled=false;
-  };
-  wrap.classList.add("cloudflare-location-refresh");
-  wrap.refreshCloudflareLocations=loadBuckets;
-  loadBuckets();return wrap;
-}
-function simpleExtraOptions(profile,showIntro=true){
-  const wrap=document.createElement("div");wrap.className="card";
-  const heading=document.createElement("div");heading.className="section-head";
-  const intro=document.createElement("div");const title=document.createElement("strong");title.textContent="Additional Simple destinations";
-  const note=document.createElement("div");note.className="meta";note.textContent="Choose existing folders or explicitly create new directories at any level. × only clears the menu location.";
-  if(showIntro)intro.append(title,note);
-  if(showIntro)heading.append(intro);
-  const rows=document.createElement("div");const options=profile.simpleOptions||=[];
-  wrap.hidden=options.length===0;
-  wrap.dataset.simpleLocationProfile=profile.id;
-  profile.simpleOptions=options;
-  function addRow(item){
-    item.bucketName||=profile.bucketName;
-    const row=document.createElement("div");row.className="card";
-    const first=document.createElement("div");first.className="grid simple-option-controls";
-    first.append(field("Menu label (shown on right-click)",item.label||"",v=>{item.label=v;},"text","My Artwork"));
-    const remove=document.createElement("button");remove.type="button";remove.className="ghost";remove.textContent="Remove option";
-    remove.addEventListener("click",()=>{const i=options.indexOf(item);if(i>=0)options.splice(i,1);row.remove();wrap.hidden=options.length===0;saveProfiles();});
-    const handle=globalThis.RedownReorder?.attach(row,{items:()=>options,item,save:saveProfiles,label:item.label||"Simple destination",changed:error=>setStatus("menu-location-status",error?"Could not save menu order. Please retry.":"Menu order saved.",error?"bad":"ok")});
-    if(handle)first.prepend(handle);
-    first.append(remove);row.append(first);
-    const second=document.createElement("div");second.className="grid simple-option-destination";
-    const bucketWrap=document.createElement("div"),bucketLabel=document.createElement("label");bucketLabel.textContent="Bucket";
-    const bucket=document.createElement("select");bucketWrap.append(bucketLabel,bucket);
-    const folders=document.createElement("div");folders.className="location-levels";
-    second.append(bucketWrap,folders);row.append(second);
-    const message=document.createElement("div");message.className="meta";row.append(message);
-    const editor=simpleFolderPathEditor(profile,folders,message,()=>item.bucketName,item.prefix,prefix=>{item.prefix=prefix;saveProfiles();});
-    bucket.addEventListener("change",()=>{item.bucketName=bucket.value;item.prefix="";saveProfiles();editor.reset();});
-    let bucketLoadVersion=0;
-    const loadBuckets=async()=>{
-      const version=++bucketLoadVersion;
-      bucket.replaceChildren();
-      bucket.disabled=true;const wait=document.createElement("option");wait.textContent="Loading buckets…";bucket.append(wait);
-      const result=await send({type:"cfBuckets",accountId:profile.accountId}).catch(e=>({ok:false,error:e.message}));
-      if(!row.isConnected||version!==bucketLoadVersion)return;
-      bucket.replaceChildren();
-      if(!result?.ok){const opt=document.createElement("option");opt.textContent=result?.error||"Unable to load buckets";bucket.append(opt);return;}
-      for(const entry of result.buckets||[]){const opt=document.createElement("option");opt.value=entry.name;opt.textContent=entry.name;bucket.append(opt);}
-      if(!Array.from(bucket.options).some(o=>o.value===item.bucketName))item.bucketName=profile.bucketName;
-      bucket.value=item.bucketName;bucket.disabled=false;
-    };
-    row.classList.add("cloudflare-location-refresh");
-    row.refreshCloudflareLocations=loadBuckets;
-    loadBuckets();
-    rows.append(row);
-  }
-  for(const item of options)addRow(item);
-  wrap.addLocation=()=>{
-    const item={id:uid(),label:"",bucketName:profile.bucketName,prefix:""};
-    wrap.hidden=false;
-    options.push(item);addRow(item);saveProfiles();rows.lastElementChild?.scrollIntoView?.({block:"nearest"});rows.lastElementChild?.querySelector("input")?.focus();
-  };
-  if(showIntro)wrap.append(heading);
-  wrap.append(rows);return wrap;
-}
-function simpleBucketCreator(){
-  const bar=document.createElement("div");bar.className="card";
-  const heading=document.createElement("strong");heading.textContent="Make New Bucket";
-  const note=document.createElement("div");note.className="meta";note.textContent="Create an R2 bucket and automatically configure a Simple destination. The menu label can be changed afterwards.";
-  const form=document.createElement("form");form.className="grid two";
-  const account=document.createElement("select");account.setAttribute("aria-label","Cloudflare account");
-  const names=new Map();
-  for(const p of profiles.filter(p=>p.type==="cloudflare-r2"&&p.accountId)){
-    if(!names.has(p.accountId))names.set(p.accountId,p.accountName||p.accountId);
-  }
-  for(const [id,name] of names){const o=document.createElement("option");o.value=id;o.textContent=name;account.append(o);}
-  const input=document.createElement("input");input.required=true;input.placeholder="New bucket name, e.g. my-artwork";input.setAttribute("aria-label","New bucket name");
-  const submit=document.createElement("button");submit.type="submit";submit.className="ghost";submit.textContent="Make New Bucket";
-  const status=document.createElement("div");status.className="meta";status.setAttribute("aria-live","polite");
-  form.append(account,input,submit);
-  form.addEventListener("submit",async(event)=>{
-    event.preventDefault();
-    const name=input.value.trim().toLowerCase();
-    if(!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(name)){status.textContent="Use 3–63 lowercase letters, numbers or hyphens.";return;}
-    if(!account.value){status.textContent="Connect and configure a Cloudflare account first.";return;}
-    if(!confirm("Create Cloudflare R2 bucket '"+name+"' in the selected account?"))return;
-    submit.disabled=true;status.textContent="Creating bucket…";
-    try{
-      const created=await send({type:"cfCreateBucket",accountId:account.value,name});
-      if(!created?.ok)throw new Error(created?.error||"Bucket creation failed.");
-      status.textContent="Bucket created. Preparing its right-click destination…";
-      const prepared=await send({type:"cfProvision",accountId:account.value,accountName:names.get(account.value)||account.value,bucketName:name,profileName:name,folders:{}});
-      if(!prepared?.ok)throw new Error("Bucket created, but destination preparation failed: "+(prepared?.error||"Retry from Cloudflare settings."));
-      await refreshProfiles();renderProfiles();
-    }catch(error){status.textContent=error.message||String(error);}
-    finally{submit.disabled=false;}
-  });
-  const fallback=document.createElement("label");
-  fallback.textContent="When a Simple menu label is empty, show";
-  const fallbackSelect=document.createElement("select");
-  fallbackSelect.setAttribute("aria-label","Simple automatic menu label");
-  for(const [value,label] of [["deepest","Lowest directory (default)"],["bucket","Top bucket name"]]){
-    const o=document.createElement("option");o.value=value;o.textContent=label;fallbackSelect.append(o);
-  }
-  fallback.append(fallbackSelect);
-  fallbackSelect.addEventListener("change",async()=>{
-    fallbackSelect.disabled=true;
-    try{await chrome.storage.local.set({simpleLabelFallback:fallbackSelect.value});}
-    catch(error){status.textContent=error?.message||"Could not save label preference.";}
-    finally{fallbackSelect.disabled=false;}
-  });
-  chrome.storage.local.get("simpleLabelFallback").then(settings=>{
-    if(fallbackSelect.isConnected)fallbackSelect.value=settings.simpleLabelFallback==="bucket"?"bucket":"deepest";
-  }).catch(()=>{});
-  bar.append(heading,note,fallback,form,status);return bar;
-}
-async function saveProfileOrder(){
-  const previous=profiles.map(profile=>[profile,profile.menuOrder]);
-  profiles.forEach((profile,index)=>{profile.menuOrder=index;});
-  try{
-    await nestedSaveQueue.catch(()=>{});
-    await saveProfiles();
-    for(const id of ["profiles","nested-profiles"]){
-      const root=$(id);
-      for(const profile of profiles){
-        const card=Array.from(root.children).find(el=>el.dataset.menuProfileId===profile.id);
-        if(card)root.append(card);
-      }
-    }
-  }catch(error){for(const [profile,order] of previous){if(order===undefined)delete profile.menuOrder;else profile.menuOrder=order;}throw error;}
-}
 function renderProfiles(){
-  applyOnboarding();renderRightClickMode();
+  applyOnboarding();
   const root=$("profiles");root.replaceChildren();
   const link=document.createElement('a');link.href='beta/explorer.html#explorer-destinations';link.textContent='Open Explorer Right-click setup';
   root.append(link);$("profiles-empty").hidden=true;
@@ -722,182 +160,6 @@ function renderProfiles(){
     root.append(card);
   }
   renderWorkspaceProfiles();
-}
-
-function defaultLocationField(profile){
-  const wrap=document.createElement("div");
-  wrap.className="default-location-builder";
-  const label=document.createElement("label");
-  label.textContent="Default location";
-  const levels=document.createElement("div");
-  levels.className="location-levels";
-  const hint=document.createElement("div");
-  hint.className="meta";
-  hint.textContent="Choose an existing folder or type a new one at any level. × only removes that level from this builder; it never deletes anything from R2.";
-
-  const cacheKey=profile.accountId+":"+profile.bucketName;
-  let segments=String(profile.defaultPrefix ?? profile.folders?.files ?? "")
-    .split("/").filter(Boolean);
-  if(!segments.length) segments=[""];
-
-  const cleanSegment=(value)=>String(value||"")
-    .trim()
-    .replace(/[\\/\0]/g,"")
-    .replace(/^\.+$/,"");
-
-  const allPrefixes=()=>defaultLocationPrefixCache.get(cacheKey)||[];
-
-  const immediateChildren=(parentSegments)=>{
-    const parent=parentSegments.filter(Boolean).join("/");
-    const seen=new Set();
-    for(const raw of allPrefixes()){
-      const parts=String(raw||"").split("/").filter(Boolean);
-      if(parentSegments.filter(Boolean).some((part,index)=>parts[index]!==part)) continue;
-      const child=parts[parentSegments.filter(Boolean).length];
-      if(child) seen.add(child);
-    }
-    return Array.from(seen).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
-  };
-
-  const currentPrefix=()=>segments.map(cleanSegment).filter(Boolean).join("/");
-
-  const commit=async({materialize=true}={})=>{
-    segments=segments.map(cleanSegment);
-    profile.defaultPrefix=currentPrefix();
-    scheduleSave();
-    if(materialize&&profile.defaultPrefix){
-      try{
-        await saveProfiles();
-        await ensureProfileMenuPrefixes(profile,[profile.defaultPrefix]);
-        hint.textContent="Default location ready: /"+profile.defaultPrefix;
-        const cached=new Set(allPrefixes());
-        cached.add(profile.defaultPrefix);
-        defaultLocationPrefixCache.set(cacheKey,Array.from(cached));
-      }catch(error){
-        hint.textContent="Saved. REDOWN will create this location when Cloudflare access is ready.";
-      }
-    }else if(!profile.defaultPrefix){
-      hint.textContent="Bucket root is the default location. Nothing in R2 was deleted.";
-    }
-  };
-
-  const renderLevels=()=>{
-    levels.replaceChildren();
-    segments.forEach((segment,index)=>{
-      const row=document.createElement("div");
-      row.className="location-level-row";
-
-      const parentSegments=segments.slice(0,index).map(cleanSegment).filter(Boolean);
-      const select=document.createElement("select");
-      select.className="location-level-select";
-      const placeholder=document.createElement("option");
-      placeholder.value="";
-      placeholder.textContent=index===0?"Choose existing folder…":"Choose existing child…";
-      select.append(placeholder);
-
-      for(const child of immediateChildren(parentSegments)){
-        const option=document.createElement("option");
-        option.value=child;
-        option.textContent=child;
-        option.selected=child===cleanSegment(segment);
-        select.append(option);
-      }
-
-      const input=document.createElement("input");
-      input.type="text";
-      input.className="location-level-input";
-      input.value=segment||"";
-      input.placeholder=index===0?"or create a new folder":"or create a new child";
-
-      const add=document.createElement("button");
-      add.type="button";
-      add.className="mini";
-      add.textContent="+ Child";
-      add.title="Add another location level";
-
-      const remove=document.createElement("button");
-      remove.type="button";
-      remove.className="mini danger location-level-remove";
-      remove.textContent="×";
-      remove.title="Remove this level from the builder only. This never deletes the R2 folder.";
-
-      select.addEventListener("change",async()=>{
-        if(!select.value)return;
-        segments[index]=select.value;
-        segments=segments.slice(0,index+1);
-        segments.push("");
-        await commit({materialize:true});
-        renderLevels();
-      });
-
-      input.addEventListener("input",()=>{
-        segments[index]=cleanSegment(input.value);
-        profile.defaultPrefix=currentPrefix();
-        scheduleSave();
-      });
-      input.addEventListener("change",async()=>{
-        segments[index]=cleanSegment(input.value);
-        await commit({materialize:true});
-        renderLevels();
-      });
-      input.addEventListener("blur",async()=>{
-        segments[index]=cleanSegment(input.value);
-        await commit({materialize:true});
-      });
-
-      add.addEventListener("click",async()=>{
-        segments[index]=cleanSegment(input.value||select.value||segments[index]);
-        segments=segments.slice(0,index+1);
-        if(!segments[index]){
-          hint.textContent="Choose or create this level before adding a child.";
-          return;
-        }
-        await commit({materialize:true});
-        segments.push("");
-        renderLevels();
-        levels.lastElementChild?.querySelector("input")?.focus();
-      });
-
-      remove.addEventListener("click",async()=>{
-        if(segments.length===1){
-          segments=[""];
-        }else{
-          segments=segments.slice(0,index);
-          if(!segments.length)segments=[""];
-        }
-        await commit({materialize:false});
-        hint.textContent="Removed from the builder only. Existing R2 folders and files were not changed.";
-        renderLevels();
-      });
-
-      row.append(select,input,add,remove);
-      levels.append(row);
-    });
-  };
-
-  const loadExisting=async()=>{
-    if(defaultLocationPrefixCache.has(cacheKey)){
-      renderLevels();
-      return;
-    }
-    hint.innerHTML='<span class="operation-spinner"></span>Loading existing folders…';
-    const result=await send({
-      type:"cfFolderPrefixes",
-      accountId:profile.accountId,
-      bucketName:profile.bucketName,
-      limit:5000
-    });
-    defaultLocationPrefixCache.set(cacheKey,result?.ok?(result.prefixes||[]):[]);
-    hint.textContent=result?.ok
-      ?"Choose existing folders or create new ones. You can continue to any depth."
-      :"Existing folders could not be loaded yet, but you can still create a new path.";
-    renderLevels();
-  };
-
-  wrap.append(label,levels,hint);
-  renderLevels();
-  loadExisting();
-  return wrap;
 }
 
 function field(labelText,value,onInput,type="text",placeholder=""){
@@ -3936,22 +3198,6 @@ async function renderHistory({markSeen=true}={}){
   }
 }
 
-async function refreshLocationEditors(){
-  defaultLocationPrefixCache.clear();
-  presetLocationCache.clear();
-  const refreshes=Array.from(document.querySelectorAll(".cloudflare-location-refresh"),el=>el.refreshCloudflareLocations());
-  RedownNestedEditor.refresh();
-  await Promise.allSettled(refreshes);
-}
-$("refresh-menu-locations").addEventListener("click",async()=>{
-  const button=$("refresh-menu-locations");if(button.disabled)return;
-  button.disabled=true;button.textContent="Refreshing…";
-  setStatus("menu-location-status","Checking Cloudflare and refreshing locations…");
-  try{
-    await refreshCloudflare(); // Each independent surface reports its own actual completion.
-  }catch(error){setStatus("menu-location-status",error?.message||"Could not refresh locations. Retry.","bad");}
-  finally{button.disabled=false;button.textContent="Refresh locations";}
-});
 let cloudflareRefreshTask=null;
 let cloudflareRefreshVersion=0;
 function invalidateCloudflareView(){
@@ -3978,7 +3224,7 @@ async function refreshCloudflareState(){
   $("cloudflare-panel").hidden=!connected;
   if(!connected)$("r2-setup").hidden=true;
   $("local-tools").hidden=!connected;
-  if(!connected){bucketLoadVersion++;$("bucket-grid").replaceChildren();setStatus("menu-location-status","Connect Cloudflare to refresh locations.","bad");return false;}
+  if(!connected){bucketLoadVersion++;$("bucket-grid").replaceChildren();setStatus("cf-status","Connect Cloudflare to refresh locations.","bad");return false;}
 
   setStatus("hero-status","Checking Cloudflare access…");
   const result=await send({type:"cfAccounts"});
@@ -3986,7 +3232,7 @@ async function refreshCloudflareState(){
   if(!result?.ok){
     onboardingBucketState="error";applyOnboarding();
     const message=result?.error||"Could not verify Cloudflare access. Retry.";
-    setStatus("cf-status",message,"bad");setStatus("hero-status",message,"bad");setStatus("menu-location-status",message,"bad");
+    setStatus("cf-status",message,"bad");setStatus("hero-status",message,"bad");setStatus("cf-status",message,"bad");
     if(/authorization|authenticate|authentication|session expired|connect cloudflare|reconnect cloudflare|unauthorized|\b401\b/i.test(message))$("connect-cloudflare").hidden=false;
     return false;
   }
@@ -3998,10 +3244,6 @@ async function refreshCloudflareState(){
   currentAccountId=select.value||"";
   // Independent Cloudflare surfaces must not block each other or page startup.
   if(currentAccountId)void refreshBuckets().catch(error=>setStatus("cf-status",safeUiMessage(error?.message||String(error)),"bad"));
-  void refreshLocationEditors().then(()=>{
-    if(refreshVersion!==cloudflareRefreshVersion)return;
-    setStatus("menu-location-status","Locations refreshed. Any folder lookup errors appear beside the affected location.","ok");
-  }).catch(error=>{if(refreshVersion===cloudflareRefreshVersion)setStatus("menu-location-status",safeUiMessage(error?.message||String(error)),"bad");});
   void loadExplorerInventory().catch(error=>{
     if(refreshVersion!==cloudflareRefreshVersion)return;
     setExplorerStatus(safeUiMessage(friendlyError(error,"load Cloudflare storage")),"failed");
@@ -4130,7 +3372,6 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
   // Selecting an existing destination must never trigger a Worker deployment.
   if(!forceRepair&&profiles.some(p=>isSetupDestination(p)&&p.accountId===account.id&&p.bucketName===bucketName)){
     setStatus("cf-status",bucketName+" selected. Configuration saved; use the circle to verify the connection.");
-    await refreshLocationEditors();
     return {ok:true,verified:false};
   }
   const setupAccountId=account.id;
@@ -4168,7 +3409,6 @@ async function addBucketPreset(bucketName,{forceRepair=false}={}){
   $("notifications-enabled").checked=stored.notificationsEnabled===true;
   profiles=stored.profiles||[];
   renderProfiles();
-  await refreshLocationEditors();
   await loadExplorerInventory();
   if(currentAccountId!==setupAccountId||operationVersion!==bucketLoadVersion)return {ok:false,cancelled:true};
   setStatus("cf-status",verified?`${bucketName} verified. Available in your right-click destinations.`:`${bucketName} configuration saved. Use the circle to verify the connection.`,verified?"ok":"");
@@ -4318,7 +3558,6 @@ chrome.storage.onChanged.addListener((changes,area)=>{
     invalidateCloudflareView();
     refreshCloudflare().catch(error=>setStatus("hero-status",safeUiMessage(error?.message||String(error)),"bad"));
   }
-  if(changes.rightClickMode){rightClickMode=RedownNestedLocations.menuMode(changes.rightClickMode.newValue,profiles);renderRightClickMode();}
   if(!changes.transferHistory)return;
   downloadsDirty=true;
   if(document.visibilityState==="visible"&&document.hasFocus()){
@@ -4434,7 +3673,6 @@ try{
   betaModeEnabled=stored.betaModeEnabled===true;
   debugModeEnabled=stored.debugModeEnabled===true;
   applyDebugMode();
-  rightClickMode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
   renderProfiles();
   wireWorkspace();
   renderWorkspaceProfiles();

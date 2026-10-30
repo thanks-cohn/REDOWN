@@ -5,6 +5,8 @@ import test from 'node:test';
 
 const source=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const modelSource=await readFile(new URL('../extension/nested-locations.js',import.meta.url),'utf8');
+const awaitedConfigSource=await readFile(new URL('../extension/destination-config.js',import.meta.url),'utf8');
+const awaitedLegacySource=await readFile(new URL('../extension/right-click-legacy.js',import.meta.url),'utf8');
 const begin=source.indexOf('async function buildMenus() {');
 const end=source.indexOf('/* Explicit, opt-in gallery capture',begin);
 assert.ok(begin>=0&&end>begin);
@@ -21,6 +23,7 @@ function harness(profiles,labelFallback){
     RedownNestedLocations:{menuMode:()=> 'simple'}
   });
   vm.runInContext(modelSource,context);
+  vm.runInContext(awaitedConfigSource+awaitedLegacySource,context);
   vm.runInContext(source.slice(begin,end),context);
   return {created,build:()=>vm.runInContext('buildMenus()',context)};
 }

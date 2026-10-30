@@ -6,7 +6,7 @@
   const $=id=>document.getElementById(id);
   const account=$('quick-setup-account'),bucket=$('quick-url-bucket');
   if(!account||!bucket||!globalThis.RedownPublicAddresses)return;
-  const setupStatus=$('quick-setup-feedback'),urlStatus=$('quick-url-feedback');
+  const urlStatus=$('quick-url-feedback');
   let accounts=[],buckets=[],accountVersion=0,bucketVersion=0,urlVersion=0,working=false;
   let selectedObject=null,lastAddressSnapshot=null,lastAddressIdentity="",dismissedPublicConsent="";
 
@@ -18,7 +18,6 @@
   const option=(value,label)=>new Option(label,value);
   const report=(node,text)=>{node.textContent=text;};
   function buttons(){
-    $('quick-create').disabled=working||!account.value;
     $('quick-url-add').disabled=working||!account.value||!bucket.value;
     $('quick-url-yes').disabled=working;
     $('quick-url-no').disabled=working;
@@ -30,7 +29,7 @@
       const active=which===name,tab=$('quick-tab-'+name);
       tab.setAttribute('aria-selected',String(active));
       tab.tabIndex=active?0:-1;
-      $('quick-panel-'+name).hidden=!active;
+      $(name==='setup'?'v3-setup':'quick-panel-urls').hidden=!active;
       if(active&&focus)tab.focus();
     }
   }
@@ -55,11 +54,11 @@
       account.replaceChildren(option('','Choose your account…'),...accounts.map(a=>option(a.id,a.name||a.id)));
       account.value=accounts.some(a=>a.id===preferred)?preferred:accounts[0]?.id||'';
       await loadBuckets();
-      if(!accounts.length)report(setupStatus,'Connect Cloudflare to begin. No bucket has been created.');
+      if(!accounts.length)report(urlStatus,'Connect Cloudflare to view bucket URLs.');
     }catch(error){
       if(version!==accountVersion)return;
       accounts=[];account.replaceChildren(option('','Cloudflare sign-in required'));
-      report(setupStatus,error.message);
+      report(urlStatus,error.message);
       bucket.replaceChildren(option('','Choose an account first'));
     }finally{if(version===accountVersion)buttons();}
   }
@@ -192,25 +191,6 @@
       void loadUrls();
     }
   });
-  $('quick-create').onclick=async()=>{
-    if(working||!account.value)return;
-    const menuLabel=$('quick-menu-label').value.trim();
-    if(!menuLabel||menuLabel.length>60){report(setupStatus,'Enter a menu label (1–60 characters).');return;}
-    if(!confirm('Create or reuse the private Cloudflare R2 bucket named REDOWN and configure its right-click destination? Cloudflare may charge for usage above its free allowance.'))return;
-    working=true;buttons();
-    report(setupStatus,'Preparing the optional redown bucket and right-click destination…');
-    try{
-      const result=await request('cfSetupRedownQuick',{accountId:account.value,menuLabel,confirmed:true});
-      report(setupStatus,result.setup?.verified?'Ready. Right-click a supported file → REDOWN → '+menuLabel+'. Add more Simple destinations above.':'Setup needs verification; check Cloudflare before retrying.');
-      await loadBuckets('redown');
-      if(result.setup?.verified){
-        $('destination-first-setup').open=false;
-        document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:account.value,bucketName:'redown'}}));
-      }
-    }catch(error){
-      report(setupStatus,'Setup not fully confirmed: '+error.message+' Check Cloudflare before retrying.');
-    }finally{working=false;buttons();}
-  };
   $('quick-url-add').onclick=async()=>{
     if(working||!account.value||!bucket.value)return;
     const website=$('quick-url-input').value.trim();

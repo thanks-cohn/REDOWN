@@ -51,7 +51,7 @@ test('attachment requires exact read-back; public connection verification and se
 test('Normal Mode attachment feedback stays visible and does not overwrite background profiles',async()=>{
  const {dom,d}=harness();let resolve;const profile={...source,id:'p'};
  dom.window.send=message=>message.type==='cfPublicAddresses'?Promise.resolve({...snapshot([managed]),ok:true}):new Promise(r=>resolve=r);
- dom.window.eval(options.slice(options.indexOf('function assetCorsControl('),options.indexOf('function renderRightClickMode(')));
+ dom.window.eval(options.slice(options.indexOf('function assetCorsControl('),options.indexOf('function renderProfiles(')));
  const ui=dom.window.assetCorsControl(profile);d.body.append(ui);const button=ui.querySelector('button');button.click();assert.equal(button.textContent,'Attaching…');assert.equal(ui.querySelector('[role=status]').hidden,false);
  resolve({ok:true,hostname:'cdn.example',state:'attached',message:'Attached — public connection not verified.',profile:{customAssetDomain:'cdn.example'}});await new Promise(r=>setTimeout(r,0));assert.match(ui.textContent,/Attached — public connection not verified/);assert.equal(button.disabled,false);assert.equal(profile.customAssetDomain,'cdn.example');dom.window.close();
 });
