@@ -183,8 +183,8 @@ test('child, parent and distinct same-account groups remove only their stable de
  const h=await ui(presets);try{const {d,b}=h;d.querySelector('#destination-mode').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,2);assert.match(d.querySelector('[data-menu-profile-id="second"] .meta').textContent,/unprepared/);
  const first=d.querySelector('[data-menu-profile-id="p"]');first.querySelector('.nested-collapse').click();await settle();first.querySelector('[data-node-id="n"] .nested-collapse').click();await settle();
  // Discovery marks an absent studio unavailable, but its definition stays removable.
- d.querySelector('[data-node-id="studio"] .nested-menu-controls [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].children.length,0);
- d.querySelector('[data-node-id="n"] .nested-menu-controls [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,0);assert.equal(b.state.profiles[1].nestedMenu.roots.length,1);
+ d.querySelector('[data-node-id="studio"] .nested-actions [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].children.length,0);
+ d.querySelector('[data-node-id="n"] .nested-actions [aria-label="Remove this menu branch without deleting any Cloudflare folders"]').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,0);assert.equal(b.state.profiles[1].nestedMenu.roots.length,1);
  d.querySelector('[data-menu-profile-id="p"] .nested-remove').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,1);d.querySelector('[data-menu-profile-id="second"] .nested-remove').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles.length,2);assert.ok(b.state.profiles.every(p=>p.token==='fixture'&&!p.nestedMenu.roots.length));
  }finally{h.dom.window.close();}
 });
@@ -285,7 +285,7 @@ test('pre-redesign right-click selection toolbar is restored without rolling bac
 test('contextual operations stay accessible through named native disclosures',async()=>{
  const h=await ui();try{const {d,w}=h;
  const options=d.querySelector('.destination-entry-options');assert.equal(options.open,false);options.open=true;
- assert.ok(options.querySelector('[aria-label="Remove menu destination"]'));
+ assert.ok(d.querySelector('.destination-card-head .destination-remove-x'));assert.equal(options.querySelector('[aria-label="Remove menu destination"]'),null);
  d.querySelector('#destination-mode').click();await settle();d.querySelector('.nested-collapse').click();await settle();
  const group=d.querySelector('[data-node-id="n"]'),details=group.querySelector('.nested-menu-controls');
  assert.equal(details.tagName,'DETAILS');assert.equal(details.open,false);details.open=true;
@@ -314,4 +314,46 @@ test('right-click editor uses product-facing status and keeps dedicated bucket s
   assert.match(d.getElementById('destination-status').textContent,/Right-click layout updated/);
   assert.doesNotMatch(d.getElementById('destination-status').textContent,/Chrome/);
  }finally{h.dom.window.close();}
+});
+
+test('Simple and Nested cards expose immediate red X without tooltips or cloud deletion',async()=>{
+ const h=await ui();try{
+  const {d,b,calls}=h;
+  const simple=d.querySelector('.destination-card');
+  const x=simple.querySelector('.destination-card-head > .destination-remove-x');
+  assert.ok(x,'Simple X belongs to the visible card header');
+  assert.equal(x.textContent,'×');
+  assert.equal(x.hasAttribute('title'),false,'no tooltip on the X');
+  assert.match(x.getAttribute('aria-label'),/Remove menu destination/);
+  const count=d.querySelectorAll('.destination-card').length;
+  x.click();await settle();
+  assert.equal(d.querySelectorAll('.destination-card').length,count-1);
+  assert.equal(b.state.profiles[0].simplePrimaryEnabled!==false,true,'removal is unsaved draft');
+  assert.match(d.querySelector('#destination-status').textContent,/Unsaved changes/);
+  d.querySelector('#destination-reload').click();await settle();
+  assert.equal(d.querySelectorAll('.destination-card').length,count);
+  d.querySelector('#destination-mode').click();await settle();
+  const nested=d.querySelector('.nested-card');
+  const groupX=nested.querySelector('.nested-heading > .nested-remove');
+  assert.ok(groupX,'Nested card X is directly on its header');
+  assert.equal(groupX.textContent,'×');assert.equal(groupX.hasAttribute('title'),false);
+  assert.ok(nested.querySelector('.nested-roots .nested-inline-remove'),'bucket rows also have visible X');
+  groupX.click();await settle();
+  assert.equal(d.querySelectorAll('.nested-card').length,0);
+  assert.equal(b.state.profiles[0].nestedMenu.roots.length,1,'unsaved removal leaves persisted menu unchanged');
+  d.querySelector('#destination-save').click();await settle();
+  assert.equal(b.state.profiles[0].nestedMenu.roots.length,0,'Save menu commits X removal');
+  assert.equal(b.state.profiles[0].token,'fixture','Cloudflare authorization remains intact');
+  assert.ok(calls.every(call=>!/^cfDelete/.test(call.type)),'no cloud deletion API calls');
+ }finally{h.dom.window.close();}
+});
+test('card X is permanently visible, red, carefully positioned, and motion-safe',async()=>{
+ const css=await readFile(new URL('../extension/beta/explorer.css',import.meta.url),'utf8');
+ assert.match(css,/\.destination-card button\.destination-remove-x/);
+ assert.match(css,/\.nested-card button\.nested-remove/);
+ assert.match(css,/\.nested-card button\.nested-inline-remove/);
+ assert.match(css,/color:var\(--danger\)/);
+ assert.match(css,/opacity:1;visibility:visible/);
+ assert.match(css,/\.nested-heading>\.nested-remove\{[\s\S]*?position:absolute;top:0;right:0/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
