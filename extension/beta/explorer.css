@@ -1099,3 +1099,10 @@ a:hover{color:var(--text)}
 #destination-nested .nested-create[hidden]{display:none}
 #destination-nested .nested-create{flex-wrap:wrap}
 #preview-info button{font-size:11px;padding:3px 8px;margin-left:6px}
+
+/* Restore visible primary fill inside the Explorer action row.
+ * .actions button otherwise overrides .primary to transparent, making
+ * Upload Folder text blend into the panel on lighter themes. */
+.actions #upload-folder.primary{background:var(--accent);border-color:transparent;font-weight:750}
+.actions #upload-folder.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.12)}
+.actions #upload-folder.primary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
