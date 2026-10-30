@@ -885,7 +885,7 @@ test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and
 
 test('toolbar adjacency follows the three requested pairs with primary folder upload',async()=>{
  const dom=new JSDOM(await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'));
- try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.equal(d.querySelector('#pref-folder-quick-add').checked,false);assert.ok(d.querySelector('#upload-folder').textContent.includes('Upload folder'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
+ try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.equal(d.querySelector('#pref-folder-quick-add').checked,false);assert.ok(d.querySelector('#upload-folder').textContent.includes('Upload folder'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelector('#prepare').hidden,false,'activation is visible on first paint');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
 });
 for(const mode of ['side','window'])test('default archive Image Reader uses existing '+mode+' Preview, natural nested order, navigation and no extraction',async()=>{
  const f=await uiFixture({previewPreferences:{mode,width:400}}),{d,w,settle}=f;
@@ -967,4 +967,34 @@ test('Upload Folder retains themed primary fill despite generic transparent acti
  const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8');
  assert.match(html,/id="upload-folder" class="primary"/);
  assert.match(html,/id="upload" class="primary"/);
+});
+
+test('Activate Buckets remains visible beside Grid View, even before storage selection',async()=>{
+ const missing=await uiFixture({autoOpen:false,sendOverride:async message=>message.type==='cfAccounts'?{ok:false,error:'Cloudflare disconnected.'}:{ok:true,profiles:[]}});
+ try{
+  const d=missing.d,button=d.querySelector('#prepare');
+  assert.equal(button.hidden,false);
+  assert.equal(button.dataset.state,'unselected');
+  assert.equal(button.previousElementSibling.id,'view');
+  assert.match(button.textContent,/Activate Buckets/);
+  button.click();
+  assert.match(d.querySelector('#status').textContent,/Choose an existing bucket/);
+  assert.equal(d.querySelector('#dialog').open,false,'no bucket must not trigger activation');
+ }finally{missing.dom.window.close();}
+ const withBucket=await uiFixture();
+ try{
+  const {d,settle}=withBucket;
+  const button=d.querySelector('#prepare');
+  await settle(()=>button.dataset.state!=='unselected');
+  assert.equal(button.hidden,false,'activation remains visible after a bucket is selected');
+  assert.equal(button.previousElementSibling.id,'view');
+  assert.ok(['idle','checking','needed','unknown','ready','activating'].includes(button.dataset.state));
+ }finally{withBucket.dom.window.close();}
+});
+test('Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar',async()=>{
+ const css=await readFile(new URL('../extension/beta/explorer.css',import.meta.url),'utf8');
+ assert.match(css,/\\.actions #prepare\\.bucket-activation\\{/);
+ assert.match(css,/\\.actions #prepare\\.bucket-activation\\[data-state="unselected"\\]/);
+ assert.match(css,/\\.actions #prepare\\.bucket-activation\\[data-state="ready"\\]/);
+ assert.doesNotMatch(css,/\\.toolbar #prepare\\.bucket-activation/);
 });
