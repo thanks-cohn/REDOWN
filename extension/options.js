@@ -3929,6 +3929,68 @@ async function beginRename(item,parts,nameEl,cell){
   });
   input.addEventListener("blur",()=>finish(true),{once:true});
 }
+// A link's parent page and its actual media/resource URL are distinct provenance.
+function historySourceLinks(item){
+  const links=[];
+  const add=(label,url)=>{if(typeof url==="string"&&url.trim())links.push({label,url:url.trim()});};
+  add("Parent webpage",item?.pageUrl);
+  if(item?.srcUrl)add("Direct image / media URL",item.srcUrl);
+  else if(item?.linkUrl)add("Direct link URL",item.linkUrl);
+  else add("Download source URL",item?.sourceUrl);
+  add("Frame URL",item?.frameUrl);
+  if(item?.srcUrl)add("Link URL",item?.linkUrl);
+  if(item?.sourceUrl&&!links.some(link=>link.url===item.sourceUrl.trim()))add("Transfer source URL",item.sourceUrl);
+  return links;
+}
+const collapsedHistorySources=new Set();
+function historySourcesDisclosure(item){
+  const links=historySourceLinks(item);
+  if(!links.length)return null;
+  const details=document.createElement("details");
+  details.className="history-sources";
+  const id=String(item?.id||[item?.at,item?.sourceUrl,item?.location].join("|"));
+  details.open=!collapsedHistorySources.has(id);
+  const summary=document.createElement("summary");
+  const setLabel=()=>{summary.textContent=(details.open?"Hide":"Show")+" source URLs ("+links.length+")";};
+  setLabel();
+  details.append(summary);
+  details.addEventListener("toggle",()=>{
+    if(details.open)collapsedHistorySources.delete(id);
+    else collapsedHistorySources.add(id);
+    setLabel();
+  });
+  for(const {label,url} of links){
+    const line=document.createElement("div");line.className="history-source-row";
+    const name=document.createElement("span");name.className="history-source-label";name.textContent=label;
+    let target;
+    try{
+      const parsed=new URL(url);
+      if(["https:","http:"].includes(parsed.protocol)&&!parsed.username&&!parsed.password){
+        target=document.createElement("a");
+        target.href=parsed.href;
+        target.target="_blank";
+        target.rel="noopener noreferrer";
+        target.referrerPolicy="no-referrer";
+      }
+    }catch{}
+    if(!target)target=document.createElement("code");
+    target.className="history-source-address";
+    target.textContent=url;
+    target.title=url;
+    const copy=document.createElement("button");
+    copy.type="button";copy.className="history-source-copy";copy.textContent="Copy";
+    copy.setAttribute("aria-label","Copy "+label);
+    copy.addEventListener("click",async()=>{
+      try{
+        await navigator.clipboard.writeText(url);
+        copy.textContent="Copied";
+      }catch{copy.textContent="Copy unavailable";}
+    });
+    line.append(name,target,copy);
+    details.append(line);
+  }
+  return details;
+}
 async function renderHistory({markSeen=true}={}){
   const [result,seenState]=await Promise.all([
     send({type:"transferHistory"}),
@@ -3985,7 +4047,7 @@ async function renderHistory({markSeen=true}={}){
       row.style.minHeight="auto";
     });
     row.addEventListener("click",event=>{
-      if(event.target.closest("button,input,a,.download-location,.download-name"))return;
+      if(event.target.closest("button,input,a,.download-location,.download-name,.history-sources"))return;
       if(parts.profile?.type==="cloudflare-r2"&&parts.key)openTransferLocation(item,parts);
     });
     nameCell.append(name);
@@ -3995,6 +4057,8 @@ async function renderHistory({markSeen=true}={}){
 
     const type=document.createElement("div");type.className="download-type";type.textContent=parts.type;
     row.append(date,location,nameCell,type);
+    const sources=historySourcesDisclosure(item);
+    if(sources)row.append(sources);
     root.append(row);
   }
 
@@ -4015,7 +4079,10 @@ async function renderHistory({markSeen=true}={}){
       const copy=document.createElement("div");copy.className="error-copy";
       const title=document.createElement("div");title.className="error-title";title.textContent=item.error||"Transfer failed";
       const meta=document.createElement("div");meta.className="error-meta";meta.textContent=[item.profileName,item.category,item.sourceUrl].filter(Boolean).join(" · ");
-      copy.append(title,meta);row.append(date,copy);list.append(row);
+      copy.append(title,meta);
+      const sources=historySourcesDisclosure(item);
+      if(sources)copy.append(sources);
+      row.append(date,copy);list.append(row);
     }
     root.append(toggle,list);
   }
