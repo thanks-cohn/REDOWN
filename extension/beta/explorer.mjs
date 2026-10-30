@@ -292,6 +292,9 @@ document.addEventListener('keydown',event=>{
   if(event.target.closest?.('input,select,textarea,dialog')||busy)return;
   const modified=event.ctrlKey||event.metaKey,k=event.key.toLowerCase();
   if(event.altKey&&['ArrowLeft','ArrowRight','ArrowUp'].includes(event.key)){event.preventDefault();$({ArrowLeft:'back',ArrowRight:'forward',ArrowUp:'up'}[event.key]).click();}
+  else if(!modified&&!event.altKey&&!event.shiftKey&&['ArrowLeft','ArrowRight'].includes(event.key)&&event.target.closest?.('.file,#side-preview')&&chosen().length===1&&!chosen()[0].folder&&/\.(zip|cbz)$/i.test(chosen()[0].key)){
+    event.preventDefault();void actions.archive({startAtEnd:event.key==='ArrowLeft'});
+  }
   else if(event.key==='Backspace'){event.preventDefault();$('up').click();}
   else if(event.key==='F5'){event.preventDefault();$('refresh').click();}
   else if(modified&&event.shiftKey&&k==='n'){event.preventDefault();$('mkdir').click();}
@@ -521,6 +524,11 @@ async function showPreview(item,navigation={}){
   const metadata=[item.folder?'Folder':bytes(item.size),item.folder?'Folder prefix':previewType(item.key)||item.key.split('.').pop().toUpperCase(),source.bucketName+'/'+item.key,item.uploaded||item.last_modified||item.lastModified].filter(Boolean).join(' · ');
   $('preview-info').textContent=metadata;
   const download=()=>{const b=button('Download',()=>{if(!busy&&sameBucket(source,current)){selected=new Set([item.key]);paintSelection();void actions.download();}});return b;};
+  if(!item.folder&&/\.(zip|cbz)$/i.test(item.key)){
+    $('preview-content').textContent='Browse ZIP/CBZ pages without extracting the archive.';
+    $('preview-content').append(button('Browse archive →',()=>{if(!busy)void actions.archive();}));
+    return;
+  }
   if(item.folder||!previewType(item.key)){
     $('preview-content').textContent=item.folder?'Folder in '+source.bucketName+'/'+item.key:'Inline preview is unavailable for this format.';
     if(!item.folder)$('preview-content').append(download());return;
@@ -544,7 +552,9 @@ async function showPreview(item,navigation={}){
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){setLightbox(false);previewIdentity='';$('preview-content').textContent=error.message||'Preview failed.';$('preview-content').append(download());}}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
-async function adjacentPreview(direction,key){if(busy||!previewItem)return;const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,invocation:key?'keyboard':'button'});}}
+async function adjacentPreview(direction,key){if(busy||!previewItem)return;
+  if(!previewItem.folder&&/\.(zip|cbz)$/i.test(previewItem.key)){void actions.archive({startAtEnd:direction<0});return;}
+  const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,invocation:key?'keyboard':'button'});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
 function resizePreview(width){
   const total=$('file-workspace').getBoundingClientRect().width||1000;
