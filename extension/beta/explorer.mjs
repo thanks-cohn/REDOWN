@@ -437,6 +437,16 @@ $('transfer-history').onclick=()=>run(async()=>{
   openModal($('transfer-history-dialog'));
 },{refresh:false});
 $('transfer-history-close').onclick=()=>$('transfer-history-dialog').close();
+$('beta-export-history').onclick=async()=>{
+  const button=$('beta-export-history'),feedback=$('beta-history-export-status');
+  if(button.disabled)return;button.disabled=true;feedback.textContent='Preparing your full History JSON backup…';
+  try{
+    const result=await request('transferHistory',{});
+    const receipt=RedownHistoryExport.download(result.data.history,{document});
+    feedback.textContent='Created '+receipt.fileName+' with '+receipt.count+' event(s). Keep the file outside Chrome.';
+  }catch(error){feedback.textContent='History export failed: '+(error?.message||String(error))+'. Nothing was deleted.';}
+  finally{button.disabled=false;}
+};
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
 $('preferences').onclick=()=>{paintPreferences();openModal($('preferences-dialog'));};
