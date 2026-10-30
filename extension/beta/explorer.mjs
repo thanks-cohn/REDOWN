@@ -16,13 +16,22 @@ let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',
 let activationState='idle',activationSource=null,activationReason='',activationEpoch=0;
 function paintActivation(){
   const action=$('prepare'),label=action.querySelector('.bucket-activation-label');
-  const selected=activationSource&&sameBucket(current,activationSource);
-  action.hidden=!(selected&&['needed','unknown','checking','activating'].includes(activationState));
-  action.dataset.state=activationState;
-  action.disabled=busy||activationState==='checking'||activationState==='activating';
-  if(label)label.textContent=activationState==='checking'?'Checking bucket…':activationState==='activating'?'Activating…':activationState==='unknown'?'Check bucket setup':'Activate Buckets';
-  action.title=activationReason||'Activate REDOWN for this bucket. Refresh only reloads files.';
-  action.setAttribute('aria-label',(label?.textContent||'Activate Buckets')+' for '+(activationSource?.bucketName||'selected bucket'));
+  const selected=Boolean(current&&activationSource&&sameBucket(current,activationSource));
+  const state=!current?'unselected':selected?activationState:'idle';
+  // The primary activation action is always in the toolbar beside Grid View.
+  // State affects its message and appearance, never its visibility.
+  action.hidden=false;
+  action.dataset.state=state;
+  action.disabled=busy||state==='checking'||state==='activating';
+  if(label)label.textContent=state==='checking'?'Checking bucket…':state==='activating'?'Activating…':'Activate Buckets';
+  const glyph=action.querySelector('.bucket-activation-glyph');
+  if(glyph)glyph.textContent=state==='ready'?'✓':'✦';
+  action.title=!current?'Choose a storage bucket to activate REDOWN.'
+    :state==='ready'?current.bucketName+' is already activated for REDOWN.'
+    :selected&&activationReason?activationReason
+    :'Check or activate REDOWN for '+current.bucketName+'. Refresh only reloads files.';
+  action.setAttribute('aria-label',!current?'Activate Buckets: choose a storage bucket first'
+    :(state==='ready'?'REDOWN already activated for ':'Activate REDOWN for ')+current.bucketName);
 }
 function resetActivation(){activationEpoch++;activationState='idle';activationSource=null;activationReason='';paintActivation();}
 async function checkActivation(source){
@@ -457,8 +466,24 @@ async function loadProfiles(){
 }
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;syncAccountPicker();await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
-$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;
-  if(activationState==='unknown'){await checkActivation(source);if(activationState!=='needed'){status(activationState==='ready'?'Bucket already active.':'Bucket setup could not be verified. Check your Cloudflare sign-in and permissions before retrying.');return;}}
+$('prepare').onclick=async()=>{
+  const source=context();
+  if(busy)return;
+  if(!source){
+    status('Choose an existing bucket under Storage Buckets before activating REDOWN.');
+    const storage=$('sidebar-storage');if(storage){storage.open=true;storage.scrollIntoView?.({block:'nearest'});}
+    return;
+  }
+  // Never reprovision an already-ready bucket. If status is not yet known,
+  // check first and require an explicit activation confirmation if needed.
+  if(activationState==='idle'||activationState==='unknown'||!activationSource||!sameBucket(source,activationSource)){
+    await checkActivation(source);
+  }
+  if(activationState==='ready'){status(source.bucketName+' is already activated for REDOWN.');return;}
+  if(activationState!=='needed'){
+    status('Bucket setup could not be verified. Reconnect or Refresh before activating.');
+    return;
+  }
   if(!await dialog('Activate '+source.bucketName+' for REDOWN?',{input:false,description:'Sets up or updates the REDOWN Worker for this R2 bucket, saves its destination, and prepares default folders. Existing settings are retained. This changes Cloudflare resources; it does not make the bucket public.',confirm:'Activate Buckets'}))return;
   activationState='activating';paintActivation();
   await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();
