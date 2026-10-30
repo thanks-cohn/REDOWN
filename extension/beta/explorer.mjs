@@ -581,15 +581,149 @@ async function chooseDestination(operation){
   return new Promise(resolve=>$('destination-dialog').addEventListener('close',()=>{destinationEpoch++;resolve($('destination-dialog').returnValue==='ok'?{accountId:$('destination-account').value,accountName:accounts.find(a=>a.id===$('destination-account').value)?.name||'',bucketName:$('destination-bucket').value,prefix:prefix($('destination-prefix').value)}:null);},{once:true}));
 }
 let archiveContext=null;
-function archiveControls(){const checks=[...document.querySelectorAll('#archive-files input')],count=checks.filter(c=>c.checked).length;$('archive-extract').disabled=busy||!count;$('archive-all').checked=checks.length>0&&count===checks.length;$('archive-all').indeterminate=count>0&&count<checks.length;}
-$('archive-all').onchange=()=>{document.querySelectorAll('#archive-files input').forEach(c=>c.checked=$('archive-all').checked);archiveControls();};
-$('archive-close').onclick=()=>$('archive-dialog').close();$('archive-cancel').onclick=()=>controller?.abort();
-$('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const target={...archiveContext};let destinationPrefix;try{destinationPrefix=prefix($('archive-prefix').value);}catch(e){$('archive-status').textContent=e.message;return;}
-  const entries=[...document.querySelectorAll('#archive-files input:checked')].map(c=>c.value);if(!entries.length)return;
-  $('archive-cancel').hidden=false;$('archive-extract').disabled=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=true);$('archive-all').disabled=true;
-  await run(async signal=>{const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}});outcome(result);$('archive-status').textContent=$('status').textContent;for(let i=0;i<result.results.length;i++)if(result.results[i].state==='completed'){const check=[...document.querySelectorAll('#archive-files input')].find(c=>c.value===entries[i]);if(check)check.checked=false;}});
-  $('archive-cancel').hidden=true;document.querySelectorAll('#archive-files input').forEach(c=>c.disabled=false);$('archive-all').disabled=false;archiveControls();
+function archiveControls(){
+  const a=archiveContext,selected=a?.selected.size||0,total=a?.entries.length||0;
+  $('archive-extract').disabled=busy||!selected;
+  $('archive-all').checked=total>0&&selected===total;
+  $('archive-all').indeterminate=selected>0&&selected<total;
+  $('archive-selection-count').textContent=selected+' of '+total+' files selected for extraction';
+}
+function stopArchivePreview(){
+  const a=archiveContext;if(!a)return;
+  a.previewTicket++;a.previewController?.abort();a.previewController=null;
+  const stage=$('archive-preview-content');
+  for(const media of stage.querySelectorAll('video,audio')){try{media.pause();media.removeAttribute('src');media.load();}catch{}}
+  stage.replaceChildren();
+}
+function archivePreviewButtons(){
+  const a=archiveContext,files=a?archiveFolder(a.entries,a.prefix).files:[],key=a?.previewKey;
+  const index=files.findIndex(file=>file.key===key);
+  $('archive-preview-position').textContent=index<0?'Select a file':(index+1)+' / '+files.length+' · '+files[index].name;
+  $('archive-preview-previous').disabled=index<=0;
+  $('archive-preview-next').disabled=index<0||index>=files.length-1;
+}
+async function archiveShowEntry(item){
+  const a=archiveContext;if(!a||!item||item.folder)return;
+  stopArchivePreview();a.previewKey=item.key;
+  // Selection and extraction remain separate operations.
+  document.querySelectorAll('#archive-files .archive-entry-row').forEach(row=>{row.dataset.active=String(row.dataset.key===item.key);});
+  archivePreviewButtons();
+  const stage=$('archive-preview-content'),type=previewType(item.key);
+  if(!type||!(type.startsWith('image/')||type.startsWith('video/')||type.startsWith('audio/')||type.startsWith('text/')||type==='application/pdf')){
+    stage.textContent='This file type cannot be previewed inline. Select it to extract, or browse another file.';
+    return;
+  }
+  stage.textContent='Loading '+item.name+'…';
+  const ticket=a.previewTicket,abort=new AbortController();a.previewController=abort;
+  try{
+    const result=await request('archiveEntryUrl',{source:a.source,key:a.key,entry:item.key,contentType:type},{signal:abort.signal});
+    if(archiveContext!==a||ticket!==a.previewTicket||abort.signal.aborted)return;
+    const signed=result.data.url;
+    const parsed=new URL(signed);
+    if(!['http:','https:'].includes(parsed.protocol))throw Error('Archive preview returned an unsupported URL.');
+    let node;
+    if(type.startsWith('text/')){
+      const response=await fetch(parsed.href,{signal:abort.signal,cache:'no-store',referrerPolicy:'no-referrer'});
+      if(!response.ok)throw Error('Entry preview returned HTTP '+response.status);
+      if(archiveContext!==a||ticket!==a.previewTicket||abort.signal.aborted)return;
+      node=document.createElement('pre');
+      const text=await response.text();
+      if(archiveContext!==a||ticket!==a.previewTicket||abort.signal.aborted)return;
+      node.textContent=text.slice(0,1024*1024);
+      if(text.length>1024*1024)node.textContent+='\n\n[Preview limited to 1 MiB]';
+    }else if(type.startsWith('image/')){
+      node=document.createElement('img');node.alt=item.name;node.src=parsed.href;
+    }else if(type.startsWith('video/')||type.startsWith('audio/')){
+      node=document.createElement(type.startsWith('video/')?'video':'audio');node.controls=true;node.preload='metadata';node.src=parsed.href;
+    }else{
+      node=document.createElement('iframe');node.title=item.name;node.referrerPolicy='no-referrer';node.src=parsed.href;
+    }
+    if(archiveContext!==a||ticket!==a.previewTicket||abort.signal.aborted)return;
+    node.addEventListener('error',()=>{if(archiveContext===a&&ticket===a.previewTicket)stage.textContent='This archive entry could not be displayed. Extraction remains available.';},{once:true});
+    stage.replaceChildren(node);
+  }catch(error){
+    if(archiveContext===a&&ticket===a.previewTicket&&!abort.signal.aborted){
+      stage.textContent='Preview unavailable: '+(error.message||String(error))+'. You can still extract the selected entry.';
+    }
+  }finally{if(archiveContext===a&&a.previewController===abort)a.previewController=null;}
+}
+function renderArchiveFolder(path='',{startAtEnd=false}={}){
+  const a=archiveContext;if(!a)return;
+  a.prefix=path;stopArchivePreview();a.previewKey=null;
+  const listing=archiveFolder(a.entries,path);
+  $('archive-up').disabled=!path;
+  const crumbs=archiveCrumbs(path);
+  $('archive-crumbs').replaceChildren(...crumbs.map((crumb,i)=>{
+    const el=button((i?'› ':'')+crumb.name,()=>renderArchiveFolder(crumb.prefix));
+    if(i===crumbs.length-1)el.setAttribute('aria-current','location');
+    return el;
+  }));
+  const rows=[];
+  for(const item of [...listing.folders,...listing.files]){
+    const row=document.createElement('div');row.className='archive-entry-row';row.dataset.key=item.key;row.dataset.active='false';
+    if(!item.folder){
+      const label=document.createElement('label');label.title='Select '+item.name+' for extraction';
+      const check=document.createElement('input');check.type='checkbox';check.value=item.key;check.checked=a.selected.has(item.key);check.setAttribute('aria-label','Extract '+item.name);
+      check.addEventListener('change',()=>{check.checked?a.selected.add(item.key):a.selected.delete(item.key);archiveControls();});
+      label.append(check);row.append(label);
+    }
+    const open=button((item.folder?'▰  ':'')+item.name,item.folder?()=>renderArchiveFolder(item.key):()=>void archiveShowEntry(item));
+    open.className='archive-entry-open';open.title=item.folder?'Open folder '+item.name:'Preview '+item.name;
+    open.setAttribute('aria-label',item.folder?'Open folder '+item.name:'Preview '+item.name);
+    row.append(open);
+    if(!item.folder){const size=document.createElement('span');size.className='archive-entry-size';size.textContent=bytes(item.size);row.append(size);}
+    rows.push(row);
+  }
+  $('archive-files').replaceChildren(...rows);
+  if(!rows.length){const empty=document.createElement('p');empty.className='archive-empty';empty.textContent='This archive folder is empty.';$('archive-files').append(empty);}
+  archiveControls();
+  if(listing.files.length)void archiveShowEntry(startAtEnd?listing.files.at(-1):listing.files[0]);
+  else{$('archive-preview-content').textContent=listing.folders.length?'Open a folder to preview its files.':'No files to preview in this folder.';archivePreviewButtons();}
+}
+function stepArchivePreview(offset){
+  const a=archiveContext;if(!a||!a.previewKey)return;
+  const next=archiveAdjacent(archiveFolder(a.entries,a.prefix).files,a.previewKey,offset);
+  if(next)void archiveShowEntry(next);
+}
+$('archive-preview-previous').onclick=()=>stepArchivePreview(-1);
+$('archive-preview-next').onclick=()=>stepArchivePreview(1);
+$('archive-up').onclick=()=>{if(archiveContext?.prefix)renderArchiveFolder(archiveParent(archiveContext.prefix));};
+$('archive-all').onchange=()=>{
+  const a=archiveContext;if(!a)return;
+  a.selected=$('archive-all').checked?new Set(a.entries.map(e=>e.name)):new Set();
+  document.querySelectorAll('#archive-files input[type="checkbox"]').forEach(check=>{check.checked=a.selected.has(check.value);});
+  archiveControls();
 };
+$('archive-close').onclick=()=>$('archive-dialog').close();
+$('archive-dialog').addEventListener('close',()=>{stopArchivePreview();archiveContext=null;});
+$('archive-cancel').onclick=()=>controller?.abort();
+document.addEventListener('keydown',event=>{
+  const a=archiveContext;if(!a||!$('archive-dialog').open)return;
+  if([...document.querySelectorAll('dialog[open]')].at(-1)!==$('archive-dialog'))return;
+  if(event.altKey&&event.key==='ArrowUp'){event.preventDefault();event.stopImmediatePropagation();$('archive-up').click();return;}
+  if(!['ArrowLeft','ArrowRight'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+  if(event.target.closest?.('input,select,textarea,[contenteditable="true"],video,audio'))return;
+  event.preventDefault();event.stopImmediatePropagation();stepArchivePreview(event.key==='ArrowRight'?1:-1);
+},true);
+$('archive-extract').onclick=async()=>{
+  const a=archiveContext;if(!a||busy||!a.selected.size)return;
+  const target={source:a.source,key:a.key};
+  let destinationPrefix;
+  try{destinationPrefix=prefix($('archive-prefix').value);}catch(error){$('archive-status').textContent=error.message;return;}
+  const entries=[...a.selected];
+  $('archive-cancel').hidden=false;$('archive-extract').disabled=true;$('archive-all').disabled=true;
+  await run(async signal=>{
+    const result=await api.batch('extractArchiveEntry',entries.map(entry=>({...target,entry,destinationPrefix})),{
+      signal,onProgress:event=>{progress(event);if(event.phase==='item')$('archive-status').textContent='Extracting '+(event.index+1)+' of '+event.total+'…';}
+    });
+    outcome(result);$('archive-status').textContent=$('status').textContent;
+    result.results.forEach((r,i)=>{if(r?.state==='completed')a.selected.delete(entries[i]);});
+  },{refresh:false});
+  $('archive-cancel').hidden=true;$('archive-all').disabled=false;
+  // No extraction changes the virtual archive or its original R2 object.
+  if(archiveContext===a)renderArchiveFolder(a.prefix);
+};
+
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:title==='Practice with this file?'?'Yes, use this file':'Approve',cancel:title==='Practice with this file?'?'No':'Cancel'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
