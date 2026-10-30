@@ -1,9 +1,0 @@
-{
-  "scope": "Node/jsdom only; excludes browser layout, painting, GPU, frame rate and installed extension",
-  "node": "v24.22.1",
-  "pathLevels": 100,
-  "noOpUpdates": 1000,
-  "initialRenderMs": 49.31836100000004,
-  "noOpMedianMs": 0.00011099999994712562,
-  "noOpP95Ms": 0.0004410000000234504
-}

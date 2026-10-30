@@ -54,6 +54,5 @@
   "extension/destination-config.js",
   "extension/beta/destinations.js",
   "extension/shelf-celestial.js",
-  "scripts/shelf-celestial-preview.mjs",
-  "extension/beta/breadcrumb-navigation.js"
+  "scripts/shelf-celestial-preview.mjs"
 ]
