@@ -121,3 +121,32 @@ test('left storage accordion and Bucket Tools do not collapse into a narrow scro
     assert.doesNotMatch(css,/\.intro,\.section-title,\.sidebar-scroll>\.eyebrow\{display:none\}/,'narrow layout must not hide accordion headings');
   }finally{dom.window.close();}
 });
+
+test('the three left-sidebar controls use one header and chevron layout',()=>{
+  const dom=new JSDOM(html);
+  try{
+    const d=dom.window.document;
+    const sections=['sidebar-destinations','sidebar-storage','sidebar-bucket-tools'].map(id=>d.getElementById(id));
+    assert.ok(sections.every(Boolean));
+    assert.ok(sections.every(panel=>panel.closest('aside')&&panel.parentElement===sections[0].parentElement));
+    const headings=sections.map(panel=>panel.querySelector(':scope > summary'));
+    assert.deepEqual(headings.map(summary=>summary.textContent.trim()),['SAVED DESTINATIONS','STORAGE BUCKETS','BUCKET TOOLS']);
+    assert.ok(headings.every(summary=>summary.querySelector('svg.sidebar-chevron.sidebar-accordion-chevron')));
+    assert.ok(headings.every(summary=>summary.querySelector('svg').getAttribute('viewBox')==='0 0 20 20'));
+    assert.equal(sections[0].hasAttribute('open'),true);
+    assert.equal(sections[0].getAttribute('name'),null,'saved destinations remains independently accessible');
+    assert.equal(sections[1].getAttribute('name'),sections[2].getAttribute('name'),'storage/tools still form the exclusive pair');
+    assert.ok(sections[1].hasAttribute('open')&&!sections[2].hasAttribute('open'));
+    assert.equal(d.getElementById('profiles').closest('details'),sections[0]);
+    assert.equal(d.getElementById('create-bucket').closest('details'),sections[1]);
+    assert.equal(d.getElementById('buckets').closest('details'),sections[1]);
+    assert.equal(d.getElementById('preferences').closest('details'),sections[2]);
+    assert.ok(d.querySelector('.sidebar-select-shell #profiles'),'existing native destination selector stays functional');
+    assert.equal(d.querySelector('.sidebar-select-shell > svg.sidebar-chevron')?.getAttribute('aria-hidden'),'true');
+    assert.match(css,/\.sidebar-select-shell #profiles\s*\{[^}]*appearance:none/);
+    assert.match(css,/\.sidebar-accordion>summary\.section-title\s*\{[^}]*min-height:44px/);
+    assert.match(css,/\.sidebar-accordion:not\(\[open\]\)>summary \.sidebar-chevron\{transform:rotate\(-90deg\)\}/);
+    assert.match(css,/\.sidebar-storage #buckets\s*\{[^}]*max-height:/);
+    assert.doesNotMatch(css,/\.sidebar-storage #create-bucket\s*\{[^}]*position:absolute/,'create button belongs in expanded body, not the summary');
+  }finally{dom.window.close();}
+});
