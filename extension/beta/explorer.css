@@ -131,7 +131,7 @@ aside{height: min(52dvh,420px);position:relative}
 .brand{margin:0}
 .intro,.sidebar-scroll>.section-title,.sidebar-scroll>.eyebrow{display:none}
 h1{font-size:17px}
-#buckets{flex-direction:column;max-height:min(35dvh,240px)}
+.sidebar-storage #buckets{flex-direction:column;max-height:min(35dvh,240px)}
 main{padding:20px 14px}
 .toolbar{flex-wrap:wrap}
 .toolbar input{width:100%;margin:5px 0 0}
