@@ -6,6 +6,7 @@ import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
+import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from './archive-browser.mjs';
 const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
 let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
@@ -121,7 +122,7 @@ function controls(){
   for(const id of ['rename','properties'])$(id).disabled=locked||selected.size!==1;
   $('get-url').disabled=locked||selected.size!==1||Boolean(chosen()[0]?.folder);
   $('archive').disabled=locked||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
-  $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(chosen()[0]?.folder||!previewType(chosen()[0]?.key||'')));
+  $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(chosen()[0]?.folder||(!previewType(chosen()[0]?.key||'')&&!/\.(zip|cbz)$/i.test(chosen()[0]?.key||''))));
   paintActivation();$('create-bucket').disabled=locked||!$('accounts').value;
   $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=locked||!clipboard||!current;
@@ -215,19 +216,23 @@ function dialog(title,{description='',value='',input=true,details='',confirm='Co
   return new Promise(resolve=>$('dialog').addEventListener('close',()=>resolve($('dialog').returnValue==='ok'?(input?$('dialog-input').value:true):null),{once:true}));
 }
 const actions={
-  async archive(){const e=chosen()[0],source=context();if(!e||e.folder||busy)return;await run(async signal=>{
-    const result=await request('archiveEntries',{source,key:e.key},{signal});archiveContext={source,key:e.key};
-    $('archive-title').textContent=e.displayName;$('archive-prefix').value=source.prefix;$('archive-status').textContent='';$('archive-all').checked=false;
-    const tree=document.createDocumentFragment(),folders=new Map([['',tree]]);
-    for(const e of (result.data.archive?.entries||[]).filter(e=>!e.directory)){
-      const parts=e.name.split('/'),filename=parts.pop();let parent=tree,path='';
-      for(const part of parts){path+=part+'/';if(!folders.has(path)){const group=document.createElement('details'),summary=document.createElement('summary'),body=document.createElement('div');group.className='rd-archive-folder';summary.textContent=part;group.append(summary,body);parent.append(group);folders.set(path,body);}parent=folders.get(path);}
-      const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');label.title=e.name;check.type='checkbox';check.value=e.name;check.onchange=archiveControls;text.textContent=filename+' · '+bytes(e.size);label.append(check,text);parent.append(label);
-    }
-    $('archive-files').replaceChildren(tree);
-    archiveControls();openModal($('archive-dialog'));
-  },{refresh:false});},
-  async preview(){const e=chosen()[0];if(e&&!busy)await showPreview(e);},
+  async archive({startAtEnd=false}={}){const e=chosen()[0],source=context();if(!e||e.folder||busy||!(/\.(zip|cbz)$/i.test(e.key)))return;
+    await run(async signal=>{
+      const result=await request('archiveEntries',{source,key:e.key},{signal});
+      const files=normalizeArchiveEntries(result.data.archive?.entries||[]);
+      archiveContext={source,key:e.key,name:e.displayName,entries:files,prefix:'',selected:new Set(),previewKey:null,previewTicket:0,previewController:null};
+      $('archive-title').textContent=e.displayName;
+      $('archive-prefix').value=source.prefix;
+      $('archive-status').textContent=files.length+' files indexed. Browse without extraction; tick any files you want to extract.';
+      $('archive-all').checked=false;
+      openModal($('archive-dialog'));
+      // Most CBZ files place pages inside one enclosing directory.
+      let first='';for(let depth=0;depth<12;depth++){const listing=archiveFolder(files,first);if(listing.files.length||listing.folders.length!==1)break;first=listing.folders[0].key;}
+      renderArchiveFolder(first,{startAtEnd});
+      $('archive-close').focus();
+    },{refresh:false});
+  },
+  async preview(){const e=chosen()[0];if(!e||busy)return;if(!e.folder&&/\.(zip|cbz)$/i.test(e.key))return actions.archive();await showPreview(e);},
   async 'get-url'(){const e=chosen()[0],source=context();if(!e||busy)return;
     const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,
       enable:source=>chrome.runtime.sendMessage({type:'cfEnablePublicAccess',...source,confirmed:true}),onState:status});
