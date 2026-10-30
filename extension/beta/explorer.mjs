@@ -553,7 +553,7 @@ async function showPreview(item,navigation={}){
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(ticket===previewEpoch)previewController=null;}
 }
 async function adjacentPreview(direction,key){if(busy||!previewItem)return;
-  if(!previewItem.folder&&/\.(zip|cbz)$/i.test(previewItem.key)){void actions.archive({startAtEnd:direction<0});return;}
+  if(!previewItem.folder&&/\.(zip|cbz)$/i.test(previewItem.key)){if($('preview-dialog').open)$('preview-dialog').close();void actions.archive({startAtEnd:direction<0});return;}
   const files=visible().filter(e=>!e.folder&&(lightbox?(previewType(e.key)||'').startsWith('image/'):Boolean(previewType(e.key)))),i=files.findIndex(e=>e.key===previewItem.key),next=i<0?null:files[i+direction];if(next){selected=new Set([next.key]);paintSelection();await showPreview(next,{key,direction,previousKey:files[i].key,invocation:key?'keyboard':'button'});}}
 $('preview-previous').onclick=()=>adjacentPreview(-1);$('preview-next').onclick=()=>adjacentPreview(1);
 function resizePreview(width){
