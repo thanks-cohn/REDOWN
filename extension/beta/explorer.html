@@ -34,7 +34,6 @@
 <nav id="buckets" aria-label="Buckets">
 </nav>
 <details class="bucket-tools"><summary>Bucket tools</summary>
-<button id="prepare">Set up selected bucket</button>
 <button id="preferences">Transfer preferences</button>
 </details>
 <button id="connect" hidden>Connect Cloudflare</button>
@@ -64,7 +63,8 @@
 <button id="back" title="Back" aria-label="Back">←</button>
 <button id="forward" title="Forward" aria-label="Forward">→</button>
 <button id="up" title="Parent folder" aria-label="Parent folder">↑</button>
-<button id="refresh" title="Refresh" aria-label="Refresh">↻</button>
+<button id="refresh" title="Refresh files from Cloudflare (does not activate buckets)" aria-label="Refresh files">↻</button>
+<button id="prepare" type="button" class="bucket-activation" data-state="idle" title="Activate the selected bucket for REDOWN file operations" hidden><span class="bucket-activation-glyph" aria-hidden="true">✦</span><span class="bucket-activation-label">Activate Buckets</span></button>
 <button id="path" title="Go to a folder path" aria-label="Go to a folder path">/</button>
 <nav id="crumbs" aria-label="Breadcrumb">
 </nav>
@@ -136,7 +136,7 @@
     </div>
     <p id="destination-status" role="status" aria-live="polite">Loading your destinations…</p>
     <div class="destination-stage"><div id="destination-simple"></div><div id="destination-nested" hidden></div></div>
-    <details class="destination-first-setup"><summary>Prepare REDOWN storage</summary>
+    <details id="destination-first-setup" class="destination-first-setup" open><summary>Prepare REDOWN storage</summary>
     <p>Give your right-click menu a destination. First-time setup creates or reuses your private <strong>REDOWN</strong> bucket in Cloudflare R2.</p>
     <div class="quick-links-grid">
       <label>Cloudflare account<select id="quick-setup-account" aria-label="Account for REDOWN bucket"><option value="">Discovering accounts…</option></select></label>
