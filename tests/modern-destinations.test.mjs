@@ -22,7 +22,7 @@ async function ui(preset){
   const b=background(),calls=[];if(preset)b.state.profiles=preset;
   const dom=new JSDOM(html,{url:'https://fixture.test/beta/explorer.html',runScripts:'outside-only'}),w=dom.window;
   w.structuredClone=structuredClone;w.confirm=()=>true;
-  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:['photos']};if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
+  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='profiles')return {ok:true,profiles:structuredClone(b.state.profiles)};if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:['photos']};if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
   for(const source of [model,config,nested,picker,editor])w.eval(source);await settle();return {b,calls,dom,w,d:w.document};
 }
 test('Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save',async()=>{
@@ -34,7 +34,7 @@ test('Simple additions are exactly one local card per click; no cloud mutation, 
     d.getElementById('destination-save').click();await settle();assert.match(d.getElementById('destination-status').textContent,/up to date/);
     assert.equal(b.state.profiles[0].simpleOptions.length,3);assert.equal(b.state.profiles[0].simpleOptions.find(x=>x.id===id).label,'Final art');
     assert.ok(b.created.some(x=>x.id==='simple-option:p:'+id&&x.title==='Final art'));
-    assert.ok(calls.every(c=>['cfAccounts','cfBuckets','saveDestinationConfig'].includes(c.type)));
+    assert.ok(calls.every(c=>['profiles','cfAccounts','cfBuckets','saveDestinationConfig'].includes(c.type)));
     assert.equal(calls.filter(c=>c.type==='cfBuckets').length,1);
   }finally{h.dom.window.close();}
 });
@@ -76,8 +76,15 @@ test('primary removal only suppresses its menu and keeps profile and remote rout
 test('modern menu navigation and quick setup preserve selected mode in source',()=>{
   const setup=bg.slice(bg.indexOf('async function setupRedownQuickDestination'),bg.indexOf('async function ensureWorkersSubdomain'));assert.doesNotMatch(setup,/rightClickMode\s*:\s*["']simple/);assert.match(bg,/beta\/explorer.html#explorer-destinations/);
 });
-test('every plus click still adds one local draft before first-time storage setup',async()=>{
-  const h=await ui([]);try{h.d.getElementById('destination-add').click();h.d.getElementById('destination-add').click();await settle();assert.equal(h.d.querySelectorAll('.destination-card').length,2);h.d.getElementById('destination-save').click();await settle();assert.match(h.d.getElementById('destination-status').textContent,/Assign a prepared account/);assert.equal(h.calls.filter(c=>c.type==='saveDestinationConfig').length,0);}finally{h.dom.window.close();}
+test('Add Location without a prepared bucket explains activation instead of creating unusable draft cards',async()=>{
+  const h=await ui([]);try{
+    h.d.getElementById('destination-add').click();h.d.getElementById('destination-add').click();await settle();
+    assert.equal(h.d.querySelectorAll('.destination-card').length,0);
+    assert.match(h.d.getElementById('destination-status').textContent,/Choose a bucket|Activate Buckets/);
+    assert.equal(h.calls.filter(c=>c.type==='cfProvision').length,0);
+    assert.equal(h.calls.filter(c=>c.type==='saveDestinationConfig').length,0);
+    assert.equal(h.d.getElementById('destination-first-setup').open,true);
+  }finally{h.dom.window.close();}
 });
 test('account edits retain the destination identifier and route it through that account’s prepared profile',async()=>{
   const presets=initial();presets.push({...presets[0],id:'second',accountId:'b',bucketName:'video',explorerManaged:true,simpleOptions:[],nestedMenu:{version:1,enabled:false,roots:[]}});
