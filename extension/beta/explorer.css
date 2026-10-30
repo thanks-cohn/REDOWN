@@ -950,3 +950,14 @@ a:hover{color:var(--text)}
   background:var(--accent-soft);
 }
 @media(max-width:650px){.url-popover-consent-actions{flex-direction:column}.url-popover-consent-actions button{width:100%}}
+
+/* Same explicit bucket-wide public-access choice as Get URL. */
+.quick-url-consent{display:grid;gap:9px;margin:11px 0 16px;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
+.quick-url-consent[hidden]{display:none!important}
+.quick-url-consent strong{color:var(--text);font-size:13px}
+.quick-url-consent p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.65;overflow-wrap:anywhere}
+.quick-url-consent-actions{display:flex;gap:9px;flex-wrap:wrap}
+.quick-url-consent-actions button{flex:1;min-width:125px;font-size:12px;font-weight:740}
+#quick-url-yes{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+#quick-url-no{background:var(--panel);color:var(--text)}
+@media(max-width:650px){.quick-url-consent-actions{flex-direction:column}.quick-url-consent-actions button{width:100%}}
