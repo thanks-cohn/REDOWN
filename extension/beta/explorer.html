@@ -176,6 +176,11 @@
 <label for="pref-preview">Preview memory budget (MiB)</label><input id="pref-preview" type="number" min="1" step="1" required>
 <p id="preferences-error" role="alert"></p><div class="dialog-actions"><button id="preferences-reset" type="button">Restore defaults</button><button id="preferences-cancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div></form>
 </dialog>
+<dialog id="transfer-history-dialog" class="transfer-history-dialog" aria-labelledby="transfer-history-title">
+<div class="transfer-history-header"><div><span class="eyebrow">RECENT ACTIVITY</span><h2 id="transfer-history-title">Transfer History</h2></div><button id="transfer-history-close" type="button" aria-label="Close History">✕</button></div>
+<p class="transfer-history-note">Source links are saved when available. A saved address is not proof that the URL still works. Click a source link to open it or Copy to copy it.</p>
+<div id="transfer-history-list" class="transfer-history-list" aria-label="Saved transfers"></div>
+</dialog>
 <dialog id="destination-dialog" aria-labelledby="destination-title"><form id="destination-form">
 <h2 id="destination-title">Choose destination</h2><p>Copy or move to an exact bucket and folder. Conflict policy follows the toolbar selection.</p>
 <label for="destination-account">Account</label><select id="destination-account" required></select>
