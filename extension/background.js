@@ -2516,7 +2516,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     catch(error){
       console.error("REDOWN Hitomi capture failed to start",error);
       const message=error?.message||String(error);
-      await recordTransfer({ok:false,sourceUrl:pageUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
+      await recordTransfer({pageUrl,ok:false,sourceUrl:pageUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
       await notify("REDOWN gallery failed",message);
     }
     return;
@@ -2526,7 +2526,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(onHitomiGallery && chosenDestination && !info.srcUrl &&
       /^https:\/\/hitomi\.la\/[^?#]+\.html(?:[?#]|$)/i.test(sourceUrl)){
     const message="Hitomi HTML pages cannot be uploaded as gallery ZIPs. Open the gallery and choose REDOWN from its Download control.";
-    await recordTransfer({ok:false,sourceUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
+    await recordTransfer({pageUrl,ok:false,sourceUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
     await notify("REDOWN gallery capture required",message);
     return;
   }
@@ -2545,11 +2545,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       if(!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
       const receipt={};
       const location=await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt);
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
+      await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message||String(error);
-      await recordTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
+      await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
       await notify("REDOWN failed",message);
     }
     return;
@@ -2572,11 +2572,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             profile.defaultPrefix != null?profile.defaultPrefix:(profile.folders?.[category]||category),
             basenameFromUrl(sourceUrl),receipt)
         : await ingest(destinationProfile, sourceUrl, category);
-      await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
+      await recordTransfer({pageUrl, ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
       await notify("REDOWN complete", location);
     } catch (error) {
       const message = error?.message || String(error);
-      await recordTransfer({ ok:false, sourceUrl, profileId:profile.id, profileName:profile.name, category:profile.defaultCategory || "files", error:message });
+      await recordTransfer({pageUrl, ok:false, sourceUrl, profileId:profile.id, profileName:profile.name, category:profile.defaultCategory || "files", error:message });
       await notify("REDOWN failed", message);
     }
     return;
@@ -2591,11 +2591,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     try{
       const receipt={};
       const location=await ingestCloudflareAtPrefix(target,sourceUrl,destination.prefix,basenameFromUrl(sourceUrl),receipt);
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
+      await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message || String(error);
-      await recordTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
+      await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
       await notify("REDOWN failed",message);
     }
     return;
@@ -2642,7 +2642,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       location = await ingest(profile, sourceUrl, category);
     }
 
-    await recordTransfer({
+    await recordTransfer({pageUrl,
       ok:true,
       sourceUrl,
       profileId:profile.id,
@@ -2654,7 +2654,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await notify("REDOWN complete", location);
   } catch (error) {
     const message = error?.message || String(error);
-    await recordTransfer({
+    await recordTransfer({pageUrl,
       ok:false,
       sourceUrl,
       profileId:profile.id,
