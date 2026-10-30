@@ -193,6 +193,11 @@
 <div class="transfer-history-header"><div><span class="eyebrow">RECENT ACTIVITY</span><h2 id="transfer-history-title">Transfer History</h2></div><button id="transfer-history-close" type="button" aria-label="Close History">✕</button></div>
 <p class="transfer-history-note">Source links are saved when available. A saved address is not proof that the URL still works. Click a source link to open it or Copy to copy it.</p>
 <div id="transfer-history-list" class="transfer-history-list" aria-label="Saved transfers"></div>
+<div class="transfer-history-export-footer">
+  <p>History stays in this extension's local storage during ordinary cache clearing. Export a JSON backup to preserve it outside Chrome. This file may contain private URLs.</p>
+  <button id="beta-export-history" type="button" class="primary">Export History (JSON)</button>
+</div>
+<p id="beta-history-export-status" role="status" aria-live="polite"></p>
 </dialog>
 <dialog id="destination-dialog" aria-labelledby="destination-title"><form id="destination-form">
 <h2 id="destination-title">Choose destination</h2><p>Copy or move to an exact bucket and folder. Conflict policy follows the toolbar selection.</p>
@@ -206,6 +211,7 @@
 <label><input id="archive-all" type="checkbox"> Select all files</label><div id="archive-files"></div>
 <label for="archive-prefix">Extract into folder (empty for bucket root)</label><input id="archive-prefix" autocomplete="off">
 <p id="archive-status" role="status"></p><div class="dialog-actions"><button id="archive-cancel" hidden>Cancel remaining</button><button id="archive-extract" class="primary" disabled>Extract selected</button></div></dialog>
+<script src="../history-export.js"></script>
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>
