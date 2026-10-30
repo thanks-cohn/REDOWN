@@ -141,5 +141,14 @@
     "Independent ingestion read-back and remote Keep Both proof",
     "Durable batch recovery",
     "Existing packaging and regression failures"
-  ]
+  ],
+  "publication": {
+    "implementationCommit": "2e4773522c71a5a140f75dd6e93451829274fdc3",
+    "tree": "8898c4860f9cc50f5ad015dda801e17729b58b06",
+    "localDeliveryCommit": "5582cab2a73e5aa4370119feb151676fcc329a8f",
+    "verifiedBlobCount": 15,
+    "method": "Connected GitHub app, conditional non-force ref update from restored parent",
+    "nativePush": "Unavailable: no HTTPS write credential",
+    "sourceTreeEqualsLocalDelivery": true
+  }
 }
