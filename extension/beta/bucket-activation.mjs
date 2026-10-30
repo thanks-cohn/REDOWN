@@ -27,7 +27,7 @@ export function activationAppearance(all,profiles,states=new Map(),loaded=true){
   let pending=0,failed=0,verified=0;
   for(const target of all){
     const state=states.get(bucketIdentity(target));
-    const saved=(profiles||[]).some(p=>matchesBucket(p,target));
+    const saved=(profiles||[]).some(p=>p?.accountId===target.accountId&&(p.ownerBucketName||p.bucketName)===target.bucketName);
     if(state==='failed')failed++;
     else if(state==='ready')verified++;
     else if(state==='needs-activation'||!saved)pending++;
