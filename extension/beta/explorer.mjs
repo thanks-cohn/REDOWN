@@ -227,7 +227,7 @@ document.addEventListener('keydown',event=>{
 function paintBuckets(accountId){
   const buckets=bucketCache.get(accountId)||[];
   $('buckets').replaceChildren(...buckets.map(bucket=>{const target={accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};const b=button('▱  '+bucket.name,()=>navigate(target));b.dataset.bucket=bucket.name;b.toggleAttribute('aria-current',sameBucket(current,target));return b;}));
-  controls();
+  syncActivationControls();controls();
 }
 async function loadBuckets(){
   const accountId=$('accounts').value;if(!accountId)return;
@@ -236,9 +236,11 @@ async function loadBuckets(){
   try{const result=await request('buckets',{accountId});if(ticket!==discoveryEpoch)return;
     bucketCache.set(accountId,result.data.buckets||[]);paintBuckets(accountId);
     current=null;items=[];selected.clear();cursor='';clipboard=null;history=[];historyIndex=-1;epoch++;
-    const buckets=bucketCache.get(accountId),saved=lastLocation?.accountId===accountId&&buckets.some(b=>b.name===lastLocation.bucketName)?lastLocation:null;
-    if(saved||buckets.length===1)await navigate(saved||{accountId,bucketName:buckets[0].name,prefix:''},true,Boolean(saved));
-    else{connectionState(buckets.length?'choose':'empty-buckets',buckets.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets in this account.');render();}
+    const available=knownBucketTargets().filter(t=>t.accountId===accountId);
+    const saved=available.find(t=>matchesBucket(t,lastLocation))?lastLocation:null;
+    const chosen=firstAvailableBucket(available,bucketPreference,saved);
+    if(chosen)await navigate({...chosen,prefix:saved&&matchesBucket(chosen,saved)?saved.prefix:''},true,Boolean(saved&&matchesBucket(chosen,saved)));
+    else{connectionState('empty-buckets','No accessible R2 buckets in this account. Use Refresh to check again.');render();}
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function loadAccounts(preferred=current||lastLocation){
@@ -247,19 +249,20 @@ async function loadAccounts(preferred=current||lastLocation){
     const result=await request('accounts',{});if(ticket!==discoveryEpoch)return;
     accounts=result.data.accounts||[];
     const discoveries=await Promise.allSettled(accounts.map(async a=>({id:a.id,buckets:(await request('buckets',{accountId:a.id})).data.buckets||[]})));
-    if(ticket!==discoveryEpoch)return;bucketCache.clear();const errors=[];
+    if(ticket!==discoveryEpoch)return;bucketCache.clear();bucketReadiness.clear();activationInventoryLoaded=false;const errors=[];
     discoveries.forEach((r,i)=>{if(r.status==='fulfilled')bucketCache.set(r.value.id,r.value.buckets);else errors.push((accounts[i].name||accounts[i].id)+': '+r.reason.message);});
     $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=(a.name||a.id)+(bucketCache.has(a.id)?'':' · unavailable');return o;}));
     const all=accounts.flatMap(a=>(bucketCache.get(a.id)||[]).map(b=>({accountId:a.id,accountName:a.name||'',bucketName:b.name,prefix:''})));
-    const restored=all.find(b=>sameBucket(b,preferred));
+    const restored=all.find(b=>matchesBucket(b,preferred));
     let restoredPrefix='';try{restoredPrefix=prefix(preferred?.prefix||'');}catch{}
-    const target=restored?{...restored,prefix:restoredPrefix}:all.length===1?all[0]:null;
-    const accountId=target?.accountId||all[0]?.accountId||accounts[0]?.id||'';
+    const selected=firstAvailableBucket(all,current?preferred:bucketPreference,restored);
+    const target=selected?{...selected,prefix:restored&&matchesBucket(restored,selected)?restoredPrefix:''}:null;
+    const accountId=target?.accountId||accounts[0]?.id||'';
     $('accounts').value=accountId;paintBuckets(accountId);
-    if(target){if(busy){current={...target};const result=await listing();if(result?.folderExists===false&&target.prefix){current.prefix='';await listing();}await rememberLocation(current);}else await navigate(target,true,Boolean(restored));}
-    else{current=null;items=[];cursor='';selected.clear();connectionState(all.length?'choose':errors.length?'failed':'empty-buckets',all.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets were found.');render();}
+    if(target){if(busy){current={...target};const result=await listing();if(result?.folderExists===false&&target.prefix){current.prefix='';await listing();}await rememberLocation(current);}else await navigate(target,true,Boolean(restored&&matchesBucket(restored,target)));}
+    else{current=null;items=[];cursor='';selected.clear();connectionState(errors.length?'failed':'empty-buckets',errors.length?'No buckets could be discovered. Use Refresh to retry.':'No accessible R2 buckets were found.');render();}
     if(errors.length){if(!all.length)failure(Error(errors.join(' ')));$('refresh').classList.add('attention');status('Some accounts could not be discovered. '+errors.join(' ')+' Use Refresh to retry or Connect Cloudflare to renew authorization.');}
-    try{await loadProfiles();}catch(e){status('Files discovery finished; saved destinations unavailable: '+e.message);}
+    try{await loadProfiles();}catch(e){activationInventoryLoaded=false;paintActivation();status('Files discovery finished; saved destinations unavailable: '+e.message);}
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function refreshConnection(){
@@ -278,6 +281,18 @@ async function refreshConnection(){
   }
 }
 $('accounts').onchange=()=>loadBuckets().catch(failure);
+$('initial-bucket').onchange=async()=>{
+  const previous=bucketPreference,raw=$('initial-bucket').value;
+  const preferred=knownBucketTargets().find(t=>bucketIdentity(t)===raw);
+  bucketPreference=preferred?{accountId:preferred.accountId,bucketName:preferred.bucketName}:null;
+  const hint=$('initial-bucket-status');
+  try{
+    await chrome.storage.local.set({betaExplorerInitialBucket:bucketPreference});
+    hint.textContent=bucketPreference?'Saved. '+preferred.bucketName+' will be your initial bucket on the next Explorer opening. Activate Buckets remains a separate action.':'Saved. REDOWN will select an accessible bucket automatically.';
+  }catch(e){
+    bucketPreference=previous;paintInitialBucketChoices();hint.textContent='Could not save your initial bucket preference. Try again.';
+  }
+};
 $('connect').onclick=()=>run(async()=>{await request('connect',{});status('Finish Cloudflare sign-in in the window that opened.');},{refresh:false});
 $('disconnect').onclick=async()=>{
   if(busy||!cloudflareSignedIn)return;
@@ -291,7 +306,8 @@ $('disconnect').onclick=async()=>{
     paintLogout(null);
     current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();
     connectionState('disconnected');
-    $('accounts').replaceChildren();$('buckets').replaceChildren();
+    bucketReadiness.clear();activationInventoryLoaded=false;savedProfiles=[];
+    $('accounts').replaceChildren();$('buckets').replaceChildren();syncActivationControls();
     render();status('Logged out of Cloudflare. Your cloud files remain untouched.');
   },{refresh:false});
 };
@@ -299,9 +315,11 @@ chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!change
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
-  const result=await request('profiles',{});savedProfiles=result.data.profiles||[];
+  const result=await request('profiles',{});savedProfiles=result.data.profiles||[];activationInventoryLoaded=true;
+  paintActivation();
   const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a saved destination…';
   $('profiles').replaceChildren(placeholder,...savedProfiles.map((p,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=(p.name||p.bucketName)+' /'+p.prefix;return o;}));
+  syncActivationControls();
 }
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
@@ -546,8 +564,10 @@ const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:title==='Practice with this file?'?'Yes, use this file':'Approve',cancel:title==='Practice with this file?'?'No':'Cancel'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
 render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{
-  const saved=await chrome.storage.local?.get(['betaExplorerLocation','cloudflareAuth']);
+  const saved=await chrome.storage.local?.get(['betaExplorerLocation','betaExplorerInitialBucket','cloudflareAuth']);
   lastLocation=saved?.betaExplorerLocation||null;
+  const pref=saved?.betaExplorerInitialBucket;
+  bucketPreference=pref&&typeof pref.accountId==='string'&&typeof pref.bucketName==='string'?{accountId:pref.accountId,bucketName:pref.bucketName}:null;
   paintLogout(saved?.cloudflareAuth);
 }catch{}
 await loadAccounts(lastLocation);})();
