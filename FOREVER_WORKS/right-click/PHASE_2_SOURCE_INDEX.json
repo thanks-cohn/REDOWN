@@ -5678,8 +5678,8 @@
     },
     {
       "path": "evidence/phase-2/REPRODUCTION.md",
-      "sha256": "3ffc0a328976f827a70755ad15c6d9d80e6a0180fd1ec14ba77d10c4b80d423c",
-      "bytes": 28984,
+      "sha256": "eaedfadebf8a5db285275054bcdc0c0361eab377b41fe29e6cc7c7770cd366a7",
+      "bytes": 28982,
       "scope": "phase-two capture; exact provenance in coverage ledger"
     },
     {

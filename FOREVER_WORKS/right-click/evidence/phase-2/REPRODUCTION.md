@@ -193,7 +193,7 @@ for(const [name,width,height,query] of cases){
  results.push({name,...measured.result.value,evidenceClass:'LOCAL_TEST_PASS',verificationScope:'Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof'});
  ws.close();await fetch('http://127.0.0.1:9222/json/close/'+target.id);
 }
-await fs.writeFile('FOREVER_WORKS/right-click/evidence/phase-2/layout-measurements.json',JSON.stringify(results,null,2)+'\n');console.log(results.map(r=>({name:r.name,panelWidth:r.panel.width,overflow:r.horizontalOverflow,xCount:r.renderedRemovalCount}))); 
+await fs.writeFile('FOREVER_WORKS/right-click/evidence/phase-2/layout-measurements.json',JSON.stringify(results,null,2)+'\n');console.log(results.map(r=>({name:r.name,panelWidth:r.panel.width,overflow:r.horizontalOverflow,xCount:r.renderedRemovalCount})));
 
 ```
 
@@ -217,6 +217,6 @@ for(const [name,width,height,query] of cases){
  results.push({name,...measured.result.value,evidenceClass:'LOCAL_TEST_PASS',verificationScope:'Rendered standalone HTML fixture with historical 515c272 CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof'});
  ws.close();await fetch('http://127.0.0.1:9222/json/close/'+target.id);
 }
-await fs.writeFile('FOREVER_WORKS/right-click/evidence/phase-2/legacy-layout-measurements.json',JSON.stringify(results,null,2)+'\n');console.log(results.map(r=>({name:r.name,panelWidth:r.panel.width,overflow:r.horizontalOverflow,xCount:r.renderedRemovalCount}))); 
+await fs.writeFile('FOREVER_WORKS/right-click/evidence/phase-2/legacy-layout-measurements.json',JSON.stringify(results,null,2)+'\n');console.log(results.map(r=>({name:r.name,panelWidth:r.panel.width,overflow:r.horizontalOverflow,xCount:r.renderedRemovalCount})));
 
 ```
