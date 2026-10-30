@@ -4466,7 +4466,7 @@ $("export-history").addEventListener("click",async()=>{
     const result=await send({type:"transferHistory"});
     if(!result?.ok||!Array.isArray(result.transferHistory))throw Error(result?.error||"History could not be loaded.");
     const receipt=RedownHistoryExport.download(result.transferHistory,{document});
-    feedback.textContent="Created "+receipt.fileName+" with "+receipt.count+" recorded event(s). Keep this JSON file somewhere safe.";
+    feedback.textContent="JSON download requested: "+receipt.fileName+" ("+receipt.count+" event(s)). Confirm it appears in Downloads and keep a copy outside Chrome.";
   }catch(error){feedback.textContent="History export failed: "+(error?.message||String(error))+". Your saved History was not erased.";}
   finally{button.disabled=false;}
 });
