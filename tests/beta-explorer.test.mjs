@@ -416,7 +416,7 @@ test('side minimize, close, reopen, expand, resize keyboard, selection and saved
     d.querySelector('#preview-expand').click();assert.ok(d.querySelector('#file-workspace').classList.contains('preview-expanded'));d.querySelector('#preview-expand').click();assert.ok(!d.querySelector('#file-workspace').classList.contains('preview-expanded'));
     d.querySelector('#preview-divider').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(f.storage.betaExplorerPreview.width,504);
     d.querySelector('#preview-close').click();assert.equal(d.querySelector('#side-preview').hidden,true);assert.ok(!d.querySelector('#file-workspace').classList.contains('with-preview'));d.querySelector('#preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(reads,2);
-    d.querySelector('[data-key="Photos/"]').click();assert.match(d.querySelector('#preview-content').textContent,/Folder in/);assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.equal(d.querySelector('#preview').disabled,false);
+    d.querySelector('[data-key="Photos/"]').click();await settle(()=>/File 1 of/.test(d.querySelector('#preview-info').textContent));assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.equal(d.querySelector('#preview').disabled,false);
     d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.dataset.command==='preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#preview-title').textContent,'root.txt');
   }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
 });
