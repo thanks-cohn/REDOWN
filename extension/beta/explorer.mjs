@@ -636,12 +636,12 @@ async function showPreview(item,navigation={}){
   $('preview-info').textContent=metadata;
   const download=()=>{const b=button('Download',()=>{if(!busy&&sameBucket(source,current)){selected=new Set([item.key]);paintSelection();void actions.download();}});return b;};
   if(!item.folder&&/\.(zip|cbz)$/i.test(item.key)){
-    if(archivePreviewMode==='reader'){await openArchiveReader(item,source);return;}
+    if(archivePreviewMode==='reader'){await openArchiveReader(item,source,navigation.startAtEnd===true);return;}
     $('preview-content').textContent='Browse ZIP/CBZ pages without extracting the archive.';
     $('preview-content').append(button('Browse archive →',()=>{if(!busy)void actions.archive({classic:true});}));
     return;
   }
-  if(item.folder){await openDirectoryReader(item,source);return;}
+  if(item.folder){await openDirectoryReader(item,source,navigation.startAtEnd===true);return;}
   if(!previewType(item.key)){
     $('preview-content').textContent='Inline preview is unavailable for this format.';
     $('preview-content').append(download());return;
@@ -667,7 +667,7 @@ async function showPreview(item,navigation={}){
 }
 // A directory is a read-only preview collection. We never navigate the
 // Explorer path, create files, or download folder contents to preview them.
-async function openDirectoryReader(item,source){
+async function openDirectoryReader(item,source,startAtEnd=false){
   const epochTicket=previewEpoch,abort=new AbortController();previewController=abort;
   const a={kind:'folder',source:{...source,prefix:item.key},key:item.key,entries:[],index:0,ticket:0};
   readerSession=a;
@@ -696,7 +696,7 @@ async function openDirectoryReader(item,source){
       $('preview-info').textContent='Folder · No previewable files';
       return;
     }
-    await showDirectoryPage(a,0);
+    await showDirectoryPage(a,startAtEnd?a.entries.length-1:0);
   }catch(error){
     if(epochTicket===previewEpoch&&!abort.signal.aborted&&readerSession===a){
       $('preview-content').textContent=error.message||'Could not read folder contents.';
@@ -748,7 +748,7 @@ async function showDirectoryPage(a,index){
   }catch(error){if(active())fail(error.message||'Could not preview this folder entry.');}
   finally{if(ownedUrl)URL.revokeObjectURL(ownedUrl);if(active())previewController=null;}
 }
-async function openArchiveReader(item,source){
+async function openArchiveReader(item,source,startAtEnd=false){
   const ticket=previewEpoch,abort=new AbortController();previewController=abort;
   const a={kind:'archive',source,key:item.key,entries:[],index:0,ticket:0};readerSession=a;
   $('preview-content').textContent='Reading archive index…';
@@ -764,7 +764,7 @@ async function openArchiveReader(item,source){
       return left.length-right.length||(x.name<y.name?-1:x.name>y.name?1:0);
     });
     if(!a.entries.length){$('preview-content').textContent='This archive contains no supported images.';readerBrowseButton();return;}
-    await showReaderPage(a,0);
+    await showReaderPage(a,startAtEnd?a.entries.length-1:0);
   }catch(error){if(ticket===previewEpoch&&!abort.signal.aborted){$('preview-content').textContent=error.message;$('preview-content').append(button('Retry archive',()=>void openArchiveReader(item,source)));readerBrowseButton();}}
 }
 function readerBrowseButton(){
