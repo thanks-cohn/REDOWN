@@ -34,8 +34,15 @@
         return first;
       });
     }
-    if(profile.bucketName) roots.push({id:crypto.randomUUID(),bucketName:profile.bucketName,ready:false,children:convert(profile.menuTree)});
+    if(profile.bucketName && profile.menuTree?.length) roots.push({id:crypto.randomUUID(),bucketName:profile.bucketName,ready:false,children:convert(profile.menuTree)});
     return {version:1,enabled:Boolean(profile.menuTree?.length),roots,imported:Boolean(profile.menuTree?.length)};
+  }
+  // Versioned draft migration. An existing model, including empty roots, wins.
+  function initialize(profile) {
+    if(!profile.nestedMenu)profile.nestedMenu=profile.menuConfigVersion>=1
+      ? {version:1,enabled:false,roots:[]} : fromLegacy(profile);
+    profile.menuConfigVersion=1;
+    return profile.nestedMenu;
   }
   function destinations(model) {
     if(!model?.enabled)return [];
@@ -59,7 +66,7 @@
     if(value==='simple' || value==='nested')return value;
     // Upgrade existing nested users without showing both modes at once.
     return profiles.some(profile=>profile.type==='cloudflare-r2' && !profile.explorerManaged &&
-      (profile.nestedMenu ? profile.nestedMenu.enabled : profile.menuTree?.length)) ? 'nested' : 'simple';
+      profile.nestedMenu?.enabled) ? 'nested' : 'simple';
   }
-  globalThis.RedownNestedLocations={name,path,blank,invalidate,setLocation,fromLegacy,destinations,menuMode};
+  globalThis.RedownNestedLocations={name,path,blank,invalidate,setLocation,fromLegacy,initialize,destinations,menuMode};
 })();

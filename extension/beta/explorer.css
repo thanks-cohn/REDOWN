@@ -1106,3 +1106,20 @@ a:hover{color:var(--text)}
 .actions #upload-folder.primary{background:var(--accent);border-color:transparent;font-weight:750}
 .actions #upload-folder.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.12)}
 .actions #upload-folder.primary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* Menu configuration removal is distinct from cloud folder deletion. */
+#destination-nested .nested-heading{align-items:center;margin-bottom:8px;gap:8px}
+#destination-nested .nested-heading .meta{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+#destination-nested .nested-heading .toggle{font-size:11px}
+#destination-nested .nested-remove{color:var(--danger);border-color:var(--danger);background:transparent;margin-left:auto}
+#destination-nested .nested-remove:focus-visible,#destination-nested button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#destination-nested .nested-card{padding:12px}
+#destination-nested .nested-empty,#destination-nested .nested-undo{padding:12px;color:var(--muted);font-size:12px}
+#destination-nested .nested-undo button{margin-left:8px}
+#destination-nested .nested-children .nested-children .nested-children{margin-left:0;padding-left:0;border-left:0}
+@media(min-width:1050px){
+  #destination-nested .nested-roots>.nested-group{display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,2fr);column-gap:14px}
+  #destination-nested .nested-roots>.nested-group>.nested-menu-controls,#destination-nested .nested-roots>.nested-group>.nested-location-row,#destination-nested .nested-roots>.nested-group>.nested-path{grid-column:1}
+  #destination-nested .nested-roots>.nested-group>.nested-children{grid-column:2;grid-row:1 / span 3}
+}
+@media(max-width:650px){#destination-nested .nested-choice{min-width:120px}#destination-nested .nested-remove{margin-left:0}#destination-nested .nested-children{padding-left:8px;margin-left:4px}}

@@ -26,9 +26,9 @@
     // provisioned a bucket before its local storage event reaches this page.
     let latest;try{latest=(await request('profiles')).profiles;}catch{}
     if(version!==epoch)return;
-    unassigned=[];profiles=structuredClone(latest||stored.profiles||[]);$('destination-legacy-fallback').hidden=!profiles.some(p=>p.type==='github');mode=M.menuMode(stored.rightClickMode,profiles);expected=C.signature(profiles,mode);dirty=false;mounted=false;
+    unassigned=[];profiles=structuredClone(latest||stored.profiles||[]);$('destination-legacy-fallback').hidden=true;mode=M.menuMode(stored.rightClickMode,profiles);expected=C.signature(profiles,mode);dirty=false;mounted=false;
     // Idempotent in-memory migration. It is persisted only on explicit Save.
-    for(const p of usable())p.nestedMenu||=M.fromLegacy(p);
+    for(const p of usable()){M.initialize(p);p.defaultPrefix??='';}
     const selector=$('destination-profile');selector.replaceChildren(...usable().map(p=>new Option((p.accountName||p.accountId)+' / '+p.bucketName,p.id)));
     renderSimple();setMode();
     if(!firstSetupDisclosureInitialized){
@@ -64,7 +64,7 @@
   }
   function renderSimple(onlyId){
     const host=$('destination-simple');if(!onlyId){for(const b of host.querySelectorAll('button'))b._picker?.close();host.replaceChildren();}else host.querySelector('.destination-empty')?.remove();
-    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','Choose your existing Cloudflare bucket, then click Activate Buckets by Grid view. After activation, + Location adds Simple menu destinations.'));
+    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','No Simple destinations configured. Use + Location to add one. Activate a bucket beside Grid view if needed.'));
     for(const row of list){
       const card=el('article','destination-card');card.dataset.destinationId=row.id;
       const head=el('div','destination-card-head');
@@ -80,7 +80,7 @@
       // Prepared profiles are required by the original transfer engine. Discovery is read-only.
       const bucketLabel=el('label','', 'Bucket');bucketLabel.append(bucket);
       const accountLabel=el('label','','Cloudflare account');accountLabel.append(account);
-      const destination=el('code','destination-path',row.base&&row.p.defaultPrefix==null?row.bucket+' / Automatic folder by file type (legacy)':row.bucket+'/'+row.prefix);destination.title=destination.textContent;
+      const destination=el('code','destination-path',row.bucket+'/'+row.prefix);destination.title=destination.textContent;
       const folders=el('div','destination-folders');
       const choose=button('Choose folder',async()=>{
         folders.replaceChildren();folders.hidden=false;
@@ -170,7 +170,7 @@
     }
     const available=usable();
     if(mode==='nested'){
-      const p=available.find(p=>p.id===$('destination-profile').value)||available[0];p.explorerManaged=false;p.nestedMenu||=M.fromLegacy(p);p.nestedMenu.enabled=true;
+      const p=available.find(p=>p.id===$('destination-profile').value)||available[0];if(p.explorerManaged||p.showInContextMenu===false)p.simplePrimaryEnabled=false;p.explorerManaged=false;M.initialize(p);p.nestedMenu.enabled=true;
       if(!mounted)mountNested();await RedownNestedEditor.addLocation(p.id);changed();if(activatedSource)document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:activatedSource}));return;
     }
     const p=available.find(p=>p.id===$('destination-profile').value)||available[0];
@@ -186,7 +186,7 @@
   document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving&&!activatingLocation)void load().catch(error=>status('Refresh destinations: '+error.message));});
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||saving||activatingLocation)return;
-    if(changes.profiles||changes.rightClickMode){if(dirty){if(changes.rightClickMode){mode=M.menuMode(changes.rightClickMode.newValue,profiles);setMode();}status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
+    if(changes.profiles||changes.rightClickMode){if(dirty){if(changes.rightClickMode&&!changes.profiles){const before=JSON.parse(expected);mode=M.menuMode(changes.rightClickMode.newValue,profiles);expected=JSON.stringify([mode,before[1]]);setMode();status('Layout updated from Chrome. Your unsaved destination edits are preserved.');return;}status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
   });
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
   void load().catch(error=>status('Could not load destinations: '+error.message));

@@ -98,19 +98,12 @@ test('legacy paths migrate without modifying old configuration or writing remote
   assert.equal(h.calls.filter(c=>c.type==='cfCreateFolder'||c.type==='cfEnsurePrefixes').length,0);h.dom.window.close();
 });
 
-test('nested saving retains provisioned worker credentials and new Explorer profiles through autosave',async()=>{
-  const options=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
-  const p=profile();p.token='stale';
-  let stored=[{...structuredClone(p),token:'current-secret',workerVersion:3},{id:'new-hidden',explorerManaged:true,bucketName:'bucket-two',token:'second-secret'}];
-  const context=vm.createContext({structuredClone,profiles:[p],chrome:{storage:{local:{get:async()=>({profiles:structuredClone(stored)}),set:async value=>{stored=structuredClone(value.profiles);}}}}});
-  vm.runInContext(options.slice(options.indexOf('async function saveProfiles()'),options.indexOf('function displayName(')),context);
-  await vm.runInContext('saveNestedMenu(profiles[0])',context);
-  await vm.runInContext('saveProfiles()',context);
-  assert.equal(stored[0].token,'current-secret');assert.equal(stored[0].defaultPrefix,'quick-only');
-  assert.equal(stored.find(item=>item.id==='new-hidden').token,'second-secret');
-  assert.equal(stored[0].nestedMenu.roots[0].children[0].children[0].name,'grandchild');
+test('legacy Nested save is read-only and ordinary preferences delegate to the serialized background',async()=>{
+ const options=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');const p=profile(),calls=[];
+ const ctx=vm.createContext({profiles:[p],send:async m=>{calls.push(m);return {ok:true};}});
+ vm.runInContext(options.slice(options.indexOf('async function saveProfiles()'),options.indexOf('function displayName(')),ctx);
+ await assert.rejects(vm.runInContext('saveNestedMenu(profiles[0])',ctx),/Right-click setup/);await vm.runInContext('saveProfiles()',ctx);assert.equal(calls[0].type,'saveStoragePreferences');assert.equal(calls[0].profiles[0],p);
 });
-
 test('one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN',async()=>{
   const p=profile(),before=structuredClone(p),created=[];let mode;
   const context=vm.createContext({crypto:webcrypto,chrome:{storage:{local:{get:async()=>({rightClickMode:mode}),set:async patch=>{mode=patch.rightClickMode;}}},contextMenus:{removeAll:async()=>{created.length=0;},create:item=>created.push(item)}},ROOT_MENU_ID:'REDOWN',getProfiles:async()=>[p]});
@@ -131,7 +124,7 @@ test('one global mode prevents Simple/Nested collisions and puts nested buckets 
   p.nestedMenu.enabled=true;assert.deepEqual(p,before);
 });
 
-test('settings mode checkbox saves only the active mode and keeps both destination configurations',async()=>{
+test('legacy settings mode controls remain read-only and preserve destination configurations',async()=>{
   const options=await readFile(new URL('../extension/options.js',import.meta.url),'utf8');
   const dom=new JSDOM('<input id="use-simple-menu" type="radio"><input id="use-nested-menu" type="radio"><div id="simple-menu-editor"></div><div id="nested-menu-editor-panel"></div><div id="right-click-mode-status"></div>',{runScripts:'outside-only'});
   const p=profile(),before=structuredClone(p),patches=[];
@@ -142,9 +135,9 @@ test('settings mode checkbox saves only the active mode and keeps both destinati
   dom.window.renderRightClickMode();
   const checkbox=dom.window.$('use-nested-menu');assert.equal(checkbox.checked,false);
   checkbox.checked=true;checkbox.dispatchEvent(new dom.window.Event('change'));await settled();
-  assert.deepEqual(patches,[{rightClickMode:'nested'}]);assert.match(dom.window.$('right-click-mode-status').textContent,/Nested menu active/);
+  assert.deepEqual(patches,[]);assert.match(dom.window.$('right-click-mode-status').textContent,/read-only/);assert.equal(checkbox.disabled,true);
   checkbox.checked=false;dom.window.$('use-simple-menu').checked=true;dom.window.$('use-simple-menu').dispatchEvent(new dom.window.Event('change'));await settled();
-  assert.deepEqual(patches.at(-1),{rightClickMode:'simple'});assert.deepEqual(p,before);dom.window.close();
+  assert.deepEqual(patches,[]);assert.deepEqual(p,before);dom.window.close();
 });
 
 test('native menu mode checkbox changes the same saved setting without downloading anything',async()=>{
@@ -233,4 +226,11 @@ test('Nested drag-handle keyboard move saves sibling order with descendants and 
   assert.deepEqual(h.saved.at(-1).nestedMenu.roots[0].children.map(x=>x.id),['sibling','child']);
   assert.equal(h.calls.some(c=>c.type==='cfCreateBucket'||c.type==='cfCreateFolder'||c.type==='cfProvision'),false);
   h.dom.window.close();
+});
+
+test('removing a parent deletes its menu descendants while retaining its bucket and cloud storage',async()=>{
+ const p=profile();p.nestedMenu.roots[0].children.push(folder('sibling','sibling'));
+ const h=harness(p);try{await settled();h.row('child').querySelector('.nested-actions button:last-child').click();await settled();
+ assert.deepEqual(p.nestedMenu.roots[0].children.map(x=>x.id),['sibling']);assert.equal(h.row('grand'),null);assert.ok(h.row('sibling'));assert.equal(p.bucketName,'bucket-one');assert.ok(!h.calls.some(x=>/Delete/.test(x.type)));
+ }finally{h.dom.window.close();}
 });

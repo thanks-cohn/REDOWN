@@ -44,7 +44,7 @@ test('Simple menu places default and extra destinations immediately under REDOWN
   assert.ok(!h.created.some(x=>String(x.id).startsWith('simple:p')));
 });
 
-test('Simple blank labels honor bucket fallback without adding a submenu or changing explicit names',async()=>{
+test('Legacy bucket-label preference cannot override modern path-derived labels or explicit names',async()=>{
   const h=harness([{
     id:'p',type:'cloudflare-r2',accountId:'a',bucketName:'bucket-one',
     simpleBucketName:'alternate-bucket',defaultPrefix:'images/portraits/final',menuLabel:'',
@@ -56,8 +56,8 @@ test('Simple blank labels honor bucket fallback without adding a submenu or chan
   }],'bucket');
   await h.build();
   assert.deepEqual(h.created.filter(x=>String(x.id).startsWith('quick:')||String(x.id).startsWith('simple-option:')).map(x=>({id:x.id,parentId:x.parentId,title:x.title})),[
-    {id:'quick:p',parentId:'REDOWN',title:'alternate-bucket'},
-    {id:'simple-option:p:a',parentId:'REDOWN',title:'bucket-two'},
+    {id:'quick:p',parentId:'REDOWN',title:'final'},
+    {id:'simple-option:p:a',parentId:'REDOWN',title:'deep'},
     {id:'simple-option:p:b',parentId:'REDOWN',title:'Named by user'}
   ]);
 });
@@ -79,6 +79,6 @@ test('explicit Simple label wins over the lowest-directory fallback',async()=>{
 test('blank and whitespace Simple labels retain automatic naming under every fallback setting',async()=>{
  for(const preference of [undefined,'menu','deepest','bucket']){
   const h=harness([{id:'p',type:'cloudflare-r2',bucketName:'gallery',defaultPrefix:'images/final',menuLabel:'   ',simpleOptions:[{id:'named',prefix:'images/other',label:'  My label  '},{id:'blank',prefix:'images/leaf',label:''},{id:'root',prefix:'',label:''}]}],preference);await h.build();
-  assert.deepEqual(h.created.filter(x=>String(x.id).startsWith('quick:')||String(x.id).startsWith('simple-option:')).map(x=>x.title),[preference==='bucket'?'gallery':'final','My label',preference==='bucket'?'gallery':'leaf','gallery']);
+  assert.deepEqual(h.created.filter(x=>String(x.id).startsWith('quick:')||String(x.id).startsWith('simple-option:')).map(x=>x.title),['final','My label','leaf','gallery']);
  }
 });

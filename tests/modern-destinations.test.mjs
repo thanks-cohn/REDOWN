@@ -103,14 +103,21 @@ test('account edits retain the destination identifier and route it through that 
   const presets=initial();presets.push({...presets[0],id:'second',accountId:'b',bucketName:'video',explorerManaged:true,simpleOptions:[],nestedMenu:{version:1,enabled:false,roots:[]}});
   const h=await ui(presets);try{const select=h.d.querySelector('[data-destination-id="extra"] [aria-label="Cloudflare account"]');select.value='b';select.dispatchEvent(new h.w.Event('change'));await settle();h.d.getElementById('destination-save').click();await settle();assert.ok(!h.b.state.profiles[0].simpleOptions.length);assert.equal(h.b.state.profiles[1].simpleOptions[0].id,'extra');assert.equal(h.b.state.profiles[1].simpleOptions[0].bucketName,'video');assert.ok(h.b.created.some(x=>x.id==='simple-option:second:extra'));}finally{h.dom.window.close();}
 });
-test('production Simple and Nested click branches hand the exact account, bucket and prefix to the existing transfer engine',async()=>{
-  const profiles=initial(),calls=[],history=[];
-  const ctx=vm.createContext({profiles,sourceUrl:'https://fixture.test/photo.jpg',basenameFromUrl:()=> 'photo.jpg',ingestCloudflareAtPrefix:async(p,_url,prefix)=>{calls.push({accountId:p.accountId,bucketName:p.bucketName,prefix});return 'saved';},recordTransfer:async r=>history.push(r),notify:async()=>{}});vm.runInContext(model,ctx);
-  const simple=bg.slice(bg.indexOf('  const extraSimpleMatch='),bg.indexOf('  const quickMatch =',bg.indexOf('  const extraSimpleMatch=')));
-  const nestedClick=bg.slice(bg.indexOf('  const nestedMatch=String(info.menuItemId).match'),bg.indexOf('  const treeMatch =',bg.indexOf('  const nestedMatch=String(info.menuItemId).match')));
-  ctx.info={menuItemId:'simple-option:p:extra'};await vm.runInContext('(async()=>{'+simple+'})()',ctx);
-  ctx.info={menuItemId:'nested:p:r:n'};await vm.runInContext('(async()=>{'+nestedClick+'})()',ctx);
+test('production click listener resolves exact active account, bucket and prefix and rejects stale IDs',async()=>{
+  const profiles=initial(),calls=[],history=[],notices=[];let listener,mode='simple';
+  const ctx=vm.createContext({structuredClone,chrome:{contextMenus:{onClicked:{addListener:fn=>listener=fn}},storage:{local:{get:async()=>({rightClickMode:mode})}}},
+    getProfiles:async()=>structuredClone(profiles),launchSaveDroplet:()=>{},selectedUrl:()=> 'https://fixture.test/photo.jpg',basenameFromUrl:()=> 'photo.jpg',
+    ingestCloudflareAtPrefix:async(p,_url,prefix)=>{calls.push({accountId:p.accountId,bucketName:p.bucketName,prefix});return 'saved';},recordTransfer:async r=>history.push(r),notify:async(...args)=>notices.push(args)});
+  vm.runInContext(model+config,ctx);
+  const start=bg.indexOf('chrome.contextMenus.onClicked.addListener(async (info, tab) => {');
+  vm.runInContext(bg.slice(start,bg.indexOf('\n});',start)+4),ctx);
+  await listener({menuItemId:'simple-option:p:extra'},{});mode='nested';await listener({menuItemId:'nested:p:r:n'},{});
   assert.deepEqual(calls,[{accountId:'a',bucketName:'art',prefix:'photos'},{accountId:'a',bucketName:'art',prefix:'photos'}]);assert.equal(history.filter(r=>r.ok).length,2);
+  profiles[0].nestedMenu.roots=[];await listener({menuItemId:'nested:p:r:n'},{});
+  await listener({menuItemId:'tree:p:old'},{});await listener({menuItemId:'simple-option:p:extra'},{});
+  mode='simple';profiles[0].simplePrimaryEnabled=false;profiles[0].simpleOptions=[];
+  await listener({menuItemId:'quick:p'},{});await listener({menuItemId:'simple-option:p:extra'},{});
+  assert.equal(calls.length,2);assert.equal(notices.filter(x=>/inactive or was removed/.test(x[1])).length,5);
 });
 test('large Simple configurations share one bucket discovery and render without per-card observers',async()=>{
   const presets=initial();presets[0].simpleOptions=Array.from({length:99},(_,i)=>({id:'entry'+i,label:'Entry '+i,bucketName:'art',prefix:''}));const h=await ui(presets);
@@ -135,11 +142,11 @@ test('Nested plus exposes focused inline creation and keeps siblings while savin
  assert.ok(h.calls.some(m=>m.type==='cfCreateFolder'&&m.prefix===''&&m.name==='new child'));d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,2);assert.ok(b.created.some(x=>x.title==='new child'));
  }finally{h.dom.window.close();}
 });
-test('mode switch persists without committing a dirty destination label; external mode changes preserve draft and reject stale save',async()=>{
+test('mode switch persists without committing a dirty destination label; external mode-only changes preserve and rebase draft',async()=>{
  const h=await ui();try{const {d,w,b}=h;const label=d.querySelector('[data-destination-id="extra"] input');label.value='Draft label';label.dispatchEvent(new w.Event('input'));
  d.querySelector('#destination-mode').click();await settle();assert.equal(b.state.rightClickMode,'nested');assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos');
  b.state.rightClickMode='simple';h.change({rightClickMode:{oldValue:'nested',newValue:'simple'}});await settle();assert.equal(d.querySelector('#destination-mode').getAttribute('aria-pressed'),'false');assert.equal(label.value,'Draft label');
- d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/changed in another window/);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos');
+ d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/up to date/);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Draft label');
  }finally{h.dom.window.close();}
 });
 test('deep native menu stays at capped flyout depth while retaining stable IDs and exact paths',async()=>{
@@ -147,4 +154,98 @@ test('deep native menu stays at capped flyout depth while retaining stable IDs a
  const draft=b.snapshot();draft.mode='nested';assert.equal((await b.save(draft)).menuUpdated,true);
  const deepest=b.created.find(x=>x.id==='nested:p:r:deep4');assert.equal(deepest.parentId,'nested:p:r:n');assert.match(deepest.title,/level0 \/ level1 \/ level2 \/ level3 \/ level4/);
  assert.equal(b.ctx.RedownNestedLocations.destinations(b.state.profiles[0].nestedMenu).find(x=>x.nodeId==='deep4').prefix,'photos/level0/level1/level2/level3/level4');
+});
+
+test('Nested full-group removal, Undo, final-root removal and save/reload preserve storage and intentional emptiness',async()=>{
+ const presets=initial();presets[0].menuTree=[{id:'old',prefix:'resurrect-me',label:'Old'}];
+ const h=await ui(presets);let persisted;
+ try{const {d,b}=h;d.querySelector('#destination-mode').click();await settle();
+  d.querySelector('.nested-remove').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,0);assert.match(d.querySelector('.nested-empty').textContent,/No nested/);assert.match(d.querySelector('#destination-status').textContent,/Unsaved/);
+  assert.equal(b.state.profiles[0].nestedMenu.roots.length,1,'unsaved deletion must not persist');
+  d.querySelector('.nested-undo button').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,1);
+  d.querySelector('[aria-label="Remove this bucket from the nested menu only"]').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,0);
+  d.querySelector('#destination-reload').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,1,'Reload cancels unsaved removal');
+  d.querySelector('.nested-remove').click();await settle();d.querySelector('#destination-save').click();await settle();
+  assert.equal(b.state.profiles[0].nestedMenu.roots.length,0);assert.ok(!b.created.some(x=>/^(nested:|tree:)/.test(x.id)));assert.equal(b.state.profiles[0].token,'fixture');assert.equal(b.state.profiles[0].menuTree[0].id,'old');
+  d.querySelector('#destination-reload').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,0);
+  await b.ctx.rebuildMenus();assert.ok(!b.created.some(x=>/^(nested:|tree:)/.test(x.id)));
+  persisted=structuredClone(b.state.profiles);
+  d.querySelector('#destination-add').click();await settle();const select=d.querySelector('.nested-existing');select.value='art';select.dispatchEvent(new h.w.Event('change'));await settle();d.querySelector('#destination-save').click();await settle();
+  assert.equal(b.created.filter(x=>x.id.startsWith('nested:')).length,1);assert.ok(!b.created.some(x=>/resurrect/.test(x.title)));assert.ok(h.calls.every(x=>!/^cf(Delete|Create)/.test(x.type)));
+ }finally{h.dom.window.close();}
+ // Fresh editor/background context simulates an extension process restart.
+ const restart=await ui(persisted);try{restart.d.querySelector('#destination-mode').click();await settle();assert.equal(restart.d.querySelectorAll('.nested-card').length,0);assert.ok(!restart.b.created.some(x=>/^(nested:|tree:)/.test(x.id)));}finally{restart.dom.window.close();}
+});
+test('child, parent and distinct same-account groups remove only their stable definitions',async()=>{
+ const presets=initial();presets[0].nestedMenu.roots[0].children[0].children=[{id:'studio',name:'studio',ready:true,children:[]}];
+ presets.push({...structuredClone(presets[0]),id:'second',bucketName:'unprepared',simpleOptions:[],nestedMenu:{version:1,enabled:true,roots:[{id:'second-root',bucketName:'unprepared',ready:true,children:[]}]}});
+ const h=await ui(presets);try{const {d,b}=h;d.querySelector('#destination-mode').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,2);assert.match(d.querySelector('[data-menu-profile-id="second"] .meta').textContent,/unprepared/);
+ const first=d.querySelector('[data-menu-profile-id="p"]');first.querySelector('.nested-collapse').click();await settle();first.querySelector('[data-node-id="n"] .nested-collapse').click();await settle();
+ // Discovery marks an absent studio unavailable, but its definition stays removable.
+ d.querySelector('[data-node-id="studio"] .nested-actions button:last-child').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].children.length,0);
+ d.querySelector('[data-node-id="n"] .nested-actions button:last-child').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,0);assert.equal(b.state.profiles[1].nestedMenu.roots.length,1);
+ d.querySelector('[data-menu-profile-id="p"] .nested-remove').click();await settle();assert.equal(d.querySelectorAll('.nested-card').length,1);d.querySelector('[data-menu-profile-id="second"] .nested-remove').click();await settle();d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles.length,2);assert.ok(b.state.profiles.every(p=>p.token==='fixture'&&!p.nestedMenu.roots.length));
+ }finally{h.dom.window.close();}
+});
+test('Simple and Nested native builds exclude obsolete trees and legacy-only accounts',async()=>{
+ const b=background();b.state.profiles[0].menuTree=[{id:'legacy',label:'Ghost',prefix:'old'}];b.state.profiles.push({id:'legacy-only',type:'cloudflare-r2',explorerManaged:true,menuTree:[{id:'old',label:'Ghost',prefix:'old'}]});b.state.profiles.push({id:'gh',type:'github',menuTree:[{id:'old',label:'Ghost'}]});
+ for(const mode of ['simple','nested']){b.state.rightClickMode=mode;await b.ctx.rebuildMenus();assert.ok(!b.created.some(x=>x.title==='Ghost'||/^(tree:|preset:|quick:gh)/.test(x.id)));}
+ b.state.profiles[0].nestedMenu={version:1,enabled:true,roots:[]};await b.ctx.rebuildMenus();assert.ok(!b.created.some(x=>x.id.startsWith('nested:')));
+});
+test('versioned migration is repeat-safe and its menu-only backup preserves original definitions',async()=>{
+ const b=background(),before=structuredClone(b.state.profiles);delete b.state.profiles[0].nestedMenu;b.state.profiles[0].menuTree=[{id:'legacy',prefix:'photos'}];
+ const draft=b.snapshot(),p=draft.profiles[0];p.nestedMenu={version:1,enabled:true,roots:[]};await b.save(draft);
+ assert.equal(b.state.profiles[0].menuConfigVersion,1);assert.ok(b.state.menuConfigurationBackupV1.legacy[0].menuTree.length);assert.ok(!JSON.stringify(b.state.menuConfigurationBackupV1).includes('fixture'));
+ const backup=JSON.stringify(b.state.menuConfigurationBackupV1);await b.save(b.snapshot());assert.equal(JSON.stringify(b.state.menuConfigurationBackupV1),backup);
+ const p2={...b.state.profiles[0]};delete p2.nestedMenu;b.ctx.RedownNestedLocations.initialize(p2);assert.equal(p2.nestedMenu.roots.length,0);assert.equal(b.state.profiles[0].token,before[0].token);
+});
+test('legacy preference writes share the modern save lane and cannot rewrite or remove menu profiles',async()=>{
+ const b=background(),draft=b.snapshot();draft.profiles[0].menuLabel='Modern label';await b.save(draft);
+ const stale=initial();stale[0].menuLabel='Legacy label';stale[0].nestedMenu.roots=[];stale[0].token='stale-secret';stale[0].name='Storage display name';
+ await b.ctx.saveStoragePreferences({profiles:stale},{url:'chrome-extension://fixture/options.html'});
+ assert.equal(b.state.profiles[0].menuLabel,'Modern label');assert.equal(b.state.profiles[0].nestedMenu.roots.length,1);assert.equal(b.state.profiles[0].token,'fixture');assert.equal(b.state.profiles[0].name,'Storage display name');
+ await b.ctx.saveStoragePreferences({profiles:[]},{url:'chrome-extension://fixture/options.html'});assert.equal(b.state.profiles.length,1);
+ await assert.rejects(b.ctx.saveStoragePreferences({profiles:stale},{url:'https://untrusted.test'}));
+});
+test('native creations await parent callbacks and later rebuild wins over an older snapshot',async()=>{
+ const b=background(),confirmed=new Set();let generation=0;
+ b.ctx.chrome.contextMenus.removeAll=async()=>{b.created.length=0;confirmed.clear();generation++;};
+ b.ctx.chrome.contextMenus.create=(item,callback)=>{
+   assert.ok(!item.parentId||confirmed.has(item.parentId),'parent callback must precede child API call');
+   assert.ok(!Object.hasOwn(item,'destination'),'Chrome receives only API fields');b.created.push(item);
+   setTimeout(()=>{confirmed.add(item.id);callback();},2);
+ };
+ b.state.rightClickMode='nested';const first=b.ctx.rebuildMenus();await new Promise(r=>setTimeout(r,5));b.state.profiles[0].nestedMenu.roots=[];const last=b.ctx.rebuildMenus();await Promise.all([first,last]);
+ assert.equal(generation,2);assert.ok(!b.created.some(x=>x.id.startsWith('nested:')));
+});
+test('deleting all Simple rows remains empty with legacy data through rebuild and readdition',async()=>{
+ const b=background();b.state.profiles[0].menuTree=[{id:'old',prefix:'old'}];const draft=b.snapshot();draft.profiles[0].simplePrimaryEnabled=false;draft.profiles[0].simpleOptions=[];await b.save(draft);await b.ctx.rebuildMenus();
+ assert.ok(!b.created.some(x=>/^(quick:|simple-option:|tree:)/.test(x.id)));
+ const next=b.snapshot();next.profiles[0].simpleOptions=[{id:'new',label:'Research',prefix:'Research',bucketName:'art'}];await b.save(next);
+ assert.deepEqual(b.created.filter(x=>/^(quick:|simple-option:|tree:)/.test(x.id)).map(x=>x.title),['Research']);assert.equal(b.ctx.RedownDestinationConfig.resolve('simple-option:p:new',b.state.profiles,'simple').prefix,'Research');
+});
+test('external profile changes preserve unsaved edits and stale saves still fail',async()=>{
+ const h=await ui();try{const {d,w,b}=h;const input=d.querySelector('[data-destination-id="extra"] input');input.value='Draft';input.dispatchEvent(new w.Event('input'));
+ b.state.profiles[0].menuLabel='Another window';h.change({profiles:{newValue:structuredClone(b.state.profiles)}});await settle();assert.equal(input.value,'Draft');d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/changed in another window/);assert.equal(b.state.profiles[0].menuLabel,'Another window');
+ }finally{h.dom.window.close();}
+});
+test('blank Nested rows cannot be saved as apparently configured destinations',async()=>{
+ const b=background(),draft=b.snapshot();draft.mode='nested';draft.profiles[0].nestedMenu.roots.push({id:'blank',bucketName:'',ready:false,children:[]});await assert.rejects(b.save(draft),/Choose a bucket/);
+ const child=b.snapshot();child.mode='nested';child.profiles[0].nestedMenu.roots[0].children.push({id:'blank-child',name:'',ready:false,children:[]});await assert.rejects(b.save(child),/Choose or create/);assert.equal(b.mutations.length,0);
+});
+test('storage provisioning cannot seed destinations without modern Explorer activation',()=>{
+ const start=bg.indexOf('  const profile = {',bg.indexOf('async function deployCloudflareProfile'));
+ const end=bg.indexOf('\n  if (existingIndex >= 0)',start);
+ function provision(menuActivation){const ctx=vm.createContext({existing:null,menuActivation,explorerOnly:false,crypto:{randomUUID:()=> 'new-profile'},profileName:'Bucket',bucketName:'art',accountId:'a',accountName:'Account',scriptName:'worker',workerUrl:'https://fixture.test',secret:'secret',folders:{},desiredFolders:{},profiles:[]});return vm.runInContext('(function(){'+bg.slice(start,end)+';return profile;})()',ctx);}
+ const legacy=provision(false),modern=provision(true);assert.equal(legacy.simplePrimaryEnabled,false);assert.equal(legacy.showInContextMenu,false);assert.equal(legacy.nestedMenu.roots.length,0);assert.equal(legacy.token,'secret');assert.equal(modern.simplePrimaryEnabled,true);assert.equal(modern.showInContextMenu,true);
+ const handler=bg.slice(bg.indexOf('if (message?.type === "cfProvision")'),bg.indexOf('if (message?.type === "cfSetAssetCors"'));
+ assert.match(handler,/menuActivation=_sender\?\.url/);assert.match(handler,/provisionCloudflareProfile\(\{\.\.\.message,menuActivation\}\)/);
+});
+
+test('delayed Worker/domain persistence cannot resurrect a deleted menu or discard other profiles',async()=>{
+ const b=background(),stale=structuredClone(b.state.profiles);stale[0].workerUrl='https://new-worker.test';
+ const saved=b.snapshot();saved.profiles[0].nestedMenu.roots=[];saved.profiles[0].simplePrimaryEnabled=false;saved.profiles[0].simpleOptions=[];await b.save(saved);
+ b.state.profiles.push({...initial()[0],id:'new-authorization',explorerManaged:true});
+ const start=bg.indexOf('async function setProfiles('),end=bg.indexOf('// Toolbar status flashes',start);vm.runInContext(bg.slice(start,end),b.ctx);
+ await b.ctx.setProfiles(stale);assert.equal(b.state.profiles[0].nestedMenu.roots.length,0);assert.equal(b.state.profiles[0].simpleOptions.length,0);assert.equal(b.state.profiles[0].simplePrimaryEnabled,false);assert.equal(b.state.profiles[0].workerUrl,'https://new-worker.test');assert.equal(b.state.profiles.length,2);
 });

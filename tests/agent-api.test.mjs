@@ -121,6 +121,6 @@ test('M0 inventory covers every literal message branch without inventing handler
   // Keep the historical 37-entry inventory intact; additions are documented separately.
   const modernInventory=readFileSync(new URL('../docs/explorer/MODERN_DESTINATIONS.md',import.meta.url),'utf8');
   const modern=[...modernInventory.matchAll(/^\| `([^`]+)` \|/gm)].map(m=>m[1]);
-  assert.equal(documented.length,37);assert.deepEqual(modern,['saveDestinationConfig']);
-  assert.deepEqual([...documented,...modern].sort(),actual);assert.equal(actual.length,38);
+  assert.equal(documented.length,37);assert.deepEqual(modern,['saveDestinationConfig','saveStoragePreferences']);
+  assert.deepEqual([...documented,...modern].sort(),actual);assert.equal(actual.length,39);
 });

@@ -34,15 +34,22 @@
     const cloudflare=profiles.filter(p=>p.type==='cloudflare-r2'&&!p.explorerManaged);
     if(!cloudflare.length){container.append(nodeElement('div','empty','Connect Cloudflare and choose a bucket to configure nested destinations.'));return;}
     for(const profile of cloudflare) {
-      const model=profile.nestedMenu ||= M.fromLegacy(profile);
+      const model=M.initialize(profile);
+      if(!model.roots.length)continue;
       // Persisted account/bucket selections are the starting point; no user re-selection should be necessary.
       const card=nodeElement('article','nested-card');card.dataset.menuProfileId=profile.id;
       const head=nodeElement('div','nested-heading');
-      const title=nodeElement('div');title.append(nodeElement('h3','',profile.accountName || profile.name || profile.bucketName),nodeElement('div','meta','Existing locations and new locations are separate choices.'));
+      const title=nodeElement('div');title.append(nodeElement('h3','',profile.accountName || profile.name || profile.bucketName),nodeElement('div','meta',[...new Set(model.roots.map(r=>r.bucketName).filter(Boolean))].join(' · ') || profile.bucketName || profile.id));
       const toggle=nodeElement('label','toggle');const enabled=nodeElement('input');enabled.type='checkbox';enabled.checked=model.enabled;
       enabled.addEventListener('change',async()=>{model.enabled=enabled.checked;try{await save(profile);live(model.enabled?'Included in Nested mode.':'Excluded from Nested mode. Your locations are kept.');}catch(error){enabled.checked=!model.enabled;model.enabled=enabled.checked;live(error.message,true);}});
       toggle.append(enabled,document.createTextNode('Show this account in the Nested right-click menu'));const reorder=globalThis.RedownReorder?.attach(card,{items:()=>context.profiles(),item:profile,save:()=>context.saveOrder?.(),label:profile.name||profile.bucketName,changed:error=>live(error?'Could not save menu order. Please retry.':'Menu order saved.',Boolean(error))});
-      if(reorder)head.append(reorder);head.append(title,toggle);card.append(head);
+      if(reorder)head.append(reorder);head.append(title,toggle);
+      const removeGroup=button('Remove from right-click menu',()=>run(profile.id,[],async()=>{
+        const previous=model.roots;model.roots=[];await save(profile);card.remove();emptyState();
+        const undo=button('Undo',async()=>{model.roots=[...previous,...model.roots.filter(root=>!previous.some(old=>old.id===root.id))];await save(profile);refresh();});
+        const notice=nodeElement('div','nested-undo','Menu group removed. Save menu to update Chrome. ');notice.append(undo);container.append(notice);undo.focus();
+        live('Unsaved removal · Cloudflare storage is unchanged.');
+      }),'ghost nested-remove');removeGroup.setAttribute('aria-label','Remove menu group '+profile.id+' without deleting cloud storage');head.append(removeGroup);card.append(head);
       if(model.imported)card.append(nodeElement('div','nested-import-note','Previous entries are checked against Cloudflare. Missing folders need to be selected or created; no existing files are moved.'));
       const headings=nodeElement('div','nested-columns');['Existing location','Create a new location here','Actions'].forEach(text=>headings.append(nodeElement('span','',text)));card.append(headings);
       const roots=nodeElement('div','nested-roots');card.append(roots);
@@ -63,8 +70,8 @@
         },()=>{if(group.isConnected)add.disabled=!root.ready;}), 'secondary');
         if(context.existingOnly)newName.disabled=true;
         const actions=nodeElement('div','nested-actions');
-        const add=button(context.allowFolderCreation?'+':'+ Child',()=>run(root.id,[],async()=>{if(!root.ready)return;const fresh=M.blank();root.children.push(fresh);collapsed.delete(root.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,'',root.ready,0);children.querySelector('[data-node-id="'+fresh.id+'"] .nested-new')?.focus();}));add.disabled=true;add.setAttribute('aria-label','Add a folder inside this bucket');
-        const remove=button('Remove',()=>run(root.id,[],async()=>{model.roots=model.roots.filter(item=>item!==root);await save(profile);group.remove();}));remove.setAttribute('aria-label','Remove this bucket from the nested menu only');
+        const add=button('+ Child',()=>run(root.id,[],async()=>{if(!root.ready)return;const fresh=M.blank();root.children.push(fresh);collapsed.delete(root.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,'',root.ready,0);children.querySelector('[data-node-id="'+fresh.id+'"] .nested-new')?.focus();}));add.disabled=true;add.setAttribute('aria-label','Add a folder inside this bucket');
+        const remove=button('Remove',()=>run(root.id,[],async()=>{model.roots=model.roots.filter(item=>item.id!==root.id);await save(profile);group.remove();if(!model.roots.length){card.remove();emptyState();document.getElementById('destination-add')?.focus();}live('Location removed. Save menu to update Chrome.');}));remove.setAttribute('aria-label','Remove this bucket from the nested menu only');
         actions.append(add,remove);
         const choose=nodeElement('div','nested-choice');const fold=button('▾',()=>{collapsed.has(root.id)?collapsed.delete(root.id):collapsed.add(root.id);children.hidden=collapsed.has(root.id);if(!children.hidden&&!children.childElementCount)for(const node of root.children)folderRow(root,node,children,'',root.ready,0);fold.textContent=collapsed.has(root.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(root.id)));fold.setAttribute('aria-label','Expand or collapse bucket children');fold.textContent=collapsed.has(root.id)?'▸':'▾';choose.append(fold,select);
         const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.hidden=Boolean(context.existingOnly);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
@@ -112,7 +119,7 @@
           await save(profile);select.replaceChildren();selectedOption(select,name,name);select.value=name;node.ready=true;add.disabled=false;location.textContent=`${root.bucketName}/${M.path(parentPath,name)}/`;if(context.allowFolderCreation)creator.hidden=true;live(`Created ${root.bucketName}/${M.path(parentPath,name)}/`);
         },()=>{if(group.isConnected)repaint();}),'secondary');create.disabled=true;
         const creator=nodeElement('form','nested-create');creator.append(newName,create);creator.hidden=Boolean(context.existingOnly&&!context.allowFolderCreation);creator.addEventListener('submit',event=>{event.preventDefault();create.click();});
-        const add=button(context.allowFolderCreation?'+':'+ Child',()=>run(node.id,[],async()=>{if(!node.ready)return;if(depth>=7)throw Error('Nested menus support up to eight folder levels.');const fresh=M.blank();node.children.push(fresh);collapsed.delete(node.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,M.path(parentPath,node.name),true,depth+1);children.querySelector('[data-node-id="'+fresh.id+'"] .nested-new')?.focus();fold.disabled=false;}));add.disabled=true;add.setAttribute('aria-label','Add a child inside this folder');
+        const add=button('+ Child',()=>run(node.id,[],async()=>{if(!node.ready)return;if(depth>=7)throw Error('Nested menus support up to eight folder levels.');const fresh=M.blank();node.children.push(fresh);collapsed.delete(node.id);children.hidden=false;fold.textContent='▾';fold.setAttribute('aria-expanded','true');await save(profile);folderRow(root,fresh,children,M.path(parentPath,node.name),true,depth+1);children.querySelector('[data-node-id="'+fresh.id+'"] .nested-new')?.focus();fold.disabled=false;}));add.disabled=true;add.setAttribute('aria-label','Add a child inside this folder');
         const remove=button('Remove',()=>run(node.id,[],async()=>{const siblings=findChildren(root,node.id);const index=siblings.indexOf(node);if(index>=0)siblings.splice(index,1);await save(profile);group.remove();}));remove.setAttribute('aria-label','Remove this menu branch without deleting any Cloudflare folders');
         const actions=nodeElement('div','nested-actions');actions.append(add,remove);
         const choose=nodeElement('div','nested-choice');const fold=button(collapsed.has(node.id)?'▸':'▾',()=>{collapsed.has(node.id)?collapsed.delete(node.id):collapsed.add(node.id);children.hidden=collapsed.has(node.id);if(!children.hidden&&!children.childElementCount)for(const child of node.children)folderRow(root,child,children,node.name?M.path(parentPath,node.name):parentPath,parentReady&&node.ready,depth+1);fold.textContent=collapsed.has(node.id)?'▸':'▾';fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));},'nested-collapse ghost');fold.setAttribute('aria-expanded',String(!collapsed.has(node.id)));fold.setAttribute('aria-label','Expand or collapse folder children');fold.disabled=!node.children.length;choose.append(fold,select);
@@ -151,13 +158,17 @@
       model.roots.forEach(rootRow);
       container.append(card);
     }
+    emptyState();
+  }
+  function emptyState(){
+    if(!container.querySelector('.nested-card')&&!container.querySelector('.nested-empty'))container.append(nodeElement('p','empty nested-empty','No nested destinations configured. Use + Location to add one.'));
   }
   function refresh(){if(!context||!container)return;if(pending.size){refreshQueued=true;return;}lastStatus={text:"",bad:false};render(context.profiles());}
   async function addLocation(profileId){
     if(pending.size)throw new Error('Finish the current location change first.');
     const profile=context.profiles().find(p=>p.id===profileId&&p.type==='cloudflare-r2'&&!p.explorerManaged);
     if(!profile)throw new Error('Choose an available destination.');
-    const model=profile.nestedMenu ||= M.fromLegacy(profile);
+    const model=M.initialize(profile);
     model.roots.push({id:crypto.randomUUID(),bucketName:'',ready:false,children:[]});
     await save(profile);render(context.profiles());
     const card=Array.from(container.querySelectorAll('.nested-card')).find(el=>el.dataset.menuProfileId===profileId);

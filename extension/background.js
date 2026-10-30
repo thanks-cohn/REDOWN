@@ -783,8 +783,21 @@ async function getProfiles() {
   const { profiles = [] } = await chrome.storage.local.get("profiles");
   return Array.isArray(profiles) ? profiles : [];
 }
-async function setProfiles(profiles) {
-  await chrome.storage.local.set({ profiles });
+async function setProfiles(profiles,menuProfileId=null) {
+  // Worker/domain preparation may finish after a menu edit. Merge against the
+  // current menu under its save lane so delayed infrastructure work cannot
+  // resurrect deleted definitions or discard newly authorized profiles.
+  const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
+    const latest=await getProfiles();
+    for(const current of latest){
+      const incoming=profiles.find(p=>p.id===current.id);
+      if(!incoming){profiles.push(current);continue;}
+      if(current.id===menuProfileId)continue;
+      for(const key of RedownDestinationConfig.fields){if(Object.hasOwn(current,key))incoming[key]=current[key];else delete incoming[key];}
+    }
+    await chrome.storage.local.set({profiles});
+  });
+  destinationSaveQueue=operation;return operation;
 }
 // Toolbar status flashes tint the shared icon, then restore its live palette.
 // No extra PNG source and no separate R design.
@@ -1009,8 +1022,8 @@ async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
   // menu entries and any existing simple paths/options on this profile.
   profiles[index]={...profiles[index],name:"Cloudflare",menuLabel:label,
     defaultPrefix:former?.defaultPrefix ?? "",
-    showInContextMenu:true,explorerManaged:false};
-  await setProfiles(profiles);
+    showInContextMenu:true,explorerManaged:false,simplePrimaryEnabled:true,menuConfigVersion:1};
+  await setProfiles(profiles,profile.id);
   // Setup must preserve the user's selected layout and both configurations.
   await rebuildMenus();
   return {accountId,bucketName:"redown",name:label,verified:true};
@@ -1041,7 +1054,7 @@ function isVerifiedWorkerHealth(body){
 async function provisionCloudflareProfile(options) {
   return navigator.locks.request("redown-provision-profile", () => deployCloudflareProfile(options));
 }
-async function deployCloudflareProfile({ accountId, accountName, bucketName, profileName, folders, explorerOnly = false }) {
+async function deployCloudflareProfile({ accountId, accountName, bucketName, profileName, folders, explorerOnly = false, menuActivation = false }) {
   if (!accountId || !bucketName) throw new Error("Choose an account and bucket");
 
   const profiles = await getProfiles();
@@ -1190,6 +1203,9 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     defaultPrefix: existing?.defaultPrefix ?? existing?.folders?.files ?? folders?.files ?? "files",
     defaultCategory: existing?.defaultCategory || "files",
     menuTree: Array.isArray(existing?.menuTree) ? existing.menuTree : [],
+    menuConfigVersion: existing ? existing.menuConfigVersion : 1,
+    nestedMenu: existing ? existing.nestedMenu : {version:1,enabled:false,roots:[]},
+    simplePrimaryEnabled: existing?.simplePrimaryEnabled ?? Boolean(menuActivation&&!explorerOnly),
     workerVersion: 6,
     explorerManaged: Boolean(explorerOnly),
     publicAssetsEnabled: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
@@ -1201,7 +1217,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
       canTransfer: true,
       canArchiveInspect: true
     },
-    showInContextMenu: explorerOnly ? false : (existing?.showInContextMenu !== false),
+    showInContextMenu: explorerOnly ? false : (existing ? existing.showInContextMenu !== false : menuActivation),
     menuOrder: existing?.menuOrder ?? profiles.length
   };
 
@@ -2030,26 +2046,6 @@ function sanitizeMenuId(value) {
   return String(value).replace(/[^a-zA-Z0-9_-]/g, "_");
 }
 
-function addPresetTree(profile, nodes, parentId, pathPrefix = [],create=item=>chrome.contextMenus.create(item)) {
-  for (const node of nodes || []) {
-    const nodeId = sanitizeMenuId(node.id || crypto.randomUUID());
-    const fullPath = [...pathPrefix, nodeId];
-    const menuId = `tree:${profile.id}:${fullPath.join(".")}`;
-    const isLeaf = !Array.isArray(node.children) || node.children.length === 0;
-
-    create({
-      id: menuId,
-      parentId,
-      title: node.label || node.name || node.prefix || "Destination",
-      contexts: ["link","image","video","audio","page"]
-    });
-
-    if (!isLeaf) {
-      addPresetTree(profile, node.children, menuId, fullPath,create);
-    }
-  }
-}
-
 function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item)){
   const locations=RedownNestedLocations.destinations(profile.nestedMenu);
   if(!locations.length)return;
@@ -2068,24 +2064,46 @@ function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item
 
 // One save lane; optimistic comparison prevents stale Explorer windows overwriting edits.
 let destinationSaveQueue=Promise.resolve();
+// Legacy settings can save unrelated preferences through this same transaction
+// lane. They cannot edit menu definitions, authorization, or profile membership.
+function saveStoragePreferences(message,sender){
+  const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
+    if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("options.html"))throw Error("Open storage settings to save preferences.");
+    if(!Array.isArray(message.profiles))throw Error("Invalid storage preferences.");
+    const {profiles=[]}=await chrome.storage.local.get("profiles");
+    const allowed=['name','folders','defaultCategory','repository','branch','workflowFile','paths','defaultPath'];
+    for(const remote of profiles){
+      const local=message.profiles.find(p=>p.id===remote.id);if(!local)continue;
+      for(const key of allowed)if(Object.hasOwn(local,key))remote[key]=local[key];
+      if(remote.type==='github'&&typeof local.token==='string')remote.token=local.token;
+    }
+    await chrome.storage.local.set({profiles});return {ok:true,profiles};
+  });
+  destinationSaveQueue=operation;return operation;
+}
 function saveDestinationConfig(message,sender){
   const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
     if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL("beta/explorer.html"))throw Error("Open Destinations in Explorer to save.");
-    const stored=await chrome.storage.local.get(["profiles","rightClickMode"]);
+    const stored=await chrome.storage.local.get(["profiles","rightClickMode","menuConfigurationBackupV1"]);
     const profiles=stored.profiles||[],mode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
     if(message.expected!==RedownDestinationConfig.signature(profiles,mode))throw Error("Destinations changed in another window. Reload the editor before saving.");
     if(!["simple","nested"].includes(message.mode))throw Error("Choose Simple or Nested.");
     const patches=message.profiles;
     if(!Array.isArray(patches))throw Error("Invalid destination configuration.");
+    const before=structuredClone(profiles);
     const patchIds=new Set();
     for(const patch of patches){
       if(patchIds.has(patch.id))throw Error("Duplicate profile update.");patchIds.add(patch.id);
       const profile=profiles.find(p=>p.id===patch.id&&p.type==="cloudflare-r2");
       if(!profile)throw Error("This account profile is no longer available. Reload the editor.");
       for(const field of RedownDestinationConfig.fields){if(Object.hasOwn(patch,field))profile[field]=patch[field];else delete profile[field];}
+      profile.menuConfigVersion=1;
+      profile.nestedMenu||={version:1,enabled:false,roots:[]};
     }
     RedownDestinationConfig.validate(profiles,message.mode);
-    await chrome.storage.local.set({profiles,rightClickMode:message.mode});
+    // Snapshot menu fields only, never duplicate authorization secrets.
+    const backup=stored.menuConfigurationBackupV1||{version:1,profiles:RedownDestinationConfig.project(before),legacy:before.map(p=>({id:p.id,menuTree:p.menuTree||[]})),mode:stored.rightClickMode};
+    await chrome.storage.local.set({profiles,rightClickMode:message.mode,menuConfigurationBackupV1:backup});
     const signature=RedownDestinationConfig.signature(profiles,message.mode);
     try{await rebuildMenus();return {ok:true,signature,menuUpdated:true};}
     catch{ return {ok:true,signature,menuUpdated:false,error:"Saved, but Chrome could not update its menu. Retry Save to rebuild."}; }
@@ -2101,26 +2119,50 @@ async function rebuildMenus() {
   menuRebuildQueue=operation;return operation;
 }
 async function buildMenus() {
-  const pending=[],errors=[];
-  const create=item=>{
-    if(!chrome.runtime?.id)return chrome.contextMenus.create(item);
-    pending.push(new Promise(resolve=>{const timer=setTimeout(()=>{errors.push('Chrome menu update timed out.');resolve();},5000);try{chrome.contextMenus.create(item,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;if(error)errors.push(error.message);resolve();});}catch(error){clearTimeout(timer);errors.push(error.message);resolve();}}));
+  // Produce a deterministic parent-first description before touching Chrome.
+  const description=[];
+  const create=item=>description.push(item);
+  const finish=async()=>{
+    const seen=new Set();
+    for(const item of description){
+      if(seen.has(item.id)||item.parentId&&!seen.has(item.parentId))throw Error('Invalid menu hierarchy. Repair destinations in Explorer.');
+      seen.add(item.id);
+    }
+    // Retain exact identity and operation in the plan; Chrome receives only
+    // presentation fields. Clicks independently revalidate the saved identity.
+    for(const item of description){
+      if(!/^(quick:|simple-option:|nested:)/.test(item.id))continue;
+      const target=globalThis.RedownDestinationConfig?.resolve(item.id,profiles,mode);
+      if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
+    }
+    await chrome.contextMenus.removeAll();
+    try{
+      for(const {destination,operation,...item} of description){
+        if(!chrome.runtime?.id){chrome.contextMenus.create(item);continue;}
+        await new Promise((resolve,reject)=>{
+          const timer=setTimeout(()=>reject(Error('Chrome menu update timed out. Retry Save.')),5000);
+          try{chrome.contextMenus.create(item,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error?reject(Error(error.message)):resolve();});}
+          catch(error){clearTimeout(timer);reject(error);}
+        });
+      }
+    }catch(error){
+      await chrome.contextMenus.removeAll().catch(()=>{});
+      throw Error('Chrome menu rebuild failed. Retry Save. '+error.message);
+    }
   };
-  const finish=async()=>{await Promise.all(pending);if(errors.length)throw Error('Chrome menu rebuild failed. Retry Save.');};
-  await chrome.contextMenus.removeAll();
   create({
     id: ROOT_MENU_ID, title: "REDOWN", contexts: ["link","image","video","audio","page"]
   });
 
   const profiles = await getProfiles();
-  const menuSettings=await chrome.storage.local.get(["rightClickMode","simpleLabelFallback"]);
+  const menuSettings=await chrome.storage.local.get(["rightClickMode"]);
   const storedMode=menuSettings.rightClickMode;
-  const labelFallback=["bucket","deepest"].includes(menuSettings.simpleLabelFallback)?menuSettings.simpleLabelFallback:"menu";
+  const labelFallback="deepest"; // Blank labels use the same path-derived name as the modern editor.
   const mode=RedownNestedLocations.menuMode(storedMode,profiles);
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
   const presets = profiles
-    .filter(p => !p.explorerManaged && (mode==='nested'
-      ? p.type==='cloudflare-r2' && (p.nestedMenu ? p.nestedMenu.enabled : p.menuTree?.length)
+    .filter(p => p.type==='cloudflare-r2' && !p.explorerManaged && (mode==='nested'
+      ? p.nestedMenu?.enabled && p.nestedMenu.roots?.length
       : p.showInContextMenu !== false))
     .sort((a,b) => (a.menuOrder ?? 999) - (b.menuOrder ?? 999));
 
@@ -2134,17 +2176,8 @@ async function buildMenus() {
 
   const simpleEntries=[];
   for (const p of presets) {
-    const title = p.menuLabel || p.name || p.bucketName || p.repository || "Destination";
-
     if(mode==='nested' && p.nestedMenu){
       addNestedLocations(p,create);
-    } else if ((mode==='nested' || p.type==='github') && Array.isArray(p.menuTree) && p.menuTree.length) {
-      const parentId = `preset:${p.id}`;
-      create({
-        id: parentId, parentId: ROOT_MENU_ID, title,
-        contexts:["link","image","video","audio","page"]
-      });
-      addPresetTree(p, p.menuTree, parentId,[],create);
     } else if(mode==='simple' && p.type==='cloudflare-r2'){
       // Simple means one menu level regardless of R2 directory depth.
       // Keep stable IDs for click routing; labels are presentation only.
@@ -2164,11 +2197,6 @@ async function buildMenus() {
         simpleEntries.push({id:`simple-option:${p.id}:${item.id}`,parentId:ROOT_MENU_ID,
           title:displayName(item.label,item.prefix,item.bucketName||p.bucketName),contexts,order:item.order??999999});
       }
-    } else {
-      create({
-        id:`quick:${p.id}`, parentId:ROOT_MENU_ID, title,
-        contexts:["link","image","video","audio","page"]
-      });
     }
   }
 
@@ -2234,41 +2262,12 @@ chrome.alarms.onAlarm.addListener(alarm=>{
 chrome.runtime.onStartup.addListener(()=>retryPendingHitomi().catch(()=>{}));
 
 const HITOMI_MAX_BYTES = 64 * 1024 * 1024;
-function hitomiDestination(menuId, profiles) {
-  const id=String(menuId);
-  let m=id.match(/^simple-option:([^:]+):([^:]+)$/);
-  if(m) {
-    const p=profiles.find(x=>x.id===m[1] && x.type==="cloudflare-r2");
-    const item=p?.simpleOptions?.find(x=>x.id===m[2]);
-    if(!item)return null;
-    const target=profiles.find(x=>x.type==="cloudflare-r2"&&x.accountId===p.accountId&&x.bucketName===(item.bucketName||p.bucketName));
-    return target?{profile:target,prefix:item.prefix||""}:null;
-  }
-  m=id.match(/^quick:([^:]+)$/);
-  if(m) {
-    const p=profiles.find(x=>x.id===m[1]&&x.type==="cloudflare-r2");
-    if(!p)return null;
-    const target=profiles.find(x=>x.type==="cloudflare-r2"&&x.accountId===p.accountId&&x.bucketName===(p.simpleBucketName||p.bucketName));
-    return target?{profile:target,prefix:p.defaultPrefix||""}:null;
-  }
-  m=id.match(/^nested:([^:]+):([^:]+):([^:]+)(?::send)?$/);
-  if(m){
-    const p=profiles.find(x=>x.id===m[1]&&x.type==="cloudflare-r2");
-    const item=RedownNestedLocations.destinations(p?.nestedMenu).find(x=>x.rootId===m[2]&&x.nodeId===m[3]);
-    return p&&item?{profile:{...p,bucketName:item.bucketName},prefix:item.prefix||""}:null;
-  }
-  m=id.match(/^tree:([^:]+):(.+)$/);
-  if(m){
-    const p=profiles.find(x=>x.id===m[1]&&x.type==="cloudflare-r2");
-    let nodes=p?.menuTree||[],node;
-    for(const key of m[2].split(".")){node=nodes.find(x=>sanitizeMenuId(x.id)===key);if(!node)return null;nodes=node.children||[];}
-    if(nodes.length)return null;
-    return {profile:p,prefix:node.prefix||""};
-  }
-  return null;
+function hitomiDestination(menuId, profiles, mode='simple') {
+  return RedownDestinationConfig.resolve(menuId,profiles,mode);
 }
 async function initiateHitomiCapture(info, tab, profiles,existingJobId=null) {
-  const target=hitomiDestination(info.menuItemId,profiles);
+  const settings=await chrome.storage.local.get('rightClickMode');
+  const target=hitomiDestination(info.menuItemId,profiles,RedownNestedLocations.menuMode(settings.rightClickMode,profiles));
   if(!target)throw new Error("Choose a prepared Cloudflare R2 destination");
   if(!tab?.id)throw new Error("No source tab found");
   const existing=hitomiIntents.get(tab.id);
@@ -2392,7 +2391,7 @@ void applyToolbarOpenMode().catch(console.error);
 chrome.runtime.onInstalled.addListener(rebuildMenus);
 chrome.runtime.onStartup.addListener(rebuildMenus);
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes.profiles || changes.rightClickMode || changes.simpleLabelFallback)) rebuildMenus().catch(()=>{});
+  if (area === "local" && (changes.profiles || changes.rightClickMode)) rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2508,6 +2507,10 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   if(/^(quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
   const profiles = await getProfiles();
+  const settings=await chrome.storage.local.get('rightClickMode');
+  const activeMode=RedownNestedLocations.menuMode(settings.rightClickMode,profiles);
+  const resolved=RedownDestinationConfig.resolve(info.menuItemId,profiles,activeMode);
+  if(!resolved)return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.
@@ -2539,138 +2542,18 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
-  const extraSimpleMatch=String(info.menuItemId).match(/^simple-option:([^:]+):([^:]+)$/);
-  if(extraSimpleMatch){
-    const profile=profiles.find(p=>p.id===extraSimpleMatch[1] && p.type==="cloudflare-r2");
-    const item=profile?.simpleOptions?.find(x=>x.id===extraSimpleMatch[2]);
-    if(!profile||!item)return notify("REDOWN","That Simple destination is no longer available.");
-    try {
-      const prefix=String(item.prefix||"").replace(/^\/+|\/+$/g,"");
-      if(prefix.split("/").some(part=>part==="."||part===".."||part.includes("\\\\")))
-        throw new Error("This destination has an invalid path. Edit it in Settings.");
-      const selectedBucket=item.bucketName||profile.bucketName;
-      const destinationProfile=profiles.find(p=>p.type==="cloudflare-r2" && p.accountId===profile.accountId && p.bucketName===selectedBucket);
-      if(!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
-      const receipt={};
-      const location=await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt);
-      await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
-      await notify("REDOWN complete",location);
-    }catch(error){
-      const message=error?.message||String(error);
-      await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
-      await notify("REDOWN failed",message);
-    }
-    return;
-  }
-
-  const quickMatch = String(info.menuItemId).match(/^quick:([^:]+)$/);
-  if (quickMatch) {
-    const profile = profiles.find(p => p.id === quickMatch[1]);
-    if (!profile) return notify("REDOWN", "That destination no longer exists.");
-    try {
-      const category = categoryForContext(info, sourceUrl, profile);
-      const selectedBucket=profile.type==="cloudflare-r2" ? (profile.simpleBucketName||profile.bucketName) : "";
-      const destinationProfile=selectedBucket!==profile.bucketName
-        ? profiles.find(p=>p.type==="cloudflare-r2"&&p.accountId===profile.accountId&&p.bucketName===selectedBucket)
-        : profile;
-      if(selectedBucket&&!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
-      const receipt={};
-      const location = profile.type === "cloudflare-r2"
-        ? await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,
-            profile.defaultPrefix != null?profile.defaultPrefix:(profile.folders?.[category]||category),
-            basenameFromUrl(sourceUrl),receipt)
-        : await ingest(destinationProfile, sourceUrl, category);
-      await recordTransfer({pageUrl, ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
-      await notify("REDOWN complete", location);
-    } catch (error) {
-      const message = error?.message || String(error);
-      await recordTransfer({pageUrl, ok:false, sourceUrl, profileId:profile.id, profileName:profile.name, category:profile.defaultCategory || "files", error:message });
-      await notify("REDOWN failed", message);
-    }
-    return;
-  }
-
-  const nestedMatch=String(info.menuItemId).match(/^nested:([^:]+):([^:]+):([^:]+)(?::send)?$/);
-  if(nestedMatch){
-    const profile=profiles.find(p=>p.id===nestedMatch[1]);
-    const destination=RedownNestedLocations.destinations(profile?.nestedMenu).find(item=>item.rootId===nestedMatch[2] && item.nodeId===nestedMatch[3]);
-    if(!profile || !destination)return notify("REDOWN","That nested location is no longer available. Refresh it in settings.");
-    const target={...profile,bucketName:destination.bucketName};
-    try{
-      const receipt={};
-      const location=await ingestCloudflareAtPrefix(target,sourceUrl,destination.prefix,basenameFromUrl(sourceUrl),receipt);
-      await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
-      await notify("REDOWN complete",location);
-    }catch(error){
-      const message=error?.message || String(error);
-      await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
-      await notify("REDOWN failed",message);
-    }
-    return;
-  }
-
-  const treeMatch = String(info.menuItemId).match(/^tree:([^:]+):(.+)$/);
-  if (!treeMatch) return;
-
-  const profile = profiles.find(p => p.id === treeMatch[1]);
-  if (!profile) return notify("REDOWN", "That destination no longer exists.");
-
-  const ids = treeMatch[2].split(".");
-  let nodes = profile.menuTree || [];
-  let node = null;
-  for (const id of ids) {
-    node = nodes.find(n => sanitizeMenuId(n.id) === id);
-    if (!node) break;
-    nodes = node.children || [];
-  }
-  if (!node || (Array.isArray(node.children) && node.children.length)) return;
-
-  const category = node.category || profile.defaultCategory || "files";
-
-  try {
-    let location;
+  // Resolve from the active saved model at click time, never from a legacy
+  // default or the previous native-menu snapshot.
+  const {profile,owner,prefix}=resolved;
+  try{
     const receipt={};
-    if (profile.type === "cloudflare-r2") {
-      const prefix = String(node.prefix ?? "").trim();
-      location = await ingestCloudflareAtPrefix(
-        profile,
-        sourceUrl,
-        prefix,
-        basenameFromUrl(sourceUrl),receipt
-      );
-    } else if (profile.type === "github") {
-      const originalPaths = profile.paths;
-      try {
-        profile.paths = { ...(profile.paths || {}), [category]: node.path ?? "" };
-        location = await ingest(profile, sourceUrl, category);
-      } finally {
-        profile.paths = originalPaths;
-      }
-    } else {
-      location = await ingest(profile, sourceUrl, category);
-    }
-
-    await recordTransfer({pageUrl,
-      ok:true,
-      sourceUrl,
-      profileId:profile.id,
-      profileName:profile.name,
-      category,
-      location,
-      ...receipt
-    });
-    await notify("REDOWN complete", location);
-  } catch (error) {
-    const message = error?.message || String(error);
-    await recordTransfer({pageUrl,
-      ok:false,
-      sourceUrl,
-      profileId:profile.id,
-      profileName:profile.name,
-      category,
-      error:message
-    });
-    await notify("REDOWN failed", message);
+    const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt);
+    await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
+    await notify("REDOWN complete",location);
+  }catch(error){
+    const message=error?.message||String(error);
+    await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message});
+    await notify("REDOWN failed",message);
   }
 });
 
@@ -2755,7 +2638,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ok:true,setup:await setupRedownQuickDestination(message.accountId,message.menuLabel)});
       }
       if (message?.type === "cfProvision") {
-        const profile=await provisionCloudflareProfile(message);
+        // Only an explicit activation in modern Explorer can seed a new menu
+        // destination. Legacy storage setup still prepares the same Worker.
+        const menuActivation=_sender?.url?.split(/[?#]/)[0]===chrome.runtime.getURL("beta/explorer.html");
+        const profile=await provisionCloudflareProfile({...message,menuActivation});
         // Explicit activation prepares the bucket and updates Chrome's menu now,
         // not after an unrelated Save or extension restart.
         let menuUpdated=true,menuError="";
@@ -2865,6 +2751,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ ok:true });
       }
       if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
+      if (message?.type === "saveStoragePreferences") return sendResponse(await saveStoragePreferences(message,_sender));
       if (message?.type === "saveDestinationConfig") return sendResponse(await saveDestinationConfig(message,_sender));
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {

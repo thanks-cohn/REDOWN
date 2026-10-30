@@ -48,28 +48,14 @@ async function send(message){
     throw error;
   } finally { clearTimeout(timeout); }
 }
-async function saveProfiles(){await chrome.storage.local.set({profiles});}
-let nestedSaveQueue=Promise.resolve();
-function saveNestedMenu(profile){
-  const model=structuredClone(profile.nestedMenu);
-  const operation=nestedSaveQueue.catch(()=>{}).then(async()=>{
-    const stored=(await chrome.storage.local.get("profiles")).profiles || [];
-    const remote=stored.find(p=>p.id===profile.id);
-    if(!remote)throw new Error("This destination was removed. Refresh settings.");
-    const unchanged=JSON.stringify(remote.nestedMenu)===JSON.stringify(model);
-    remote.nestedMenu=model;
-    // Folder creation may provision a bucket worker. Keep its current credentials
-    // and any newly added Explorer profiles when the existing autosave runs.
-    for(const latest of stored){
-      const local=profiles.find(p=>p.id===latest.id);
-      if(!local && latest.explorerManaged)profiles.push(latest);
-      if(local)for(const key of ["workerUrl","workerVersion","token","publicBaseUrl","scriptName"])
-        if(latest[key]!==undefined)local[key]=latest[key];
-    }
-    if(!unchanged)await chrome.storage.local.set({profiles:stored});
-  });
-  nestedSaveQueue=operation;return operation;
+async function saveProfiles(){
+  // The background serializes this with modern menu saves and copies only
+  // unrelated preferences. Stale legacy windows cannot rewrite destinations.
+  const result=await send({type:'saveStoragePreferences',profiles});
+  if(!result?.ok)throw Error(result?.error||'Could not save storage preferences.');
 }
+let nestedSaveQueue=Promise.resolve();
+async function saveNestedMenu(){throw Error('Manage right-click destinations in Explorer → Right-click setup.');}
 function displayName(p){return p.name||p.bucketName||p.repository||"Destination";}
 let saveTimer=null;
 function scheduleSave(){
@@ -430,34 +416,15 @@ function assetCorsControl(profile){
 }
 
 function renderRightClickMode(){
-  $("use-simple-menu").checked=rightClickMode==='simple';
-  $("use-nested-menu").checked=rightClickMode==='nested';
-  $("simple-menu-editor").hidden=rightClickMode!=='simple';
-  $("nested-menu-editor-panel").hidden=rightClickMode!=='nested';
+  for(const id of ["use-simple-menu","use-nested-menu","add-menu-location","refresh-menu-locations"])if($(id))$(id).disabled=true;
+  $("simple-menu-editor").hidden=false;
+  $("nested-menu-editor-panel").hidden=true;
   $("right-click-mode-status").className="meta";
-  $("right-click-mode-status").textContent=rightClickMode==='nested'
-    ? "Nested menu active. Simple locations are saved but inactive."
-    : "Simple menu active. Nested locations are saved but inactive.";
+  $("right-click-mode-status").textContent="Right-click destinations are managed in Explorer. Legacy menu settings are read-only.";
 }
-async function chooseRightClickMode(nextMode){
-  if(nextMode===rightClickMode){renderRightClickMode();return;}
-  const previous=rightClickMode;
-  rightClickMode=nextMode;
-  $("use-simple-menu").disabled=true;
-  $("use-nested-menu").disabled=true;
-  renderRightClickMode();
-  try {await chrome.storage.local.set({rightClickMode});}
-  catch(error){
-    rightClickMode=previous;
-    renderRightClickMode();
-    $("right-click-mode-status").textContent=error?.message || "Could not save the menu mode.";
-  } finally {
-    $("use-simple-menu").disabled=false;
-    $("use-nested-menu").disabled=false;
-  }
-}
-$("use-simple-menu").addEventListener("change",()=>chooseRightClickMode("simple"));
-$("use-nested-menu").addEventListener("change",()=>chooseRightClickMode("nested"));
+async function chooseRightClickMode(){renderRightClickMode();}
+$("use-simple-menu").addEventListener("change",()=>chooseRightClickMode());
+$("use-nested-menu").addEventListener("change",()=>chooseRightClickMode());
 
 // Simple destinations share one path editor: dropdowns are selections, inputs are drafts.
 // Removing a level preserves lower rows as blank, reusable selectors; no R2 deletion.
@@ -736,84 +703,25 @@ async function saveProfileOrder(){
   }catch(error){for(const [profile,order] of previous){if(order===undefined)delete profile.menuOrder;else profile.menuOrder=order;}throw error;}
 }
 function renderProfiles(){
-  applyOnboarding();
-  renderRightClickMode();
-  const root=$("profiles");
-  root.replaceChildren();
-  if(rightClickMode==="simple")root.append(simpleBucketCreator());
-  profiles.sort((a,b)=>(a.menuOrder??999)-(b.menuOrder??999));
-  const visibleProfiles=profiles.filter(profile=>!profile.explorerManaged);
-  $("profiles-empty").hidden=visibleProfiles.some(p=>betaModeEnabled||p.type!=="github");
-
-  let simpleIntroShown=false;
-  visibleProfiles.forEach((p,index)=>{
-    const card=document.createElement("article");
-    card.className=p.type==="github"?"card beta-only":"card";card.dataset.menuProfileId=p.id;
-
-    const top=document.createElement("div");
-    top.className="card-top";
-    const left=document.createElement("div");
-    const title=document.createElement("div"); title.className="title"; title.textContent=displayName(p);
-    const meta=document.createElement("div"); meta.className="meta";
-    meta.textContent=p.type==="cloudflare-r2"
-      ? `Cloudflare R2 · ${p.bucketName}`
-      : `GitHub · ${p.repository||"not configured"}`;
-    left.append(title,meta);
-    const badge=document.createElement("div"); badge.className="badge"; badge.textContent=p.type==="cloudflare-r2"?"R2":"GitHub";
-    const handle=globalThis.RedownReorder?.attach(card,{items:()=>profiles,item:p,save:saveProfileOrder,label:displayName(p),changed:error=>setStatus("menu-location-status",error?"Could not save menu order. Please retry.":"Menu order saved.",error?"bad":"ok")});
-    if(handle)top.append(handle);
-    top.append(left,badge);
-
-    const grid=document.createElement("div"); grid.className="grid profile-fields";
-    grid.append(
-      field("Menu label",p.type==="cloudflare-r2"?(p.menuLabel||""):(p.menuLabel||p.name||""),v=>p.menuLabel=v),
-      p.type==="cloudflare-r2"
-        ? simplePrimaryLocationField(p)
-        : field("Default path",p.defaultPath||"assets/files",v=>p.defaultPath=v)
-    );
-
-    if(p.type==="cloudflare-r2"){
-      grid.append(assetCorsControl(p));
-    }else{
-      grid.append(
-        field("Repository",p.repository||"",v=>p.repository=v,"text","owner/repository"),
-        field("Branch",p.branch||"main",v=>p.branch=v),
-        field("GitHub token",p.token||"",v=>p.token=v,"password"),
-        field("3D path",p.paths?.["3d"]||"assets/3d",v=>(p.paths??={})["3d"]=v),
-        field("2D path",p.paths?.["2d"]||"assets/2d",v=>(p.paths??={})["2d"]=v),
-        field("Video path",p.paths?.videos||"assets/videos",v=>(p.paths??={}).videos=v),
-        field("Files path",p.paths?.files||"assets/files",v=>(p.paths??={}).files=v)
-      );
+  applyOnboarding();renderRightClickMode();
+  const root=$("profiles");root.replaceChildren();
+  const link=document.createElement('a');link.href='beta/explorer.html#explorer-destinations';link.textContent='Open Explorer Right-click setup';
+  root.append(link);$("profiles-empty").hidden=true;
+  // Keep storage/domain and experimental GitHub preferences available, without
+  // rendering any of the old menu-definition controls.
+  for(const profile of profiles.filter(p=>!p.explorerManaged)){
+    const card=document.createElement('article');card.className=profile.type==='github'?'card beta-only':'card';
+    const heading=document.createElement('h3');heading.textContent=displayName(profile)+' · Storage preferences';card.append(heading);
+    if(profile.type==='cloudflare-r2')card.append(assetCorsControl(profile));
+    else if(profile.type==='github'){
+      const grid=document.createElement('div');grid.className='grid profile-fields';
+      grid.append(field('Repository',profile.repository||'',v=>profile.repository=v),field('Branch',profile.branch||'main',v=>profile.branch=v),field('GitHub token',profile.token||'',v=>profile.token=v,'password'),field('Default path',profile.defaultPath||'assets/files',v=>profile.defaultPath=v));
+      for(const category of ['3d','2d','videos','files'])grid.append(field(category+' path',profile.paths?.[category]||'assets/'+category,v=>(profile.paths??={})[category]=v));
+      card.append(grid);
     }
-
-    const actions=document.createElement("div");actions.className="row-actions";
-    const toggle=document.createElement("label");toggle.className="toggle";
-    const check=document.createElement("input");check.type="checkbox";check.checked=p.showInContextMenu!==false;
-    check.addEventListener("change",()=>{p.showInContextMenu=check.checked;scheduleSave();});
-    toggle.append(check,document.createTextNode(p.type==="cloudflare-r2" ? "Include in Simple mode" : "Show in right-click menu"));
-    actions.append(toggle);
-
-    const remove=document.createElement("button");remove.className="danger";remove.textContent="Remove preset";
-    remove.addEventListener("click",()=>{profiles=profiles.filter(x=>x.id!==p.id);renderProfiles();saveProfiles();});
-    actions.append(remove);
-
-    card.append(top,grid,actions);
-    if(p.type==="cloudflare-r2"){
-      card.append(simpleExtraOptions(p,!simpleIntroShown));
-      simpleIntroShown=true;
-    }
-    else card.append(renderTree(p));
     root.append(card);
-  });
-
-  renderWorkspaceProfiles();
-  for (const profile of visibleProfiles) {
-    if(profile.type!=="cloudflare-r2")ensureProfileMenuPrefixes(profile, leafMenuPrefixes(profile.menuTree)).catch(()=>{});
-    if (profile.type==="cloudflare-r2" && profile.defaultPrefix)
-      ensureProfileMenuPrefixes(profile,[profile.defaultPrefix]).catch(()=>{});
   }
-  scheduleSave();
-  RedownNestedEditor.mount($("nested-profiles"),{profiles:()=>profiles,save:saveNestedMenu,saveOrder:saveProfileOrder,send});
+  renderWorkspaceProfiles();
 }
 
 function defaultLocationField(profile){
@@ -4527,7 +4435,6 @@ try{
   debugModeEnabled=stored.debugModeEnabled===true;
   applyDebugMode();
   rightClickMode=RedownNestedLocations.menuMode(stored.rightClickMode,profiles);
-  if(stored.rightClickMode!=="simple" && stored.rightClickMode!=="nested")await chrome.storage.local.set({rightClickMode});
   renderProfiles();
   wireWorkspace();
   renderWorkspaceProfiles();

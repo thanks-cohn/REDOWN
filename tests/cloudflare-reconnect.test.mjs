@@ -45,7 +45,7 @@ test('verified reconnect refreshes both editors and Explorer, coalescing concurr
   vm.runInContext(source.slice(source.indexOf('function renderRightClickMode(){'),source.indexOf('async function chooseRightClickMode(')),ctx);
   vm.runInContext('renderRightClickMode()',ctx);
   assert.equal(dom.window.document.getElementById('right-click-mode-status').className,'meta');
-  assert.match(dom.window.document.getElementById('right-click-mode-status').textContent,/Simple menu active/);
+  assert.match(dom.window.document.getElementById('right-click-mode-status').textContent,/Legacy menu settings are read-only/);
   dom.window.close();
 });
 
