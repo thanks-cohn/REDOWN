@@ -7,6 +7,16 @@
 **Priority:** P0: regain working current functionality quickly; everything else follows.  
 **Status:** Owner direction and implementation request, NOT proof of implemented behavior or accepted Forever Works intent.
 
+## SCOPE CORRECTION — RIGHT-CLICK ONLY (HIGHEST PRIORITY)
+
+**This request is ONLY to reconstruct the Right-click Setup UI and the Right-click configuration/menu API. It is NOT a REDOWN-wide V3 rebuild.** The prior broader wording about reconstructing the File Explorer engine/API, transfer engine, existing URL system, application shell, or provider architecture is **superseded and explicitly withdrawn**. Never interpret "rendering" as a request to rebuild Explorer rendering. Rendering refers solely to the new Right-click Setup UI.
+
+**Do not replace, refactor, migrate, rewrite, or rebuild:** the existing File Explorer API, Explorer UI, transfer engine, Cloudflare implementation, current URL system, History implementation, or storage provider APIs. Preserve their existing state, behaviors and user-facing functionality. This is a **surgical clean-room replacement of the Right-click subsystem only**, with minimal necessary connections to existing working APIs. If an integration change outside right-click code is absolutely necessary, keep it targeted, document the reason and regression-test it; do not expand scope.
+
+**Do rebuild from scratch:** V3 Right-click Setup UI (with newly implemented folder-outline concept), its own canonical destination config, menu generation/registration, click routing and persistence, plus the Settings Legacy/New engine selector. Legacy's functional Chrome right-click engine remains isolated for fallback; its old configuration UI must never be rendered. Remove obsolete setup UI runtime imports, styling, mounting paths and collisions, without deleting unrelated Explorer or URL components.
+
+**Success means** the rebuilt right-click section/configuration faithfully controls Chrome right-click destinations using the existing Cloudflare/Explorer/transfer/URL functionality. No unrelated reconstruction is required or authorized. The first milestone is working right-click parity, not rebuilding all of REDOWN. All other broad instructions below are to be interpreted within this narrower scope.
+
 ## ABSOLUTE OWNER REQUIREMENT: CLEAN-ROOM RIGHT-CLICK SETUP UI
 
 **All UI belonging to the old Legacy and old Modern Right-click Setup systems must be GONE from the active application. Start the V3 Right-click Setup UI from scratch.**
@@ -23,7 +33,7 @@
 
 ## Mission
 
-Build a new REDOWN foundation and NEW Right-click engine with the shortest safe path to today's functional Cloudflare REDOWN. Do **not** keep patching Modern's broken right-click wiring or transplant its old configuration UI. Treat Legacy and current source as behavioral evidence; treat `FOREVER_WORKS` as the primary accumulated evidence and requirements corpus, differentiating source-confirmed facts, owner requirements, proposals, mock tests, actual installed-Chrome tests, and live Cloudflare outcomes.
+Build a new RIGHT-CLICK subsystem and clean Right-click Setup UI, integrated with the EXISTING REDOWN File Explorer API, Cloudflare transfer engine and URL system, with the shortest safe path to today's working right-click functionality. Do **not** keep patching Modern's broken right-click wiring or transplant its old configuration UI. Treat Legacy and current source as behavioral evidence; treat `FOREVER_WORKS` as the primary accumulated evidence and requirements corpus, differentiating source-confirmed facts, owner requirements, proposals, mock tests, actual installed-Chrome tests, and live Cloudflare outcomes.
 
 **Design for future expansion; implement present functionality first.** The architecture must not permanently obstruct additional S3-compatible storage, Google Drive, OneDrive, Dropbox, or MEGA. These adapters, speculative capabilities, and premium features are **not** P0 requirements. Do not delay Cloudflare parity for a generalized provider framework.
 
@@ -60,7 +70,7 @@ P0 objective: get the new application to verified working parity with today's Cl
 
 **Authorize/activate Cloudflare storage → configure bucket and nested folder destination in V3 → generate Chrome right-click menu → click an actual supported webpage URL → route to exactly the chosen destination → execute actual remote save → verify completion before reporting success → show the result in History and Explorer.**
 
-Restore other existing working Explorer actions and transfer handling incrementally: listing, navigation, rename, delete, copy, move, drag-and-drop, search, previews, upload and provider URL integrations, with a documented current-state inventory. Preserve **Keep Both** as the default filename-conflict policy, not Skip; maintain failures/receipts honestly. Do not claim unsupported behavior is working.
+Do not reconstruct Explorer actions or transfer handling. Existing listing, navigation, rename, delete, copy, move, drag-and-drop, search, previews, upload and provider URL integrations stay as they are; check for regressions only. Preserve **Keep Both** as the default filename-conflict policy, not Skip; maintain failures/receipts honestly. Do not claim unsupported behavior is working.
 
 Protect the current visual product direction including attractive hierarchy, compact premium layouts, responsive Any Shape principles, and the existing successfully functioning UX features, while rebuilding the V3 Right-click setup from scratch.
 
@@ -78,13 +88,13 @@ Protect the current visual product direction including attractive hierarchy, com
 
 **Phase 0 — Ground truth and safety.** Inventory current working capabilities and bugs (separate owner reports, source evidence, tests, and live proof). Preserve checkpoints. Produce precise keep/rebuild boundaries and a feature-parity matrix.
 
-**Phase 1 — Small V3 foundation.** Create isolated modules/contracts and test harness; robust versioned canonical destination store; explicit runtime engine selection; URL subsystem remains untouched. No broad redesign required before the first useful slice.
+**Phase 1 — Small V3 foundation.** Create isolated RIGHT-CLICK modules/contracts and test harness; robust canonical RIGHT-CLICK destination store; explicit runtime engine selection; Explorer, transfers, Cloudflare APIs and URL subsystem remain untouched. No broad redesign required before the first useful slice.
 
 **Phase 2 — First actual Cloudflare vertical slice.** Make V3 configured destination work from UI to Chrome menu through real click, transfer, verified outcome, History and Explorer. Keep Legacy togglable in Settings. Validate actual installed-browser and live-provider behavior when environment and authorization permit; otherwise mark exactly what remains unverified.
 
-**Phase 3 — Achieve current feature parity.** Systematically restore tested operations to the existing functional level and repair documented bugs, including deletion without orphaned cards and menu parity. Use source-backed regression cases and comparative Legacy/V3 observations. Record both successes and failure categories.
+**Phase 3 — Achieve RIGHT-CLICK feature parity.** Verify right-click setup, registered Chrome menus, accurate destination routing, switchable Legacy engine, and transfers through the existing APIs. Existing Explorer operations remain out of scope; regression-test that right-click work does not break them. Use source-backed regression cases and comparative Legacy/V3 observations. Record both successes and failure categories.
 
-**Phase 4 — Refine UI and extensibility.** Once parity is established, improve aesthetic and UX quality, future provider adapters, and paid features in separately prioritized plans. Do not turn these into blockers for P0.
+**Phase 4 — Refine the RIGHT-CLICK UI only.** Once right-click parity is established, improve its aesthetics and responsiveness. Future provider adapters and paid features are separate projects, not deliverables here. Do not turn these into blockers for P0.
 
 Release gates: no unverified claims; no automatic replacement of existing release behavior; no loss of URL features; menu ownership deterministic; settings persist across restart; correct destination and verified Cloudflare transfer; Legacy remains functional as fallback; feature-parity matrix identifies proven, failed and untested items.
 
@@ -107,4 +117,4 @@ Add documents as evidence warrants. Do not pass off proposals as accepted Foreve
 
 Start by auditing enough current code to make a correct minimal V3 design; write the documents and initial isolated foundation, then prioritize the smallest runnable Chrome/Cloudflare slice. Keep the existing release branch untouched. Make changes in bounded, reviewable increments; test; commit/push to the isolated V3 branch. **Before concluding each run, write a complete handoff** detailing exactly what changed, what did not, test evidence and remaining live verification. Do not let an idealized architecture delay the first functional milestone.
 
-**North star:** Regain today's working REDOWN quickly. Preserve Legacy as a switchable live control/reference, display only the new setup in the Right-click section, preserve the folder outline and current URL subsystem, and leave sensible seams for future providers.
+**North star:** Rebuild ONLY the right-click setup and API; regain today's working right-click behavior quickly. Preserve Legacy as a switchable live control/reference, display only the new setup in the Right-click section, preserve the folder outline and current URL subsystem, and leave sensible seams for future providers.
