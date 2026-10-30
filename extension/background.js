@@ -748,6 +748,13 @@ async function sha256Base64Url(value) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return bytesToBase64Url(new Uint8Array(digest));
 }
+function contextUrlsFromMenu(info,tab){
+  // Chrome supplies these fields independently; absent fields must not block other URLs.
+  const pageUrl=typeof info?.pageUrl==="string"&&info.pageUrl.trim()?info.pageUrl:tab?.url;
+  return Object.fromEntries(Object.entries({
+    pageUrl,srcUrl:info?.srcUrl,frameUrl:info?.frameUrl,linkUrl:info?.linkUrl
+  }).filter(([,url])=>typeof url==="string"&&url.trim()));
+}
 function selectedUrl(info) {
   // For images/video/audio Chrome supplies srcUrl; prefer the actual media bytes
   // even when the media is wrapped in a hyperlink.
@@ -2117,7 +2124,7 @@ async function retryPendingHitomi(){
     }
     const profiles=await getProfiles();
     try{
-      await initiateHitomiCapture({menuItemId:job.menuId,pageUrl:job.url},tab,profiles,job.id);
+      await initiateHitomiCapture({menuItemId:job.menuId,pageUrl:job.url,...job.contextUrls},tab,profiles,job.id);
     }catch(error){
       const retries=(job.retries||0)+1;
       await markHitomiQueue(job.id,{status:"pending",retries,nextAt:Date.now()+Math.min(300000,5000*Math.pow(2,Math.min(retries,6))),lastError:error?.message||String(error)});
@@ -2170,12 +2177,13 @@ async function initiateHitomiCapture(info, tab, profiles,existingJobId=null) {
   const existing=hitomiIntents.get(tab.id);
   if(existing && Date.now()-existing.at<180000)throw new Error("A gallery capture is already active in this tab");
   const jobId=existingJobId||crypto.randomUUID();
+  const contextUrls=contextUrlsFromMenu(info,tab);
   if(!existingJobId){
     const jobs=await readHitomiQueue();
-    jobs.push({id:jobId,menuId:String(info.menuItemId),url:tab.url,tabId:tab.id,status:"pending",createdAt:Date.now(),updatedAt:Date.now(),retries:0,nextAt:0});
+    jobs.push({id:jobId,menuId:String(info.menuItemId),url:tab.url,contextUrls,tabId:tab.id,status:"pending",createdAt:Date.now(),updatedAt:Date.now(),retries:0,nextAt:0});
     await chrome.storage.local.set({[HITOMI_QUEUE_KEY]:jobs.slice(-250)});
   }
-  hitomiIntents.set(tab.id,{...target,jobId,at:Date.now(),chunks:[],size:0,state:"armed"});
+  hitomiIntents.set(tab.id,{...target,contextUrls,jobId,at:Date.now(),chunks:[],size:0,state:"armed"});
   await markHitomiQueue(jobId,{status:"capturing"});
   chrome.alarms.create("redown-hitomi-queue",{periodInMinutes:1});
   try {
@@ -2216,7 +2224,7 @@ async function handleHitomiCaptureMessage(message,sender) {
     hitomiIntents.delete(tabId);
     const error=String(message.error||"Capture failed");
     await markHitomiQueue(intent.jobId,{status:"pending",nextAt:Date.now()+15000,lastError:error});
-    await recordTransfer({ok:false,sourceUrl:sender.url,profileId:intent.profile?.id,profileName:intent.profile?.name||"Hitomi gallery",category:"files",error}).catch(()=>{});
+    await recordTransfer({...intent.contextUrls,ok:false,sourceUrl:sender.url,profileId:intent.profile?.id,profileName:intent.profile?.name||"Hitomi gallery",category:"files",error}).catch(()=>{});
     await notify("REDOWN gallery failed",error);
     return {ok:true};
   }
@@ -2254,7 +2262,7 @@ async function handleHitomiCaptureMessage(message,sender) {
     const location=body.publicUrl||publicAssetUrl(prepared,body.key);
     const key=String(body.key||"");
     if(!key||key.split("/").slice(0,-1).join("/")!==folder)throw new Error("Destination verification failed. Check storage before retrying.");
-    await recordTransfer({ok:true,sourceUrl:sender.url,profileId:intent.profile.id,profileName:intent.profile.name,category:"files",location,destination:{accountId:intent.profile.accountId,accountName:intent.profile.accountName||"",bucketName:intent.profile.bucketName,prefix:folder,key}});
+    await recordTransfer({...intent.contextUrls,ok:true,sourceUrl:sender.url,profileId:intent.profile.id,profileName:intent.profile.name,category:"files",location,destination:{accountId:intent.profile.accountId,accountName:intent.profile.accountName||"",bucketName:intent.profile.bucketName,prefix:folder,key}});
     await markHitomiQueue(intent.jobId,{status:"complete",location});
     await notify("REDOWN gallery complete",location);
     return {ok:true,location};
@@ -2306,7 +2314,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   // Do not route gallery context-menu choices through generic URL ingestion.
   // Detect gallery pages by the currently loaded document (not the clicked
   // anchor href), and capture generated ZIP bytes for R2 destinations.
-  const pageUrl=String(info.pageUrl||tab?.url||"");
+  const contextUrls=contextUrlsFromMenu(info,tab);
+  const recordContextTransfer=entry=>recordTransfer({...contextUrls,...entry});
+  const pageUrl=contextUrls.pageUrl||"";
   const onHitomiGallery=/^https:\/\/hitomi\.la\//i.test(pageUrl);
   const isGalleryDocument=/^https:\/\/hitomi\.la\/(?:imageset|doujinshi|manga|cg|gamecg|artistcg|galleries|reader|tag|series|character|group|type)\//i.test(pageUrl) &&
     !/\/(?:index|popular|search)\.html(?:[?#]|$)/i.test(pageUrl);
@@ -2316,7 +2326,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     catch(error){
       console.error("REDOWN Hitomi capture failed to start",error);
       const message=error?.message||String(error);
-      await recordTransfer({ok:false,sourceUrl:pageUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
+      await recordContextTransfer({ok:false,sourceUrl:pageUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
       await notify("REDOWN gallery failed",message);
     }
     return;
@@ -2326,7 +2336,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(onHitomiGallery && chosenDestination && !info.srcUrl &&
       /^https:\/\/hitomi\.la\/[^?#]+\.html(?:[?#]|$)/i.test(sourceUrl)){
     const message="Hitomi HTML pages cannot be uploaded as gallery ZIPs. Open the gallery and choose REDOWN from its Download control.";
-    await recordTransfer({ok:false,sourceUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
+    await recordContextTransfer({ok:false,sourceUrl,profileName:"Hitomi gallery capture",category:"files",error:message}).catch(()=>{});
     await notify("REDOWN gallery capture required",message);
     return;
   }
@@ -2344,11 +2354,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const destinationProfile=profiles.find(p=>p.type==="cloudflare-r2" && p.accountId===profile.accountId && p.bucketName===selectedBucket);
       if(!destinationProfile)throw new Error("Selected bucket is not prepared for ReDown transfers. Prepare it in Cloudflare settings first.");
       const location=await ingestCloudflareAtPrefix(destinationProfile,sourceUrl,prefix,basenameFromUrl(sourceUrl));
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location});
+      await recordContextTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message||String(error);
-      await recordTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
+      await recordContextTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
       await notify("REDOWN failed",message);
     }
     return;
@@ -2368,11 +2378,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       const location = profile.type === "cloudflare-r2" && profile.defaultPrefix != null
         ? await ingestCloudflareAtPrefix(destinationProfile, sourceUrl, profile.defaultPrefix, basenameFromUrl(sourceUrl))
         : await ingest(destinationProfile, sourceUrl, category);
-      await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
+      await recordContextTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
       await notify("REDOWN complete", location);
     } catch (error) {
       const message = error?.message || String(error);
-      await recordTransfer({ ok:false, sourceUrl, profileId:profile.id, profileName:profile.name, category:profile.defaultCategory || "files", error:message });
+      await recordContextTransfer({ ok:false, sourceUrl, profileId:profile.id, profileName:profile.name, category:profile.defaultCategory || "files", error:message });
       await notify("REDOWN failed", message);
     }
     return;
@@ -2387,11 +2397,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     try{
       const receipt={};
       const location=await ingestCloudflareAtPrefix(target,sourceUrl,destination.prefix,basenameFromUrl(sourceUrl),receipt);
-      await recordTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
+      await recordContextTransfer({ok:true,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",location,...receipt});
       await notify("REDOWN complete",location);
     }catch(error){
       const message=error?.message || String(error);
-      await recordTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
+      await recordContextTransfer({ok:false,sourceUrl,profileId:profile.id,profileName:profile.name,category:"files",error:message});
       await notify("REDOWN failed",message);
     }
     return;
@@ -2437,7 +2447,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       location = await ingest(profile, sourceUrl, category);
     }
 
-    await recordTransfer({
+    await recordContextTransfer({
       ok:true,
       sourceUrl,
       profileId:profile.id,
@@ -2448,7 +2458,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await notify("REDOWN complete", location);
   } catch (error) {
     const message = error?.message || String(error);
-    await recordTransfer({
+    await recordContextTransfer({
       ok:false,
       sourceUrl,
       profileId:profile.id,
