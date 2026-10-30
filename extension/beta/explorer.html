@@ -136,30 +136,15 @@
     <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1"><span class="quick-tab-number" aria-hidden="true">02</span><span>Bucket URLs</span></button>
   </div>
   <section id="quick-panel-setup" class="quick-links-content" role="tabpanel" aria-labelledby="quick-tab-setup">
-    <section class="destination-section" aria-labelledby="destination-config-title">
-      <h3 id="destination-config-title">01 / Menu configuration</h3>
-      <div class="destination-toolbar">
-        <div class="destination-mode" role="group" aria-label="Right-click menu layout"><span>Simple</span><button id="destination-mode" type="button" aria-label="Switch to Nested" aria-pressed="false"><span aria-hidden="true">≡</span><span aria-hidden="true">⑂</span><i></i></button><span>Nested</span></div>
-        <p id="destination-mode-help">Simple puts every destination on one level. Nested preserves your folder hierarchy.</p>
-      </div>
-    </section>
-    <section class="destination-section" aria-labelledby="destination-accounts-title">
-      <h3 id="destination-accounts-title">02 / Accounts and buckets</h3>
-      <div class="destination-account-tools"><label>Prepared storage for a new location<select id="destination-profile" aria-label="Account and prepared bucket for new locations"></select></label><button id="destination-add" type="button" aria-label="Add destination">+ <span>Add menu location</span></button></div>
-      <p class="destination-hint">Adds a menu reference. Removing a reference never deletes cloud storage. Nested account inclusion is controlled in its group below.</p>
-    </section>
-    <section class="destination-section" aria-labelledby="destination-tree-title">
-      <h3 id="destination-tree-title">03 / Destination hierarchy</h3>
-      <p class="destination-hint">Choose existing locations. Open Entry options to rename, reorder or create a folder.</p>
-      <div class="destination-stage"><div id="destination-simple"></div><div id="destination-nested" hidden></div></div>
-    </section>
-    <section class="destination-section" aria-labelledby="destination-preview-title">
-      <h3 id="destination-preview-title">04 / Preview and commit</h3>
-      <p class="destination-hint">This is how your saved REDOWN destinations will appear in the right-click menu. Hidden groups stay saved until you remove them.</p>
-      <div id="destination-preview" aria-label="REDOWN right-click destination preview"></div>
-      <div class="destination-commit"><button id="destination-save" class="primary" type="button">Save menu</button><button id="destination-reload" type="button">Reload / discard edits</button></div>
-      <p id="destination-status" role="status" aria-live="polite">Loading your destinations…</p>
-    </section>
+    <div class="destination-toolbar">
+      <div class="destination-mode" role="group" aria-label="Right-click menu layout"><span>Simple</span><button id="destination-mode" type="button" aria-label="Switch to Nested" aria-pressed="false"><span aria-hidden="true">≡</span><span aria-hidden="true">⑂</span><i></i></button><span>Nested</span></div>
+      <select id="destination-profile" aria-label="Account and prepared bucket for new locations"></select>
+      <button id="destination-add" type="button" aria-label="Add destination">+ <span>Location</span></button>
+      <button id="destination-save" class="primary" type="button">Save menu</button>
+      <button id="destination-reload" type="button">Reload</button>
+    </div>
+    <p id="destination-status" role="status" aria-live="polite">Loading your destinations…</p>
+    <div class="destination-stage"><div id="destination-simple"></div><div id="destination-nested" hidden></div></div>
     <details id="destination-first-setup" class="destination-first-setup"><summary>Optional: Dedicated REDOWN bucket</summary>
     <p>You can use any existing R2 bucket through <strong>Activate Buckets</strong>. Or use this optional setup to create or reuse a separate private bucket named <strong>redown</strong>.</p>
     <div class="quick-links-grid">
