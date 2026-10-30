@@ -34,11 +34,18 @@ test('bucket, folder, metadata and Unicode content workflows run through the act
 test('zero bytes, 50 MiB and 51 MiB binary uploads retain bytes and forward File without client-side whole-file buffering',async()=>{
   const f=await fixture();for(const size of [0,50*1024*1024,51*1024*1024]){const bytes=Buffer.alloc(size,0xb7),file=new File([bytes],size?String(size)+'.zip':'empty.dat');file.arrayBuffer=()=>{throw Error('Client must not buffer entire file');};const r=await f.api.run('upload',{source,file,key:file.name});assert.equal(r.state,'completed',JSON.stringify(r));assert.equal(hash(f.stored.get(file.name).bytes),hash(bytes));assert.equal(f.requests.findLast(r=>r.options.method==='PUT').options.body,file);}
 });
-test('conflicts skip, keep both and explicitly replace while preserving accurate bytes',async()=>{
+test('Keep Both is default; explicit skip and replace retain accurate bytes',async()=>{
   const f=await fixture();await f.bucket.put('a.txt','original');const file=new File(['replacement'],'a.txt');
-  let r=await f.api.run('upload',{source,file,key:'a.txt'});assert.equal(r.state,'partial');assert.equal(f.stored.get('a.txt').bytes.toString(),'original');
-  r=await f.api.run('upload',{source,file,key:'a.txt',conflict:'keep'});assert.equal(r.state,'completed',JSON.stringify(r));assert.equal(f.stored.get('a (2).txt').bytes.toString(),'replacement');assert.equal(f.stored.get('a.txt').bytes.toString(),'original');
-  r=await f.api.run('upload',{source,file,key:'a.txt',conflict:'replace'});assert.equal(r.state,'completed');assert.equal(f.stored.get('a.txt').bytes.toString(),'replacement');
+  let r=await f.api.run('upload',{source,file,key:'a.txt'});
+  assert.equal(r.state,'completed',JSON.stringify(r));
+  assert.equal(f.stored.get('a (2).txt').bytes.toString(),'replacement');
+  assert.equal(f.stored.get('a.txt').bytes.toString(),'original');
+  r=await f.api.run('upload',{source,file,key:'a.txt',conflict:'skip'});
+  assert.equal(r.state,'partial');assert.equal(f.stored.get('a.txt').bytes.toString(),'original');
+  r=await f.api.run('upload',{source,file,key:'a.txt',conflict:'keep'});
+  assert.equal(r.state,'completed',JSON.stringify(r));assert.equal(f.stored.get('a (3).txt').bytes.toString(),'replacement');
+  r=await f.api.run('upload',{source,file,key:'a.txt',conflict:'replace'});
+  assert.equal(r.state,'completed');assert.equal(f.stored.get('a.txt').bytes.toString(),'replacement');
 });
 test('populated folder copy, rename and delete use ordinary prefix operations',async()=>{
   const f=await fixture();await f.bucket.put('tree/deep/a.bin','bytes');await f.bucket.put('tree/empty/',new Uint8Array());
