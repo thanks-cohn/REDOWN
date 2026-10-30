@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {JSDOM} from 'jsdom';
 
 const source=(path)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const html=source('extension/beta/explorer.html');
@@ -97,4 +98,26 @@ test('LOGIN and LOG OUT remain centered and the Mac-style account slot does not 
   assert.match(explorer,/\$\('connect'\)\.click\(\)/);
   assert.match(html,/id="account-standby-action"/);
   assert.match(html,/id="disconnect"/);
+});
+
+test('left storage accordion and Bucket Tools do not collapse into a narrow scrollbar',()=>{
+  const dom=new JSDOM(html);
+  try{
+    const d=dom.window.document;
+    const storage=d.getElementById('sidebar-storage');
+    const tools=d.getElementById('sidebar-bucket-tools');
+    assert.ok(storage&&tools,'both collapsible sections are present in the far-left Explorer aside');
+    assert.equal(storage.parentElement,tools.parentElement);
+    assert.equal(storage.closest('aside'),tools.closest('aside'));
+    assert.equal(storage.getAttribute('name'),tools.getAttribute('name'),'native details grouping keeps only one section open');
+    assert.ok(storage.hasAttribute('open'),'bucket list starts expanded');
+    assert.ok(!tools.hasAttribute('open'),'tools start retracted');
+    assert.equal(d.getElementById('buckets').closest('details'),storage);
+    assert.equal(d.getElementById('create-bucket').closest('details'),storage);
+    assert.equal(d.getElementById('preferences').closest('details'),tools);
+    assert.match(css,/\.sidebar-scroll\s*>\s*\*\s*\{flex-shrink:0\}/);
+    assert.match(css,/\.sidebar-accordion\[open\] \.sidebar-accordion-chevron/);
+    assert.match(css,/\.sidebar-storage #buckets\s*\{[^}]*max-height:/);
+    assert.doesNotMatch(css,/\.intro,\.section-title,\.sidebar-scroll>\.eyebrow\{display:none\}/,'narrow layout must not hide accordion headings');
+  }finally{dom.window.close();}
 });
