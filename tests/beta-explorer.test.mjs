@@ -67,7 +67,7 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences=null,tourPreferences=null,autoLoadImages=true}={}){
+async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
@@ -86,6 +86,19 @@ async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpe
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
   return {...f,dom,w,d:w.document,settle};
 }
+test('a fresh user gets Side Preview by default, while an existing Window preference remains respected',async()=>{
+  const first=await uiFixture({previewPreferences:null});
+  try{
+    assert.equal(first.d.querySelector('#preview-mode').value,'side');
+    assert.equal(first.storage.betaExplorerPreview.mode,'side');
+    assert.equal(first.d.querySelector('#side-preview').hidden,false);
+  }finally{first.dom.window.close();}
+  const existing=await uiFixture({previewPreferences:{mode:'window',width:390}});
+  try{
+    assert.equal(existing.d.querySelector('#preview-mode').value,'window');
+    assert.equal(existing.d.querySelector('#side-preview').hidden,true);
+  }finally{existing.dom.window.close();}
+});
 test('actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels deletion and creates folders through API',async()=>{
   const f=await uiFixture(),{d,w,settle}=f;
   try{
