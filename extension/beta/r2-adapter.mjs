@@ -88,7 +88,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       if(verified!==file.size)throw Error('Upload read-back ended early.');
     } finally {await Promise.allSettled([remote.cancel(),local.cancel()]);}
   }
-  async function transfer(operation,{source,destination,entries,conflict='skip'},options) {
+  async function transfer(operation,{source,destination,entries,conflict='keep'},options) {
     const s=location(source),d=location(destination);
     if(!['skip','keep','replace'].includes(conflict))throw Error('Choose a conflict policy.');
     const selected=entries.map(entry);if(!selected.length)throw Error('Select at least one item.');
@@ -173,7 +173,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     copy:(input,o)=>transfer('copy',input,o),move:(input,o)=>transfer('move',input,o),
     rename:({source,entry:e,newName},o)=>message('cfRenameEntry',{source:location(source),entry:entry(e),newName:name(newName)},o),
     delete:({source,entries},o)=>message('cfDeleteObjects',{source:location(source),entries:entries.map(entry)},o),
-    async upload({source,file,key:k,conflict='skip',stagingPrefix='.redown-beta-uploads/'},options={}) {
+    async upload({source,file,key:k,conflict='keep',stagingPrefix='.redown-beta-uploads/'},options={}) {
       options=resolveOptions('upload',{},options);const {signal,onProgress}=options;
       const l=location(source);key(k);
       if(!file || !Number.isSafeInteger(file.size)||file.size<0)throw Error('Choose a local file.');
