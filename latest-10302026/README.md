@@ -14,13 +14,13 @@
 3. [03 | Comic and Image Reading Modes](03_COMIC_AND_IMAGE_READING_MODES.md): Separate preview placement (Window/Side) from reading mode (Single/Continuous Scroll/Two-Page Book). Lazy-load a bounded image window, and support ZIP/CBZ without manual extraction.
 4. [04 | Expandable Breadcrumb Hierarchy](04_EXPANDABLE_BREADCRUMB_HIERARCHY.md): Bring the earlier conversation's responsive directory-path presentation into the same proposal collection. Abbreviated ancestors can expand into independent rows in exact path order.
 5. [05 | PHASE 2: Scrolldown (Pretty) for Documents & Archives](05_PHASE_2_SCROLLDOWN_PRETTY_DOCUMENT_AND_ARCHIVE_READER.md): A separate styled reader for PDF/DOCX and CBZ/ZIP libraries: active vertically-scrolling file in the center, three previous and three next first-page/cover thumbnails in side rails, Left/Right changes files, Up/Down scrolls pages, background choices Dimmed/Glass/Black, and one-level Escape.
-6. [06 | PHASE 3: Scrolldown for Directories](06_PHASE_3_DIRECTORY_SCROLLDOWN.md): Extend ordinary continuous scrolling across all readable contents of a directory without extracting archives or losing the original Explorer background.
+6. [06 | PHASE 3: Directory Reading Modes](06_PHASE_3_DIRECTORY_SCROLLDOWN.md): Treat a whole directory as a reader source, then switch between **Scrolldown, Reader and Magazine** views, including images, **videos**, documents and comics. Keep regular Scrolldown on the original Explorer background; reuse the existing media/page rendering and lazy-loading machinery.
 
 ## Reader-phase terminology (important)
 
 - **Phase 1: regular Scrolldown** is the pages of one file/image sequence arranged vertically, with **the original Explorer as the background**. It does not require side rails or any dark overlay. Book mode is separately proposed in Phase 1.
 - **Phase 2: Scrolldown (Pretty)** is a distinct enhanced visual reader for multi-document and archive libraries: three preceding/three following first-page or cover images flank the active scrolling document; only Pretty offers Dimmed/Glass/Black backgrounds.
-- **Phase 3: directory Scrolldown** takes the *regular* continuous vertical reading experience to the whole directory, stacking the readable contents of many files while retaining the original Explorer background.
+- **Phase 3: directory reading modes** takes a *directory* instead of one document as the reader source. Users can choose **Scrolldown** (continuous mixed-media vertical reading, original Explorer background), **Reader** (focused pages/spreads) or **Magazine** (responsive editorial mixed-media layout). Supported videos get lazy, controlled playback. All use the same logical source/adapters and maintain exact file identities.
 
 ## Principles across all proposals
 
@@ -37,7 +37,7 @@
 
 **First:** URL list parser plus preview of batch plan and safe ingestion orchestration.
 
-**Second:** Reader mode/state model, image virtualization, book spreads, then ZIP/CBZ integration.
+**Second:** Reader mode/state model, image virtualization, book spreads, then ZIP/CBZ integration. **Phase 3 extends the reader's source to directories and adds mixed-media Scrolldown, Reader and Magazine presentations, including videos**, without duplicating the content engine.
 
 **Third:** Specialty-first toolbar refactor after the actions have reliable deep links and tests.
 
