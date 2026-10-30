@@ -22,7 +22,7 @@ test('versioned JSON export preserves all URL provenance, status and future fiel
   assert.equal(doc.schemaVersion,1);assert.equal(doc.format,'redown.history');assert.equal(doc.count,2);
   assert.deepEqual(unwrap(doc.records),records);
   assert.deepEqual(unwrap(api.read(JSON.stringify(doc)).records),records);
-  assert.ok(JSON.stringify(doc,null,2).includes('\\n  "schemaVersion": 1'));
+  assert.ok(JSON.stringify(doc,null,2).includes('\n  "schemaVersion": 1'));
 });
 test('reader rejects invalid or unsupported formats without guessing',()=>{
   assert.throws(()=>api.read('{}'),/Not a REDOWN/);
