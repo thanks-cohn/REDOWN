@@ -638,3 +638,18 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 - Popup delivery counter (0.5.22): historical totals cannot reconstruct discarded entries beyond the old fifty-entry history cap; uninstrumented paths and MV3 completion-to-local-commit gaps can undercount. See [counter boundaries and remaining acceptance](../docs/popup/DASHBOARD_LAUNCHER.md). Installed Chrome odometer/login acceptance remains pending.
 
 - Odometer roll-up (0.5.23): deterministic animation, sound, mute and cancellation regressions pass. Actual Chrome motion, audio volume/autoplay policy and interrupted-popup preference persistence still need installed acceptance; see [presentation boundaries](../docs/popup/DASHBOARD_LAUNCHER.md).
+
+
+## BUG-021 — Electric rainbow outline after-effect becomes detached when the outline moves (2026-10-29)
+
+**Status:** Open; user-reported visual mismatch. **Priority: P2 visual polish.** No fix or installed-Chrome verification is claimed by this entry.
+
+**Observed:** During the theme/outline reveal animation, a small electric, rainbow-colored light pass sweeps along the outline as an after-effect. If the outline moves after the effect's geometry has been established, the rainbow sweep still travels along the outline's **previous position** instead of its **current on-screen position**. The animation continues, but its glowing trace appears detached or offset from the visible border, making the transition look slightly wrong.
+
+**Reproduction to verify:** Trigger the outline reveal, then change the outline's position during the after-effect (for example, while a panel translates, reflows, or resizes). Compare the rainbow pass with the border's actual location on every frame. Exact theme, browser conditions, and movement timing remain to be confirmed in an installed build.
+
+**Expected:** The electric/rainbow sweep remains precisely aligned with the **currently rendered outline** throughout movement, resizing, and the transition; it never draws over where the border used to be. If the outline is animated, the effect must track the same live geometry or transform without visible lag or jumps.
+
+**Investigation lead, not proven cause:** The sweep may be following an earlier measured outline path or a separate animation layer whose coordinates/transforms are not updated in sync with the moving border. Inspect the animation's coordinate space, transform origin, resize/reflow behavior, and timing before changing the implementation.
+
+**Acceptance:** In real Chrome, repeatedly move/reposition the outline during the electric pass at normal and reduced animation speed and at narrow/wide viewport widths. The sweep must coincide with the visible border in every frame, without displaced ghost traces or a one-frame snap. Preserve the existing aesthetic and animation timing unless a change is necessary to correct alignment.
