@@ -1,3 +1,5 @@
+import {createBreadcrumbs,orderedBreadcrumbPath} from '../extension/beta/standard-breadcrumbs.mjs';
+import {installRemoteDialog} from '../extension/beta/remote-dialog.mjs';
 import {installTestItTools} from '../extension/beta/test-it-tools.mjs';
 import {installTestIt} from '../extension/beta/test-it.mjs';
 import {installTour} from '../extension/beta/tour.mjs';
@@ -74,17 +76,17 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
+async function uiFixture({deletePreferences=null,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.createBreadcrumbs=createBreadcrumbs;w.orderedBreadcrumbPath=orderedBreadcrumbPath;w.installRemoteDialog=installRemoteDialog;w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>({[key]:storage[key]}),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={betaExplorerDeletePreferences:deletePreferences,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
@@ -183,7 +185,7 @@ test('saved profiles are redacted, public URLs and explicit setup reuse producti
 test('Beta preferences, duplicate, saved destination and preview are working UI interactions',async()=>{
   const f=await uiFixture(),{d,w,settle}=f;
   try{
-    d.querySelector('#preferences').click();assert.ok(d.querySelector('#preferences-dialog').open);d.querySelector('#pref-concurrency').value='2';d.querySelector('#pref-upload').value='450';d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.match(d.querySelector('#status').textContent,/applied/);
+    d.querySelector('#preferences').click();assert.ok(d.querySelector('#preferences-dialog').open);d.querySelector('#pref-concurrency').value='2';d.querySelector('#pref-upload').value='450';d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>!d.querySelector('#preferences-dialog').open);assert.match(d.querySelector('#status').textContent,/applied/);
     d.querySelector('[data-key="root.txt"]').click();d.querySelector('#duplicate').click();await settle(()=>f.stored.has('root (copy).txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('root (copy).txt').bytes.toString(),'payload');
     d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-dialog').open&&d.querySelector('#preview-content pre'));assert.equal(d.querySelector('#preview-content pre').textContent,'payload');d.querySelector('#preview-close').click();assert.equal(d.querySelector('#preview-content').children.length,0);
     d.querySelector('#profiles').value='0';d.querySelector('#profiles').dispatchEvent(new w.Event('change'));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));
@@ -414,7 +416,7 @@ test('side minimize, close, reopen, expand, resize keyboard, selection and saved
     d.querySelector('#preview-divider').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(f.storage.betaExplorerPreview.width,504);
     d.querySelector('#preview-close').click();assert.equal(d.querySelector('#side-preview').hidden,true);assert.ok(!d.querySelector('#file-workspace').classList.contains('with-preview'));d.querySelector('#preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(reads,2);
     d.querySelector('[data-key="Photos/"]').click();assert.match(d.querySelector('#preview-content').textContent,/Folder in/);assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.equal(d.querySelector('#preview').disabled,false);
-    d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#preview-title').textContent,'root.txt');
+    d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.dataset.command==='preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#preview-title').textContent,'root.txt');
   }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
 });
 test('side unsupported file metadata and Download fallback make no preview read',async()=>{
@@ -834,3 +836,15 @@ for(const exitGuide of [false,true])test('Test It exercise 57 records delayed Ch
  assert.deepEqual(f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id).sort(),ids);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');assert.ok(f.stored.has('root.txt'));
  }finally{f.dom.window.close();}
  });
+
+test('Phase 1 toolbar order, safe default focus, persistent delete preferences and hidden-button shortcut',async()=>{
+ const f=await uiFixture();try{const {d,w,settle}=f;
+ assert.deepEqual([...d.querySelector('.header-actions').children].map(e=>e.id||e.className),['remote','upload','explorer-menu-wrap']);
+ d.querySelector('[data-key="root.txt"]').click();d.querySelector('#delete').click();await settle(()=>d.querySelector('#dialog').open);assert.equal(d.activeElement.id,'dialog-cancel');d.querySelector('#dialog-cancel').click();
+ d.querySelector('#preferences').click();d.querySelector('#pref-confirm-delete').checked=false;d.querySelector('#pref-show-delete').checked=false;
+ d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>!d.querySelector('#preferences-dialog').open);
+ assert.equal(f.storage.betaExplorerDeletePreferences.confirmBeforeDeleting,false);assert.equal(d.querySelector('#delete').hidden,true);
+ d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Delete',bubbles:true}));await settle(()=>!f.stored.has('root.txt'));assert.equal(d.querySelector('#dialog').open,false);
+ }finally{f.dom.window.close();}
+ const reopened=await uiFixture({deletePreferences:{confirmBeforeDeleting:false,showDeleteOnDashboard:false}});try{assert.equal(reopened.d.querySelector('#delete').hidden,true);reopened.d.querySelector('#preferences').click();assert.equal(reopened.d.querySelector('#pref-confirm-delete').checked,false);}finally{reopened.dom.window.close();}
+});

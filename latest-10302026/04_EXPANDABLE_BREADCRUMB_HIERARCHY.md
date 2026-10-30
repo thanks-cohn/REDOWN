@@ -1,6 +1,6 @@
 # PROPOSAL: Expandable Ordered Breadcrumb Hierarchy
 
-**Status:** PROPOSAL ONLY, NOT IMPLEMENTED
+**Status:** REJECTED AND SUPERSEDED. The experiment was reverted at `24d0df1`. Do not implement the initial/expandable-row model below. [The Phase 1 handoff](09_PHASE_1_IMPLEMENTATION_HANDOFF.md) documents its standardized replacement. The remaining text is historical.
 **Origin:** Earlier October 30 discussion, included here so all current Explorer presentation proposals live together.
 **Problem:** Long directory names and Chrome's wide Shelf leave the modern Explorer breadcrumb control wrapping into disconnected lines and colliding visually with navigation and filter controls.
 

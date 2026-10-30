@@ -1,3 +1,5 @@
+import {createBreadcrumbs,orderedBreadcrumbPath} from './standard-breadcrumbs.mjs';
+import {installRemoteDialog} from './remote-dialog.mjs';
 import {installTestItTools} from './test-it-tools.mjs';
 import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
@@ -104,6 +106,11 @@ function announceUrlSelection(){
 }
 function status(text){$('status').textContent=text;}
 function button(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=handler;return b;}
+let deletePreferences={confirmBeforeDeleting:true,showDeleteOnDashboard:true};
+const breadcrumbs=createBreadcrumbs($('crumbs'),(entry,source)=>{if(!busy)void navigate({...source,prefix:entry.prefix},true,false,'breadcrumb');});
+const remoteDialog=installRemoteDialog({document,api,openModal,run,status,getDestination:context,isBusy:()=>busy,cancel:()=>controller?.abort()});
+function paintDeletePreferences(){$('delete').hidden=!deletePreferences.showDeleteOnDashboard;}
+void chrome.storage.local?.get('betaExplorerDeletePreferences').then(value=>{const saved=value?.betaExplorerDeletePreferences;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}).catch(()=>{});
 function controls(){
   const loading=listingState==='loading',locked=busy||loading||Boolean(current&&listingState!=='ready');
   for(const id of ['accounts','profiles','upload','upload-folder','remote','mkdir','filter','path'])$(id).disabled=locked || (!current&&!['accounts','profiles'].includes(id));
@@ -111,7 +118,8 @@ function controls(){
   $('accounts').disabled=busy||$('account-chooser').dataset.state!=='ready';
   $('back').disabled=locked||historyIndex<1;$('forward').disabled=locked||historyIndex>=history.length-1;$('up').disabled=locked||!current?.prefix;
   for(const id of ['copy','cut','delete','duplicate','copy-to','move-to'])$(id).disabled=locked||!selected.size;
-  for(const id of ['rename','properties','get-url'])$(id).disabled=locked||selected.size!==1;
+  for(const id of ['rename','properties'])$(id).disabled=locked||selected.size!==1;
+  $('get-url').disabled=locked||selected.size!==1||Boolean(chosen()[0]?.folder);
   $('archive').disabled=locked||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
   $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(chosen()[0]?.folder||!previewType(chosen()[0]?.key||'')));
   paintActivation();$('create-bucket').disabled=locked||!$('accounts').value;
@@ -145,7 +153,8 @@ function render(){
   }));
   $('empty').hidden=shown.length>0;$('empty').textContent=listingState==='loading'?'Loading Cloudflare files…':listingState==='unauthorized'?'Cloudflare authorization required. Reconnect or Refresh.':listingState==='failed'?'Could not load files. Use Refresh to retry safely.':!current?(listingState==='choose'?'Choose a bucket from the sidebar.':listingState==='empty-buckets'?'No accessible R2 buckets were found.':'Connect Cloudflare and use Refresh to discover buckets.'):shown.length?'':$('filter').value?'No matches in the loaded items.':'This folder is empty. Drop a file to make it yours.';
   $('heading').textContent=current?current.bucketName:'Your files, beautifully organized.';
-  $('crumbs').replaceChildren();if(current){$('crumbs').append(button(current.bucketName,()=>navigate({...context(),prefix:''},true,false,'breadcrumb')));let p='';for(const segment of current.prefix.split('/').filter(Boolean)){p+=segment+'/';const target=p;$('crumbs').append(button('› '+segment,()=>navigate({...context(),prefix:target},true,false,'breadcrumb')));}}
+  const path=current?orderedBreadcrumbPath(current):[];
+  breadcrumbs.update(path,current?{...current}:null);
   controls();syncSideSelection();practice?.paintOwnership();announceUrlSelection();
 }
 let commandInvocation=null;
@@ -202,14 +211,20 @@ function openModal(modal){modal.showModal();document.dispatchEvent(new CustomEve
 function dialog(title,{description='',value='',input=true,details='',confirm='Continue',cancel='Cancel',required=true}={}){
   if($('dialog').open)return Promise.resolve(null);
   $('dialog-cancel').textContent=cancel;$('dialog-title').textContent=title;$('dialog-description').textContent=description;$('dialog-input').hidden=!input;$('dialog-label').hidden=!input;$('dialog-input').value=value;$('dialog-input').required=input&&required;$('dialog-details').hidden=!details;$('dialog-details').textContent=details;$('dialog-confirm').textContent=confirm;$('dialog').returnValue='';openModal($('dialog'));
-  if(input){$('dialog-input').focus();$('dialog-input').select();}else $('dialog-confirm').focus();
+  if(input){$('dialog-input').focus();$('dialog-input').select();}else $(confirm==='Delete permanently'?'dialog-cancel':'dialog-confirm').focus();
   return new Promise(resolve=>$('dialog').addEventListener('close',()=>resolve($('dialog').returnValue==='ok'?(input?$('dialog-input').value:true):null),{once:true}));
 }
 const actions={
   async archive(){const e=chosen()[0],source=context();if(!e||e.folder||busy)return;await run(async signal=>{
     const result=await request('archiveEntries',{source,key:e.key},{signal});archiveContext={source,key:e.key};
     $('archive-title').textContent=e.displayName;$('archive-prefix').value=source.prefix;$('archive-status').textContent='';$('archive-all').checked=false;
-    $('archive-files').replaceChildren(...(result.data.archive?.entries||[]).filter(e=>!e.directory).map(e=>{const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');check.type='checkbox';check.value=e.name;check.onchange=archiveControls;text.textContent=e.name+' · '+bytes(e.size);label.append(check,text);return label;}));
+    const tree=document.createDocumentFragment(),folders=new Map([['',tree]]);
+    for(const e of (result.data.archive?.entries||[]).filter(e=>!e.directory)){
+      const parts=e.name.split('/'),filename=parts.pop();let parent=tree,path='';
+      for(const part of parts){path+=part+'/';if(!folders.has(path)){const group=document.createElement('details'),summary=document.createElement('summary'),body=document.createElement('div');group.className='rd-archive-folder';summary.textContent=part;group.append(summary,body);parent.append(group);folders.set(path,body);}parent=folders.get(path);}
+      const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');label.title=e.name;check.type='checkbox';check.value=e.name;check.onchange=archiveControls;text.textContent=filename+' · '+bytes(e.size);label.append(check,text);parent.append(label);
+    }
+    $('archive-files').replaceChildren(tree);
     archiveControls();openModal($('archive-dialog'));
   },{refresh:false});},
   async preview(){const e=chosen()[0];if(e&&!busy)await showPreview(e);},
@@ -229,11 +244,11 @@ const actions={
     await run(async signal=>{if(!sameBucket(destination,current))await ensureWorker(destination,signal);const result=await api.batch(clip.operation,clip.entries.map(e=>({source:clip.source,destination,entries:[e],conflict})),{signal,onProgress:progress,testItCorrelation});outcome(result);if(clip.operation==='move'&&clip===clipboard){const remaining=clip.entries.filter((e,i)=>result.results[i]?.state!=='completed');clipboard=remaining.length?{...clip,entries:remaining}:null;}});
   },
   async rename(){const e=chosen()[0],source=context();if(!e||busy)return;guideAction('command',{action:'rename'});const testItCorrelation=practice?.capture();const n=await dialog('Rename '+e.displayName,{value:e.displayName});if(n===null||n===e.displayName)return;await run(async()=>outcome(await request('rename',{source,entry:e,newName:name(n)},{testItCorrelation})));},
-  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(practice?.session?.active)practice.session.assertOwned(source,entries);guideAction('command',{action:'delete'});const testItCorrelation=practice?.capture();if(!await dialog('Delete '+entries.length+' selected items?',{input:false,description:'Permanently removes selected files and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress,testItCorrelation})));},
+  async delete(){const entries=chosen(),source=context();if(!entries.length||busy)return;if(practice?.session?.active)practice.session.assertOwned(source,entries);guideAction('command',{action:'delete'});const testItCorrelation=practice?.capture();if(deletePreferences.confirmBeforeDeleting&&!await dialog('Delete '+entries.length+' selected items?',{input:false,description:entries.slice(0,8).map(e=>e.displayName).join(', ')+(entries.length>8?' and '+(entries.length-8)+' more':'')+'. Permanently removes these items and every object inside selected folders from '+source.bucketName+'. This cannot be undone.',confirm:'Delete permanently'}))return;await run(async signal=>outcome(await api.batch('delete',entries.map(e=>({source,entries:[e]})),{signal,onProgress:progress,testItCorrelation})));},
   async mkdir(){const source=context();if(!source||busy)return;const n=await dialog('New folder',{description:'Create a folder in '+source.bucketName+'/'+source.prefix});if(n===null)return;await run(async()=>outcome(await request('mkdir',{source,name:name(n)})));},
   async download(){const source=context(),entries=chosen();if(!entries.length||entries.some(e=>e.folder)||busy)return;guideAction('command',{action:'download'});const testItCorrelation=practice?.capture();await run(async signal=>outcome(await api.batch('download',entries.map(e=>({source,entry:e})),{signal,onProgress:progress,testItCorrelation})),{refresh:false});},
   async properties(){const e=chosen()[0],source=context();if(!e||busy)return;await run(async()=>{const result=e.folder?{key:e.key,type:'Folder prefix',bucket:source.bucketName,...(await request('list',{source:{...source,prefix:e.key}})).data}:(await request('stat',{source,key:e.key})).data.object;if(!result)throw Error('This file is no longer present. Refresh the folder.');await dialog('Properties',{input:false,details:JSON.stringify(result,null,2),confirm:'Close'});},{refresh:false});},
-  async remote(){const destination=context();if(!destination||busy)return;const url=await dialog('Send URL to cloud',{description:'Cloudflare fetches the source directly into '+destination.bucketName+'/'+destination.prefix+'. Your computer does not relay the bytes.'});if(!url)return;await run(async()=>{status('Cloudflare is acquiring the remote source…');const result=await request('remoteIngest',{destination,url});status('Remote acquisition confirmed by Worker. Refresh to inspect the saved object.');return result;});}
+  async remote(){remoteDialog.open();}
 };
 for(const [id,action] of Object.entries(actions))$(id).onclick=()=>{try{Promise.resolve(action()).catch(e=>status(e.message));}catch(e){status(e.message);}};
 async function upload(files,source=context()){
@@ -260,6 +275,7 @@ $('dropzone').ondrop=event=>{event.preventDefault();$('dropzone').classList.remo
 $('dialog-cancel').onclick=()=>$('dialog').close('cancel');$('sort').onchange=render;$('filter').oninput=render;$('refresh').onclick=()=>run(()=>refreshConnection(),{refresh:false});$('more').onclick=()=>run(()=>listing(true),{refresh:false});
 $('path').onclick=async()=>{if(!current||busy)return;const target=context(),p=await dialog('Go to folder',{description:'Enter a bucket-relative folder path. Leave empty for the bucket root.',value:target.prefix,required:false});if(p!==null)void navigate({...target,prefix:p}).catch(e=>status(e.message));};
 $('back').onclick=()=>{if(historyIndex>0)void navigate(history[--historyIndex],false);};$('forward').onclick=()=>{if(historyIndex<history.length-1)void navigate(history[++historyIndex],false);};$('up').onclick=()=>{if(current)void navigate({...context(),prefix:current.prefix.replace(/[^/]+\/$/,'')});};
+const overflow=document.querySelector('.rd-overflow');overflow.addEventListener('click',event=>{if(event.target.closest('button'))overflow.open=false;});overflow.addEventListener('keydown',event=>{if(event.key==='Escape'){overflow.open=false;overflow.querySelector('summary').focus();event.preventDefault();}});
 $('view').onclick=()=>{$('files').classList.toggle('grid');$('view').textContent=$('files').classList.contains('grid')?'List view':'Grid view';guideAction('switch-view');};
 $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or remaining items. A running cloud copy or move may still complete; refresh before retrying.');};
 function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir','refresh'].filter(id=>!$(id).disabled).map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;invokeCommand(id,'contextmenu');});b.dataset.command=id;b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
@@ -375,7 +391,7 @@ $('disconnect').onclick=async()=>{
 document.addEventListener('redown:destinations-ready',event=>{
   if(current&&sameBucket(current,event.detail))void checkActivation(context());
 });
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -398,11 +414,11 @@ $('prepare').onclick=async()=>{const source=context();if(!source||busy)return;
 };
 
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
-function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
+function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('pref-confirm-delete').checked=deletePreferences.confirmBeforeDeleting;$('pref-show-delete').checked=deletePreferences.showDeleteOnDashboard;$('preferences-error').textContent='';}
 $('preferences').onclick=()=>{paintPreferences();openModal($('preferences-dialog'));};
 $('preferences-cancel').onclick=()=>$('preferences-dialog').close();
-$('preferences-reset').onclick=()=>{api.setPreferences({});paintPreferences();status('Transfer preferences restored to defaults.');};
-$('preferences-form').onsubmit=event=>{event.preventDefault();try{const values=api.getPreferences();for(const [key,[id,scale]] of Object.entries(preferenceFields))values[key]=Number($(id).value)*scale;api.setPreferences(values);$('preferences-dialog').close();status('Transfer preferences applied to this tab.');}catch(e){$('preferences-error').textContent=e.message;}};
+$('preferences-reset').onclick=()=>{api.setPreferences({});$('pref-confirm-delete').checked=true;$('pref-show-delete').checked=true;for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=api.getDefaults()[key]/scale;status('Transfer preferences restored to defaults.');};
+$('preferences-form').onsubmit=async event=>{event.preventDefault();try{const values=api.getPreferences();for(const [key,[id,scale]] of Object.entries(preferenceFields))values[key]=Number($(id).value)*scale;await chrome.storage.local.set({betaExplorerDeletePreferences:{confirmBeforeDeleting:$('pref-confirm-delete').checked,showDeleteOnDashboard:$('pref-show-delete').checked}});deletePreferences={confirmBeforeDeleting:$('pref-confirm-delete').checked,showDeleteOnDashboard:$('pref-show-delete').checked};paintDeletePreferences();api.setPreferences(values);$('preferences-dialog').close();status('Transfer preferences applied to this tab.');}catch(e){$('preferences-error').textContent=e.message;}};
 // Both presentations own the same viewer DOM and the same universal API read.
 let previewMode='side',sideState='closed',previewExpanded=false,previewWidth=400;
 let previewEpoch=0,previewController=null,previewIdentity='',lightbox=false;
@@ -536,7 +552,7 @@ $('preview-divider').onpointerdown=event=>{
   const finish=()=>{divider.onpointermove=null;rememberPreview();};divider.onpointerup=finish;divider.onpointercancel=finish;divider.onlostpointercapture=finish;
 };
 $('preview-divider').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();resizePreview(event.key==='Home'?280:event.key==='End'?720:previewWidth+(event.key==='ArrowLeft'?24:-24));rememberPreview();}};
-window.addEventListener('pagehide',closePreview);
+window.addEventListener('pagehide',event=>{closePreview();if(!event.persisted)breadcrumbs.destroy();});
 async function chooseTransfer(operation){
   if(busy||!selected.size)return;const clip={source:context(),entries:chosen().map(e=>({...e})),operation};
   guideAction('command',{action:operation+'-to'});const testItCorrelation=practice?.capture();

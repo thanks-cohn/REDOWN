@@ -7,6 +7,7 @@
 <link rel="icon" href="../icon.svg">
 <link rel="preload" href="../fonts/dm-sans-latin-variable.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="explorer.css">
+<link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 <aside>
@@ -69,9 +70,9 @@
 <h2 id="heading">Your files, beautifully organized.</h2>
 </div>
 <div class="header-actions">
-<div class="explorer-menu-wrap"><button id="explorer-menu-button" aria-label="Explorer menu" aria-expanded="false" aria-controls="explorer-menu">☰</button><div id="explorer-menu" hidden><button id="take-tour">Take the Tour</button></div></div>
 <button id="remote">↗ Send URL to cloud</button>
 <button id="upload" class="primary">+ Upload files</button>
+<div class="explorer-menu-wrap"><button id="explorer-menu-button" aria-label="Explorer menu" aria-expanded="false" aria-controls="explorer-menu">☰</button><div id="explorer-menu" hidden><button id="take-tour">Take the Tour</button></div></div>
 </div>
 </header>
 <div class="toolbar">
@@ -85,25 +86,13 @@
 </nav>
 <input id="filter" type="search" placeholder="Filter this folder…" aria-label="Filter loaded files">
 </div>
-<div class="actions">
-<button id="mkdir">New folder</button>
-<button id="upload-folder">Upload folder</button>
-<span class="divider">
-</span>
-<div class="action-group" role="group" aria-label="Organize files"><button id="copy">Copy</button>
-<button id="cut">Cut</button>
-<button id="paste">Paste</button>
-<button id="rename">Rename</button>
-<button id="duplicate">Duplicate</button>
-<button id="copy-to">Copy to…</button>
-<button id="move-to">Move to…</button></div>
-<div class="action-group" role="group" aria-label="Inspect files"><button id="archive">Open archive</button>
-<button id="preview">Preview</button>
-<button id="get-url">Get URL</button>
-<button id="download">Download</button>
-<button id="properties">Properties</button>
-<button id="delete" class="danger">Delete</button>
-</div>
+<div class="actions rd-dashboard-actions">
+<div class="action-group" role="group" aria-label="Everyday file operations">
+<button id="copy">Copy</button><button id="paste">Paste</button><button id="move-to">Move to…</button><button id="rename">Rename</button><button id="download">Download</button></div>
+<div class="action-group rd-specialties" role="group" aria-label="REDOWN tools"><button id="archive">Open ZIP/CBZ</button><button id="preview">Preview / Read</button><button id="get-url">Get URL</button></div>
+<details class="rd-overflow"><summary aria-label="More file actions">More ▾</summary><div class="rd-overflow-menu"><button id="mkdir">New folder</button><button id="upload-folder">Upload folder</button><button id="cut">Cut</button><button id="duplicate">Duplicate</button><button id="copy-to">Copy to…</button><button id="properties">Properties</button></div></details>
+<button id="delete" class="danger rd-delete"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg>Delete</button>
+<div class="rd-view-options" role="group" aria-label="View and conflict preferences">
 <select id="conflict" aria-label="Paste conflict policy">
 <option value="keep" selected>Keep both</option>
 <option value="skip">Conflicts: skip</option>
@@ -117,6 +106,7 @@
 </select>
 <select id="preview-mode" aria-label="Preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select>
 <button id="view" aria-label="Switch grid or list">Grid view</button>
+</div>
 </div>
 <div id="file-workspace">
 <section id="dropzone" aria-label="Cloud files">
@@ -222,6 +212,15 @@
 </div>
 </form>
 </dialog>
+<dialog id="remote-dialog" class="rd-remote" aria-labelledby="remote-title"><form id="remote-form">
+<h2 id="remote-title">Send URL to Cloud</h2><p id="remote-destination"></p>
+<label for="remote-single">Single URL</label><input id="remote-single" type="url" placeholder="https://example.com/file.pdf">
+<div class="rd-list-label"><label for="remote-list">URL List (.txt)</label><button id="remote-pick" type="button">Upload File</button></div>
+<input id="remote-list" type="file" accept=".txt,text/plain" hidden><p>One URL per line. Upload a plain text file to send every listed URL to your selected cloud destination.</p>
+<div class="rd-list-label"><span id="remote-filename">No file selected</span><button id="remote-remove" type="button" hidden>Remove</button></div>
+<p id="remote-summary" role="status" aria-live="polite"></p><pre id="remote-errors"></pre><ol id="remote-results" aria-label="Per-source transfer results"></ol>
+<div class="dialog-actions"><button id="remote-close" type="button">Close</button><button id="remote-cancel" type="button" hidden>Cancel pending</button><button id="remote-export" type="button" hidden>Export results JSON</button><button id="remote-submit" type="submit" class="primary" disabled>Approve transfers</button></div>
+</form></dialog>
 <dialog id="preview-dialog" class="preview-dialog" tabindex="-1" aria-labelledby="preview-title">
 <div id="preview-viewer">
 <div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><div class="preview-controls"><select id="preview-mode-inline" aria-label="Change preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select><button id="preview-minimize" aria-label="Minimize preview" title="Minimize preview" hidden>−</button><button id="preview-expand" aria-label="Expand preview" title="Expand preview" hidden>⤢</button><button id="preview-lightbox" aria-label="Open image lightbox" title="Open image lightbox" hidden disabled>⤢</button><button id="preview-close" aria-label="Close preview" title="Close preview">✕</button></div></div>
@@ -230,10 +229,11 @@
 </div>
 </dialog>
 <dialog id="preferences-dialog" aria-labelledby="preferences-title">
-<form id="preferences-form"><h2 id="preferences-title">Transfer preferences</h2><p>Applies to this Explorer tab. Restore defaults at any time.</p>
+<form id="preferences-form"><h2 id="preferences-title">Explorer preferences</h2><p>Transfer limits apply to this tab. Deletion safety is saved across sessions.</p>
 <label for="pref-concurrency">Files processed at once</label><input id="pref-concurrency" type="number" min="1" step="1" required>
 <label for="pref-upload">Upload deadline (seconds)</label><input id="pref-upload" type="number" min="1" step="1" required>
 <label for="pref-preview">Preview memory budget (MiB)</label><input id="pref-preview" type="number" min="1" step="1" required>
+<fieldset class="rd-safety"><legend>Deletion safety</legend><label><input id="pref-confirm-delete" type="checkbox" checked> Confirm Before Deleting</label><small>Turning this off allows irreversible deletion without the ordinary confirmation.</small><label><input id="pref-show-delete" type="checkbox" checked> Show Delete on Dashboard</label><small>Context menu and keyboard deletion remain available.</small></fieldset>
 <p id="preferences-error" role="alert"></p><div class="dialog-actions"><button id="preferences-reset" type="button">Restore defaults</button><button id="preferences-cancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div></form>
 </dialog>
 <dialog id="destination-dialog" aria-labelledby="destination-title"><form id="destination-form">
