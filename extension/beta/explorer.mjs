@@ -371,15 +371,24 @@ function explorerPreviewKind(item){
   if(type==='application/pdf'||type.startsWith('text/'))return 'document';
   return 'other';
 }
-function moveGridItem(direction,{preview=false}={}){
+function moveGridItem(direction,{preview=false,skipUnsupported=false}={}){
   const rows=[...$('files').querySelectorAll('.file')];
   const active=document.activeElement?.closest?.('#files .file');
   const picked=chosen().length===1?chosen()[0]:null;
   let index=rows.findIndex(row=>row===active);
   if(index<0&&picked)index=rows.findIndex(row=>row.dataset.key===picked.key);
-  if(index<0||index+direction<0||index+direction>=rows.length)return false;
-  const target=rows[index+direction];
-  const item=visible().find(e=>e.key===target.dataset.key);
+  if(index<0)return false;
+  const byKey=new Map(visible().map(item=>[item.key,item]));
+  let nextIndex=index+direction;
+  if(skipUnsupported){
+    while(nextIndex>=0&&nextIndex<rows.length&&
+      explorerPreviewKind(byKey.get(rows[nextIndex].dataset.key))==='other'){
+      nextIndex+=direction;
+    }
+  }
+  if(nextIndex<0||nextIndex>=rows.length)return false;
+  const target=rows[nextIndex];
+  const item=byKey.get(target.dataset.key);
   const wasWindow=previewMode==='window'&&$('preview-dialog').open;
   if(wasWindow)$('preview-dialog').close();
   target.focus({preventScroll:true});target.click();target.scrollIntoView?.({block:'nearest',inline:'nearest'});
@@ -420,7 +429,7 @@ function navigateSelectedArrow(key,{modal=false}={}){
   }
   // A document's horizontal arrows leave the document. Individual media
   // horizontally traverses neighboring grid entries, including archives.
-  return moveGridItem(direction,{preview:kind==='media'||kind==='document'||modal});
+  return moveGridItem(direction,{preview:kind==='media'||kind==='document'||modal,skipUnsupported:kind==='media'||kind==='document'});
 }
 document.addEventListener('keydown',event=>{
   if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap'))return;
