@@ -4,6 +4,14 @@
 **Targets:** Both **Window Preview** and **Side Preview** in modern Explorer, and ZIP/CBZ content inspection.
 **Goal:** A useful reader for comics, scanned pages, illustrations and ordered image folders without downloading and unpacking everything manually.
 
+## Terminology clarification: Phase 1 versus Phase 2/3
+
+**Regular Scrolldown in Phase 1** is simply pages stacked vertically and scrolled naturally. It keeps the original REDOWN Explorer as its background, **not** black/dim/glass, and does not require neighboring-file preview rails. The vertical page stream can later be reused for supported PDF, DOCX and other document formats when their renderers are available.
+
+**Scrolldown (Pretty) is a different Phase 2 presentation** for documents and CBZ/ZIP archives: the central page stream is surrounded by previous-three and next-three thumbnail rails, with optional Dimmed/Glass/Black backgrounds. See [Phase 2](05_PHASE_2_SCROLLDOWN_PRETTY_DOCUMENT_AND_ARCHIVE_READER.md).
+
+**Phase 3** extends ordinary Scrolldown across a whole directory's readable files, preserving Explorer's original background; see [Directory Scrolldown](06_PHASE_3_DIRECTORY_SCROLLDOWN.md).
+
 ## Two independent settings (do not combine them)
 
 **Preview placement**
