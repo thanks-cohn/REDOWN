@@ -71,7 +71,10 @@ function enableHarness({enabled=false,verified=true,status=200}={}){
 test('explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only',async()=>{
  for(const enabled of [false,true]){const h=enableHarness({enabled});const r=await h.context.enableBucketPublicAccess(h.message,h.sender);assert.equal(r.ok,true);assert.equal(h.calls.length,enabled?2:3);assert.ok(h.calls.every(c=>c.path==='/accounts/actual-account/r2/buckets/actual%20bucket/domains/managed'));const writes=h.calls.filter(c=>c.options);assert.equal(writes.length,enabled?0:1);if(writes.length){assert.equal(writes[0].options.method,'PUT');assert.deepEqual(JSON.parse(writes[0].options.body),{enabled:true});}}
 });
-test('public enable requires exact options sender and explicit confirmation; rejects denied or unverified changes',async()=>{
+test('public enable accepts only authorized Explorer pages and explicit confirmation; rejects denied or unverified changes',async()=>{
+ const modern=enableHarness();
+ const optedIn=await modern.context.enableBucketPublicAccess(modern.message,{url:'chrome-extension://fixture/beta/explorer.html'});
+ assert.equal(optedIn.ok,true,'the modern Explorer may enable public access only after explicit confirmation');
  const h=enableHarness();for(const [message,sender] of [[{...h.message,confirmed:false},h.sender],[h.message,{url:'https://example.com/options.html'}]]){assert.equal((await h.context.enableBucketPublicAccess(message,sender)).ok,false);}assert.equal(h.calls.length,0);
  for(const [settings,code] of [[{status:403},'EXPLORER_PERMISSION_DENIED'],[{status:401},'EXPLORER_AUTH_EXPIRED'],[{verified:false},'EXPLORER_RESULT_UNCONFIRMED']]){const f=enableHarness(settings);const result=await f.context.enableBucketPublicAccess(f.message,f.sender);assert.equal(result.code,code);assert.doesNotMatch(JSON.stringify(result),/PRIVATE_TOKEN/);}
  assert.match(background,/message\?\.type === "cfEnablePublicAccess"\) return sendResponse\(await enableBucketPublicAccess\(message,_sender\)\)/);
