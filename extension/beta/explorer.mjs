@@ -184,8 +184,8 @@ function progress(event){
   if(event.phase==='uploading')status('Uploading file bytes… Keep this page open.');
   if(event.phase==='verifying'){status('Checking uploaded bytes against your original file…');$('progress').hidden=false;$('progress').max=event.totalBytes||1;$('progress').value=event.bytes;}
   if(event.phase==='committing')status('Upload received. Committing and checking the destination…');
-  if(event.phase==='download-complete')status('Chrome reports download complete. Independent SHA-256 verification was not performed.');
-  if(event.phase==='download-interrupted')status('Download interrupted: '+(event.error||'Open Chrome Downloads for details.'));
+  if(event.phase==='download-complete')status('Download complete (reported by browser). File integrity was not independently verified.');
+  if(event.phase==='download-interrupted')status('Download interrupted: '+(event.error||'Check your browser downloads for details.'));
 }
 async function request(operation,input,options={}) {
   const result=await api.run(operation,input,{onProgress:progress,...options});
@@ -223,7 +223,7 @@ function outcome(result){
   const list=result.results || [result],bad=list.filter(r=>r.state!=='completed'&&r.state!=='started');
   const partial=result.state==='partial'||bad.length;
   const details=[...new Set(list.flatMap(r=>r.error?[r.error]:[...(r.data?.errors||[]).map(e=>typeof e==='string'?e:e.error||'File failed'),...(r.data?.conflicts||[]).map(()=> 'Destination exists; skipped.'),...(r.data?.partialMove?['Some copies succeeded but source deletion was not confirmed.']:[]),...(r.data?.recoveryKey?['Temporary upload retained at '+r.data.recoveryKey]:[])]))];
-  status(!partial&&list.every(r=>r.data?.downloadState==='complete')?'Chrome reports download complete. Independent SHA-256 verification was not performed.':partial?`Partial result. ${details.join(' ') || 'Stopped before all items completed. Refresh and inspect both locations.'}`:list.some(r=>r.state==='started')?'Download started. Chrome will report completion or interruption.':'Operation completed and provider result confirmed.');
+  status(!partial&&list.every(r=>r.data?.downloadState==='complete')?'Download complete (reported by browser). File integrity was not independently verified.':partial?`Partial result. ${details.join(' ') || 'Stopped before all items completed. Refresh and inspect both locations.'}`:list.some(r=>r.state==='started')?'Download started. Chrome will report completion or interruption.':'Operation completed and provider result confirmed.');
 }
 function openModal(modal){modal.showModal();document.dispatchEvent(new CustomEvent('redown:modal-open',{detail:{modal}}));}
 function dialog(title,{description='',value='',input=true,details='',confirm='Continue',cancel='Cancel',required=true}={}){
@@ -428,7 +428,7 @@ async function refreshConnection(){
     const result=await listing();
     if(!result)return;
     await rememberLocation(target);
-    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);if(activationState==='unknown'||activationState==='needed')void checkActivation(target);guideAction('refresh',{testItCorrelation});
+    status('Folder refreshed · '+target.bucketName+'/'+(target.prefix||'/'));if(activationState==='unknown'||activationState==='needed')void checkActivation(target);guideAction('refresh',{testItCorrelation});
   }catch(error){
     failure(error);void checkActivation(target);
     // Discovery is recovery, not a prerequisite for ordinary folder refresh.
@@ -488,7 +488,7 @@ $('prepare').onclick=async()=>{
   activationState='activating';paintActivation();
   await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();
     document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:source.accountId,bucketName:source.bucketName}}));
-    status(result.data.menuUpdated===false?(result.data.menuError||'Bucket activated, but Chrome could not update its menu. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
+    status(result.data.menuUpdated===false?(result.data.menuError||'Bucket activated, but the REDOWN right-click menu could not be updated. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
   if(sameBucket(current,source))await checkActivation(source);
   if(activationState==='ready'&&!$('status').textContent.includes('menu'))status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
   else if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
