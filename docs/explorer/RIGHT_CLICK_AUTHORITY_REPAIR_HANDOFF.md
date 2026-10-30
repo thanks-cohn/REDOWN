@@ -59,4 +59,4 @@ Existing toolbar New Folder, default-off per-folder plus controls, Upload Folder
 
 **Next actions:** retest scenarios A–F in an approved Chrome extension environment using an isolated profile; verify actual remote receipts against the selected bucket and prefix; inspect narrow and themed layouts. Address baseline suite debt separately. Local green focused tests do not constitute final live acceptance.
 
-**Delivery record:** implementation commit and push results are recorded below after publication.
+**Delivery record:** published implementation commit `16dad07d248d6f9be52392fdc9b4a067350dadbf` on `release/cloudflare-true-remote`. Direct HTTPS Git push was unavailable because the environment had no push credentials. The connected GitHub integration published the identical tested tree `54d8e2e957226a2e362cd3c921d0ccd3cf1e90d2` and confirmed a successful fast-forward branch update from `515c272`. This report's publication record is a documentation-only follow-up; the final response identifies that final branch-head SHA. No force update or deployment was performed.
