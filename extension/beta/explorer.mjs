@@ -420,7 +420,8 @@ function navigateSelectedArrow(key,{modal=false}={}){
       return true;
     }
     // Up/Down is always the explicit escape from ZIP/CBZ and folder reading.
-    return moveGridItem(direction);
+    moveGridItem(direction);
+    return true;
   }
   if(kind==='collection'){
     if(readerSession&&previewItem?.key===item.key)void adjacentPreview(direction,key);
@@ -430,7 +431,8 @@ function navigateSelectedArrow(key,{modal=false}={}){
   }
   // A document's horizontal arrows leave the document. Individual media
   // horizontally traverses neighboring grid entries, including archives.
-  return moveGridItem(direction,{preview:kind==='media'||kind==='document'||modal,skipUnsupported:kind==='media'||kind==='document'});
+  moveGridItem(direction,{preview:kind==='media'||kind==='document'||modal,skipUnsupported:kind==='media'||kind==='document'});
+  return true;
 }
 document.addEventListener('keydown',event=>{
   if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap'))return;
