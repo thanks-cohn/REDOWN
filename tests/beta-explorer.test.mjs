@@ -885,7 +885,7 @@ test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and
 
 test('toolbar adjacency follows the three requested pairs with primary folder upload',async()=>{
  const dom=new JSDOM(await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'));
- try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.ok(d.querySelector('#upload-folder').textContent.includes('Upload folder'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
+ try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.equal(d.querySelector('#pref-folder-quick-add').checked,false);assert.ok(d.querySelector('#upload-folder').textContent.includes('Upload folder'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
 });
 for(const mode of ['side','window'])test('default archive Image Reader uses existing '+mode+' Preview, natural nested order, navigation and no extraction',async()=>{
  const f=await uiFixture({previewPreferences:{mode,width:400}}),{d,w,settle}=f;
@@ -957,4 +957,14 @@ test('rapid archive navigation cancels stale reads, retries fresh URLs, and clos
   d.querySelector('#preview-content img').dispatchEvent(new w.Event('error'));assert.match(d.querySelector('#preview-content').textContent,/fresh read URL/);[...d.querySelectorAll('#preview-content button')].find(b=>b.textContent==='Retry page').click();await settle(()=>pending.length===4);
   d.querySelector('#preview-close').click();assert.equal(pending[3].options.signal.aborted,true);pending[3].resolve({url:'https://fixture.test/3-retry.webp'});await new Promise(r=>setTimeout(r,10));assert.equal(d.querySelector('#preview-content img'),null);
  }finally{f.dom.window.close();}
+});
+
+test('Upload Folder retains themed primary fill despite generic transparent action-button styling',async()=>{
+ const css=await readFile(new URL('../extension/beta/explorer.css',import.meta.url),'utf8');
+ assert.match(css,/\\.actions button\\{[^}]*background:transparent/);
+ assert.match(css,/\\.actions #upload-folder\\.primary\\{background:var\\(--accent\\)/);
+ assert.match(css,/\\.actions #upload-folder\\.primary:hover:not\\(:disabled\\)/);
+ const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8');
+ assert.match(html,/id="upload-folder" class="primary"/);
+ assert.match(html,/id="upload" class="primary"/);
 });
