@@ -360,19 +360,81 @@ $('cancel').onclick=()=>{controller?.abort();status('Stopping the upload or rema
 function showMenu(x,y){const menu=$('context');menu.replaceChildren(...['archive','preview','get-url','copy','cut','paste','duplicate','copy-to','move-to','rename','download','properties','delete','mkdir','refresh'].filter(id=>!$(id).disabled).map(id=>{const b=button($(id).textContent,()=>{menu.hidden=true;invokeCommand(id,'contextmenu');});b.dataset.command=id;b.disabled=$(id).disabled;return b;}));menu.hidden=false;menu.style.left=Math.max(0,Math.min(x,innerWidth-menu.offsetWidth-8))+'px';menu.style.top=Math.max(0,Math.min(y,innerHeight-menu.offsetHeight-8))+'px';menu.querySelector('button:not(:disabled)')?.focus();}
 document.addEventListener('click',e=>{if(!$('context').contains(e.target))$('context').hidden=true;});
 $('dropzone').oncontextmenu=e=>{if(e.target.closest('.file')||busy)return;e.preventDefault();showMenu(e.clientX,e.clientY);};
+// Keyboard semantics are determined by the selected item's kind, not the
+// number of grid columns. Collection pages own horizontal arrows; media
+// owns horizontal file-to-file browsing; documents own vertical reading.
+function explorerPreviewKind(item){
+  if(!item)return 'none';
+  if(item.folder||/\.(zip|cbz)$/i.test(item.key||''))return 'collection';
+  const type=previewType(item.key)||'';
+  if(type.startsWith('image/')||type.startsWith('video/')||type.startsWith('audio/'))return 'media';
+  if(type==='application/pdf'||type.startsWith('text/'))return 'document';
+  return 'other';
+}
+function moveGridItem(direction,{preview=false}={}){
+  const rows=[...$('files').querySelectorAll('.file')];
+  const active=document.activeElement?.closest?.('#files .file');
+  const picked=chosen().length===1?chosen()[0]:null;
+  let index=rows.findIndex(row=>row===active);
+  if(index<0&&picked)index=rows.findIndex(row=>row.dataset.key===picked.key);
+  if(index<0||index+direction<0||index+direction>=rows.length)return false;
+  const target=rows[index+direction];
+  const item=visible().find(e=>e.key===target.dataset.key);
+  const wasWindow=previewMode==='window'&&$('preview-dialog').open;
+  if(wasWindow)$('preview-dialog').close();
+  target.focus({preventScroll:true});target.click();target.scrollIntoView?.({block:'nearest',inline:'nearest'});
+  // Keep the read/view experience continuous when the window was already
+  // open or an arrow requested a new preview. Never open remote folders.
+  if(item&&(preview||wasWindow)&&!(previewMode==='window'&&!item.folder&&/\.(zip|cbz)$/i.test(item.key))&&
+      (item.folder||previewType(item.key))){
+    void showPreview(item);
+  }
+  return true;
+}
+function scrollDocumentPreview(direction){
+  const view=$('preview-content');
+  const scrolling=view.querySelector('pre')||view;
+  const delta=Math.max(170,Math.round((scrolling.clientHeight||view.clientHeight||320)*.75));
+  if(typeof scrolling.scrollBy==='function')scrolling.scrollBy({top:direction*delta,behavior:'auto'});
+  else scrolling.scrollTop+=direction*delta;
+}
+function navigateSelectedArrow(key,{modal=false}={}){
+  const item=chosen().length===1?chosen()[0]:null;
+  if(!item)return false;
+  const kind=explorerPreviewKind(item),direction=key==='ArrowRight'||key==='ArrowDown'?1:-1;
+  const vertical=key==='ArrowUp'||key==='ArrowDown';
+  if(vertical){
+    if(kind==='document'){
+      if(previewItem?.key===item.key)scrollDocumentPreview(direction);
+      else void showPreview(item);
+      return true;
+    }
+    // Up/Down is always the explicit escape from ZIP/CBZ and folder reading.
+    return moveGridItem(direction);
+  }
+  if(kind==='collection'){
+    if(readerSession&&previewItem?.key===item.key)void adjacentPreview(direction,key);
+    else if(!item.folder&&archivePreviewMode==='classic')void actions.archive({classic:true,startAtEnd:direction<0});
+    else void showPreview(item,{startAtEnd:direction<0});
+    return true;
+  }
+  // A document's horizontal arrows leave the document. Individual media
+  // horizontally traverses neighboring grid entries, including archives.
+  return moveGridItem(direction,{preview:kind==='media'||kind==='document'||modal});
+}
 document.addEventListener('keydown',event=>{
   if(event.target.closest?.('.guide-card,.tour-invitation,.explorer-menu-wrap,.test-it-tools-wrap'))return;
   if(event.key==='Escape'){$('context').hidden=true;return;}
-  if(event.target.closest?.('input,select,textarea,dialog')||busy)return;
+  if(event.target.closest?.('input,select,textarea,dialog,[contenteditable="true"],video,audio,[role="slider"],[role="spinbutton"]')||busy)return;
   const modified=event.ctrlKey||event.metaKey,k=event.key.toLowerCase();
   if(event.altKey&&['ArrowLeft','ArrowRight','ArrowUp'].includes(event.key)){event.preventDefault();$({ArrowLeft:'back',ArrowRight:'forward',ArrowUp:'up'}[event.key]).click();}
-  else if(!modified&&!event.altKey&&!event.shiftKey&&['ArrowLeft','ArrowRight'].includes(event.key)&&event.target.closest?.('.file,#side-preview')&&chosen().length===1&&!chosen()[0].folder&&/\.(zip|cbz)$/i.test(chosen()[0].key)){
-    event.preventDefault();if(readerSession&&event.target.closest?.('#side-preview'))void adjacentPreview(event.key==='ArrowRight'?1:-1,event.key);else void actions.archive({startAtEnd:event.key==='ArrowLeft'});
+  else if(!modified&&!event.altKey&&!event.shiftKey&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&
+    (event.target.closest?.('#files,#side-preview')||document.activeElement?.closest?.('#files .file'))){
+    if(navigateSelectedArrow(event.key))event.preventDefault();
   }
   else if(event.key==='Backspace'){event.preventDefault();$('up').click();}
   else if(event.key==='F5'){event.preventDefault();$('refresh').click();}
   else if(modified&&event.shiftKey&&k==='n'){event.preventDefault();$('mkdir').click();}
-  else if(['ArrowDown','ArrowUp'].includes(event.key)&&event.target.closest?.('#files')){event.preventDefault();const rows=[...document.querySelectorAll('.file')],i=rows.indexOf(event.target.closest?.('.file')),next=rows[Math.max(0,Math.min(rows.length-1,i+(event.key==='ArrowDown'?1:-1)))];next?.focus();if(next&&!modified)next.click();}
   else if(modified&&k==='a'){event.preventDefault();selected=new Set(visible().map(e=>e.key));paintSelection();}
   else if(modified&&['c','x','v'].includes(k)){event.preventDefault();invokeCommand({c:'copy',x:'cut',v:'paste'}[k],'keyboard',{key:k,ctrl:true});}
   else if(event.key==='F2'){event.preventDefault();$('rename').click();}
@@ -380,6 +442,7 @@ document.addEventListener('keydown',event=>{
   else if(event.key==='Enter'&&event.target.closest?.('.file')){event.preventDefault();event.target.closest?.('.file').ondblclick();}
   else if(event.key===' '&&event.target.closest?.('.file')){event.preventDefault();event.target.closest?.('.file').click();}
 });
+
 function paintBuckets(accountId){
   const buckets=bucketCache.get(accountId)||[];
   $('buckets').replaceChildren(...buckets.map(bucket=>{
