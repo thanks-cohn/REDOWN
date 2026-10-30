@@ -443,7 +443,7 @@ $('beta-export-history').onclick=async()=>{
   try{
     const result=await request('transferHistory',{});
     const receipt=RedownHistoryExport.download(result.data.history,{document});
-    feedback.textContent='Created '+receipt.fileName+' with '+receipt.count+' event(s). Keep the file outside Chrome.';
+    feedback.textContent='JSON download requested: '+receipt.fileName+' ('+receipt.count+' event(s)). Verify it in Downloads and keep a copy outside Chrome.';
   }catch(error){feedback.textContent='History export failed: '+(error?.message||String(error))+'. Nothing was deleted.';}
   finally{button.disabled=false;}
 };
