@@ -77,7 +77,7 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({archivePreference=null,deletePreferences=null,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
+async function uiFixture({archivePreference=null,deletePreferences=null,inlineFolderButtons=false,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
@@ -87,7 +87,7 @@ async function uiFixture({archivePreference=null,deletePreferences=null,saved=nu
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,betaExplorerInlineFolderButtons:inlineFolderButtons,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
@@ -116,7 +116,7 @@ test('actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels d
     d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/root.txt"]')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Photos/root.txt').bytes.toString(),'payload');assert.ok(f.stored.has('root.txt'));
     d.querySelector('[data-key="Photos/root.txt"]').click();d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'F2',bubbles:true}));assert.ok(d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='new 雪.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/new 雪.txt"]')&&!d.querySelector('#upload').disabled);assert.ok(!f.stored.has('Photos/root.txt'));
     d.querySelector('[data-key="Photos/new 雪.txt"]').click();d.querySelector('#delete').click();assert.ok(d.querySelector('#dialog').open);d.querySelector('#dialog-cancel').click();await settle(()=>!d.querySelector('#dialog').open);assert.ok(f.stored.has('Photos/new 雪.txt'));
-    d.querySelector('#mkdir').click();d.querySelector('#inline-folder-name').value='Nested';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('[data-key="Photos/Nested/"]')&&!d.querySelector('#upload').disabled);assert.ok(f.stored.has('Photos/Nested/.redown'));
+    d.querySelector('#mkdir').click();assert.ok(d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Nested';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/Nested/"]')&&!d.querySelector('#upload').disabled);assert.ok(f.stored.has('Photos/Nested/.redown'));
     d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'a',ctrlKey:true,bubbles:true}));assert.equal(d.querySelectorAll('.file[aria-selected=true]').length,3);
     d.querySelector('#filter').value='new 雪';d.querySelector('#filter').dispatchEvent(new w.Event('input'));assert.equal(d.querySelectorAll('.file').length,1);
     d.querySelector('#view').click();assert.ok(d.querySelector('#files').classList.contains('grid'));
@@ -744,7 +744,7 @@ test('Window Preview actual Previous then Next buttons register Next without a c
 test('production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
  d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();
- d.querySelector('#mkdir').click();await settle(()=>!d.querySelector('#inline-folder').hidden);d.querySelector('#inline-folder-name').value='Fresh destination';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));
+ d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Fresh destination';d.querySelector('#dialog-confirm').click();
  await settle(()=>d.querySelector('[data-key="Fresh destination/"]')&&!d.querySelector('#mkdir').disabled);
  assert.equal(d.querySelector('[data-key="root.txt"]').getAttribute('aria-selected'),'true');assert.equal(d.querySelector('#paste').disabled,false);
  assert.equal(f.storage.betaExplorerTestIt.index,22);assert.notEqual(f.storage.betaExplorerTestIt.records[22].verdict,'PASSED');assert.equal(f.storage.betaExplorerTestIt.practiceFolders[0].status,'created');
@@ -769,7 +769,7 @@ test('ordinary GUI and embedded Worker move two Test Copies into a new folder',a
  while(d.querySelector('[data-guide-progress]').textContent!=='Question 39 of 60')d.querySelector('[data-guide-skip]').click();
  const keys=['root (copy).txt','root (copy) (copy).txt'];d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));
  const ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id);
- d.querySelector('#mkdir').click();await settle(()=>!d.querySelector('#inline-folder').hidden);d.querySelector('#inline-folder-name').value='Batch destination';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Batch destination';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
  for(const key of keys)assert.equal(d.querySelector('[data-key="'+key+'"]').getAttribute('aria-selected'),'true');
  assert.equal(f.storage.betaExplorerTestIt.index,38);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');
  d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Batch destination/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
@@ -885,7 +885,7 @@ test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and
 
 test('toolbar adjacency follows the three requested pairs with primary folder upload',async()=>{
  const dom=new JSDOM(await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'));
- try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
+ try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.ok(d.querySelector('#upload-folder').textContent.includes('Upload folder'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
 });
 for(const mode of ['side','window'])test('default archive Image Reader uses existing '+mode+' Preview, natural nested order, navigation and no extraction',async()=>{
  const f=await uiFixture({previewPreferences:{mode,width:400}}),{d,w,settle}=f;
@@ -902,12 +902,39 @@ for(const mode of ['side','window'])test('default archive Image Reader uses exis
   d.querySelector('#preview-close').click();d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));assert.equal(d.querySelector('#preview-info').textContent.includes('Page '),false);
  }finally{f.dom.window.close();}
 });
-test('inline folder creation focuses, cancels, keeps errors and creates within the exact child parent',async()=>{
+test('top New folder is the default; folder-row quick plus is a saved opt-in',async()=>{
  const f=await uiFixture(),{d,w,settle}=f;
  try{
-  d.querySelector('#mkdir').click();assert.equal(d.activeElement.id,'inline-folder-name');d.querySelector('#inline-folder-name').value='cancelled';d.querySelector('#inline-folder-name').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(d.querySelector('#inline-folder').hidden,true);assert.ok(!f.messages.some(m=>m.type==='cfCreateFolder'));
-  d.querySelector('[data-key="Photos/"] .folder-add').click();d.querySelector('#inline-folder-name').value='bad/name';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('#inline-folder-status').textContent);assert.equal(d.querySelector('#inline-folder-name').value,'bad/name');
-  d.querySelector('#inline-folder-name').value='Child';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>f.stored.has('Photos/Child/.redown')&&!d.querySelector('#mkdir').disabled);assert.equal(d.querySelector('#inline-folder').hidden,true);assert.ok(!f.stored.has('Child/.redown'));assert.equal(d.querySelector('#dialog').open,false);
+  assert.equal(d.querySelector('[data-key="Photos/"] .folder-add'),null,'no unsolicited plus in Explorer folder rows');
+  d.querySelector('#mkdir').click();
+  assert.equal(d.querySelector('#dialog').open,true,'default top action uses the familiar folder dialog');
+  assert.equal(d.querySelector('#inline-folder').hidden,true);
+  d.querySelector('#dialog-cancel').click();
+  assert.ok(!f.messages.some(m=>m.type==='cfCreateFolder'));
+  d.querySelector('#preferences').click();
+  assert.equal(d.querySelector('#pref-folder-quick-add').checked,false,'quick plus is off by default');
+  d.querySelector('#pref-folder-quick-add').checked=true;
+  d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
+  await settle(()=>!d.querySelector('#preferences-dialog').open&&d.querySelector('[data-key="Photos/"] .folder-add'));
+  assert.equal(f.storage.betaExplorerInlineFolderButtons,true);
+  const plus=d.querySelector('[data-key="Photos/"] .folder-add');plus.click();
+  assert.equal(d.activeElement.id,'inline-folder-name');
+  d.querySelector('#inline-folder-name').value='bad/name';
+  d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));
+  await settle(()=>d.querySelector('#inline-folder-status').textContent);
+  assert.equal(d.querySelector('#inline-folder-name').value,'bad/name');
+  d.querySelector('#inline-folder-name').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+  assert.equal(d.querySelector('#inline-folder').hidden,true);
+  plus.click();d.querySelector('#inline-folder-name').value='Child';
+  d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));
+  await settle(()=>f.stored.has('Photos/Child/.redown')&&!d.querySelector('#mkdir').disabled);
+  assert.equal(d.querySelector('#inline-folder').hidden,true);
+  assert.ok(!f.stored.has('Child/.redown'));
+  d.querySelector('#preferences').click();assert.equal(d.querySelector('#pref-folder-quick-add').checked,true);
+  d.querySelector('#pref-folder-quick-add').checked=false;
+  d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
+  await settle(()=>!d.querySelector('#preferences-dialog').open&&!d.querySelector('[data-key="Photos/"] .folder-add'));
+  assert.equal(f.storage.betaExplorerInlineFolderButtons,false);
  }finally{f.dom.window.close();}
 });
 test('archive with no images offers Classic; saved Classic preference persists',async()=>{
