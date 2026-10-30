@@ -659,6 +659,12 @@ $('preview-mode').onchange=event=>setPreviewMode(event.target.value);
 $('preview-mode-inline').onchange=event=>setPreviewMode(event.target.value);
 $('preview-close').onclick=()=>{closePreview();sideState='closed';if($('preview-dialog').open)$('preview-dialog').close();layoutPreview();$('preview').focus();};
 $('preview-lightbox').onclick=()=>{if($('preview-content').querySelector('img'))setLightbox(true);};
+$('side-preview').tabIndex=0;
+$('preview-content').addEventListener('click',event=>{
+  if(previewMode==='side'&&event.target.closest?.('img,pre')){
+    $('side-preview').focus({preventScroll:true});
+  }
+});
 $('preview-dialog').addEventListener('click',event=>{if(lightbox&&[ $('preview-dialog'),previewViewer,$('preview-content') ].includes(event.target))setLightbox(false);});
 $('preview-dialog').addEventListener('cancel',event=>{event.preventDefault();if(lightbox)setLightbox(false,'Escape');else $('preview-close').click();});
 document.addEventListener('keydown',event=>{
@@ -669,11 +675,13 @@ document.addEventListener('keydown',event=>{
   if(event.key!=='Escape'&&event.target.closest?.('.guide-card'))return;
   // Keep all Explorer shortcuts behind the modal, even if focus was elsewhere.
   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();if(lightbox)setLightbox(false,'Escape');else $('preview-close').click();return;}
-  if(!['ArrowLeft','ArrowRight'].includes(event.key)) {if(!event.target.closest?.('#preview-dialog'))event.stopImmediatePropagation();return;}
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){
+    if(!event.target.closest?.('#preview-dialog'))event.stopImmediatePropagation();return;
+  }
   if(event.target.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),video,audio,[role="slider"],[role="spinbutton"]'))return;
-  event.stopImmediatePropagation();
   if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
-  event.preventDefault();void adjacentPreview(event.key==='ArrowRight'?1:-1,event.key);
+  event.stopImmediatePropagation();
+  if(navigateSelectedArrow(event.key,{modal:true}))event.preventDefault();
 },true);
 $('preview-dialog').addEventListener('close',()=>{if(previewMode==='window'&&!$('preview-dialog').open)closePreview();});
 $('preview-minimize').onclick=()=>{sideState=sideState==='minimized'?'open':'minimized';if(sideState==='minimized')stopPreviewMedia();layoutPreview();if(sideState==='open')syncSideSelection();};
