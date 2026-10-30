@@ -4458,6 +4458,18 @@ $("rfis-export").addEventListener("click",async()=>{
   }finally{button.disabled=false;}
 });
 $("refresh-history").addEventListener("click",()=>renderHistory({markSeen:true}));
+$("export-history").addEventListener("click",async()=>{
+  const button=$("export-history"),feedback=$("history-export-status");
+  if(button.disabled)return;
+  button.disabled=true;feedback.textContent="Preparing the complete local History export…";
+  try{
+    const result=await send({type:"transferHistory"});
+    if(!result?.ok||!Array.isArray(result.transferHistory))throw Error(result?.error||"History could not be loaded.");
+    const receipt=RedownHistoryExport.download(result.transferHistory,{document});
+    feedback.textContent="Created "+receipt.fileName+" with "+receipt.count+" recorded event(s). Keep this JSON file somewhere safe.";
+  }catch(error){feedback.textContent="History export failed: "+(error?.message||String(error))+". Your saved History was not erased.";}
+  finally{button.disabled=false;}
+});
 
 let downloadsDirty=false;
 chrome.storage.onChanged.addListener((changes,area)=>{
