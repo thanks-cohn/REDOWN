@@ -1,0 +1,1899 @@
+{
+  "revision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "oldRevision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+  "scope": "isolated actual-source extraction, synthetic state, no installed Chrome or provider calls",
+  "reports": [
+    {
+      "case": "P1 actual Legacy callbacks vs actual Modern UI same bucket/deep folder/add/remove",
+      "result": "PASS",
+      "historicalWrites": 3,
+      "legacyTiming": "primary debounce 180ms; extra add/remove immediate; observed after 240ms",
+      "modernBeforeSave": {
+        "savedPrefix": "photos/deep",
+        "savedExtra": [
+          "extra"
+        ],
+        "draftStatus": "Unsaved changes · Save menu to apply them."
+      },
+      "historical": {
+        "profiles": [
+          {
+            "id": "p",
+            "accountId": "a",
+            "bucketName": "art",
+            "menuLabel": "Art",
+            "defaultPrefix": "photos/deep",
+            "simpleBucketName": "art",
+            "simpleOptions": [
+              {
+                "id": "parity-added",
+                "label": "",
+                "bucketName": "art",
+                "prefix": ""
+              }
+            ],
+            "showInContextMenu": true,
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "n",
+                      "name": "photos",
+                      "ready": true,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "simple-option:p:parity-added",
+            "parentId": "redown",
+            "title": "art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": false,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "resolved": [
+          {
+            "id": "quick:p",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "photos/deep"
+            }
+          },
+          {
+            "id": "simple-option:p:parity-added",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "modern": {
+        "profiles": [
+          {
+            "id": "p",
+            "accountId": "a",
+            "bucketName": "art",
+            "menuConfigVersion": 1,
+            "menuLabel": "Art",
+            "defaultPrefix": "photos/deep",
+            "simpleBucketName": "art",
+            "simpleOptions": [
+              {
+                "id": "parity-added",
+                "label": "",
+                "bucketName": "art",
+                "prefix": "",
+                "order": 2
+              }
+            ],
+            "simplePrimaryOrder": 0,
+            "explorerManaged": false,
+            "showInContextMenu": true,
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "n",
+                      "name": "photos",
+                      "ready": true,
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "simple-option:p:parity-added",
+            "parentId": "redown",
+            "title": "art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": false,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "resolved": [
+          {
+            "id": "quick:p",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "photos/deep"
+            }
+          },
+          {
+            "id": "simple-option:p:parity-added",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "descriptorDiff": []
+    },
+    {
+      "case": "P2 removeAll failure",
+      "result": "PASS",
+      "receipt": {
+        "ok": true,
+        "signature": "[\"simple\",[{\"id\":\"p\",\"accountId\":\"a\",\"bucketName\":\"art\",\"menuConfigVersion\":1,\"menuLabel\":\"After save\",\"defaultPrefix\":\"\",\"simpleOptions\":[{\"id\":\"extra\",\"label\":\"Photos\",\"bucketName\":\"art\",\"prefix\":\"photos\"}],\"showInContextMenu\":true,\"nestedMenu\":{\"version\":1,\"enabled\":true,\"roots\":[{\"id\":\"r\",\"bucketName\":\"art\",\"ready\":true,\"children\":[{\"id\":\"n\",\"name\":\"photos\",\"ready\":true,\"children\":[]}]}]}}]]",
+        "menuUpdated": false,
+        "error": "Saved, but Chrome could not update its menu. Retry Save to rebuild."
+      },
+      "savedLabel": "After save",
+      "previousRegisteredDescriptors": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "quick:p",
+          "parentId": "redown",
+          "title": "Art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "simple-option:p:extra",
+          "parentId": "redown",
+          "title": "Photos",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": false,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "remainingRegisteredDescriptors": [
+        {
+          "id": "redown",
+          "title": "REDOWN",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "quick:p",
+          "parentId": "redown",
+          "title": "Art",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "simple-option:p:extra",
+          "parentId": "redown",
+          "title": "Photos",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-mode-separator",
+          "parentId": "redown",
+          "type": "separator",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-nested-mode",
+          "parentId": "redown",
+          "type": "checkbox",
+          "title": "Use nested menu",
+          "checked": false,
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-saved-urls",
+          "parentId": "redown",
+          "title": "View saved object's URLs…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "redown-manage",
+          "parentId": "redown",
+          "title": "Manage destinations…",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "interpretation": "mock retained old menu; real rejection may have different side effects, unknown"
+    },
+    {
+      "case": "P3 eight levels historic/current actual builders",
+      "result": "PASS expected structural divergence",
+      "historical": {
+        "profiles": [
+          {
+            "id": "p",
+            "accountId": "a",
+            "bucketName": "art",
+            "menuLabel": "Art",
+            "defaultPrefix": "",
+            "simpleOptions": [
+              {
+                "id": "extra",
+                "label": "Photos",
+                "bucketName": "art",
+                "prefix": "photos"
+              }
+            ],
+            "showInContextMenu": true,
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "level1",
+                      "name": "level1",
+                      "ready": true,
+                      "children": [
+                        {
+                          "id": "level2",
+                          "name": "level2",
+                          "ready": true,
+                          "children": [
+                            {
+                              "id": "level3",
+                              "name": "level3",
+                              "ready": true,
+                              "children": [
+                                {
+                                  "id": "level4",
+                                  "name": "level4",
+                                  "ready": true,
+                                  "children": [
+                                    {
+                                      "id": "level5",
+                                      "name": "level5",
+                                      "ready": true,
+                                      "children": [
+                                        {
+                                          "id": "level6",
+                                          "name": "level6",
+                                          "ready": true,
+                                          "children": [
+                                            {
+                                              "id": "level7",
+                                              "name": "level7",
+                                              "ready": true,
+                                              "children": [
+                                                {
+                                                  "id": "level8",
+                                                  "name": "level8",
+                                                  "ready": true,
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:r",
+            "parentId": "redown",
+            "title": "art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:r:send",
+            "parentId": "nested:p:r:r",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level1",
+            "parentId": "nested:p:r:r",
+            "title": "level1",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level1:send",
+            "parentId": "nested:p:r:level1",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level2",
+            "parentId": "nested:p:r:level1",
+            "title": "level2",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level3",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level4",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level5",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level6",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level7",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6 / level7",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level8",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6 / level7 / level8",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": true,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "resolved": [
+          {
+            "id": "nested:p:r:r",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "nested:p:r:r:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "nested:p:r:level1",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1"
+            }
+          },
+          {
+            "id": "nested:p:r:level1:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1"
+            }
+          },
+          {
+            "id": "nested:p:r:level2",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2"
+            }
+          },
+          {
+            "id": "nested:p:r:level3",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3"
+            }
+          },
+          {
+            "id": "nested:p:r:level4",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4"
+            }
+          },
+          {
+            "id": "nested:p:r:level5",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5"
+            }
+          },
+          {
+            "id": "nested:p:r:level6",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6"
+            }
+          },
+          {
+            "id": "nested:p:r:level7",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6/level7"
+            }
+          },
+          {
+            "id": "nested:p:r:level8",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6/level7/level8"
+            }
+          }
+        ]
+      },
+      "modern": {
+        "profiles": [
+          {
+            "id": "p",
+            "accountId": "a",
+            "bucketName": "art",
+            "menuLabel": "Art",
+            "defaultPrefix": "",
+            "simpleOptions": [
+              {
+                "id": "extra",
+                "label": "Photos",
+                "bucketName": "art",
+                "prefix": "photos"
+              }
+            ],
+            "showInContextMenu": true,
+            "nestedMenu": {
+              "version": 1,
+              "enabled": true,
+              "roots": [
+                {
+                  "id": "r",
+                  "bucketName": "art",
+                  "ready": true,
+                  "children": [
+                    {
+                      "id": "level1",
+                      "name": "level1",
+                      "ready": true,
+                      "children": [
+                        {
+                          "id": "level2",
+                          "name": "level2",
+                          "ready": true,
+                          "children": [
+                            {
+                              "id": "level3",
+                              "name": "level3",
+                              "ready": true,
+                              "children": [
+                                {
+                                  "id": "level4",
+                                  "name": "level4",
+                                  "ready": true,
+                                  "children": [
+                                    {
+                                      "id": "level5",
+                                      "name": "level5",
+                                      "ready": true,
+                                      "children": [
+                                        {
+                                          "id": "level6",
+                                          "name": "level6",
+                                          "ready": true,
+                                          "children": [
+                                            {
+                                              "id": "level7",
+                                              "name": "level7",
+                                              "ready": true,
+                                              "children": [
+                                                {
+                                                  "id": "level8",
+                                                  "name": "level8",
+                                                  "ready": true,
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "descriptors": [
+          {
+            "id": "redown",
+            "title": "REDOWN",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:r",
+            "parentId": "redown",
+            "title": "art",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:r:send",
+            "parentId": "nested:p:r:r",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level1",
+            "parentId": "nested:p:r:r",
+            "title": "level1",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level1:send",
+            "parentId": "nested:p:r:level1",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level2",
+            "parentId": "nested:p:r:level1",
+            "title": "level2",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level2:send",
+            "parentId": "nested:p:r:level2",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level3",
+            "parentId": "nested:p:r:level2",
+            "title": "level3",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level3:send",
+            "parentId": "nested:p:r:level3",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level4",
+            "parentId": "nested:p:r:level3",
+            "title": "level4",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level4:send",
+            "parentId": "nested:p:r:level4",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level5",
+            "parentId": "nested:p:r:level4",
+            "title": "level5",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level5:send",
+            "parentId": "nested:p:r:level5",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level6",
+            "parentId": "nested:p:r:level5",
+            "title": "level6",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level6:send",
+            "parentId": "nested:p:r:level6",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level7",
+            "parentId": "nested:p:r:level6",
+            "title": "level7",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level7:send",
+            "parentId": "nested:p:r:level7",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "nested:p:r:level8",
+            "parentId": "nested:p:r:level7",
+            "title": "level8",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown",
+            "type": "separator",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "type": "checkbox",
+            "title": "Use nested menu",
+            "checked": true,
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "resolved": [
+          {
+            "id": "nested:p:r:r",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "nested:p:r:r:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "nested:p:r:level1",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1"
+            }
+          },
+          {
+            "id": "nested:p:r:level1:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1"
+            }
+          },
+          {
+            "id": "nested:p:r:level2",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2"
+            }
+          },
+          {
+            "id": "nested:p:r:level2:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2"
+            }
+          },
+          {
+            "id": "nested:p:r:level3",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3"
+            }
+          },
+          {
+            "id": "nested:p:r:level3:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3"
+            }
+          },
+          {
+            "id": "nested:p:r:level4",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4"
+            }
+          },
+          {
+            "id": "nested:p:r:level4:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4"
+            }
+          },
+          {
+            "id": "nested:p:r:level5",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5"
+            }
+          },
+          {
+            "id": "nested:p:r:level5:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5"
+            }
+          },
+          {
+            "id": "nested:p:r:level6",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6"
+            }
+          },
+          {
+            "id": "nested:p:r:level6:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6"
+            }
+          },
+          {
+            "id": "nested:p:r:level7",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6/level7"
+            }
+          },
+          {
+            "id": "nested:p:r:level7:send",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6/level7"
+            }
+          },
+          {
+            "id": "nested:p:r:level8",
+            "target": {
+              "owner": "p",
+              "accountId": "a",
+              "bucketName": "art",
+              "prefix": "level1/level2/level3/level4/level5/level6/level7/level8"
+            }
+          }
+        ]
+      },
+      "descriptorDiff": [
+        {
+          "id": "nested:p:r:level2:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level2:send",
+            "parentId": "nested:p:r:level2",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level3",
+          "historical": {
+            "id": "nested:p:r:level3",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level3",
+            "parentId": "nested:p:r:level2",
+            "title": "level3",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level3:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level3:send",
+            "parentId": "nested:p:r:level3",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level4",
+          "historical": {
+            "id": "nested:p:r:level4",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level4",
+            "parentId": "nested:p:r:level3",
+            "title": "level4",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level4:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level4:send",
+            "parentId": "nested:p:r:level4",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level5",
+          "historical": {
+            "id": "nested:p:r:level5",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level5",
+            "parentId": "nested:p:r:level4",
+            "title": "level5",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level5:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level5:send",
+            "parentId": "nested:p:r:level5",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level6",
+          "historical": {
+            "id": "nested:p:r:level6",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level6",
+            "parentId": "nested:p:r:level5",
+            "title": "level6",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level6:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level6:send",
+            "parentId": "nested:p:r:level6",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level7",
+          "historical": {
+            "id": "nested:p:r:level7",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6 / level7",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level7",
+            "parentId": "nested:p:r:level6",
+            "title": "level7",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level7:send",
+          "historical": null,
+          "current": {
+            "id": "nested:p:r:level7:send",
+            "parentId": "nested:p:r:level7",
+            "title": "Send here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        },
+        {
+          "id": "nested:p:r:level8",
+          "historical": {
+            "id": "nested:p:r:level8",
+            "parentId": "nested:p:r:level1",
+            "title": "level2 / level3 / level4 / level5 / level6 / level7 / level8",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          "current": {
+            "id": "nested:p:r:level8",
+            "parentId": "nested:p:r:level7",
+            "title": "level8",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case": "P4 genuine historical/current click listeners: page/link/image/video, mode mismatch, deleted/malformed",
+      "result": "PASS expected safety divergence",
+      "historical": {
+        "calls": [
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/page"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/link"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/image"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/video"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/page"
+          }
+        ],
+        "notices": [
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN",
+            "That Simple destination is no longer available."
+          ]
+        ],
+        "history": [
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/page",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/link",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/image",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/video",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/page",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          }
+        ],
+        "modeMismatch": 1,
+        "afterDeleted": 5
+      },
+      "modern": {
+        "calls": [
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/page"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/link"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/image"
+          },
+          {
+            "accountId": "a",
+            "bucketName": "art",
+            "prefix": "photos",
+            "url": "https://fixture.test/video"
+          }
+        ],
+        "notices": [
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN complete",
+            "mock-receipt"
+          ],
+          [
+            "REDOWN",
+            "That destination is inactive or was removed. Open Right-click setup in Explorer."
+          ],
+          [
+            "REDOWN",
+            "That destination is inactive or was removed. Open Right-click setup in Explorer."
+          ],
+          [
+            "REDOWN",
+            "That destination is inactive or was removed. Open Right-click setup in Explorer."
+          ]
+        ],
+        "history": [
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/page",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/link",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/image",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          },
+          {
+            "pageUrl": "https://fixture.test/page",
+            "ok": true,
+            "sourceUrl": "https://fixture.test/video",
+            "profileId": "p",
+            "category": "files",
+            "location": "mock-receipt"
+          }
+        ],
+        "modeMismatch": 0,
+        "afterDeleted": 4
+      },
+      "interpretation": "Legacy stale Simple ID can transfer while Nested active; Modern rejects freshly. Transfer stub proves dispatch target only, not Worker bytes."
+    },
+    {
+      "case": "P5 assembled Nested prefix validation gap",
+      "result": "PASS reproduced negative gap",
+      "prefixCharacters": 1207,
+      "prefixBytes": 1207,
+      "receipt": {
+        "ok": true,
+        "signature": "[\"nested\",[{\"id\":\"p\",\"accountId\":\"a\",\"bucketName\":\"art\",\"menuConfigVersion\":1,\"menuLabel\":\"Art\",\"defaultPrefix\":\"\",\"simpleOptions\":[{\"id\":\"extra\",\"label\":\"Photos\",\"bucketName\":\"art\",\"prefix\":\"photos\"}],\"showInContextMenu\":true,\"nestedMenu\":{\"version\":1,\"enabled\":true,\"roots\":[{\"id\":\"r\",\"bucketName\":\"art\",\"ready\":true,\"children\":[{\"id\":\"long1\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long2\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long3\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long4\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long5\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long6\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long7\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[{\"id\":\"long8\",\"name\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"ready\":true,\"children\":[]}]}]}]}]}]}]}]}]}]}}]]",
+        "menuUpdated": true
+      },
+      "descriptor": {
+        "id": "nested:p:r:long8",
+        "parentId": "nested:p:r:long7",
+        "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      "resolved": null,
+      "interpretation": "Save validates names/depth but not concatenated prefix; resolver rejects over1024 JS length. Synthetic, not owner attribution."
+    },
+    {
+      "case": "P6 hidden managed Nested profile validates despite planner exclusion",
+      "result": "PASS reproduced negative gap",
+      "error": "Choose or create every active Nested folder before saving.",
+      "storageWrites": 0,
+      "hiddenProfileHasPlannedEntries": false,
+      "interpretation": "Corrupt/imported synthetic managed profile, not normal activation/owner state. Validator selection differs from planner selection."
+    }
+  ]
+}

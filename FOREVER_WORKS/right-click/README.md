@@ -52,3 +52,5 @@ Start with [main Legacy-success/Modern-failure differential](FORENSIC_LEGACY_VS_
 ## Phase 3 wiring contract and reconstruction audit
 
 [Phase 3 entry](phase-3/README.md) → [UI-to-wiring contract](phase-3/UI_TO_WIRING_CONTRACT.md), [current control census](phase-3/CURRENT_MODERN_END_TO_END.md), [new parity evidence](phase-3/evidence/parity.json) and [handoff](phase-3/HANDOFF_LATEST.md). Audit-only, source pinned to b717844; installed/native/live acceptance remains PARTIAL. Previous phases and canonical authority remain unchanged.
+
+Phase3 independent continuation: [expanded source-wiring contract and handoff](phase-3/source-wiring-continuation/README.md), including per-control bindings and additional conditional validation reproductions. Existing Phase3 audit/evidence are preserved.

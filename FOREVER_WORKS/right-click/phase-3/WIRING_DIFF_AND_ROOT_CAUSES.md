@@ -26,3 +26,7 @@ P1 is a useful positive counterexample: current valid prepared state reaches exa
 New boundary precision: removeAll rejection occurs after storage but before any new create; clear-on-create failure is another branch. Missing native receipt means neither persisted signature nor UI success can certify current registered revision. Native mode bypasses full definition validation, whereas mode button profiles:[] still validates saved active definitions. Keep those paths distinct in future tests.
 
 No REPRODUCED BROWSER CAUSE is claimed. Current public/source evidence contains no actual owner installed snapshot or native registration error. Preserve this gap rather than naming one convenient culprit.
+
+## Independent source-wiring continuation
+
+[Independent source-wiring root causes](source-wiring-continuation/WIRING_DIFF_AND_ROOT_CAUSES.md) add F14/F15: eight individually valid150-character Nested segments save/build but assembled1207-character prefix fails resolve; an explorerManaged enabled blank Nested model can reject Save despite planner exclusion. Actual synthetic-source fixtures only; no owner-installed attribution. It also independently compares genuine historical/current mode-mismatched clicks. P numbers refer to that continuation only.

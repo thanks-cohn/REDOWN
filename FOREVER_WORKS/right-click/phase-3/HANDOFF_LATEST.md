@@ -29,3 +29,7 @@ Rebuild only the Modern Right-click setup view and local adapter over existing c
 Immediate continuation if more audit proof is needed: obtain a redacted same-installed-version owner failing sequence, compare draft/saved/plan/native callbacks/render/resolve before changing data. Then run approved disposable native lifecycle/multi-window and separately authorized exact-byte provider tests. Do not use preparation endpoints as read-only diagnostics.
 
 Fresh reconciliation: original seven-suite focused88/85/3; alternate set86/83/3; full686/634/52, zero full failure-name changes vs Phase2. Actual historical/current quick click listener calls match in P11. Detailed source/evidence manifest and local validation accompany this handoff.
+
+## Independent source-wiring continuation
+
+The [independent continuation handoff](source-wiring-continuation/HANDOFF_LATEST.md) contains the detailed per-control contract, expanded source index, preserved raw logs and new conditional validation findings. This remote package was preserved in full before that continuation was added; no production code or existing evidence was overwritten. Source/local results remain at b717844, native/provider acceptance PARTIAL.

@@ -1,0 +1,10 @@
+{
+  "priorRevision": "2e65ba137a35e1656b691fd2fdbf95082a0cdf4e",
+  "currentRevision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "priorFailureCount": 52,
+  "freshFailureCount": 52,
+  "added": [],
+  "removed": [],
+  "freshPassed": 634,
+  "freshSkipped": 0
+}

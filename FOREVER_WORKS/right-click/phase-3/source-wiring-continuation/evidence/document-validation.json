@@ -1,0 +1,38 @@
+{
+  "sourceRevision": "b7178442c26c7723a9a650613ef65ba38ce26b21",
+  "integrationHead": "515c7d80fae9c620538cc98443e6ec2200856244",
+  "chapters": 12,
+  "currentSourcePaths": 21,
+  "sourceNamedFunctionAnchors": 364,
+  "sourceEventSites": 194,
+  "parityReports": 6,
+  "preservedRemotePrefixes": [
+    {
+      "file": "FOREVER_WORKS/right-click/README.md",
+      "preservedPrefix": true
+    },
+    {
+      "file": "FOREVER_WORKS/right-click/phase-3/HANDOFF_LATEST.md",
+      "preservedPrefix": true
+    },
+    {
+      "file": "FOREVER_WORKS/right-click/phase-3/README.md",
+      "preservedPrefix": true
+    },
+    {
+      "file": "FOREVER_WORKS/right-click/phase-3/REGRESSION_AND_ACCEPTANCE_MATRIX.md",
+      "preservedPrefix": true
+    },
+    {
+      "file": "FOREVER_WORKS/right-click/phase-3/UI_TO_WIRING_CONTRACT.md",
+      "preservedPrefix": true
+    },
+    {
+      "file": "FOREVER_WORKS/right-click/phase-3/WIRING_DIFF_AND_ROOT_CAUSES.md",
+      "preservedPrefix": true
+    }
+  ],
+  "productionDiff": [],
+  "authoredWhitespaceExit": 0,
+  "errors": []
+}

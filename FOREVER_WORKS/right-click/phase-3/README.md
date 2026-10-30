@@ -15,3 +15,7 @@ Starting branch `release/cloudflare-true-remote`, HEAD b7178442c26c7723a9a650613
 5. [Provider seams](FUTURE_PROVIDER_SEAMS.md), [coverage](EVIDENCE_AND_COVERAGE_LEDGER.md), [handoff](HANDOFF_LATEST.md), [76 exact anchors](SOURCE_INDEX.json).
 
 Each source-index entry links immutable source lines. Earlier phases are preserved under [parent route](../README.md). Historical reliability is the owner's report; the experiments explain particular reliable behaviors, not a universal guarantee. This audit never reinstates the old writer, native tree fallback, new UI or provider API.
+
+## Independent source-wiring continuation
+
+Read the [independent source-wiring continuation](source-wiring-continuation/README.md) for a detailed per-control binding ledger, complete replacement-field/save receipt contract, six additional actual-source parity/negative observations, new assembled Nested path/hidden-managed validation gaps and a separately preserved handoff. Both audits are source-pinned to b717844; P numbers are independent namespaces.

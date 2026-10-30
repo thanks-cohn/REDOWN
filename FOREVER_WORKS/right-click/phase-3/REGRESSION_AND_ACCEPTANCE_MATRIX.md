@@ -36,3 +36,7 @@ Current local evidence is not a universal release certificate. P = new actual-so
 Freeze source revision and isolated inputs. Compare full descriptors and separately resolve each actionable ID to exact account/bucket/prefix. Retain before/after save baseline, draft, callback failures and deterministic order. New UI must match current supported valid-state fixtures, then explicitly handle the known negative cases. Do not delete old tests to erase failures or update frozen hashes to manufacture freshness.
 
 For approved installed acceptance, capture matching installed fingerprint, same saved model/mode, actual native menu and click target at every boundary, with redacted private evidence. Test dirty/clean windows, actual service-worker termination, lifecycle rebuilds, callback errors and real constrained panels separately from local mocks. Separately authorized provider tests need real receipt and independent byte/target checks. Until then final answer to universal reconstruction acceptance is PARTIAL.
+
+## Independent source-wiring continuation
+
+The [expanded regression contract](source-wiring-continuation/REGRESSION_AND_ACCEPTANCE_MATRIX.md) adds explicit assembled-prefix/hidden-managed negative requirements and a six-case independent actual-source parity package. Its fresh original focused85/88 and full634/686 have the same52 failure names as Phase2; no installed/live acceptance is added.

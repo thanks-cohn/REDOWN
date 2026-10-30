@@ -1,0 +1,137 @@
+[
+  {
+    "name": "start-guide",
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "getStartGuide"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "registry",
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "validateRegistry"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "issues",
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "listIssues"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "readiness",
+    "command": [
+      "npm",
+      "run",
+      "diagnostics",
+      "--",
+      "getReleaseReadiness"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "forever-describe",
+    "command": [
+      "node",
+      "FOREVER_WORKS/tools/query.mjs",
+      "describe"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "focused",
+    "command": [
+      "node",
+      "--test",
+      "tests/modern-destinations.test.mjs",
+      "tests/nested-locations.test.mjs",
+      "tests/simple-menu-flat.test.mjs",
+      "tests/menu-reorder.test.mjs",
+      "tests/popup-destinations.test.mjs",
+      "tests/explorer-destination-menu.test.mjs",
+      "tests/destination-search-regression.test.mjs"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "reliability",
+    "command": [
+      "npm",
+      "run",
+      "reliability:check"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "forever-model",
+    "command": [
+      "node",
+      "FOREVER_WORKS/tools/query.mjs",
+      "validateModel"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "preservation",
+    "command": [
+      "node",
+      "FOREVER_WORKS/tools/check-preservation.mjs"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "forever-validation",
+    "command": [
+      "python3",
+      "FOREVER_WORKS/tools/validate.py"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "npm-ci",
+    "command": [
+      "npm",
+      "ci",
+      "--cache",
+      "/workspace/.npm-cache",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "exit": 0,
+    "log": "npm-ci.log"
+  },
+  {
+    "name": "phase2-recheck",
+    "command": [
+      "node",
+      "work/phase3/phase2-recheck.mjs"
+    ],
+    "exit": 0,
+    "log": "phase2-recheck.log"
+  },
+  {
+    "name": "parity",
+    "command": [
+      "node",
+      "work/phase3/parity.mjs"
+    ],
+    "exit": 0,
+    "log": "parity.json",
+    "stderr": "parity.stderr",
+    "cases": 6
+  }
+]

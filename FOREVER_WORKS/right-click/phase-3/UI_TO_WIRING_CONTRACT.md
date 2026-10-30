@@ -76,3 +76,7 @@ Proposed status states: Unsaved; Saving; Saved/registration pending; Registered 
 ## Reuse gate
 
 For valid prepared R2 fixtures, preserve exact current IDs/order/parents/context/targets before/after view replacement. Run no-resurrection, red ×/Undo, inactive-mode retention, stale signature, delayed infrastructure merge, current click listener, failure and narrow-layout gates. Resolve or explicitly exclude malformed IDs, excessive UTF-8 keys and unverified migration readiness before claiming all destinations supported. Preserve owner-directed folder outline, separated tabs, permanent red deletion controls and premium responsive hierarchy. No production implementation occurs in Phase 3.
+
+## Independent source-wiring continuation
+
+The [expanded interface-to-wiring contract](source-wiring-continuation/UI_TO_WIRING_CONTRACT.md) details full-field replacement versus mode-only save, exact sender/private/exported boundaries, exceptional writers, multi-window signatures and proposed status/view boundary. [Additional P5/P6 evidence](source-wiring-continuation/evidence/parity.json) reproduces assembled Nested prefix and hidden-managed validator/planner gaps; do not infer universal validation/resolution equivalence.
