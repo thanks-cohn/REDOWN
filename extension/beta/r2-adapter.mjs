@@ -136,7 +136,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
     },
     async profiles(_,o){const result=await message('profiles',{},o);return {profiles:(result.profiles||[]).filter(p=>p.type==='cloudflare-r2').map(p=>({id:p.id,name:p.name,accountId:p.accountId,accountName:p.accountName,bucketName:p.defaultBucketName||p.bucketName,prefix:p.defaultPrefix||''}))};},
     async transferHistory(_,o){const result=await message('transferHistory',{},o);return {history:result.transferHistory||[]};},
-    prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification}));},
+    prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification,menuUpdated:result.menuUpdated,menuError:result.menuError}));},
     createBucket:({accountId,name:n},o)=>message('cfCreateBucket',{accountId,name:n},o),
     publicUrls:({source},o)=>message('cfPublicAddresses',location(source),o),
     async listRaw({source,cursor=''},options={}) {
