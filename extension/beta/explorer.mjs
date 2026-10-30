@@ -9,6 +9,35 @@ let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
 let savedProfiles=[],previewUrl='',previewItem=null,listingState='disconnected',lastLocation=null,discoveryEpoch=0,cloudflareSignedIn=false;
+let activationState='idle',activationSource=null,activationReason='',activationEpoch=0;
+function paintActivation(){
+  const action=$('prepare'),label=action.querySelector('.bucket-activation-label');
+  const selected=activationSource&&sameBucket(current,activationSource);
+  action.hidden=!(selected&&['needed','unknown','checking','activating'].includes(activationState));
+  action.dataset.state=activationState;
+  action.disabled=busy||activationState==='checking'||activationState==='activating';
+  if(label)label.textContent=activationState==='checking'?'Checking bucket…':activationState==='activating'?'Activating…':activationState==='unknown'?'Check bucket setup':'Activate Buckets';
+  action.title=activationReason||'Activate REDOWN for this bucket. Refresh only reloads files.';
+  action.setAttribute('aria-label',(label?.textContent||'Activate Buckets')+' for '+(activationSource?.bucketName||'selected bucket'));
+}
+function resetActivation(){activationEpoch++;activationState='idle';activationSource=null;activationReason='';paintActivation();}
+async function checkActivation(source){
+  if(!source||!sameBucket(current,source)){resetActivation();return null;}
+  const ticket=++activationEpoch;
+  activationSource={accountId:source.accountId,bucketName:source.bucketName};
+  activationState='checking';activationReason='Checking the REDOWN Worker configuration for '+source.bucketName;paintActivation();
+  const result=await api.run('connectionStatus',{source});
+  if(ticket!==activationEpoch||!sameBucket(current,source))return null;
+  if(result.state==='completed'){
+    activationState=result.data?.ready?'ready':'needed';
+    activationReason=result.data?.reason||'REDOWN activation is required for file changes.';
+  }else{
+    activationState='unknown';
+    activationReason='Bucket setup could not be checked: '+(result.error||'Unknown error')+'. This does not establish missing permissions.';
+  }
+  paintActivation();
+  return activationState==='ready'?true:activationState==='needed'?false:null;
+}
 function paintLogout(auth){
   cloudflareSignedIn=Boolean(auth?.accessToken);
   $('session-actions').hidden=!cloudflareSignedIn;
@@ -78,7 +107,7 @@ function controls(){
   for(const id of ['rename','properties','get-url'])$(id).disabled=locked||selected.size!==1;
   $('archive').disabled=locked||selected.size!==1||chosen()[0]?.folder||!(/\.(zip|cbz)$/i.test(chosen()[0]?.key||''));
   $('preview').disabled=locked||selected.size!==1||(previewMode==='window'&&(chosen()[0]?.folder||!previewType(chosen()[0]?.key||'')));
-  $('prepare').disabled=locked||!current;$('create-bucket').disabled=locked||!$('accounts').value;
+  paintActivation();$('create-bucket').disabled=locked||!$('accounts').value;
   $('download').disabled=locked||!selected.size||chosen().some(e=>e.folder);
   $('paste').disabled=locked||!clipboard||!current;
   $('connect').disabled=busy;$('disconnect').disabled=busy||!cloudflareSignedIn;
@@ -139,9 +168,10 @@ async function listing(add=false){
 async function navigate(target,record=true,restore=false,origin=null){
   const previous=context(),testItCorrelation=practice?.capture();
   if(busy)return;let next;try{next={...target,prefix:prefix(target.prefix||'')};}catch(e){status(e.message);return;}current=next;selected.clear();anchor=-1;items=[];cursor='';$('filter').value='';epoch++;
+  if(!sameBucket(previous,next))resetActivation();
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   $('accounts').value=next.accountId;syncAccountPicker();paintBuckets(next.accountId);render();
-  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);}
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');if(!sameBucket(previous,next)||activationState==='idle'||activationState==='unknown')void checkActivation(next);guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);void checkActivation(next);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -152,7 +182,7 @@ async function run(task,{refresh=true,checkWorker=refresh}={}) {
 async function ensureWorker(source,signal){
   const result=await request('connectionStatus',{source},{signal});
   if(result.data.ready)return;
-  $('refresh').classList.add('attention');
+  if(sameBucket(current,source)){activationSource={accountId:source.accountId,bucketName:source.bucketName};activationState='needed';activationReason=result.data.reason;paintActivation();}
   throw Error(result.data.reason+' No file changes were sent.');
 }
 function outcome(result){
@@ -177,7 +207,8 @@ const actions={
   },{refresh:false});},
   async preview(){const e=chosen()[0];if(e&&!busy)await showPreview(e);},
   async 'get-url'(){const e=chosen()[0],source=context();if(!e||busy)return;
-    const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,onState:status});
+    const menu=globalThis.RedownPublicAddresses.popover({document,load:async source=>(await request('publicUrls',{source})).data,
+      enable:source=>chrome.runtime.sendMessage({type:'cfEnablePublicAccess',...source,confirmed:true}),onState:status});
     await menu.show({source,key:e.key,name:e.displayName,returnFocus:$('get-url'),isCurrent:()=>current?.accountId===source.accountId&&current?.bucketName===source.bucketName});
   },
   async duplicate(){if(busy||!selected.size)return;guideAction('command',{action:'duplicate'});await actions.paste(context(),{source:context(),entries:chosen().map(e=>({...e})),operation:'copy',conflict:'keep'});},
@@ -251,6 +282,7 @@ function paintBuckets(accountId){
 }
 async function loadBuckets(){
   const accountId=$('accounts').value;if(!accountId)return;
+  resetActivation();
   const ticket=++discoveryEpoch;epoch++;current=null;items=[];selected.clear();cursor='';
   $('buckets').replaceChildren();connectionState('loading','Discovering R2 buckets…');render();
   try{const result=await request('buckets',{accountId});if(ticket!==discoveryEpoch)return;
@@ -269,6 +301,7 @@ async function loadAccounts(preferred=current||lastLocation){
     render();
     return;
   }
+  resetActivation();
   const ticket=++discoveryEpoch;epoch++;items=[];selected.clear();cursor='';accountVisual('loading');connectionState('loading','Discovering Cloudflare accounts and R2 buckets…');render();
   try{
     const result=await request('accounts',{});if(ticket!==discoveryEpoch)return;
@@ -297,7 +330,7 @@ async function refreshConnection(){
     const result=await listing();
     if(!result)return;
     await rememberLocation(target);
-    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);guideAction('refresh',{testItCorrelation});
+    status('Live R2 contents refreshed: '+target.bucketName+'/'+target.prefix);if(activationState==='unknown'||activationState==='needed')void checkActivation(target);guideAction('refresh',{testItCorrelation});
   }catch(error){
     failure(error);
     // Discovery is recovery, not a prerequisite for ordinary folder refresh.
@@ -316,13 +349,13 @@ $('disconnect').onclick=async()=>{
   await run(async()=>{
     await request('disconnect',{});
     paintLogout(null);
-    current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();
+    resetActivation();current=null;items=[];selected.clear();cursor='';clipboard=null;accounts=[];history=[];historyIndex=-1;bucketCache.clear();
     connectionState('disconnected');
     $('accounts').replaceChildren();accountVisual('disconnected');$('buckets').replaceChildren();
     render();status('Logged out of Cloudflare. Your cloud files remain untouched.');
   },{refresh:false});
 };
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local'||!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -332,7 +365,17 @@ async function loadProfiles(){
 }
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;syncAccountPicker();await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
-$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;if(!await dialog('Set up right-click destination?',{input:false,description:'Deploys or updates the existing REDOWN Worker for '+source.bucketName+' and saves a destination profile. Existing profile settings are retained. Creates default destination folders. This uses the original setup service.',confirm:'Set up destination'}))return;await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();status(result.data.verification?.workerReachable?'Destination setup verified by the original service. Configure Simple or Nested menus in Original Explorer settings.':'Setup returned without reachability verification. Check Original Explorer settings.');},{checkWorker:false});};
+$('prepare').onclick=async()=>{const source=context();if(!source||busy)return;
+  if(activationState==='unknown'){await checkActivation(source);if(activationState!=='needed'){status(activationState==='ready'?'Bucket already active.':'Bucket setup could not be verified. Check your Cloudflare sign-in and permissions before retrying.');return;}}
+  if(!await dialog('Activate '+source.bucketName+' for REDOWN?',{input:false,description:'Sets up or updates the REDOWN Worker for this R2 bucket, saves its destination, and prepares default folders. Existing settings are retained. This changes Cloudflare resources; it does not make the bucket public.',confirm:'Activate Buckets'}))return;
+  activationState='activating';paintActivation();
+  await run(async signal=>{const result=await request('prepareBucket',{source},{signal});await loadProfiles();
+    document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:source.accountId,bucketName:source.bucketName}}));
+    status(result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');},{checkWorker:false});
+  if(sameBucket(current,source))await checkActivation(source);
+  if(activationState==='ready')status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
+  else if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
+};
 
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('preferences-error').textContent='';}
@@ -341,7 +384,7 @@ $('preferences-cancel').onclick=()=>$('preferences-dialog').close();
 $('preferences-reset').onclick=()=>{api.setPreferences({});paintPreferences();status('Transfer preferences restored to defaults.');};
 $('preferences-form').onsubmit=event=>{event.preventDefault();try{const values=api.getPreferences();for(const [key,[id,scale]] of Object.entries(preferenceFields))values[key]=Number($(id).value)*scale;api.setPreferences(values);$('preferences-dialog').close();status('Transfer preferences applied to this tab.');}catch(e){$('preferences-error').textContent=e.message;}};
 // Both presentations own the same viewer DOM and the same universal API read.
-let previewMode='window',sideState='closed',previewExpanded=false,previewWidth=400;
+let previewMode='side',sideState='closed',previewExpanded=false,previewWidth=400;
 let previewEpoch=0,previewController=null,previewIdentity='',lightbox=false;
 function setLightbox(active,key){
   lightbox=Boolean(active&&previewMode==='window'&&$('preview-dialog').open);
@@ -509,7 +552,7 @@ $('archive-extract').onclick=async()=>{if(!archiveContext||busy)return;const tar
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:title==='Practice with this file?'?'Yes, use this file':'Approve',cancel:title==='Practice with this file?'?'No':'Cancel'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
-render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}}catch{}try{
+render();void (async()=>{try{const preferences=await chrome.storage.local?.get('betaExplorerPreview');const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}else setPreviewMode('side');}catch{setPreviewMode('side');}try{
   const saved=await chrome.storage.local?.get(['betaExplorerLocation','cloudflareAuth']);
   lastLocation=saved?.betaExplorerLocation||null;
   paintLogout(saved?.cloudflareAuth);
