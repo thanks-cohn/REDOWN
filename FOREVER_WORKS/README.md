@@ -46,3 +46,7 @@ appearance or close existing incidents.
 the owner-directed proposal: the highest aesthetics with easy entry, the
 one-click shtick, and useful, satisfying game-like feedback. Intended philosophy
 and future gamification remain distinct from demonstrated current behavior.
+
+## Right-click systems audit — 30 October 2026
+
+[Legacy/Modern right-click audit](right-click/README.md) separates purpose, wiring and presentation at the current release source pin. Read its [handoff](right-click/HANDOFF_LATEST.md) for partial coverage, current failures and the cloud-workspace evidence-recovery limitation. This documentation does not update canonical authority or historical evidence.

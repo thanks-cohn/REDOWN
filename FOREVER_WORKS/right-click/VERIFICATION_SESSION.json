@@ -1,0 +1,91 @@
+{
+  "recordType": "non-normative session-observation recovery",
+  "sourceRevision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+  "date": "2026-10-30",
+  "environment": "Linux Node24.19.0; Chromium154.0.8037.57",
+  "rawEvidenceStatus": "BLOCKED: files written under /workspace/REDOWN/FOREVER_WORKS/right-click/verification became inaccessible when cloud workspace became unavailable around17:43UTC; not included in this remote recovery commit",
+  "focused": {
+    "command": "node --test tests/modern-destinations.test.mjs tests/nested-locations.test.mjs tests/simple-menu-flat.test.mjs tests/menu-reorder.test.mjs tests/popup-destinations.test.mjs tests/explorer-destination-menu.test.mjs tests/destination-search-regression.test.mjs",
+    "exitCode": 1,
+    "total": 88,
+    "pass": 85,
+    "fail": 3,
+    "skipped": 0,
+    "failedNames": [
+      "right-click editor uses product-facing status and keeps dedicated bucket setup optional",
+      "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "green zero-delivery state reads READY! and Dashboard opens the existing options page"
+    ]
+  },
+  "full": {
+    "command": "npm test",
+    "exitCode": 1,
+    "total": 686,
+    "pass": 634,
+    "fail": 52,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 75544.901356
+  },
+  "reliability": {
+    "command": "npm run reliability:check",
+    "exitCode": 1,
+    "release": "blocked",
+    "passStages": [
+      "syntax",
+      "api-registry",
+      "issues"
+    ],
+    "failStages": [
+      "architecture freshness",
+      "regression"
+    ]
+  },
+  "forever": {
+    "modelValidation": {
+      "exitCode": 0,
+      "valid": true
+    },
+    "combinedPublishedSchemaSource": {
+      "exitCode": 1,
+      "records": 253,
+      "sourceDriftOccurrences": 222,
+      "otherErrors": []
+    },
+    "preservation": {
+      "exitCode": 0,
+      "valid": true
+    }
+  },
+  "layout": {
+    "scope": "standalone HTTP fixtures with real current/historical renderer/CSS and synthetic Chrome/provider, no extension installed",
+    "modernCases": 6,
+    "historicalCases": 3,
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 1000,
+        "panelWidth": 1100
+      },
+      {
+        "width": 320,
+        "height": 800,
+        "panelWidth": 273
+      },
+      {
+        "width": 1440,
+        "height": 1000,
+        "panelWidth": 320
+      }
+    ],
+    "observedDocumentHorizontalOverflow": false,
+    "modernRemovalSize": {
+      "width": 34,
+      "height": 34
+    },
+    "rawScreenshots": "inaccessible, not attached"
+  },
+  "installedBrowser": "NOT_TESTED",
+  "liveProvider": "NOT_TESTED",
+  "evidenceAuthority": "session observations preserved from completed tool outputs, not reconstructed raw execution logs"
+}

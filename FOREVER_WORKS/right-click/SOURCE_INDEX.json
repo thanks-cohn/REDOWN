@@ -1,0 +1,3621 @@
+{
+  "indexType": "non-normative documentary index",
+  "notAForeverSchema": true,
+  "authority": "unreviewed source/evidence navigation; not accepted intent or runtime permissions",
+  "repository": "thanks-cohn/REDOWN",
+  "branch": "release/cloudflare-true-remote",
+  "sourceRevision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+  "canonicalBaseline": "424f29e5a4216085fa24ffd1a48b79f4123d6f8f",
+  "upstreamForeverRevision": "f76056aa59942935cad5ab53f26a78cefedff77d",
+  "canonicalReferences": [
+    "redown.capability.destinations",
+    "redown.invariant.destinations",
+    "redown.implementation.destinations",
+    "redown.compatibility.destination-state"
+  ],
+  "sources": [
+    {
+      "claimId": "source-001",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderPreview",
+      "line": 9,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-002",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function setMode",
+      "line": 26,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-003",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function mountNested",
+      "line": 27,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-004",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function load",
+      "line": 32,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-005",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function save",
+      "line": 48,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-006",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function rows",
+      "line": 62,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-007",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function update",
+      "line": 66,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-008",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderSimple",
+      "line": 72,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-009",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "$('destination-mode').onclick",
+      "line": 155,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-010",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "$('destination-add').onclick",
+      "line": 165,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-011",
+      "path": "extension/beta/destinations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "chrome.storage.onChanged.addListener",
+      "line": 205,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-012",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const fields=",
+      "line": 3,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-013",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function project",
+      "line": 4,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-014",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function signature",
+      "line": 5,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-015",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function prefix",
+      "line": 6,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-016",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function validate",
+      "line": 7,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-017",
+      "path": "extension/destination-config.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function resolve",
+      "line": 22,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "MODERN_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-018",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function name",
+      "line": 3,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-019",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function path",
+      "line": 8,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-020",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function blank",
+      "line": 9,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-021",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function invalidate",
+      "line": 10,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-022",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function setLocation",
+      "line": 14,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-023",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function fromLegacy",
+      "line": 18,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-024",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function initialize",
+      "line": 41,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-025",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function destinations",
+      "line": 47,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-026",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function nestedEntries",
+      "line": 66,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-027",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function menuEntries",
+      "line": 76,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-028",
+      "path": "extension/nested-locations.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function menuMode",
+      "line": 89,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-029",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function menuControls",
+      "line": 10,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-030",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function save",
+      "line": 18,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-031",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function live",
+      "line": 19,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-032",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function run",
+      "line": 20,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-033",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function render",
+      "line": 26,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-034",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const removeGroup=",
+      "line": 47,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-035",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function rootRow",
+      "line": 62,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-036",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function folderRow",
+      "line": 108,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-037",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function findChildren",
+      "line": 164,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-038",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function emptyState",
+      "line": 173,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-039",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function refresh",
+      "line": 176,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-040",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function addLocation",
+      "line": 177,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-041",
+      "path": "extension/nested-menu-editor.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "globalThis.RedownNestedEditor=",
+      "line": 187,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-042",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const ROOT_MENU_ID",
+      "line": 1,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-043",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function putNewDownload",
+      "line": 161,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-044",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function checkedFetch",
+      "line": 207,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-045",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const sourceUrl = String(body.sourceUrl",
+      "line": 651,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-046",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function selectedUrl",
+      "line": 751,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-047",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function setProfiles",
+      "line": 786,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-048",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function recordTransfer",
+      "line": 868,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-049",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function notify",
+      "line": 873,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-050",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function createBucket",
+      "line": 984,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-051",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function setupRedownQuickDestination",
+      "line": 997,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-052",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function deployCloudflareProfile",
+      "line": 1057,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-053",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function listFolderChildren",
+      "line": 1548,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-054",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function preparedProfile",
+      "line": 1615,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-055",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function callBucketWorker",
+      "line": 1631,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-056",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function createExplorerFolder",
+      "line": 1878,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-057",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function ingestCloudflareAtPrefix",
+      "line": 1970,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-058",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function addNestedLocations",
+      "line": 2049,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-059",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function saveStoragePreferences",
+      "line": 2057,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-060",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function saveDestinationConfig",
+      "line": 2072,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-061",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function rebuildMenus",
+      "line": 2103,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-062",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function buildMenus",
+      "line": 2109,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-063",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function addMenuControls",
+      "line": 2156,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-064",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function hitomiDestination",
+      "line": 2214,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-065",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function initiateHitomiCapture",
+      "line": 2217,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-066",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "chrome.runtime.onInstalled.addListener(rebuildMenus)",
+      "line": 2340,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-067",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "if (area === \"local\" && (changes.profiles",
+      "line": 2343,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-068",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function launchSaveDroplet",
+      "line": 2349,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-069",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "chrome.contextMenus.onClicked.addListener",
+      "line": 2423,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-070",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "chrome.runtime.onMessage.addListener",
+      "line": 2509,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-071",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "if (message?.type === \"cfCreateBucket\")",
+      "line": 2583,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-072",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "if(message?.type===\"cfSetupRedownQuick\")",
+      "line": 2584,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-073",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "if (message?.type === \"cfProvision\")",
+      "line": 2589,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-074",
+      "path": "extension/background.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "if (message?.type === \"cfCreateFolder\")",
+      "line": 2641,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "RIGHT_CLICK_API_READINESS.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-075",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function saveProfiles",
+      "line": 51,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-076",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function saveNestedMenu",
+      "line": 58,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-077",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function ensureProfileMenuPrefixes",
+      "line": 82,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-078",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function leafMenuPrefixes",
+      "line": 97,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-079",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderTree",
+      "line": 139,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-080",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderTree",
+      "line": 223,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-081",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderTreeNode",
+      "line": 223,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-082",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderRightClickMode",
+      "line": 418,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-083",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function chooseRightClickMode",
+      "line": 425,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-084",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function addMenuLocation",
+      "line": 431,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-085",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function simpleFolderPathEditor",
+      "line": 453,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-086",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function simplePrimaryLocationField",
+      "line": 554,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-087",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function simpleExtraOptions",
+      "line": 583,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-088",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function simpleBucketCreator",
+      "line": 639,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-089",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function saveProfileOrder",
+      "line": 690,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-090",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function renderProfiles",
+      "line": 705,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-091",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function destinationMenus",
+      "line": 3378,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-092",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function showExplorerMenu",
+      "line": 3394,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-093",
+      "path": "extension/options.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "chrome.storage.onChanged.addListener",
+      "line": 4304,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-094",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".location-level-row.simple-location-row",
+      "line": 312,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-095",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".location-level-row.simple-location-row",
+      "line": 316,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-096",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".nested-card{",
+      "line": 374,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-097",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".nested-card{",
+      "line": 387,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-098",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<section id=\"right-click-presets\"",
+      "line": 586,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-099",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<div hidden inert aria-hidden=\"true\">",
+      "line": 591,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-100",
+      "path": "extension/options.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<script src=\"nested-locations.js\"",
+      "line": 751,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "LEGACY_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-101",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<section class=\"quick-links-panel\"",
+      "line": 132,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-102",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<div class=\"destination-toolbar\"",
+      "line": 139,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-103",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<div class=\"destination-stage\"",
+      "line": 147,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-104",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<details id=\"destination-first-setup\"",
+      "line": 148,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-105",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<menu id=\"context\"",
+      "line": 201,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-106",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<dialog id=\"destination-dialog\"",
+      "line": 248,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-107",
+      "path": "extension/beta/explorer.html",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "<script src=\"../nested-locations.js\"",
+      "line": 275,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "MODERN_SOURCE_MAP.md",
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-108",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ":root{",
+      "line": 3,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-109",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ":root{",
+      "line": 445,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-110",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 5,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-111",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 50,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-112",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 175,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-113",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 182,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-114",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 438,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-115",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 608,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-116",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "body{",
+      "line": 685,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-117",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".quick-links-panel{",
+      "line": 774,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-118",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-toolbar{",
+      "line": 951,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-119",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-mode{",
+      "line": 953,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-120",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-stage{",
+      "line": 960,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-121",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-simple{",
+      "line": 961,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-122",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-card,.nested-card{",
+      "line": 962,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-123",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-card,.nested-card{",
+      "line": 992,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-124",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-nested .nested-children{",
+      "line": 982,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-125",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-nested .nested-menu-controls{",
+      "line": 985,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-126",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-nested .nested-menu-controls:has(summary)",
+      "line": 998,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-127",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".inline-folder,.destination-inline-create{",
+      "line": 1180,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-128",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-nested .nested-group[data-depth=\"2\"]",
+      "line": 1187,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-129",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-card-head{gap:10px",
+      "line": 1206,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-130",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "#destination-nested .nested-heading>.nested-remove{",
+      "line": 1213,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-131",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-card button.destination-remove-x,",
+      "line": 1218,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-132",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": ".destination-card button.destination-remove-x,",
+      "line": 1247,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-133",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 108,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-134",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 201,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-135",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 384,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-136",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 426,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-137",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 502,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-138",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 523,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-139",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 593,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-140",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 768,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-141",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 946,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-142",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 992,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-143",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 1048,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-144",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 1105,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-145",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 1176,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-146",
+      "path": "extension/beta/explorer.css",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "@media(prefers-reduced-motion:reduce)",
+      "line": 1246,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PRESENTATION_AND_CSS.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-147",
+      "path": "extension/beta/quick-links.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "$('quick-create').onclick",
+      "line": 195,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-148",
+      "path": "extension/beta/quick-links.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "cfSetupRedownQuick",
+      "line": 203,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-149",
+      "path": "extension/beta/quick-links.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "cfEnablePublicAccess",
+      "line": 167,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-150",
+      "path": "extension/beta/explorer.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function showMenu",
+      "line": 360,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-151",
+      "path": "extension/beta/explorer.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function destinationBuckets",
+      "line": 898,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-152",
+      "path": "extension/beta/explorer.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "async function chooseDestination",
+      "line": 908,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-153",
+      "path": "extension/beta/explorer.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "redown:destinations-ready",
+      "line": 548,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-154",
+      "path": "extension/beta/explorer.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "redown:destinations-ready",
+      "line": 594,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SURFACE_INVENTORY.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-155",
+      "path": "extension/explorer-destination-menu.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function create",
+      "line": 3,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-156",
+      "path": "extension/explorer-destination-menu.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const closeFrom=",
+      "line": 18,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-157",
+      "path": "extension/explorer-destination-menu.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function cachedPage",
+      "line": 5,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-158",
+      "path": "extension/explorer-destination-menu.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function attach",
+      "line": 96,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-159",
+      "path": "extension/explorer-destination-menu.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "return {attach,clearCache:",
+      "line": 122,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-160",
+      "path": "extension/transfer-counter.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "function create",
+      "line": 3,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-161",
+      "path": "extension/transfer-counter.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "const delivered=",
+      "line": 9,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-162",
+      "path": "extension/transfer-counter.js",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "record:entry",
+      "line": 23,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "PURPOSE_AND_INVARIANTS.md",
+        "WIRING_AND_STATE.md",
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-163",
+      "path": "extension/manifest.json",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "\"manifest_version\"",
+      "line": 2,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-164",
+      "path": "extension/manifest.json",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "\"permissions\"",
+      "line": 6,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    },
+    {
+      "claimId": "source-165",
+      "path": "extension/manifest.json",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "symbol": "\"options_page\"",
+      "line": 38,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "confidence": "direct pinned text anchor; not runtime proof",
+      "chapters": [
+        "SIDE_BY_SIDE_MATRIX.md",
+        "CHROME_RUNTIME_AND_SECURITY.md",
+        "COLD_AGENT_RECONSTRUCTION.md"
+      ]
+    }
+  ],
+  "historicalSources": [
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "async function saveProfiles",
+      "line": 51,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function saveNestedMenu",
+      "line": 53,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "async function chooseRightClickMode",
+      "line": 442,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function renderProfiles",
+      "line": 738,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function simpleFolderPathEditor",
+      "line": 486,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function simplePrimaryLocationField",
+      "line": 587,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function simpleExtraOptions",
+      "line": 616,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/options.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function simpleBucketCreator",
+      "line": 672,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "function addNestedLocations",
+      "line": 2053,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "simpleLabelFallback",
+      "line": 2116,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "simpleLabelFallback",
+      "line": 2118,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "simpleLabelFallback",
+      "line": 2395,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "tree:",
+      "line": 2037,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "tree:",
+      "line": 2260,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "tree:",
+      "line": 2509,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "tree:",
+      "line": 2521,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    },
+    {
+      "path": "extension/background.js",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "symbol": "tree:",
+      "line": 2612,
+      "evidenceClass": "SOURCE_INSPECTED",
+      "scope": "historical source; not current authority"
+    }
+  ],
+  "tests": [
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 28,
+      "name": "Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 41,
+      "name": "mode switches persist immediately, preserve both configurations, and reload restores active layout",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 48,
+      "name": "existing folder picker routes exact prefix without creating folders or provisioning",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 55,
+      "name": "collapsed Nested nodes load lazily, labels do not alter paths, and sibling moves persist",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 62,
+      "name": "stale concurrent saves reject rather than overwrite newer changes; storage failures leave old config intact",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 67,
+      "name": "native Chrome callback errors preserve saved configuration and successful retry rebuilds it",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 70,
+      "name": "invalid paths, duplicate IDs, unprepared buckets and excessive hierarchy fail before persistence",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 73,
+      "name": "primary removal only suppresses its menu and keeps profile and remote routing credentials",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 76,
+      "name": "modern menu navigation and quick setup preserve selected mode in source",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 79,
+      "name": "Add Location without a prepared bucket explains activation instead of creating unusable draft cards",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 90,
+      "name": "Add Location can activate an existing Cloudflare bucket without creating another R2 bucket",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 103,
+      "name": "account edits retain the destination identifier and route it through that account’s prepared profile",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 107,
+      "name": "production click listener resolves exact active account, bucket and prefix and rejects stale IDs",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 123,
+      "name": "large Simple configurations share one bucket discovery and render without per-card observers",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 127,
+      "name": "inactive invalid legacy hierarchy is preserved while saving valid Simple changes",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 131,
+      "name": "Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 139,
+      "name": "Nested plus exposes focused inline creation and keeps siblings while saving the verified child",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 146,
+      "name": "mode switch persists without committing a dirty destination label; external mode-only changes preserve and rebase draft",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 153,
+      "name": "deep native menu preserves every immediate parent, concise labels and exact paths",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 160,
+      "name": "Nested full-group removal, Undo, final-root removal and save/reload preserve storage and intentional emptiness",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 180,
+      "name": "child, parent and distinct same-account groups remove only their stable definitions",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 191,
+      "name": "Simple and Nested native builds exclude obsolete trees and legacy-only accounts",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 196,
+      "name": "versioned migration is repeat-safe and its menu-only backup preserves original definitions",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 203,
+      "name": "legacy preference writes share the modern save lane and cannot rewrite or remove menu profiles",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 211,
+      "name": "native creations await parent callbacks and later rebuild wins over an older snapshot",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 222,
+      "name": "deleting all Simple rows remains empty with legacy data through rebuild and readdition",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 228,
+      "name": "external profile changes preserve unsaved edits and stale saves still fail",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 233,
+      "name": "blank Nested rows cannot be saved as apparently configured destinations",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 237,
+      "name": "storage provisioning cannot seed destinations without modern Explorer activation",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 246,
+      "name": "delayed Worker/domain persistence cannot resurrect a deleted menu or discard other profiles",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 255,
+      "name": "eight-level shared plan preserves immediate parents, parent save actions and preview parity",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 269,
+      "name": "pre-redesign right-click selection toolbar is restored without rolling back shared menu authority",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 285,
+      "name": "contextual operations stay accessible through named native disclosures",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 300,
+      "name": "removed parent send actions no longer resolve after their last child is removed",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 308,
+      "name": "right-click editor uses product-facing status and keeps dedicated bucket setup optional",
+      "status": "FAIL",
+      "evidenceClass": "LOCAL_TEST_FAIL",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 319,
+      "name": "Simple and Nested cards expose immediate red X without tooltips or cloud deletion",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/modern-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 350,
+      "name": "card X is permanently visible, red, carefully positioned, and motion-safe",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 39,
+      "name": "selection never fills the new-name field, and preserves an independently typed draft",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 55,
+      "name": "Add child and Create use the exact parent path; actual dropdown children stay scoped",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 71,
+      "name": "hiding a nested menu preserves its hierarchy and failed creation preserves the draft",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 81,
+      "name": "native nested menu targets every verified depth and offers Send here for parents",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 93,
+      "name": "legacy paths migrate without modifying old configuration or writing remote folders",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 101,
+      "name": "legacy Nested save is read-only and ordinary preferences delegate to the serialized background",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 107,
+      "name": "one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 127,
+      "name": "legacy settings mode controls remain read-only and preserve destination configurations",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 143,
+      "name": "native menu mode checkbox changes the same saved setting without downloading anything",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 154,
+      "name": "DBG-001: selecting a new deep child enables its next child without bucket reselection",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 169,
+      "name": "DBG-001: create-new folder enables repeated + Child through five levels",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 191,
+      "name": "DBG-001: selecting existing child enables + Child after the async save lock releases",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 201,
+      "name": "reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 218,
+      "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact",
+      "status": "FAIL",
+      "evidenceClass": "LOCAL_TEST_FAIL",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/nested-locations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 231,
+      "name": "removing a parent deletes its menu descendants while retaining its bucket and cloud storage",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/simple-menu-flat.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 28,
+      "name": "Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/simple-menu-flat.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 49,
+      "name": "Legacy bucket-label preference cannot override modern path-derived labels or explicit names",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/simple-menu-flat.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 67,
+      "name": "Menu Label is default for existing profiles without a saved preference",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/simple-menu-flat.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 75,
+      "name": "explicit Simple label wins over the lowest-directory fallback",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/simple-menu-flat.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 81,
+      "name": "blank and whitespace Simple labels retain automatic naming under every fallback setting",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 17,
+      "name": "keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 30,
+      "name": "failed persistence restores original array and DOM order",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 36,
+      "name": "pointer drop reorders at visible insertion marker and cancellation leaves order unchanged",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 47,
+      "name": "native Simple context menu follows saved section and additional destination order",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 62,
+      "name": "drag continues outside grip and gaps are valid insertion targets",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 72,
+      "name": "Escape cancels lifted drag without saving or leaving compact cards behind",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/menu-reorder.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 81,
+      "name": "saved moves retain focus so repeated arrow keys move the same branch",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 14,
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+      "status": "FAIL",
+      "evidenceClass": "LOCAL_TEST_FAIL",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 17,
+      "name": "red connection shows LOGIN in the same odometer and clicking it starts direct sign-in",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 20,
+      "name": "failed or canceled login stays red and retryable without resetting the total",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 24,
+      "name": "odometer carries digits, expands beyond six places and retains exact large totals",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 27,
+      "name": "late count response cannot overwrite a newer storage count",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 30,
+      "name": "reopening during OAuth resumes background login without opening duplicate windows",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 33,
+      "name": "count failure never invents a zero count or hides the disconnected LOGIN action",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 36,
+      "name": "background accepts a discovered unsaved bucket only after read-only existence validation",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 43,
+      "name": "reopening starts at the last seen count, rolls to the current total and remembers completion",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 47,
+      "name": "a newer total interrupts an old roll and final persistence never rolls back",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 51,
+      "name": "reduced motion immediately shows the verified total and the sound preference persists",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 56,
+      "name": "the final settled number emits one quiet click and mute suppresses subsequent clicks",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/popup-destinations.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 62,
+      "name": "unavailable audio never prevents reaching or saving the verified total",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 14,
+      "name": "Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 23,
+      "name": "current bucket remains available for sibling destinations and same-folder choice is disabled",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 28,
+      "name": "folder pages append via More folders and closed menus ignore late replies",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 32,
+      "name": "keyboard arrows navigate menus and Escape returns to parent without changing Explorer",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 35,
+      "name": "failed lazy folder reads offer retry and never execute a transfer",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 38,
+      "name": "Copy here is available immediately while child-folder listing is still pending",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/explorer-destination-menu.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 45,
+      "name": "reopening the same destination reuses a bounded short-lived folder page cache",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/destination-search-regression.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 7,
+      "name": "explicit nested folder is sent intact and receipt uses actual target bucket and key",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/destination-search-regression.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 16,
+      "name": "history uses explicit bucket/key rather than mistaking public assets route for storage folder",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/destination-search-regression.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 22,
+      "name": "search previews retain result set and use each result account/bucket and exact key",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    },
+    {
+      "path": "tests/destination-search-regression.test.mjs",
+      "revision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+      "line": 32,
+      "name": "history location opens exact folder and preview without scroll or focus jump",
+      "status": "PASS",
+      "evidenceClass": "LOCAL_TEST_PASS",
+      "scope": "session-observed focused Node/jsdom/VM run; raw log inaccessible after environment loss",
+      "evidence": "VERIFICATION_SESSION.json"
+    }
+  ],
+  "limitations": [
+    "Textual anchors, not exhaustive dynamic callers",
+    "Raw test logs/screenshots inaccessible after cloud workspace failure",
+    "No installed-extension/live-provider certification",
+    "No canonical JSON changed"
+  ],
+  "unmatchedAnchors": []
+}
