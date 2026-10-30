@@ -394,7 +394,8 @@ function moveGridItem(direction,{preview=false,skipUnsupported=false}={}){
   target.focus({preventScroll:true});target.click();target.scrollIntoView?.({block:'nearest',inline:'nearest'});
   // Keep the read/view experience continuous when the window was already
   // open or an arrow requested a new preview. Never open remote folders.
-  if(item&&(preview||wasWindow)&&!(previewMode==='window'&&!item.folder&&/\.(zip|cbz)$/i.test(item.key))&&
+  if(item&&(preview||wasWindow)&&!(previewMode==='side'&&sideState==='open')&&
+      !(previewMode==='window'&&!item.folder&&/\.(zip|cbz)$/i.test(item.key))&&
       (item.folder||previewType(item.key))){
     void showPreview(item);
   }
