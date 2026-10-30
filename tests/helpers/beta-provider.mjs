@@ -37,6 +37,7 @@ export async function fixture(){
     case 'cfAccounts':return {ok:true,accounts:[{id:source.accountId,name:'Fixture'}]};
     case 'cfBuckets':return {ok:true,buckets:[{name:source.bucketName}]};
     case 'cfArchiveEntries':return {ok:true,...await manage(profile,{action:'listArchive',key:m.key})};
+    case 'cfArchiveEntryUrl':return {ok:true,url:'https://fixture.workers.dev/archive-preview?entry='+encodeURIComponent(m.entry)};
     case 'cfExtractArchive':return {ok:true,...await manage(profile,{action:'extractArchiveEntries',key:m.key,entries:m.entries,destinationPrefix:m.destinationPrefix})};
     case 'cfTransferObjects':return {ok:true,...await context.transferExplorerObjects(m)};
     case 'cfRenameEntry':return {ok:true,...await context.renameExplorerEntry(m)};
