@@ -3,7 +3,7 @@
   'use strict';
   const $=id=>document.getElementById(id),C=RedownDestinationConfig,M=RedownNestedLocations;
   if(!$('destination-mode'))return;
-  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,firstSetupDisclosureInitialized=false;
+  let profiles=[],accounts=[],mode='simple',expected='',dirty=false,saving=false,mounted=false,epoch=0,reads=0,firstSetupDisclosureInitialized=false,activatingLocation=false;
   const bucketCache=new Map();let unassigned=[];
   const status=text=>$('destination-status').textContent=text;
   const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -112,7 +112,8 @@
   }
   $('destination-mode').onclick=()=>{if(saving)return;mode=mode==='simple'?'nested':'simple';changed();setMode();};
   $('destination-add').onclick=async()=>{
-    if(saving)return;
+    if(saving||activatingLocation)return;
+    let activatedSource=null;
     // Adopt the original Cloudflare-created destination if it was prepared
     // in the other Explorer, without requiring a second REDOWN bucket.
     if(!usable().length&&!dirty)try{await load();}catch{}
@@ -125,32 +126,33 @@
       }
       if(!confirm('Activate your existing Cloudflare bucket '+bucketName+' for REDOWN right-click destinations? This deploys or updates its private REDOWN Worker. It does not enable public file URLs.'))return;
       status('Activating '+bucketName+' so you can add Simple menu locations…');
+      activatingLocation=true;$('destination-add').disabled=true;
       try{
         await request('cfProvision',{accountId,bucketName,profileName:bucketName,folders:{},explorerOnly:false});
-        document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId,bucketName}}));
-        await load();
+        await load();activatedSource={accountId,bucketName};
       }catch(error){status('Could not activate '+bucketName+': '+error.message+'. Your Cloudflare bucket was not deleted.');return;}
+      finally{activatingLocation=false;$('destination-add').disabled=false;}
       if(!usable().some(p=>p.accountId===accountId&&p.bucketName===bucketName)){status('Activation was not reflected in saved destinations. Check Cloudflare before trying again.');return;}
       $('destination-profile').value=usable().find(p=>p.accountId===accountId&&p.bucketName===bucketName).id;
     }
     const available=usable();
     if(mode==='nested'){
       const p=available.find(p=>p.id===$('destination-profile').value)||available[0];p.explorerManaged=false;p.nestedMenu||=M.fromLegacy(p);p.nestedMenu.enabled=true;
-      if(!mounted)mountNested();await RedownNestedEditor.addLocation(p.id);changed();return;
+      if(!mounted)mountNested();await RedownNestedEditor.addLocation(p.id);changed();if(activatedSource)document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:activatedSource}));return;
     }
     const p=available.find(p=>p.id===$('destination-profile').value)||available[0];
     if(p.explorerManaged||p.showInContextMenu===false)p.simplePrimaryEnabled=false;
     p.explorerManaged=false;p.showInContextMenu=true;
     rows().forEach((r,i)=>{if(r.base)r.p.simplePrimaryOrder=i;else r.item.order=i;});
     const id=crypto.randomUUID();(p.simpleOptions||=[]).push({id,label:'New location',bucketName:p.bucketName,prefix:'',order:rows().length});
-    changed();renderSimple(id);const last=$('destination-simple').lastElementChild;last?.querySelector('input')?.focus();last?.scrollIntoView?.({block:'nearest'});
+    changed();renderSimple(id);if(activatedSource)document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:activatedSource}));const last=$('destination-simple').lastElementChild;last?.querySelector('input')?.focus();last?.scrollIntoView?.({block:'nearest'});
   };
   $('destination-save').onclick=()=>save().catch(error=>status(error.message));
   $('destination-reload').onclick=()=>load().catch(error=>status(error.message));
   document.addEventListener('click',event=>{if(!event.target.closest('.destination-card'))for(const b of $('destination-simple').querySelectorAll('button'))b._picker?.close();});
-  document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving)void load().catch(error=>status('Refresh destinations: '+error.message));});
+  document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving&&!activatingLocation)void load().catch(error=>status('Refresh destinations: '+error.message));});
   chrome.storage.onChanged.addListener((changes,area)=>{
-    if(area!=='local'||saving)return;
+    if(area!=='local'||saving||activatingLocation)return;
     if(changes.profiles||changes.rightClickMode){if(dirty){status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
   });
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
