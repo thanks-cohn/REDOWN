@@ -94,7 +94,7 @@
 <button id="upload-folder" class="primary">Upload folder</button></div>
 <button id="delete" class="danger rd-delete"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg>Delete</button>
 <div class="rd-view-options" role="group" aria-label="View and conflict preferences">
-<div class="toolbar-pair"><button id="mkdir">+ New folder</button>
+<div class="toolbar-pair"><button id="mkdir">New folder</button>
 <select id="conflict" aria-label="Paste conflict policy">
 <option value="keep" selected>Keep both</option>
 <option value="skip">Conflicts: skip</option>
@@ -238,6 +238,10 @@
 <label for="pref-upload">Upload deadline (seconds)</label><input id="pref-upload" type="number" min="1" step="1" required>
 <label for="pref-preview">Preview memory budget (MiB)</label><input id="pref-preview" type="number" min="1" step="1" required>
 <fieldset class="rd-safety"><legend>Deletion safety</legend><label><input id="pref-confirm-delete" type="checkbox" checked> Confirm Before Deleting</label><small>Turning this off allows irreversible deletion without the ordinary confirmation.</small><label><input id="pref-show-delete" type="checkbox" checked> Show Delete on Dashboard</label><small>Context menu and keyboard deletion remain available.</small></fieldset>
+<fieldset class="rd-safety"><legend>Explorer folder controls</legend>
+<label><input id="pref-folder-quick-add" type="checkbox"> Show inline + buttons on folders</label>
+<small>Off by default. Use New folder in the top toolbar. Turn this on only if you want a quick + action on each Explorer folder. This does not affect the Right-click setup editor.</small>
+</fieldset>
 <label for="pref-archive">Archive Preview Behavior</label><select id="pref-archive"><option value="reader">Image Reader (Default)</option><option value="classic">Folder Browser (Classic)</option></select>
 <p id="preferences-error" role="alert"></p><div class="dialog-actions"><button id="preferences-reset" type="button">Restore defaults</button><button id="preferences-cancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div></form>
 </dialog>
