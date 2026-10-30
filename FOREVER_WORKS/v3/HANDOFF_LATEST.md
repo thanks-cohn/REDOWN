@@ -1,6 +1,6 @@
 # V3 handoff — 30 October 2026
 
-**Implemented foundation and first locally tested vertical slice; P0 installed/live parity remains incomplete.** Work branch: `codex/v3-parity-first-reconstruction`. Starting commit: `bfbca3b185e1e81b81910c2fb2df7a7d3d99f79e`. Implementation commit: the commit containing this handoff (recorded explicitly in the following documentation commit after creation). Owner scope correction `244138c6602de4276db5adc4df079e221cc4d9f4` adopted by fast-forward before implementation: **Right-click UI/API only**. No release branch or historical tag rewrite.
+**Implemented foundation and first locally tested vertical slice; P0 installed/live parity remains incomplete.** Work branch: `codex/v3-parity-first-reconstruction`. Starting commit: `bfbca3b185e1e81b81910c2fb2df7a7d3d99f79e`. Implementation commit: [`9c871f59ef00e6e555c520e4eba53f147142f20c`](https://github.com/thanks-cohn/REDOWN/commit/9c871f59ef00e6e555c520e4eba53f147142f20c). The implementation push was verified against the remote V3 ref; this following documentation commit records the receipt. Owner scope correction `244138c6602de4276db5adc4df079e221cc4d9f4` adopted by fast-forward before implementation: **Right-click UI/API only**. No release branch or historical tag rewrite.
 
 ## Completed
 
@@ -39,6 +39,10 @@ The branch advanced remotely to `244138c` with the owner’s highest-priority Ri
 ## Next task
 
 First migrate the obsolete source-extraction tests to V3 requirements and close any actual regressions without resurrecting old UI. Then run the installed-browser/disposable Cloudflare acceptance chain, retaining exact-byte receipts and History/Explorer evidence. Keep the release branch untouched until its separate gates pass. See `PARITY_MATRIX.md`, `SETUP_REMOVAL_AUDIT.md` and the engine/store contracts for boundaries.
+
+## Commit and preservation receipt
+
+Implementation `9c871f5` was pushed by normal fast-forward from owner scope correction `244138c` to the requested V3 branch. Remote verification retained release branch `2582c05d2253f3063e55404bb9ff6b97275f8ac1` and protected `right-click-shits` tag object `bd69e3082f7544cc21254ce066d8820467a955df` unchanged. No force push, rebase, deployment, publication or release-branch update. Runtime source hashes in the final report match the committed runtime/test source; the following handoff-only commit changes documentation only.
 
 ## Every modified file
 
