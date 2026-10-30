@@ -134,7 +134,7 @@ export function createR2Adapter({send=message=>chrome.runtime.sendMessage(messag
       if(!Array.isArray(result.results)||result.results.length!==1)throw Object.assign(Error('Archive extraction was not confirmed. Inspect the destination before retrying.'),{uncertain:true});
       return {...result,completed:result.results.filter(r=>r.status==='extracted').length,errors:result.results.filter(r=>r.status!=='extracted')};
     },
-    async profiles(_,o){const result=await message('profiles',{},o);return {profiles:(result.profiles||[]).filter(p=>p.type==='cloudflare-r2').map(p=>({id:p.id,name:p.name,accountId:p.accountId,accountName:p.accountName,bucketName:p.defaultBucketName||p.bucketName,prefix:p.defaultPrefix||''}))};},
+    async profiles(_,o){const result=await message('profiles',{},o);return {profiles:(result.profiles||[]).filter(p=>p.type==='cloudflare-r2').map(p=>({id:p.id,name:p.name,accountId:p.accountId,accountName:p.accountName,bucketName:p.defaultBucketName||p.bucketName,ownerBucketName:p.bucketName,prefix:p.defaultPrefix||''}))};},
     async transferHistory(_,o){const result=await message('transferHistory',{},o);return {history:result.transferHistory||[]};},
     prepareBucket:({source},o)=>{const l=location(source);return message('cfProvision',{...l,profileName:l.bucketName,folders:{}},o).then(result=>({verification:result.verification}));},
     createBucket:({accountId,name:n},o)=>message('cfCreateBucket',{accountId,name:n},o),
