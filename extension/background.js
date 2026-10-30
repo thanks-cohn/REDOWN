@@ -1851,20 +1851,20 @@ async function renameCloudflareTransfer(profile, location, newFilename, exactKey
   return body;
 }
 async function renameTransferHistoryItem(id, newFilename) {
-  const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");
-  const history = Array.isArray(transferHistory) ? transferHistory : [];
-  const index = history.findIndex(item => item?.id === id);
-  if (index < 0) throw new Error("Download history entry was not found");
-  const item = history[index];
+  const history = await transferCounter.history();
+  const item = history.find(record => record?.id === id);
+  if (!item) throw new Error("Download history entry was not found");
   if (!item?.ok) throw new Error("Only completed downloads can be renamed");
   const profiles = await getProfiles();
   const profile = item.destination?await preparedProfile(item.destination.accountId,item.destination.bucketName,item.destination.accountName):profiles.find(p => p.id === item.profileId);
   if (!profile || profile.type !== "cloudflare-r2") throw new Error("Inline rename is currently available for Cloudflare R2 downloads");
   const renamed = await renameCloudflareTransfer(profile, item.location, newFilename, item.destination?.key);
-  if(item.destination)item.destination={...item.destination,key:renamed.key,prefix:renamed.key.split("/").slice(0,-1).join("/")};
-  history[index] = { ...item, location: renamed.publicUrl || publicAssetUrl(profile, renamed.key), renamedAt: new Date().toISOString() };
-  await chrome.storage.local.set({ transferHistory: history });
-  return history[index];
+  const destination=item.destination?{...item.destination,key:renamed.key,prefix:renamed.key.split("/").slice(0,-1).join("/")}:undefined;
+  return transferCounter.update(id,{
+    ...(destination?{destination}:{}),
+    location:renamed.publicUrl || publicAssetUrl(profile,renamed.key),
+    renamedAt:new Date().toISOString()
+  });
 }
 async function ensureGitHubWorkflow(profile) {
   const repo = String(profile.repository || "").trim();
@@ -2649,8 +2649,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
-        const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");
-        return sendResponse({ ok:true, transferHistory });
+        return sendResponse({ok:true,transferHistory:await transferCounter.history()});
       }
       if (message?.type === "renameTransfer") {
         return sendResponse({ ok:true, item:await renameTransferHistoryItem(message.id, message.newFilename) });
