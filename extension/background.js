@@ -2823,7 +2823,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"listArchive",key:message.key})) });
       }
       if (message?.type === "cfArchiveEntryUrl") {
-        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName);
+        const profile=await preparedProfile(message.accountId,message.bucketName,message.accountName,false,message.explorerTrace,message.betaNoProvision===true);
         return sendResponse({ ok:true, ...(await callBucketWorker(profile,{action:"createArchiveEntryReadUrl",key:message.key,entry:message.entry,contentType:message.contentType})) });
       }
       if (message?.type === "cfExtractArchive") {
