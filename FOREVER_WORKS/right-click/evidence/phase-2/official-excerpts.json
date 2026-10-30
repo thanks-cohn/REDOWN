@@ -1,0 +1,111 @@
+[
+  {
+    "id": "onedrive-upload",
+    "htmlSha256": "ca8538299606015deacf5c8ed07be1bb08e3a3ea22988bd08014034b52ea4019",
+    "excerpts": [
+      {
+        "term": "320",
+        "excerpt": "ges, the size of each byte range MUST be a multiple of 320 KiB (327,680 bytes). Using a fragment size that doesn't divide evenly by 320 KiB results in er"
+      },
+      {
+        "term": "60 MiB",
+        "excerpt": "as the maximum bytes in any given request is less than 60 MiB. The fragments of the file must be uploaded sequentially in order. Uploading fragments out of "
+      },
+      {
+        "term": "Files.ReadWrite",
+        "excerpt": "vileged permissions Delegated (work or school account) Files.ReadWrite Files.ReadWrite.All, Sites.ReadWrite.All Delegated (personal Microsoft account) Files.ReadWrit"
+      },
+      {
+        "term": "expirationDateTime",
+        "excerpt": "e uploaded and specifies when the session expires. The expirationDateTime property indicates the time at which the current session expires if no further activity occurs"
+      }
+    ]
+  },
+  {
+    "id": "dropbox-upload",
+    "htmlSha256": "5200ee00c04089a5dbd4decbe9bbeaf909e423064e8ce2edcc60cd5f358a424b",
+    "excerpts": []
+  },
+  {
+    "id": "chrome-fetch",
+    "htmlSha256": "0d0d66b1c4c7cd6a19029bbc15ae9c140461350d2a44313d8466e1281914aff4",
+    "excerpts": [
+      {
+        "term": "host_permissions",
+        "excerpt": "n's origin, add hosts, match patterns , or both to the host_permissions section of the manifest file. { \"name\" : \"My extension\" , ... \"host_permissions\" : [ \"https://"
+      },
+      {
+        "term": "content scripts",
+        "excerpt": "lize the interface Core concepts The browser namespace Content scripts Message passing Match patterns Storage and cookies Content filtering The activeTab permission "
+      },
+      {
+        "term": "cross-origin",
+        "excerpt": "Cross-origin network requests | Chrome for Developers Skip to main content Docs Build with Chrome Learn how"
+      }
+    ]
+  },
+  {
+    "id": "chrome-lifetime",
+    "htmlSha256": "aef14224b8b45abe95ddd1c8f03593ca7b6171c7242dc6156e456eab124ab4c2",
+    "excerpts": [
+      {
+        "term": "30 seconds",
+        "excerpt": "ker when one of the following conditions is met: After 30 seconds of inactivity. Receiving an event or calling an extension API resets this timer. When a single"
+      },
+      {
+        "term": "5 minutes",
+        "excerpt": "quest, such as an event or API call, takes longer than 5 minutes to process. When a fetch() response takes more than 30 seconds to arrive. Events and calls to "
+      }
+    ]
+  },
+  {
+    "id": "chrome-contextmenus",
+    "htmlSha256": "ba21931777b8f60a8105c86c5f0c011758d645f39e7e235ca972bc5bab31448f",
+    "excerpts": [
+      {
+        "term": "parentId",
+        "excerpt": ". Cannot be the same as another ID for this extension. parentId string | number optional The ID of a parent menu item; this makes the item a child of a previo"
+      },
+      {
+        "term": "ACTION_MENU_TOP_LEVEL_LIMIT",
+        "excerpt": "eckbox or radio item before it was clicked. Properties ACTION_MENU_TOP_LEVEL_LIMIT The maximum number of top level extension items that can be added to an extension action conte"
+      },
+      {
+        "term": "lastError",
+        "excerpt": "he creation callback fires; details will be in runtime.lastError . Parameters createProperties CreateProperties callback function optional The callback paramet"
+      }
+    ]
+  },
+  {
+    "id": "drive-upload",
+    "htmlSha256": "540304839d9f2f4d8dffc1db557b89769e1adabae8dbf6fa1d3aacdf02110ce6",
+    "excerpts": [
+      {
+        "term": "256 KB",
+        "excerpt": "ata to the request body. Create chunks in multiples of 256 KB (256 x 1024 bytes) in size, except for the final chunk that completes the upload. Keep the chu"
+      },
+      {
+        "term": "resumable",
+        "excerpt": "ultipart upload, refer to Perform a multipart upload . Resumable upload ( uploadType=resumable ) : Use this upload type for large files (greater than 5 MB) and"
+      },
+      {
+        "term": "one week",
+        "excerpt": "e upload status. A resumable session URI expires after one week. To update an existing file, use PATCH . If you have metadata for the file, add the metadata t"
+      }
+    ]
+  },
+  {
+    "id": "drive-scope",
+    "htmlSha256": "aebb57fe1b53d285c98a59b198e042248b55b6c3bc31ebe36ec18e2bed9d16b6",
+    "excerpts": [
+      {
+        "term": "drive.file",
+        "excerpt": " ); Python SCOPES = [ \"https://www.googleapis.com/auth/drive.file\" , \"https://www.googleapis.com/auth/drive.metadata.readonly\" , ] Node.js const SCOPES = [ 'htt"
+      },
+      {
+        "term": "Picker",
+        "excerpt": "ate Drive widgets into your web app Display the Google Picker Add the \"Save to Drive\" button Add the \"Share\" button Integrate with shared drives Overview Im"
+      }
+    ]
+  }
+]

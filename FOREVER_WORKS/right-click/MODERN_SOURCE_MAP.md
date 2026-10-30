@@ -48,3 +48,7 @@ Shared editor state: context/container/renderVersion, collapsed IDs, pending mut
 Validation checks duplicate profile/location IDs, label length/control characters, invalid path segments/backslash/control characters, prepared same-account buckets, active blank/unready Nested rows, eight folder levels and500 active locations. Inactive layout can remain invalid when saving the other mode. Native mode checkbox is a separate path without this full validation.
 
 renderPreview uses shared menuEntries and resolve, but restored HTML lacks destination-preview. A fixture injecting it does not establish visible current preview. Current UI is compact restoration plus later red controls, not the old studio.
+
+## Phase 2 addendum — 30 October 2026
+
+Phase2 D1–D8 distinguishes unsaved cards, hidden migration readiness, automatic mode inference and synthetic colon-ID grammar. No current behavior altered. See [A–Q matrix](EQUIVALENT_WORKFLOW_DIFF_MATRIX.md).

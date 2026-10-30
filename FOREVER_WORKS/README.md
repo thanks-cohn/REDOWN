@@ -50,3 +50,5 @@ and future gamification remain distinct from demonstrated current behavior.
 ## Right-click systems audit — 30 October 2026
 
 [Legacy/Modern right-click audit](right-click/README.md) separates purpose, wiring and presentation at the current release source pin. Read its [handoff](right-click/HANDOFF_LATEST.md) for partial coverage, current failures and the cloud-workspace evidence-recovery limitation. This documentation does not update canonical authority or historical evidence.
+
+Phase2 continuation: [forensic Legacy/Modern differential](right-click/FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md), [coverage/evidence](right-click/FULL_EVIDENCE_COVERAGE_LEDGER.md) and [handoff](right-click/PHASE_2_AUDIT_HANDOFF.md). Provider-neutral/browser-byte material is requirements documentation only.

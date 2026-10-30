@@ -16,3 +16,7 @@ Modern HTML: quick-tab-setup / quick-tab-urls form tablist; quick-panel-setup is
 Legacy #right-click-presets visibly links to Explorer. Old mode/add controls are inside hidden/inert/aria-hidden container. #simple-menu-editor now renders Storage preferences; #nested-menu-editor-panel remains hidden. Imports do not imply active mount or writer authority.
 
 Modern menu#context and destination-dialog/destination-form belong to **file-grid commands / Copy or Move to**, not native-menu configuration. Shared names are not shared authority. RedownDestinationMenus is an HTML lazy folder-picker used by Modern Simple selection and Legacy Explorer Move/Copy. Modern file-grid Copy/Move currently uses its own account/bucket/prefix dialog. Shared Worker/auth code does not make these one menu system.
+
+## Phase 2 addendum — 30 October 2026
+
+Phase2 confirms four distinct surfaces and dormant Google auth/provider scaffold boundaries. See [full census](FULL_CALL_AND_WRITER_CENSUS.md) and [provider constraints](PROVIDER_NEUTRAL_FUTURE_CONSTRAINTS.md); source-present auth file is not a mounted connection/upload feature.

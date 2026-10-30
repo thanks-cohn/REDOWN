@@ -26,3 +26,7 @@
 | Keyboard/a11y | Native controls/reorder/focus | Storage remains | ARIA names/status/details/picker keys | Picker/Nested primitives | Not ARIA tree; remove focus risks | DOM/CSS/browser | Reachable controls | V | picker keys PASS; screen reader NOT_TESTED | Primitives yes |
 | Theme/status/onboarding | Navy dashboard, former status language | Storage setup | Theme tokens, optional setup closed, adopt bucket | Auth/quick-links | Readiness may overwrite mode-success text | State/controller | Easy entry/honest feedback | M/V | wording FAIL; themes partial | Tokens after review |
 | Instrumentation/coverage | Frozen catalog/debug/semantic reports | Hashes intentionally stale | Named mocks, runtime correlation, existing incidents | Diagnostics/Forever | Docs not executable API | Source pin/results | No mock/live equivalence | Tests/gaps | 634PASS/52FAIL; installed/live open | Existing inspection adapters yes |
+
+## Phase 2 addendum — 30 October 2026
+
+The [Phase2 A–Q matrix](EQUIVALENT_WORKFLOW_DIFF_MATRIX.md) adds explicit first divergence, counterexample, confidence/gap and future-only repair per required workflow. [Root-cause analysis](FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md) does not attribute one universal cause to the owner without installed evidence.

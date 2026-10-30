@@ -33,3 +33,7 @@ PARTIAL source foundation. FAIL current full regression/freshness. NOT_TESTED in
 7. Any later canonical additions use actual pinned schemas and unreviewed/agent-proposed provenance until review; no duplicate capability authority.
 
 No implementation should be inferred from candidate names. Complete evidence recovery/review first.
+
+## Phase 2 addendum — 30 October 2026
+
+Phase2 adds owner bucket-name requirement, [provider-neutral constraints](PROVIDER_NEUTRAL_FUTURE_CONSTRAINTS.md) and [browser-byte requirements](BROWSER_TO_CLOUD_FUTURE_REQUIREMENTS.md). No Explorer prerequisite for future provider selection; no API implementation authorized.

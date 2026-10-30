@@ -1,0 +1,19 @@
+{
+  "valid": true,
+  "sourcePin": "2e65ba137a35e1656b691fd2fdbf95082a0cdf4e",
+  "errors": [],
+  "checks": [
+    "all documentary JSON parses",
+    "source SHA256 and exact symbol lines",
+    "evidence hashes",
+    "relative chapter links",
+    "existing documents prefix-preserved",
+    "recovered raw byte equality"
+  ],
+  "notChecked": [
+    "installed Chrome",
+    "live provider",
+    "independent reconstruction",
+    "actual owner causal attribution"
+  ]
+}

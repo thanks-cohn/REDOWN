@@ -38,3 +38,7 @@ Retain shared auth/API access, prepared Worker/profile adapters, exact-prefix di
 Never restore whole-profile menu autosave, old native tree generation or duplicate mode writers. Legacy menu read-only does not mean the entire settings page is read-only: domain setup, provisioning, storage and Beta GitHub preferences still have effects.
 
 Historical Simple rows clear a selected segment and retain blank descendant selectors; Modern removes a card or selects an entire prefix. Historical Nested native builder flattened descendants beyond shallow levels to first-folder ancestors with concatenated labels; current plan preserves immediate parents. Source/history and [DBG-001](../../docs/debug/DBG-001_NESTED_CHILD_DEPTH_DISABLED_STATE.md), [DBG-002](../../docs/debug/DBG-002_SIMPLE_LOCATION_ROWS.md) remain distinct from live closure.
+
+## Phase 2 addendum — 30 October 2026
+
+Historical actual selector/autosave and native tree/bucket-fallback planner were executed in isolated fixtures. Current Legacy writer remains inert; useful immediate ownership differs from competing authority. See [forensic differential](FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md).

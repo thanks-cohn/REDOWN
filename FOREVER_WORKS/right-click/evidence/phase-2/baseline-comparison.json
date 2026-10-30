@@ -1,0 +1,11 @@
+{
+  "historicalRevision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+  "currentRevision": "2e65ba137a35e1656b691fd2fdbf95082a0cdf4e",
+  "historicalRaw": "../phase-1-recovered/full-tests.log",
+  "currentRaw": "reliability.json",
+  "pass": 634,
+  "fail": 52,
+  "newNames": [],
+  "noLongerFailing": [],
+  "productSourceChanged": false
+}

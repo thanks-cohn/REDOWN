@@ -51,3 +51,7 @@ Worker handles exactFolder, inferred filename/extension, unique conditional-crea
 Background accepts response.ok/body.ok and nonempty key whose parent equals requested folder; mismatch says file may exist/check before retry. recordTransfer delegates history/counter and cosmetic feedback. Counter counts ok:true with HTTP(S) or R2 location, stores lifetime total plus50-row recent compatibility history, attempts archive before truncation, archive failure does not fail completion. Cloud/history/counter are not a distributed transaction. Notifications default off; stale-ID feedback can be suppressed.
 
 Hitomi gallery documents without srcUrl divert to generated ZIP capture; accidental HTML transfer is blocked. Full gallery/session/buffering/auth/suspension security remains partial, not live-certified.
+
+## Phase 2 addendum — 30 October 2026
+
+Phase2 [diagnostic tree](CHROME_MENU_PARITY_AND_DIAGNOSTIC_TREE.md) distinguishes saved/registered/rendered/received; [browser future requirements](BROWSER_TO_CLOUD_FUTURE_REQUIREMENTS.md) documents existing site-specific Blob bridge and limits without generalizing it.

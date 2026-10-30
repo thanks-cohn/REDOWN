@@ -1,0 +1,160 @@
+✔ explicit nested folder is sent intact and receipt uses actual target bucket and key (3.632096ms)
+✔ history uses explicit bucket/key rather than mistaking public assets route for storage folder (3.106524ms)
+✔ search previews retain result set and use each result account/bucket and exact key (2.47411ms)
+✔ history location opens exact folder and preview without scroll or focus jump (2.201039ms)
+✔ Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes (76.854973ms)
+✔ current bucket remains available for sibling destinations and same-folder choice is disabled (17.482437ms)
+✔ folder pages append via More folders and closed menus ignore late replies (17.783162ms)
+✔ keyboard arrows navigate menus and Escape returns to parent without changing Explorer (10.479641ms)
+✔ failed lazy folder reads offer retry and never execute a transfer (10.293849ms)
+✔ Copy here is available immediately while child-folder listing is still pending (8.640618ms)
+✔ reopening the same destination reuses a bounded short-lived folder page cache (10.502114ms)
+✔ keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries (60.157609ms)
+✔ failed persistence restores original array and DOM order (11.738298ms)
+✔ pointer drop reorders at visible insertion marker and cancellation leaves order unchanged (13.400734ms)
+✔ native Simple context menu follows saved section and additional destination order (5.685922ms)
+✔ drag continues outside grip and gaps are valid insertion targets (9.863892ms)
+✔ Escape cancels lifted drag without saving or leaving compact cards behind (8.254395ms)
+✔ saved moves retain focus so repeated arrow keys move the same branch (8.652315ms)
+✔ Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save (206.919729ms)
+✔ mode switches persist immediately, preserve both configurations, and reload restores active layout (133.155516ms)
+✔ existing folder picker routes exact prefix without creating folders or provisioning (102.26913ms)
+✔ collapsed Nested nodes load lazily, labels do not alter paths, and sibling moves persist (109.331769ms)
+✔ stale concurrent saves reject rather than overwrite newer changes; storage failures leave old config intact (4.408507ms)
+✔ native Chrome callback errors preserve saved configuration and successful retry rebuilds it (3.7741ms)
+✔ invalid paths, duplicate IDs, unprepared buckets and excessive hierarchy fail before persistence (5.954867ms)
+✔ primary removal only suppresses its menu and keeps profile and remote routing credentials (2.807222ms)
+✔ modern menu navigation and quick setup preserve selected mode in source (0.687095ms)
+✔ Add Location without a prepared bucket explains activation instead of creating unusable draft cards (86.617281ms)
+✔ Add Location can activate an existing Cloudflare bucket without creating another R2 bucket (43.330169ms)
+✔ account edits retain the destination identifier and route it through that account’s prepared profile (72.768432ms)
+✔ production click listener resolves exact active account, bucket and prefix and rejects stale IDs (4.786868ms)
+✔ large Simple configurations share one bucket discovery and render without per-card observers (212.472907ms)
+✔ inactive invalid legacy hierarchy is preserved while saving valid Simple changes (5.911973ms)
+✔ Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels (99.721288ms)
+✔ Nested plus exposes focused inline creation and keeps siblings while saving the verified child (65.803081ms)
+✔ mode switch persists without committing a dirty destination label; external mode-only changes preserve and rebase draft (43.72263ms)
+✔ deep native menu preserves every immediate parent, concise labels and exact paths (18.29274ms)
+✔ Nested full-group removal, Undo, final-root removal and save/reload preserve storage and intentional emptiness (259.365702ms)
+✔ child, parent and distinct same-account groups remove only their stable definitions (62.054038ms)
+✔ Simple and Nested native builds exclude obsolete trees and legacy-only accounts (2.464326ms)
+✔ versioned migration is repeat-safe and its menu-only backup preserves original definitions (1.996009ms)
+✔ legacy preference writes share the modern save lane and cannot rewrite or remove menu profiles (1.988377ms)
+✔ native creations await parent callbacks and later rebuild wins over an older snapshot (31.560844ms)
+✔ deleting all Simple rows remains empty with legacy data through rebuild and readdition (2.751289ms)
+✔ external profile changes preserve unsaved edits and stale saves still fail (46.318243ms)
+✔ blank Nested rows cannot be saved as apparently configured destinations (2.330844ms)
+✔ storage provisioning cannot seed destinations without modern Explorer activation (2.690507ms)
+✔ delayed Worker/domain persistence cannot resurrect a deleted menu or discard other profiles (4.672223ms)
+✔ eight-level shared plan preserves immediate parents, parent save actions and preview parity (7.348534ms)
+✔ pre-redesign right-click selection toolbar is restored without rolling back shared menu authority (88.823608ms)
+✔ contextual operations stay accessible through named native disclosures (35.026969ms)
+✔ removed parent send actions no longer resolve after their last child is removed (2.489023ms)
+✖ right-click editor uses product-facing status and keeps dedicated bucket setup optional (25.468518ms)
+✔ Simple and Nested cards expose immediate red X without tooltips or cloud deletion (65.144097ms)
+✔ card X is permanently visible, red, carefully positioned, and motion-safe (2.284494ms)
+✔ selection never fills the new-name field, and preserves an independently typed draft (122.071979ms)
+✔ Add child and Create use the exact parent path; actual dropdown children stay scoped (31.955857ms)
+✔ hiding a nested menu preserves its hierarchy and failed creation preserves the draft (40.469704ms)
+✔ native nested menu targets every verified depth and offers Send here for parents (2.097021ms)
+✔ legacy paths migrate without modifying old configuration or writing remote folders (34.092473ms)
+✔ legacy Nested save is read-only and ordinary preferences delegate to the serialized background (12.074774ms)
+✔ one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN (3.116649ms)
+✔ legacy settings mode controls remain read-only and preserve destination configurations (12.255376ms)
+✔ native menu mode checkbox changes the same saved setting without downloading anything (1.736097ms)
+✔ DBG-001: selecting a new deep child enables its next child without bucket reselection (23.441532ms)
+✔ DBG-001: create-new folder enables repeated + Child through five levels (84.593782ms)
+✔ DBG-001: selecting existing child enables + Child after the async save lock releases (22.124285ms)
+✔ reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths (38.008103ms)
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (16.663482ms)
+✔ removing a parent deletes its menu descendants while retaining its bucket and cloud storage (19.207799ms)
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'create')]
+    at reportException (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+    at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) TypeError: Cannot read properties of undefined (reading 'create')
+    at HTMLButtonElement.eval (eval at open (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:11:21), <anonymous>:49:73)
+    at HTMLButtonElement.callTheUserObjectsOperation (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (111.261326ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (39.032376ms)
+✔ failed or canceled login stays red and retryable without resetting the total (20.047665ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (55.455487ms)
+✔ late count response cannot overwrite a newer storage count (17.772764ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (15.211254ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (29.710191ms)
+✔ background accepts a discovered unsaved bucket only after read-only existence validation (28.923246ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (27.224815ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (30.675118ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (14.209593ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (37.058622ms)
+✔ unavailable audio never prevents reaching or saving the verified total (33.812316ms)
+✔ Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (4.72243ms)
+✔ Legacy bucket-label preference cannot override modern path-derived labels or explicit names (1.289694ms)
+✔ Menu Label is default for existing profiles without a saved preference (1.196113ms)
+✔ explicit Simple label wins over the lowest-directory fallback (1.150003ms)
+✔ blank and whitespace Simple labels retain automatic naming under every fallback setting (3.798737ms)
+ℹ tests 88
+ℹ suites 0
+ℹ pass 85
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5367.569398
+
+✖ failing tests:
+
+test at tests/modern-destinations.test.mjs:308:1
+✖ right-click editor uses product-facing status and keeps dedicated bucket setup optional (25.468518ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Right-click layout updated/. Input:
+  
+  'Unsaved changes · Save menu to apply them.'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/modern-destinations.test.mjs:314:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Unsaved changes · Save menu to apply them.',
+    expected: /Right-click layout updated/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/nested-locations.test.mjs:218:1
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (16.663482ms)
+  TypeError: Cannot read properties of null (reading 'dispatchEvent')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/nested-locations.test.mjs:222:50)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/popup-destinations.test.mjs:14:1
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (111.261326ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:264)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,338 @@
+[
+  {
+    "name": "legacy-wide",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 162.5,
+      "y": 40,
+      "width": 1100,
+      "height": 921.640625
+    },
+    "stage": {
+      "x": 162.5,
+      "y": 40,
+      "width": 1100,
+      "height": 921.640625
+    },
+    "documentWidth": 1425,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 5,
+    "removals": [
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 1182.484375,
+          "y": 313.25,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 1182.484375,
+          "y": 363.9375,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1119.9375,
+          "y": 587.640625,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1119.9375,
+          "y": 693.921875,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1119.9375,
+          "y": 800.203125,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 243.5,
+          "y": 679.078125,
+          "width": 969,
+          "height": 200.5625
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 274.5,
+          "y": 785.359375,
+          "width": 938,
+          "height": 94.28125
+        }
+      }
+    ],
+    "status": "Historical synthetic fixture",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with historical 515c272 CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "legacy-narrow",
+    "viewport": {
+      "width": 320,
+      "height": 800
+    },
+    "panel": {
+      "x": 16,
+      "y": 40,
+      "width": 273,
+      "height": 1708.453125
+    },
+    "stage": {
+      "x": 16,
+      "y": 40,
+      "width": 273,
+      "height": 1708.453125
+    },
+    "documentWidth": 305,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 5,
+    "removals": [
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 202,
+          "y": 543.609375,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 202,
+          "y": 715.296875,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 167.4375,
+          "y": 1149.703125,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 180.4375,
+          "y": 1366.984375,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 193.4375,
+          "y": 1584.265625,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 65,
+          "y": 1239.296875,
+          "width": 188,
+          "height": 441.15625
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 78,
+          "y": 1456.578125,
+          "width": 175,
+          "height": 223.875
+        }
+      }
+    ],
+    "status": "Historical synthetic fixture",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with historical 515c272 CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "legacy-panel",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 552.5,
+      "y": 40,
+      "width": 320,
+      "height": 1791.546875
+    },
+    "stage": {
+      "x": 552.5,
+      "y": 40,
+      "width": 320,
+      "height": 1791.546875
+    },
+    "documentWidth": 1425,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 5,
+    "removals": [
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 792.484375,
+          "y": 400.03125,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "mini danger location-level-remove",
+        "box": {
+          "x": 792.484375,
+          "y": 450.71875,
+          "width": 32,
+          "height": 36
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(217, 154, 165)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1063.9375,
+          "y": 1438.953125,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1094.9375,
+          "y": 1545.234375,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      },
+      {
+        "class": "ghost",
+        "box": {
+          "x": 1125.9375,
+          "y": 1651.515625,
+          "width": 69.90625,
+          "height": 40
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(199, 210, 231)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 633.5,
+          "y": 1530.390625,
+          "width": 189,
+          "height": 219.15625
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 664.5,
+          "y": 1636.671875,
+          "width": 158,
+          "height": 112.875
+        }
+      }
+    ],
+    "status": "Historical synthetic fixture",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with historical 515c272 CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  }
+]

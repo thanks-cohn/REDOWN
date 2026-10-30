@@ -34,3 +34,7 @@ Use synthetic P/A/B/R/N, not customer state. Trace one Simple extra and eight-le
 Impact analysis: label/CSS changes need owning renderer/selector, unchanged routing plus visual widths/themes. Persistence changes need all write paths, dirty windows, zero states, backups, delayed infrastructure and callback failures. Provider changes need discovery/prepare/create/ingest/delete separated, exact identities/private auth and disposable live proof. Missing destination diagnosis compares saved model/mode, readiness/filter, normalized plan, actual registration then current resolver; never deploy merely to inspect.
 
 Recover inaccessible raw evidence before claiming complete reproducibility. Unknown source-independent reconstruction remains NOT_TESTED.
+
+## Phase 2 addendum — 30 October 2026
+
+Use the [new root-cause drill](COLD_AGENT_ROOT_CAUSE_DRILL.md) to locate first divergent boundary and disconfirm competing hypotheses. Independent fresh-agent execution is still NOT_TESTED.

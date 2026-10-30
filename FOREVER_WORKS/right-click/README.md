@@ -30,3 +30,21 @@ Actual installed upstream: [UPSTREAM.json](../upstream/forever-works/UPSTREAM.js
 Modern is the active destination-definition editor through guarded background save, while Legacy is a storage/preferences surface with obsolete menu callbacks retained. Explicit Modern activation/dedicated setup can seed definitions; Chrome's checkbox writes mode. Profiles own the saved model; a freshly resolved ID owns the click target. Shared menuEntries provides flat Simple and immediate-parent Nested plans. Red × removes menu definitions, never cloud storage.
 
 Current restored compact presentation differs from the superseded four-region studio. Preview code exists but the restored HTML has no destination-preview host. Saving can succeed while native rebuilding fails; native registration, rendering and cloud completion remain separate truths.
+
+## Phase 2 forensic route — current continuation
+
+Start with [main Legacy-success/Modern-failure differential](FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md) and [Phase2 handoff](PHASE_2_AUDIT_HANDOFF.md). Old Phase1 recovery limitations above remain historical: raw logs/screenshots are recovered and fresh runs/captures are now attached. Owner requests bucket-default Simple labels and minimal/intuitive/aesthetic setup; no code changed.
+
+- [Forensic Legacy Vs Modern Root Cause](FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md)
+- [Equivalent Workflow Diff Matrix](EQUIVALENT_WORKFLOW_DIFF_MATRIX.md)
+- [Full Call And Writer Census](FULL_CALL_AND_WRITER_CENSUS.md)
+- [Chrome Menu Parity And Diagnostic Tree](CHROME_MENU_PARITY_AND_DIAGNOSTIC_TREE.md)
+- [Historical Legacy Presentation](HISTORICAL_LEGACY_PRESENTATION.md)
+- [Modern Presentation And Behavior](MODERN_PRESENTATION_AND_BEHAVIOR.md)
+- [Provider Neutral Future Constraints](PROVIDER_NEUTRAL_FUTURE_CONSTRAINTS.md)
+- [Browser To Cloud Future Requirements](BROWSER_TO_CLOUD_FUTURE_REQUIREMENTS.md)
+- [Full Evidence Coverage Ledger](FULL_EVIDENCE_COVERAGE_LEDGER.md)
+- [Cold Agent Root Cause Drill](COLD_AGENT_ROOT_CAUSE_DRILL.md)
+- [Phase 2 Audit Handoff](PHASE_2_AUDIT_HANDOFF.md)
+- [Owner Direction 2026 10 30](OWNER_DIRECTION_2026_10_30.md)
+- [Phase 2 Source Index.Json](PHASE_2_SOURCE_INDEX.json)

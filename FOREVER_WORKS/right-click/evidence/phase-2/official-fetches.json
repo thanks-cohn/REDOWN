@@ -1,0 +1,73 @@
+[
+  {
+    "id": "chrome-contextmenus",
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/contextMenus",
+    "httpStatus": 200,
+    "bytes": 194350,
+    "status": "FETCHED"
+  },
+  {
+    "id": "chrome-fetch",
+    "url": "https://developer.chrome.com/docs/extensions/develop/concepts/network-requests",
+    "httpStatus": 200,
+    "bytes": 157540,
+    "status": "FETCHED"
+  },
+  {
+    "id": "chrome-lifetime",
+    "url": "https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle",
+    "httpStatus": 200,
+    "bytes": 142822,
+    "status": "FETCHED"
+  },
+  {
+    "id": "drive-upload",
+    "url": "https://developers.google.com/workspace/drive/api/guides/manage-uploads",
+    "httpStatus": 200,
+    "bytes": 357533,
+    "status": "FETCHED"
+  },
+  {
+    "id": "drive-scope",
+    "url": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "httpStatus": 200,
+    "bytes": 181377,
+    "status": "FETCHED"
+  },
+  {
+    "id": "dropbox-upload",
+    "url": "https://developers.dropbox.com/dbx-file-access-guide",
+    "httpStatus": 200,
+    "bytes": 367661,
+    "status": "FETCHED"
+  },
+  {
+    "id": "onedrive-upload",
+    "url": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0",
+    "httpStatus": 200,
+    "bytes": 71902,
+    "status": "FETCHED"
+  },
+  {
+    "id": "chrome-messages",
+    "url": "https://developer.chrome.com/docs/extensions/develop/concepts/messaging",
+    "httpStatus": 200,
+    "bytes": 217894,
+    "sha256": "1cb24f4a1ed19c19bc12f0021f0eb4815d0376edb4a883e3b9b2de56b20de716",
+    "status": "FETCHED"
+  },
+  {
+    "id": "dropbox-oauth",
+    "url": "https://www.dropbox.com/developers/reference/oauth-guide",
+    "httpStatus": 200,
+    "bytes": 263444,
+    "sha256": "086cccec81be439e85920fafd5f1262560240bfe53fae037905a0da7bab8ba10",
+    "status": "FETCHED"
+  },
+  {
+    "id": "r2-worker",
+    "url": "https://developers.cloudflare.com/r2/api/workers/workers-api-reference/",
+    "status": "BLOCKED",
+    "error": "HTTP Error 403: Forbidden"
+  }
+]

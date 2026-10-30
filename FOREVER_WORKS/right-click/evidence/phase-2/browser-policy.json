@@ -1,0 +1,9 @@
+{
+  "evidenceClass": "SOURCE_INSPECTED environment policy",
+  "policyPath": "/etc/chromium/policies/managed/extensions.json",
+  "ExtensionInstallBlocklist": [
+    "*"
+  ],
+  "installedExtensionAcceptance": "BLOCKED/NOT_TESTED; no bypass attempted",
+  "standaloneHtmlFixtures": "allowed; no extension installation, synthetic state only"
+}

@@ -1,0 +1,9 @@
+{
+  "sourceRevision": "e621ef2dcf11cad3042e5b268a83470df606b85d",
+  "records": 253,
+  "schemaAndNonFreshnessChecks": "PASS",
+  "sourceFreshness": "FAIL",
+  "sourceDriftCount": 222,
+  "otherErrors": [],
+  "method": "Invoked unchanged validate.py; classified returned errors without modifying canonical records, schemas or hashes"
+}

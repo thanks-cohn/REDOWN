@@ -1,0 +1,14 @@
+{
+  "method": "read-only Cloudflare documentation connector",
+  "query": "R2 Workers binding put get head conditional writes onlyIf streams known length object key metadata",
+  "url": "https://developers.cloudflare.com/r2/api/workers/workers-api-reference/",
+  "retrieval": "SUCCESS after direct HTTP403",
+  "observedSemantics": [
+    "head returns metadata or null",
+    "get may return object body ReadableStream",
+    "put accepts Blob/stream/byte forms and returns object metadata or null on failed precondition",
+    "onlyIf controls conditional write",
+    "document states R2 writes strongly consistent after resolved promise"
+  ],
+  "scope": "primary reference, not live provider execution"
+}

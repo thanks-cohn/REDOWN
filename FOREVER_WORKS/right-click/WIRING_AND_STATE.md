@@ -72,3 +72,7 @@ Background applies only RedownDestinationConfig.fields onto known profiles, pres
 | Transfer succeeds, history fails | Separate caught outcome path | No atomic cloud/history/count transaction or durable resume promise |
 
 Shared HTML picker caches64 pages, TTL10s after success, read timeout12s; closed panels ignore stale replies. These are not native Chrome-menu geometry controls.
+
+## Phase 2 addendum — 30 October 2026
+
+Phase2 adds [writer census and sequence diagrams](FULL_CALL_AND_WRITER_CENSUS.md), including buildMenus automatic mode write and Legacy-only inference change. Registered/rendered/provider truth remains independent.

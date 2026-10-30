@@ -1,0 +1,857 @@
+[
+  {
+    "name": "wide-simple",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 170,
+      "y": 45,
+      "width": 1100,
+      "height": 800.78125
+    },
+    "stage": {
+      "x": 196,
+      "y": 320.59375,
+      "width": 1048,
+      "height": 450
+    },
+    "documentWidth": 1440,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 2,
+    "removals": [
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 665,
+          "y": 343.78125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 1190,
+          "y": 343.78125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [],
+    "status": "Choose a layout and design your right-click menu.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "narrow-simple",
+    "viewport": {
+      "width": 320,
+      "height": 800
+    },
+    "panel": {
+      "x": 16,
+      "y": 45,
+      "width": 273,
+      "height": 871.53125
+    },
+    "stage": {
+      "x": 32,
+      "y": 484.34375,
+      "width": 241,
+      "height": 360
+    },
+    "documentWidth": 305,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 2,
+    "removals": [
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 204,
+          "y": 507.53125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 204,
+          "y": 820.6875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [],
+    "status": "Choose a layout and design your right-click menu.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "panel-simple",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 552.5,
+      "y": 45,
+      "width": 320,
+      "height": 988.75
+    },
+    "stage": {
+      "x": 578.5,
+      "y": 508.5625,
+      "width": 268,
+      "height": 450
+    },
+    "documentWidth": 1425,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 2,
+    "removals": [
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 777.5,
+          "y": 531.75,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "destination-remove-x",
+        "box": {
+          "x": 777.5,
+          "y": 827.3125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [],
+    "status": "Choose a layout and design your right-click menu.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "wide-nested",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 170,
+      "y": 45,
+      "width": 1100,
+      "height": 800.78125
+    },
+    "stage": {
+      "x": 196,
+      "y": 320.59375,
+      "width": 1048,
+      "height": 450
+    },
+    "documentWidth": 1440,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 10,
+    "removals": [
+      {
+        "class": "nested-remove",
+        "box": {
+          "x": 1175,
+          "y": 339.59375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 438.984375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 553.375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 667.765625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 782.15625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 896.546875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 1010.9375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 1125.328125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 1239.71875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 1175,
+          "y": 1354.109375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 243,
+          "y": 501.984375,
+          "width": 966,
+          "height": 995.125
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 270,
+          "y": 616.375,
+          "width": 939,
+          "height": 870.734375
+        }
+      },
+      {
+        "depth": "2",
+        "box": {
+          "x": 297,
+          "y": 730.765625,
+          "width": 912,
+          "height": 746.34375
+        }
+      },
+      {
+        "depth": "3",
+        "box": {
+          "x": 297,
+          "y": 845.15625,
+          "width": 912,
+          "height": 621.953125
+        }
+      },
+      {
+        "depth": "4",
+        "box": {
+          "x": 297,
+          "y": 959.546875,
+          "width": 912,
+          "height": 497.5625
+        }
+      },
+      {
+        "depth": "5",
+        "box": {
+          "x": 297,
+          "y": 1073.9375,
+          "width": 912,
+          "height": 373.171875
+        }
+      },
+      {
+        "depth": "6",
+        "box": {
+          "x": 297,
+          "y": 1188.328125,
+          "width": 912,
+          "height": 248.78125
+        }
+      },
+      {
+        "depth": "7",
+        "box": {
+          "x": 297,
+          "y": 1302.71875,
+          "width": 912,
+          "height": 124.390625
+        }
+      }
+    ],
+    "status": "Unsaved changes · Save menu to apply them.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "narrow-nested",
+    "viewport": {
+      "width": 320,
+      "height": 800
+    },
+    "panel": {
+      "x": 16,
+      "y": 45,
+      "width": 273,
+      "height": 871.53125
+    },
+    "stage": {
+      "x": 32,
+      "y": 484.34375,
+      "width": 241,
+      "height": 360
+    },
+    "documentWidth": 305,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 10,
+    "removals": [
+      {
+        "class": "nested-remove",
+        "box": {
+          "x": 204,
+          "y": 503.34375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 204,
+          "y": 758.671875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 204,
+          "y": 915.0625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 204,
+          "y": 1071.453125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 1243.84375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 1432.234375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 1620.625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 1825.015625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 2029.40625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 213.765625,
+          "y": 2249.796875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 79,
+          "y": 818.671875,
+          "width": 159,
+          "height": 1635.125
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 106,
+          "y": 975.0625,
+          "width": 132,
+          "height": 1468.734375
+        }
+      },
+      {
+        "depth": "2",
+        "box": {
+          "x": 133,
+          "y": 1147.453125,
+          "width": 105,
+          "height": 1286.34375
+        }
+      },
+      {
+        "depth": "3",
+        "box": {
+          "x": 133,
+          "y": 1335.84375,
+          "width": 105,
+          "height": 1087.953125
+        }
+      },
+      {
+        "depth": "4",
+        "box": {
+          "x": 133,
+          "y": 1524.234375,
+          "width": 105,
+          "height": 889.5625
+        }
+      },
+      {
+        "depth": "5",
+        "box": {
+          "x": 133,
+          "y": 1728.625,
+          "width": 105,
+          "height": 675.171875
+        }
+      },
+      {
+        "depth": "6",
+        "box": {
+          "x": 133,
+          "y": 1933.015625,
+          "width": 105,
+          "height": 460.78125
+        }
+      },
+      {
+        "depth": "7",
+        "box": {
+          "x": 133,
+          "y": 2153.40625,
+          "width": 105,
+          "height": 230.390625
+        }
+      }
+    ],
+    "status": "Unsaved changes · Save menu to apply them.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  },
+  {
+    "name": "panel-nested",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "panel": {
+      "x": 552.5,
+      "y": 45,
+      "width": 320,
+      "height": 974.375
+    },
+    "stage": {
+      "x": 578.5,
+      "y": 494.1875,
+      "width": 268,
+      "height": 450
+    },
+    "documentWidth": 1425,
+    "horizontalOverflow": false,
+    "renderedRemovalCount": 10,
+    "removals": [
+      {
+        "class": "nested-remove",
+        "box": {
+          "x": 777.5,
+          "y": 513.1875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 749.328125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 905.71875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1062.109375,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1218.5,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1390.890625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1563.28125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1751.671875,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 1940.0625,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      },
+      {
+        "class": "nested-inline-remove",
+        "box": {
+          "x": 777.5,
+          "y": 2128.453125,
+          "width": 34,
+          "height": 34
+        },
+        "display": "grid",
+        "visibility": "visible",
+        "opacity": "1",
+        "color": "rgb(169, 41, 74)"
+      }
+    ],
+    "nestedDepth": [
+      {
+        "depth": "0",
+        "box": {
+          "x": 625.5,
+          "y": 809.328125,
+          "width": 186,
+          "height": 1507.125
+        }
+      },
+      {
+        "depth": "1",
+        "box": {
+          "x": 652.5,
+          "y": 965.71875,
+          "width": 159,
+          "height": 1340.734375
+        }
+      },
+      {
+        "depth": "2",
+        "box": {
+          "x": 679.5,
+          "y": 1122.109375,
+          "width": 132,
+          "height": 1174.34375
+        }
+      },
+      {
+        "depth": "3",
+        "box": {
+          "x": 679.5,
+          "y": 1294.5,
+          "width": 132,
+          "height": 991.953125
+        }
+      },
+      {
+        "depth": "4",
+        "box": {
+          "x": 679.5,
+          "y": 1466.890625,
+          "width": 132,
+          "height": 809.5625
+        }
+      },
+      {
+        "depth": "5",
+        "box": {
+          "x": 679.5,
+          "y": 1655.28125,
+          "width": 132,
+          "height": 611.171875
+        }
+      },
+      {
+        "depth": "6",
+        "box": {
+          "x": 679.5,
+          "y": 1843.671875,
+          "width": 132,
+          "height": 412.78125
+        }
+      },
+      {
+        "depth": "7",
+        "box": {
+          "x": 679.5,
+          "y": 2032.0625,
+          "width": 132,
+          "height": 214.390625
+        }
+      }
+    ],
+    "status": "Unsaved changes · Save menu to apply them.",
+    "evidenceClass": "LOCAL_TEST_PASS",
+    "verificationScope": "Rendered standalone HTML fixture with real CSS/renderer and synthetic Chrome/provider responses; not installed-extension or live-provider proof"
+  }
+]

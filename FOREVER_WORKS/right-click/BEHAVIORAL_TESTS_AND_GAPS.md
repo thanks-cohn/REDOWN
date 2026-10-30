@@ -78,3 +78,7 @@ Historical deep flattening is source-confirmed and superseded by current immedia
 | Independent cold-agent reconstruction drill |NOT_TESTED|Recipe provided, no fresh-agent reconstruction executed |
 
 Next first action: recover local work and logs from /workspace/REDOWN/FOREVER_WORKS/right-click and work/right-click if environment returns. Preserve both versions; reconcile carefully against the remote audit. Do not overwrite richer local files with shorter recovery chapters blindly.
+
+## Phase 2 addendum — 30 October 2026
+
+Recovery succeeded. Historical logs/assets are now preserved under evidence/phase-1-recovered; fresh source2e65ba1 results again85/88 focused and634/686 full, same52 names. See [fresh coverage/results](FULL_EVIDENCE_COVERAGE_LEDGER.md). Original report is preserved as historical, not retroactively rewritten.

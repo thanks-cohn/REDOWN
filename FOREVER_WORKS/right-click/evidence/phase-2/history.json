@@ -1,0 +1,52 @@
+[
+  {
+    "sha": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+    "subject": "docs(explorer): audit CSS primary visibility and inline-folder scope correction",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "16dad07d248d6f9be52392fdc9b4a067350dadbf",
+    "subject": "fix: make modern right-click destinations authoritative and removable",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "2018b6bd269fd79d4a9f14cdba6da1ac13d07df2",
+    "subject": "docs: record right-click repair validation and publication outcome",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "45e1c7178d4732a7c9cbb6be4cbe575a3252ab19",
+    "subject": "fix: restore right-click hierarchy and structured destination editor",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "947b0cc9dcb4834848244660d5528bdc80fa7dd7",
+    "subject": "revert(right-click UI): restore compact pre-redesign selector toolbar from 515c272",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "0c39d305777cd2daf7c854aa62b09405d0de781e",
+    "subject": "revert(right-click styles): restore 515c272 compact selector and nested editor spacing",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "5913a5c89d76169ae5a52752f2622bf01a70a9b5",
+    "subject": "fix(right-click): put visible red remove X on each Simple destination card",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "9272fe2664d3008239b54c8eb390aa7b72dd4302",
+    "subject": "fix(right-click): surface permanent red X on Nested cards and child locations",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "b981b683f8345bd65f86128041d445fecfef44f5",
+    "subject": "style(right-click): position always-visible red X with premium spacing on menu cards",
+    "ancestorOfPhase2Start": true
+  },
+  {
+    "sha": "5c2c95931c78e679a0626f94abb88ebdc93462da",
+    "subject": "test(right-click): cover immediate visible red X and safe Simple/Nested menu removal",
+    "ancestorOfPhase2Start": true
+  }
+]

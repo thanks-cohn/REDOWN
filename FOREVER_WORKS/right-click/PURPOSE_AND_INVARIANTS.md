@@ -52,3 +52,7 @@ These elaborate existing [invariant](../../forever/invariants/redown.invariant.d
 - Droplet animation starts before ID resolution; invalid IDs may receive cosmetic feedback without a transfer. Notifications off can suppress a stale-ID notice.
 
 See [source index](SOURCE_INDEX.json) for exact symbols and tests. No contradiction was fixed during this audit.
+
+## Phase 2 addendum — 30 October 2026
+
+Owner now explicitly requests automatic Simple bucket naming, intuitive/minimal/aesthetic setup and retention of useful folder outline. This is OWNER_INTENT outside canonical records; actual deepest-folder behavior remains unchanged. See [owner direction](OWNER_DIRECTION_2026_10_30.md) and [confirmed naming differential](FORENSIC_LEGACY_VS_MODERN_ROOT_CAUSE.md).

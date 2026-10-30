@@ -55,3 +55,7 @@ Modern removal controls measured34×34px, opacity1/visible. Expanded eight-level
 ## Reproduce/complete acceptance — NOT_TESTED in installed Chrome
 
 Use administrator-approved extension environment and synthetic/disposable state. Capture1440×1000,960×800,480×800,320×720, plus actual320/480px Shelf panels inside a wide viewport. Record actual panel width, theme, zoom/DPR/font/computed styles. Include empty/many cards, eight levels, long/duplicate names, × resting/hover/focus/disabled, collapsed/expanded rows, creator Escape, picker edge-fitting, keyboard/reorder/remove focus and scroll. Repeat supported themes, reduced-motion, screen reader and touch review. Capture native Chrome menu independently: **REDOWN CSS does not position Chrome flyouts**.
+
+## Phase 2 addendum — 30 October 2026
+
+Raw assets were recovered, and nine fresh standalone captures now exist. See [historical](HISTORICAL_LEGACY_PRESENTATION.md) and [Modern](MODERN_PRESENTATION_AND_BEHAVIOR.md). Earlier unavailable/no-capture statements describe Phase1 recovery delivery, not current evidence availability.

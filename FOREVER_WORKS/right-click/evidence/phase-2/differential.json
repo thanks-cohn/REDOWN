@@ -1,0 +1,230 @@
+{
+  "sourceRevision": "2e65ba137a35e1656b691fd2fdbf95082a0cdf4e",
+  "scope": "Isolated current jsdom/VM harness and extracted historical actual functions. Chrome/provider mocked; not installed or live evidence.",
+  "observations": [
+    {
+      "case": "D1 Modern add before/after explicit Save",
+      "before": {
+        "cards": 3,
+        "savedOptions": 1,
+        "status": "Unsaved changes · Save menu to apply them.",
+        "native": [
+          {
+            "id": "redown",
+            "title": "REDOWN"
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art"
+          },
+          {
+            "id": "simple-option:p:extra",
+            "parentId": "redown",
+            "title": "Photos"
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown"
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "title": "Use nested menu"
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…"
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…"
+          }
+        ]
+      },
+      "after": {
+        "cards": 3,
+        "savedOptions": 2,
+        "status": "Saved · REDOWN right-click menu updated.",
+        "native": [
+          {
+            "id": "redown",
+            "title": "REDOWN"
+          },
+          {
+            "id": "quick:p",
+            "parentId": "redown",
+            "title": "Art"
+          },
+          {
+            "id": "simple-option:p:extra",
+            "parentId": "redown",
+            "title": "Photos"
+          },
+          {
+            "id": "simple-option:p:43de1b0b-ab78-41a9-9115-a60867963b1b",
+            "parentId": "redown",
+            "title": "New location"
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown"
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "title": "Use nested menu"
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…"
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…"
+          }
+        ]
+      },
+      "result": "CONFIRMED_LOCAL_DIFFERENCE"
+    },
+    {
+      "case": "D1 Historical actual Simple selection callback/autosave",
+      "revision": "515c272c48f89eb3f509fa2c7a5a02e0db53f66b",
+      "savedPrefix": "photos",
+      "writes": [
+        [
+          "profiles"
+        ]
+      ],
+      "result": "CONFIRMED_LOCAL_AUTOSAVE"
+    },
+    {
+      "case": "D2 Legacy-only migration requires explicit commit and collapsed child discovery",
+      "historicalTreeDescriptors": [
+        {
+          "id": "tree:p:old",
+          "parentId": "preset:p",
+          "title": "Historical photos"
+        }
+      ],
+      "legacyOnlyNativeDestinations": 0,
+      "saveBeforeExpand": "Choose or create every active Nested folder before saving.",
+      "afterExpandAndSave": {
+        "cards": 2,
+        "savedOptions": 1,
+        "status": "Saved · REDOWN right-click menu updated.",
+        "native": [
+          {
+            "id": "redown",
+            "title": "REDOWN"
+          },
+          {
+            "id": "nested:p:60f02f7f-3dd2-4bc6-a131-8788aea89db6:60f02f7f-3dd2-4bc6-a131-8788aea89db6",
+            "parentId": "redown",
+            "title": "art"
+          },
+          {
+            "id": "nested:p:60f02f7f-3dd2-4bc6-a131-8788aea89db6:60f02f7f-3dd2-4bc6-a131-8788aea89db6:send",
+            "parentId": "nested:p:60f02f7f-3dd2-4bc6-a131-8788aea89db6:60f02f7f-3dd2-4bc6-a131-8788aea89db6",
+            "title": "Send here"
+          },
+          {
+            "id": "nested:p:60f02f7f-3dd2-4bc6-a131-8788aea89db6:f6bdcf7d-5a9e-417e-8262-9597ca83da54",
+            "parentId": "nested:p:60f02f7f-3dd2-4bc6-a131-8788aea89db6:60f02f7f-3dd2-4bc6-a131-8788aea89db6",
+            "title": "photos"
+          },
+          {
+            "id": "redown-mode-separator",
+            "parentId": "redown"
+          },
+          {
+            "id": "redown-nested-mode",
+            "parentId": "redown",
+            "title": "Use nested menu"
+          },
+          {
+            "id": "redown-saved-urls",
+            "parentId": "redown",
+            "title": "View saved object's URLs…"
+          },
+          {
+            "id": "redown-manage",
+            "parentId": "redown",
+            "title": "Manage destinations…"
+          }
+        ]
+      },
+      "result": "CONFIRMED_LOCAL_MIGRATION_GATE"
+    },
+    {
+      "case": "D3 Persistence success/native create failure",
+      "persistedLabel": "Saved but absent",
+      "nativeCount": 0,
+      "status": "Saved, but Chrome could not update its menu. Retry Save to rebuild.",
+      "result": "CONFIRMED_LOCAL_PARTIAL_SUCCESS"
+    },
+    {
+      "case": "D4 Invalid prepared snapshot descriptor exists but resolver rejects",
+      "menuId": "quick:p",
+      "descriptorPresent": true,
+      "resolves": false,
+      "result": "CONFIRMED_LOCAL_NOT_NORMAL_VALIDATED_SAVE"
+    },
+    {
+      "case": "D5 status after mode/readiness",
+      "storedMode": "nested",
+      "status": "Unsaved changes · Save menu to apply them.",
+      "result": "LOCAL_OBSERVATION"
+    },
+    {
+      "case": "D6 Owner bucket-name default / Legacy preference differential",
+      "syntheticBucket": "art",
+      "storedPrefix": "files",
+      "storedLabel": "",
+      "historicalBucketPreferenceLabel": "art",
+      "currentLabel": "files",
+      "changingOnlyLegacyMenuTreeChangesModernPlan": false,
+      "result": "CONFIRMED_LOCAL_NAMING_DIVERGENCE"
+    },
+    {
+      "case": "D7 Mode inference on old-only profile with no stored mode",
+      "historicalMode": "nested",
+      "currentMode": "simple",
+      "result": "CONFIRMED_CONDITIONAL_COMPATIBILITY_DIVERGENCE"
+    },
+    {
+      "case": "D8 Colon profile ID accepted by validation but not resolver",
+      "syntheticProfileId": "synthetic:colon",
+      "saveAccepted": true,
+      "descriptorPresent": true,
+      "resolves": false,
+      "result": "CONFIRMED_NEGATIVE_ID_GRAMMAR_GAP; normal UUID creation does not produce this ID"
+    },
+    {
+      "case": "D9 Same account multiple prepared profiles creates repeated account headings",
+      "profileCount": 2,
+      "groupCount": 2,
+      "headings": [
+        "Account",
+        "Account"
+      ],
+      "roots": [
+        "art",
+        "unprepared"
+      ],
+      "result": "CONFIRMED_DOM_IDENTITY_CLARITY_CASE; CSS hides group meta; not an orphaned data writer"
+    },
+    {
+      "case": "D10 Menu prefix character limit versus Worker UTF-8 key limit",
+      "characters": 600,
+      "bytes": 1200,
+      "menuValidationAccepted": true,
+      "workerKeyValidationAccepted": false,
+      "result": "CONFIRMED_SYNTHETIC_SIZE_BOUNDARY; not owner profile or actual write"
+    }
+  ]
+}
