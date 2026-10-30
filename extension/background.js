@@ -2058,9 +2058,10 @@ function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item
   for(const item of locations){
     const id=`nested:${profile.id}:${item.rootId}:${item.nodeId}`;
     const parentNode=item.ids.length>1?item.ids.at(-2):item.rootId;
-    const parentId=item.ids.length?`nested:${profile.id}:${item.rootId}:${parentNode}`:parent;
-    create({id,parentId,title:item.name,contexts});
-    if(locations.some(child=>child.rootId===item.rootId && child.ids.length===item.ids.length+1 && (item.ids.length===0 || child.ids.at(-2)===item.nodeId)))
+    const parentId=item.ids.length?`nested:${profile.id}:${item.rootId}:${item.ids.length>1?item.ids[0]:parentNode}`:parent;
+    const title=item.ids.length>1 ? item.prefix.split('/').slice(1).join(' / ')+(item.name!==item.prefix.split('/').at(-1)?' · '+item.name:'') : item.name;
+    create({id,parentId,title,contexts});
+    if(item.ids.length<=1 && locations.some(child=>child.rootId===item.rootId && child.ids.length===item.ids.length+1 && (item.ids.length===0 || child.ids.at(-2)===item.nodeId)))
       create({id:`${id}:send`,parentId:id,title:"Send here",contexts});
   }
 }
@@ -2473,7 +2474,14 @@ function launchSaveDroplet(info,tab){
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(info.menuItemId==='redown-nested-mode'){
-    await chrome.storage.local.set({rightClickMode:info.checked ? 'nested' : 'simple'});
+    // Share the save lane with Dashboard transactions so a stale save cannot
+    // overwrite a native mode switch after its revision check.
+    const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
+      await chrome.storage.local.set({rightClickMode:info.checked ? 'nested' : 'simple'});
+      await rebuildMenus();
+    });
+    destinationSaveQueue=operation;
+    try{await operation;}catch{await chrome.action?.setBadgeText?.({text:'!'});}
     return;
   }
   if(info.menuItemId==="redown-saved-urls"){

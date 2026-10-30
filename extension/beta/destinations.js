@@ -14,9 +14,9 @@
   function changed(){dirty=true;status('Unsaved changes · Save menu to update Chrome.');}
   function setMode(){const nested=mode==='nested';$('destination-mode').setAttribute('aria-pressed',String(nested));$('destination-mode').setAttribute('aria-label','Switch to '+(nested?'Simple':'Nested'));$('destination-simple').hidden=nested;$('destination-nested').hidden=!nested;if(nested&&!mounted)mountNested();}
   function mountNested(){mounted=true;RedownNestedEditor.mount($('destination-nested'),{
-    profiles:()=>profiles,existingOnly:true,startCollapsed:true,
-    send:async message=>{reads++;try{return await request(message.type,message);}finally{reads--;}} ,
-    save:async()=>{changed();},saveOrder:async()=>{profiles.forEach((p,i)=>p.menuOrder=i);changed();}
+    profiles:()=>profiles,existingOnly:true,allowFolderCreation:true,startCollapsed:true,
+    send:async message=>{reads++;try{return await request(message.type,{...message,...(message.type==='cfCreateFolder'?{betaNoProvision:true}:{})});}finally{reads--;}} ,
+    save:async()=>{if(C.signature(profiles,mode)!==expected)changed();},saveOrder:async()=>{profiles.forEach((p,i)=>p.menuOrder=i);changed();}
   });}
   async function load(){
     if(saving)return;if(dirty&&!confirm('Discard unsaved menu edits and reload?'))return;
@@ -35,7 +35,7 @@
       firstSetupDisclosureInitialized=true;
       $('destination-first-setup').open=usable().length===0;
     }
-    status(usable().length?'Choose a layout and design your right-click menu.':'Choose an existing Cloudflare bucket, then Activate Buckets beside Refresh, or prepare REDOWN storage below.');
+    status(usable().length?'Choose a layout and design your right-click menu.':'Choose an existing Cloudflare bucket, then Activate Buckets beside Grid view, or prepare REDOWN storage below.');
     try{accounts=(await request('cfAccounts')).accounts||[];}catch(error){status('Saved destinations loaded. '+error.message);}
   }
   async function save(){
@@ -64,7 +64,7 @@
   }
   function renderSimple(onlyId){
     const host=$('destination-simple');if(!onlyId){for(const b of host.querySelectorAll('button'))b._picker?.close();host.replaceChildren();}else host.querySelector('.destination-empty')?.remove();
-    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','Choose your existing Cloudflare bucket, then click Activate Buckets by Refresh. After activation, + Location adds Simple menu destinations.'));
+    const list=onlyId?rows().filter(row=>row.id===onlyId):rows();if(!list.length)host.append(el('p','destination-empty','Choose your existing Cloudflare bucket, then click Activate Buckets by Grid view. After activation, + Location adds Simple menu destinations.'));
     for(const row of list){
       const card=el('article','destination-card');card.dataset.destinationId=row.id;
       const head=el('div','destination-card-head');
@@ -107,10 +107,43 @@
         if(row.base){row.p.simplePrimaryEnabled=false;row.item={id:row.id,label:row.label,bucketName:row.bucket,prefix:row.prefix,order:row.p.simplePrimaryOrder};row.base=false;}else if(row.draft){unassigned=unassigned.filter(r=>r!==row);row.draft=false;}else row.p.simpleOptions=row.p.simpleOptions.filter(i=>i!==row.item);row.p=target;if(target.explorerManaged||target.showInContextMenu===false)target.simplePrimaryEnabled=false;target.explorerManaged=false;target.showInContextMenu=true;(target.simpleOptions||=[]).push(row.item);row.item.bucketName=target.bucketName;row.item.prefix='';changed();renderSimple();
       };
       bucket.onchange=()=>{choose._picker?.close();update(row,'bucket',bucket.value);update(row,'prefix','');destination.textContent=bucket.value+'/';};
-      fields.append(accountLabel,bucketLabel,choose,root);card.append(head,fields,destination,folders);host.append(card);void loadBuckets();
+      const creator=el('form','destination-inline-create');creator.hidden=true;
+      const input=el('input');input.placeholder='New folder name…';input.setAttribute('aria-label','New folder inside this destination');input.required=true;input.autocomplete='off';
+      const feedback=el('span');feedback.setAttribute('role','status');
+      const create=el('button','','✓');create.type='submit';create.setAttribute('aria-label','Create folder');
+      const cancel=button('×',()=>{creator.hidden=true;input.value='';feedback.textContent='';},'Cancel folder creation');
+      creator.append(input,create,cancel,feedback);
+      const plus=button('+',()=>{creator.hidden=false;input.focus();},'Create folder inside '+row.bucket+'/'+row.prefix);
+      creator.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancel.click();plus.focus();}};
+      creator.onsubmit=async event=>{
+        event.preventDefault();if(saving||reads)return;
+        const target={accountId:row.p.accountId,accountName:row.p.accountName,bucketName:row.bucket,prefix:row.prefix};
+        let child;try{child=M.name(input.value);}catch(error){feedback.textContent=error.message;return;}
+        reads++;const locked=[...card.querySelectorAll('input,select,button')],previous=locked.map(n=>n.disabled);locked.forEach(n=>n.disabled=true);feedback.textContent='Creating…';
+        try{
+          const before=await request('cfFolderChildren',{...target,parentPrefix:target.prefix});
+          if((before.children||[]).includes(child))throw Error('That folder already exists. Choose it from the folder picker.');
+          await request('cfCreateFolder',{...target,name:child,betaNoProvision:true});
+          const check=await request('cfFolderChildren',{...target,parentPrefix:target.prefix});
+          if(!(check.children||[]).includes(child))throw Error('Creation was not verified. Refresh before retrying.');
+          update(row,'prefix',M.path(target.prefix,child));destination.textContent=row.bucket+'/'+row.prefix;
+          choose._picker?.close();folders.hidden=true;input.value='';creator.hidden=true;status('Folder verified. Save menu to add this destination to Chrome.');
+        }catch(error){feedback.textContent=error.message;}
+        finally{reads--;locked.forEach((n,i)=>{if(n.isConnected)n.disabled=previous[i];});}
+      };
+      fields.append(accountLabel,bucketLabel,choose,root,plus);card.append(head,fields,destination,creator,folders);host.append(card);void loadBuckets();
     }
   }
-  $('destination-mode').onclick=()=>{if(saving)return;mode=mode==='simple'?'nested':'simple';changed();setMode();};
+  $('destination-mode').onclick=async()=>{
+    if(saving||reads)return;
+    const next=mode==='simple'?'nested':'simple';saving=true;$('destination-mode').disabled=true;
+    try{
+      const result=await request('saveDestinationConfig',{expected,mode:next,profiles:[]});
+      expected=result.signature;mode=next;setMode();
+      status(result.menuUpdated?(dirty?'Layout updated in Chrome. Your unsaved destination edits are preserved.':'Layout updated in Chrome.'):result.error);
+    }catch(error){status('Layout was not changed: '+error.message+' Your draft is preserved.');}
+    finally{saving=false;$('destination-mode').disabled=false;}
+  };
   $('destination-add').onclick=async()=>{
     if(saving||activatingLocation)return;
     let activatedSource=null;
@@ -121,7 +154,7 @@
       const accountId=$('accounts')?.value||'';
       const bucketName=$('buckets')?.querySelector('button[aria-current]')?.dataset.bucket||'';
       if(!accountId||!bucketName){
-        status('Choose a bucket in the Storage Buckets sidebar first. Then click Activate Buckets next to Refresh. No new bucket is required.');
+        status('Choose a bucket in the Storage Buckets sidebar first. Then click Activate Buckets next to Grid view. No new bucket is required.');
         $('destination-first-setup').open=true;return;
       }
       if(!confirm('Activate your existing Cloudflare bucket '+bucketName+' for REDOWN right-click destinations? This deploys or updates its private REDOWN Worker. It does not enable public file URLs.'))return;
@@ -153,7 +186,7 @@
   document.addEventListener('redown:destinations-ready',()=>{if(!dirty&&!saving&&!activatingLocation)void load().catch(error=>status('Refresh destinations: '+error.message));});
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local'||saving||activatingLocation)return;
-    if(changes.profiles||changes.rightClickMode){if(dirty){status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
+    if(changes.profiles||changes.rightClickMode){if(dirty){if(changes.rightClickMode){mode=M.menuMode(changes.rightClickMode.newValue,profiles);setMode();}status('Saved configuration changed. Your draft is preserved; Reload before saving.');return;}void load().catch(error=>status(error.message));}
   });
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
   void load().catch(error=>status('Could not load destinations: '+error.message));

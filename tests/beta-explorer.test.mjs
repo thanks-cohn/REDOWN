@@ -77,7 +77,7 @@ test('upload read-back detects corruption before touching the final destination'
   }}});
   const r=await createFileApi(adapter).run('upload',{source,file:new File(['OK!'],'a'),key:'a'});assert.equal(r.state,'uncertain');assert.match(r.error,/differs/);assert.equal(messages.length,0);
 });
-async function uiFixture({deletePreferences=null,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
+async function uiFixture({archivePreference=null,deletePreferences=null,saved=null,sendOverride=null,httpOverride=null,autoOpen=true,adapterSetup=null,previewPreferences={mode:'window',width:400},tourPreferences=null,autoLoadImages=true}={}){
   const f=await fixture();if(sendOverride||httpOverride){const original=f.adapter;const alternate=createR2Adapter({send:sendOverride?m=>sendOverride(m,f):undefined,http:httpOverride?httpOverride(f.http):f.http});for(const method of ['accounts','buckets','connectionStatus'])if(sendOverride)f.adapter[method]=alternate[method];if(httpOverride)f.adapter.list=alternate.list;}await f.bucket.put('root.txt','payload');await f.bucket.put('Photos/one.jpg','image');adapterSetup?.(f.adapter,f);
   const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'),ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
@@ -87,7 +87,7 @@ async function uiFixture({deletePreferences=null,saved=null,sendOverride=null,ht
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerDeletePreferences:deletePreferences,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
@@ -116,7 +116,7 @@ test('actual Beta UI navigates, multi-selects, copies/pastes, renames, cancels d
     d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/root.txt"]')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Photos/root.txt').bytes.toString(),'payload');assert.ok(f.stored.has('root.txt'));
     d.querySelector('[data-key="Photos/root.txt"]').click();d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'F2',bubbles:true}));assert.ok(d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='new 雪.txt';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/new 雪.txt"]')&&!d.querySelector('#upload').disabled);assert.ok(!f.stored.has('Photos/root.txt'));
     d.querySelector('[data-key="Photos/new 雪.txt"]').click();d.querySelector('#delete').click();assert.ok(d.querySelector('#dialog').open);d.querySelector('#dialog-cancel').click();await settle(()=>!d.querySelector('#dialog').open);assert.ok(f.stored.has('Photos/new 雪.txt'));
-    d.querySelector('#mkdir').click();d.querySelector('#dialog-input').value='Nested';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Photos/Nested/"]')&&!d.querySelector('#upload').disabled);assert.ok(f.stored.has('Photos/Nested/.redown'));
+    d.querySelector('#mkdir').click();d.querySelector('#inline-folder-name').value='Nested';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('[data-key="Photos/Nested/"]')&&!d.querySelector('#upload').disabled);assert.ok(f.stored.has('Photos/Nested/.redown'));
     d.querySelector('#files').dispatchEvent(new w.KeyboardEvent('keydown',{key:'a',ctrlKey:true,bubbles:true}));assert.equal(d.querySelectorAll('.file[aria-selected=true]').length,3);
     d.querySelector('#filter').value='new 雪';d.querySelector('#filter').dispatchEvent(new w.Event('input'));assert.equal(d.querySelectorAll('.file').length,1);
     d.querySelector('#view').click();assert.ok(d.querySelector('#files').classList.contains('grid'));
@@ -220,7 +220,7 @@ test('ZIP inspection and individual extraction reuse the real production Worker,
   await f.bucket.put('output/notes.txt','keep existing');r=await f.api.run('extractArchiveEntry',{source,key:'book.zip',entry:'notes.txt',destinationPrefix:'output/'});assert.equal(r.state,'partial');assert.equal(f.stored.get('output/notes.txt').bytes.toString(),'keep existing');
 });
 test('archive dialog and destination chooser route actual extraction and copy through API',async()=>{
-  const f=await uiFixture(),{d,w,settle}=f;
+  const f=await uiFixture({archivePreference:'classic'}),{d,w,settle}=f;
   try{
     d.querySelector('[data-key="root.txt"]').click();d.querySelector('#copy-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Copies/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>f.stored.has('Copies/root.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Copies/root.txt').bytes.toString(),'payload');assert.ok(f.stored.has('root.txt'));
     await f.bucket.put('book.zip',storedZip([['nested/one.txt','archive bytes']]));d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="book.zip"]')&&!d.querySelector('#upload').disabled);d.querySelector('[data-key="book.zip"]').click();d.querySelector('#archive').click();await settle(()=>d.querySelector('#archive-dialog').open&&!d.querySelector('#upload').disabled);d.querySelector('#archive-all').checked=true;d.querySelector('#archive-all').dispatchEvent(new w.Event('change'));d.querySelector('#archive-prefix').value='Extracted/';d.querySelector('#archive-extract').click();await settle(()=>f.stored.has('Extracted/nested/one.txt')&&!d.querySelector('#upload').disabled);assert.equal(f.stored.get('Extracted/nested/one.txt').bytes.toString(),'archive bytes');assert.ok(f.stored.has('book.zip'));
@@ -744,7 +744,7 @@ test('Window Preview actual Previous then Next buttons register Next without a c
 test('production Explorer dialog creates a new Test It destination, preserves selection/clipboard and verifies subsequent Paste without advancing on mkdir',async()=>{
  const f=await uiFixture({tourPreferences:{invitationDismissed:true}});try{const {d,w,settle}=f;await practiceAt(f,20);await approvePracticeSource(f);
  d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('contextmenu',{bubbles:true}));[...d.querySelectorAll('#context button')].find(b=>b.textContent==='Copy').click();d.querySelector('[data-guide-next]').click();
- d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Fresh destination';d.querySelector('#dialog-confirm').click();
+ d.querySelector('#mkdir').click();await settle(()=>!d.querySelector('#inline-folder').hidden);d.querySelector('#inline-folder-name').value='Fresh destination';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));
  await settle(()=>d.querySelector('[data-key="Fresh destination/"]')&&!d.querySelector('#mkdir').disabled);
  assert.equal(d.querySelector('[data-key="root.txt"]').getAttribute('aria-selected'),'true');assert.equal(d.querySelector('#paste').disabled,false);
  assert.equal(f.storage.betaExplorerTestIt.index,22);assert.notEqual(f.storage.betaExplorerTestIt.records[22].verdict,'PASSED');assert.equal(f.storage.betaExplorerTestIt.practiceFolders[0].status,'created');
@@ -769,7 +769,7 @@ test('ordinary GUI and embedded Worker move two Test Copies into a new folder',a
  while(d.querySelector('[data-guide-progress]').textContent!=='Question 39 of 60')d.querySelector('[data-guide-skip]').click();
  const keys=['root (copy).txt','root (copy) (copy).txt'];d.querySelector('[data-key="'+keys[0]+'"]').click();d.querySelector('[data-key="'+keys[1]+'"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true,ctrlKey:true}));
  const ids=f.storage.betaExplorerTestIt.objects.filter(o=>!o.deleted).map(o=>o.id);
- d.querySelector('#mkdir').click();await settle(()=>d.querySelector('#dialog').open);d.querySelector('#dialog-input').value='Batch destination';d.querySelector('#dialog-confirm').click();await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
+ d.querySelector('#mkdir').click();await settle(()=>!d.querySelector('#inline-folder').hidden);d.querySelector('#inline-folder-name').value='Batch destination';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('[data-key="Batch destination/"]')&&!d.querySelector('#refresh').disabled);
  for(const key of keys)assert.equal(d.querySelector('[data-key="'+key+'"]').getAttribute('aria-selected'),'true');
  assert.equal(f.storage.betaExplorerTestIt.index,38);assert.notEqual(f.storage.betaExplorerTestIt.records[38].verdict,'PASSED');
  d.querySelector('#move-to').click();await settle(()=>d.querySelector('#destination-dialog').open&&!d.querySelector('#destination-confirm').disabled);d.querySelector('#destination-prefix').value='Batch destination/';d.querySelector('#destination-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
@@ -852,7 +852,7 @@ test('Phase 1 toolbar order, safe default focus, persistent delete preferences a
 
 
 test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and optional extraction',async()=>{
- const f=await uiFixture(),{d,w,settle}=f;
+ const f=await uiFixture({archivePreference:'classic'}),{d,w,settle}=f;
  try{
    await f.bucket.put('comic.cbz',storedZip([['pages/001.webp','page1'],['pages/002.webp','page2'],['other/notes.txt','notes']]));
    d.querySelector('#refresh').click();
@@ -880,5 +880,54 @@ test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and
    await settle(()=>f.stored.has('Unpacked/pages/001.webp')&&!d.querySelector('#upload').disabled);
    assert.equal(f.stored.has('Unpacked/pages/002.webp'),false,'extract only checked files');
    assert.equal(f.stored.has('comic.cbz'),true,'original remains intact');
+ }finally{f.dom.window.close();}
+});
+
+test('toolbar adjacency follows the three requested pairs with primary folder upload',async()=>{
+ const dom=new JSDOM(await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8'));
+ try{const d=dom.window.document;assert.equal(d.querySelector('.rd-overflow').nextElementSibling.id,'upload-folder');assert.ok(d.querySelector('#upload-folder').classList.contains('primary'));assert.equal(d.querySelector('#mkdir').nextElementSibling.id,'conflict');assert.equal(d.querySelector('#view').nextElementSibling.id,'prepare');assert.equal(d.querySelectorAll('#prepare').length,1);assert.equal(d.querySelector('#conflict').value,'keep');}finally{dom.window.close();}
+});
+for(const mode of ['side','window'])test('default archive Image Reader uses existing '+mode+' Preview, natural nested order, navigation and no extraction',async()=>{
+ const f=await uiFixture({previewPreferences:{mode,width:400}}),{d,w,settle}=f;
+ try{
+  const original=storedZip([['chapter2/10.webp','ten'],['chapter2/2.webp','two'],['chapter2/1.webp','one'],['chapter10/1.webp','last'],['notes.txt','skip']]);
+  await f.bucket.put('reader.cbz',original);d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="reader.cbz"]')&&!d.querySelector('#refresh').disabled);
+  d.querySelector('[data-key="reader.cbz"]').click();await settle(()=>d.querySelector('#preview-content img'));
+  assert.match(d.querySelector('#preview-content img').src,/chapter2%2F1.webp/);assert.match(d.querySelector('#preview-info').textContent,/Page 1 of 4/);assert.equal(d.querySelector('#preview-previous').disabled,true);assert.equal(d.querySelector('#archive-dialog').open,false);
+  d.querySelector('#preview-next').click();await settle(()=>d.querySelector('#preview-content img')?.src.includes('chapter2%2F2.webp'));
+  const host=d.querySelector(mode==='side'?'#side-preview':'#preview-dialog');host.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await settle(()=>d.querySelector('#preview-content img')?.src.includes('chapter2%2F10.webp'));
+  d.querySelector('#preview-previous').click();await settle(()=>d.querySelector('#preview-content img')?.src.includes('chapter2%2F2.webp'));
+  d.querySelector('#preview-mode-inline').value=mode==='side'?'window':'side';d.querySelector('#preview-mode-inline').dispatchEvent(new w.Event('change'));assert.match(d.querySelector('#preview-info').textContent,/Page 2 of 4/);
+  assert.equal(f.messages.filter(m=>m.type==='cfExtractArchive').length,0);assert.equal(hash(f.stored.get('reader.cbz').bytes),hash(original));assert.ok(f.messages.filter(m=>m.type==='cfArchiveEntryUrl').every(m=>m.betaNoProvision));
+  d.querySelector('#preview-close').click();d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));assert.equal(d.querySelector('#preview-info').textContent.includes('Page '),false);
+ }finally{f.dom.window.close();}
+});
+test('inline folder creation focuses, cancels, keeps errors and creates within the exact child parent',async()=>{
+ const f=await uiFixture(),{d,w,settle}=f;
+ try{
+  d.querySelector('#mkdir').click();assert.equal(d.activeElement.id,'inline-folder-name');d.querySelector('#inline-folder-name').value='cancelled';d.querySelector('#inline-folder-name').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(d.querySelector('#inline-folder').hidden,true);assert.ok(!f.messages.some(m=>m.type==='cfCreateFolder'));
+  d.querySelector('[data-key="Photos/"] .folder-add').click();d.querySelector('#inline-folder-name').value='bad/name';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>d.querySelector('#inline-folder-status').textContent);assert.equal(d.querySelector('#inline-folder-name').value,'bad/name');
+  d.querySelector('#inline-folder-name').value='Child';d.querySelector('#inline-folder').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>f.stored.has('Photos/Child/.redown')&&!d.querySelector('#mkdir').disabled);assert.equal(d.querySelector('#inline-folder').hidden,true);assert.ok(!f.stored.has('Child/.redown'));assert.equal(d.querySelector('#dialog').open,false);
+ }finally{f.dom.window.close();}
+});
+test('archive with no images offers Classic; saved Classic preference persists',async()=>{
+ const f=await uiFixture({previewPreferences:{mode:'side'}}),{d,w,settle}=f;
+ try{
+  await f.bucket.put('text.zip',storedZip([['notes.txt','notes']]));d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="text.zip"]')&&!d.querySelector('#refresh').disabled);d.querySelector('[data-key="text.zip"]').click();await settle(()=>/no supported images/.test(d.querySelector('#preview-content').textContent));
+  [...d.querySelectorAll('#preview-content button')].find(b=>b.textContent==='Browse Archive').click();await settle(()=>d.querySelector('#archive-dialog').open);d.querySelector('#archive-close').click();
+  d.querySelector('#preferences').click();d.querySelector('#pref-archive').value='classic';d.querySelector('#preferences-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle(()=>!d.querySelector('#preferences-dialog').open);assert.equal(f.storage.betaExplorerArchivePreview,'classic');
+ }finally{f.dom.window.close();}
+ const reopened=await uiFixture({archivePreference:'classic'});try{reopened.d.querySelector('#preferences').click();assert.equal(reopened.d.querySelector('#pref-archive').value,'classic');}finally{reopened.dom.window.close();}
+});
+
+test('rapid archive navigation cancels stale reads, retries fresh URLs, and closing cannot repaint',async()=>{
+ const pending=[];const f=await uiFixture({previewPreferences:{mode:'side'},adapterSetup:adapter=>{adapter.archiveEntryUrl=(input,options)=>new Promise(resolve=>pending.push({input,options,resolve}));}}),{d,w,settle}=f;
+ try{
+  await f.bucket.put('race.cbz',storedZip([['1.webp','one'],['2.webp','two'],['3.webp','three']]));d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="race.cbz"]')&&!d.querySelector('#refresh').disabled);d.querySelector('[data-key="race.cbz"]').click();await settle(()=>pending.length===1);
+  d.querySelector('#preview-next').click();await settle(()=>pending.length===2);d.querySelector('#preview-next').click();await settle(()=>pending.length===3);assert.equal(pending[0].options.signal.aborted,true);assert.equal(pending[1].options.signal.aborted,true);
+  pending[2].resolve({url:'https://fixture.test/3.webp'});await settle(()=>d.querySelector('#preview-content img')?.src.endsWith('/3.webp'));
+  pending[0].resolve({url:'https://fixture.test/1.webp'});pending[1].resolve({url:'https://fixture.test/2.webp'});await new Promise(r=>setTimeout(r,10));assert.ok(d.querySelector('#preview-content img').src.endsWith('/3.webp'));assert.equal(d.querySelector('#preview-next').disabled,true);
+  d.querySelector('#preview-content img').dispatchEvent(new w.Event('error'));assert.match(d.querySelector('#preview-content').textContent,/fresh read URL/);[...d.querySelectorAll('#preview-content button')].find(b=>b.textContent==='Retry page').click();await settle(()=>pending.length===4);
+  d.querySelector('#preview-close').click();assert.equal(pending[3].options.signal.aborted,true);pending[3].resolve({url:'https://fixture.test/3-retry.webp'});await new Promise(r=>setTimeout(r,10));assert.equal(d.querySelector('#preview-content img'),null);
  }finally{f.dom.window.close();}
 });

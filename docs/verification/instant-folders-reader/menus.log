@@ -1,0 +1,58 @@
+✔ Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save (382.157567ms)
+✔ mode switches persist immediately, preserve both configurations, and reload restores active layout (156.244998ms)
+✔ existing folder picker routes exact prefix without creating folders or provisioning (141.659402ms)
+✔ collapsed Nested nodes load lazily, labels do not alter paths, and sibling moves persist (86.363168ms)
+✔ stale concurrent saves reject rather than overwrite newer changes; storage failures leave old config intact (3.388279ms)
+✔ native Chrome callback errors preserve saved configuration and successful retry rebuilds it (2.078355ms)
+✔ invalid paths, duplicate IDs, unprepared buckets and excessive hierarchy fail before persistence (7.91285ms)
+✔ primary removal only suppresses its menu and keeps profile and remote routing credentials (2.273698ms)
+✔ modern menu navigation and quick setup preserve selected mode in source (1.005233ms)
+✔ Add Location without a prepared bucket explains activation instead of creating unusable draft cards (57.833745ms)
+✔ Add Location can activate an existing Cloudflare bucket without creating another R2 bucket (132.626531ms)
+✔ account edits retain the destination identifier and route it through that account’s prepared profile (69.887765ms)
+✖ production Simple and Nested click branches hand the exact account, bucket and prefix to the existing transfer engine (4.574671ms)
+✔ large Simple configurations share one bucket discovery and render without per-card observers (439.599288ms)
+✔ inactive invalid legacy hierarchy is preserved while saving valid Simple changes (6.625469ms)
+✔ Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels (184.21379ms)
+✔ Nested plus exposes focused inline creation and keeps siblings while saving the verified child (111.870455ms)
+✔ mode switch persists without committing a dirty destination label; external mode changes preserve draft and reject stale save (125.27867ms)
+✔ deep native menu stays at capped flyout depth while retaining stable IDs and exact paths (7.139749ms)
+✔ selection never fills the new-name field, and preserves an independently typed draft (242.802186ms)
+✔ Add child and Create use the exact parent path; actual dropdown children stay scoped (62.918801ms)
+✔ hiding a nested menu preserves its hierarchy and failed creation preserves the draft (49.393595ms)
+✔ native nested menu targets every verified depth and offers Send here for parents (8.468264ms)
+✔ legacy paths migrate without modifying old configuration or writing remote folders (33.003433ms)
+✔ nested saving retains provisioned worker credentials and new Explorer profiles through autosave (9.285129ms)
+✔ one global mode prevents Simple/Nested collisions and puts nested buckets directly under REDOWN (8.007345ms)
+✔ settings mode checkbox saves only the active mode and keeps both destination configurations (26.094998ms)
+✔ native menu mode checkbox changes the same saved setting without downloading anything (3.19989ms)
+✔ DBG-001: selecting a new deep child enables its next child without bucket reselection (38.575648ms)
+✔ DBG-001: create-new folder enables repeated + Child through five levels (73.637313ms)
+✔ DBG-001: selecting existing child enables + Child after the async save lock releases (35.974578ms)
+✔ reconnect refresh retries failed Nested lookups and preserves typed drafts and selected paths (68.863118ms)
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (28.170429ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 31
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2689.686502
+
+✖ failing tests:
+
+test at tests/modern-destinations.test.mjs:106:1
+✖ production Simple and Nested click branches hand the exact account, bucket and prefix to the existing transfer engine (4.574671ms)
+  ReferenceError [Error]: pageUrl is not defined
+      at evalmachine.<anonymous>:19:29
+      at async TestContext.<anonymous> (file:///workspace/scratch/92bf8e7b6147/REDOWN/tests/modern-destinations.test.mjs:111:49)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/nested-locations.test.mjs:225:1
+✖ Nested drag-handle keyboard move saves sibling order with descendants and paths intact (28.170429ms)
+  TypeError [Error]: Cannot read properties of null (reading 'dispatchEvent')
+      at TestContext.<anonymous> (file:///workspace/scratch/92bf8e7b6147/REDOWN/tests/nested-locations.test.mjs:229:50)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

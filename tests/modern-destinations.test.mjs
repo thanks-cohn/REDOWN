@@ -19,11 +19,11 @@ function background(){
   return {state,created,ctx,save,snapshot,mutations,set failStorage(v){failStorage=v;},set failMenu(v){failMenu=v;},get maxActive(){return maxActive;}};
 }
 async function ui(preset){
-  const b=background(),calls=[];if(preset)b.state.profiles=preset;
+  const listeners=[];const b=background(),calls=[],folders=new Map([['',['photos']]]);if(preset)b.state.profiles=preset;
   const dom=new JSDOM(html,{url:'https://fixture.test/beta/explorer.html',runScripts:'outside-only'}),w=dom.window;
   w.structuredClone=structuredClone;w.confirm=()=>true;
-  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='cfProvision'){b.state.profiles.push({...initial()[0],id:'adopted-existing',accountId:m.accountId,bucketName:m.bucketName,menuLabel:m.bucketName,simpleOptions:[]});return {ok:true};}if(m.type==='profiles')return {ok:true,profiles:structuredClone(b.state.profiles)};if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:['photos']};if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
-  for(const source of [model,config,nested,picker,editor])w.eval(source);await settle();return {b,calls,dom,w,d:w.document};
+  w.chrome={storage:{local:{get:async()=>structuredClone(b.state)},onChanged:{addListener:fn=>listeners.push(fn)}},runtime:{sendMessage:async m=>{calls.push(m);if(m.type==='cfProvision'){b.state.profiles.push({...initial()[0],id:'adopted-existing',accountId:m.accountId,bucketName:m.bucketName,menuLabel:m.bucketName,simpleOptions:[]});return {ok:true};}if(m.type==='profiles')return {ok:true,profiles:structuredClone(b.state.profiles)};if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account'}]};if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'art'},{name:'unprepared'}]};if(m.type==='cfFolderChildren')return {ok:true,children:folders.get(m.parentPrefix)||[]};if(m.type==='cfCreateFolder'){folders.set(m.prefix,[...(folders.get(m.prefix)||[]),m.name]);return {ok:true,key:[m.prefix,m.name].filter(Boolean).join('/')+'/'};}if(m.type==='cfDestinationFolders')return {ok:true,folders:[{name:'photos',prefix:'photos/'}],cursor:''};if(m.type==='saveDestinationConfig')try{return await b.save(m);}catch(error){return {ok:false,error:error.message};}throw Error(m.type);}}};
+  for(const source of [model,config,nested,picker,editor])w.eval(source);await settle();return {b,calls,dom,w,d:w.document,change:patch=>listeners.forEach(fn=>fn(patch,'local'))};
 }
 test('Simple additions are exactly one local card per click; no cloud mutation, IDs and reordering survive save',async()=>{
   const h=await ui();try{const {d,w,b,calls}=h;assert.equal(d.querySelectorAll('.destination-card').length,2);const originalCard=d.querySelector('.destination-card');
@@ -38,8 +38,8 @@ test('Simple additions are exactly one local card per click; no cloud mutation, 
     assert.equal(calls.filter(c=>c.type==='cfBuckets').length,1);
   }finally{h.dom.window.close();}
 });
-test('mode switches preserve both configurations, remain drafts until save, and reload restores active layout',async()=>{
-  const h=await ui();try{const {d,b}=h;d.getElementById('destination-mode').click();await settle();assert.equal(d.getElementById('destination-simple').hidden,true);assert.equal(b.state.rightClickMode,'simple');
+test('mode switches persist immediately, preserve both configurations, and reload restores active layout',async()=>{
+  const h=await ui();try{const {d,b}=h;d.getElementById('destination-mode').click();await settle();assert.equal(d.getElementById('destination-simple').hidden,true);assert.equal(b.state.rightClickMode,'nested');
     d.getElementById('destination-save').click();await settle();assert.equal(b.state.rightClickMode,'nested');assert.equal(b.state.profiles[0].simpleOptions[0].id,'extra');assert.ok(b.created.some(x=>x.id==='nested:p:r:n'));assert.ok(b.created.some(x=>x.title==='Send here'));assert.ok(!b.created.some(x=>x.id.startsWith('quick:')));d.getElementById('destination-reload').click();await settle();assert.equal(d.getElementById('destination-mode').getAttribute('aria-pressed'),'true');
     d.getElementById('destination-mode').click();await settle();assert.equal(d.querySelectorAll('.destination-card').length,2);d.getElementById('destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children[0].id,'n');
     assert.doesNotMatch(d.querySelector('.destination-mode').textContent,/\b(?:ON|OFF)\b/);
@@ -118,4 +118,33 @@ test('large Simple configurations share one bucket discovery and render without 
 });
 test('inactive invalid legacy hierarchy is preserved while saving valid Simple changes',async()=>{
   const b=background();b.state.profiles[0].nestedMenu.roots[0].bucketName='not-prepared';const before=structuredClone(b.state.profiles[0].nestedMenu),draft=b.snapshot();draft.profiles[0].menuLabel='Updated';assert.equal((await b.save(draft)).menuUpdated,true);assert.deepEqual(b.state.profiles[0].nestedMenu,before);
+});
+
+test('Simple inline plus creates and verifies exact parent, saves stable routing and Escape cancels',async()=>{
+ const h=await ui();try{const {d,w,b}=h;const card=d.querySelector('[data-destination-id="extra"]');
+ card.querySelector('[aria-label^="Create folder inside"]').click();await settle();const form=card.querySelector('form'),input=form.querySelector('input');assert.equal(d.activeElement,input);input.value='cancelled';input.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));await settle();assert.equal(form.hidden,true);assert.ok(!h.calls.some(m=>m.type==='cfCreateFolder'));
+ card.querySelector('[aria-label^="Create folder inside"]').click();input.value='new child';form.dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();assert.equal(form.hidden,true);
+ const create=h.calls.find(m=>m.type==='cfCreateFolder');assert.equal(create.accountId,'a');assert.equal(create.bucketName,'art');assert.equal(create.prefix,'photos');assert.equal(create.name,'new child');
+ d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].simpleOptions.find(x=>x.id==='extra').prefix,'photos/new child');assert.ok(b.created.some(x=>x.id==='simple-option:p:extra'));
+ }finally{h.dom.window.close();}
+});
+test('Nested plus exposes focused inline creation and keeps siblings while saving the verified child',async()=>{
+ const h=await ui();try{const {d,w,b}=h;d.querySelector('#destination-mode').click();await settle();
+ const root=d.querySelector('.nested-roots > .nested-group');root.querySelector('.nested-actions button').click();await settle();
+ const input=d.activeElement;assert.ok(input.classList.contains('nested-new'));input.value='new child';input.dispatchEvent(new w.Event('input'));input.closest('form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
+ assert.ok(h.calls.some(m=>m.type==='cfCreateFolder'&&m.prefix===''&&m.name==='new child'));d.querySelector('#destination-save').click();await settle();assert.equal(b.state.profiles[0].nestedMenu.roots[0].children.length,2);assert.ok(b.created.some(x=>x.title==='new child'));
+ }finally{h.dom.window.close();}
+});
+test('mode switch persists without committing a dirty destination label; external mode changes preserve draft and reject stale save',async()=>{
+ const h=await ui();try{const {d,w,b}=h;const label=d.querySelector('[data-destination-id="extra"] input');label.value='Draft label';label.dispatchEvent(new w.Event('input'));
+ d.querySelector('#destination-mode').click();await settle();assert.equal(b.state.rightClickMode,'nested');assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos');
+ b.state.rightClickMode='simple';h.change({rightClickMode:{oldValue:'nested',newValue:'simple'}});await settle();assert.equal(d.querySelector('#destination-mode').getAttribute('aria-pressed'),'false');assert.equal(label.value,'Draft label');
+ d.querySelector('#destination-save').click();await settle();assert.match(d.querySelector('#destination-status').textContent,/changed in another window/);assert.equal(b.state.profiles[0].simpleOptions[0].label,'Photos');
+ }finally{h.dom.window.close();}
+});
+test('deep native menu stays at capped flyout depth while retaining stable IDs and exact paths',async()=>{
+ const b=background();let children=b.state.profiles[0].nestedMenu.roots[0].children[0].children;for(let i=0;i<5;i++){const node={id:'deep'+i,name:'level'+i,ready:true,children:[]};children.push(node);children=node.children;}
+ const draft=b.snapshot();draft.mode='nested';assert.equal((await b.save(draft)).menuUpdated,true);
+ const deepest=b.created.find(x=>x.id==='nested:p:r:deep4');assert.equal(deepest.parentId,'nested:p:r:n');assert.match(deepest.title,/level0 \/ level1 \/ level2 \/ level3 \/ level4/);
+ assert.equal(b.ctx.RedownNestedLocations.destinations(b.state.profiles[0].nestedMenu).find(x=>x.nodeId==='deep4').prefix,'photos/level0/level1/level2/level3/level4');
 });

@@ -148,14 +148,14 @@ test('settings mode checkbox saves only the active mode and keeps both destinati
 });
 
 test('native menu mode checkbox changes the same saved setting without downloading anything',async()=>{
-  const patches=[];let listener;
-  const context=vm.createContext({chrome:{contextMenus:{onClicked:{addListener:fn=>{listener=fn;}}},storage:{local:{set:async patch=>patches.push(structuredClone(patch))}}}});
+  const patches=[];let listener;let rebuilds=0;
+  const context=vm.createContext({destinationSaveQueue:Promise.resolve(),rebuildMenus:async()=>{rebuilds++;},chrome:{contextMenus:{onClicked:{addListener:fn=>{listener=fn;}}},storage:{local:{set:async patch=>patches.push(structuredClone(patch))}}}});
   const start=background.indexOf('chrome.contextMenus.onClicked.addListener(async (info, tab) => {');
   const end=background.indexOf('  const profiles = await getProfiles();',start);
   vm.runInContext(background.slice(start,end)+'});',context);
   await listener({menuItemId:'redown-nested-mode',checked:false});
   await listener({menuItemId:'redown-nested-mode',checked:true});
-  assert.deepEqual(patches,[{rightClickMode:'simple'},{rightClickMode:'nested'}]);
+  assert.deepEqual(patches,[{rightClickMode:'simple'},{rightClickMode:'nested'}]);assert.equal(rebuilds,2);
 });
 
 test('DBG-001: selecting a new deep child enables its next child without bucket reselection',async()=>{

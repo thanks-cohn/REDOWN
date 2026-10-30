@@ -1,0 +1,14 @@
+✔ toolbar adjacency follows the three requested pairs with primary folder upload (253.470386ms)
+✔ default archive Image Reader uses existing side Preview, natural nested order, navigation and no extraction (484.360743ms)
+✔ default archive Image Reader uses existing window Preview, natural nested order, navigation and no extraction (205.785303ms)
+✔ inline folder creation focuses, cancels, keeps errors and creates within the exact child parent (104.555261ms)
+✔ archive with no images offers Classic; saved Classic preference persists (953.100458ms)
+✔ rapid archive navigation cancels stale reads, retries fresh URLs, and closing cannot repaint (207.521499ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2976.431897

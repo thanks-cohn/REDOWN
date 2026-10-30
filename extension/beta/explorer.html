@@ -80,7 +80,7 @@
 <button id="forward" title="Forward" aria-label="Forward">→</button>
 <button id="up" title="Parent folder" aria-label="Parent folder">↑</button>
 <button id="refresh" title="Refresh files from Cloudflare (does not activate buckets)" aria-label="Refresh files">↻</button>
-<button id="prepare" type="button" class="bucket-activation" data-state="idle" title="Activate the selected bucket for REDOWN file operations" hidden><span class="bucket-activation-glyph" aria-hidden="true">✦</span><span class="bucket-activation-label">Activate Buckets</span></button>
+
 <button id="path" title="Go to a folder path" aria-label="Go to a folder path">/</button>
 <nav id="crumbs" aria-label="Breadcrumb">
 </nav>
@@ -90,14 +90,16 @@
 <div class="action-group" role="group" aria-label="Everyday file operations">
 <button id="copy">Copy</button><button id="paste">Paste</button><button id="move-to">Move to…</button><button id="rename">Rename</button><button id="download">Download</button></div>
 <div class="action-group rd-specialties" role="group" aria-label="REDOWN tools"><button id="archive">Open ZIP/CBZ</button><button id="preview">Preview / Read</button><button id="get-url">Get URL</button></div>
-<details class="rd-overflow"><summary aria-label="More file actions">More ▾</summary><div class="rd-overflow-menu"><button id="mkdir">New folder</button><button id="upload-folder">Upload folder</button><button id="cut">Cut</button><button id="duplicate">Duplicate</button><button id="copy-to">Copy to…</button><button id="properties">Properties</button></div></details>
+<div class="toolbar-pair"><details class="rd-overflow"><summary aria-label="More file actions">More ▾</summary><div class="rd-overflow-menu"><button id="cut">Cut</button><button id="duplicate">Duplicate</button><button id="copy-to">Copy to…</button><button id="properties">Properties</button></div></details>
+<button id="upload-folder" class="primary">Upload folder</button></div>
 <button id="delete" class="danger rd-delete"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg>Delete</button>
 <div class="rd-view-options" role="group" aria-label="View and conflict preferences">
+<div class="toolbar-pair"><button id="mkdir">+ New folder</button>
 <select id="conflict" aria-label="Paste conflict policy">
 <option value="keep" selected>Keep both</option>
 <option value="skip">Conflicts: skip</option>
 <option value="replace">Replace existing</option>
-</select>
+</select></div>
 <select id="sort" aria-label="Sort loaded items">
 <option value="name">Name A–Z</option>
 <option value="name-desc">Name Z–A</option>
@@ -105,9 +107,11 @@
 <option value="date">Newest first</option>
 </select>
 <select id="preview-mode" aria-label="Preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select>
-<button id="view" aria-label="Switch grid or list">Grid view</button>
+<div class="toolbar-pair"><button id="view" aria-label="Switch grid or list">Grid view</button>
+<button id="prepare" type="button" class="bucket-activation" data-state="idle" title="Activate the selected bucket for REDOWN file operations" hidden><span class="bucket-activation-glyph" aria-hidden="true">✦</span><span class="bucket-activation-label">Activate Buckets</span></button></div>
 </div>
 </div>
+<form id="inline-folder" class="inline-folder" hidden aria-label="Create folder"><span id="inline-folder-parent"></span><input id="inline-folder-name" placeholder="New folder name…" aria-label="New folder name" autocomplete="off" required><button type="submit" aria-label="Create folder">✓</button><button id="inline-folder-cancel" type="button" aria-label="Cancel folder creation">×</button><span id="inline-folder-status" role="status"></span></form>
 <div id="file-workspace">
 <section id="dropzone" aria-label="Cloud files">
 <div class="list-heading">
@@ -234,6 +238,7 @@
 <label for="pref-upload">Upload deadline (seconds)</label><input id="pref-upload" type="number" min="1" step="1" required>
 <label for="pref-preview">Preview memory budget (MiB)</label><input id="pref-preview" type="number" min="1" step="1" required>
 <fieldset class="rd-safety"><legend>Deletion safety</legend><label><input id="pref-confirm-delete" type="checkbox" checked> Confirm Before Deleting</label><small>Turning this off allows irreversible deletion without the ordinary confirmation.</small><label><input id="pref-show-delete" type="checkbox" checked> Show Delete on Dashboard</label><small>Context menu and keyboard deletion remain available.</small></fieldset>
+<label for="pref-archive">Archive Preview Behavior</label><select id="pref-archive"><option value="reader">Image Reader (Default)</option><option value="classic">Folder Browser (Classic)</option></select>
 <p id="preferences-error" role="alert"></p><div class="dialog-actions"><button id="preferences-reset" type="button">Restore defaults</button><button id="preferences-cancel" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div></form>
 </dialog>
 <dialog id="destination-dialog" aria-labelledby="destination-title"><form id="destination-form">

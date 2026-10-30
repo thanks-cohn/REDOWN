@@ -1084,3 +1084,18 @@ a:hover{color:var(--text)}
 #archive-prefix{width:100%}
 @media(max-width:800px){.archive-browser{grid-template-columns:1fr}#archive-files{max-height:30vh}#archive-preview-content img{max-height:40vh}}
 @media(prefers-reduced-motion:reduce){#archive-files .archive-entry-open{transition:none}}
+
+/* Compact inline creation, grouped toolbar and capped hierarchy indentation. */
+.rd-view-options{flex-wrap:wrap;min-width:0}
+.inline-folder,.destination-inline-create{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin:8px 0;background:var(--panel)}
+.inline-folder[hidden],.destination-inline-create[hidden]{display:none}
+.inline-folder input,.destination-inline-create input{flex:1 1 170px;min-width:0;max-width:320px}
+#inline-folder-parent{font-size:12px;overflow-wrap:anywhere;max-width:100%}
+#inline-folder-status,.destination-inline-create [role=status]{font-size:12px;flex-basis:100%}
+.file{position:relative}.file .folder-add{position:absolute;right:8px;top:8px;min-width:26px;padding:3px 7px;opacity:.65}
+.file:hover .folder-add,.file:focus-within .folder-add{opacity:1}
+#destination-nested .nested-group[data-depth="2"] .nested-children{margin-left:0;padding-left:0;border-left:0}
+#destination-nested .nested-path{overflow-wrap:anywhere}
+#destination-nested .nested-create[hidden]{display:none}
+#destination-nested .nested-create{flex-wrap:wrap}
+#preview-info button{font-size:11px;padding:3px 8px;margin-left:6px}
