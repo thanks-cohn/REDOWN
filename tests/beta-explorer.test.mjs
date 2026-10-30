@@ -849,3 +849,36 @@ test('Phase 1 toolbar order, safe default focus, persistent delete preferences a
  }finally{f.dom.window.close();}
  const reopened=await uiFixture({deletePreferences:{confirmBeforeDeleting:false,showDeleteOnDashboard:false}});try{assert.equal(reopened.d.querySelector('#delete').hidden,true);reopened.d.querySelector('#preferences').click();assert.equal(reopened.d.querySelector('#pref-confirm-delete').checked,false);}finally{reopened.dom.window.close();}
 });
+
+
+test('ZIP/CBZ opens as a navigable virtual folder with next/previous preview and optional extraction',async()=>{
+ const f=await uiFixture(),{d,w,settle}=f;
+ try{
+   await f.bucket.put('comic.cbz',storedZip([['pages/001.webp','page1'],['pages/002.webp','page2'],['other/notes.txt','notes']]));
+   d.querySelector('#refresh').click();
+   await settle(()=>d.querySelector('[data-key="comic.cbz"]')&&!d.querySelector('#upload').disabled);
+   const card=d.querySelector('[data-key="comic.cbz"]');card.click();card.focus();
+   card.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+   await settle(()=>d.querySelector('#archive-dialog').open&&d.querySelector('#archive-files [data-key="pages/"]'));
+   assert.equal(f.stored.has('comic.cbz'),true,'archive must not be extracted or modified by opening');
+   assert.equal(d.querySelector('#archive-up').disabled,true,'root breadcrumb is correct');
+   d.querySelector('#archive-files [data-key="pages/"] .archive-entry-open').click();
+   await settle(()=>d.querySelector('#archive-preview-position').textContent.includes('001.webp')&&d.querySelector('#archive-preview-content img'));
+   assert.equal(d.querySelector('#archive-up').disabled,false);
+   d.querySelector('#archive-preview-next').click();
+   await settle(()=>d.querySelector('#archive-preview-position').textContent.includes('002.webp')&&d.querySelector('#archive-preview-content img'));
+   d.querySelector('#archive-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));
+   await settle(()=>d.querySelector('#archive-preview-position').textContent.includes('001.webp'));
+   assert.equal(f.messages.filter(m=>m.type==='cfExtractArchive').length,0,'preview must not extract');
+   const readRequests=f.messages.filter(m=>m.type==='cfArchiveEntryUrl');
+   assert.ok(readRequests.length>=2,'individual previews request signed entry URLs');
+   assert.ok(readRequests.every(m=>m.betaNoProvision===true),'archive reads cannot silently provision a Worker');
+   const page=d.querySelector('#archive-files [data-key="pages/001.webp"] input[type="checkbox"]');
+   page.checked=true;page.dispatchEvent(new w.Event('change',{bubbles:true}));
+   d.querySelector('#archive-prefix').value='Unpacked/';
+   d.querySelector('#archive-extract').click();
+   await settle(()=>f.stored.has('Unpacked/pages/001.webp')&&!d.querySelector('#upload').disabled);
+   assert.equal(f.stored.has('Unpacked/pages/002.webp'),false,'extract only checked files');
+   assert.equal(f.stored.has('comic.cbz'),true,'original remains intact');
+ }finally{f.dom.window.close();}
+});
