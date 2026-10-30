@@ -325,7 +325,7 @@ test('GUI upload, independent fixture SHA-256, rename, copy, nested move, downlo
     d.querySelector('[data-key="renamed.bin"]').click();d.querySelector('#duplicate').click();await settle(()=>d.querySelector('[data-key="renamed (copy).bin"]')&&!d.querySelector('#upload').disabled);
     d.querySelector('[data-key="renamed (copy).bin"]').click();d.querySelector('#cut').click();d.querySelector('[data-key="Photos/"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));d.querySelector('#paste').click();await settle(()=>d.querySelector('[data-key="Photos/renamed (copy).bin"]')&&!d.querySelector('#upload').disabled);
     assert.equal(hash(f.stored.get('Photos/renamed (copy).bin').bytes),hash(bytes));assert.ok(!f.stored.has('renamed (copy).bin'));
-    d.querySelector('[data-key="Photos/renamed (copy).bin"]').click();d.querySelector('#download').click();await settle(()=>/Chrome reports download complete/.test(d.querySelector('#status').textContent)&&!d.querySelector('#upload').disabled);
+    d.querySelector('[data-key="Photos/renamed (copy).bin"]').click();d.querySelector('#download').click();await settle(()=>/Download complete/.test(d.querySelector('#status').textContent)&&!d.querySelector('#upload').disabled);
     d.querySelector('#delete').click();d.querySelector('#dialog-confirm').click();await settle(()=>!f.stored.has('Photos/renamed (copy).bin')&&!d.querySelector('#upload').disabled);assert.ok(!d.querySelector('[data-key="Photos/renamed (copy).bin"]'));assert.equal(hash(f.stored.get('renamed.bin').bytes),hash(bytes));
     assert.ok(f.messages.filter(m=>['cfTransferObjects','cfRenameEntry','cfDeleteObjects'].includes(m.type)).every(m=>m.betaNoProvision===true));
   }finally{f.dom.window.close();}
@@ -997,4 +997,17 @@ test('Activate Buckets styling targets its current actions slot rather than obso
  assert.match(css,/\\.actions #prepare\\.bucket-activation\\[data-state="unselected"\\]/);
  assert.match(css,/\\.actions #prepare\\.bucket-activation\\[data-state="ready"\\]/);
  assert.doesNotMatch(css,/\\.toolbar #prepare\\.bucket-activation/);
+});
+
+test('regular Explorer hides stale limitations and keeps new bucket setup optional',async()=>{
+ const html=await readFile(new URL('../extension/beta/explorer.html',import.meta.url),'utf8');
+ const dom=new JSDOM(html);try{
+  const d=dom.window.document;
+  assert.equal(d.querySelector('#limitation'),null,'permanent limitation warning removed');
+  assert.equal(d.querySelector('#destination-first-setup').open,false);
+  assert.match(d.querySelector('#destination-first-setup summary').textContent,/Optional: Dedicated REDOWN bucket/);
+  assert.equal(d.querySelector('.test-it-tools-wrap').hidden,true,'test tools do not appear in regular UI');
+  assert.ok(d.querySelector('footer .explorer-shortcuts'),'file count and key hints are separately styled');
+  assert.equal(d.querySelector('#prepare').hidden,false);
+ }finally{dom.window.close();}
 });
