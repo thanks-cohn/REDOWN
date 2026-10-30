@@ -1359,7 +1359,11 @@ async function bucketPublicAddresses(accountId,bucketName){
 
 // Explicit bucket-wide mutation; never called by public-address discovery.
 async function enableBucketPublicAccess(message,sender){
-  if(sender?.url!==chrome.runtime.getURL("options.html")||message.confirmed!==true)
+  // Both the original and modern Explorer may request a public URL, but only
+  // after the user explicitly chooses Yes in Get URL. Discovery never mutates.
+  const caller=sender?.url?.split(/[?#]/)[0];
+  const allowed=[chrome.runtime.getURL("options.html"),chrome.runtime.getURL("beta/explorer.html")];
+  if(!allowed.includes(caller)||message.confirmed!==true)
     return {ok:false,code:"EXPLORER_PERMISSION_DENIED",error:"Confirm enabling public access from Get URL first."};
   const {accountId,bucketName}=message;
   if(typeof accountId!=="string"||!accountId||typeof bucketName!=="string"||!bucketName)
