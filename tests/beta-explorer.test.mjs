@@ -1011,3 +1011,60 @@ test('regular Explorer hides stale limitations and keeps new bucket setup option
   assert.equal(d.querySelector('#prepare').hidden,false);
  }finally{dom.window.close();}
 });
+
+test('folder collection previews ordered children without changing the Explorer location; Up/Down leaves the folder',async()=>{
+ const f=await uiFixture({previewPreferences:{mode:'side'}}),{d,w,settle}=f;
+ try{
+  await f.bucket.put('Photos/02.jpg','image two');
+  await f.bucket.put('Photos/10.jpg','image ten');
+  d.querySelector('#refresh').click();
+  await settle(()=>d.querySelector('[data-key="Photos/"]')&&!d.querySelector('#refresh').disabled);
+  const folder=d.querySelector('[data-key="Photos/"]');
+  folder.click();
+  await settle(()=>/File 1 of/.test(d.querySelector('#preview-info').textContent));
+  assert.equal(d.querySelector('#heading').textContent,source.bucketName);
+  assert.equal(f.storage.betaExplorerLocation.prefix,'');
+  previewKey(f,'ArrowRight',folder);
+  await settle(()=>/File 2 of/.test(d.querySelector('#preview-info').textContent));
+  assert.equal(d.querySelector('#heading').textContent,source.bucketName,'Left/Right never enters the cloud folder');
+  previewKey(f,'ArrowLeft',folder);
+  await settle(()=>/File 1 of/.test(d.querySelector('#preview-info').textContent));
+  previewKey(f,'ArrowDown',folder);
+  assert.equal(folder.getAttribute('aria-selected'),'false','Up/Down leaves collection reading and selects next file');
+  assert.equal(d.querySelector('#preview-title').textContent,'root.txt');
+ }finally{f.dom.window.close();}
+});
+
+test('CBZ arrows read pages, Up/Down moves the grid; document arrows use the opposite escape rule',async()=>{
+ const f=await uiFixture({previewPreferences:{mode:'side'}}),{d,w,settle}=f;
+ try{
+  await f.bucket.put('book.cbz',storedZip([['1.webp','page one'],['2.webp','page two']]));
+  await f.bucket.put('reading.pdf','PDF bytes');
+  d.querySelector('#refresh').click();
+  await settle(()=>d.querySelector('[data-key="book.cbz"]')&&d.querySelector('[data-key="reading.pdf"]')&&!d.querySelector('#refresh').disabled);
+  const cbz=d.querySelector('[data-key="book.cbz"]');
+  cbz.click();await settle(()=>/Page 1 of 2/.test(d.querySelector('#preview-info').textContent));
+  previewKey(f,'ArrowRight',cbz);await settle(()=>/Page 2 of 2/.test(d.querySelector('#preview-info').textContent));
+  previewKey(f,'ArrowLeft',cbz);await settle(()=>/Page 1 of 2/.test(d.querySelector('#preview-info').textContent));
+  previewKey(f,'ArrowDown',cbz);
+  assert.equal(cbz.getAttribute('aria-selected'),'false','Up leaves CBZ to select next grid item');
+  const doc=d.querySelector('[data-key="reading.pdf"]');
+  doc.click();await settle(()=>d.querySelector('#preview-content iframe'));
+  const original=Number(d.querySelector('#preview-content').scrollTop)||0;
+  previewKey(f,'ArrowDown',doc);
+  assert.equal(doc.getAttribute('aria-selected'),'true','Up/Down stays with selected document');
+  assert.ok((Number(d.querySelector('#preview-content').scrollTop)||0)>=original);
+  previewKey(f,'ArrowLeft',doc);
+  assert.equal(doc.getAttribute('aria-selected'),'false','Left/Right exits the document selection');
+ }finally{f.dom.window.close();}
+});
+
+test('activation effect only glows success after verified readiness; reduced-motion has a static alternative',async()=>{
+ const ui=await readFile(new URL('../extension/beta/explorer.mjs',import.meta.url),'utf8');
+ const css=await readFile(new URL('../extension/beta/explorer.css',import.meta.url),'utf8');
+ assert.match(ui,/operationCompleted&&menuUpdated&&activationState==='ready'/);
+ assert.match(ui,/showActivationGlow\\('working',\\{ongoing:true\\}\\)/);
+ assert.match(ui,/showActivationGlow\\('success'\\)/);
+ assert.match(css,/\\[data-effect="success"\\]/);
+ assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
+});
