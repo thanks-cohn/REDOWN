@@ -12,6 +12,7 @@ import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
 import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
+import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from '../extension/beta/archive-browser.mjs';
 const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
 const source={accountId:'fixture-account',bucketName:'disposable-fixture',prefix:''};
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -82,7 +83,7 @@ async function uiFixture({deletePreferences=null,saved=null,sendOverride=null,ht
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.createBreadcrumbs=createBreadcrumbs;w.orderedBreadcrumbPath=orderedBreadcrumbPath;w.installRemoteDialog=installRemoteDialog;w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.createBreadcrumbs=createBreadcrumbs;w.orderedBreadcrumbPath=orderedBreadcrumbPath;w.installRemoteDialog=installRemoteDialog;w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;Object.assign(w,{normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent});w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
