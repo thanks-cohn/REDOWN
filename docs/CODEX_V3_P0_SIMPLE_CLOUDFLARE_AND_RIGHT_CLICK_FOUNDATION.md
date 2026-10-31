@@ -3,6 +3,7 @@
 **Repository:** `thanks-cohn/REDOWN`  
 **Mandatory branch:** `codex/v3-parity-first-reconstruction`  
 **Owner-approved latest direction:** 2026-10-31  
+**Authoritative owner fundamentals:** [`NEED_TO_DO:fundamentals`](../NEED_TO_DO/fundamentals.md). When this work request or historical material conflicts, follow the fundamentals, particularly Cloudflare-first Nested hierarchy and immediate-change/full-tree persistence.
 **Priority:** P0 — user-visible right-click regression and new-user activation experience.  
 **Execution:** INSPECT → REPRODUCE → IMPLEMENT → TEST → DOCUMENT → COMMIT → PUSH.  
 **THIS IS AN IMPLEMENTATION REQUEST. DO NOT STOP AFTER AN AUDIT OR A PROPOSAL.**  
@@ -134,14 +135,15 @@ RIGHT-CLICK MENU MODE
 
 ## 4. PRESERVE THE OTHER TWO MENU MODES — TEST REGRESSIONS
 
-**Nested → Narrow:** Generate a natural hierarchy from the user's deliberately configured destinations only. Maintain existing descendant relationships, intermediate ancestors, `Save here` semantics where supported, labels, ordering, keyboard reachability and original exact routes. Do not force Cloudflare's Simple-only provider submenu into Narrow.
+**Nested → Narrow:** **Always start `REDOWN → Cloudflare`, then the existing bucket/selected-path hierarchy.** Generate a natural hierarchy from only the user's deliberately configured destinations. Maintain existing descendant relationships, intermediate ancestors, `Save here` semantics where supported, labels, ordering, keyboard reachability and original exact routes. **Cloudflare is the shared provider header for all modes**, not a Simple-only wrapper. Do not enumerate unrelated unselected directories or reset saved configuration.
 
-**Nested → Level → Depth 1–10:** Expose the real known authorized bucket roots and their discovered folder structure to the selected Depth. Depth is a *view projection*, not a destructive data filter. Preserve actual bucket participation, private activation, folders and advanced scope controls. The previously reported `Depth 5 → Reload → only Depth 3 remains` regression is forbidden. When Depth changes 5→3→5, known branches must reappear immediately and further discovery merge safely.
+**Nested → Depth (internal `level`) 1–10:** **Always start `REDOWN → Cloudflare`, then actual authorized bucket roots and their discovered folder structure.** Cloudflare does not count toward bucket-relative Depth. Depth is a *view projection*, not a destructive data filter. Preserve actual bucket participation, private activation, folders and advanced scope controls. The reported `Depth 5 → Reload → only Depth 3 remains` regression is forbidden. When Depth changes 5→3→5, already-known, still-authorized branches reappear immediately and further discovery merges safely.
 
 **All modes:** No debug inventory strings among Chrome's native destination choices; a partial scan must retain still-authorized usable paths; navigation/selection should be stable; no duplicate entry IDs or hidden intentional save destinations; exact save receipt and provider route must match clicked leaf. Respect actual Chrome menu size/behavior limits instead of claiming infinite entries.
 
 ## 5. APPLY / RELOAD / RIGHT-CLICK RELIABILITY (P0 FOLLOW-UP)
 
+- **USER-FIRST INVARIANT:** The user's acknowledged change is reflected immediately in the relevant native menu, while every untouched, previously known, still-authorized directory remains accessible through Nested. Never wait for a global rescan to display the confirmed change; never discard other branches because a new scan is partial.
 - `Save Changes` must durably save the latest revision **and** acknowledge native Chrome menu application. Show restrained perimeter shimmer while really applying, stop on success/failure, with `Retry Apply` for actionable failures. No user-facing scan/debug dump.
 - On a real Level Depth Save, perform the existing bounded refresh promptly and at most one delayed ~30-second follow-up for the current generation, via MV3-safe scheduling. An unchanged Save or right-click opening must not restart all bucket scans.
 - Fix old in-flight generation promises swallowing the latest Depth request. Superseded scans cannot clobber newer menu state. Repeated Reload must **reconcile**, never destructively replace the complete known tree.
@@ -158,7 +160,7 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 - OAuth disconnect and MV3 suspension **pause** the affected scan and preserve the last committed page/frontier. Reconnect same validated account and resume when cursor valid; if invalid, restart only the affected listing segment. Avoid endless retries and credential leaks.
 - **Refresh Folder Listing…** verifies only the selected authorized folder (immediate children by default, optional bounded recursive scan); compare against persistent tree, merge verified changes, and preserve all other branches. Place advanced refresh in nested/utility/Explorer surfaces so **Simple's single Cloudflare entry stays clean**.
 - Respect Chrome native-menu limits: persist more than is currently projected, with bounded/fair menu coverage and a browse-further fallback instead of silently losing full graph content.
-- History policy **Daily DEFAULT / Weekly / Off** controls historical restore points only. Live directory memory stays enabled in all modes. No fabricated offline snapshot dates, duplicated full copies for unchanged trees, or claims that directory metadata restores deleted file bytes. Full Time Machine UI may follow separately.
+- History policy **Daily DEFAULT / Weekly / Off** controls **immutable dated snapshot anchors** only. Each day's/week's anchor stays fixed after creation, while a separate live working graph updates immediately and an append-only delta journal records verified differences. Chrome-owned IndexedDB / extension local storage are operational durability, **not protection from extension uninstall/profile removal or explicit erasure**. Provide user-authorized, verifiable export/import and optional independently stored encrypted backup for genuine cross-deletion recovery. No fabricated offline snapshot dates, duplicated full copies for unchanged trees or claims that directory metadata restores deleted file bytes. Full Time Machine UI may follow separately. Follow [`NEED_TO_DO:fundamentals`](../NEED_TO_DO/fundamentals.md).
 
 ## 6A. P0 SAME-ROUND TOOLBAR BRANDING REPAIR — NO FALSE EXCLAMATION, NO TECHNICAL HOVER WARNINGS
 
