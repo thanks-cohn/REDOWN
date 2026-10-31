@@ -128,3 +128,56 @@ test('private activation never inherits the historical implicit public-assets de
  const evaluate=new Function('privateActivation','existing','explorerOnly',code+'return publicAssetsEnabled;');
  assert.equal(evaluate(true,{explorerManaged:false},false),false);assert.equal(evaluate(true,{publicAssetsEnabled:false},false),false);assert.equal(evaluate(true,{publicAssetsEnabled:true},false),true);assert.equal(evaluate(true,null,true),false);
 });
+
+
+// The Explorer sends this event after activation; V3 must refresh in place instead
+// of requiring a full Explorer reload or another bucket inventory scan.
+function mountV3Setup(h){
+ const dom=new JSDOM(read('extension/beta/explorer.html'),{url:'https://extension.test/beta/explorer.html',runScripts:'outside-only'});
+ const {window}=dom,listeners=[];
+ window.structuredClone=structuredClone;
+ window.confirm=()=>false;
+ window.chrome={runtime:{sendMessage:m=>send(h,m)},storage:{onChanged:{addListener:fn=>listeners.push(fn)}}};
+ window.eval(read('extension/right-click-v3.js'));
+ window.eval(read('extension/beta/right-click-v3-ui.js'));
+ return {dom,document:window.document,listeners,ready:()=>waitFor(()=>window.document.getElementById('v3-save').textContent!=='Save Changes')};
+}
+async function waitFor(predicate){
+ for(let i=0;i<80;i++){if(predicate())return;await new Promise(resolve=>setTimeout(resolve,1));}
+ assert.fail('V3 setup did not refresh after activation');
+}
+test('global Activate Buckets refreshes the V3 Setup tree and bucket dropdown without page reload',async()=>{
+ const h=await fixture(),view=mountV3Setup(h),d=view.document;
+ await view.ready();
+ assert.match(d.getElementById('v3-outline').textContent,/Activate a bucket/);
+ const before=d.getElementById('v3-setup');
+ const activation=await activate(h);
+ assert.equal(activation.activation.state,'ready');
+ d.dispatchEvent(new view.dom.window.CustomEvent('redown:destinations-ready'));
+ await waitFor(()=>d.getElementById('v3-profile').options.length===2&&d.getElementById('v3-outline').textContent.includes('alpha')&&d.getElementById('v3-outline').textContent.includes('beta'));
+ assert.equal(d.getElementById('v3-setup'),before);
+ assert.equal(d.getElementById('v3-save').textContent,'Saved');
+ assert.equal(d.getElementById('v3-level-buckets').querySelectorAll('input[type=checkbox]:checked').length,2);
+ view.dom.window.close();
+});
+test('storage change refresh preserves search, expanded tree, scroll and unfinished Add Destination form',async()=>{
+ const h=await fixture(),view=mountV3Setup(h),d=view.document;
+ await view.ready();await activate(h);
+ d.dispatchEvent(new view.dom.window.CustomEvent('redown:destinations-ready'));
+ await waitFor(()=>d.getElementById('v3-profile').options.length===2);
+ const search=d.getElementById('v3-search');search.value='alpha';search.dispatchEvent(new view.dom.window.Event('input',{bubbles:true}));
+ const outline=d.getElementById('v3-outline');outline.scrollTop=65;
+ const add=d.querySelector('button[aria-label="Add destination in alpha"]');
+ assert.ok(add);add.click();
+ const prefix=d.getElementById('v3-prefix');prefix.value='unfinished/path';prefix.focus();
+ const oldSelection=d.getElementById('v3-profile').value;
+ h.local.profiles.push({id:'profile-c',type:'cloudflare-r2',accountId:'c',accountName:'C',bucketName:'gamma',workerUrl:'https://c.fixture.invalid',token:'synthetic'});
+ for(const listener of view.listeners)listener({profiles:{newValue:h.local.profiles}},'local');
+ await waitFor(()=>d.getElementById('v3-profile').options.length===3);
+ assert.equal(d.getElementById('v3-profile').value,oldSelection);
+ assert.equal(search.value,'alpha');
+ assert.equal(outline.scrollTop,65);
+ assert.equal(prefix.value,'unfinished/path');
+ assert.equal(d.activeElement,prefix);
+ view.dom.window.close();
+});
