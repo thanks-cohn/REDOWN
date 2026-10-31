@@ -292,6 +292,9 @@
     return true;
   }
   async function open(){
+    // Navigation errors belong to an individual GO TO attempt, not to the History archive.
+    // Do not leave a stale Explorer-readiness diagnostic underneath the transfer count.
+    $('history-navigation-status').replaceChildren();
     // Every time History is opened, expose today's transfers immediately
     // instead of requiring the user to expand Year then Today manually.
     if(!loaded||dirty)await refresh();
