@@ -13,10 +13,11 @@
 The owner wants REDOWN to feel **obvious to a complete newcomer** while retaining powerful modes for experienced users.
 
 **Deliver in this order:**
-1. **P0, IMMEDIATE:** Repair V3 **Simple** to show **Cloudflare**, never the separate **Buckets** heading, with user-configured labels **under Cloudflare**, never beside it. Resolve labels, activation, save routing, settings and native registered menu together. Ship this narrow functional slice before tackling the deeper index.
-2. **P0 NEXT:** Preserve known folder depths and eliminate non-destructive Reload/Save race bugs for Nested → Level. Maintain Native Simple/Narrow parity.
-3. **P0/P1 NEXT:** Incremental persistent directory graph, journal, OAuth/MV3 checkpoints, scoped Refresh Folder Listing and efficient menu reconciliation.
-4. **P1 LATER:** Daily-default/Weekly/Off historical snapshots, exports and Time Machine queries, built on the same graph; no separate crawler and no premature full Time Machine UI.
+1. **P0, IMMEDIATE, SAME DELIVERY:** Repair V3 **Simple** and **remove the false REDOWN toolbar `!` badge/technical hover text** as two separately verified small fixes. The owner explicitly requires both in this Work request. Do not leave the ugly warning for a later polish sprint. The menu fix remains the primary functional correction and the toolbar fix is the required visual-trust correction.
+2. **P0, IMMEDIATE:** Repair V3 **Simple** to show **Cloudflare**, never the separate **Buckets** heading, with user-configured labels **under Cloudflare**, never beside it. Resolve labels, activation, save routing, settings and native registered menu together. Ship this narrow functional slice before tackling the deeper index.
+3. **P0 NEXT:** Preserve known folder depths and eliminate non-destructive Reload/Save race bugs for Nested → Level. Maintain Native Simple/Narrow parity.
+4. **P0/P1 NEXT:** Incremental persistent directory graph, journal, OAuth/MV3 checkpoints, scoped Refresh Folder Listing and efficient menu reconciliation.
+5. **P1 LATER:** Daily-default/Weekly/Off historical snapshots, exports and Time Machine queries, built on the same graph; no separate crawler and no premature full Time Machine UI.
 Each phase must have independent tests, truthful status, and commits. **Do not attempt one giant speculative rewrite or delay the user's Simple fix until Time Machine is done.**
 
 ## 1. LATEST SIMPLE CONTRACT — SUPERSEDES OLDER FLAT-SIMPLE DOCUMENTS
@@ -126,6 +127,50 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 - Respect Chrome native-menu limits: persist more than is currently projected, with bounded/fair menu coverage and a browse-further fallback instead of silently losing full graph content.
 - History policy **Daily DEFAULT / Weekly / Off** controls historical restore points only. Live directory memory stays enabled in all modes. No fabricated offline snapshot dates, duplicated full copies for unchanged trees, or claims that directory metadata restores deleted file bytes. Full Time Machine UI may follow separately.
 
+## 6A. P0 SAME-ROUND TOOLBAR BRANDING REPAIR — NO FALSE EXCLAMATION, NO TECHNICAL HOVER WARNINGS
+
+**OWNER-OBSERVED REGRESSION:** REDOWN actually works, but its tiny Chrome toolbar icon carries a visible `!` badge and hovering exposes a raw debug sentence:
+
+> `Chrome accepted the Shelf request; local readiness is unconfirmed. No second panel was opened.`
+
+Chrome may append `Wants access to this site`, which is a **separate browser-owned permissions indicator**. The first sentence and the `!` badge were confirmed as **REDOWN-authored source behavior**, not evidence that the Shelf truly failed. Both visual artifacts detract from the product's branding and are **required fixes in this same urgent Codex execution**.
+
+### Source-confirmed exact origin and lifecycle bug
+
+1. `extension/background.js:1` imports `entry-bootstrap.js` through `importScripts`. Search the **imported bootstrap**, not just `background.js`.
+2. `extension/entry-bootstrap.js:56–61`: `launchIndication()` calls `chrome.action.setTitle({title})` with technical state text and `chrome.action.setBadgeText({text:'!'})` for an apparent launch failure.
+3. Around `entry-bootstrap.js:124–129`: a **resolved/accepted** `chrome.sidePanel.open()` followed by an inconclusive `verifyShelf()` readiness handshake is labeled `SHELF_READINESS_UNKNOWN` and **incorrectly invokes `launchIndication()`** with the owner's exact text. Lack of handshake does not prove a failed UI.
+4. Around `entry-bootstrap.js:112–119`: after a ~2,500ms pending deadline the code paints another `!` and increments `toolbarGeneration`, potentially suppressing a late successful response and leaving the false-warning badge/title stuck. Fix race/generation cleanup instead of only deleting the string.
+5. `entry-bootstrap.js:86–97` also uses **tab-specific** badges/titles when recovery is genuinely blocked. Per-tab overrides can outlive a global success reset. Audit and clear **the correct per-tab/global state** after recovery.
+6. `extension/shelf.js` provides `redownShelfReady` responses; evaluate native Chrome readiness limitations without treating a missed readiness acknowledgement as a failed Shelf launch.
+7. `extension/background.js` has existing **transient transfer success/failure icon/title feedback**. Preserve the intended tasteful transfer feedback without persistent bogus launch warnings or stuck visual states.
+
+### Required production behavior
+
+- **Healthy / accepted / pending / unconfirmed-readiness Shelf states:** clean recognizable REDOWN icon, **NO REDOWN-authored `!` warning badge**, no warning-colored icon overlay, no raw debug/launch/status/attempt text in **any hover tooltip**. Default/fallback hover text is a short, welcoming brand title such as **`REDOWN — Your cloud companion`**.
+- **Confirmed opening failure:** record the precise sanitized diagnostic in local Health & Repair/Diagnostics and present a concise recovery explanation **inside the Shelf or Chrome's existing icon-attached REDOWN mini-dashboard when reachable**, not as a verbose action title. The owner does not want a persistent exclamation badge or technical hover-warning experience even when a failure occurs. If Chrome blocks all user interfaces, document truthful platform limitations rather than inventing a detached window/tab or fabricating success.
+- **Late success:** clear any REDOWN-owned stale badge/title both **globally and on the affected tab**, without clearing real transfer progress prematurely or damaging another tab's ongoing attempt. Distinguish a genuinely rejected opening from uncertain or delayed readiness. Old attempts must not overwrite new healthy state.
+- **No duplicate interface:** keep Shelf first, and only if it **definitely fails** request the existing Chrome **toolbar-attached** REDOWN pop-out (`popup.html`), where supported. **Never** automatically show both, never a detached popup window or unsolicited browser tab, and never treat a slow Shelf/readiness ping as authorization to open a second surface.
+- **Permissions are Chrome's:** `Wants access to this site` is a Chrome-managed site-access string; REDOWN cannot rewrite that Chromium UI with `action.setTitle`. Investigate whether permissions are genuinely needed; **do not** suppress or misrepresent the browser's notice, request excessive host access, or change user consent to improve branding. Show exactly which visual portion is under REDOWN's control.
+- **No raw inventory or worker diagnostics in user-facing surfaces:** keep detailed event codes/reasons in the existing local diagnostics record (privacy-safe, no tokens/private URLs), not the icon hover, native context-menu destinations, or routine Shelf title.
+- **Preserve existing brand:** no icon redesign, no new badge animation, no new popup surface, no new logging service, no changes to transfer paths, no masking genuine failures.
+
+### Required same-delivery tests and proof
+
+1. Clean Chrome profile / no Cloudflare auth: icon remains clean and recognizable; clicking launches Shelf if supported.
+2. Shelf opens and responds ready: no `!`, no technical hover.
+3. Shelf opens but readiness ping is missing/late: still **no `!`** and no scary hover text.
+4. Shelf request is still pending at 2.5 seconds and later succeeds: no stuck warning, correct final state, no duplicate attached popup.
+5. Real Shelf rejection: fallback is the existing **icon-anchored** REDOWN pop-out only if supported; no unsolicited tab/window; recovery details remain accessible without raw hover warnings.
+6. Existing tab-specific `!` and title overrides: clear after successful recovery; no incorrect effects on another tab/window.
+7. Switching tabs, restarting the MV3 worker, reloading the extension, alternating Shelf/explicit Popup preferences: no stale warning on hover; clean icon remains until a legitimate transient transfer update.
+8. Verified transfer success/failure: preserve established short-lived feedback and subsequent restoration of the branded idle state; never leave launcher warnings behind.
+9. Capture **real installed Chrome** icon and hover before/after where available. Mock tests alone are **not** proof of actual toolbar appearance. Distinguish REDOWN-owned icon/title from Chrome's `Wants access to this site` notice and any Chromium-controlled indicator. Do not claim to remove Chrome-controlled UI.
+
+**Read the dedicated source-backed audit** `docs/CODEX_P1_TOOLBAR_BRANDING_BADGE_TOOLTIP_PERMISSION_AUDIT.md`, which contains exact code origins, more test conditions and Chrome permission constraints. This section **promotes the branding repair into the SAME urgent V3 P0 Work request**; do not treat the separate audit's original P1 label as a reason to defer it.
+
+---
+
 ## 7. EXACT REQUIRED ACCEPTANCE MATRIX
 
 **P0 Simple (MUST PASS FIRST):**
@@ -138,6 +183,13 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 7. Existing `redown` bucket with objects is reused unchanged; account creation not repeated after timeouts or multiple logins. Multi-account identity cannot redirect a save.
 8. Right-click on a link/image/page/video invokes the correct existing save handler and produces an actual verified receipt (use disposable test objects when permission permits).
 
+**P0 toolbar branding (MUST PASS IN THE SAME DELIVERY):**
+- No REDOWN-generated exclamation badge or raw launch diagnostics in hover, including `SHELF_READINESS_UNKNOWN`, pending Shelf, missing readiness handshake and a successful late Shelf open.
+- Distinguish Chrome-owned site-access notices from REDOWN's programmable action title/badge; do not bypass user security permissions.
+- Clean global and tab-specific stale titles/badges without removing legitimate short-lived transfer feedback.
+- Preserve Shelf first, native toolbar-attached pop-out only after definite failure where supported, and **NEVER both**, detached windows or unsolicited tabs.
+- Record actual Chrome visual verification or clearly mark it unverified.
+
 **Advanced P0/P1 regression (after Simple):**
 9. Nested/Narrow configured hierarchy and Nested/Level selected bucket/depth remain unchanged; Level Depth 5→3→5 retains known branches.
 10. Partial/expired/failed scanning and Reload cannot erase deeper known paths; a new-generation Save always wins.
@@ -149,13 +201,14 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 
 ## 8. IMPLEMENTATION AND DELIVERY DISCIPLINE
 
-1. Read `AGENTS.md`, `docs/SIMPLE_RIGHT_CLICK_MENU_CONTRACT.md` (historical, now superseded for hierarchy), `NEED_TO_DO/10312026.md`, `FOREVER_WORKS/v3/HANDOFF_LATEST.md`, `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLICK_TREE_WORK_REQUEST.md`, `docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md`, `extension/right-click-v3.js`, `extension/background.js`, `extension/beta/right-click-v3-ui.js` and existing V3/menu tests. Inspect actual latest branch sources and protected tags before modifications.
-2. First commit a focused **Simple Cloudflare-only provider subtree and exact routing** fix with regression tests. Make sure Simple's initial case and custom submenu both work. Do not defer this behind a migration to IndexedDB.
-3. Then address Depth/Save invariants and add durable index/recovery in **separately testable increments**. Do not turn a small menu bug into a high-risk reimplementation. Do not stop after an audit.
-4. Keep a root-cause/evidence report per significant repaired behavior in `FOREVER_WORKS/v3/`; update `bugs/README.md`, the Need To Do list, and **put the 2026-10-31 supersession at the top of older Simple documentation**.
-5. Run focused unit/domain/whole-worker tests, `npm run reliability:check`, and installed-Chrome end-to-end verification where authorized/available. State exact pass/fail and historical baseline differences; no masking failures by rewriting tests. **Never** report live R2 object saves as tested if no live provider action occurred.
-6. Preserve V3-only architecture, existing Shelf-first toolbar/attached-action-pop-out emergency fallback, toolbar branding correction, all other Explorer/History functions, user preferences, private R2 defaults, and protected checkpoint tags. No unsolicited popup windows or new browser tabs as launcher fallback.
-7. Commit and push implemented code, tests and documentation to the mandatory branch. Report each implemented phase and what remains open; no false “everything is complete” release claim.
+1. **Two urgent deliverables are mandatory in this same Codex round:** (A) Cloudflare-only Simple menu and exact destination routing; (B) remove false `!` badge and all REDOWN-authored technical hover warnings while retaining truthful private Diagnostics. Do not ship A while deferring B to a separate sprint.
+2. Read `AGENTS.md`, `docs/SIMPLE_RIGHT_CLICK_MENU_CONTRACT.md` (historical, now superseded for hierarchy), `NEED_TO_DO/10312026.md`, `FOREVER_WORKS/v3/HANDOFF_LATEST.md`, `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLICK_TREE_WORK_REQUEST.md`, `docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md`, `extension/right-click-v3.js`, `extension/background.js`, `extension/beta/right-click-v3-ui.js` and existing V3/menu tests. Inspect actual latest branch sources and protected tags before modifications.
+3. First commit a focused **Simple Cloudflare-only provider subtree and exact routing** fix with regression tests. Make sure Simple's initial case and custom submenu both work. Do not defer this behind a migration to IndexedDB.
+4. Then address Depth/Save invariants and add durable index/recovery in **separately testable increments**. Do not turn a small menu bug into a high-risk reimplementation. Do not stop after an audit.
+5. Keep a root-cause/evidence report per significant repaired behavior in `FOREVER_WORKS/v3/`; update `bugs/README.md`, the Need To Do list, and **put the 2026-10-31 supersession at the top of older Simple documentation**.
+6. Run focused unit/domain/whole-worker tests, `npm run reliability:check`, and installed-Chrome end-to-end verification where authorized/available. State exact pass/fail and historical baseline differences; no masking failures by rewriting tests. **Never** report live R2 object saves as tested if no live provider action occurred.
+7. Preserve V3-only architecture, existing Shelf-first toolbar/attached-action-pop-out emergency fallback, toolbar branding correction, all other Explorer/History functions, user preferences, private R2 defaults, and protected checkpoint tags. No unsolicited popup windows or new browser tabs as launcher fallback.
+8. Commit and push implemented code, tests and documentation to the mandatory branch. Report each implemented phase and what remains open; no false “everything is complete” release claim.
 
 ### FINAL OWNER ACCEPTANCE
 
@@ -165,4 +218,4 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 
 **A power user can still switch to Narrow or Level and traverse genuinely authorized folders without losing remembered directory knowledge when REDOWN refreshes or disconnects.**
 
-**FIX SIMPLE FIRST. PRESERVE WHAT WORKS. THEN BUILD THE RELIABLE FOUNDATION.**
+**FIX SIMPLE FIRST AND REMOVE THE FALSE EXCLAMATION/HOVER WARNINGS IN THE SAME ROUND. PRESERVE WHAT WORKS. THEN BUILD THE RELIABLE FOUNDATION.**
