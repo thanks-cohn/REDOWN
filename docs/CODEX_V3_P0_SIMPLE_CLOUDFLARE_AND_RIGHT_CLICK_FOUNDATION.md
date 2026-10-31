@@ -23,37 +23,42 @@ Each phase must have independent tests, truthful status, and commits. **Do not a
 
 The previous requirement `REDOWN → [every destination as direct siblings]` is now **SUPERSEDED**. The owner's latest decision is a **single fixed provider label: Cloudflare**.
 
-### Case A: no named/custom locations configured
+### Case A: only the default `redown` bucket; no other children or discovered buckets
 
 Native page/link/image/video/audio right-click menu:
 
 ```text
 REDOWN
-└── Cloudflare     [CLICK SAVES to the verified chosen default R2 destination]
+└── Cloudflare   [CLICK: save DIRECTLY to R2 bucket redown, prefix ""]
 ```
 
-- **Exactly one destination entry**, named **Cloudflare**, underneath the REDOWN root.
+- When the verified default `redown` bucket is the **sole available destination**, **Cloudflare is a directly clickable save leaf** at the REDOWN root, not a submenu.
 - **Never:** `REDOWN → Buckets → [bucket names]`.
-- No stray activated bucket lists, diagnostic rows, duplicated `Files`, initial setup shortcuts, or default location exposed as an unexplained extra menu entry.
+- No unrelated diagnostic entries, duplicate destination labels, unexpected setup shortcuts or extra hierarchy.
 - Cloudflare is a **provider display label**, not a literal bucket name. **OWNER CLARIFICATION (2026-10-31): With zero custom children, clicking Cloudflare MUST save directly to the ROOT (empty prefix) of the Cloudflare R2 bucket whose literal name is `redown` (lowercase), in the verified/default connected account.** It must NEVER target whichever bucket is highlighted in Explorer, an arbitrary active bucket, a non-root folder, or an older unrelated default path. For an existing user with a separately configured prior default, preserve that record without silently overwriting it; don't let it hijack this new Simple zero-child leaf. If `redown` is not verified/usable, show an honest setup/authorization path rather than treating a different bucket as a substitute.
 - If the account is not yet authorized, the Cloudflare action should lead to the existing connection/activation onboarding in a supported user-initiated REDOWN UI, **not** pretend a save occurred. Do not expose unauthorized destination details.
 - Preserve a safe route to Settings/repair in the Shelf; standard Simple should not be cluttered with unrelated utility rows. If native recovery requires a minimal management entry in a true failure state, justify and test this exception explicitly.
 
-### Case B: user adds one or more named/custom save locations
+### Case B: user adds any child OR an additional Cloudflare bucket is discovered
 
 ```text
 REDOWN
-└── Cloudflare           [NAVIGATE: submenu parent]
-    ├── Photography      [CLICK SAVES to configured exact target]
-    ├── Projects         [CLICK SAVES to configured exact target]
-    └── Backups          [CLICK SAVES to configured exact target]
+└── Cloudflare             [SUBMENU PARENT — no direct save]
+    ├── REDOWN             [CLICK: default R2 bucket "redown", prefix ""]
+    ├── Photography        [CLICK: exact custom destination]
+    ├── Projects           [CLICK: exact custom destination]
+    └── Other Bucket       [CLICK: that bucket root, once activated/authorized]
 ```
 
-- Each item is a **flat sibling DIRECTLY under Cloudflare**, no more nested folder menus in Simple.
+- **THIS IS THE LATEST OWNER OVERRIDE (2026-10-31):** Cloudflare becomes a submenu when either **(a)** at least one additional named/child destination exists **OR (b)** at least one distinct bucket has been discovered and is eligible to appear. In that state the default `redown` bucket MUST remain directly clickable as the first leaf labeled **`REDOWN`** under Cloudflare, **even if the user did not manually create a "REDOWN" shortcut**. It must never vanish just because Cloudflare gained children.
+- Additional verified/discovered buckets are represented as **direct sibling bucket-name leaves** under Cloudflare; there is **no separate "Buckets" heading**. If a discovered bucket is not yet activated for safe saving, either indicate its unavailable/setup state without granting a false save route, or defer its actionable leaf until activation, documenting precisely when submenu promotion occurs. Do not infer account permission merely from a cached name.
+- Custom Menu Label destinations and eligible bucket leaves remain **flat siblings directly under Cloudflare**; there is no further right-click folder depth in Simple.
+- Avoid creating two indistinguishable `REDOWN` leaves if the default bucket also appears in discovered buckets; deduplicate by canonical account+bucket identity while preserving intentionally distinct custom target records.
+- When multiple accounts expose the same bucket label, disambiguate visible labels while preserving exact identities.
 - The label must come from the user's saved **Menu Label**, or established blank-label fallback when absent. The label does not change the actual destination identity.
 - Each labeled item resolves to the correct **provider + account ID + bucket + exact folder prefix**, regardless of underlying prefix depth.
 - Never render the user's real directory hierarchy in Simple. A path `works/projects/illustrations/final` can appear as one item `Artwork`, saving directly to the full prefix.
-- **Critical Chrome native-menu rule:** Once Cloudflare has submenu children, the Cloudflare parent is navigation and cannot simultaneously act as the same direct-save leaf. Do not implement a fake clickable parent or promise both behaviors. When no custom choices exist, it is a leaf. When at least one custom choice exists, it becomes a submenu parent. Preserve the underlying default target in storage; only show a default child when it is explicitly retained/configured as a visible saved destination (do not inject a surprise `Default` row into the owner's requested example).
+- **Critical Chrome native-menu rule:** Once Cloudflare has children (custom locations **or** other discovered eligible buckets), Cloudflare itself becomes navigation, not a direct-save leaf. **The original default always remains actionable as the first `REDOWN` child**, pointing to the verified `redown` root. Do not require the user to add that child manually. When it has no children beyond its own default, Cloudflare itself is the direct-save leaf.
 - **Never** put a custom label beside Cloudflare or the former Buckets heading at REDOWN root.
 - All configured children must be visible up to bounded Chrome menu capacity; if too many, use one clear `More destinations…` *inside* Cloudflare that opens a supported REDOWN chooser, not drop records silently.
 - Handle exact duplicate display labels deterministically and accessibly without merging destinations. Preserve stable IDs, saved order and precise routing.
@@ -61,8 +66,8 @@ REDOWN
 
 ### Explicit limits
 
-- `REDOWN → Cloudflare` (direct save to **the root of the verified bucket literally named `redown`**, using `prefix: ''`) is the **zero-custom-location** path.
-- `REDOWN → Cloudflare → Menu Label` (clickable leaf) is the **custom-location** path.
+- `REDOWN → Cloudflare` (direct save to **verified `redown` root**, `prefix: ''`) is the **only-one-bucket and no-other-child** path.
+- If **any other configured child OR eligible discovered bucket exists**, `REDOWN → Cloudflare` becomes a submenu containing **`REDOWN` first** (same default root), followed by other bucket names and user-configured labeled leaves. Every leaf clicks directly to its exact account/bucket/prefix, without a deeper submenu.
 - **No third destination depth** in Simple. **No `Buckets` anywhere in Simple's normal native destination menu.**
 - Do not affect Nested/Narrow and Nested/Level/Depth navigation.
 - The REDOWN toolbar Shelf/popup opening is a completely different interface: do not confuse the Chrome extension's toolbar-attached popup with a **right-click submenu**.
@@ -125,10 +130,10 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 
 **P0 Simple (MUST PASS FIRST):**
 1. Fresh install, one authorized Cloudflare account and verified R2 bucket literally named `redown`: visible destination structure is exactly `REDOWN → Cloudflare`, with **no Buckets** submenu and no custom peer nodes. Click Cloudflare → verified save to **that account's `redown` bucket ROOT (`prefix: ''`)**, regardless of Explorer's selected bucket or last-used folder. If that bucket is not yet verified, the click must initiate an honest setup/connection route, not an arbitrary upload.
-2. Add one existing folder with Menu Label `Photography`: now `REDOWN → Cloudflare → Photography`; clicking saves to exact selected prefix. It is not a third-level folder tree.
-3. Add `Projects` and `Backups`: three sibling destination leaves under Cloudflare in saved order. No `REDOWN → Projects` peer. No `REDOWN → Buckets`.
+2. Add one existing folder with Menu Label `Photography`: now `REDOWN → Cloudflare → REDOWN` (saves to default `redown` ROOT) **and** `REDOWN → Cloudflare → Photography` (saves to exact configured prefix). Two sibling leaves; it is not a deeper folder tree.
+3. Add `Projects` and `Backups`: Cloudflare children are `REDOWN`, `Photography`, `Projects`, `Backups` in stable deterministic order. No `REDOWN → Projects` peer and no `Buckets` heading. An additional authorized/activated discovered `other-bucket` shows as another direct sibling leaf named `other-bucket` (or disambiguated display name).
 4. One custom destination points to a 6+ segment remote folder: native Simple still exposes **one labeled child leaf** and click writes to the full exact prefix.
-5. Blank label fallback, explicit label, duplicate labels, rename/reorder/delete *menu configuration only*, invalid/unauthorized account and partially activated buckets all behave correctly. Removing last custom choice restores direct Cloudflare leaf without erasing underlying cloud objects/default config.
+5. Blank label fallback, explicit label, duplicate labels, rename/reorder/delete *menu configuration only*, invalid/unauthorized account and partially activated buckets all behave correctly. Removing the last custom child restores direct Cloudflare leaf **only when no other eligible discovered bucket remains**. Otherwise keep the `Cloudflare → REDOWN` default and other bucket child(ren). Do not alter underlying cloud objects or configured defaults.
 6. Migration with existing V3 custom Simple destinations preserves IDs/owner/prefix and makes them Cloudflare children. Switching Simple↔Narrow↔Level restores each mode and does not erase configured destinations.
 7. Existing `redown` bucket with objects is reused unchanged; account creation not repeated after timeouts or multiple logins. Multi-account identity cannot redirect a save.
 8. Right-click on a link/image/page/video invokes the correct existing save handler and produces an actual verified receipt (use disposable test objects when permission permits).
@@ -156,7 +161,7 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 
 **A brand-new user sees:** `REDOWN → Cloudflare`.
 
-**A user who adds named Simple locations sees:** `REDOWN → Cloudflare → Menu Label` (or several sibling labels), **never Buckets and never deeper Simple navigation**.
+**When additional labeled locations or buckets exist:** `REDOWN → Cloudflare → REDOWN` (default bucket ROOT) **plus sibling** `Menu Label` and/or discovered bucket-name leaves. **Never a separate Buckets heading or another submenu depth.**
 
 **A power user can still switch to Narrow or Level and traverse genuinely authorized folders without losing remembered directory knowledge when REDOWN refreshes or disconnects.**
 
