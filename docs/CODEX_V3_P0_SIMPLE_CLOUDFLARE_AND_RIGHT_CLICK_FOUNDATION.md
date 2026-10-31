@@ -13,8 +13,8 @@
 The owner wants REDOWN to feel **obvious to a complete newcomer** while retaining powerful modes for experienced users.
 
 **Deliver in this order:**
-1. **P0, IMMEDIATE, SAME DELIVERY:** Repair V3 **Simple** and **remove the false REDOWN toolbar `!` badge/technical hover text** as two separately verified small fixes. The owner explicitly requires both in this Work request. Do not leave the ugly warning for a later polish sprint. The menu fix remains the primary functional correction and the toolbar fix is the required visual-trust correction.
-2. **P0, IMMEDIATE:** Repair V3 **Simple** to show **Cloudflare**, never the separate **Buckets** heading, with user-configured labels **under Cloudflare**, never beside it. Resolve labels, activation, save routing, settings and native registered menu together. Ship this narrow functional slice before tackling the deeper index.
+1. **P0, IMMEDIATE:** Repair V3 **Simple** to show **Cloudflare**, never the separate **Buckets** heading, with user-configured labels and other eligible buckets **under Cloudflare**. The default `redown` root remains directly clickable—on `Cloudflare` with no other children, or on the first `REDOWN` child when others exist. Fix native projection, exact routing, activation and setup without redesigning the editor.
+2. **P0, IMMEDIATE — SAME DELIVERY, NOT DEFERRED:** Remove REDOWN's **false toolbar `!` badge and technical hover warnings**, fix the underlying Shelf-readiness/late-success race, and restore the clean branded idle icon/title. Both #1 and #2 must be implemented, tested, committed and reported together. Do not call the Simple fix complete while the false toolbar warning remains.
 3. **P0 NEXT:** Preserve known folder depths and eliminate non-destructive Reload/Save race bugs for Nested → Level. Maintain Native Simple/Narrow parity.
 4. **P0/P1 NEXT:** Incremental persistent directory graph, journal, OAuth/MV3 checkpoints, scoped Refresh Folder Listing and efficient menu reconciliation.
 5. **P1 LATER:** Daily-default/Weekly/Off historical snapshots, exports and Time Machine queries, built on the same graph; no separate crawler and no premature full Time Machine UI.
