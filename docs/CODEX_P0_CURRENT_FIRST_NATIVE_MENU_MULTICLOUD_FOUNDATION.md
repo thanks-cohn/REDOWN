@@ -214,6 +214,77 @@ Each destination/routing record must retain:
 
 **Provider-local expansion rule:** Different connected providers are peers under REDOWN. Each provider can be a verified direct-save leaf when it has exactly one unambiguous default destination and its actual adapter supports the save. It becomes a submenu when it has multiple selectable destinations. A change in one provider's children must not alter another provider's leaf/submenu state, account selection or location hierarchy.
 
+## 7A. PROVIDER-NAMESPACED CURRENT / JSON / JSONL — EACH CLOUD INDEPENDENT, ONE REDOWN API
+
+**LATEST OWNER REQUIREMENT (2026-10-31) — MANDATORY DESIGN CONTRACT:** The `CURRENT`, `right-click.json` logical read model, `right-click.jsonl` change journal, daily immutable `BACKUP`, mutable `WORKING`, authorization state, directory graph, event/checkpoint history, applied native-menu generation and future provider change-feed cursor **MUST BE DISTINCTLY NAMESPACED FOR EVERY CONNECTED PROVIDER INSTANCE/ACCOUNT**. Current Cloudflare records must be explicitly branded and typed **Cloudflare R2**. The same folder/bucket names at different clouds must NEVER collide, merge, overwrite, reroute or inherit each other's permissions or scan progress.
+
+**Provider names versus S3 transport:** Use `providerKind` / `providerLabel` to identify the actual product, and `adapterKind` to identify the *shared protocol implementation*. For example:
+- `cloudflare-r2` / `Cloudflare`, transport `s3-compatible` or existing R2 worker adapter.
+- `google-cloud-storage` / `Google Cloud Storage`, transport `gcs-xml-s3-interoperability` where implemented; GCS XML/HMAC interoperability **is not** the same service as `google-drive`.
+- `mega-s4` / `MEGA S4`, transport `s3-compatible` with verified MEGA S4-specific differences; **not** ordinary MEGA cloud drive.
+- `aws-s3` / `Amazon S3` and `s3-compatible` / user-approved custom provider, with explicit endpoint/region/credentials scope.
+- `google-drive` and `onedrive` remain separate native-file-provider adapters with provider-native folder/item IDs, not S3 prefixes.
+
+**Identity is never only the bucket name or URI path.** Each node, configured destination, event, checkpoint, historical anchor, audit status and native menu routing ID is associated with a typed canonical namespace such as:
+```text
+namespace = providerKind + connectionId + remoteAccountOrTenantIdentity + endpointIdentity
+objectId  = namespace + containerIdentity + exactNativePrefixOrFolderId
+```
+Use unambiguous structured composite keys / stable opaque IDs instead of unsafe raw string concatenation. `connectionId` distinguishes two customer connections to the **same provider**, including same-named buckets, and survives user-friendly display-label changes. Endpoint identity distinguishes generic S3 services/regions as appropriate; provider-specific native IDs and exact key case remain intact. Never reveal credentials in `connectionId`, exported endpoint metadata, JSONL, menu labels or telemetry. A cloud connection can be renamed in the UI without changing its persistent identity.
+
+**Logical storage shape — illustrative only, not a requirement for physically separate IndexedDB databases/files:**
+```text
+REDOWN global catalog / provider registry          [provider list and authorization references]
+├── cloudflare-r2 / connection-A
+│   ├── CURRENT -> 2026-10-31/WORKING@revision
+│   ├── 2026-10-31/BACKUP        [immutable]
+│   ├── 2026-10-31/WORKING       [mutable]
+│   ├── right-click.json        [portable CURRENT projection]
+│   ├── right-click.jsonl       [provider-scoped delta events]
+│   └── scan/checkpoints + provider event cursor
+├── google-cloud-storage / connection-B
+│   └── [its OWN CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints]
+├── mega-s4 / connection-C
+│   └── [its OWN CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints]
+└── s3-compatible / connection-D
+    └── [its OWN CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints]
+
+REDOWN GLOBAL RIGHT-CLICK PLAN = authorized union/projection of each CURRENT
+REDOWN PROGRAMMATIC API       = provider-scoped calls OR explicit aggregate queries
+```
+
+A **single IndexedDB database with composite namespace keys and per-namespace stores/indexes is acceptable and probably preferable** to many physical DBs; isolation is LOGICAL and TRANSACTIONAL, not necessarily separate database files. Export the global provider manifest plus optional independent `<provider>/<connection>/right-click.json` and `right-click.jsonl` artifacts. JSONL record fields include `providerKind`, `connectionId`, canonical container and operation identity. The aggregate menu/export is a *derived view*; it must not become a second competing editable tree.
+
+**Independent daily rollover:** Global Settings `Daily` is DEFAULT, but each actively participating connection maintains its own reconstructable immutable BACKUP and separate WORKING for the selected period. CURRENT for that connection advances immediately on its own verified changes. An edit in Cloudflare only advances Cloudflare's CURRENT/journal generation and affected global native menu subtree; Google Cloud Storage and MEGA S4 working generations, journals, backups and checkpoints are untouched. The optional overall REDOWN view/aggregate generation changes only to mark that one provider projection changed. A provider in an offline/unconnected state retains its local historical identity without fabricating successful cloud verification or keeping revoked destinations clickable.
+
+**Independent scanning and future change feeds:** Provider-specific observation/checkpoint logic is scoped to provider instance and affected container/folder. R2/MEGA S4/S3 may use bounded S3-style prefix listings with provider-specific differences and optional events where actually supported; Google Cloud Storage XML/listing or future notifications as actually supported; Google Drive or OneDrive use their own change-token/delta APIs when supported. Never reuse pagination tokens/cursors, OAuth state, events or deletion evidence across providers. The journal records discovered verified differences, not a magical externally authoritative feed. One provider's partial scan/outage must not delete, refresh, or invalidate unrelated providers' CURRENT.
+
+**One user-facing system, no false merging:**
+```text
+REDOWN
+├── Cloudflare             [Cloudflare's independently projected CURRENT]
+├── Google Cloud Storage   [ONLY when real adapter + authorization available]
+├── MEGA S4                [ONLY when real adapter + authorization available]
+└── Other S3               [ONLY when real adapter + authorization available]
+```
+Each ready provider has independent Simple/Nested→Narrow or Depth projection based on the **same selected global menu mode** and its own authorized CURRENT. Provider is always the first submenu level; Cloudflare's single-default direct-save exception remains provider-local. Custom Menu Labels belong to configured destinations within the correct provider only. Do not display placeholders as actionable native save entries.
+
+**Unified programmatic API, scoped by default:** Offer a single future REDOWN API interface to list connected providers, query an exact connection's CURRENT, read its journal since a generation, list folders and submit actions through the corresponding real adapter. Global aggregated search/list is explicitly requested and tagged by provider+connection, never silently resolves two identically named objects to one. Cross-provider copy/move cannot be falsely described as one atomic cloud operation; record separate confirmed source/destination phases and compensate/report partial failures. Only update a provider's CURRENT after its specific operation is verified, and preserve source data until a safe move commits. API automation cannot bypass authorization or enable new provider credentials.
+
+**Real implementation limits:** This P0 round MUST implement Cloudflare's provider namespace and provider-agnostic schema/projection boundary, plus test doubles for at least two same-named buckets across different S3-compatible providers and two connections of one provider. Other real connectors are future work unless already implemented and verifiably authorized. **Never require new provider credentials, deploy provider services, or claim Google Cloud / MEGA / Google Drive / OneDrive is operational solely from schema or mocks.**
+
+**Acceptance tests for provider isolation:**
+1. Distinct `Cloudflare/connection-A/photos`, `GCS/connection-B/photos`, and `MEGA-S4/connection-C/photos` remain separate CURRENT node IDs, daily BACKUP+WORKING, JSONL sequences/checkpoints and menu routes despite identical bucket names and folder prefixes.
+2. Cloudflare label change / folder mutation modifies only its CURRENT/journal and only its native subtree, leaving other providers' recorded generations, history, discovery state and routes unchanged.
+3. Two Cloudflare accounts, two custom S3 endpoints, and same bucket/folder display names never collide. User-visible account disambiguation doesn't expose secrets.
+4. Cloudflare disconnect affects only Cloudflare actionable routes; GCS/MEGA/S3 connected routes remain available where truly authorized; no auto-deletion of disconnected historical metadata.
+5. Export Cloudflare-only memory and import/reconnect later without corrupting GCS history, or export an aggregate manifest without merging distinct histories.
+6. The global API's `getCurrent(connectionId)` and `getChanges(connectionId,since)` return isolated results; explicit aggregate results include provider/connection identity and cannot silently choose wrong remote target.
+7. S3 protocol reuse honors per-provider capability matrix; non-S3 Google Drive/OneDrive folder IDs remain distinct. No fake connected/cloud-transfer test claims.
+8. Daily per-provider BACKUP is immutable; provider-specific WORKING and journal changes propagate to global Chrome native menu without replaying or rescanning all other providers.
+
+---
+
 ## 8. MIGRATION, BACKWARD COMPATIBILITY AND NONDESTRUCTIVE ROLLOUT
 
 - Inspect existing V3 `chrome.storage.local['right-click.json']` schema-v1 snapshot, `rightClickV3Inventory`, `rightClickV3`, mode/submode presentation, level scope, activated buckets, profile IDs, saved menu labels, `rightClickNativeIds` and actual native routing code.
