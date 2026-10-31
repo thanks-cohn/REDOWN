@@ -1,0 +1,265 @@
+✔ whole MV3 background with real imports registers handlers and installs root on worker activation (18.951034ms)
+✔ toolbar invokes Shelf synchronously within the gesture without storage/menu prerequisites (5.254141ms)
+✔ rejected, synchronous and unavailable Shelf APIs open recovery popup (14.47227ms)
+✔ stale popup preference migrates even when panel configuration fails (2.965128ms)
+✔ failed native child or root creation restores root/management without erasing settings (9.352303ms)
+✔ failed removal retains functional local access; Chrome-wide denial is reported honestly (4.955103ms)
+✔ partial inventory, invalid cache and malformed configuration cannot prevent local menu access (7.230937ms)
+✔ worker restart and concurrent startup/install/storage/alarm events share the registration lane (14.597021ms)
+✔ recovery management entry uses the existing local Explorer click route (3.09012ms)
+✔ missing native acknowledgement times out without deleting the root and a later Apply succeeds (29.374656ms)
+✔ failed folder discovery leaves root and valid configured destinations accessible (7.190816ms)
+✔ a failed rebuild after successful registration preserves a recoverable root instead of clearing everything (4.774858ms)
+✔ rapid failures share a recovery window and subsequent failures focus it (3.676036ms)
+✔ unchanged menu plan performs no destructive registration and discovery (3.698971ms)
+✔ unrelated background import failure leaves independently registered toolbar usable (2.052872ms)
+✔ storage failure cannot gate toolbar or base menu access (3.125133ms)
+✔ Shelf document readiness is window-scoped and successful readiness avoids recovery (13.955528ms)
+✔ failed Shelf initialization has bounded visible recovery and retained evidence (1509.073894ms)
+✔ worker restart reconciles persisted IDs without native destruction or folder discovery (5.582646ms)
+✔ saved match and independent NEON enter white, shimmer first, then one spatial liquid transition and cleanup (198.994052ms)
+✔ reduced motion, unsupported rendering and other palettes bypass entrance (112.554074ms)
+✔ failed or stalled storage always releases boot gate; late known palette remains authoritative (40.820308ms)
+✔ pointer, keyboard, resize, background and watchdog interruption release temporary resources (136.796742ms)
+✔ new palette wins during startup without replaying introduction (33.373211ms)
+✔ white treatment changes no geometry; shared sweep and outline ring use the same wave radii (0.875645ms)
+✖ real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes (33.640655ms)
+✔ calendar grouping uses local dates near midnight, not UTC date slicing (17.378993ms)
+✖ empty, read failure and retry states are honest; missing metadata is not invented or executed (10.432133ms)
+✖ large retained histories render in bounded increments and unrelated storage changes do no history work (25.839022ms)
+✔ dock generates exactly three local accessible SVGs; History and Settings keep user gesture and scoped Shelf intents (24.803376ms)
+Error: Uncaught [TypeError: panel.scrollIntoView is not a function]
+    at reportException (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:118:66)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+    at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) TypeError: panel.scrollIntoView is not a function
+    at HTMLButtonElement.eval (eval at dock (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:107:5), <anonymous>:61:11)
+    at HTMLButtonElement.callTheUserObjectsOperation (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:118:66)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+✖ missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager (107.450824ms)
+✔ an open Shelf consumes only fresh intents for its own window and returns to Remote Cloud (30.731293ms)
+✔ transition errors and hidden initialization fall back to the finished saved palette (39.788677ms)
+✔ recovery interface and retry work without background messaging or provider connection (74.321783ms)
+✔ explicit popup opening does not claim emergency recovery (12.900167ms)
+✔ V3 domain projects parent-first exact IDs and resolves branch Save here only (3.911918ms)
+✔ V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect (0.782945ms)
+✔ V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8 (0.943528ms)
+✔ V3 save/register/resolve persists across restart and refuses Legacy selection (13.415237ms)
+✔ actual background stale and unauthorized commits reject; concurrent saves serialize (2.669439ms)
+✔ actual Chrome create/remove failures distinguish saved settings from registration (3.323207ms)
+✔ tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data (252.985295ms)
+✔ contextual addition auto persists, search finds destination and registration retry uses acknowledged revision (167.176119ms)
+✔ actual click listener waits for V3 read-back before recording completion and never falls back (2.239458ms)
+✔ active HTML/CSS/JS and packaging contain no retired setup mounts/imports/hooks (4.760472ms)
+✔ Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles (3.585795ms)
+✔ actual V3 ingest preserves the existing transport and URL contract with an exact non-provisioning target (1.5926ms)
+✔ package closure includes V3 and recovery Settings, excludes retired Legacy runtime and excludes all retired setup code (131.887635ms)
+✔ setup snapshot is sender-gated and exposes no credential or legacy menu state (1.762236ms)
+✔ storage preferences retain every literal DOM dependency after old setup removal (41.778677ms)
+✔ real shared tabs, engine events and reload can only return to the single V3 setup (115.707005ms)
+✔ Settings exposes V3 setup and recovery, with no engine selector or Legacy warning (12.608015ms)
+✔ rapid edits serialize snapshots and advance only acknowledged revisions (85.086768ms)
+✔ stale revision never automatically retries or drops retained edit (74.304572ms)
+✔ tree Home End arrows and selection use roving focus independently of inclusion (62.044637ms)
+✔ inline add controls retain click focus and own keys without selecting the tree (94.266971ms)
+✔ contextual plus selects its owner and Escape restores that row without saving (50.527041ms)
+✔ folder redraw preserves inline draft focus and anchor, checkbox redraw preserves its control (117.073294ms)
+✔ tree shortcuts require actual tree focus and ignore composition and modified keys (59.386952ms)
+✔ Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here (1.298846ms)
+✔ Level depth 1–10 is counted from authorized root; true names, siblings and exact routing (12.148972ms)
+✔ Level uses opted-in bucket roots and never reads unrelated profiles (1.528247ms)
+✔ Level paginates files-only pages, deduplicates and sorts exact cloud names without writes (1.010836ms)
+✔ Level rejects broken pagination, provider failures and unsupported paths as incomplete (1.190611ms)
+✔ Level bounds folder count, pages, elapsed budget and menu entries with visible partial status (308.975181ms)
+✔ Level cache survives serialization; expiry, root changes and wrong depth fail closed (2.05952ms)
+✔ presentation transitions serialize independently, retain Level depth 5 and persist across background restart (13.53471ms)
+✔ actual Level background inventory registration and click resolver retain exact authorized targets across restart (8.186541ms)
+✔ late Level discovery cannot apply after roots change; concurrent refreshes share one inventory (49.948632ms)
+✔ header progressive controls preserve the tree and form focus, validate depth and remember hidden choices (188.396331ms)
+✔ rapid presentation changes retain native radio focus and serialize the latest desired mode (74.463555ms)
+✔ a timed-out read halts traversal instead of accumulating unresolved remote requests (1.217692ms)
+✔ periodic maintenance uses V3 regardless of stale engine settings and leaves non-Level alone; credential changes clear inventory before rebuilding (126.782478ms)
+✔ natural Narrow synthesizes real ancestors, retains exact configured-only targets and stable order (1.748845ms)
+✔ Narrow handles explicit skipped ancestors, independent disabled prefixes and distinct accounts (1.108035ms)
+✔ Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions (6.309709ms)
+✔ Level depth boundary 1, 2, 3, 5 and 10 uses bucket zero, eleven-level chains and no custom labels (4.502676ms)
+✔ bounded Level projection reserves later buckets before broad descendants and counts failed attempts (289.593038ms)
+✔ real UI, dispatcher and transaction preserve mode acknowledgements and reconcile a lost reply (161.416042ms)
+✔ literal Unknown request never silently downgrades the desired Nested choice (101.864874ms)
+✔ Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt (105.055373ms)
+✔ Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement (159.621026ms)
+✔ failed registration retains persisted edits, Retry Apply repairs without rewriting destinations (127.608226ms)
+✔ partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics (163.13548ms)
+✔ bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus (156.19661ms)
+✔ apply endpoint rejects stale snapshots and foreign senders, receipt changes for each projection input (3.474224ms)
+✔ durable snapshot restores fresh inventory without a provider rescan and stores no secrets (5.154974ms)
+✔ incremental discovery resumes a failed child without relisting its completed root (1.386852ms)
+✔ adding a participating bucket reuses the unchanged bucket and revoked buckets never project (1.544753ms)
+✔ perimeter animation has a reduced-motion override and visible keyboard focus (0.871753ms)
+✔ restored broad inventory reserves capacity for a newly participating bucket (151.014223ms)
+✔ Shelf-only toolbar preference survives reopening and preserves unrelated data (185.995082ms)
+✖ provider order, pending integrations, verified account state and actual history remain honest (39.311824ms)
+✔ History opens Today by default and preserves clickable source and hosting-page URLs (68.243091ms)
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (0.712129ms)
+✔ toolbar migration retires popup preferences before reading storage (20.315561ms)
+✔ Shelf and compact popup Home controls use a clear small house icon instead of a diagonal launch arrow (28.209474ms)
+ℹ tests 97
+ℹ suites 0
+ℹ pass 91
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7612.390559
+
+✖ failing tests:
+
+test at tests/explorer-neon-history.test.mjs:70:1
+✖ real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes (33.640655ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+  +   '2026⌄',
+  +   '2025⌄',
+  +   'Unknown date⌄'
+  -   '2026',
+  -   '2025',
+  -   'Unknown date'
+    ]
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:73:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '2026⌄', '2025⌄', 'Unknown date⌄' ],
+    expected: [ '2026', '2025', 'Unknown date' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/explorer-neon-history.test.mjs:90:1
+✖ empty, read failure and retry states are honest; missing metadata is not invented or executed (10.432133ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Could not read/. Input:
+
+  'History could not be loaded'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:91:53)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'History could not be loaded',
+    expected: /Could not read/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/explorer-neon-history.test.mjs:94:1
+✖ large retained histories render in bounded increments and unrelated storage changes do no history work (25.839022ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  40 !== 100
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:96:41)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 40,
+    expected: 100,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/explorer-neon-history.test.mjs:114:1
+✖ missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager (107.450824ms)
+  TypeError: Cannot read properties of undefined (reading '1')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-neon-history.test.mjs:118:134)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/shelf.test.mjs:21:1
+✖ provider order, pending integrations, verified account state and actual history remain honest (39.311824ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+  -   'Google Drive',
+  -   'Dropbox',
+  -   'Microsoft OneDrive',
+      'Cloudflare R2'
+    ]
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/shelf.test.mjs:23:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'Cloudflare R2' ],
+    expected: [ 'Google Drive', 'Dropbox', 'Microsoft OneDrive', 'Cloudflare R2' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:54:1
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (0.712129ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /href="shelf.html#settings"/. Input:
+
+  '<!doctype html>\n' +
+    '<html lang="en">\n' +
+    '<head>\n' +
+    '  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+    '  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n' +
+    '  <style>\n' +
+    '    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n' +
+    '    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n' +
+    '    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n' +
+    '    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n' +
+    '    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n' +
+    '    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n' +
+    '    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard svg{display:block;flex:none;filter:drop-shadow(0 1px 2px #2d14453b)}\n' +
+    '    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n' +
+    '    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n' +
+    '    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n' +
+    '    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n' +
+    '  </style>\n' +
+    '</head>\n' +
+    '<body><main class="shell"><section id="recovery" hidden><p>REDOWN opened in recovery mode because the Shelf could not open.</p><button id="retry-shelf" type="button">Retry Shelf</button><button id="support-report" type="button">Export support report</button><p id="recovery-status" role="status"></p></section>\n' +
+    '  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n' +
+    '  <button id="dashboard" class="dashboard" type="button" title="Open REDOWN Home">Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3.5 10.2 11.1 3.7a1.4 1.4 0 0 1 1.8 0l7.6 6.5V19a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8.8Z"/><path d="M9.2 21v-5.5a2.8 2.8 0 0 1 5.6 0V21"/><path d="M17 12.5h1.5v1.5H17z"/></svg></button>\n' +
+    '  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n' +
+    '  <p class="hint">Your files. Your destinations. All in one place.</p>\n' +
+    '  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n' +
+    '  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n' +
+    '</main><script src="popup-recovery.js"></script><script src="odometer.js"></script><script src="popup.js"></script></body>\n' +
+    '</html>\n'
+
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/shelf.test.mjs:55:275)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n  <style>\n    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard svg{display:block;flex:none;filter:drop-shadow(0 1px 2px #2d14453b)}\n    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n  </style>\n</head>\n<body><main class="shell"><section id="recovery" hidden><p>REDOWN opened in recovery mode because the Shelf could not open.</p><button id="retry-shelf" type="button">Retry Shelf</button><button id="support-report" type="button">Export support report</button><p id="recovery-status" role="status"></p></section>\n  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n  <button id="dashboard" class="dashboard" type="button" title="Open REDOWN Home">Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3.5 10.2 11.1 3.7a1.4 1.4 0 0 1 1.8 0l7.6 6.5V19a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8.8Z"/><path d="M9.2 21v-5.5a2.8 2.8 0 0 1 5.6 0V21"/><path d="M17 12.5h1.5v1.5H17z"/></svg></button>\n  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n  <p class="hint">Your files. Your destinations. All in one place.</p>\n  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n</main><script src="popup-recovery.js"></script><script src="odometer.js"></script><script src="popup.js"></script></body>\n</html>\n',
+    expected: /href="shelf.html#settings"/,
+    operator: 'match',
+    diff: 'simple'
+  }

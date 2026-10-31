@@ -59,12 +59,12 @@ $('cloudflare').addEventListener('click',async()=>{
 });
 async function refreshPreference() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
-  for (const input of modes) input.checked = input.value === (toolbarOpenMode === 'popup' ? 'popup' : 'shelf');
+  for (const input of modes) input.checked = input.value === ('shelf');
 }
 for (const input of modes) input.addEventListener('change',async()=>{
   for (const item of modes) item.disabled = true;
   try {
-    await chrome.storage.local.set({toolbarOpenMode:input.value});
+    await chrome.storage.local.set({toolbarOpenMode:'shelf'});
     status('Preference saved. Future toolbar clicks open the '+(input.value==='popup'?'Popup.':'Shelf.'));
   } catch { status('Could not save your opening preference. Please try again.'); }
   finally { await refreshPreference().catch(()=>{}); for (const item of modes) item.disabled=false; }
@@ -112,3 +112,12 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 void refreshPreference().catch(()=>{for(const input of modes)input.disabled=true;status('Opening preference unavailable. Reopen Settings to retry.');});
 void refreshConnection().catch(()=>status('Connection state unavailable. Reopen Shelf to retry.'));
+
+// Registered only after the local navigation and controls initialize.
+chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
+  if(sender.id===chrome.runtime.id&&message.type==='redownShelfReady'){
+    // Other windows must not win Chrome's first-response race with a false acknowledgement.
+    chrome.windows.getCurrent().then(win=>{if(win.id===message.windowId)respond({ready:true});}).catch(()=>{});
+    return true;
+  }
+});

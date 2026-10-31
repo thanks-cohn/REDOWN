@@ -28,7 +28,7 @@ test('V3 rejects collisions, orphans, cycles, cross-account targets, invalid pat
 function background(local={profiles:[structuredClone(profile)]},failure={}){
  local.rightClickV3Migration??={version:1};
  const native=[],writes=[],c=vm.createContext({TextEncoder,structuredClone,setTimeout,clearTimeout,crypto:webcrypto});
- c.chrome={runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,lastError:null},storage:{local:{get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])])),set:async patch=>{writes.push(structuredClone(patch));Object.assign(local,structuredClone(patch));}}},contextMenus:{removeAll:async()=>{if(failure.remove)throw Error('remove failed');native.length=0;},create(item,callback){if(failure.create)c.chrome.runtime.lastError={message:'create failed'};else native.push(item);callback?.();c.chrome.runtime.lastError=null;}}};
+ c.chrome={runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,lastError:null},storage:{local:{get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])])),set:async patch=>{writes.push(structuredClone(patch));Object.assign(local,structuredClone(patch));}}},contextMenus:{remove(id,cb){const index=native.findIndex(x=>x.id===id);if(index>=0)native.splice(index,1);cb?.();},update(id,patch,cb){const item=native.find(x=>x.id===id);if(item)Object.assign(item,patch);else c.chrome.runtime.lastError={message:'missing'};cb?.();c.chrome.runtime.lastError=null;},removeAll:async()=>{if(failure.remove)throw Error('remove failed');native.length=0;},create(item,callback){if(failure.create)c.chrome.runtime.lastError={message:'create failed'};else native.push(item);callback?.();c.chrome.runtime.lastError=null;}}};
  vm.runInContext(domain+legacyModel+legacy+legacyEngine,c);c.getProfiles=async()=>structuredClone(local.profiles||[]);c.ROOT_MENU_ID='redown';
  vm.runInContext('let destinationSaveQueue=Promise.resolve();\n'+bg.slice(bg.indexOf('function v3MenuTransaction('),bg.indexOf('/* Explicit, opt-in gallery capture')),c);
  return {c,local,native,writes,call:(type,fields={},page='beta/explorer.html')=>c.v3MenuTransaction({type,...fields},{url:c.chrome.runtime.getURL(page)})};
@@ -284,12 +284,12 @@ test('a timed-out read halts traversal instead of accumulating unresolved remote
 });
 test('periodic maintenance uses V3 regardless of stale engine settings and leaves non-Level alone; credential changes clear inventory before rebuilding',async()=>{
  const alarms=[],listeners=[],calls=[],local={rightClickEngine:'legacy',rightClickV3Presentation:level};
- const c=vm.createContext({RedownRightClickV3:model(),chrome:{runtime:{onInstalled:{addListener(){}},onStartup:{addListener(){}}},alarms:{create:(...args)=>alarms.push(args),onAlarm:{addListener:fn=>listeners.push(fn)}},storage:{local:{get:async()=>local,set:async patch=>{calls.push('invalidate');Object.assign(local,patch);}},onChanged:{addListener:fn=>listeners.push(fn)}}},resumeGlobalActivation:async()=>{},rebuildMenus:async()=>calls.push('rebuild')});
+ const c=vm.createContext({RedownRightClickV3:model(),chrome:{runtime:{onInstalled:{addListener(){}},onStartup:{addListener(){}}},alarms:{create:(...args)=>alarms.push(args),onAlarm:{addListener:fn=>listeners.push(fn)}},storage:{local:{get:async()=>local,set:async patch=>{calls.push('invalidate');Object.assign(local,patch);}},onChanged:{addListener:fn=>listeners.push(fn)}}},resumeGlobalActivation:async()=>{},refreshV3Inventory:async()=>calls.push('refresh'),rebuildMenus:async()=>calls.push('rebuild')});
  vm.runInContext(bg.slice(bg.indexOf('function requestMenuRebuild(){'),bg.indexOf('/* Cosmetic only. A context-menu gesture')),c);
  await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;
- assert.equal(alarms[0][1].periodInMinutes,5);listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;
+ assert.equal(alarms[0][1].periodInMinutes,5);listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['refresh','rebuild']);calls.length=0;
  local.rightClickEngine='v3';local.rightClickV3Presentation=narrow;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,[]);
- local.rightClickV3Presentation=level;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;
+ local.rightClickV3Presentation=level;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['refresh','rebuild']);calls.length=0;
  listeners[1]({profiles:{newValue:[profile]}},'local');await settle();assert.deepEqual(calls,['invalidate','rebuild']);assert.equal(local.rightClickV3Inventory,null);
 });
 
@@ -385,9 +385,9 @@ test('Save Changes glows after autosaved edits, applies same revision without re
 test('Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement',async()=>{
  const h=await applyHarness();try{
  h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();await settle();
- const create=h.c.chrome.contextMenus.create;let release;let hold=true;
- h.c.chrome.contextMenus.create=(item,callback)=>{if(hold){hold=false;release=()=>create(item,callback);}else create(item,callback);};
- h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Applying…');assert.equal(h.local.rightClickMenuStatus.state,'applying');
+ const update=h.c.chrome.contextMenus.update;let release;let hold=true;
+ h.c.chrome.contextMenus.update=(id,patch,callback)=>{if(hold){hold=false;release=()=>update(id,patch,callback);}else update(id,patch,callback);};
+ h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Applying…');assert.equal(typeof release,'function'); // Existing receipt remains until base access is acknowledged.
  h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();release();await settle();
  assert.notEqual(h.$('save').textContent,'Saved');assert.equal(h.local.rightClickV3.destinations[0].enabled,true);
  h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Saved');

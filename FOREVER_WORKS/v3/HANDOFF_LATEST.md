@@ -1,3 +1,12 @@
+# Latest: Shelf-first toolbar and native-menu reconciliation
+
+See [the permanent entry-point repair report](../../docs/reliability/TOOLBAR_AND_MENU_ROOT_CAUSE_REPORT.md)
+and [owner Chrome checklist](../../docs/reliability/TOOLBAR_AND_MENU_OWNER_CHECKLIST.md).
+Shelf-first supersedes earlier popup-mode and automatic tab/Options recovery behavior.
+The future diagnostic API remains proposal-only. Installed Chrome acceptance remains policy-blocked.
+
+---
+
 # Latest: V3 only and global private bucket activation
 
 31 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
@@ -151,3 +160,15 @@ Read [P0 audit](P0_MENU_MODE_AND_DEPTH_AUDIT.md) and [implementation-ready recon
 [Audit evidence](menu-mode-depth-audit-evidence/README.md) includes A–G exact current projections, actual R2 REST adapter synthetic fixtures, source hashes, protected refs, focused results and full reliability log. Focused tests: 54 pass, zero fail. Current handler exists; earlier Unknown request rollback is not attributed to an invented original cause. Installed Chrome and live cloud remain unverified. Next implementation must add combined UI/actual-dispatcher state tests, not claim current snapshot-dispatch coverage proves presentation end-to-end.
 
 Next Work agent: inspect this contract before implementing; do not rebuild the editor. Implementation requires a new implementation instruction. Start with Simple goldens, natural Narrow trie, explicit Level participation, bucket-root depth counting, then bounded partial discovery and state reconciliation. Preserve History GO TO and all protected checkpoints.
+
+## Shelf-first entry-point follow-up — 31 October 2026
+
+See [root-cause report](../../docs/reliability/TOOLBAR_AND_MENU_ROOT_CAUSE_REPORT.md),
+[owner acceptance](../../docs/reliability/TOOLBAR_AND_MENU_OWNER_CHECKLIST.md), and
+[future API proposal only](../../docs/reliability/TOOLBAR_AND_CONTEXT_MENU_DIAGNOSTIC_API_PROPOSAL.md).
+This supersedes the earlier popup-preference and automatic Shelf-tab/Options fallback behavior.
+Toolbar now registers before provider imports, migrates to Shelf-first and opens the existing
+popup in a reusable recovery window on failure. Menus reconcile acknowledged IDs across restart,
+preserve base access and avoid discovery from registration. Focused79/79; full700 pass/71 existing
+failed names/incomplete, no added failure names against fresh branch baseline688/72.
+Installed Chrome remains policy-blocked, zero assertions; no live provider or release claims.

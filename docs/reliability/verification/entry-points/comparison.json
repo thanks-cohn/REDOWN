@@ -1,0 +1,21 @@
+{
+  "baselineCommit": "1a635b942fd1e9b01f183d60db8b17970f084da1",
+  "baseline": {
+    "passed": 688,
+    "failed": 72
+  },
+  "after": {
+    "passed": 700,
+    "failed": 71,
+    "incomplete": true
+  },
+  "addedFailures": [],
+  "removedNames": [
+    [
+      "tests/shelf.test.mjs",
+      "existing toolbar implementation applies default Shelf and Popup in both directions"
+    ]
+  ],
+  "removedNameExplanation": "Obsolete bidirectional popup-preference test replaced with required Shelf-only migration test; not an independently proven historical fix.",
+  "sourceSha256": "d7387a032e834d2f6b5de2c56e36aad0751432e8c9e98a4287c32821a3240715"
+}

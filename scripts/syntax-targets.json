@@ -61,5 +61,7 @@
   "extension/beta/right-click-v3-ui.js",
   "extension/right-click-legacy.js",
   "extension/history-navigation.js",
-  "extension/beta/history-target.mjs"
+  "extension/beta/history-target.mjs",
+  "extension/entry-bootstrap.js",
+  "extension/popup-recovery.js"
 ]

@@ -1,0 +1,22 @@
+{
+  "state": "blocked",
+  "installedAssertions": 0,
+  "reason": "Managed ExtensionInstallBlocklist blocks REDOWN; no bypass attempted",
+  "policy": {
+    "ExtensionInstallBlocklist": [
+      "*"
+    ],
+    "ExtensionInstallForcelist": [
+      "kcdongibgcplmaagnmgpjhpjgmmaaaaa;http://localhost:31460/ids.xml"
+    ],
+    "ExtensionInstallSources": []
+  },
+  "unverified": [
+    "fresh and upgraded profiles",
+    "real toolbar gesture and user activation",
+    "native menu visibility",
+    "worker suspension",
+    "multi-window focus",
+    "rendered recovery interactivity"
+  ]
+}

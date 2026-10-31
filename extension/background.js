@@ -1,3 +1,4 @@
+importScripts("entry-bootstrap.js");
 const ROOT_MENU_ID = "redown";
 const CF_CLIENT_ID = "d9db0f71eb24cd2eed86b50a650a045e";
 const CF_AUTH_URL = "https://dash.cloudflare.com/oauth2/auth";
@@ -2303,21 +2304,34 @@ async function rebuildMenus() {
   // Location verification can save several rows together. Chrome menu rebuilds
   // must finish in order so another removeAll cannot delete a pending parent.
   const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
+    let stage='base-access';
     try{
-      await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       // Establish local access before reading caches, profiles or inventory.
       await ensureMenuAccess();
-      await ensureV3Only();
-      await restoreV3MenuSnapshot();
+      stage='storage';
+      if(nativeMenuIds===null){
+        const saved=await chrome.storage.local.get('rightClickNativeIds');
+        if(Array.isArray(saved.rightClickNativeIds)&&saved.rightClickNativeIds.length<=2048&&saved.rightClickNativeIds.every(id=>typeof id==='string'))nativeMenuIds=saved.rightClickNativeIds;
+      }
+      await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
+      stage='migration';await ensureV3Only();
+      stage='snapshot';await restoreV3MenuSnapshot();
       const applicationKey=await menuApplicationKey();
-      const receipt=await buildMenus();
+      stage='projection';
+      const receipt=await buildMenus(()=>{stage='native-registration';});
+      stage='receipt';
       const current=applicationKey===await menuApplicationKey();
       await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':'registered'}});
       await persistV3MenuSnapshot();
       return receipt;
     }catch(error){
       // Also covers interrupted/failed removal and malformed projection inputs.
-      await ensureMenuAccess().catch(recovery=>console.warn('REDOWN menu access could not be restored:',recovery));
+      nativeMenuPlan=null;nativeMenuIds=null;
+      await chrome.storage.local.set({rightClickNativeIds:null}).catch(()=>{});
+      let recovery='base-restored';
+      try{await ensureMenuAccess();}
+      catch{recovery='base-failed';console.warn('REDOWN menu access could not be restored.');}
+      globalThis.entryEvidence?.('context-menu','register',stage,'MENU_REGISTRATION_FAILED',recovery);
       await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
       throw error;
     }
@@ -2346,7 +2360,13 @@ async function ensureMenuAccess(){
     catch{await acknowledgeMenu('create',item);}
   }
 }
+function removeNativeMenus(){
+  let timer;
+  return Promise.race([chrome.contextMenus.removeAll(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Menu reset timed out')),5000);})]).finally(()=>clearTimeout(timer));
+}
+let nativeMenuPlan=null,nativeMenuIds=null;
 async function buildMenus() {
+  const onStage=arguments[0]||(()=>{});
   // Produce a deterministic parent-first description before touching Chrome.
   const description=[];
   const create=item=>description.push(item);
@@ -2363,12 +2383,40 @@ async function buildMenus() {
       const target=RedownRightClickV3.resolve(item.id,{...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes,activatedBuckets:menuSettings.rightClickActivatedBuckets},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory);
       if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
     }
-    await chrome.contextMenus.removeAll();
+    const plan=JSON.stringify(description);
+    if(nativeMenuPlan===plan)return;
+    onStage();
+    // Keep root/management installed throughout destination replacement.
+    const expectedIds=new Set(description.map(item=>item.id));
+    // Chrome update cannot move sibling order. Recreate destinations only when
+    // the ordered ID structure changes; label-only edits stay incremental.
+    const reorder=nativeMenuIds&&JSON.stringify(nativeMenuIds)!==JSON.stringify([...expectedIds]);
+    if(nativeMenuIds){
+      for(const id of [...nativeMenuIds].reverse()){
+        if(id===ROOT_MENU_ID||id==='redown-manage'||!reorder&&expectedIds.has(id))continue;
+        await new Promise((resolve,reject)=>{
+          const timer=setTimeout(()=>reject(Error('Menu removal timed out')),5000);
+          chrome.contextMenus.remove(id,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error?reject(Error('Menu removal failed')):resolve();});
+        });
+      }
+      if(reorder)nativeMenuIds=[ROOT_MENU_ID,'redown-manage'];
+    }else{
+      // Unknown persisted native state has no Chrome enumeration API.
+      await removeNativeMenus();
+      await ensureMenuAccess();
+    }
     try{
       for(const {destination,operation,...item} of description){
+        if(item.id===ROOT_MENU_ID||item.id==='redown-manage')continue;
         if(!chrome.runtime?.id){chrome.contextMenus.create(item);continue;}
-        await acknowledgeMenu('create',item);
+        if(nativeMenuIds?.includes(item.id)){
+          try{await acknowledgeMenu('update',item);}
+          catch{await acknowledgeMenu('create',item);}
+        }else await acknowledgeMenu('create',item);
       }
+      nativeMenuIds=description.map(item=>item.id);
+      await chrome.storage.local.set({rightClickNativeIds:nativeMenuIds});
+      nativeMenuPlan=plan;
     }catch(error){
       // Keep the acknowledged root and any successfully installed destinations.
       // The serialized caller restores the local management entry on failure.
@@ -2390,7 +2438,7 @@ async function buildMenus() {
   for(const entry of entries)create(entry);
   addMenuControls(mode,item=>{if(item.id!=='redown-nested-mode')create(item);});
   await finish();
-  void Promise.resolve().then(()=>refreshV3Inventory()).catch(()=>{});
+  // Registration uses cached inventory; explicit refresh and the existing alarm own discovery.
   return {summary:projection?.summary,complete:projection?.complete??true,warnings:projection?.warnings||[],inventoryAt:menuSettings.rightClickV3Inventory?.at||null,presentation:projection?RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation):undefined,engine:'v3',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
 }
 function addMenuControls(mode){
@@ -2556,37 +2604,6 @@ async function handleHitomiCaptureMessage(message,sender) {
   }finally{hitomiIntents.delete(tabId);}
 }
 
-// Toolbar presentation: Shelf by default, compact popup on explicit preference.
-async function applyToolbarOpenMode() {
-  const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
-  const mode = toolbarOpenMode === 'popup' ? 'popup' : 'shelf';
-  // Popup mode still opens the toolbar Popup, but Settings needs the Shelf available.
-  try{await chrome.sidePanel.setOptions({path:'shelf.html',enabled:true});}
-  catch(error){console.warn('REDOWN Shelf configuration failed; local opening remains available:',error);}
-  await chrome.action.setPopup({popup:mode==='popup'?'popup.html':''});
-}
-function openToolbarInterface(tab){
-  const fallback=async error=>{
-    console.warn('REDOWN Shelf could not open; opening the local Shelf:',error);
-    try{await chrome.tabs.create({url:chrome.runtime.getURL('shelf.html'),active:true});}
-    catch(failure){
-      console.error('REDOWN local Shelf could not open:',failure);
-      await chrome.runtime.openOptionsPage();
-    }
-  };
-  // No storage read, discovery or await before this user-gesture-bound call.
-  try{return Promise.resolve(chrome.sidePanel.open({windowId:tab.windowId})).catch(fallback);}
-  catch(error){return fallback(error);}
-}
-chrome.action.onClicked.addListener(tab => {
-  void openToolbarInterface(tab).catch(error=>console.error('REDOWN could not open:',error));
-});
-chrome.runtime.onInstalled.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
-chrome.runtime.onStartup.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
-chrome.storage.onChanged.addListener((changes,area)=>{
-  if(area==='local'&&changes.toolbarOpenMode)void applyToolbarOpenMode().catch(console.error);
-});
-void applyToolbarOpenMode().catch(console.error);
 
 function requestMenuRebuild(){
   void rebuildMenus().catch(error=>console.warn('REDOWN menu update failed; local access recovery attempted:',error));
@@ -2603,7 +2620,7 @@ chrome.alarms.onAlarm.addListener(alarm=>{
   if(alarm.name!=='redown-v3-inventory')return;
   void chrome.storage.local.get(['rightClickEngine','rightClickV3Presentation']).then(s=>{
     const options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
-    if(options.style==='nested'&&options.nested==='level')return rebuildMenus();
+    if(options.style==='nested'&&options.nested==='level')return refreshV3Inventory().then(()=>rebuildMenus());
   }).catch(()=>{});
 });
 chrome.storage.onChanged.addListener((changes, area) => {
