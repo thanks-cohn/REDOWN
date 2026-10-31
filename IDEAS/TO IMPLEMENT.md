@@ -100,6 +100,21 @@ Sources for comparison:
 - `FOREVER_WORKS/right-click/phase-3/HISTORICAL_LEGACY_END_TO_END.md`
 - `FOREVER_WORKS/right-click/phase-3/KEEP_REPLACE_DECISION_MATRIX.md`
 
+## NEXT STEPS: History GO TO must reuse an existing REDOWN Explorer (P0)
+
+**Status:** Owner-requested follow-up repair, not implemented or verified by this roadmap entry. **Protected baseline:** `V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION`. Keep this separate from the Simple/Narrow/Level **audit-only** task.
+
+The current History GO TO can open a new REDOWN tab for each different file. **That is not the desired behavior.** GO TO is a navigation command for an existing REDOWN Explorer whenever a suitable instance is available, not a command to launch another copy of REDOWN on every click.
+
+- **New Tab preference (default):** If an eligible REDOWN Explorer/Dashboard tab already exists, reuse and activate that tab, switch its internal view to Explorer if necessary, navigate to the exact saved object, select it and show its existing preview. Create and activate a new REDOWN tab **only when no suitable existing tab exists**.
+- **Side Panel preference:** If the REDOWN side panel is already open in the relevant Chrome window, reuse it, switching Dashboard to Explorer if needed, navigating to the requested exact file and updating selection and preview. Keep the user's current webpage and browser tab active. If the panel is not open, open it through supported Chrome APIs without switching tabs; on failure offer an explicit New Tab fallback, never silently change the saved preference. Side-panel placement follows Chrome/user settings (left where configured), not an unsupported extension force-left promise.
+- **Repeated GO TO:** A sequence of History GO TO actions (file A, then B, then C) updates the same appropriate application surface. Clear/supersede stale selection, ensure the latest navigation wins, and replace the preview. **No accumulation of redundant tabs or panels.**
+- **Multiple instances/windows:** Define deterministic reuse preference (same Chrome window and matching requested mode first); do not hijack unrelated pages or switch a side-panel preference to a tab. Handle closed/discarded/stale instances, service-worker restart, and lost acknowledgements safely.
+- **Exact-file guarantees:** Preserve receipt-based provider/account/bucket/final object-key identity (including Keep Both collision names), folder navigation, paginated exact lookup, selection, and existing preview integration. Failed, cancelled, pending, and uncertain History entries receive **no GO TO** and retain their present appearance and interactions without placeholders.
+- **Regression acceptance:** Cold-start creation once; subsequent same-mode reuse; Dashboard-to-Explorer transition; active Explorer reuse; exact file A → B selection/preview; narrow side-panel reuse without tab activation; repeated clicks and race cancellation; multiple windows; missing files and auth failures; graceful explicit fallback. Verify installed-Chrome behavior where possible, distinguish mocks from live evidence, and preserve the existing V3 UI.
+
+**Implementation instruction:** Audit the current History tab/side-panel target discovery and messaging handoff, then make the smallest reliable reuse-first repair in a separate implementation run. Document, test, and protect checkpoints; no implementation is authorized by adding this idea.
+
 ## Suggested implementation order
 
 1. Finish installed Chrome/real Cloudflare acceptance of V3 menu projection and core Explorer operation reliability; complete legacy-versus-current Explorer parity audit.
