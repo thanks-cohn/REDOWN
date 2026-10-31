@@ -1,0 +1,31 @@
+{
+  "basis": "Archived previous V3 full run, not a fresh pristine full rerun",
+  "passed": 621,
+  "failed": 69,
+  "incomplete": true,
+  "additionalFailedNames": [],
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "freshProtectedBaselineHistory": {
+    "passed": 5,
+    "failed": 4,
+    "log": "baseline-history.log"
+  },
+  "sourceHashMismatches": []
+}

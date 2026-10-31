@@ -1,0 +1,17 @@
+{
+  "extension/cloudflare-api.js": true,
+  "extension/public-addresses.js": true,
+  "extension/history-archive.js": true,
+  "extension/right-click-v3.js": true,
+  "extension/right-click-legacy.js": true,
+  "extension/transfer-counter.js": true,
+  "extension/manifest.json": true,
+  "History renderer excluding conditional GO TO insertion": true,
+  "existing preview": true,
+  "tree renderer": true,
+  "existing History CSS prefix": true,
+  "tags": {
+    "V3-MENU-MODES-BEFORE-HISTORY-REPAIR": "46b03c66735aef6efd7395b19f4d8c02484ae947",
+    "BASE-v3": "209a52cd1515d44f0dab005e26b738e678c29b65"
+  }
+}

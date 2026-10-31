@@ -1,0 +1,388 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> remote-asset-ingest@0.1.0 check
+> node scripts/check-syntax.mjs
+
+{
+  "state": "passed",
+  "results": [
+    {
+      "file": "extension/cloudflare-api.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/cloudflare-auth.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/background.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/nested-locations.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/menu-reorder.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/settings-mascot.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/popup.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-expansion-benchmark.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-signals-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/explorer-operations-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/public-addresses.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/storage-signals.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/options.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "worker/src/index.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/runtime-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/search-session.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-destination-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/installed-chrome.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-bridge.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-ui.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-status.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-check.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-policy.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-reporter.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/adapters.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/registry.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/agent-gateway-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/check-syntax.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/issues.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/transfer-counter.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/odometer.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/file-api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/r2-adapter.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/explorer.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/configuration.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/dropped-files.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/beta-explorer-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/guided-interaction.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/tour.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/lab.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "tools/lab/bridge.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/lab-local-smoke.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-history.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/destination-config.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-celestial.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/shelf-celestial-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/standard-breadcrumbs.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/url-list.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/remote-dialog.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-v3.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-engine-settings.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/right-click-v3-ui.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-legacy.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-navigation.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/history-target.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+✔ Shelf, Explorer, and toolbar use the same R path and Midnight is red on black (3.853914ms)
+✔ Independent Explorer and Shelf each receive their own shared mark without duplicate SVG paths (190.430031ms)
+✔ Local transfer recorder archives every new record but retains 50 for compatibility (6.178153ms)
+✖ History displays only one page at once and exposes older month, numbered-week, day disclosures (164.017679ms)
+✔ Shelf defaults to Shelf; both choices persist and survive reopening without touching other data (430.556612ms)
+✖ provider order, pending integrations, verified account state and actual history remain honest (55.582868ms)
+✔ History opens Today by default and preserves clickable source and hosting-page URLs (117.129688ms)
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (1.170738ms)
+✖ existing toolbar implementation applies default Shelf and Popup in both directions (3.743108ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 5
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1242.693217
+
+✖ failing tests:
+
+test at tests/brand-and-paginated-history.test.mjs:53:1
+✖ History displays only one page at once and exposes older month, numbered-week, day disclosures (164.017679ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok([...year.querySelectorAll('.history-day')].every(x=>!x.open))
+  
+      at TestContext.<anonymous> (file:///tmp/redown-history-baseline/tests/brand-and-paginated-history.test.mjs:75:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:18:1
+✖ provider order, pending integrations, verified account state and actual history remain honest (55.582868ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  -   'Google Drive',
+  -   'Dropbox',
+  -   'Microsoft OneDrive',
+      'Cloudflare R2'
+    ]
+  
+      at TestContext.<anonymous> (file:///tmp/redown-history-baseline/tests/shelf.test.mjs:20:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'Cloudflare R2' ],
+    expected: [ 'Google Drive', 'Dropbox', 'Microsoft OneDrive', 'Cloudflare R2' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:51:1
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (1.170738ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /href="shelf.html#settings"/. Input:
+  
+  '<!doctype html>\n' +
+    '<html lang="en">\n' +
+    '<head>\n' +
+    '  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+    '  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n' +
+    '  <style>\n' +
+    '    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n' +
+    '    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n' +
+    '    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n' +
+    '    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n' +
+    '    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n' +
+    '    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n' +
+    '    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard span{font-size:18px;font-weight:400}\n' +
+    '    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n' +
+    '    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n' +
+    '    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n' +
+    '    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n' +
+    '  </style>\n' +
+    '</head>\n' +
+    '<body><main class="shell">\n' +
+    '  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n' +
+    '  <button id="dashboard" class="dashboard" type="button">Go to Dashboard <span aria-hidden="true">↗</span></button>\n' +
+    '  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n' +
+    '  <p class="hint">Your files. Your destinations. All in one place.</p>\n' +
+    '  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n' +
+    '  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n' +
+    '</main><script src="odometer.js"></script><script src="popup.js"></script></body>\n' +
+    '</html>\n'
+  
+      at TestContext.<anonymous> (file:///tmp/redown-history-baseline/tests/shelf.test.mjs:52:275)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n  <style>\n    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard span{font-size:18px;font-weight:400}\n    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n  </style>\n</head>\n<body><main class="shell">\n  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n  <button id="dashboard" class="dashboard" type="button">Go to Dashboard <span aria-hidden="true">↗</span></button>\n  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n  <p class="hint">Your files. Your destinations. All in one place.</p>\n  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n</main><script src="odometer.js"></script><script src="popup.js"></script></body>\n</html>\n',
+    expected: /href="shelf.html#settings"/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:54:1
+✖ existing toolbar implementation applies default Shelf and Popup in both directions (3.743108ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      [
+        'panel',
+        true
+      ],
+  ...
+        'panel',
+  +     true
+  -     false
+      ],
+      [
+        'popup',
+        'popup.html'
+      ],
+  
+      at TestContext.<anonymous> (file:///tmp/redown-history-baseline/tests/shelf.test.mjs:58:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'panel', true ], [ 'popup', '' ], [ 'panel', true ], [ 'popup', 'popup.html' ], [ 'panel', true ], [ 'popup', '' ] ],
+    expected: [ [ 'panel', true ], [ 'popup', '' ], [ 'panel', false ], [ 'popup', 'popup.html' ], [ 'panel', true ], [ 'popup', '' ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
