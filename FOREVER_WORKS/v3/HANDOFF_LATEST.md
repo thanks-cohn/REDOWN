@@ -1,3 +1,19 @@
+# Latest: clean right-click menus, durable snapshot and truthful Apply
+
+31 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
+
+Implementation commit **d153357e854936e6de89182aa999015c4ebba893**, tree **bf34247bd14656644191e4ec923b30cd02fd4458**, identical to tested local `b9fd9b6`. Documentation delivery follows; final delivery SHA is in branch history and final response. Protected checkpoint tag objects are unchanged.
+
+Read [the complete three-fix report](P0_RIGHT_CLICK_THREE_FIX_REPAIR.md). Native inventory warning entries and ordinary Setup inventory dumps are removed at their presentation boundaries. Warnings/completeness remain diagnostic. Logical `chrome.storage.local['right-click.json']` extends the existing inventory with safe restoration, scoped reuse, resumable frontier and opaque projection/application generations. Existing alarms, startup, budgets, authorization checks and serialized registration remain authoritative.
+
+Apply confirms the acknowledged bounded native projection independently of continuing discovery completeness. It no longer forces a scan, spins only during actual Apply, preserves edits on failure and shows Retry Apply. A contained perimeter shimmer respects reduced motion and visible focus. Saved is native-application acknowledgement, never a claim of every cloud folder being present. Simple/Narrow/Level, editor, Explorer, Shelf, transfers and Split View remain preserved.
+
+Focused: **56 pass, zero fail**. Full reliability: **650 pass / 69 failed names / incomplete**, identical failed names to preceding published split/save evidence. Syntax, registry and issue inventory pass; architecture freshness fails. Installed Chrome: **unavailable ENOENT, zero assertions**. No live Cloudflare verification. Real shimmer appearance, native registration, MV3 restart/interruption, accessibility and live provider behavior remain acceptance work. Evidence and exact limitations are linked in the report.
+
+---
+
+## Earlier handoffs retained as history
+
 # Latest: native Split View, Shelf preservation and verified menu application
 
 30 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
