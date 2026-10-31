@@ -45,6 +45,16 @@
 
 **Cache crash rule:** On startup or any cache miss, recover the latest consistent CURRENT pointer and graph from durable storage before consulting cloud inventory. Rebuild native menu projection from CURRENT immediately subject to current authorization. Partial scans may add verified changes, never replace CURRENT with a thinner cache. If CURRENT is damaged, validate and reconstruct it from the latest good immutable backup plus committed journal, preserving exact sequence/generation and flagging any genuinely unrecoverable data; never silently reset to empty. This reconstruction protects against local cache/transaction errors, **not** full Chrome-profile/extension-data deletion: independent user-authorized off-device backup remains necessary for that threat.
 
+## FULL IMPLEMENTATION HANDOFF — INSTANT CURRENT + MULTI-CLOUD PROVIDER ROOTS
+
+**Canonical full Codex implementation request:** [`CODEX_P0_CURRENT_FIRST_NATIVE_MENU_MULTICLOUD_FOUNDATION.md`](../docs/CODEX_P0_CURRENT_FIRST_NATIVE_MENU_MULTICLOUD_FOUNDATION.md).
+
+**Latest owner-approved extensibility rule:** Today all currently working provider branches start `REDOWN → Cloudflare`; this Cloudflare heading is intentional, since genuinely connected **Google Drive, OneDrive and S3/S3-compatible** providers may later appear as **sibling provider headings** directly below REDOWN. Each implemented provider should support the same **Simple / Nested → Narrow or Depth** presentation where its real API capabilities permit it. A new provider connection MUST NOT silently change Cloudflare's leaf/submenu state or redirect its `redown` root. Future providers are a capability contract, not invented connected accounts or authorization to fake saves.
+
+**Urgent operation:** Chrome displays previously registered native menu items; CURRENT in IndexedDB drives the precomputed registration and exact click routing. A verified edit updates only affected CURRENT/WORKING records, commits a journal delta, then immediately reconciles and acknowledges the Chrome menu. No full scan while right-clicking; no wiping untouched branches during partial discovery, cache failure or worker restart. **Daily DEFAULT** creates immutable BACKUP + mutable WORKING; CURRENT points at the latest committed working generation.
+
+---
+
 ## 0. The highest priority invariant — the user sees their changes immediately; untouched directories remain
 
 > **When a user makes a confirmed change through REDOWN, the intended right-click destination and local live tree update immediately, without waiting for a full provider scan. ALL untouched, previously known, still-authorized directories stay accessible through Nested. Reload, Depth, OAuth interruption, a partial scan, Chrome native menu refresh or an MV3 service-worker restart must NEVER erase or hide still-authorized known branches merely because the latest scan did not visit them.**
