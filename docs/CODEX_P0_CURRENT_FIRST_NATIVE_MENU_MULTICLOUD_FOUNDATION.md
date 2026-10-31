@@ -159,6 +159,23 @@ Use **transactional extension IndexedDB** as the primary store (or a justified e
 - Native Chrome item limits do not truncate CURRENT. Use deterministic bounded projection plus a searchable **Browse more destinations…** in REDOWN for all eligible nodes not displayed natively. Do not promise every record fits within Chrome's native submenu limits.
 - When only one configured node is changed among 18 activated buckets, none of the other 17 participating bucket branches can be destroyed, reinitialized, made unactionable without an authorization reason or dropped from CURRENT.
 
+## 5A. NO DAILY RESCAN — ADAPTIVE INCREMENTAL RECONCILIATION CONTRACT
+
+**Owner clarification (2026-10-31):** Daily BACKUP+WORKING rollover **MUST NOT** trigger a mandatory full provider or bucket crawl. At login/startup, load CURRENT and restore the already-registered menu immediately. Background verification is a separate, bounded, interruptible activity with its own persisted checkpoints. There is no requirement to synchronize all Cloudflare buckets before the user can use the existing authorized paths.
+
+**Discovery work queue priorities (design, test and implement safely):**
+1. **Highest:** a user-requested `Refresh Folder Listing` on an exact authorized scope, or reconciliation necessary after an explicit confirmed REDOWN edit; a confirmed in-product change is already known and must not be blocked waiting for this scan.
+2. **Next:** unfinished or never-verified participating scopes that have valid persisted checkpoints, recently used paths, and scopes whose freshness has genuinely expired. Ensure fair progress across accounts/buckets rather than starving deep/older scopes indefinitely.
+3. **Lower:** routine maintenance of long-untouched directories and safety checks for missed external modifications. Limit work by real provider quotas, paging, elapsed time, worker lifecycle and account authorization. Avoid aggressive perpetual scanning.
+
+For every checked folder store `lastVerifiedAt`, `lastAttemptAt`, `coverageComplete`, `checkpoint/cursor`, and provider/account/scope identity. **Separate checking from changing**: re-observing an identical complete scope updates verification metadata only, producing zero semantic JSONL events and no pointless native menu rebuild. Do not assume the JSONL journal can discover external changes; it only records **verified differences already observed**. CURRENT is the read-optimized materialized graph, so **normal startup does NOT replay every historical journal line**; the journal is used for crash repair/reconstruction/history or as needed for migration. Resume at the last valid scan checkpoint after interruption; retry only the affected scope if a provider cursor is expired.
+
+**Optional separate future extension:** Cloudflare R2 object-change notifications through Queues/Workers may eventually inform targeted verification when explicitly configured and authorized. This is NOT a required provider integration for this P0 request, is not guaranteed to detect all changes or deliver live notifications to a suspended browser, and does not replace periodic bounded reconciliation. Do not provision Queues/Workers or introduce new costs without authorization.
+
+**Acceptance:** Startup after an offline day loads CURRENT and shows retained registered destinations **without listing any Cloudflare bucket**. Daily rollover creates the two logical dated versions locally; no provider crawl. A confirmed in-app change yields one CURRENT+journal update and targeted menu reconciliation without full rescanning. An external change in one chosen folder is recognized on scoped refresh and other directories remain intact. A repeated identical complete listing generates no semantic delta and no native registration churn. A scan interrupted on bucket 3/18 resumes without resetting the other 15.
+
+---
+
 ## 6. FATAL ERRORS, CACHE FAILURES, BROWSER RESTARTS, REBUILD STRATEGY
 
 A production recovery strategy must clearly separate these cases:
