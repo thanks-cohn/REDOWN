@@ -2399,7 +2399,7 @@ function addMenuControls(mode){
   create({id:"redown-mode-separator",parentId:ROOT_MENU_ID,type:"separator",contexts});
   create({id:"redown-nested-mode",parentId:ROOT_MENU_ID,type:"checkbox",title:"Use nested menu",checked:mode==='nested',contexts});
   create({
-    id:"redown-saved-urls",parentId:ROOT_MENU_ID,title:"View saved object's URLs…",
+    id:"redown-go-home",parentId:ROOT_MENU_ID,title:"Go Home",
     contexts:["link","image","video","audio","page"]
   });
   create({
@@ -2698,26 +2698,31 @@ function launchSaveDroplet(info,tab){
   }).catch(()=>{/* Restricted tabs and browser pages deliberately skip the effect. */});
 }
 
+// Go Home is a navigation action, not a saved-object URL lookup.
+// Prefer an existing unsplit Explorer in the invoking window, preserving its
+// current session when it is already at the home URL.
+async function openRedownHome(tab){
+  const home=chrome.runtime.getURL('beta/explorer.html');
+  const windowId=Number.isInteger(tab?.windowId)?tab.windowId:null;
+  const tabs=await chrome.tabs.query(windowId===null?{currentWindow:true}:{windowId});
+  const existing=tabs.filter(t=>t?.url?.split(/[?#]/)[0]===home&&
+    (!Number.isInteger(t.splitViewId)||t.splitViewId<0)&&!t.discarded&&!t.frozen)
+    .sort((a,b)=>Number(b.active)-Number(a.active)||(a.index??0)-(b.index??0))[0];
+  if(existing){
+    // A previous GO TO deep link is not the home screen; remove its navigation token.
+    const options={active:true};
+    if(existing.url!==home)options.url=home;
+    return chrome.tabs.update(existing.id,options);
+  }
+  return chrome.tabs.create({url:home,active:true,...(windowId===null?{}:{windowId})});
+}
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(info.menuItemId==='redown-nested-mode')return; // Retired engine control.
 
-  if(info.menuItemId==="redown-saved-urls"){
-    const url=String(info.srcUrl||info.linkUrl||info.pageUrl||tab?.url||"");
-    const {transferHistory=[]}=await chrome.storage.local.get("transferHistory");
-    const saved=Array.isArray(transferHistory)?transferHistory.find(item=>
-      item?.ok===true&&item.sourceUrl===url&&item.destination?.accountId&&
-      item.destination?.bucketName&&item.destination?.key):null;
-    if(!saved){
-      await chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html?savedUrlMissing=1")});
-      return;
-    }
-    const token=crypto.randomUUID();
-    await chrome.storage.session.set({["redownUrlLookup:"+token]:{
-      accountId:saved.destination.accountId,bucketName:saved.destination.bucketName,
-      key:saved.destination.key,createdAt:Date.now()
-    }});
-    await chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html?savedUrls="+encodeURIComponent(token))});
-    return;
+  if(info.menuItemId==="redown-go-home"){
+    // The former saved-URL utility is available through Explorer's Get URL action.
+    return openRedownHome(tab);
   }
   if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage") {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
