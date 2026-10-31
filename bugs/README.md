@@ -1,5 +1,17 @@
 # REDOWN bugs
 
+## P0 V3 Setup does not automatically reflect global bucket activation (2026-10-31)
+
+**Status:** Source-level UI refresh patch committed; installed-Chrome acceptance pending. **Priority:** P0 onboarding correctness.
+
+**Owner reproduction:** After signing in and clicking **Activate Buckets**, the backend can successfully prepare multiple buckets and update Chrome's V3 right-click menu, yet the already-open **Right-click Setup** tree and bucket chooser keep showing the old pre-activation state until the user manually reloads. This misleadingly suggests activation failed.
+
+**Source-confirmed cause:** `extension/beta/explorer.mjs` already emits `redown:destinations-ready` after activation and uses storage changes to track global activation. The `extension/beta/right-click-v3-ui.js` tree did **not subscribe to that event** or react to `profiles` / `rightClickActivatedBuckets` storage updates. It only refreshed the V3 configuration for unrelated storage keys or when the user manually clicked Reload.
+
+**Implemented patch:** The existing V3 Setup now listens for activation completion and relevant storage updates, fetches the authoritative `rightClickV3Snapshot` from the current background, repaints the account/bucket outline, bucket chooser, Level-scope checkboxes and acknowledged Apply status **in place**, preserving current search, selection, expanded nodes, scroll and unfinished form values. It does not reload the page, enumerate Cloudflare buckets again or overwrite unsaved destination drafts. Rapid duplicate notifications are serialized/coalesced. If snapshot reconciliation fails, Setup keeps the existing state and offers its existing manual Reload fallback.
+
+**Regression coverage:** Added tests to `tests/global-bucket-activation.test.mjs` for event-driven activation refresh and preservation of search/form/scroll on storage-triggered refresh. **This environment has not executed Node tests or installed Chrome; test outcomes are unverified.** Validate on the user's installed Chrome: after global activation, all prepared account/bucket roots and dropdown options appear immediately in the currently open V3 Setup, without page reload; partial activation shows available buckets; switching menu modes continues working; unfinished user inputs are retained.
+
 ## P0 global activation / Legacy default regression (2026-10-31)
 
 **Status:** Source causes repaired and locally tested; installed Chrome/live acceptance pending. [Complete repair and recovery report](../FOREVER_WORKS/v3/P0_V3_ONLY_GLOBAL_BUCKET_ACTIVATION.md). Implementation `139711a9de89d289a2bb7d4c4887120149e8d3bc`.
