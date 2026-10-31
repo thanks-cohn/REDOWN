@@ -32,6 +32,17 @@ The existing production implementation is **not yet** this design:
 
 These are source-backed design problems, **not proof of one unique cause of the owner's installed-browser symptoms**. Test rather than infer.
 
+## OWNER'S APPROVED CURRENT-FIRST DAILY DUAL-COPY CONTRACT
+
+Follow [`NEED_TO_DO:fundamentals`](../../NEED_TO_DO/fundamentals.md) as the authority for the daily two-state lifecycle and immediate menu correctness.
+
+**Settings default: Daily.** At the first eligible active use each day, atomically establish (a) immutable `DATE/BACKUP` of the latest complete committed known graph, and (b) mutable `DATE/WORKING` seeded from it. **CURRENT** is a durable pointer to the most recent committed working generation. `right-click.jsonl` is the append-only transactionally recorded delta stream. On next day's first real use, seal the previous WORKING, create the new two states and advance CURRENT; no fake midnight event when Chrome wasn't running. Weekly follows the equivalent weekly period; Off suppresses new immutable dated history only.
+
+**Correct mutation semantics:** one confirmed edit → overwrite only affected CURRENT working records by stable key, append corresponding journal deltas and commit graph/generation/current-pointer/checkpoints in one IndexedDB transaction → immediately register/reconcile native Chrome menus using the FULL CURRENT graph. The native menu update is outside the database transaction; on API failure keep correct CURRENT, expose nontechnical pending Apply and retry newest generation. A partial discovery inventory never replaces CURRENT or discards all untouched known authorized Nested paths; cache miss/worker restart rehydrate from CURRENT before scanning.
+
+Do not store secrets in exported JSON/JSONL; daily immutable backups and live working copy may share unchanged physical records copy-on-write. Two dated versions are **logical independently reconstructable versions**, not necessarily two full large byte copies. Chrome profile erase/uninstall still requires external authorized verified backup.
+
+---
 ## 2. Core data model: current tree + immutable history + transactionally committed deltas
 
 Maintain three logically separate but consistent states:
