@@ -14,6 +14,22 @@
 
 **Acceptance and regression tests:** Synthetic and installed-Chrome checks for (1) no warning or diagnostic menu items in complete, partial, stale and failed discovery, (2) correct selectable IDs and exact save routing for valid entries, (3) warning/completeness information retained in Debug, (4) no false success in Save Changes, (5) refresh/retry behavior, (6) no inadvertent unauthorized folder exposure, and (7) Simple/Narrow/Level functionality preserved. Do not claim installed Chrome evidence from mocks.
 
+### URGENT follow-up: exact warning, persistent menu snapshot, silent discovery and Save shimmer (2026-10-30)
+
+**Exact owner-observed text:**
+
+> Some folders could not be read; inventory is incomplete. Depth 10 · 40 known folders · 5/5 bucket roots checked. Explorer shows the full paged directory.
+
+**Severity:** URGENT P0. This text should appear **neither inside Chrome's native right-click menu nor as noisy status text in Right-click Setup after Save**. Maintain meaningful error details in Debug/Diagnostics and a discoverable error/retry affordance only if a user action truly needs intervention.
+
+**Desired behavior:** A successful initial menu registration should remain functional while discovery continues incrementally and quietly in the background, using bounded, cancellable, rate-limited work, retries/backoff and correct authorization boundaries. Do not stall Save waiting for a complete exhaustive Depth-10 traversal, and do not claim all paths are present when they are not. The Explorer's paged directory and Chrome's bounded native context-menu inventory are distinct: a partial menu must not falsely imply the Explorer lacks folders.
+
+**Persistent snapshot proposal:** Design a durable, versioned `right-click.json` logical artifact holding a sanitized snapshot of configured destinations, selected authorized bucket roots, per-root discovery progress/cursors/freshness and the last successfully applied native-menu projection. Use Chrome-supported extension-writable storage (e.g. a serialized JSON object in extension storage or an explicitly created user-managed file where supported), **not a claim that MV3 can freely overwrite a packaged extension file**. Restore the last safe menu immediately on restart, reconcile changes in the background, atomically replace only complete validated projection generations and avoid full rescans on every right-click/Save. Never store provider secrets; invalidate affected roots on changes, and ensure stale cache cannot expose revoked destinations. Chrome native menu limits require bounded projections.
+
+**Save interaction:** After clicking Save Changes, show no diagnostic text dump or inventory-count warnings in the normal Right-click Setup. Animate only a tasteful **circularly traveling shimmer around the Save button outline** while real persistence/apply work is in progress, with a readable static `Applying…` state, reduced-motion fallback, and completion acknowledgement; make it stop on verified completion, but never hide failures or falsely mark incomplete discovery as complete. If an actionable failure persists, disclose it through a concise accessible status/Retry and Debug details, not a silent infinite shimmer.
+
+**Regression tests:** exact warning string absent from both native context menu and routine Save surface; partial discovery keeps working menu entries; staged snapshot restore after MV3 restart; freshness/authorization invalidation; new bucket/folder discovery without full re-enumeration; no duplicate or stale menu entries; no overlapping background scans; explicit error recovery; Save shimmer stops and status remains truthful; low-power/reduced-motion behavior; real Chrome testing clearly distinguished from mocks.
+
 ---
 
 ## BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)
