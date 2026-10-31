@@ -150,6 +150,18 @@ RIGHT-CLICK MENU MODE
 - Keep the original registered REDOWN root usable through recoverable provider/listing failures; preserve existing menu-recovery architecture and separate it from toolbar Shelf/popup opening.
 - No focus losses, deleted draft forms, text-input hijacking or full Right-click Setup rerenders during small changes. Activated buckets update the editor without a page reload.
 
+## OWNER'S DAILY CURRENT STORAGE RULE — MANDATORY IMMEDIATE UPDATE
+
+The authoritative complete architecture is [`NEED_TO_DO:fundamentals`](../NEED_TO_DO/fundamentals.md). **Daily is default**. On each eligible active day create **TWO distinct dated logical states**: unchanging immutable `YYYY-MM-DD/BACKUP` and mutable `YYYY-MM-DD/WORKING`. **CURRENT** is a stable reference to the **newest committed generation** of today's WORKING, not a third unrelated file or the latest partial discovery cache. Append verified changes to transactional `right-click.jsonl` logical journal. At the next period's actual first use, roll forward idempotently; Weekly/Off policies retain a live CURRENT/journal.
+
+**User sees changes immediately; everything untouched remains:** on a confirmed local edit/provider-acknowledged cloud change, overwrite **only affected IndexedDB records** inside the current WORKING graph via transaction; atomically commit matching journal event(s), generation, checkpoint and CURRENT pointer. Then **immediately** reconcile/acknowledge Chrome's native context menu from **CURRENT**, not from latest scan. This IndexedDB write and Chrome native menu registration are **different operations**; handle registration failure with truthful pending status and replay of latest generation, never loss of acknowledged CURRENT.
+
+**Cache/scan does not win:** startup/cache miss reads CURRENT first, then verifies/reconciles additions; a partial Depth scan and MV3/OAuth interruption must NEVER erase other previously known, still-authorized Nested directories from CURRENT or menu projection. Reconstruct damaged CURRENT from a validated immutable backup plus journal when possible. Full Chrome extension/profile data erasure still requires independent verified external backup.
+
+**Required focused tests:** one record edited in 18 buckets updates CURRENT and its Chrome entry but retains unchanged routes in other 17; 5-deep paths survive 3-deep partial scan; worker restart/cache miss restores CURRENT; IndexedDB transaction rejection cannot partially commit graph/event/pointer; menu-registration failure leaves CURRENT intact and retries latest projection; Daily stable backup unchanged through 20 edits while WORKING changes and CURRENT always latest.
+
+---
+
 ## 6. PERSISTENT TREE AND INTERRUPTED SCANS — FOLLOW THE EXISTING CANONICAL SPEC
 
 Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLICK_TREE_WORK_REQUEST.md`, not a second incompatible architecture.
