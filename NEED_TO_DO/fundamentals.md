@@ -55,6 +55,36 @@
 
 ---
 
+## PROVIDER-ISOLATED JSON + JSONL FUNDAMENTAL — ONE REDOWN, INDEPENDENT CLOUD MEMORIES
+
+**Owner's latest requirement (2026-10-31):** Current Cloudflare records must be explicitly identified as **Cloudflare R2**, not anonymous S3. REDOWN will support a shared object-storage protocol where possible, but **each provider AND each separate connected account/endpoint has its OWN logical CURRENT, dated BACKUP and WORKING, `right-click.json`, `right-click.jsonl`, scan checkpoint/event cursor, authorization boundary, native menu subtree and history**. Two clouds with a bucket `photos` must never share an ID or overwrite the other cloud's directory memory.
+
+```text
+REDOWN — unified native menu + future programming API
+├── Cloudflare R2 / account A
+│   ├── CURRENT → latest active WORKING generation
+│   ├── 2026-10-31/BACKUP + 2026-10-31/WORKING
+│   ├── right-click.json  [logical CURRENT export]
+│   ├── right-click.jsonl [append-only verified deltas]
+│   └── independent discovery checkpoints
+├── Google Cloud Storage / connection B
+│   └── separate CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints
+├── MEGA S4 / connection C
+│   └── separate CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints
+└── Custom S3 / connection D
+    └── separate CURRENT/BACKUP/WORKING/JSON/JSONL/checkpoints
+```
+
+**One physical IndexedDB database may implement this** with composite `providerKind + connectionId + endpoint/account identity + bucket/container + exact prefix/folder ID` keys, and namespaced records. Do not create a separate physical JSON file or database unless there's a demonstrated need; the **logical isolation is mandatory**. Every JSONL event includes its provider/connection identity. Cloudflare R2, Google Cloud Storage's S3-interoperable XML API and MEGA S4 may share tested protocol utilities but have distinct providers, credential scopes, endpoint behaviors and capability limits. **Google Cloud Storage is NOT Google Drive; MEGA S4 is NOT ordinary MEGA Drive**. Never swap folder IDs for object prefixes or assume all providers have the same features.
+
+**Each provider's CURRENT changes independently.** Editing Cloudflare must update just its own WORKING + journal transaction, then reproject the relevant Cloudflare native menu entries. Every other provider's CURRENT, unchanged directories, daily backup, journal sequence and checkpoints remain untouched. The unified `REDOWN → [Provider]` menu is a derived authorized union, not a single merged authority. The same global Simple / Nested → Narrow or Depth selection applies to capable connected providers while preserving each provider's native folder semantics and eligibility.
+
+**Future programmable API:** A single REDOWN API can list providers, inspect `CURRENT` for one provider connection, query its `JSONL` changes, save to exact destinations and perform explicit aggregated searches with fully qualified identities. An identical folder name never authorizes guessing which provider to use. Per-provider exports/import and independent user-authorized backups ensure vendor portability; real provider adapters are implemented only when verified, not fabricated.
+
+**Full implementation acceptance and technical schema:** [`CODEX_P0_CURRENT_FIRST_NATIVE_MENU_MULTICLOUD_FOUNDATION.md` §7A](../docs/CODEX_P0_CURRENT_FIRST_NATIVE_MENU_MULTICLOUD_FOUNDATION.md).
+
+---
+
 ## 0. The highest priority invariant — the user sees their changes immediately; untouched directories remain
 
 > **When a user makes a confirmed change through REDOWN, the intended right-click destination and local live tree update immediately, without waiting for a full provider scan. ALL untouched, previously known, still-authorized directories stay accessible through Nested. Reload, Depth, OAuth interruption, a partial scan, Chrome native menu refresh or an MV3 service-worker restart must NEVER erase or hide still-authorized known branches merely because the latest scan did not visit them.**
