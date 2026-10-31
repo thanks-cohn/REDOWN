@@ -185,6 +185,18 @@ Node edits, journal events, scan progress/checkpoints and CURRENT generation com
 - Chrome's native entry limits may prevent displaying every path simultaneously; keep all in CURRENT, provide explicit full-tree browse/search access from REDOWN and truthfully note limits.
 - IndexedDB and `chrome.storage.local` surviving ordinary restarts does not mean survival after uninstall, removed profile or erased extension origin data. For that case, only a **separately stored, verified, user-authorized** export or encrypted remote backup can restore a missing CURRENT; importing requires reconnect/revalidate.
 
+### E. IndexedDB overwrites changed CURRENT values — NOT untouched paths
+
+**Owner confirmation (2026-10-31):** A new verified value for an already-known destination **overwrites that record's previous CURRENT working-state value** under its canonical stable key; creating a destination inserts only that new key; a confirmed remove marks/removes only the verified affected key under the journal and history policy. In IndexedDB terms the write path uses a transactional `put`/equivalent key update, not `clear()`, whole-store replacement, or a rewrite of all nested paths.
+
+**CURRENT is not Chrome's disposable cache:** CURRENT resolves to the most recently committed WORKING generation in durable IndexedDB. Chrome-native context menus and any short-lived discovery caches are **derived from CURRENT**, not a replacement authority. A cache miss triggers a CURRENT read; a service-worker restart reads committed CURRENT. If a partial scan sees only 3 of 18 buckets, preserve all previously verified authorized nodes of the other 15 buckets; an incomplete observation does not permit deleting them.
+
+**Two required outcomes for each successful edit:** (1) the affected CURRENT graph record is durably updated (with the journal and generation atomically); (2) the registered native right-click menu is promptly reconciled from CURRENT and the new menu generation acknowledged by Chrome. These are two sequential systems: IndexedDB transaction commits first; Chrome's menu APIs cannot be included in that transaction. If Chrome registration fails, CURRENT remains correct and REDOWN must retry latest projection and show an accurate Apply-pending status instead of pretending the native menu is current. A background scan must not race to restore stale values.
+
+**The backup is never overwritten.** DAILY BACKUP remains the exact prior committed state at the day's actual capture, DAILY WORKING is edited, and CURRENT points at the newest working revision. The append-only journal preserves the old→new change for history. This is record-level mutation plus a moving CURRENT pointer, not physical rewriting of a whole JSON document for each edit.
+
+---
+
 ## 6. How the user gets immediate changes without losing the other 18 buckets
 
 1. User chooses a different Menu Label, bucket or location and presses **Save Changes**. Validate and commit their requested configuration. Reproject only the affected native entries as Chrome permits and acknowledge actual registration. The user sees the new choice **now**; there is no requirement to re-scan every bucket.
