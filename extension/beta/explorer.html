@@ -138,12 +138,13 @@
   </div>
   <section id="v3-setup" role="tabpanel" aria-labelledby="quick-tab-setup">
       <header class="v3-header">
-        <div><h3>Right-click Setup · V3</h3><p id="v3-engine" role="status"></p></div>
+        <div class="v3-context"><h3>Right-click Setup · V3</h3><p id="v3-context-text">Flat configured destinations</p><p id="v3-engine" role="status"></p><small id="v3-presentation-status" role="status" aria-live="polite"></small></div>
         <div class="v3-presentation" aria-label="V3 menu presentation">
           <fieldset id="v3-style" disabled><legend>Menu style</legend><label><input type="radio" name="v3-style" value="simple" checked>Simple</label><label><input type="radio" name="v3-style" value="nested">Nested</label></fieldset>
           <fieldset id="v3-nested" hidden disabled><legend>Nested options</legend><label><input type="radio" name="v3-nested" value="narrow" checked>Narrow</label><label><input type="radio" name="v3-nested" value="level">Level</label></fieldset>
           <label id="v3-depth-row" hidden>Depth: <input id="v3-depth" type="number" min="1" max="10" step="1" value="1" aria-label="Cloud directory depth" aria-describedby="v3-presentation-status"></label>
-          <small id="v3-presentation-status" role="status" aria-live="polite"></small>
+          <button id="v3-save" type="button" disabled aria-describedby="v3-apply-status">Save Changes</button>
+          <small id="v3-apply-status" role="status" aria-live="polite"></small>
         </div>
       </header>
       <div class="v3-toolbar"><input id="v3-search" type="search" aria-label="Search V3 destinations" placeholder="Find a folder or destination…"><button id="v3-retry" type="button" hidden>Retry</button><button id="v3-reload" type="button">Reload</button><button id="v3-undo" type="button" hidden>Undo deletion</button></div>

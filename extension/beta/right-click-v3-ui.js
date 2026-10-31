@@ -9,17 +9,55 @@ let addAnchor='',typeahead='',typedAt=0;
 const status=t=>{$('status').textContent=t;};
 const request=async(type,fields={})=>{let timer;try{const r=await Promise.race([chrome.runtime.sendMessage({type,...fields}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Outcome unknown: request timed out.')),30000);})]);if(!r?.ok)throw Error(r?.error==='Unknown request'?'The running REDOWN background does not support '+type+'. Reload the extension in chrome://extensions, then reload Explorer.':r?.error||'Request not acknowledged.');return r;}finally{clearTimeout(timer);}};
 function button(text,label,fn){const b=el('button',text);b.type='button';b.setAttribute('aria-label',label);b.onclick=e=>{e.stopPropagation();const owner=b.closest('[role=treeitem]');if(owner)select(owner.dataset.key);fn();};return b;}
-let levelScopes=RedownRightClickV3.emptyScopes();
-const scopeBox=el('fieldset');scopeBox.id='v3-level-buckets';$('depth-row').after(scopeBox);
+let applyEpoch=0,applyPending=true,applying=false,applyError='',lastMenuStatus=null,applicationKey=null;
+function paintApply(){
+ const b=$('save');b.disabled=applying||!config||!applyPending;
+ b.dataset.state=applying?'applying':applyError?'failed':applyPending?'pending':'saved';
+ b.textContent=applying?'Applying…':applyError?'Retry Apply':applyPending?'Save Changes':'Saved';
+ $('apply-status').textContent=applyError||(!applyPending?'Applied to Chrome.':engine!=='v3'?'Legacy is active. Select New Right-click in Settings to apply V3.':pending||saving||presentationDraft||presentationSaving||scopeDraft||scopeSaving?'Saving choices… Apply will wait for persistence.':'Changes saved automatically; apply to confirm Chrome.');
+}
+function dirty(){applyEpoch++;applyPending=true;applyError='';paintApply();}
+function applyFailed(message){applyPending=true;applyError=message;paintApply();}
+let levelScopes=RedownRightClickV3.emptyScopes(),acknowledgedScopes=levelScopes,scopeSaving=false,scopeDraft=false;
+const scopePopover=el('details');scopePopover.id='v3-bucket-picker';
+const scopeSummary=el('summary','Buckets');scopeSummary.setAttribute('aria-label','Choose participating buckets');
+const scopeBox=el('fieldset');scopeBox.id='v3-level-buckets';scopePopover.append(scopeSummary,scopeBox);$('depth-row').after(scopePopover);
+scopePopover.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();scopePopover.open=false;scopeSummary.focus();}};
+document.addEventListener('pointerdown',e=>{if(!scopePopover.contains(e.target))scopePopover.open=false;});
 function paintScopes(){
- scopeBox.hidden=menuPresentation.style!=='nested'||menuPresentation.nested!=='level';scopeBox.replaceChildren(el('legend','Participating buckets'),el('small','Include a bucket root and its discovered folders as save destinations. Existing shortcuts do not opt in.'));
+ const active=document.activeElement,focusId=active?.dataset.scope;
+ scopePopover.hidden=menuPresentation.style!=='nested'||menuPresentation.nested!=='level';
+ if(scopePopover.hidden)scopePopover.open=false;
+ scopeSummary.textContent='Buckets · '+levelScopes.buckets.filter(b=>b.enabled).length;
+ scopeBox.replaceChildren(el('legend','Participating buckets'));
  const available=d=>profiles.some(p=>p.id===d.profileId&&p.accountId===d.accountId&&p.bucketName===d.bucketName);
- if(levelScopes.buckets.some(d=>!available(d))){const remove=el('button','Remove unavailable buckets');remove.type='button';remove.onclick=async()=>{scopeBox.disabled=true;try{const r=await request('setRightClickV3LevelScopes',{expected:levelScopes.revision,buckets:levelScopes.buckets.filter(available)});levelScopes=r.levelScopes;}catch(e){$('presentation-status').textContent=e.message;}finally{scopeBox.disabled=false;paintScopes();}};scopeBox.append(remove);}
- for(const p of profiles){const label=el('label'),input=el('input');input.type='checkbox';input.checked=levelScopes.buckets.some(d=>d.profileId===p.id&&d.accountId===p.accountId&&d.bucketName===p.bucketName&&d.enabled);
- input.onchange=async()=>{scopeBox.disabled=true;try{const buckets=levelScopes.buckets.filter(d=>d.profileId!==p.id);if(input.checked)buckets.push({id:crypto.randomUUID(),profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,enabled:true});const r=await request('setRightClickV3LevelScopes',{expected:levelScopes.revision,buckets});levelScopes=r.levelScopes;menuFeedback(r.menuStatus);}catch(e){$('presentation-status').textContent=e.message;}finally{scopeBox.disabled=false;paintScopes();}};label.append(input,document.createTextNode(p.accountName+' · '+p.bucketName));scopeBox.append(label);}
+ if(levelScopes.buckets.some(d=>!available(d))){const remove=el('button','Remove unavailable buckets');remove.type='button';remove.onclick=()=>void saveScopes(levelScopes.buckets.filter(available));scopeBox.append(remove);}
+ if(!profiles.length)scopeBox.append(el('small','Activate a bucket in Explorer to include it here.'));
+ for(const p of profiles){const label=el('label'),input=el('input');input.type='checkbox';input.dataset.scope=p.id;input.checked=levelScopes.buckets.some(d=>d.profileId===p.id&&d.accountId===p.accountId&&d.bucketName===p.bucketName&&d.enabled);
+ input.onchange=()=>{const buckets=levelScopes.buckets.filter(d=>d.profileId!==p.id);if(input.checked)buckets.push({id:crypto.randomUUID(),profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,enabled:true});void saveScopes(buckets);};
+ const name=el('span',p.bucketName),account=el('small',(p.accountName||p.accountId)+(profiles.filter(q=>q.accountId===p.accountId&&q.bucketName===p.bucketName).length>1?' · '+p.id:'')),text=el('span');text.append(name,account);label.append(input,text);scopeBox.append(label);}
+ if(focusId){[...scopeBox.querySelectorAll('input')].find(i=>i.dataset.scope===focusId)?.focus();}
+}
+async function saveScopes(buckets){
+ dirty();levelScopes={...levelScopes,buckets};scopeDraft=true;paintScopes();if(scopeSaving)return;
+ scopeSaving=true;
+ try{
+  do{const target=structuredClone(levelScopes.buckets),r=await request('setRightClickV3LevelScopes',{expected:acknowledgedScopes.revision,buckets:target});
+   acknowledgedScopes=r.levelScopes;levelScopes.revision=acknowledgedScopes.revision;menuFeedback(r.menuStatus);
+   if(JSON.stringify(levelScopes.buckets)===JSON.stringify(target))break;
+  }while(true);
+  scopeDraft=false;
+ }catch(e){
+  try{const r=await request('rightClickV3Snapshot');if(JSON.stringify(r.levelScopes?.buckets)===JSON.stringify(levelScopes.buckets)){acknowledgedScopes=r.levelScopes;levelScopes.revision=r.levelScopes.revision;scopeDraft=false;}}catch{}
+  applyFailed(e.message+' Bucket choices retained. Retry Apply.');
+ }
+ finally{scopeSaving=false;paintScopes();paintApply();}
 }
 let menuPresentation=RedownRightClickV3.presentation(),acknowledgedPresentation=menuPresentation,presentationSaving=false,presentationDraft=false;
 function menuFeedback(menuStatus){
+ lastMenuStatus=menuStatus||lastMenuStatus;
+ if(menuStatus?.state==='failed')applyFailed(menuStatus.error||'Chrome registration failed. Retry Apply.');
+ else if(menuStatus&&menuStatus.state!=='registered'){applyPending=true;paintApply();}
  const target=$('presentation-status');if(!target)return;
  const options=menuPresentation;
  if(menuStatus?.state==='failed'){target.textContent=menuStatus.error||'Chrome menu registration failed.';return;}
@@ -31,6 +69,7 @@ function menuFeedback(menuStatus){
  }else target.textContent=menuStatus?.state==='registered'?'Chrome menu updated.':'';
 }
 function paintPresentation(){
+ $('context-text').textContent=menuPresentation.style==='simple'?'Flat configured destinations':menuPresentation.nested==='narrow'?'Configured destinations, naturally organized':'Real bucket folders · Depth '+menuPresentation.depth;
  paintScopes();
  const active=document.activeElement;
  for(const kind of ['style','nested']){
@@ -44,7 +83,7 @@ function paintPresentation(){
 }
 async function savePresentation(next){
  try{menuPresentation=RedownRightClickV3.validatePresentation(next);}catch(e){$('presentation-status').textContent=e.message;return;}
- presentationDraft=true;paintPresentation();if(presentationSaving)return;
+ dirty();presentationDraft=true;paintPresentation();if(presentationSaving)return;
  presentationSaving=true;$('presentation-status').textContent='Updating Chrome…';
  try{
   // Native radio keys keep focus while rapid changes queue behind acknowledged saves.
@@ -55,7 +94,7 @@ async function savePresentation(next){
    if(!r.menuUpdated)$('presentation-status').textContent=r.error||'Saved; Chrome menu registration failed.';
    if(JSON.stringify(menuPresentation)===JSON.stringify(target))break;
   }while(true);
- }catch(e){$('presentation-status').textContent=e.message+' Choice retained; reload or choose again to retry.';}
+ }catch(e){$('presentation-status').textContent=e.message+' Choice retained; reload or choose again to retry.';applyFailed(e.message+' Choice retained. Retry Apply.');}
  finally{
   const desired=JSON.stringify(menuPresentation);
   try{const r=await request('rightClickV3Snapshot');acknowledgedPresentation=RedownRightClickV3.presentation(r.presentation);
@@ -63,7 +102,7 @@ async function savePresentation(next){
     if(JSON.stringify(acknowledgedPresentation)!==desired)$('presentation-status').textContent+=' Saved state differs; your choice is retained as an unsaved draft.';
    }
   }catch{}
-  presentationDraft=JSON.stringify(menuPresentation)!==JSON.stringify(acknowledgedPresentation);presentationSaving=false;paintPresentation();
+  presentationDraft=JSON.stringify(menuPresentation)!==JSON.stringify(acknowledgedPresentation);presentationSaving=false;paintPresentation();paintApply();
   if(JSON.stringify(menuPresentation)!==desired)void savePresentation(menuPresentation);
  }
 
@@ -72,11 +111,11 @@ for(const kind of ['style','nested'])$(kind).onchange=e=>{if(e.target.matches('i
 $('depth').onchange=()=>{if(!$('depth').validity.valid||!$('depth').value){$('presentation-status').textContent='Depth must be an integer from 1 to 10.';$('depth').value=menuPresentation.depth;return;}void savePresentation({...menuPresentation,depth:Number($('depth').value)});};
 function note(){$('engine').textContent=engine==='v3'?'':'Legacy Right-click is active. V3 edits do not control Chrome until selected in Settings.';}
 function validate(next){RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));}
-function change(fn){try{const next=structuredClone(config);fn(next);validate(next);undo=structuredClone(config.destinations);config=next;pending=true;sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));draw();void flush();}catch(e){status(e.message);}}
+function change(fn){try{const next=structuredClone(config);fn(next);validate(next);undo=structuredClone(config.destinations);config=next;dirty();pending=true;sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));draw();void flush();}catch(e){status(e.message);}}
 async function flush(){if(saving||blocked||!pending)return;saving=true;pending=false;const snapshot=structuredClone(config.destinations);status('Saving… Updating Chrome…');try{
  const r=await request('saveRightClickV3',{expected:config.revision,destinations:snapshot});config.revision=r.revision;if(!pending)sessionStorage.removeItem('redown-v3-recovery');else sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));engine=r.engine;note();
  status(r.menuUpdated?(engine==='v3'?'Saved and ready':'Saved. Legacy controls Chrome.'):'Configuration saved. Unable to update Chrome. Retry.');$('retry').hidden=r.menuUpdated;
-}catch(e){pending=true;blocked=true;status(e.message+' Changes retained in this window. Reload to reconcile before retrying.');}finally{saving=false;if(pending&&!blocked)void flush();}}
+}catch(e){pending=true;blocked=true;applyFailed(e.message);status(e.message+' Changes retained in this window. Reload to reconcile before retrying.');}finally{saving=false;paintApply();if(pending&&!blocked)void flush();}}
 function focusSelected(){const row=[...$('outline').querySelectorAll('[role=treeitem]')].find(n=>n.dataset.key===selected);row?.focus();}
 function select(key){selected=key;for(const row of $('outline').querySelectorAll('[role=treeitem]')){row.tabIndex=row.dataset.key===key?0:-1;row.setAttribute('aria-selected',String(row.dataset.key===key));}}
 function rename(d){typeahead='';select(d.id);editing=d.id;draw();const input=$('outline').querySelector('input[data-edit]');input?.focus();input?.select();}
@@ -131,7 +170,7 @@ function draw(){
  else if(owned){const row=rows.find(n=>n.dataset.key===key);const replacements=row?[...row.querySelector('.v3-row').querySelectorAll('button,input,select,summary')]:[];const replacement=onItem?row:replacements[controlIndex];(replacement||rows.find(n=>n.dataset.key===selected))?.focus();if(replacement?.hasAttribute('data-edit')&&renameDraft)replacement.setSelectionRange(renameDraft.start,renameDraft.end);}
 
 }
-async function load(){if(saving||presentationSaving){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;presentationDraft=false;paintPresentation();menuFeedback(r.menuStatus);pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'');}catch(e){status(e.message);}}
+async function load(){if(saving||presentationSaving||scopeSaving||applying){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();acknowledgedScopes=structuredClone(levelScopes);scopeDraft=false;engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;presentationDraft=false;applicationKey=r.applicationKey;paintPresentation();menuFeedback(r.menuStatus);applyPending=!!pending||r.engine!=='v3'||r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey||r.menuStatus.complete===false||(menuPresentation.style==='nested'&&menuPresentation.nested==='level'&&(!r.menuStatus.inventoryAt||Date.now()-r.menuStatus.inventoryAt>=RedownRightClickV3.limits.ttl));applyError=r.menuStatus?.state==='failed'?r.menuStatus.error:'';paintApply();pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'');}catch(e){status(e.message);}}
 $('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load().then(async()=>{if(menuPresentation.style==='nested'&&menuPresentation.nested==='level'){try{const r=await request('refreshRightClickV3Inventory');menuFeedback(r.menuStatus);}catch(e){$('presentation-status').textContent=e.message;}}});}};
 $('undo').onclick=()=>{if(!undo)return;const previous=undo;undo=null;change(next=>{next.destinations=previous;});};
 $('retry').onclick=()=>{if(blocked)return status('Reload to reconcile retained changes first.');pending=true;void flush();};
@@ -139,6 +178,32 @@ $('cancel').onclick=()=>{$('add').hidden=true;select(addAnchor);focusSelected();
 $('folders').onkeydown=e=>{if(e.key==='Escape'&&!$('add').hidden){e.preventDefault();e.stopPropagation();$('cancel').click();}};
 $('add').onsubmit=e=>{e.preventDefault();const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;const before=config,id=crypto.randomUUID();change(next=>{next.destinations.push({id,profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,parentId:$('parent').value||null,prefix:$('prefix').value.replace(/\/$/,''),label:$('label').value,enabled:true});});if(config!==before){$('add').hidden=true;let parent=$('parent').value;while(parent){expanded.add(parent);parent=config.destinations.find(d=>d.id===parent)?.parentId;}expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);selected=id;draw();focusSelected();}};
 $('browse').onclick=async()=>{const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;try{const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix:$('prefix').value});$('folders').replaceChildren();const filter=el('input');filter.type='search';filter.placeholder='Filter folders…';filter.setAttribute('aria-label','Filter existing folders');filter.oninput=()=>{for(const choice of $('folders').querySelectorAll('button'))choice.hidden=!choice.textContent.toLowerCase().includes(filter.value.toLowerCase());};$('folders').append(filter);for(const f of r.folders||[]){const path=(typeof f==='string'?f:f.prefix).replace(/\/$/,'');$('folders').append(button(path,'Choose '+path,()=>{$('prefix').value=path;$('label').value||=path.split('/').at(-1)||p.bucketName;$('prefix').focus();}));}status(r.cursor?'More folders exist. Enter a narrower path to browse.':'Folders loaded.');}catch(e){status(e.message);}};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickV3LevelScopes){levelScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV3.emptyScopes();paintScopes();}if(changes.rightClickV3Presentation&&!presentationSaving){acknowledgedPresentation=RedownRightClickV3.presentation(changes.rightClickV3Presentation.newValue);if(!presentationDraft)menuPresentation=acknowledgedPresentation;else $('presentation-status').textContent='Saved presentation changed. Your unsaved choice is retained; reload or choose again to retry.';paintPresentation();}if(changes.rightClickMenuStatus)menuFeedback(changes.rightClickMenuStatus.newValue);if(changes.rightClickEngine){engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
-window.addEventListener('beforeunload',e=>{if(pending||saving||presentationSaving){e.preventDefault();e.returnValue='';}});void load();
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickV3LevelScopes&&!scopeSaving){acknowledgedScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV3.emptyScopes();if(!scopeDraft)levelScopes=acknowledgedScopes;dirty();paintScopes();}if(changes.rightClickV3Presentation&&!presentationSaving){dirty();acknowledgedPresentation=RedownRightClickV3.presentation(changes.rightClickV3Presentation.newValue);if(!presentationDraft)menuPresentation=acknowledgedPresentation;else $('presentation-status').textContent='Saved presentation changed. Your unsaved choice is retained; reload or choose again to retry.';paintPresentation();}if(changes.rightClickMenuStatus)menuFeedback(changes.rightClickMenuStatus.newValue);if(changes.rightClickEngine){dirty();engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
+$('save').onclick=async()=>{
+ if(applying)return;applying=true;paintApply();
+ try{
+  const deadline=Date.now()+35000;
+  while(saving||presentationSaving||scopeSaving){if(Date.now()>deadline)throw Error('A save is still pending. Wait and retry Apply.');await new Promise(r=>setTimeout(r,25));}
+  if(blocked){
+   const r=await request('rightClickV3Snapshot');
+   if(JSON.stringify(r.config.destinations)===JSON.stringify(config.destinations)){config.revision=r.config.revision;pending=false;blocked=false;sessionStorage.removeItem('redown-v3-recovery');}
+   else if(r.config.revision===config.revision)blocked=false;
+   else throw Error('Destinations changed in another window. Local edits retained; reload and review before applying.');
+  }
+  if(pending)await flush();
+  if(presentationDraft)await savePresentation(menuPresentation);
+  if(scopeDraft)await saveScopes(levelScopes.buckets);
+  if(pending||blocked||presentationDraft||scopeDraft)throw Error('Some choices are not persisted. Review the error and retry Apply.');
+  const ticket=applyEpoch;
+  const r=await request('applyRightClickV3',{expected:config.revision,expectedScopes:levelScopes.revision,expectedPresentation:JSON.stringify(menuPresentation)});
+  applicationKey=r.applicationKey;menuFeedback(r.menuStatus);
+  if(ticket!==applyEpoch)throw Error('New changes arrived during application. Apply again to include them.');
+  if(r.engine!=='v3')throw Error('V3 choices are saved. Select New Right-click in Settings, then retry Apply.');
+  if(!r.menuUpdated||r.menuStatus?.state!=='registered'||r.menuStatus.complete===false||!applicationKey||r.menuStatus.applicationKey!==applicationKey)throw Error(r.menuStatus?.warnings?.join(' ')||r.error||'Chrome has not confirmed the complete current menu. Retry Apply.');
+  applyPending=false;applyError='';
+ }catch(e){applyFailed(e.message);}
+ finally{applying=false;paintApply();}
+};
+setInterval(()=>{if(!applyPending&&menuPresentation.style==='nested'&&menuPresentation.nested==='level'&&Date.now()-(lastMenuStatus?.inventoryAt||0)>=RedownRightClickV3.limits.ttl){applyPending=true;paintApply();}},30000);
+window.addEventListener('beforeunload',e=>{if(pending||saving||presentationSaving||scopeSaving||scopeDraft||presentationDraft||applying){e.preventDefault();e.returnValue='';}});void load();
 })();

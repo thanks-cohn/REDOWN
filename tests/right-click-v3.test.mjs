@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
+import {webcrypto} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {JSDOM} from 'jsdom';
@@ -25,7 +26,7 @@ test('V3 rejects collisions, orphans, cycles, cross-account targets, invalid pat
  const m=model();for(const mutate of [s=>s.destinations.push(destination()),s=>s.destinations[1].parentId='gone',s=>s.destinations[0].parentId='deep',s=>s.destinations[1].accountId='other',s=>s.destinations[1].prefix='a/../b',s=>s.destinations[1].prefix='a//b',s=>s.destinations[0].prefix='界'.repeat(301),s=>s.destinations[0].id='bad:id']){const s=store();mutate(s);assert.throws(()=>m.validate(s,[profile]));}
 });
 function background(local={profiles:[structuredClone(profile)]},failure={}){
- const native=[],writes=[],c=vm.createContext({TextEncoder,structuredClone,setTimeout,clearTimeout});
+ const native=[],writes=[],c=vm.createContext({TextEncoder,structuredClone,setTimeout,clearTimeout,crypto:webcrypto});
  c.chrome={runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,lastError:null},storage:{local:{get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])])),set:async patch=>{writes.push(structuredClone(patch));Object.assign(local,structuredClone(patch));}}},contextMenus:{removeAll:async()=>{if(failure.remove)throw Error('remove failed');native.length=0;},create(item,callback){if(failure.create)c.chrome.runtime.lastError={message:'create failed'};else native.push(item);callback?.();c.chrome.runtime.lastError=null;}}};
  vm.runInContext(domain+legacyModel+legacy+legacyEngine,c);c.getProfiles=async()=>structuredClone(local.profiles||[]);c.ROOT_MENU_ID='redown';
  vm.runInContext('let destinationSaveQueue=Promise.resolve();\n'+bg.slice(bg.indexOf('function v3MenuTransaction('),bg.indexOf('/* Explicit, opt-in gallery capture')),c);
@@ -44,7 +45,7 @@ test('actual background stale and unauthorized commits reject; concurrent saves 
 test('actual Chrome create/remove failures distinguish saved settings from registration',async()=>{
  for(const kind of ['create','remove']){const h=background(undefined,{[kind]:true});const r=await h.call('saveRightClickV3',{expected:0,destinations:store().destinations});assert.equal(r.ok,true);assert.equal(r.menuUpdated,false);assert.equal(h.local.rightClickV3.revision,1);assert.match(r.error,/registration failed/);}
 });
-const settle=async()=>{for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r));};
+const settle=async()=>{for(let i=0;i<12;i++)await new Promise(r=>setTimeout(r,2));};
 async function view(engine='legacy'){
  const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://extension.invalid/beta/explorer.html'}),calls=[],listeners=[];
  const w=dom.window;w.TextEncoder=TextEncoder;w.structuredClone=structuredClone;w.confirm=()=>true;
@@ -332,7 +333,7 @@ test('bounded Level projection reserves later buckets before broad descendants a
 
 test('real UI, dispatcher and transaction preserve mode acknowledgements and reconcile a lost reply',async()=>{
  const h=background({profiles:[profile],rightClickEngine:'v3',rightClickV3:store()});let listener;
- h.c.crypto={randomUUID:()=> 'fixture'};h.c.performance=performance;h.c.chrome.runtime.onMessage={addListener:f=>listener=f};
+ h.c.crypto={randomUUID:()=> 'fixture',subtle:webcrypto.subtle};h.c.performance=performance;h.c.chrome.runtime.onMessage={addListener:f=>listener=f};
  vm.runInContext(bg.slice(bg.indexOf('chrome.runtime.onMessage.addListener')),h.c);
  const dispatch=(message,page='beta/explorer.html')=>new Promise(resolve=>listener(message,{url:h.c.chrome.runtime.getURL(page)},resolve));
  const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://extension.invalid/beta/explorer.html'}),w=dom.window;
@@ -353,4 +354,71 @@ test('literal Unknown request never silently downgrades the desired Nested choic
  h.w.chrome.runtime.sendMessage=m=>m.type==='setRightClickV3Presentation'?Promise.resolve({ok:false,error:'Unknown request'}):send(m);
  h.$('style').querySelector('[value=nested]').click();await settle();assert.equal(h.$('style').querySelector('[value=nested]').checked,true);assert.match(h.$('presentation-status').textContent,/Reload the extension/);assert.match(h.$('presentation-status').textContent,/unsaved draft/);
  h.$('reload').click();await settle();assert.equal(h.$('style').querySelector('[value=simple]').checked,true,'explicit reload reconciles actual persisted state');h.dom.window.close();
+});
+
+async function applyHarness(failure={}){
+ const h=background({profiles:[profile],rightClickEngine:'v3',rightClickV3:store(),rightClickV3Presentation:simple},failure);
+ await h.c.rebuildMenus();let listener;
+ h.c.performance=performance;h.c.crypto=webcrypto;h.c.chrome.runtime.onMessage={addListener:f=>listener=f};
+ vm.runInContext(bg.slice(bg.indexOf('chrome.runtime.onMessage.addListener')),h.c);
+ const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://extension.invalid/beta/explorer.html'}),w=dom.window,listeners=[],calls=[];
+ w.TextEncoder=TextEncoder;w.structuredClone=structuredClone;w.confirm=()=>false;
+ const set=h.c.chrome.storage.local.set;h.c.chrome.storage.local.set=async patch=>{await set(patch);for(const fn of listeners)fn(Object.fromEntries(Object.entries(patch).map(([key,value])=>[key,{newValue:structuredClone(value)}])),'local');};
+ w.chrome={runtime:{sendMessage:message=>{calls.push(structuredClone(message));return new Promise(resolve=>listener(structuredClone(message),{url:h.c.chrome.runtime.getURL('beta/explorer.html')},result=>resolve(structuredClone(result))))}},storage:{onChanged:{addListener:f=>listeners.push(f)}}};
+ w.eval(domain);w.eval(ui);await settle();return {...h,dom,w,calls,$:id=>w.document.getElementById('v3-'+id)};
+}
+test('Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt',async()=>{
+ const h=await applyHarness();try{
+ assert.equal(h.$('save').textContent,'Saved');assert.equal(h.$('save').dataset.state,'saved');
+ h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();await settle();const revision=h.local.rightClickV3.revision;
+ assert.equal(h.$('save').textContent,'Save Changes');assert.equal(h.$('save').dataset.state,'pending');
+ h.$('save').click();assert.equal(h.$('save').textContent,'Applying…');assert.equal(h.$('save').disabled,true);await settle();
+ assert.equal(h.$('save').textContent,'Saved');assert.equal(h.local.rightClickV3.revision,revision);assert.equal(h.calls.filter(c=>c.type==='applyRightClickV3').length,1);
+ assert.equal(h.local.rightClickMenuStatus.applicationKey,await h.c.menuApplicationKey());assert.equal(h.local.rightClickMenuStatus.complete,true);
+ }finally{h.dom.window.close();}
+});
+test('Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement',async()=>{
+ const h=await applyHarness();try{
+ h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();await settle();
+ const create=h.c.chrome.contextMenus.create;let release;let hold=true;
+ h.c.chrome.contextMenus.create=(item,callback)=>{if(hold){hold=false;release=()=>create(item,callback);}else create(item,callback);};
+ h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Applying…');assert.equal(h.local.rightClickMenuStatus.state,'applying');
+ h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();release();await settle();
+ assert.notEqual(h.$('save').textContent,'Saved');assert.equal(h.local.rightClickV3.destinations[0].enabled,true);
+ h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Saved');
+ }finally{h.dom.window.close();}
+});
+test('failed registration retains persisted edits, Retry Apply repairs without rewriting destinations',async()=>{
+ const failure={},h=await applyHarness(failure);try{
+ failure.create=true;h.$('outline').querySelector('[aria-label="Include root in Chrome"]').click();await settle();const revision=h.local.rightClickV3.revision;
+ h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Retry Apply');assert.equal(h.local.rightClickV3.destinations[0].enabled,false);assert.match(h.$('apply-status').textContent,/failed|Retry/);
+ failure.create=false;h.$('save').click();await settle();assert.equal(h.$('save').textContent,'Saved');assert.equal(h.local.rightClickV3.revision,revision);
+ const restarted=background(structuredClone(h.local));await restarted.c.rebuildMenus();assert.equal(restarted.local.rightClickMenuStatus.applicationKey,await restarted.c.menuApplicationKey());
+ }finally{h.dom.window.close();}
+});
+test('partial Level inventory stays Retry Apply and never reports a complete saved menu',async()=>{
+ const h=await applyHarness();try{
+ h.c.listObjectsPage=async()=>{throw Error('synthetic provider unavailable');};
+ h.$('style').querySelector('[value=nested]').click();await settle();h.$('nested').querySelector('[value=level]').click();await settle();
+ h.$('level-buckets').querySelector('input').click();await settle();h.$('save').click();await settle();
+ assert.equal(h.local.rightClickMenuStatus.state,'partial');assert.equal(h.$('save').textContent,'Retry Apply');assert.match(h.$('apply-status').textContent,/incomplete|could not/);
+ }finally{h.dom.window.close();}
+});
+test('bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus',async()=>{
+ const h=await applyHarness();try{
+ h.$('style').querySelector('[value=nested]').click();await settle();h.$('nested').querySelector('[value=level]').click();await settle();
+ const send=h.w.chrome.runtime.sendMessage;let fail=true;h.w.chrome.runtime.sendMessage=message=>message.type==='setRightClickV3LevelScopes'&&fail?Promise.resolve({ok:false,error:'Synthetic persistence failure'}):send(message);
+ h.$('bucket-picker').open=true;h.$('level-buckets').querySelector('input').click();await settle();assert.equal(h.$('level-buckets').querySelector('input').checked,true);assert.equal(h.$('save').textContent,'Retry Apply');
+ fail=false;h.c.listObjectsPage=async()=>({objects:[],delimited:[]});h.$('save').click();await settle();assert.equal(h.local.rightClickV3LevelScopes.buckets.length,1);assert.equal(h.$('save').textContent,'Saved');
+ h.$('bucket-picker').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(h.$('bucket-picker').open,false);assert.equal(h.w.document.activeElement,h.$('bucket-picker').querySelector('summary'));
+ }finally{h.dom.window.close();}
+});
+test('apply endpoint rejects stale snapshots and foreign senders, receipt changes for each projection input',async()=>{
+ const h=background({profiles:[profile],rightClickEngine:'v3',rightClickV3:store(),rightClickV3Presentation:simple});const first=await h.c.menuApplicationKey();
+ const message={expected:0,expectedScopes:0,expectedPresentation:JSON.stringify(simple)};
+ await assert.rejects(h.call('applyRightClickV3',{...message,expected:1}),/changed/);await assert.rejects(h.call('applyRightClickV3',message,'shelf.html'),/V3 Setup/);
+ for(const [key,value] of [['rightClickV3Presentation',narrow],['rightClickV3LevelScopes',scope()],['profiles',[{...profile,token:'synthetic rotated'}]]]){
+  const before=await h.c.menuApplicationKey();h.local[key]=value;assert.notEqual(await h.c.menuApplicationKey(),before,key);
+ }
+ assert.notEqual(await h.c.menuApplicationKey(),first);assert.doesNotMatch(await h.c.menuApplicationKey(),/synthetic/);
 });
