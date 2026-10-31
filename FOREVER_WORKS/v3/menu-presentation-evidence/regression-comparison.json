@@ -1,0 +1,29 @@
+{
+  "comparison": "Archived prior V3 tree-editor report, not a fresh baseline rerun",
+  "priorPass": 587,
+  "finalPass": 605,
+  "priorFailedNames": 69,
+  "finalFailedNames": 69,
+  "additionalFailedNames": [],
+  "resolvedFailedNames": [],
+  "incomplete": true,
+  "sourceHashMismatches": [],
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ]
+}

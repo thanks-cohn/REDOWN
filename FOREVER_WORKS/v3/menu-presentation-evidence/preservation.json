@@ -1,0 +1,72 @@
+{
+  "start": "a1bd4d1d99d7a9bc38a5dfb3db8fc10082d237c4",
+  "baselineTagObject": "322358123d78cebad75ee4503f30c33cfa34459c",
+  "baselineCommit": "209a52cd1515d44f0dab005e26b738e678c29b65",
+  "checks": [
+    {
+      "name": "Entire destination tree renderer",
+      "unchanged": true,
+      "sha256": "cd819fde99c94474b432ca5df8d8aa745b276ad775e2b652b50f2ec98f88fad6"
+    },
+    {
+      "name": "Original editor CSS",
+      "unchanged": true,
+      "sha256": "d3bab68af015930bbe1bbedcb1d95543e9fc9d5009c58dc4475c3c370a51c2eb"
+    },
+    {
+      "name": "Editor DOM below header",
+      "unchanged": true,
+      "sha256": "ec4e0d315270b4600fa57951722b4a722b9098b1dfc603bc477aa00335e7c35f"
+    },
+    {
+      "name": "Click/save/History path",
+      "unchanged": true,
+      "sha256": "7a1d7f522168950445381fb087ecc51f2417f84cf779994c3c627bf200d38bd6"
+    },
+    {
+      "name": "Existing folder discovery",
+      "unchanged": true,
+      "sha256": "92bdcfe6ed07b4d7f16201af57280a85c5c82694358465761f08c0463fe7d00e"
+    },
+    {
+      "name": "Exact ingest engine",
+      "unchanged": true,
+      "sha256": "703e61a48594e1c3c3cef9e1b7d0b94283fdfacdb4158acaf7018aa081a2edca"
+    },
+    {
+      "name": "extension/right-click-legacy.js",
+      "unchanged": true,
+      "sha256": "f348d5917b257f32a8655319b397f0d9e79688cded29663928f3ab692bf6e582"
+    },
+    {
+      "name": "extension/public-addresses.js",
+      "unchanged": true,
+      "sha256": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69"
+    },
+    {
+      "name": "extension/cloudflare-api.js",
+      "unchanged": true,
+      "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+    },
+    {
+      "name": "extension/beta/explorer.mjs",
+      "unchanged": true,
+      "sha256": "651f3fdfd6738fda2f310d8c4f2a12d588d5fd269c947eaa58b0bd37ccf3b0b1"
+    },
+    {
+      "name": "extension/options.js",
+      "unchanged": true,
+      "sha256": "ca2dcf8ff0afae0924c7607867639d325a614e71a827d5dcd7a7e53a27f0e74a"
+    },
+    {
+      "name": "extension/shelf-history.js",
+      "unchanged": true,
+      "sha256": "02ed05c929109a3afadbef9d3617273d11cc1dd2f37c635c73425f1f735fac83"
+    },
+    {
+      "name": "extension/right-click-engine-settings.js",
+      "unchanged": true,
+      "sha256": "ea4f1725b936918d5cace4f7f6dad2f31e816e56356bc83aad9f821f27666687"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+✔ V3 domain projects parent-first exact IDs and resolves branch Save here only (3.946695ms)
+✔ V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect (0.796302ms)
+✔ V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8 (1.111236ms)
+✔ actual background switch/save/register/resolve persists independent engines across restart (6.922224ms)
+✔ actual background stale and unauthorized commits reject; concurrent saves serialize (1.420333ms)
+✔ actual Chrome create/remove failures distinguish saved settings from registration (2.469186ms)
+✔ tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data (164.168405ms)
+✔ contextual addition auto persists, search finds destination and registration retry uses acknowledged revision (62.317116ms)
+✔ actual click listener waits for V3 read-back before recording completion and never falls back (2.420672ms)
+✔ active HTML/CSS/JS and packaging contain no retired setup mounts/imports/hooks (4.799642ms)
+✔ Legacy pre-v1 tree remains executable without restoring its setup or mutating profiles (1.98137ms)
+✔ actual V3 ingest preserves the existing transport and URL contract with an exact non-provisioning target (1.631151ms)
+✔ package closure includes V3, Legacy and Settings and excludes all retired setup code (141.76896ms)
+✔ setup snapshot is sender-gated and exposes no credential or legacy menu state (1.45795ms)
+✔ storage preferences retain every literal DOM dependency after old setup removal (54.271148ms)
+✔ real shared tabs, engine events and reload can only return to the single V3 setup (38.032666ms)
+✔ Settings applies only the engine message and preserves restart-visible registration failure (17.062194ms)
+✔ rapid edits serialize snapshots and advance only acknowledged revisions (38.35292ms)
+✔ stale revision never automatically retries or drops retained edit (26.798746ms)
+✔ tree Home End arrows and selection use roving focus independently of inclusion (27.548046ms)
+✔ inline add controls retain click focus and own keys without selecting the tree (53.127453ms)
+✔ contextual plus selects its owner and Escape restores that row without saving (29.319098ms)
+✔ folder redraw preserves inline draft focus and anchor, checkbox redraw preserves its control (34.605054ms)
+✔ tree shortcuts require actual tree focus and ignore composition and modified keys (24.493467ms)
+✔ Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here (1.190125ms)
+✔ Level depth 1–10 is counted from authorized root; true names, siblings and exact routing (7.8337ms)
+✔ Level scopes configured roots, collapses overlapping roots and never reads unrelated profiles (1.227121ms)
+✔ Level paginates files-only pages, deduplicates and sorts exact cloud names without writes (0.877394ms)
+✔ Level rejects broken pagination, provider failures and unsupported paths as incomplete (0.971836ms)
+✔ Level bounds folder count, pages, elapsed budget and menu entries with visible partial status (9.419663ms)
+✔ Level cache survives serialization; expiry, root changes and wrong depth fail closed (1.311649ms)
+✔ presentation transitions serialize independently, retain Level depth 5 and persist across background restart (6.084602ms)
+✔ actual Level background inventory registration and click resolver retain exact authorized targets across restart (3.623417ms)
+✔ late Level discovery cannot apply after roots change; concurrent refreshes share one inventory (3.457076ms)
+✔ header progressive controls preserve the tree and form focus, validate depth and remember hidden choices (45.455707ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1124.28245
