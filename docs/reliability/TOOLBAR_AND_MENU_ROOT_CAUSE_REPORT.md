@@ -1,3 +1,5 @@
+> Toolbar behavior in this historical report is superseded by [the native attached-pop-out correction](ATTACHED_TOOLBAR_POPOUT_CORRECTION.md). Do not use its detached-window or forced-preference steps. Prior verification is retained as scoped history.
+
 # Toolbar and menu repair: source causes and verification
 
 31 October 2026. Branch `codex/v3-parity-first-reconstruction`; investigated baseline `1a635b942fd1e9b01f183d60db8b17970f084da1`. This implements launch and registration repairs. It does not establish the cause of the owner's installed fresh-profile incident or certify Chrome acceptance.

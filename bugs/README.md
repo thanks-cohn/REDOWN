@@ -1,5 +1,9 @@
 # REDOWN bugs
 
+## P0 toolbar fallback correction — native attached panel only (2026-10-31)
+
+**Status:** corrective production implementation and local regression tests complete; **installed Chrome acceptance unavailable; original fresh-profile incident remains open**. The prior `1aa1d0e` launcher created a detached `windows.create({type:'popup'})` window and could treat readiness/timeouts as failure. This violated the clarified owner contract. It now attempts native `action.openPopup` only after definite Shelf rejection, arms an explicit next-click native recovery route when rejected/unavailable, and never automatically creates a window/tab or changes the saved mode. Accepted or pending Shelf requests never trigger an automatic second interface. Explicit Popup preferences are restored/preserved. [Architecture, limitations and evidence](../docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md).
+
 ## EMERGENCY P0 — clean Chrome profile REDOWN toolbar click opens nothing (2026-10-31)
 
 **Status:** **OWNER-REPRODUCED IN INSTALLED CHROME / ROOT CAUSE UNKNOWN / NOT FIXED.** Fresh Chrome profile, newly installed REDOWN, click extension toolbar icon: no visible Shelf, popup or other UI. This is a first-run release blocker even when there is no Cloudflare OAuth state. Previous source repair of `sidePanel.open()` rejection to local Shelf tab was mock-tested but never installed-Chrome-accepted. It does not cover the click never reaching the worker listener.

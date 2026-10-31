@@ -1,3 +1,5 @@
+> Toolbar behavior in this historical report is superseded by [the native attached-pop-out correction](ATTACHED_TOOLBAR_POPOUT_CORRECTION.md). Do not use its detached-window or forced-preference steps. Prior verification is retained as scoped history.
+
 # Owner acceptance in approved Chrome
 
 Use the required branch in a Chrome installation that allows unpacked extensions. Keep a backup of existing extension data; do not clear ordinary user storage. No cloud destination is needed for launch tests. Do not use a policy workaround.

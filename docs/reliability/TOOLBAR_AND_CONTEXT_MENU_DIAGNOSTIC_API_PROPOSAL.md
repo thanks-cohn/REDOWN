@@ -1,3 +1,5 @@
+> Recovery surface correction: the current launcher uses native action-popup recovery only. See [the implementation correction](ATTACHED_TOOLBAR_POPOUT_CORRECTION.md). This remains proposal-only; no new API is implemented.
+
 # Toolbar and native-menu diagnostics: proposal only
 
 Status: design, 31 October 2026. No operations in this document are implemented or advertised. This proposal follows the entry-point repair; it is not a release certificate.
@@ -29,7 +31,7 @@ Proposed runtime schema 2.0 (separate from gateway, extension and Forever versio
   "status": "failed",
   "error": {"code": "SHELF_OPEN_REJECTED", "message": "Chrome rejected Shelf opening."},
   "configurationRevision": null,
-  "recovery": {"attempted": true, "method": "popup-window", "status": "accepted"},
+  "recovery": {"attempted": true, "method": "action-popup", "status": "accepted"},
   "evidence": {"source": "chrome-api", "confidence": "observed", "scope": "api-acceptance"}
 }
 ```

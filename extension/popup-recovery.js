@@ -3,13 +3,24 @@
  if(new URLSearchParams(location.search).get('recovery')!=='1')return;
  document.getElementById('recovery').hidden=false;
  const status=document.getElementById('recovery-status');
+ const parameters=new URLSearchParams(location.search);
+ const tabId=Number(parameters.get('tabId')),ownerWindowId=Number(parameters.get('windowId'));
+ // Chrome has already opened the attached popup. Consume its tab-only override;
+ // the user's stored preference is untouched, and the next click tries Shelf.
+ if(parameters.has('tabId')&&Number.isInteger(tabId)){
+   chrome.storage.local.get('toolbarOpenMode').then(data=>chrome.action.setPopup({tabId,popup:data.toolbarOpenMode==='popup'?'popup.html':''})).then(()=>{
+     void chrome.action.setTitle({tabId,title:chrome.runtime.getManifest().name||'REDOWN'});
+     void chrome.action.setBadgeText?.({tabId,text:''});
+   }).catch(()=>{status.textContent='Chrome could not reset recovery. Reload REDOWN to retry the Shelf.';});
+ }
  document.getElementById('retry-shelf').onclick=()=>{
-   // windows.getCurrent would consume user activation; this window ID is cached below.
-   try{Promise.resolve(chrome.sidePanel.open({windowId:ownerWindowId})).then(()=>{status.textContent='Shelf opening requested. Keep this window available until it opens.';}).catch(()=>{status.textContent='Shelf still cannot open. You can keep using this recovery window.';});}
-   catch{status.textContent='Shelf is unavailable. You can keep using this recovery window.';}
+   if(!chrome.sidePanel?.open||!parameters.has('windowId')){status.textContent='Shelf is unavailable. You can keep using this attached panel.';return;}
+   // Close the attached panel synchronously before requesting another surface.
+   window.close();
+   try{void Promise.resolve(chrome.sidePanel.open({windowId:ownerWindowId})).catch(()=>{
+     void chrome.action.setTitle({title:'REDOWN Shelf could not open. Click REDOWN to retry.'});
+   });}catch{void chrome.action.setTitle({title:'REDOWN Shelf is unavailable. Click REDOWN to retry.'});}
  };
- let ownerWindowId;
- chrome.windows.getLastFocused({windowTypes:['normal']}).then(win=>{ownerWindowId=win.id;}).catch(()=>{});
  document.getElementById('support-report').onclick=async()=>{
    try{
      const data=await chrome.storage.local.get(['entryPointEvidence','rightClickMenuStatus']);

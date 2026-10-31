@@ -9,14 +9,14 @@ async function shelf(data={},response={ok:true,accounts:[]}){
  dom.window.chrome={storage:{local:{async get(keys){return Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,data[k]]));},async set(value){Object.assign(data,value);for(const fn of listeners)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'local');}},onChanged:{addListener(fn){listeners.push(fn);}}},runtime:{getURL:p=>'https://extension.test/'+p,async sendMessage(){return response;}},tabs:{async create(o){opened.push(o);}}};
  dom.window.eval(script);await settle();return {dom,data,opened,doc:dom.window.document};
 }
-test('Shelf-only toolbar preference survives reopening and preserves unrelated data',async()=>{
- const data={toolbarOpenMode:'popup',profiles:[{name:'test'}],transferHistory:[]},s=await shelf(data);
+test('Shelf defaults to Shelf and preserves explicitly selected native Popup across reopening',async()=>{
+ const data={profiles:[{name:'test'}]},s=await shelf(data);
  assert.equal(s.doc.querySelector('[value=shelf]').checked,true);
- assert.equal(s.doc.querySelector('[name="toolbar-mode"][value=popup]'),null);
- const input=s.doc.querySelector('[value=shelf]');input.dispatchEvent(new s.dom.window.Event('change'));await settle();
- assert.equal(data.toolbarOpenMode,'shelf');assert.equal(data.profiles[0].name,'test');
- const reopened=await shelf(data);assert.equal(reopened.doc.querySelector('[value=shelf]').checked,true);
- reopened.dom.window.close();s.dom.window.close();
+ for(const value of ['popup','shelf']){
+  const input=s.doc.querySelector('[name="toolbar-mode"][value='+value+']');input.checked=true;input.dispatchEvent(new s.dom.window.Event('change'));await settle();
+  assert.equal(data.toolbarOpenMode,value);const next=await shelf(data);assert.equal(next.doc.querySelector('[name="toolbar-mode"][value='+value+']').checked,true);next.dom.window.close();
+ }
+ assert.equal(data.profiles[0].name,'test');s.dom.window.close();
 });
 test('provider order, pending integrations, verified account state and actual history remain honest',async()=>{
  const s=await shelf({cloudflareAuth:{accessToken:'fixture'},transferHistory:[{ok:false,profileName:'Failed fixture',at:'2026-10-29T00:00:00Z'}]});
@@ -54,11 +54,11 @@ test('History opens Today by default and preserves clickable source and hosting-
 test('Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape',()=>{
  const explorer=readFileSync('extension/beta/explorer.html','utf8');assert.doesNotMatch(explorer,/toolbar-mode|toolbarOpenMode|bottom-right-controls/);assert.match(explorer,/id="test-it-tools-button"/);assert.equal(existsSync('extension/beta/toolbar-mode.js'),false);assert.match(readFileSync('extension/popup.html','utf8'),/href="shelf.html#settings"/);
 });
-test('toolbar migration retires popup preferences before reading storage',async()=>{
+test('toolbar configuration preserves explicit popup and defaults unknown modes to Shelf',async()=>{
  const {worker,config}=await import('./helpers/background-worker.mjs');
  for(const mode of [undefined,'popup','shelf']){
   const data=config();data.toolbarOpenMode=mode;const h=worker(data);await h.ready();
-  assert.equal(data.toolbarOpenMode,'shelf');assert.ok(h.calls.some(c=>c[0]==='popup'&&c[1]===''));
+  assert.equal(data.toolbarOpenMode,mode);assert.equal(await h.chrome.action.getPopup({tabId:1}),mode==='popup'?'chrome-extension://test/popup.html':'');
  }
 });
 

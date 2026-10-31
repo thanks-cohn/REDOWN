@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/action",
+    "fetchedDate": "2026-10-31",
+    "term": "openPopup() Chrome",
+    "excerpt": "openPopup() Chrome 127+ browser.* since Chrome 148 browser . action . openPopup ( options? : OpenPopupOptions , ) : Promise<void> Opens the extension's popup. Between Chrome 118 and Chrome 126, this is only available to policy installed extensions. Parameters options OpenPopupOptions optional Specifies options for opening the popup. Returns Promise<void> setBadgeBackgroundColor() browser . action . setBadgeBackgroundColor ( details : object , ) : Promise<void> Sets the background color for the badge. Parameters details object color string | ColorArray An array of four integers in the range [0,255] that make up the RGBA color of the badge. For"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/action",
+    "fetchedDate": "2026-10-31",
+    "term": "The action.onClicked event",
+    "excerpt": "The action.onClicked event won't be sent if the extension action has specified a popup to show on click of the current tab. Use cases Per-tab state Extension actions can have different states for each tab. To set a value for an individual tab, use the tabId property in the action API's setting methods. For example, to set the badge text for a specific tab, do something like the following: function getTabId () { /* ... */ } function getTabBadge () { /* ... */ } browser . action . setBadgeText ( { text : getTabBadge ( tabId ), tabId : getTabId (), }, () = > { ... } ); If the tabId property is left out, the setting is treated as a global setting"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/action",
+    "fetchedDate": "2026-10-31",
+    "term": "Tab-specific settings take priority",
+    "excerpt": "Tab-specific settings take priority over global settings. Enabled state By default, toolbar actions are enabled (clickable) on every tab. You can change this default by setting the default_state property in the action key of the manifest. If default_state is set to \"disabled\" , the action is disabled by default and must be enabled programmatically to be clickable. If default_state is set to \"enabled\" (the default), the action is enabled and clickable by default. You can control the state programmatically using the action.enable() and action.disable() methods. This only affects whether the popup (if any) or action.onClicked event is sent to yo"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/action",
+    "fetchedDate": "2026-10-31",
+    "term": "setPopup() browser",
+    "excerpt": "setPopup() browser . action . setPopup ( details : object , ) : Promise<void> Sets the HTML document to be opened as a popup when the user clicks on the action's icon. Parameters details object popup string The relative path to the HTML file to show in a popup. If set to the empty string ( '' ), no popup is shown. tabId number optional Limits the change to when a particular tab is selected. Automatically resets when the tab is closed. Returns Promise<void> setTitle() browser . action . setTitle ( details : object , ) : Promise<void> Sets the title of the action. This shows up in the tooltip. Parameters details object tabId number optional Lim"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/sidePanel",
+    "fetchedDate": "2026-10-31",
+    "term": "close() Chrome",
+    "excerpt": "close() Chrome 141+ browser.* since Chrome 148 browser . sidePanel . close ( options : CloseOptions , ) : Promise<void> Closes the extension's side panel. This is a no-op if the panel is already closed. Parameters options CloseOptions Specifies the context in which to close the side panel. Returns Promise<void> Returns a Promise which resolves when the side panel has been closed. getLayout() Chrome 140+ browser.* since Chrome 148 browser . sidePanel . getLayout () : Promise< PanelLayout > Returns the side panel's current layout. Returns Promise< PanelLayout > Returns a Promise which resolves with a PanelLayout . getOptions() browser . sidePan"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/sidePanel",
+    "fetchedDate": "2026-10-31",
+    "term": "Programmatically open the side panel on user interaction",
+    "excerpt": "Programmatically open the side panel on user interaction Chrome 116 introduces sidePanel.open() . It allows extensions to open the side panel through an extension user gesture, such as clicking on the action icon . Or a user interaction on an extension page or content script , such as clicking a button. For a complete demo, see the Open Side Panel sample extension. The following code shows how to open a global side panel on the current window when the user clicks on a context menu. When using sidePanel.open() , you must choose the context in which it should open. Use windowId to open a global side panel. Alternatively, set the tabId to open t"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/sidePanel",
+    "fetchedDate": "2026-10-31",
+    "term": "setPanelBehavior()",
+    "excerpt": "setPanelBehavior() . First, declare the \"action\" key in the manifest: manifest.json: { \"name\": \"My side panel extension\", ... \"action\": { \"default_title\": \"Click to open panel\" }, ... } Now, add this code to the previous example: service-worker.js: const GOOGLE_ORIGIN = 'https://www.google.com' ; // Allows users to open the side panel by clicking on the action toolbar icon browser . sidePanel . setPanelBehavior ({ openPanelOnActionClick : true }) . catch (( error ) = > console . error ( error )); ... Programmatically open the side panel on user interaction Chrome 116 introduces sidePanel.open() . It allows extensions to open the side panel th"
+  },
+  {
+    "url": "https://developer.chrome.com/docs/extensions/reference/api/sidePanel",
+    "fetchedDate": "2026-10-31",
+    "term": "onOpened Chrome",
+    "excerpt": "onOpened Chrome 141+ browser.* since Chrome 148 browser . sidePanel . onOpened . addListener ( callback : function , ) Fired when the extension's side panel is opened. Parameters callback function The callback parameter looks like: ( info : PanelOpenedInfo ) => void info PanelOpenedInfo Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License , and code samples are licensed under the Apache 2.0 License . For details, see the Google Developers Site Policies . Java is a registered trademark of Oracle and/or its affiliates. Last updated 2026-10-29 UTC. [[[\"Easy to understand\",\"easyToUnder"
+  }
+]

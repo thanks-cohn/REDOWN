@@ -59,12 +59,12 @@ $('cloudflare').addEventListener('click',async()=>{
 });
 async function refreshPreference() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
-  for (const input of modes) input.checked = input.value === ('shelf');
+  for (const input of modes) input.checked = input.value === (toolbarOpenMode === 'popup' ? 'popup' : 'shelf');
 }
 for (const input of modes) input.addEventListener('change',async()=>{
   for (const item of modes) item.disabled = true;
   try {
-    await chrome.storage.local.set({toolbarOpenMode:'shelf'});
+    await chrome.storage.local.set({toolbarOpenMode:input.value});
     status('Preference saved. Future toolbar clicks open the '+(input.value==='popup'?'Popup.':'Shelf.'));
   } catch { status('Could not save your opening preference. Please try again.'); }
   finally { await refreshPreference().catch(()=>{}); for (const item of modes) item.disabled=false; }

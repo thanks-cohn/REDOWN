@@ -13,18 +13,25 @@ test('toolbar invokes Shelf synchronously within the gesture without storage/men
  const h=worker();h.calls.length=0;h.chrome.action.onClicked.listeners[0]({windowId:7});
  assert.deepEqual(structuredClone(h.calls[0]),['panel',{windowId:7}]);await h.ready();assert.ok(!h.calls.some(c=>c[0]==='tab'));
 });
-test('rejected, synchronous and unavailable Shelf APIs open recovery popup',async()=>{
+test('definite Shelf rejection, synchronous throw and missing API use only native attached popup',async()=>{
  for(const failure of [{panel:true},{syncPanel:true},{missing:true}]){
   const h=worker(undefined,failure);if(failure.missing)delete h.chrome.sidePanel.open;
-  await h.click({windowId:7});await h.ready();
-  assert.equal(h.calls.find(c=>c[0]==='window')[1].url,'chrome-extension://test/popup.html?recovery=1');assert.equal(h.local.toolbarOpenMode,'shelf');
+  await h.click({id:1,windowId:7});await h.ready();
+  assert.ok(h.calls.some(c=>c[0]==='attached'));assert.match(await h.chrome.action.getPopup({tabId:1}),/^chrome-extension:\/\/test\/popup.html\?recovery=1/);
+  assert.equal(h.local.toolbarOpenMode,'shelf');assert.ok(!h.calls.some(c=>['window','tab','options'].includes(c[0])));
  }
- const h=worker(undefined,{panel:true,window:true});await h.click({windowId:7});await h.ready();assert.ok(h.local.entryPointEvidence.some(e=>e.code==='ACCESS_BLOCKED'));
+ const h=worker(undefined,{panel:true,openPopup:true});await h.click({id:1,windowId:7});await h.ready();
+ assert.ok(h.local.entryPointEvidence.some(e=>e.code==='ATTACHED_POPUP_NEXT_CLICK'));
+ await h.click({id:1,windowId:7});assert.ok(h.calls.some(c=>c[0]==='nativePopup'));
 });
-test('stale popup preference migrates even when panel configuration fails',async()=>{
- const local=config();local.toolbarOpenMode='popup';const h=worker(local,{options:true});await h.ready();assert.ok(h.calls.some(c=>c[0]==='popup'&&c[1]===''));
- const manifest=JSON.parse(readFileSync('extension/manifest.json','utf8'));assert.equal(manifest.side_panel.default_path,'shelf.html');assert.ok(manifest.permissions.includes('sidePanel'));
+
+test('explicit Popup preference is preserved even when Shelf configuration fails',async()=>{
+ const local=config();local.toolbarOpenMode='popup';const h=worker(local,{options:true});await h.ready();
+ assert.equal(await h.chrome.action.getPopup({tabId:1}),'chrome-extension://test/popup.html');await h.click({id:1,windowId:7});
+ assert.ok(h.calls.some(c=>c[0]==='nativePopup'));assert.ok(!h.calls.some(c=>c[0]==='panel'));assert.equal(local.toolbarOpenMode,'popup');
+ const manifest=JSON.parse(readFileSync('extension/manifest.json','utf8'));assert.equal(manifest.side_panel.default_path,'shelf.html');assert.equal(manifest.action.default_popup,undefined);
 });
+
 test('failed native child or root creation restores root/management without erasing settings',async()=>{
  for(const id of ['v3:one','redown','redown-manage']){
   const initial=config(),before=structuredClone(initial),h=worker(initial,{create:id});await h.ready();
@@ -89,13 +96,14 @@ test('a failed rebuild after successful registration preserves a recoverable roo
  await h.rebuild();assert.ok(h.native.has('v3:changed'));
 });
 
-test('rapid failures share a recovery window and subsequent failures focus it',async()=>{
+test('rapid clicks share one failure attempt and Chrome handles subsequent native popup clicks',async()=>{
  const h=worker(undefined,{panel:true});await h.ready();
- h.chrome.action.onClicked.listeners[0]({windowId:1});h.chrome.action.onClicked.listeners[0]({windowId:1});
- await h.ready();await h.click({windowId:1});await h.ready();
- assert.equal(h.calls.filter(c=>c[0]==='window').length,1);assert.ok(h.calls.some(c=>c[0]==='focus'));
- assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_UNAVAILABLE'));
+ h.chrome.action.onClicked.listeners[0]({id:1,windowId:7});h.chrome.action.onClicked.listeners[0]({id:1,windowId:7});
+ await h.ready();await h.click({id:1,windowId:7});await h.ready();
+ assert.equal(h.calls.filter(c=>c[0]==='attached').length,1);assert.equal(h.calls.filter(c=>c[0]==='panel').length,1);
+ assert.ok(!h.calls.some(c=>['window','tab'].includes(c[0])));
 });
+
 test('unchanged menu plan performs no destructive registration and discovery',async()=>{
  const h=worker();await h.ready();let removed=0,discovered=0;
  h.chrome.contextMenus.removeAll=async()=>{removed++;};h.context.refreshV3Inventory=async()=>{discovered++;};
@@ -104,11 +112,11 @@ test('unchanged menu plan performs no destructive registration and discovery',as
 test('unrelated background import failure leaves independently registered toolbar usable',async()=>{
  const h=worker(undefined,{import:'cloudflare-api.js',panel:true});
  assert.ok(h.evaluationError);await h.click({windowId:3});
- assert.ok(h.calls.some(c=>c[0]==='window'));
+ assert.ok(h.calls.some(c=>c[0]==='attached'));
 });
 test('storage failure cannot gate toolbar or base menu access',async()=>{
  const h=worker(undefined,{storage:true,panel:true});await h.ready();await h.click({windowId:3});
- assert.ok(h.calls.some(c=>c[0]==='window'));assert.ok(h.native.has('redown-manage'));
+ assert.ok(h.calls.some(c=>c[0]==='attached'));assert.ok(h.native.has('redown-manage'));
 });
 test('Shelf document readiness is window-scoped and successful readiness avoids recovery',async()=>{
  const h=worker();await h.ready();
@@ -116,11 +124,13 @@ test('Shelf document readiness is window-scoped and successful readiness avoids 
  await h.context.openToolbarInterface({windowId:3});await h.ready();
  assert.ok(!h.calls.some(c=>c[0]==='window'));assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_READY'));
 });
-test('failed Shelf initialization has bounded visible recovery and retained evidence',async()=>{
+test('accepted Shelf with unconfirmed readiness never opens a second surface',async()=>{
  const h=worker();await h.ready();h.chrome.runtime.getContexts=async()=>[];
- await h.context.openToolbarInterface({windowId:3});await h.ready();
- assert.ok(h.calls.some(c=>c[0]==='window'));assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_UNAVAILABLE'));
+ await h.context.openToolbarInterface({id:1,windowId:7});await h.ready();
+ assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
+ assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_READINESS_UNKNOWN'));
 });
+
 test('worker restart reconciles persisted IDs without native destruction or folder discovery',async()=>{
  const h=worker();await h.ready();
  const next=worker(h.local,{nativeEntries:[...h.native]});await next.ready();
@@ -142,4 +152,54 @@ test('ordered destination changes recreate siblings while retaining root managem
  h.local.rightClickV3.destinations.reverse();await h.rebuild();
  const ids=[...h.native.keys()];assert.ok(ids.indexOf('v3:two')<ids.indexOf('v3:one'));
  assert.ok(h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,1);
+});
+test('fresh empty storage and no OAuth opens Shelf without destination prerequisites',async()=>{
+ const h=worker({});await h.ready();await h.click({id:1,windowId:7});await h.ready();
+ assert.equal(h.calls.filter(c=>c[0]==='panel').length,1);assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
+ assert.ok(h.native.has('redown-manage'));
+});
+test('missing native openPopup leaves a next-click attached recovery route without changing preference',async()=>{
+ const h=worker(undefined,{panel:true});delete h.chrome.action.openPopup;await h.ready();await h.click({id:1,windowId:7});await h.ready();
+ const popup=await h.chrome.action.getPopup({tabId:1});assert.match(popup,/recovery=1/);assert.equal(h.local.toolbarOpenMode,'shelf');
+ await h.click({id:1,windowId:7});assert.ok(h.calls.some(c=>c[0]==='nativePopup'));
+});
+test('slow accepted Shelf cannot trigger a timeout popup or late duplicate',async()=>{
+ const h=worker();await h.ready();let resolve;h.chrome.sidePanel.open=()=>new Promise(r=>{resolve=r;});
+ const request=h.context.openToolbarInterface({id:1,windowId:7});await new Promise(r=>setTimeout(r,45));
+ resolve();await request;await h.ready();assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
+ assert.ok(h.local.entryPointEvidence.some(e=>e.code==='SHELF_OPEN_PENDING'));
+});
+test('late rejected expired attempt cannot override a newer successful Shelf',async()=>{
+ const h=worker();await h.ready();let reject;h.chrome.sidePanel.open=()=>new Promise((_,r)=>{reject=r;});
+ const old=h.context.openToolbarInterface({id:1,windowId:7});await new Promise(r=>setTimeout(r,45));
+ h.chrome.sidePanel.open=async()=>{};await h.context.openToolbarInterface({id:1,windowId:7});reject(Error('late rejection'));await old;
+ assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
+});
+test('blocked popup registration produces native error evidence, no alternate windows',async()=>{
+ const h=worker(undefined,{panel:true,setPopup:true});await h.ready();await h.click({id:1,windowId:7});await h.ready();
+ assert.ok(h.local.entryPointEvidence.some(e=>e.code==='ATTACHED_POPUP_BLOCKED'));
+ assert.ok(!h.calls.some(c=>['attached','window','tab','options'].includes(c[0])));
+});
+test('worker restart preserves armed tab recovery, while preference changes clear stale overrides',async()=>{
+ const h=worker(undefined,{panel:true,openPopup:true});await h.ready();await h.click({id:1,windowId:7});await h.ready();
+ const next=worker(h.local,{popupState:h.popupState});await next.ready();await next.click({id:1,windowId:7});
+ assert.ok(next.calls.some(c=>c[0]==='nativePopup'));assert.ok(!next.calls.some(c=>c[0]==='panel'));
+ h.local.toolbarOpenMode='popup';for(const fn of next.chrome.storage.onChanged.listeners)fn({toolbarOpenMode:{newValue:'popup'}},'local');
+ await new Promise(r=>setImmediate(r));assert.equal(await next.chrome.action.getPopup({tabId:1}),'chrome-extension://test/popup.html');
+});
+test('automatic toolbar launcher contains no detached surface API and disables Chrome-managed parallel opening',async()=>{
+ const source=readFileSync('extension/entry-bootstrap.js','utf8');assert.doesNotMatch(source,/windows\.(create|update)|tabs\.create|window\.open|openOptionsPage/);
+ const h=worker();await h.ready();assert.ok(h.calls.some(c=>c[0]==='behavior'&&c[1]===false));
+});
+test('tab switch during failure abandons stale recovery instead of opening in another tab',async()=>{
+ const h=worker(undefined,{panel:true});await h.ready();h.openTabs[0]={id:99,windowId:7,active:true};
+ await h.context.openToolbarInterface({id:1,windowId:7});await h.ready();assert.ok(!h.calls.some(c=>c[0]==='attached'));
+ assert.ok(h.local.entryPointEvidence.some(e=>e.code==='LAUNCH_SUPERSEDED'));
+});
+test('latest different-window click supersedes pending attempt without a stale popup',async()=>{
+ const h=worker();await h.ready();let reject;
+ h.chrome.sidePanel.open=()=>new Promise((_,r)=>{reject=r;});
+ const old=h.context.openToolbarInterface({id:1,windowId:7});h.chrome.sidePanel.open=async()=>{};
+ await h.context.openToolbarInterface({id:2,windowId:8});reject(Error('superseded'));await old;
+ assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
 });

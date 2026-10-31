@@ -1,0 +1,16 @@
+{
+  "baselineCommit": "1aa1d0ef6692a0e734e3ea7bc674e91e847ba799",
+  "baseline": {
+    "passed": 700,
+    "failed": 71
+  },
+  "after": {
+    "passed": 709,
+    "failed": 71,
+    "incomplete": true
+  },
+  "addedFailureNames": [],
+  "removedFailureNames": [],
+  "sourceSha256": "2d0ecaa8ef3d906144ae0ee692ae5c1c7124f5da3cf5828c68e24d964abb22a2",
+  "allFinalSourceFilesMatch": true
+}

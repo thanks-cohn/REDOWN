@@ -1,3 +1,5 @@
+> Current toolbar contract: [native attached-pop-out correction](../../docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md). Automatic tab/Options recovery described below is historical and no longer supported. Menu history remains preserved.
+
 # P0 toolbar and native context-menu emergency repair
 
 31 October 2026, America/Chicago. Branch: `codex/v3-parity-first-reconstruction`.

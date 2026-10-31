@@ -1,0 +1,37 @@
+{
+  "artifactSha256": "d5555467a3577623abdf3b8bf49187c4abaa6eb3d7219ababf68c361d339d636",
+  "launcherSha256": "5ca4b188f23433efa2f74e5d516635cdf05696351cb83b37b009f83452878f5c",
+  "state": "unavailable",
+  "scope": "standard unpacked attempt from actual audit package in disposable Chromium profile",
+  "browser": "Chromium 154.0.8037.57",
+  "policy": {
+    "ExtensionInstallBlocklist": [
+      "*"
+    ],
+    "ExtensionInstallForcelist": [
+      "kcdongibgcplmaagnmgpjhpjgmmaaaaa;http://localhost:31460/ids.xml"
+    ],
+    "ExtensionInstallSources": []
+  },
+  "installedAssertions": 0,
+  "visualAssertions": 0,
+  "prohibitedWorkaroundsUsed": false,
+  "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+  "extensionWorkerPresent": false,
+  "targets": [
+    {
+      "type": "page",
+      "isRedown": false
+    },
+    {
+      "type": "browser_ui",
+      "isRedown": false
+    },
+    {
+      "type": "browser_ui",
+      "isRedown": false
+    }
+  ],
+  "reason": "No REDOWN worker observed. Managed policy blocklists all non-approved extensions; modern Chromium may also ignore load-extension. No alternate installation or policy bypass attempted.",
+  "policyMessages": []
+}

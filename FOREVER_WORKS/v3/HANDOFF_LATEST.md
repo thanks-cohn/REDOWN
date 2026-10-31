@@ -1,3 +1,15 @@
+# Latest: corrected native attached toolbar recovery
+
+Read [the correction report](../../docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md).
+This supersedes `1aa1d0e` detached-window fallback and forced Shelf preference migration.
+The one early launcher now uses native action popup recovery only after settled Shelf failure;
+failed native opening leaves a documented next-click attached route. Accepted/pending Shelf
+requests never cause another automatic surface. Explicit Popup preference is preserved.
+V3 native-menu repair is retained. Installed Chrome remains unavailable under managed policy;
+the original fresh-profile incident is open, not conclusively repaired.
+
+---
+
 # Latest: Shelf-first toolbar and native-menu reconciliation
 
 See [the permanent entry-point repair report](../../docs/reliability/TOOLBAR_AND_MENU_ROOT_CAUSE_REPORT.md)
