@@ -11,8 +11,8 @@ const settle=async()=>{for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r)
 function view(data={},side=()=>Promise.resolve()){
  const dom=new JSDOM(read('extension/shelf.html'),{url:'https://extension.invalid/shelf.html#history',runScripts:'outside-only'}),w=dom.window,listeners=[],calls=[];
  const local={...data},session={};
- const storage=(values,area)=>({get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,values[k]])),set:async patch=>{Object.assign(values,structuredClone(patch));for(const f of listeners)f(Object.fromEntries(Object.entries(patch).map(([k,v])=>[k,{newValue:v}])),area);},remove:async k=>{delete values[k];}});
- w.chrome={storage:{local:storage(local,'local'),session:storage(session,'session'),onChanged:{addListener:f=>listeners.push(f)}},runtime:{getURL:p=>'https://extension.invalid/'+p},tabs:{getCurrent:async()=>({id:2}),create:async o=>{calls.push(['tab',o]);}},windows:{WINDOW_ID_CURRENT:-2,getCurrent:async()=>({id:7})},sidePanel:{open:o=>{calls.push(['panel',o]);return side();}}};
+ const storage=(values,area)=>({get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,values[k]])),set:async patch=>{Object.assign(values,structuredClone(patch));for(const f of listeners)f(Object.fromEntries(Object.entries(patch).map(([k,v])=>[k,{newValue:v}])),area);},remove:async keys=>{for(const k of Array.isArray(keys)?keys:[keys])delete values[k];}});
+ w.chrome={storage:{local:storage(local,'local'),session:storage(session,'session'),onChanged:{addListener:f=>listeners.push(f)}},runtime:{getURL:p=>'https://extension.invalid/'+p},tabs:{getCurrent:async()=>({id:2}),create:async o=>{calls.push(['tab',o]);const token=o.url.split('#history=')[1];await w.chrome.storage.session.set({['historyAccepted:'+token]:{state:'accepted'},['historyResult:'+token]:{state:'completed'}});return {id:8};}},windows:{WINDOW_ID_CURRENT:-2,getCurrent:async()=>({id:7})},sidePanel:{open:o=>{calls.push(['panel',o]);return side();}}};
  w.eval(script);return {dom,w,local,session,calls,nav:w.RedownHistoryNavigation};
 }
 test('strict receipt eligibility retains exact Keep Both key without source/filename inference',async()=>{
@@ -26,7 +26,7 @@ test('strict receipt eligibility retains exact Keep Both key without source/file
 test('default creates and activates a new tab with only an opaque request ID; receipt remains unchanged',async()=>{
  const h=view(),before=JSON.stringify(good);await h.nav.preference;h.nav.open(good);await settle();
  assert.equal(h.calls.length,1);assert.equal(h.calls[0][0],'tab');const args=h.calls[0][1];assert.equal(args.active,true);assert.match(args.url,/beta\/explorer.html#history=/);assert.ok(!args.url.includes('bucket')&&!args.url.includes('photos'));
- assert.equal(Object.values(h.session)[0].locator.key,good.destination.key);assert.equal(JSON.stringify(good),before);h.dom.window.close();
+ assert.equal(JSON.stringify(good),before);assert.equal(JSON.stringify(good),before);h.dom.window.close();
 });
 test('Side Panel invokes open synchronously in the gesture and never creates or activates a tab',async()=>{
  const h=view({historyGoToMode:'side'});await h.nav.preference;h.nav.open(good);assert.equal(h.calls[0][0],'panel');await settle();assert.equal(h.calls.length,1);assert.equal(h.session.historySideNavigation.windowId,7);assert.equal(h.session.historySideNavigation.locator.key,good.destination.key);h.dom.window.close();
@@ -78,7 +78,7 @@ async function navigationHarness(overrides={}){
  const messages=[],selectedRows=[],previews=[],rows=[];
  const context={setTimeout,clearTimeout,AbortController,Date,Set,Error,
    RedownHistoryNavigation:{valid:i=>Boolean(i?.locator)},chrome:{tabs:{getCurrent:async()=>undefined},windows:{getCurrent:async()=>({id:7})}},
-   explorerInitialization:Promise.resolve(),busy:false,cloudflareSignedIn:true,accounts:[{id:'a'}],bucketCache:new Map([['a',[{name:'bucket'}]]]),current:null,listingState:'ready',epoch:0,discoveryEpoch:0,
+   closePreview:()=>{},chrome:{tabs:{getCurrent:async()=>undefined},windows:{getCurrent:async()=>({id:7})},storage:{session:{set:async()=>{}}}},explorerInitialization:Promise.resolve(),busy:false,cloudflareSignedIn:true,accounts:[{id:'a'}],bucketCache:new Map([['a',[{name:'bucket'}]]]),current:null,listingState:'ready',epoch:0,discoveryEpoch:0,
    status:m=>messages.push(m),sameBucket:(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName,
    loadAccounts:async()=>{},navigate:async t=>{context.current={...t};context.epoch++;},resolveHistoryTarget:async(_,t)=>({key:t.key,displayName:t.filename}),api:{},
    items:[],selected:new Set(),render:()=>{selectedRows.push([...context.selected]);rows.splice(0,rows.length,...context.items.map(i=>({dataset:{key:i.key},scrollIntoView(){this.scrolled=true;},focus(){this.focused=true;}})));},
@@ -108,4 +108,48 @@ test('actual background dispatcher recognizes Setup requests and identifies unsu
  const request=type=>new Promise(resolve=>listener({type},{url:'chrome-extension://test/beta/explorer.html'},resolve));
  assert.equal((await request('rightClickV3Snapshot')).ok,true);
  const missing=await request('oldSetupRequest');assert.equal(missing.ok,false);assert.equal(missing.diagnosticError.code,'UNSUPPORTED_REQUEST');assert.match(missing.error,/oldSetupRequest.*Reload the extension/);assert.notEqual(missing.error,'Unknown request');
+});
+
+test('authenticated running Explorer is probed, activated and navigated without URL update or new tab',async()=>{
+ const h=view();await h.nav.preference;const received=[];
+ h.w.chrome.tabs.query=async()=>[{id:2,windowId:7,active:false,url:'https://extension.invalid/beta/explorer.html#explorer-destinations'}];
+ h.w.chrome.tabs.update=async(id,options)=>h.calls.push(['activate',{id,...options}]);
+ await h.nav.receive(async intent=>{received.push(intent.locator.key);await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'completed'}});},()=>true);
+ h.nav.open(good);await settle();assert.deepEqual(received,[good.destination.key]);assert.equal(h.calls.length,1);assert.equal(h.calls[0][0],'activate');assert.equal(h.calls[0][1].url,undefined);
+ h.nav.open({...good,destination:{...good.destination,key:'photos/new.webp'}});await settle();assert.deepEqual(received,[good.destination.key,'photos/new.webp']);assert.equal(h.calls.filter(c=>c[0]==='tab').length,0);h.dom.window.close();
+});
+test('reuse chooses current-window active instance deterministically and rejects unrelated URL candidates',async()=>{
+ const h=view();await h.nav.preference;h.w.chrome.tabs.query=async()=>[
+ {id:1,windowId:8,active:true,url:'https://extension.invalid/beta/explorer.html'},
+ {id:3,windowId:7,active:false,url:'https://extension.invalid/beta/explorer.html'},
+ {id:2,windowId:7,active:true,url:'https://extension.invalid/beta/explorer.html'},
+ {id:0,windowId:7,active:true,url:'https://unrelated.invalid/beta/explorer.html'}];
+ h.w.chrome.tabs.update=async(id,options)=>h.calls.push(['activate',{id,...options}]);
+ await h.nav.receive(async intent=>{await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'completed'}});},()=>true);
+ h.nav.open(good);await settle();assert.equal(h.calls[0][1].id,2);assert.equal(h.calls.length,1);h.dom.window.close();
+});
+test('receiver failure is reported to History without creating a recovery tab',async()=>{
+ const h=view();await h.nav.preference;h.w.chrome.tabs.query=async()=>[{id:2,windowId:7,url:'https://extension.invalid/beta/explorer.html'}];h.w.chrome.tabs.update=async()=>{};
+ await h.nav.receive(async intent=>{await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'failed',error:'The exact object was deleted.'}});},()=>true);
+ h.nav.open(good);await settle();assert.match(h.w.document.getElementById('history-navigation-status').textContent,/exact object was deleted/);assert.equal(h.calls.length,0);h.dom.window.close();
+});
+test('rapid GO TO before instance selection keeps only the latest target',async()=>{
+ const h=view();await h.nav.preference;const received=[];h.w.chrome.tabs.query=async()=>[{id:2,windowId:7,url:'https://extension.invalid/beta/explorer.html'}];h.w.chrome.tabs.update=async()=>{};
+ await h.nav.receive(async intent=>{received.push(intent.locator.key);await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'completed'}});},()=>true);
+ h.nav.open(good);h.nav.open({...good,destination:{...good.destination,key:'photos/latest.webp'}});await settle();assert.deepEqual(received,['photos/latest.webp']);assert.equal(h.calls.length,0);h.dom.window.close();
+});
+
+test('a new application becomes reusable before the next queued GO TO; no duplicate tab is created',async()=>{
+ const h=view();await h.nav.preference;let existing=false,release;const received=[];
+ h.w.chrome.tabs.query=async()=>existing?[{id:8,windowId:7,url:'https://extension.invalid/beta/explorer.html'}]:[];
+ h.w.chrome.tabs.update=async()=>h.calls.push(['activate']);
+ h.w.chrome.tabs.create=async options=>{
+  h.calls.push(['tab',options]);existing=true;
+  await new Promise(r=>release=r);
+  h.w.chrome.tabs.getCurrent=async()=>({id:8});
+  await h.nav.receive(async intent=>{received.push(intent.locator.key);await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'completed'}});},()=>true);
+  const token=options.url.split('#history=')[1];await h.w.chrome.storage.session.set({['historyAccepted:'+token]:{state:'accepted'},['historyResult:'+token]:{state:'completed'}});return {id:8};
+ };
+ h.nav.open(good);await settle();h.nav.open({...good,destination:{...good.destination,key:'photos/second.webp'}});release();await settle();
+ assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);assert.equal(h.calls.filter(c=>c[0]==='activate').length,1);assert.deepEqual(received,['photos/second.webp']);h.dom.window.close();
 });

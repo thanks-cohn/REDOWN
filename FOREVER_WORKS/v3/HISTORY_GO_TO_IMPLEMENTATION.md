@@ -83,3 +83,9 @@ Final focused run: **54 pass / 0 fail**, comprising 16 new History/navigation/me
 The installed Chrome probe is blocked with `CHROME_NOT_AVAILABLE_ENOENT`, zero assertions. No screenshots, actual tab/panel lifecycle, native keyboard/screen-reader acceptance, service-worker suspension or live Cloudflare transfers were verified. Mocked Chrome calls and in-memory provider pages are not live evidence. The full reliability suite retains historical failures and architecture freshness debt; this is not release certification.
 
 Remaining P0 acceptance: installed Chrome visual/narrow-width checks; exact saved file and preview using an authorized live disposable R2 save, including Keep Both; true panel tab preservation and explicit failure fallback; extension reload and MV3 lifecycle; keyboard/screen-reader review; capture and close the owner's exact unsupported Setup request if it recurs. Do not treat this implementation as proof that those external gates passed.
+
+## Subsequent instance-reuse implementation
+
+See [History GO TO instance reuse](HISTORY_GO_TO_INSTANCE_REUSE.md). The earlier
+always-create New Tab behavior above is superseded; exact receipts and preview
+contracts remain preserved.

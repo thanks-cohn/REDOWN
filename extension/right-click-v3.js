@@ -29,27 +29,35 @@
     while(d){if(seen.has(d.id)||!d.enabled||!prepared(d,profiles))return false;seen.add(d.id);if(d.parentId===null)return true;d=config.destinations.find(p=>p.id===d.parentId);}
     return false;
   }
+  const identity=d=>JSON.stringify([d.profileId,d.accountId,d.bucketName]);
+  const pathId=(d,prefix)=>'v3:path:'+encodeURIComponent(JSON.stringify([d.profileId,d.accountId,d.bucketName,prefix]));
   function narrowEntries(config,profiles,root='redown'){
-    validate(config,profiles);const out=[];
-    const walk=(parentId,menuParent)=>{
-      for(const d of config.destinations.filter(d=>d.parentId===parentId&&eligible(d,config,profiles))){
-        const id='v3:'+d.id;
-        out.push({id,parentId:menuParent,title:d.label.trim(),contexts});
-        if(config.destinations.some(c=>c.parentId===d.id&&eligible(c,config,profiles))){
-          out.push({id:id+':send',parentId:id,title:'Save here',contexts});walk(d.id,id);
-        }
+    validate(config,profiles);const groups=new Map(),out=[];
+    for(const d of config.destinations.filter(d=>eligible(d,config,profiles))){
+      const key=identity(d);let node=groups.get(key);
+      if(!node){node={scope:d,prefix:'',name:d.bucketName,records:[],children:new Map()};groups.set(key,node);}
+      for(const part of d.prefix?d.prefix.split('/'):[]){
+        if(!node.children.has(part))node.children.set(part,{scope:d,prefix:node.prefix?node.prefix+'/'+part:part,name:part,records:[],children:new Map()});
+        node=node.children.get(part);
       }
-    };
-    walk(null,root);return out;
+      node.records.push(d);
+    }
+    function walk(n,parent,bucket=false){
+      const single=!bucket&&n.records.length===1,d=single?n.records[0]:null;
+      const id=d?'v3:'+d.id:pathId(n.scope,n.prefix),branch=bucket||n.children.size||n.records.length>1;
+      const collision=[...groups.values()].filter(g=>g.name===n.name).length>1;
+      out.push({id,parentId:parent,title:d?d.label.trim():bucket&&collision?n.name+' · '+n.scope.accountId+' · '+n.scope.profileId:n.name,contexts});
+      if(d&&branch)out.push({id:id+':send',parentId:id,title:'Save here',contexts});
+      if(!single)for(const record of n.records)out.push({id:'v3:'+record.id,parentId:id,title:record.label.trim(),contexts});
+      for(const child of n.children.values())walk(child,id);
+    }
+    for(const g of groups.values())walk(g,root,true);
+    return out;
   }
   function narrowResolve(id,config,profiles){
-    if(typeof id!=='string'||!/^v3:[a-zA-Z0-9_-]+(?::send)?$/.test(id))return null;
-    try{validate(config,profiles);}catch{return null;}
-    const d=config.destinations.find(d=>d.id===id.split(':')[1]);
-    if(!d||!eligible(d,config,profiles))return null;
-    const branch=config.destinations.some(c=>c.parentId===d.id&&eligible(c,config,profiles));
-    if(branch!==id.endsWith(':send'))return null;
-    const profile=prepared(d,profiles);return {profile,owner:profile,prefix:d.prefix};
+    const d=config.destinations.find(d=>'v3:'+d.id===id||'v3:'+d.id+':send'===id);
+    if(!d)return null;
+    const profile=prepared(d,profiles);return profile?{profile,owner:profile,prefix:d.prefix}:null;
   }
   function remove(config,id){
     const ids=new Set([id]);let size;
@@ -67,17 +75,28 @@
     return presentation(value);
   }
   const within=(prefix,root)=>prefix===root||prefix.startsWith(root?root+'/':'');
+  const emptyScopes=()=>({version:1,revision:0,buckets:[]});
+  function validateScopes(value,profiles){
+    if(value?.version!==1||!Number.isSafeInteger(value.revision)||value.revision<0||!Array.isArray(value.buckets)||value.buckets.length>200)throw Error('Invalid Level bucket selection.');
+    const ids=new Set(),tuples=new Set();
+    for(const d of value.buckets){
+      if(!/^[a-zA-Z0-9_-]{1,80}$/.test(d.id)||ids.has(d.id)||tuples.has(identity(d))||typeof d.enabled!=='boolean'||!prepared(d,profiles))throw Error('Choose an activated bucket for Level.');
+      ids.add(d.id);tuples.add(identity(d));
+    }
+    return value;
+  }
   function roots(config,profiles){
-    validate(config,profiles);
-    const candidates=config.destinations.filter(d=>d.parentId===null&&eligible(d,config,profiles));
-    return candidates.filter((d,i)=>!candidates.some((other,j)=>other.profileId===d.profileId&&within(d.prefix,other.prefix)&&(other.prefix!==d.prefix||j<i)));
+    const scopes=config.levelScopes||emptyScopes();
+    // Revoked scopes fail closed independently; never fall back to shortcuts.
+    return (scopes.buckets||[]).filter(d=>d.enabled&&prepared(d,profiles)).map(d=>({...d,prefix:''}));
   }
   function inventoryKey(config,profiles,settings){
-    return JSON.stringify([config.revision,presentation(settings).depth,roots(config,profiles).map(d=>[d.profileId,d.accountId,d.bucketName,d.prefix,prepared(d,profiles).workerUrl])]);
+    return JSON.stringify([2,config.levelScopes?.revision||0,presentation(settings).depth,roots(config,profiles).map(d=>[d.id,d.profileId,d.accountId,d.bucketName,'',prepared(d,profiles).workerUrl])]);
   }
   function fresh(inventory,key,now=Date.now()){return inventory?.key===key&&Number.isFinite(inventory.at)&&now>=inventory.at&&now-inventory.at<limits.ttl;}
   const compare=(a,b)=>a<b?-1:a>b?1:0;
   function childPrefixes(page,prefix){
+    if(!page||page.delimited!==undefined&&!Array.isArray(page.delimited)||page.objects!==undefined&&!Array.isArray(page.objects)||(page.delimited||[]).some(p=>typeof p!=='string'||!p.endsWith('/'))||(page.objects||[]).some(o=>!o||typeof (o.key||o.name)!=='string'))throw Error('invalid-page');
     const parent=prefix?prefix+'/':'',children=new Set();
     for(const raw of [...(page.delimited||[]),...(page.objects||[]).map(o=>o.key||o.name||'')]){
       if(typeof raw!=='string'||!raw.startsWith(parent))continue;
@@ -94,58 +113,52 @@
     const options=presentation(settings),start=clock(),key=inventoryKey(config,profiles,options);
     const nodes=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,prefix:d.prefix,parent:null,level:0}));
     const warnings=new Set();let pages=0,halt=false;
-    for(let i=0;i<nodes.length&&!halt;i++){
-      const node=nodes[i];if(node.level>=options.depth)continue;
-      let cursor='';const seen=new Set();
-      do{
-        if(pages>=limits.pages||nodes.length>=limits.folders||clock()-start>=limits.milliseconds){warnings.add('Inventory limit reached; some folders are not shown.');halt=true;break;}
-        let timedOut=false;
-        try{
-          let timer;
-          const remaining=Math.max(1,Math.min(8000,limits.milliseconds-(clock()-start)));
-          const page=await Promise.race([listPage(node.accountId,node.bucketName,node.prefix?node.prefix+'/':'',cursor,'/'),new Promise((_,reject)=>{timer=setTimeout(()=>{timedOut=true;reject(Error('timeout'));},remaining);})]).finally(()=>clearTimeout(timer));
-          pages++;
-          if(page.truncated&&!page.cursor||page.cursor&&(page.cursor===cursor||seen.has(page.cursor)))throw Error('pagination');
-          const children=childPrefixes(page,node.prefix);
-          for(const prefix of children){
-            if(nodes.some(n=>n.profileId===node.profileId&&n.prefix===prefix))continue;
-            if(nodes.length>=limits.folders){warnings.add('Folder limit reached; some folders are not shown.');halt=true;break;}
-            nodes.push({...node,prefix,parent:node.prefix,level:node.level+1});
-          }
-          cursor=page.cursor||'';seen.add(cursor);
-        }catch{warnings.add('Some folders could not be read; inventory is incomplete.');if(timedOut)halt=true;break;}
-      }while(cursor&&!halt);
+    const perBucket=Math.max(1,Math.floor(limits.folders/Math.max(1,nodes.length)));
+    const queue=nodes.map(node=>({node,cursor:'',seen:[]}));
+    while(queue.length&&!halt){
+      const task=queue.shift(),node=task.node;if(node.level>=options.depth)continue;
+      if(pages>=limits.pages||nodes.length>=limits.folders||clock()-start>=limits.milliseconds){warnings.add('Inventory limit reached; some folders are not shown.');queue.unshift(task);break;}
+      let timedOut=false;
+      try{
+        let timer;const remaining=Math.max(1,Math.min(8000,limits.milliseconds-(clock()-start)));
+        pages++;
+        const page=await Promise.race([listPage(node.accountId,node.bucketName,node.prefix?node.prefix+'/':'',task.cursor,'/'),new Promise((_,reject)=>{timer=setTimeout(()=>{timedOut=true;reject(Error('timeout'));},remaining);})]).finally(()=>clearTimeout(timer));
+        if(page.truncated&&!page.cursor||page.cursor&&(page.cursor===task.cursor||task.seen.includes(page.cursor)))throw Error('pagination');
+        for(const prefix of childPrefixes(page,node.prefix)){
+          if(nodes.some(n=>identity(n)===identity(node)&&n.prefix===prefix))continue;
+          if(nodes.filter(n=>identity(n)===identity(node)).length>=perBucket){node.partial=true;warnings.add('Folder limit reached; some folders are not shown.');break;}
+          const child={...node,prefix,parent:node.prefix,level:node.level+1};nodes.push(child);queue.push({node:child,cursor:'',seen:[]});
+        }
+        if(page.cursor)queue.push({node,cursor:page.cursor,seen:[...task.seen,page.cursor]});
+        node.listed=!page.cursor;node.observedAt=clock();
+      }catch{node.listed=false;warnings.add('Some folders could not be read; inventory is incomplete.');if(timedOut)halt=true;}
     }
     // Stable sibling order independent of network completion and provider page order.
     nodes.sort((a,b)=>compare(a.profileId,b.profileId)||compare(a.prefix,b.prefix));
-    return {version:1,key,at:clock(),depth:options.depth,nodes,pages,complete:!warnings.size,warnings:[...warnings]};
+    const observations=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,checked:!!nodes.find(n=>identity(n)===identity(d)&&n.prefix==='')?.listed,knownFolders:nodes.filter(n=>identity(n)===identity(d)).length-1}));
+    return {version:2,key,at:clock(),depth:options.depth,nodes,pages,observations,frontier:queue.map(t=>({profileId:t.node.profileId,prefix:t.node.prefix,cursor:t.cursor})),unknownRemaining:!!warnings.size,complete:!warnings.size,warnings:[...warnings]};
   }
-  const nodeId=n=>'v3:cloud:'+encodeURIComponent(n.profileId)+':'+encodeURIComponent(n.prefix);
+  const nodeId=n=>'v3:cloud:'+encodeURIComponent(JSON.stringify([n.profileId,n.accountId,n.bucketName,n.prefix]));
   function levelProjection(config,profiles,settings,inventory,root,now){
     const key=inventoryKey(config,profiles,settings),valid=fresh(inventory,key,now),out=[],warnings=[];
+    if(!roots(config,profiles).length)return {entries:out,warnings:['Select participating buckets in Level setup.'],complete:false};
     if(!valid)return {entries:out,warnings:['Folder inventory is unavailable or stale. Open Right-click Setup to refresh.'],complete:false};
     warnings.push(...inventory.warnings||[]);
     const authorized=roots(config,profiles),nodes=(inventory.nodes||[]).filter(n=>authorized.some(d=>d.profileId===n.profileId&&d.accountId===n.accountId&&d.bucketName===n.bucketName&&within(n.prefix,d.prefix)));
-    function walk(node,parentId){
-      const children=nodes.filter(n=>n.profileId===node.profileId&&n.parent===node.prefix&&n.level===node.level+1);
-      const id=nodeId(node),cost=children.length?2:1;
-      if(out.length+cost>limits.entries){warnings.push('Chrome menu entry limit reached; some folders are not shown.');return;}
-      out.push({id,parentId,title:node.prefix.split('/').at(-1)||node.bucketName,contexts});
+    // Reserve every root before breadth-first allocation. Each folder reserves
+    // its parent Save here atomically; later buckets cannot be starved by DFS.
+    const pending=nodes.filter(n=>n.parent===null).map(n=>({node:n,parentId:root}));
+    const byParent=n=>nodes.filter(c=>identity(c)===identity(n)&&c.parent===n.prefix&&c.level===n.level+1);
+    while(pending.length){
+      const {node,parentId}=pending.shift(),id=nodeId(node),children=byParent(node),cost=children.length?2:1;
+      if(out.length+cost>limits.entries){warnings.push('Chrome menu entry limit reached; some folders are not shown.');continue;}
+      const collision=nodes.filter(n=>n.parent===null&&n.bucketName===node.bucketName).length>1;
+      const title=node.prefix.split('/').at(-1)||node.bucketName+(collision?' · '+node.accountId+' · '+node.profileId:'');
+      out.push({id,parentId,title,contexts});
       if(children.length)out.push({id:id+':send',parentId:id,title:'Save here',contexts});
-      for(const child of children)walk(child,id);
+      for(const child of children)pending.push({node:child,parentId:id});
     }
-    // Preserve bucket headings for authorized subfolder roots, without making
-    // ancestors outside the authorized prefix writable.
-    for(const profileId of [...new Set(nodes.map(n=>n.profileId))]){
-      const top=nodes.filter(n=>n.profileId===profileId&&n.parent===null);
-      let parent=root;
-      if(!top.some(n=>n.prefix==='')){
-        if(out.length>=limits.entries){warnings.push('Chrome menu entry limit reached; some folders are not shown.');break;}
-        parent='v3:bucket:'+encodeURIComponent(profileId);out.push({id:parent,parentId:root,title:top[0]?.bucketName||'',contexts});
-      }
-      for(const n of top)walk(n,parent);
-    }
-    return {entries:out,warnings:[...new Set(warnings)],complete:!!inventory.complete&&!warnings.length};
+    return {entries:out,summary:{depth:presentation(settings).depth,knownFolders:Math.max(0,nodes.length-authorized.length),rootsChecked:(inventory.observations||[]).filter(o=>o.checked).length,rootsTotal:authorized.length,ageMs:now-inventory.at},warnings:[...new Set(warnings)],complete:!!inventory.complete&&!warnings.length};
   }
   function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
     validate(config,profiles);const options=presentation(settings);
@@ -170,5 +183,5 @@
       const d=config.destinations.find(d=>'v3:'+d.id===id);const profile=prepared(d,profiles);return {profile,owner:profile,prefix:d.prefix};
     }catch{return null;}
   }
-  globalThis.RedownRightClickV3=Object.freeze({empty,validate,entries,resolve,remove,presentation,validatePresentation,roots,inventoryKey,fresh,discover,project,limits});
+  globalThis.RedownRightClickV3=Object.freeze({empty,validate,entries,resolve,remove,presentation,validatePresentation,emptyScopes,validateScopes,roots,inventoryKey,fresh,discover,project,limits});
 })();

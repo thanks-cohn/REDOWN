@@ -1,0 +1,9 @@
+{
+  "currentPassed": 633,
+  "currentFailedNames": 69,
+  "priorPassed": 621,
+  "priorFailedNames": 69,
+  "additionalVersusPrior": [],
+  "missingVersusPrior": [],
+  "note": "Comparison against published audit evidence, not a fresh pristine full-suite rerun. Runner newFailures refers to an older internal baseline."
+}

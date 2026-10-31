@@ -1,0 +1,14 @@
+{
+  "BASE-v3": {
+    "object": "322358123d78cebad75ee4503f30c33cfa34459c",
+    "commit": "209a52cd1515d44f0dab005e26b738e678c29b65"
+  },
+  "V3-MENU-MODES-BEFORE-HISTORY-REPAIR": {
+    "object": "cff7020054885e95a3f313cacd38f37218f9e735",
+    "commit": "46b03c66735aef6efd7395b19f4d8c02484ae947"
+  },
+  "V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION": {
+    "object": "20612eb8f181abfe087be8d28995d983cf4c2e1e",
+    "commit": "10bd512093e44f09d0b60676f89d1688c44b82ff"
+  }
+}

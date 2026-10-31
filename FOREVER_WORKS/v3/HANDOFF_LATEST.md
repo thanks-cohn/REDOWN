@@ -1,3 +1,42 @@
+# Latest: natural Narrow, selected-bucket Level, reuse-first History GO TO
+
+30 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
+Start commit `f78cd1f5064f326b127ab525e0d80a82b69a6220`; delivery commit is in branch history.
+All protected tag objects remain unchanged; see reconstruction-evidence/protected-tags.json.
+
+Implemented: unchanged flat Simple; natural configured-only Narrow trie with
+synthetic nonwritable ancestors; explicit whole-bucket Level participation in
+the existing header; true bucket-root depth and real cloud names; bounded fair
+inventory/projection with truthful partial status; acknowledged presentation
+reconciliation with retained unsaved drafts; reuse-first authenticated Explorer
+tab navigation and same-window Side Panel exact-file handoff; frontend acceptance
+and completion results; latest-request preview/timeout cancellation.
+
+Read [menu implementation](NARROW_DEPTH_RECONSTRUCTION_IMPLEMENTATION.md),
+[GO TO instance reuse](HISTORY_GO_TO_INSTANCE_REUSE.md),
+[baseline investigation](RECONSTRUCTION_BASELINE.md) and
+[regression evidence](reconstruction-evidence/README.md).
+
+Final focused: **66 pass / 0 fail**. Required full reliability: **633 pass / 69 failed
+names / incomplete**, same failed names as published audit; architecture freshness
+still fails. Syntax, API registry and issue inventory pass. Installed Chrome:
+**unavailable ENOENT, zero assertions**. No live Cloudflare verification.
+Existing tree rendering, History interface, preview renderer, prefix-ingest engine,
+manifest, provider/public/Legacy/archive modules remain preserved by hash checks.
+
+Outstanding: installed/native/visual/accessibility and real MV3/provider acceptance;
+original Unknown request incident attribution remains unproven. Inventory frontier
+is diagnostic only, Refresh restarts bounded discovery; huge bucket native coverage
+remains partial. Initial Shelf host transfers within the existing panel to its
+Explorer document; later GO TO requests navigate that running Explorer. Beta
+Dashboard already contains Explorer, with no separate dashboard route to rebuild.
+The Web Locks cross-page creation lane needs real Chrome verification.
+No release certification, cloud deployment, provider addition or tag movement.
+
+---
+
+## Historical handoffs below
+
 # History GO TO and V3 Setup handoff
 
 30 October 2026, America/Chicago. Branch `codex/v3-parity-first-reconstruction`.

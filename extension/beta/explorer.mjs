@@ -1074,7 +1074,7 @@ else{
 }})();
 
 // Session-backed handoff survives MV3 suspension; only opaque IDs enter the URL.
-let historyNavigationEpoch=0,historyNavigationAbort=null,consumedHistoryToken=null;
+let historyNavigationEpoch=0,historyNavigationAbort=null,consumedHistoryToken=null,latestHistoryAt=0,historyNavigationTimer=null;
 async function useHistoryNavigation(intent,{side=false}={}){
   if(!globalThis.RedownHistoryNavigation?.valid(intent)||intent.token===consumedHistoryToken)return;
   if(side){
@@ -1082,16 +1082,20 @@ async function useHistoryNavigation(intent,{side=false}={}){
     if(tab||win.id!==intent.windowId)return;
     await chrome.storage.session.set({historySideAcknowledged:{token:intent.token}});
   }
+  if(intent.issuedAt<latestHistoryAt)return;latestHistoryAt=intent.issuedAt||Date.now();
   consumedHistoryToken=intent.token;
   const ticket=++historyNavigationEpoch;
   historyNavigationAbort?.abort();
+  clearTimeout(historyNavigationTimer);
+  closePreview();
   const abort=new AbortController();historyNavigationAbort=abort;
-  const timer=setTimeout(()=>{discoveryEpoch++;epoch++;status('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.');abort.abort(Error('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.'));},90000);
+  const timer=historyNavigationTimer=setTimeout(()=>{if(ticket!==historyNavigationEpoch)return;discoveryEpoch++;epoch++;status('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.');abort.abort(Error('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.'));},90000);
   const active=()=>{abort.signal.throwIfAborted();if(ticket!==historyNavigationEpoch)throw Error('Navigation superseded.');};
   try{
     await explorerInitialization;active();
     if(busy)throw Error('Explorer is busy. Finish or cancel the current operation, then use GO TO again.');
     if(!cloudflareSignedIn)throw Error('Connect Cloudflare, then use History GO TO again.');
+    await chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'}});active();
     const target=intent.locator;
     status('Locating the exact saved file…');
     await loadAccounts(target);active();
@@ -1106,12 +1110,14 @@ async function useHistoryNavigation(intent,{side=false}={}){
     const row=[...$('files').querySelectorAll('[data-key]')].find(n=>n.dataset.key===item.key);
     row?.scrollIntoView({block:'nearest'});row?.focus({preventScroll:true});
     await showPreview(item);active();
+    await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'completed'}});
     status('Saved file selected. '+(!previewType(item.key)&&!/\.(zip|cbz)$/i.test(item.key)?'Preview is unavailable for this format.':''));
-  }catch(error){if(ticket===historyNavigationEpoch)status(error.message||'Saved-file navigation was interrupted. Use History GO TO again.');}
+  }catch(error){if(ticket===historyNavigationEpoch){status(error.message||'Saved-file navigation was interrupted. Use History GO TO again.');await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'failed',error:error.message}});}}
   finally{clearTimeout(timer);if(ticket===historyNavigationEpoch)historyNavigationAbort=null;}
 }
 void (async()=>{
   if(!globalThis.RedownHistoryNavigation)return;
+  await globalThis.RedownHistoryNavigation.receive(useHistoryNavigation,()=>cloudflareSignedIn);
   const token=new URLSearchParams(location.hash.slice(1)).get('history');
   if(token&&/^[a-zA-Z0-9-]{1,80}$/.test(token)){
     const key='historyNavigation:'+token,data=await chrome.storage.session.get(key);

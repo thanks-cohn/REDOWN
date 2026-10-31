@@ -48,3 +48,9 @@
 #v3-setup :is(#v3-status,#v3-engine,#v3-presentation-status):empty{display:none}
 
 #v3-setup.quick-links-content{min-height:0}
+
+#v3-setup #v3-level-buckets{flex-direction:column;gap:6px;padding:8px;max-height:180px;overflow:auto}
+#v3-setup #v3-level-buckets[hidden]{display:none}
+#v3-setup #v3-level-buckets legend{position:static;width:auto;height:auto;overflow:visible;clip-path:none;font-size:12px}
+#v3-setup #v3-level-buckets label{justify-content:flex-start;overflow-wrap:anywhere}
+#v3-setup #v3-level-buckets small{font-size:11px;color:var(--muted)}

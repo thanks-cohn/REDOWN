@@ -85,3 +85,9 @@ Primary references consulted: [Chrome contextMenus](https://developer.chrome.com
 See the current handoff for exact final counts and commit references. Focused tests exercise actual domain and sliced background registration/routing functions with synthetic callbacks/storage/provider pages, plus the real setup controller in JSDOM. Existing focus/plus/rename/form/checkbox regression cases remain active. New coverage includes modes, duplicates, parent saving, all depths 1–10, roots, siblings, pagination, broken cursors, failures, all bounds, cache serialization/expiry, stale IDs, service-worker fixture restart, late reads, single-flight, Level-only alarms, credential invalidation and rapid control persistence.
 
 Required remaining acceptance: install the packaged extension in an approved Chrome environment; inspect actual native submenu rendering/callback behavior and service-worker interruption; visually review desktop/narrow/reduced-motion geometry; run keyboard and screen-reader acceptance; verify authorized disposable R2 folders, remote saves and read-back through History/Explorer. Resolve or classify the existing broader test debt and architecture freshness independently. Source/mock passes do not close those gates.
+
+## Subsequent owner-semantics reconstruction
+
+See [Natural Narrow / participating-bucket Level](NARROW_DEPTH_RECONSTRUCTION_IMPLEMENTATION.md)
+for the newer implementation. Earlier parentId-only Narrow and configured-prefix
+Level semantics above are historical, superseded descriptions.
