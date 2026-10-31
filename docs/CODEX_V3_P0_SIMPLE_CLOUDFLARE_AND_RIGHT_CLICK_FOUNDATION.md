@@ -141,6 +141,14 @@ RIGHT-CLICK MENU MODE
 
 **All modes:** No debug inventory strings among Chrome's native destination choices; a partial scan must retain still-authorized usable paths; navigation/selection should be stable; no duplicate entry IDs or hidden intentional save destinations; exact save receipt and provider route must match clicked leaf. Respect actual Chrome menu size/behavior limits instead of claiming infinite entries.
 
+### P0 HOT PATH AND CRASH RECOVERY: REGISTER CHROME MENU FROM INDEXEDDB CURRENT *IN ADVANCE*
+
+**Canonical source:** [`NEED_TO_DO:fundamentals` section 5A](../NEED_TO_DO/fundamentals.md). **Never read/parse/import `right-click.json`, traverse IndexedDB records or scan buckets just because the user opens Chrome's right-click.** Chrome displays native context-menu entries that REDOWN has already registered. The event handler resolves a clicked stable ID against CURRENT/authorization before transferring.
+
+After a verified edit: atomically commit CURRENT record-level changes + JSONL journal + desired generation, then immediately create/update/remove affected native menu items as supported, acknowledge `appliedMenuGeneration`, and keep all unaffected paths. If native registration fails, CURRENT stays correct and the last acknowledged menu/root recovery command must remain available where possible; a recovery loop reconciles current desired-vs-applied generations. Handle browser startup, worker restart, crashes between commit/menu API, stale generations, and partial discovery without destructive native `removeAll()` reset unless absolutely necessary. **An IndexedDB transaction cannot atomically include Chrome contextMenus API calls.** Do not promise full native menu while Chrome/extension cannot execute or after all extension-owned data is erased. The existing `ensureMenuAccess` + native ID tracking / incremental registration are useful; migrate the builder's current `chrome.storage.local.rightClickV3Inventory` authority to verified CURRENT carefully.
+
+---
+
 ## 5. APPLY / RELOAD / RIGHT-CLICK RELIABILITY (P0 FOLLOW-UP)
 
 - **USER-FIRST INVARIANT:** The user's acknowledged change is reflected immediately in the relevant native menu, while every untouched, previously known, still-authorized directory remains accessible through Nested. Never wait for a global rescan to display the confirmed change; never discard other branches because a new scan is partial.
