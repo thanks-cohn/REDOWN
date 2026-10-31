@@ -209,3 +209,32 @@ test('GO TO production code has no Shelf redirect or side-panel navigation path'
  assert.doesNotMatch(script,/sidePanel|location\.href|historySideNavigation|relaySide/);
  assert.doesNotMatch(read('extension/beta/explorer.mjs'),/historySideNavigation|historySideAcknowledged/);
 });
+
+test('reopening loaded History removes stale Explorer readiness diagnostics without hiding transfers',async()=>{
+ const h=view({transferHistory:[good]});await h.nav.preference;
+ h.w.eval(read('extension/shelf-history.js'));
+ const navStatus=h.w.document.getElementById('history-navigation-status');
+ navStatus.textContent='Could not open Explorer: An existing Explorer is not ready. Activate it, connect Cloudflare and retry GO TO.';
+ await h.w.RedownShelfHistory.open();
+ assert.equal(navStatus.textContent,'','a previous GO TO error is not part of the History archive');
+ assert.match(h.w.document.getElementById('history-status').textContent,/1 transfers/);
+ h.dom.window.close();
+});
+
+test('a fresh GO TO clears stale errors and acknowledged success does not leave a diagnostic behind',async()=>{
+ const h=view();await h.nav.preference;
+ const status=h.w.document.getElementById('history-navigation-status');
+ status.textContent='Old navigation failed';
+ h.w.chrome.tabs.create=async options=>{
+  h.calls.push(['tab',options]);
+  const token=options.url.split('#history=')[1];
+  await h.w.chrome.storage.session.set({['historyAccepted:'+token]:{state:'accepted'}});
+  status.textContent='Old intermediate error';
+  await h.w.chrome.storage.session.set({['historyResult:'+token]:{state:'completed'}});
+  return {id:8};
+ };
+ h.nav.open(good);await settle();
+ assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);
+ assert.equal(status.textContent,'','a real completed navigation clears prior technical warnings');
+ h.dom.window.close();
+});
