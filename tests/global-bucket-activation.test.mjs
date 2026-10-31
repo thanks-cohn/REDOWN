@@ -140,7 +140,7 @@ function mountV3Setup(h){
  window.chrome={runtime:{sendMessage:m=>send(h,m)},storage:{onChanged:{addListener:fn=>listeners.push(fn)}}};
  window.eval(read('extension/right-click-v3.js'));
  window.eval(read('extension/beta/right-click-v3-ui.js'));
- return {dom,document:window.document,listeners,ready:()=>waitFor(()=>window.document.getElementById('v3-save').textContent!=='Save Changes')};
+ return {dom,document:window.document,listeners,ready:()=>waitFor(()=>window.document.getElementById('v3-outline').textContent.includes('Activate a bucket'))};
 }
 async function waitFor(predicate){
  for(let i=0;i<80;i++){if(predicate())return;await new Promise(resolve=>setTimeout(resolve,1));}
