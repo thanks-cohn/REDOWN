@@ -1,5 +1,13 @@
 # REDOWN bugs
 
+## P0 global activation / Legacy default regression (2026-10-31)
+
+**Status:** Source causes repaired and locally tested; installed Chrome/live acceptance pending. [Complete repair and recovery report](../FOREVER_WORKS/v3/P0_V3_ONLY_GLOBAL_BUCKET_ACTIVATION.md). Implementation `139711a9de89d289a2bb7d4c4887120149e8d3bc`.
+
+The old button used selected Explorer `context()` and per-bucket `cfProvision`, without seeding V3 destinations. Missing engine settings selected Legacy. V3 is now unconditional, migrated automatically and has no runtime selector/warning. Global activation enumerates all accessible account/bucket pages, verifies private profiles, preserves custom shortcuts, commits activated roots/default deep participation and requires acknowledged root coverage. Root access is independent of folder inventory and Explorer selection. Partial failures retain successful buckets and offer retry; saved preparation work resumes through existing alarms/startup. The green prerequisite button reflects global state and respects reduced motion. Migration has a retained original snapshot and credential-free Settings recovery export.
+
+Focused 140/140 plus three targeted fixture regressions pass; full reliability 679 pass / the same 69 failed names / incomplete. Syntax/registry/issues pass, architecture freshness fails. Installed Chrome unavailable, zero assertions; no live Cloudflare mutations. Existing pagination/store/native projection budgets and unverified native/provider acceptance remain explicit limitations. Prior toolbar incident uncertainty is unchanged.
+
 ## P0 incident: toolbar opens nothing and native REDOWN menu disappears (2026-10-31)
 
 **Status:** Source-confirmed failure mechanisms repaired and locally tested; original installed trigger and Chrome acceptance remain open. [Emergency report, implementation commit and exact manual tests](../FOREVER_WORKS/v3/P0_TOOLBAR_AND_CONTEXT_MENU_EMERGENCY_REPAIR.md).

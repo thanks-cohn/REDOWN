@@ -1,0 +1,15 @@
+{
+  "state": "unavailable",
+  "scope": "Installed Chrome and live Cloudflare",
+  "executables": {
+    "chromium": null,
+    "chromium-browser": null,
+    "google-chrome": null
+  },
+  "assertions": [],
+  "liveCloudflareMutations": 0,
+  "limitations": [
+    "No installed Chrome executable found. No native-menu, rendered animation, MV3 or live transfer acceptance is claimed.",
+    "No administrator policy bypass attempted."
+  ]
+}

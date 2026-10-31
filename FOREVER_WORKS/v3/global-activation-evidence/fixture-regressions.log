@@ -1,0 +1,11 @@
+✔ session invalidation clears the old bucket and ignores its delayed response (217.531388ms)
+✔ Activate Buckets remains visible beside Grid View, even before storage selection (164.303259ms)
+✔ provisioning includes explicit public Worker fetch compatibility without weakening verified transfers (2.451569ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 741.981269

@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-31",
+  "timezone": "America/Chicago",
+  "branch": "codex/v3-parity-first-reconstruction",
+  "implementationCommit": "139711a9de89d289a2bb7d4c4887120149e8d3bc",
+  "testedLocalCommit": "cdb01c93c06959499f5d796585d6287814e7949a",
+  "testedImplementationTree": "9142a639f84191a6d7d339d6f6e258fc58206750",
+  "sourceHashesMatch": true,
+  "focused": {
+    "passed": 140,
+    "failed": 0,
+    "globalActivationTests": 17
+  },
+  "targetedFixtureRegressions": {
+    "passed": 3,
+    "failed": 0
+  },
+  "baseline": {
+    "passed": 662,
+    "failedNames": 69,
+    "incomplete": true
+  },
+  "final": {
+    "passed": 679,
+    "failedNames": 69,
+    "incomplete": true,
+    "additionalFailedNames": []
+  },
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "liveCloudflareMutations": 0,
+  "installedBrowserAssertions": 0,
+  "releaseCertified": false,
+  "sourceInventoryHash": "887d2d68545ed2b81841fe958d712fd31a789cd18250694f6a49f8a03b0509b5",
+  "publication": "GitHub app; command-line push credentials unavailable. Exact tested implementation tree reproduced. Final documentation delivery SHA is in branch history and delivery response."
+}

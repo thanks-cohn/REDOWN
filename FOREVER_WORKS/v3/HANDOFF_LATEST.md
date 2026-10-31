@@ -1,3 +1,21 @@
+# Latest: V3 only and global private bucket activation
+
+31 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
+
+Published implementation **`139711a9de89d289a2bb7d4c4887120149e8d3bc`**, exact tested tree **`9142a639f84191a6d7d339d6f6e258fc58206750`** (local commit `cdb01c9`). Documentation/evidence delivery follows; final delivery SHA is in branch history and the delivery response. Protected checkpoint tags are unchanged.
+
+Read [the global activation report](P0_V3_ONLY_GLOBAL_BUCKET_ACTIVATION.md) and [exact evidence summary](global-activation-evidence/summary.json). V3 now owns native menu projection, click routing, Setup and Apply unconditionally. Legacy is no longer imported or selectable. Automatic migration retains profiles/History, labels, ordering, disabled targets and existing presentation; incompatible records retain an original snapshot and a credential-free recovery export in Shelf Settings.
+
+Activate Buckets no longer consumes Explorer selection. It discovers paginated accessible accounts/buckets, prepares and verifies private Workers using existing APIs, commits independent activated roots and default Level participation, and requires native registration acknowledgement. Simple/Narrow shortcuts retain their meanings, with a separate Buckets root path; Level roots work before inventory. Saved progress and the existing alarm/startup lane support continuation, session changes stop preparation, and partial failures retain usable successes with Retry Failed Buckets. Private activation cannot inherit the old implicit public-assets default. No bucket visibility/public URL API is called.
+
+The existing toolbar button owns the green prerequisite glow after login, shows progress while disabled during work, and clears guidance on verified success. Reduced motion gets a static outline. Existing editor/layout/transfer implementations remain in place.
+
+**Actual local results:** 140 focused pass / 0 fail; three targeted fixture regressions pass. Full reliability **679 pass / 69 failed names / incomplete**, identical failed names to the fresh baseline **662 pass / 69 failed names**. Syntax/registry/issues pass; architecture freshness remains failed. Whole-background mocks cover two native root clicks through the existing save handler and completion check. **Installed Chrome unavailable, zero assertions; no live Cloudflare mutations or transfer verification.** Native visual/accessibility/MV3/live acceptance remains open. Existing store/native pagination budgets remain bounded; excess state is partial/recoverable, never falsely certified. No release certificate.
+
+---
+
+## Earlier handoffs retained as history
+
 # Latest: P0 toolbar and native-menu access recovery
 
 31 October 2026, America/Chicago. Branch `codex/v3-parity-first-reconstruction`.
