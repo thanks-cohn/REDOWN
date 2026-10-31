@@ -1,5 +1,9 @@
 # ReDown Simple right-click menu — canonical behavior and current state
 
+> **SUPERSEDED HIERARCHY NOTICE — OWNER DECISION 2026-10-31:** The old claim that every Simple destination is a direct child of REDOWN, with no provider submenu, is now HISTORICAL. **Current requirement:** with no custom destinations, `REDOWN → Cloudflare` is a direct-save leaf; when one or more named locations are configured, `REDOWN → Cloudflare → Menu Label` displays flat labeled leaves under a single provider parent. **No `Buckets` heading or peers beside Cloudflare in Simple.** Cloudflare's submenu is the final Simple destination depth. **This newest requirement is defined by [the urgent V3 P0 Codex work request](CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md).** Preserve old details below only as historical implementation evidence; do not treat their hierarchy rules as active. Other explicitly compatible rules (exact destination, label fallbacks, editor preservation) remain active.
+
+
+
 **Recorded:** 2026-10-10 (America/Chicago)  
 **Scope:** Simple right-click mode, not Nested mode and not the Basic/Premium/API tiers.  
 **Status:** User-approved requirements; partial source implementation. Human Chrome testing and some preference controls remain pending.
