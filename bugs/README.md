@@ -1,5 +1,17 @@
 # REDOWN bugs
 
+## P0 V3 Level Depth saved, but native menu does not promptly show updated folders (2026-10-31)
+
+**Status:** Owner-reported in installed Chrome; source inspection establishes asynchronous discovery/generation-reconciliation hazards, but exact first-Reload timeline is **not yet reproduced**. **Code fix not yet implemented.**
+
+**Reproduction report:** User changed Level Depth from its prior value (menu initially showed Depth 2), clicked Save Changes, and saw no expected menu change. First Reload appeared to do nothing; a further depth change, Save and Reload finally produced updated folder entries. The exact new Depth values and elapsed timing were not captured; do not invent them.
+
+**Source mechanism:** Depth `onchange` writes `setRightClickV3Presentation` immediately; Save Changes only confirms `applyRightClickV3` menu registration. `buildMenus()` starts `refreshV3Inventory()` as detached background work. A changed Depth invalidates the old inventory key, so the immediate projection contains roots but not deeper folders until discovery completes. `refreshV3Inventory(force)` returns any existing in-flight `v3InventoryRefresh` regardless of generation; Reload can therefore await an old-depth operation rather than guarantee a latest-depth scan. Superseded discovery schedules another rebuild later. Current UI does not make the intermediate state visible.
+
+**Expected:** Save latest Depth, register a truthful immediate menu projection, then progressively add deeper authorized folder entries on discovery completion. Show clear 'saved / loading / ready / partial' state and guarantee an up-to-date generation after overlapping Save/Reload requests. Do not require a second manual Reload or present a stale tree as complete.
+
+**Acceptance/tests:** Hold an old-depth scan in flight, change Depth, click Save and Reload, then release the old scan; verify latest-depth inventory eventually registers without extra user action. Test rapid changes and partial/time-limited requests, preserve settings/drafts, run installed Chrome checks. See the bottom section of [the 2026-10-31 roadmap](../NEED_TO_DO/10312026.md) for the complete implementation scope.
+
 ## P0 V3 Setup does not automatically reflect global bucket activation (2026-10-31)
 
 **Status:** Source-level UI refresh patch committed; installed-Chrome acceptance pending. **Priority:** P0 onboarding correctness.
