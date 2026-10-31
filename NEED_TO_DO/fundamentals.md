@@ -7,6 +7,44 @@
 **Status:** SPECIFICATION — not proof of code implementation, Chrome verification or a working backup.  
 **Precedence:** This file controls the fundamentals when older plans conflict, particularly the two-stage mode selector, Cloudflare-first native menu, user-first immediate updates, and immutable dated snapshots.
 
+## OWNER-APPROVED CURRENT-FIRST CONTRACT — SUPERSEDES VAGUE "ONE DAILY SNAPSHOT" WORDING
+
+**Defaults and state identity:** Settings starts at **Daily**. For EACH eligible active calendar day, REDOWN makes **TWO logically distinct dated states**:
+
+1. **DAILY BACKUP (immutable):** a protected snapshot of the last committed complete known state at that day's actual rollover/capture moment. This backup **never changes** as the user works that day.
+2. **DAILY WORKING (mutable):** a separate editable working state initially based on that same complete known graph. This is the copy REDOWN updates whenever it verifies a user edit or new authorized discovery.
+3. **CURRENT (always latest):** a stable, globally resolvable **durable pointer/view to the active DAILY WORKING version**, not a stale cache and not an additional independent full copy. Its referenced version/generation advances atomically with each confirmed edit. Callers always resolve CURRENT, not "whichever scan result arrived last." If an implementation materializes `CURRENT/right-click.json` for reads/export, it must reflect the same acknowledged database generation and never become a diverging second authority.
+4. **APPEND-ONLY DELTA JOURNAL:** the versioned event stream recording exactly which entries changed; its committed generation must match the change applied to the working graph and CURRENT.
+
+```text
+                   FIRST ACTIVE USE OF A NEW DAY
+                                |
+                      CAPTURE VERIFIED CURRENT
+                         /             \
+                        /               \
+            YYYY-MM-DD/BACKUP       YYYY-MM-DD/WORKING
+              IMMUTABLE                  MUTABLE  <── verified edits + new discoveries
+                                              |
+                                    CURRENT ──┘ (latest generation)
+                                              |
+                          REGISTRATION OF NESTED CHROME MENU
+                                              ^
+                                read from CURRENT only
+
+      Every verified modification also APPENDS to right-click.jsonl
+      No changed/untouched branches are dropped on a partial scan.
+```
+
+**The core atomicity rule:** Provider-reported cloud change must be confirmed first; then a **single IndexedDB readwrite transaction** updates the affected WORKING graph node(s), the matching journal event(s), the scan/menu generation and CURRENT's active version/generation pointer. If storage commit fails, don't claim the edit is durably incorporated, and reconcile truthful provider outcome on retry. A local menu label/configuration edit can be committed directly with that transaction. On transaction success, **immediately (no full scan) reconcile the Chrome-native right-click menu using CURRENT** and acknowledge the applied registration generation. Menu APIs are separate browser operations, not part of an IndexedDB transaction: if registration fails, retain CURRENT, preserve the last usable menu as far as supported, retry/reconcile and visibly report the pending native Apply rather than claiming two separate APIs committed atomically.
+
+**MOST IMPORTANT:** Untouched, previously known, authorized branches are **not reinitialized, discarded, compacted away, overwritten or made inaccessible** by a user editing another branch, a failed cache lookup, incomplete provider discovery, service-worker restart, delayed native registration, TTL expiry, or changing Depth. Nested → Narrow projects only deliberately configured routes from CURRENT; Nested → Depth projects all eligible known authorized routes within selected depth from CURRENT. **Both start `REDOWN → Cloudflare`.** If Chrome's native menu cannot fit every stored route, REDOWN's authorized full-tree chooser must remain accessible; do not falsely claim unlimited native Chrome entries.
+
+**Daily rollover:** At the first actual authorized activation/transaction of each new local calendar day, reconcile the prior day's latest CURRENT, seal yesterday's WORKING as a historical state, create today's new **immutable BACKUP** and separately addressable **mutable WORKING**, and atomically redirect CURRENT to today's WORKING. Preserve identical node records through immutable structural sharing/copy-on-write; "two" means two independently reconstructable logical states, not wasteful full rewrites of identical data. Record the *real* capture time and period label; never fabricate a midnight capture while Chrome was closed. Make rollover idempotent across simultaneous tabs/windows/service-worker startup and power loss. At least one restorable daily backup and one current working state are required for each eligible active day.
+
+**Cadence settings:** Daily creates BACKUP + WORKING for each eligible active day (**default**). Weekly creates a stable weekly BACKUP and a mutable working-period state, with CURRENT still moving on *every* verified edit. Off disables new dated historical backups, **not CURRENT, the live graph or the journal**. Changing cadence must not corrupt CURRENT, retroactively rewrite old immutable dated backups, or silently erase old history.
+
+**Cache crash rule:** On startup or any cache miss, recover the latest consistent CURRENT pointer and graph from durable storage before consulting cloud inventory. Rebuild native menu projection from CURRENT immediately subject to current authorization. Partial scans may add verified changes, never replace CURRENT with a thinner cache. If CURRENT is damaged, validate and reconstruct it from the latest good immutable backup plus committed journal, preserving exact sequence/generation and flagging any genuinely unrecoverable data; never silently reset to empty. This reconstruction protects against local cache/transaction errors, **not** full Chrome-profile/extension-data deletion: independent user-authorized off-device backup remains necessary for that threat.
+
 ## 0. The highest priority invariant — the user sees their changes immediately; untouched directories remain
 
 > **When a user makes a confirmed change through REDOWN, the intended right-click destination and local live tree update immediately, without waiting for a full provider scan. ALL untouched, previously known, still-authorized directories stay accessible through Nested. Reload, Depth, OAuth interruption, a partial scan, Chrome native menu refresh or an MV3 service-worker restart must NEVER erase or hide still-authorized known branches merely because the latest scan did not visit them.**
@@ -99,62 +137,53 @@ Depth navigates the **actual previously known and newly discovered authorized di
 
 No old branch should vanish because another bucket exhausted a page/time budget, one OAuth token expired, a newer Depth was chosen, an inventory TTL expired, or Chrome's native menu reached an entry limit. Keep the full durable tree and offer a searchable REDOWN browse-more fallback for nodes that cannot fit into the native menu.
 
-## 5. The three distinct memory artifacts — stable snapshot, live JSON, delta journal
+## 5. CURRENT + daily dual-copy + append-only JSONL — authoritative model
 
-**Conceptual layout:**
+There are **two dated working/safety artifacts per active day** plus the **CURRENT** reference and the journal. All menu reads derive their data from the CURRENT working graph, never a frozen backup or a disposable discovery cache.
 
-```text
-       VERIFIED CHANGE / DISCOVERY
-                    │
-                    ▼
-      ONE ATOMIC LOCAL TRANSACTION
-      ┌─────────────┴──────────────┐
-      ▼                            ▼
-  LIVE WORKING GRAPH          APPEND-ONLY JOURNAL
-  right-click.json            right-click.jsonl
-  current generation          verified changed records
-      │                            │
-      └─────────────┬──────────────┘
-                    ▼
-       DAILY or WEEKLY STABLE
-       IMMUTABLE RESTORE POINT
-       (plus original baseline)
-                    │
-                    ▼
-        REBUILD / AUDIT HISTORY
-```
+| Logical artifact | Role | Editing / lifecycle |
+|---|---|---|
+| `YYYY-MM-DD/BACKUP` | Today's stable safety anchor | Created once from prior committed CURRENT; **immutable** |
+| `YYYY-MM-DD/WORKING` | Today's complete editable known-tree version | Receives small, verified changes throughout the day |
+| `CURRENT` | Globally stable pointer/manifest to active WORKING + latest committed generation | Advances **atomically** on each verified edit |
+| `right-click.jsonl` | Append-only verified deltas + sequence/idempotency keys | Records only real changes; unchanged scans produce no change event |
+| `right-click.json` | Exportable materialized JSON read model of CURRENT and safe metadata | Regenerated or incrementally materialized from authority; never a conflicting second truth |
 
-**Names `right-click.json` and `right-click.jsonl` describe portable logical formats and exports.** An extension must not assume it can append to a JSONL file inside its packaged installation. The **durable authority** should be IndexedDB (or a carefully justified transactional equivalent) with separate node, append-only event, discovery-checkpoint and immutable snapshot stores. A JSON manifest/materialized read model can be exported from it; portable JSONL can be streamed from the event store. The actual Chrome native context menu is only a **projection** of this database, never the authoritative store.
+A tested transactional IndexedDB layout is preferred, with named stores such as `liveNodes`, `workingVersions`, `dailyBackups`, `journal`, `scanCheckpoints`, and `meta/current` inside **one database and one transaction scope** for updates that must commit together. Exact store names are illustrative, not a demand to reinvent existing code; migrations from `chrome.storage.local['right-click.json']` must preserve all verified known paths before switching authority.
 
-### A. Stable dated JSON snapshot — NEVER mutate an existing dated point
+**Not literal bundled files:** `right-click.json` and `right-click.jsonl` are **portable export formats and logical read models**. A Manifest V3 extension cannot append to its packaged source files. Maintain the journal transactionally, export ordered JSONL lines when requested. Keep immutable backups/reconstructable snapshot references and journal ranges with integrity metadata; use copy-on-write structural sharing to avoid copying 10,000 unchanged entries each day.
 
-- On the first eligible **actual capture** of the user's chosen calendar day (Daily; **default**) or eligible week (Weekly), create an **immutable, reconstructable snapshot reference** to a **verified committed generation** of the graph, or a compact baseline + journal range.
-- Once saved, that day's/week's anchor **does not change** when the user edits a folder or menu later. Later confirmed changes go to the **live working graph and journal**, and the current menu reflects them immediately.
-- On the next eligible day/week create another immutable point. Unchanged days/weeks should share unchanged graph content rather than duplicate large files. Retain an initial verified baseline and weekly recovery lineage without extra redundant full copies.
-- If Chrome was closed or off during the scheduled capture, **do not fake a midnight snapshot**. On resumption create a point with its real capture timestamp; separately record the last observation time.
-- Settings: **Daily (default) / Weekly / Off** control new *historical dated points only*. Off does not disable the live graph, journal, or safe current menu. Changing cadence never deletes existing history without explicit user choice.
+### A. BACKUP: today's stable unchanging starting state
 
-### B. Live editable JSON — the current working version
+- On the first eligible active use of a day, snapshot the last committed full CURRENT generation into the dated BACKUP. Keep this BACKUP invariant even after twenty or two thousand edits later that same day.
+- Save a timestamp, base generation, journal boundary and integrity checksum. An unchanged day can share stable content with prior dates while retaining a separate logical restore point.
+- Never label a newly captured backup as having existed at midnight while Chrome was closed. Once yesterday's WORKING closes, retain its reconstructable final generation as history according to policy.
+- Settings choose Daily (**default**), Weekly or Off. This governs immutable historical frequency; never disables CURRENT's persistence and live-menu behavior.
 
-- Current snapshot/materialized graph includes canonical `provider/account/bucket/prefix`, parent ID, enabled/authorization state, stable node ID, verified/observed times, source, generation, saved configured labels and menu preferences as appropriate.
-- This is continuously reconstructed/updated from committed deltas. A confirmed change updates only its affected records immediately, without rewriting an entire huge JSON file on each event.
-- Untouched branches retain their records, depth, identities, latest known verification and accessibility when still authorized.
-- Preserve privacy. Folder paths can be sensitive; the live file must not contain OAuth tokens or private object bytes.
+### B. WORKING and CURRENT: the latest version is always the one projected
 
-### C. Append-only JSONL journal — record exactly what changed
+- Today's WORKING is seeded from the full prior CURRENT and carries **all previously known still-authorized branches**, including those that a new scan has not checked.
+- CURRENT is the single authoritative lookup key to that WORKING's most recent committed generation. Every accepted local configuration change and confirmed cloud mutation advances the working graph/CURRENT in one atomic transaction.
+- Immediately after commit, update the Chrome native menu to reflect the changed entries. Read **the entire known eligible state** from CURRENT when necessary, not only the latest scan's incomplete subset. Do not wait for new cloud scanning to show the user's just-confirmed changes.
+- If Chrome's menu API rejects or delays registration, keep the newly committed CURRENT and last usable menu, retry the latest generation and report accurate progress. Do not overwrite a newer CURRENT from a late old result.
+- A CURRENT cache miss means **read/recover persisted CURRENT**, not `new empty tree` and not `list all buckets then discard everything not returned`. On worker restart, recover CURRENT before initiating discovery.
 
-Example conceptual export (illustrative record values, NOT real user data):
+### C. JSONL: the detailed differences
+
+Each real change adds a uniquely identified, ordered event; scans returning the same verified contents do not add fake changes. Example export entries, illustrative only:
 
 ```jsonl
 {"schema":1,"seq":101,"generation":42,"op":"prefix-added","account":"ACCOUNT_X","bucket":"redown","prefix":"photography/portraits","observedAt":"2026-10-31T20:00:00Z","verified":true}
 {"schema":1,"seq":102,"generation":43,"op":"menu-label-updated","destinationId":"DEST_X","before":"Photos","after":"Portraits","observedAt":"2026-10-31T20:03:00Z","verified":true}
 ```
 
-- Each event has a stable sequence, idempotency key, generation, canonical subject identity, operation, reason/source and **observedAt**. A real external creation date cannot be invented from a later discovery timestamp.
-- **No meaningful change = no new change event and no pointless record rewrite.** Updated `lastCheckedAt` is checkpoint/observation metadata, not proof that a directory changed.
-- Exactly one transaction commits **the changed graph records + any required journal events + scan checkpoint/generation**. Crash mid-write rolls the whole transaction back; replay is idempotent and never creates corrupt partial JSONL lines.
-- Verification is mandatory before marking a cloud operation successful or declaring a deletion. A partial or unauthorized listing must never create a tombstone.
-- Compact redundant physical representation without destroying the journal chain/immutable references needed to reconstruct chosen historical points; test hash/checksum and revision integrity.
+Node edits, journal events, scan progress/checkpoints and CURRENT generation commit together; if the MV3 worker terminates midway, the transaction fails atomically and retries idempotently. The export can reconstruct the state between stable backup points. Do not invent external file-creation times from later observations. Never commit deletion/tombstone from partial scans, timeouts or authorization loss. Compact journal/storage without invalidating references for retained immutable backup or closed working versions.
+
+### D. Authorization, browser limits, recovery and off-device safety
+
+- Native Chrome context menu is a **projection of CURRENT**, not its storage backend. Live route clicks recheck account/bucket authorization and exact destination identity, and no known authorized branch is removed merely for missing in a partial scan.
+- Chrome's native entry limits may prevent displaying every path simultaneously; keep all in CURRENT, provide explicit full-tree browse/search access from REDOWN and truthfully note limits.
+- IndexedDB and `chrome.storage.local` surviving ordinary restarts does not mean survival after uninstall, removed profile or erased extension origin data. For that case, only a **separately stored, verified, user-authorized** export or encrypted remote backup can restore a missing CURRENT; importing requires reconnect/revalidate.
 
 ## 6. How the user gets immediate changes without losing the other 18 buckets
 
@@ -197,7 +226,7 @@ Private by default. Local folder names and old path histories can be sensitive e
 4. New discovered sibling appears only after verified discovery; an unselected sibling never leaks into Narrow.
 5. Only default bucket Simple saves via `REDOWN → Cloudflare`; additional children/buckets switch to `REDOWN → Cloudflare → REDOWN` first, followed by flat alternatives.
 6. Nested → Narrow / Nested → Depth both start with `REDOWN → Cloudflare` and preserve correct label semantics.
-7. Daily immutable anchor survives twenty edits that day without being overwritten. Live working graph changes twenty times; journal logs only twenty actual changes. Next eligible day gets a new immutable point. Weekly/Off behave correctly.
+7. **Daily dual-copy invariant:** On each eligible active day create exactly one immutable BACKUP and separately addressable mutable WORKING seeded from the prior full CURRENT. CURRENT always resolves to the latest committed working generation; twenty edits preserve unchanged BACKUP and all untouched branches, advance CURRENT twenty times and append only twenty actual deltas. At next rollover, seal prior WORKING and create the next BACKUP+WORKING without fabricated offline timestamps. Weekly/Off retain CURRENT and journal.
 8. Crash between updates cannot leave graph updated without matching required journal/checkpoint, or vice versa; replay is idempotent.
 9. Service-worker restart and OAuth disconnect/reconnect preserve acknowledged graph and resume valid per-scope scan progress; revoked accounts have no actionable native save routes.
 10. After clearing/removing local extension data in a disposable test profile, **no recovery is promised without a verified external backup**. Import of a test backup restores history and configured paths after reauthorization and account reconciliation, without recreating provider data blindly.
@@ -213,4 +242,4 @@ Private by default. Local folder names and old path histories can be sensitive e
 
 **Order:** (1) User-facing Simple/Nested provider hierarchy, immediate menu Apply and false-toolbar-warning fix; (2) no-loss known-depth preservation and latest-generation native reconciliation; (3) transactional live graph + journal + resume checkpoints + targeted folder refresh; (4) stable Daily/Weekly/Off history references; (5) opt-in verifiable export/backup/restore protection against actual local Chrome data deletion. Do not confuse local operational durability with off-device disaster recovery.
 
-**Final acceptance:** **User sees their confirmed change immediately. All other untouched, still-authorized paths remain accessible through Nested. Today's/this week's immutable snapshot remains stable; the live version evolves; the journal records only verified differences.**
+**Final acceptance:** **Every eligible Daily period has TWO distinct dated states: unchanging BACKUP and editable WORKING. CURRENT ALWAYS resolves to the latest committed WORKING state, which drives the immediately updated Nested Chrome menu. Untouched, still-authorized paths remain available. JSONL records only verified changes; a partial scan/cache failure can never replace the complete CURRENT tree.**
