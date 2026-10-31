@@ -166,6 +166,58 @@ function draw(){
 
 }
 async function load(){if(saving||presentationSaving||scopeSaving||applying){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;migrationRecoveryCount=r.migrationRecoveryCount||0;levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();acknowledgedScopes=structuredClone(levelScopes);scopeDraft=false;engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;presentationDraft=false;applicationKey=r.applicationKey;paintPresentation();menuFeedback(r.menuStatus);applyPending=!!pending||r.engine!=='v3'||r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey;applyError=r.menuStatus?.state==='failed'?r.menuStatus.error:'';paintApply();pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'');}catch(e){status(e.message);}}
+// Activation is background-owned. Refresh the local V3 tree when Explorer finishes
+// preparing buckets; never reload the page, rescan Cloudflare or discard local drafts.
+let activationViewRefresh=null,activationViewQueued=false;
+async function refreshActivatedDestinations(){
+ const r=await request('rightClickV3Snapshot');
+ if(!config||saving||presentationSaving||scopeSaving||applying){activationViewQueued=true;return;}
+ const oldProfile=$('profile').value,outline=$('outline'),oldScroll=outline.scrollTop;
+ const nextProfiles=r.profiles||[];
+ const profilesChanged=JSON.stringify(profiles)!==JSON.stringify(nextProfiles);
+ const remoteChanged=JSON.stringify(config.destinations)!==JSON.stringify(r.config.destinations);
+ if(pending||blocked){
+  if(remoteChanged){blocked=true;status('Destinations changed during activation. Local edits retained; reload to reconcile before applying.');}
+ }else config=r.config;
+ profiles=nextProfiles;
+ migrationRecoveryCount=r.migrationRecoveryCount||0;
+ if(!scopeDraft&&!scopeSaving){
+  levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();
+  acknowledgedScopes=structuredClone(levelScopes);
+ }
+ if(profilesChanged){
+  $('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));
+  if(profiles.some(p=>p.id===oldProfile))$('profile').value=oldProfile;
+  for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}
+ }
+ // Do not replace an in-progress presentation choice.
+ if(!presentationDraft&&!presentationSaving){
+  menuPresentation=RedownRightClickV3.presentation(r.presentation);
+  acknowledgedPresentation=menuPresentation;
+ }
+ engine=r.engine;
+ applicationKey=r.applicationKey;
+ menuFeedback(r.menuStatus);
+ if(!pending&&!blocked&&!presentationDraft&&!scopeDraft){
+  applyPending=r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey;
+  applyError=r.menuStatus?.state==='failed'?r.menuStatus.error:'';
+ }
+ paintPresentation();
+ if(config)draw();
+ outline.scrollTop=oldScroll;
+ paintApply();
+}
+function queueActivatedDestinationsRefresh(){
+ if(!config)return;
+ if(activationViewRefresh){activationViewQueued=true;return;}
+ activationViewRefresh=(async()=>{
+  do{
+   activationViewQueued=false;
+   await refreshActivatedDestinations();
+  }while(activationViewQueued&&!saving&&!presentationSaving&&!scopeSaving&&!applying);
+ })().catch(e=>status('Could not update activated buckets: '+e.message+' Use Reload to retry.')).finally(()=>{activationViewRefresh=null;});
+}
+document.addEventListener('redown:destinations-ready',queueActivatedDestinationsRefresh);
 $('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load().then(async()=>{if(menuPresentation.style==='nested'&&menuPresentation.nested==='level'){try{const r=await request('refreshRightClickV3Inventory');menuFeedback(r.menuStatus);}catch(e){$('presentation-status').textContent=e.message;}}});}};
 $('undo').onclick=()=>{if(!undo)return;const previous=undo;undo=null;change(next=>{next.destinations=previous;});};
 $('retry').onclick=()=>{if(blocked)return status('Reload to reconcile retained changes first.');pending=true;void flush();};
@@ -173,7 +225,7 @@ $('cancel').onclick=()=>{$('add').hidden=true;select(addAnchor);focusSelected();
 $('folders').onkeydown=e=>{if(e.key==='Escape'&&!$('add').hidden){e.preventDefault();e.stopPropagation();$('cancel').click();}};
 $('add').onsubmit=e=>{e.preventDefault();const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;const before=config,id=crypto.randomUUID();change(next=>{next.destinations.push({id,profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,parentId:$('parent').value||null,prefix:$('prefix').value.replace(/\/$/,''),label:$('label').value,enabled:true});});if(config!==before){$('add').hidden=true;let parent=$('parent').value;while(parent){expanded.add(parent);parent=config.destinations.find(d=>d.id===parent)?.parentId;}expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);selected=id;draw();focusSelected();}};
 $('browse').onclick=async()=>{const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;try{const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix:$('prefix').value});$('folders').replaceChildren();const filter=el('input');filter.type='search';filter.placeholder='Filter folders…';filter.setAttribute('aria-label','Filter existing folders');filter.oninput=()=>{for(const choice of $('folders').querySelectorAll('button'))choice.hidden=!choice.textContent.toLowerCase().includes(filter.value.toLowerCase());};$('folders').append(filter);for(const f of r.folders||[]){const path=(typeof f==='string'?f:f.prefix).replace(/\/$/,'');$('folders').append(button(path,'Choose '+path,()=>{$('prefix').value=path;$('label').value||=path.split('/').at(-1)||p.bucketName;$('prefix').focus();}));}status(r.cursor?'More folders exist. Enter a narrower path to browse.':'Folders loaded.');}catch(e){status(e.message);}};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickV3LevelScopes&&!scopeSaving){acknowledgedScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV3.emptyScopes();if(!scopeDraft)levelScopes=acknowledgedScopes;dirty();paintScopes();}if(changes.rightClickV3Presentation&&!presentationSaving){dirty();acknowledgedPresentation=RedownRightClickV3.presentation(changes.rightClickV3Presentation.newValue);if(!presentationDraft)menuPresentation=acknowledgedPresentation;else $('presentation-status').textContent='Saved presentation changed. Your unsaved choice is retained; reload or choose again to retry.';paintPresentation();}if(changes.rightClickMenuStatus)menuFeedback(changes.rightClickMenuStatus.newValue);if(changes.rightClickEngine){dirty();engine='v3';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.profiles||changes.rightClickActivatedBuckets||(['ready','partial','failed'].includes(changes.rightClickGlobalActivation?.newValue?.state)&&changes.rightClickGlobalActivation?.newValue?.state!==changes.rightClickGlobalActivation?.oldValue?.state))queueActivatedDestinationsRefresh();if(changes.rightClickV3LevelScopes&&!scopeSaving){acknowledgedScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV3.emptyScopes();if(!scopeDraft)levelScopes=acknowledgedScopes;dirty();paintScopes();}if(changes.rightClickV3Presentation&&!presentationSaving){dirty();acknowledgedPresentation=RedownRightClickV3.presentation(changes.rightClickV3Presentation.newValue);if(!presentationDraft)menuPresentation=acknowledgedPresentation;else $('presentation-status').textContent='Saved presentation changed. Your unsaved choice is retained; reload or choose again to retry.';paintPresentation();}if(changes.rightClickMenuStatus)menuFeedback(changes.rightClickMenuStatus.newValue);if(changes.rightClickEngine){dirty();engine='v3';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
 $('save').onclick=async()=>{
  if(applying)return;applying=true;paintApply();
  try{
