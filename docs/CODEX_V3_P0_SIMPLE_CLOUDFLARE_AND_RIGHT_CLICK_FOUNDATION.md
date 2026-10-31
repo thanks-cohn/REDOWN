@@ -35,7 +35,7 @@ REDOWN
 - **Exactly one destination entry**, named **Cloudflare**, underneath the REDOWN root.
 - **Never:** `REDOWN → Buckets → [bucket names]`.
 - No stray activated bucket lists, diagnostic rows, duplicated `Files`, initial setup shortcuts, or default location exposed as an unexplained extra menu entry.
-- Cloudflare is a **provider display label**, not a literal bucket name. The actual default can be the R2 bucket named `redown`, or an explicitly preserved user-selected safe default.
+- Cloudflare is a **provider display label**, not a literal bucket name. **OWNER CLARIFICATION (2026-10-31): With zero custom children, clicking Cloudflare MUST save directly to the ROOT (empty prefix) of the Cloudflare R2 bucket whose literal name is `redown` (lowercase), in the verified/default connected account.** It must NEVER target whichever bucket is highlighted in Explorer, an arbitrary active bucket, a non-root folder, or an older unrelated default path. For an existing user with a separately configured prior default, preserve that record without silently overwriting it; don't let it hijack this new Simple zero-child leaf. If `redown` is not verified/usable, show an honest setup/authorization path rather than treating a different bucket as a substitute.
 - If the account is not yet authorized, the Cloudflare action should lead to the existing connection/activation onboarding in a supported user-initiated REDOWN UI, **not** pretend a save occurred. Do not expose unauthorized destination details.
 - Preserve a safe route to Settings/repair in the Shelf; standard Simple should not be cluttered with unrelated utility rows. If native recovery requires a minimal management entry in a true failure state, justify and test this exception explicitly.
 
@@ -61,7 +61,7 @@ REDOWN
 
 ### Explicit limits
 
-- `REDOWN → Cloudflare` (direct save) is the **zero-custom-location** path.
+- `REDOWN → Cloudflare` (direct save to **the root of the verified bucket literally named `redown`**, using `prefix: ''`) is the **zero-custom-location** path.
 - `REDOWN → Cloudflare → Menu Label` (clickable leaf) is the **custom-location** path.
 - **No third destination depth** in Simple. **No `Buckets` anywhere in Simple's normal native destination menu.**
 - Do not affect Nested/Narrow and Nested/Level/Depth navigation.
@@ -124,7 +124,7 @@ Implement after the Simple slice using `FOREVER_WORKS/v3/P0_PERSISTENT_RIGHT_CLI
 ## 7. EXACT REQUIRED ACCEPTANCE MATRIX
 
 **P0 Simple (MUST PASS FIRST):**
-1. Fresh install, one authorized Cloudflare account and default bucket: visible destination structure is exactly `REDOWN → Cloudflare`, with **no Buckets** submenu and no custom peer nodes. Click Cloudflare → verified save to correct account/`redown` root.
+1. Fresh install, one authorized Cloudflare account and verified R2 bucket literally named `redown`: visible destination structure is exactly `REDOWN → Cloudflare`, with **no Buckets** submenu and no custom peer nodes. Click Cloudflare → verified save to **that account's `redown` bucket ROOT (`prefix: ''`)**, regardless of Explorer's selected bucket or last-used folder. If that bucket is not yet verified, the click must initiate an honest setup/connection route, not an arbitrary upload.
 2. Add one existing folder with Menu Label `Photography`: now `REDOWN → Cloudflare → Photography`; clicking saves to exact selected prefix. It is not a third-level folder tree.
 3. Add `Projects` and `Backups`: three sibling destination leaves under Cloudflare in saved order. No `REDOWN → Projects` peer. No `REDOWN → Buckets`.
 4. One custom destination points to a 6+ segment remote folder: native Simple still exposes **one labeled child leaf** and click writes to the full exact prefix.
