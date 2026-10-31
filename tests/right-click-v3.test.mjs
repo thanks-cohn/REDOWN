@@ -281,7 +281,8 @@ test('a timed-out read halts traversal instead of accumulating unresolved remote
 test('periodic maintenance leaves Legacy and non-Level V3 alone; credential changes clear inventory before rebuilding',async()=>{
  const alarms=[],listeners=[],calls=[],local={rightClickEngine:'legacy',rightClickV3Presentation:level};
  const c=vm.createContext({RedownRightClickV3:model(),chrome:{runtime:{onInstalled:{addListener(){}},onStartup:{addListener(){}}},alarms:{create:(...args)=>alarms.push(args),onAlarm:{addListener:fn=>listeners.push(fn)}},storage:{local:{get:async()=>local,set:async patch=>{calls.push('invalidate');Object.assign(local,patch);}},onChanged:{addListener:fn=>listeners.push(fn)}}},rebuildMenus:async()=>calls.push('rebuild')});
- vm.runInContext(bg.slice(bg.indexOf('chrome.runtime.onInstalled.addListener(rebuildMenus);'),bg.indexOf('/* Cosmetic only. A context-menu gesture')),c);
+ vm.runInContext(bg.slice(bg.indexOf('function requestMenuRebuild(){'),bg.indexOf('/* Cosmetic only. A context-menu gesture')),c);
+ await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;
  assert.equal(alarms[0][1].periodInMinutes,5);listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,[]);
  local.rightClickEngine='v3';local.rightClickV3Presentation=narrow;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,[]);
  local.rightClickV3Presentation=level;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;

@@ -2193,20 +2193,46 @@ async function rebuildMenus() {
   // must finish in order so another removeAll cannot delete a pending parent.
   const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
     try{
+      await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
+      // Establish local access before reading caches, profiles or inventory.
+      await ensureMenuAccess();
       await restoreV3MenuSnapshot();
       const applicationKey=await menuApplicationKey();
-      await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       const receipt=await buildMenus();
       const current=applicationKey===await menuApplicationKey();
       await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':'registered'}});
       await persistV3MenuSnapshot();
       return receipt;
     }catch(error){
+      // Also covers interrupted/failed removal and malformed projection inputs.
+      await ensureMenuAccess().catch(recovery=>console.warn('REDOWN menu access could not be restored:',recovery));
       await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
       throw error;
     }
   });
   menuRebuildQueue=operation;return operation;
+}
+// Chrome's native callback owns acknowledgement and runtime.lastError lifetime.
+function acknowledgeMenu(method,item){
+  return new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(Error('Chrome menu update timed out. Retry Apply.')),5000);
+    const done=()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error?reject(Error(error.message)):resolve();};
+    try{
+      if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}
+      else chrome.contextMenus.create(item,done);
+    }catch(error){clearTimeout(timer);reject(error);}
+  });
+}
+async function ensureMenuAccess(){
+  const contexts=['link','image','video','audio','page'];
+  for(const item of [
+    {id:ROOT_MENU_ID,title:'REDOWN',contexts},
+    {id:'redown-manage',parentId:ROOT_MENU_ID,title:'Manage destinations…',contexts}
+  ]){
+    // Update preserves existing children/destinations; create only if absent.
+    try{await acknowledgeMenu('update',item);}
+    catch{await acknowledgeMenu('create',item);}
+  }
 }
 async function buildMenus() {
   // Produce a deterministic parent-first description before touching Chrome.
@@ -2229,14 +2255,11 @@ async function buildMenus() {
     try{
       for(const {destination,operation,...item} of description){
         if(!chrome.runtime?.id){chrome.contextMenus.create(item);continue;}
-        await new Promise((resolve,reject)=>{
-          const timer=setTimeout(()=>reject(Error('Chrome menu update timed out. Retry Save.')),5000);
-          try{chrome.contextMenus.create(item,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error?reject(Error(error.message)):resolve();});}
-          catch(error){clearTimeout(timer);reject(error);}
-        });
+        await acknowledgeMenu('create',item);
       }
     }catch(error){
-      await chrome.contextMenus.removeAll().catch(()=>{});
+      // Keep the acknowledged root and any successfully installed destinations.
+      // The serialized caller restores the local management entry on failure.
       throw Error('Chrome menu rebuild failed. Retry Save. '+error.message);
     }
   };
@@ -2426,14 +2449,25 @@ async function applyToolbarOpenMode() {
   const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');
   const mode = toolbarOpenMode === 'popup' ? 'popup' : 'shelf';
   // Popup mode still opens the toolbar Popup, but Settings needs the Shelf available.
-  await chrome.sidePanel.setOptions({path:'shelf.html',enabled:true});
+  try{await chrome.sidePanel.setOptions({path:'shelf.html',enabled:true});}
+  catch(error){console.warn('REDOWN Shelf configuration failed; local opening remains available:',error);}
   await chrome.action.setPopup({popup:mode==='popup'?'popup.html':''});
 }
+function openToolbarInterface(tab){
+  const fallback=async error=>{
+    console.warn('REDOWN Shelf could not open; opening the local Shelf:',error);
+    try{await chrome.tabs.create({url:chrome.runtime.getURL('shelf.html'),active:true});}
+    catch(failure){
+      console.error('REDOWN local Shelf could not open:',failure);
+      await chrome.runtime.openOptionsPage();
+    }
+  };
+  // No storage read, discovery or await before this user-gesture-bound call.
+  try{return Promise.resolve(chrome.sidePanel.open({windowId:tab.windowId})).catch(fallback);}
+  catch(error){return fallback(error);}
+}
 chrome.action.onClicked.addListener(tab => {
-  // Invoke open during the toolbar-click gesture; await would risk losing it.
-  void chrome.sidePanel.open({windowId:tab.windowId}).catch(error=>{
-    console.warn('REDOWN Shelf could not open:',error);
-  });
+  void openToolbarInterface(tab).catch(error=>console.error('REDOWN could not open:',error));
 });
 chrome.runtime.onInstalled.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
 chrome.runtime.onStartup.addListener(()=>{void applyToolbarOpenMode().catch(console.error);});
@@ -2442,8 +2476,14 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 void applyToolbarOpenMode().catch(console.error);
 
-chrome.runtime.onInstalled.addListener(rebuildMenus);
-chrome.runtime.onStartup.addListener(rebuildMenus);
+function requestMenuRebuild(){
+  void rebuildMenus().catch(error=>console.warn('REDOWN menu update failed; local access recovery attempted:',error));
+}
+chrome.runtime.onInstalled.addListener(requestMenuRebuild);
+chrome.runtime.onStartup.addListener(requestMenuRebuild);
+// onStartup is a browser-start event, not an MV3 worker-activation event.
+// Reconcile on every worker load as well, using the same serialized lane.
+requestMenuRebuild();
 chrome.alarms.create('redown-v3-inventory',{periodInMinutes:5});
 chrome.alarms.onAlarm.addListener(alarm=>{
   if(alarm.name!=='redown-v3-inventory')return;
