@@ -15,7 +15,7 @@ The owner wants REDOWN to feel **obvious to a complete newcomer** while retainin
 **Deliver in this order:**
 1. **P0, IMMEDIATE:** Repair V3 **Simple** to show **Cloudflare**, never the separate **Buckets** heading, with user-configured labels and other eligible buckets **under Cloudflare**. The default `redown` root remains directly clickable—on `Cloudflare` with no other children, or on the first `REDOWN` child when others exist. Fix native projection, exact routing, activation and setup without redesigning the editor.
 2. **P0, IMMEDIATE — SAME DELIVERY, NOT DEFERRED:** Remove REDOWN's **false toolbar `!` badge and technical hover warnings**, fix the underlying Shelf-readiness/late-success race, and restore the clean branded idle icon/title. Both #1 and #2 must be implemented, tested, committed and reported together. Do not call the Simple fix complete while the false toolbar warning remains.
-3. **P0 NEXT:** Preserve known folder depths and eliminate non-destructive Reload/Save race bugs for Nested → Level. Maintain Native Simple/Narrow parity.
+3. **P0 NEXT:** Expose exactly **Simple / Narrow / Nested** as the three user-facing mode choices; **Nested alone shows Depth 1–10** and discovers actual folders, while Narrow organizes only user-configured destinations. Preserve known Depth across Reload and eliminate stale discovery races. Retain native-mode parity.
 4. **P0/P1 NEXT:** Incremental persistent directory graph, journal, OAuth/MV3 checkpoints, scoped Refresh Folder Listing and efficient menu reconciliation.
 5. **P1 LATER:** Daily-default/Weekly/Off historical snapshots, exports and Time Machine queries, built on the same graph; no separate crawler and no premature full Time Machine UI.
 Each phase must have independent tests, truthful status, and commits. **Do not attempt one giant speculative rewrite or delay the user's Simple fix until Time Machine is done.**
@@ -98,6 +98,38 @@ The intended onboarding is **Connect Cloudflare → verify/reuse or safely creat
 - Fresh installs default to Simple. Existing users with explicit Nested selection must retain it. Existing customized Simple locations must migrate safely to the Cloudflare parent, **not be deleted, renamed in storage, or silently redirected to `redown`**.
 - Make required settings choices clear but do not redesign the established polished V3 tree editor. **Adding a location in Simple puts it under Cloudflare immediately after acknowledged Apply**; no repeated Reload.
 - Cloudflare save action must invoke existing verified transfer execution; a menu registration acknowledgement does not establish a completed file save. Preserve Keep Both default and protected cloud/private access.
+
+## 3A. P0 — EXACT THREE USER-FACING MODES: SIMPLE / NARROW / NESTED
+
+**LATEST OWNER REQUIREMENT — SUPERSEDES THE OLD TWO-STAGE MODE SELECTOR:** Right-click Setup must offer exactly **three peer mode choices: Simple, Narrow, Nested.** Do not require choosing **Nested → Narrow/Level**. **Nested** is the mode that exposes the real discovered cloud directory structure **with an adjustable Depth 1–10**. **Narrow** is a separate mode that includes **only intentionally configured destinations arranged by their natural folder hierarchy**. **Simple** is the new Cloudflare-first direct-save presentation defined above.
+
+```text
+RIGHT-CLICK MODE
+( ) Simple   Cloudflare quick saves
+( ) Narrow   Only my configured destinations, naturally organized
+( ) Nested   Actual cloud directories, up to chosen Depth
+
+When Nested is selected:
+  Depth [1..10]              [existing bucket participation control]
+```
+
+**Important distinction:** In **Narrow**, the menu follows the natural path shape of configured shortcuts, even when those shortcuts point to deep remote folders. It must **not** automatically enumerate the rest of the bucket. In **Nested**, the menu represents **actually discovered folder levels**, with the Depth control governing the projection and without requiring individual folders to be configured as shortcuts. Simple is neither of these.
+
+**Preserve the existing V3 engine and saved settings.** The present code stores `{style:'simple'}`, `{style:'nested',nested:'narrow'}`, or `{style:'nested',nested:'level'}`. These are valid internal representations; map them to **Simple**, **Narrow**, **Nested** respectively in the UI rather than replacing the underlying engine, inventing a second state store, or breaking migrations. When old settings specify nested/narrow, display Narrow; when they specify nested/level, display Nested and the saved Depth. Internal enum `level` may remain in code, but the user-facing mode must say **Nested**. No "Nested" parent option with another Narrow/Level decision beneath it.
+
+**UI:** Replace the old two-stage selector with one accessible, mutually exclusive three-choice control. Show Depth (1–10) and participating-bucket scope selection **only for Nested**. Show the relevant configured-location editor in Simple/Narrow as appropriate. Preserve selected modes, configured destinations, expanded tree state, focused inputs and unsaved drafts across transitions. Do not redesign the existing polished tree editor. Switching modes cannot reset labels, destinations, Depth, activated buckets or scan state. Save Changes must truly register the projection corresponding to the visible selected mode.
+
+**Mandatory regression matrix:**
+1. UI visibly presents exactly **Simple / Narrow / Nested**, not Simple / Nested and a hidden Narrow/Level choice.
+2. **Simple**: `REDOWN → Cloudflare` direct-save leaf when the default bucket is alone; once another eligible bucket or custom location exists, `REDOWN → Cloudflare → REDOWN` first, followed by flat configured/discovered sibling choices. No separate Buckets heading.
+3. **Narrow**: Given a configured deep target `photography/architecture/brutalism` and an unconfigured neighbor `photography/cats`, show only the natural hierarchy leading to the configured target, **never** the unconfigured neighbor, and perform **no full-bucket discovery** due to Narrow selection.
+4. **Nested**: With verified bucket subfolders at depths 1–5, changing Depth 2→5 reveals known eligible deeper branches and may resume bounded discovery for missing branches. It is not limited to user-configured shortcuts.
+5. Switch Simple→Narrow→Nested→Simple and back; preserve each mode's data, latest Depth, authorized bucket scope, configured shortcuts, exact save routes and browser-native menu state. Older saved `nested:'narrow'` displays Narrow; older saved `nested:'level'` displays Nested.
+6. Real Chrome context-menu registration and click/save destinations match each visible mode, with no stale or duplicated nodes, silent mode snap-back, or missing labels. Keep debug/warning entries out of Chrome's native menu.
+
+**This is required in the same Codex work program.** Complete the immediate Simple provider-subtree + false toolbar warning fixes first, then deliver the accessible three-mode selector and Narrow/Nested parity; do not claim the overall right-click reconstruction is finished without these acceptance tests. Do not hold the immediate fixes hostage to a broad Time Machine database rewrite.
+
+---
 
 ## 4. PRESERVE THE OTHER TWO MENU MODES — TEST REGRESSIONS
 
@@ -216,6 +248,6 @@ Chrome may append `Wants access to this site`, which is a **separate browser-own
 
 **When additional labeled locations or buckets exist:** `REDOWN → Cloudflare → REDOWN` (default bucket ROOT) **plus sibling** `Menu Label` and/or discovered bucket-name leaves. **Never a separate Buckets heading or another submenu depth.**
 
-**A power user can still switch to Narrow or Level and traverse genuinely authorized folders without losing remembered directory knowledge when REDOWN refreshes or disconnects.**
+**A power user can choose Narrow to organize only configured destinations or Nested to browse genuinely authorized discovered folders up to chosen Depth 1–10, without losing remembered directory knowledge when REDOWN refreshes or disconnects.**
 
 **FIX SIMPLE FIRST AND REMOVE THE FALSE EXCLAMATION/HOVER WARNINGS IN THE SAME ROUND. PRESERVE WHAT WORKS. THEN BUILD THE RELIABLE FOUNDATION.**
