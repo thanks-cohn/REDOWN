@@ -7,6 +7,15 @@
 **Execution:** Inspect current installed/build sources, diagnose, implement narrow correction, test in real Chrome, document, commit, push. **Not documentation-only.**
 
 ## Owner's actual desired outcome
+## PRIORITY OVERRIDE — MUST SHIP WITH THE V3 P0 SIMPLE MENU REPAIR (2026-10-31)
+
+The owner explicitly requires this bug fixed **in the SAME Codex Work round** as `docs/CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md`. This page is the detailed supporting source/evidence checklist; its historical P1 label does NOT permit deferring the correction.
+
+**Latest branding contract:** The REDOWN toolbar must NOT display an invented `!` warning or long internal diagnostic tooltip for accepted, pending, missing-handshake or late-successful Shelf requests. Even true launch failures should be explained through the existing accessible Shelf or native icon-attached pop-out/Health & Repair rather than publishing raw event codes on hover. Keep a concise brand-safe action title and true private local evidence. If a Chrome-controlled permission notice says `Wants access to this site`, do not assert the extension can suppress it; inspect scope and explain the browser's independent security UI without changing user consent.
+
+**One click, one interface:** Shelf first; only on confirmed failure and where permitted, the **existing attached** action pop-out, never both/detached windows/tabs. Preserve legitimate temporary transfer feedback and precise diagnostic evidence. This is an **implementation request**, not a cosmetic documentation change.
+
+
 
 **Normal healthy behavior:** REDOWN's original branded icon remains fully visible, clean, without a persistent exclamation/warning overlay, grey/error treatment, or developer text in the icon tooltip. Hover should use a short, friendly, accessible title such as `REDOWN — Your cloud companion` (owner-approved branding can be used). A successful or accepted Shelf launch is not an error.
 
