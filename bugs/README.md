@@ -1,5 +1,15 @@
 # REDOWN bugs
 
+## P0 — Simple menu shows Buckets and places custom labels beside it (2026-10-31)
+
+**Owner observation:** Native V3 Simple right-click currently shows a separate `Buckets` submenu for globally activated buckets and puts newly added Simple locations at REDOWN's root alongside Buckets. **Expected latest behavior:** with no custom locations, only `REDOWN → Cloudflare` direct save; with one or more custom labels, `REDOWN → Cloudflare → Menu Label` siblings, never deeper, and never a Buckets submenu in Simple. Cloudflare is the provider display name, not a literal bucket identity.
+
+**Source-confirmed mechanism:** `extension/right-click-v3.js:project()` builds Simple entries with `parentId:root` and unconditionally prepends a `v3:buckets` menu for activated buckets in its non-Level path. `resolve()` and `background.js:buildMenus()` must be updated consistently to preserve exact save targets. Older flat-Simple docs are superseded by this owner's newest hierarchy rule. **Implementation request:** [urgent Codex V3 Simple Cloudflare fix and right-click reliability foundation](../docs/CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md). **Not fixed by documentation; installed-Chrome verification pending.**
+
+---
+
+
+
 
 ## P1 visual trust — false redown toolbar exclamation and technical hover title (2026-10-31)
 
