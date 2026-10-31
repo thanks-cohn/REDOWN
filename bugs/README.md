@@ -2,6 +2,12 @@
 
 The Simple Cloudflare structure and false REDOWN toolbar warnings are now repaired in production source and tested together. [Implementation, permission ownership, evidence and remaining foundation phases](../FOREVER_WORKS/v3/SIMPLE_CLOUDFLARE_AND_TOOLBAR_BRANDING_REPAIR.md). Normal Simple uses Cloudflare, preserving the verified redown root and flat exact targets; launch pending/unknown/late-success states keep a friendly title and never write `!`. Global/tab cleanup preserves valid transfer feedback. Chrome-owned site-access notices are unaffected. Depth/partial Reload retention is also implemented as a bounded first foundation phase. **Installed Chrome/visual/live-provider acceptance remains pending; original clean-profile incident is not closed.** Older owner reports below are retained as history, not the latest implementation status.
 
+## P0 — CURRENT/indexedDB authority and native right-click recovery not yet implemented as a unified system
+
+**Required behavior:** Chrome native menu is pre-registered from CURRENT, not loaded from a JSON file or cloud scan when right-clicking. On a verified user change, transactionally update only affected CURRENT/WORKING records + journal, then immediately reconcile the registered menu; an incomplete inventory, MV3 restart or temporary cache failure cannot erase untouched known authorized branches. Daily default has immutable BACKUP and mutable WORKING with CURRENT always latest. Maintain Cloudflare as provider heading for future sibling Google Drive/OneDrive/S3 implementations; no fake connected providers. [Canonical production implementation handoff](../docs/CODEX_P0_CURRENT_FIRST_NATIVE_MENU_MULTICLOUD_FOUNDATION.md). **New architecture is specified, not yet demonstrated in installed Chrome.**
+
+---
+
 # REDOWN bugs
 
 ## P0 — Simple menu shows Buckets and places custom labels beside it (2026-10-31)
