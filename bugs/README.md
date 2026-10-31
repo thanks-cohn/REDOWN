@@ -1,5 +1,16 @@
 # REDOWN bugs
 
+
+## P1 visual trust — false redown toolbar exclamation and technical hover title (2026-10-31)
+
+**OWNER REPRODUCTION:** The Shelf and REDOWN functionality appear to work, but the Chrome toolbar icon displays an unwanted exclamation badge and hover includes `Chrome accepted the Shelf request; local readiness is unconfirmed. No second panel was opened.` followed by `Wants access to this site`.
+
+**CONFIRMED CODE CAUSE:** `extension/entry-bootstrap.js:56–61` explicitly sets the literal `!` badge and arbitrary title from `launchIndication`. At `entry-bootstrap.js:126`, a resolved Shelf opening with failed readiness handshake invokes that misleading warning. At `entry-bootstrap.js:112–119`, a 2.5-second pending timer also triggers `!` and invalidates its generation so a successful late Shelf result can fail to clear it. Thus functional UI can appear broken. **The Chrome phrase `Wants access to this site` is a separate browser-managed site-permissions string** and must be diagnosed without suppressing Chrome security indicators or broadening grants.
+
+**REQUIRED WORK FIX:** [Focused Codex audit/implementation specification](../docs/CODEX_P1_TOOLBAR_BRANDING_BADGE_TOOLTIP_PERMISSION_AUDIT.md). Neutral/unverified is not a failure. Restore branded icon/title for accepted, pending, late success, and actually ready Shelf; preserve private Diagnostics and genuine actionable error/recovery state, clean per-tab/global badge/title overrides, respect Chrome-owned permission notices and preserve Shelf-first/attached-pop-out-only/no-double-interface behavior. Native Chrome visual acceptance remains open. **Not implemented by this documentation.**
+
+---
+
 ## P0 toolbar fallback correction — native attached panel only (2026-10-31)
 
 **Status:** corrective production implementation and local regression tests complete; **installed Chrome acceptance unavailable; original fresh-profile incident remains open**. The prior `1aa1d0e` launcher created a detached `windows.create({type:'popup'})` window and could treat readiness/timeouts as failure. This violated the clarified owner contract. It now attempts native `action.openPopup` only after definite Shelf rejection, arms an explicit next-click native recovery route when rejected/unavailable, and never automatically creates a window/tab or changes the saved mode. Accepted or pending Shelf requests never trigger an automatic second interface. Explicit Popup preferences are restored/preserved. [Architecture, limitations and evidence](../docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md).
