@@ -64,7 +64,7 @@ function menuFeedback(menuStatus){
  target.textContent='';
 }
 function paintPresentation(){
- $('context-text').textContent=menuPresentation.style==='simple'?'Flat configured destinations':menuPresentation.nested==='narrow'?'Configured destinations, naturally organized':'Real bucket folders · Depth '+menuPresentation.depth;
+ $('context-text').textContent=menuPresentation.style==='simple'?'Cloudflare · REDOWN root and flat labeled destinations':menuPresentation.nested==='narrow'?'Configured destinations, naturally organized':'Real bucket folders · Depth '+menuPresentation.depth;
  paintScopes();
  const active=document.activeElement;
  for(const kind of ['style','nested']){

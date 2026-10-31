@@ -19,8 +19,8 @@ test('V3 domain projects parent-first exact IDs and resolves branch Save here on
  assert.equal(m.resolve('v3:deep',s,p,options).prefix,'one/two/three');assert.equal(m.resolve('v3:child',s,p,options),null);assert.equal(m.resolve('v3:child:send',s,p,options).prefix,'one/two');assert.equal(m.resolve('v3:deep:send',s,p,options),null);assert.equal(m.resolve('quick:p',s,p,options),null);
 });
 test('V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect',()=>{
- const m=model(),s=store();s.destinations[0].enabled=false;assert.equal(m.entries(s,[profile]).length,0);assert.equal(m.resolve('v3:deep',s,[profile]),null);
- const removed=m.remove(store(),'child');assert.equal(removed.destinations.length,1);assert.equal(m.resolve('v3:deep',removed,[profile]),null);assert.equal(m.entries(m.empty(),[profile]).length,0);assert.equal(m.resolve('v3:deep',store(),[{...profile,token:''}]),null);
+ const m=model(),s=store();s.destinations[0].enabled=false;assert.ok(!m.entries(s,[profile]).some(e=>e.id==='v3:deep'));assert.equal(m.resolve('v3:deep',s,[profile]),null);
+ const removed=m.remove(store(),'child');assert.equal(removed.destinations.length,1);assert.equal(m.resolve('v3:deep',removed,[profile]),null);assert.equal(m.entries(m.empty(),[profile])[0].id,'v3:cloudflare-setup');assert.equal(m.resolve('v3:deep',store(),[{...profile,token:''}]),null);
 });
 test('V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8',()=>{
  const m=model();for(const mutate of [s=>s.destinations.push(destination()),s=>s.destinations[1].parentId='gone',s=>s.destinations[0].parentId='deep',s=>s.destinations[1].accountId='other',s=>s.destinations[1].prefix='a/../b',s=>s.destinations[1].prefix='a//b',s=>s.destinations[0].prefix='界'.repeat(301),s=>s.destinations[0].id='bad:id']){const s=store();mutate(s);assert.throws(()=>m.validate(s,[profile]));}
@@ -180,7 +180,7 @@ test('tree shortcuts require actual tree focus and ignore composition and modifi
 const simple={style:'simple',nested:'narrow',depth:1},narrow={...simple,style:'nested'},level={style:'nested',nested:'level',depth:2};
 test('Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here',()=>{
  const m=model(),s=store();s.destinations.forEach(d=>d.label='Duplicate');const before=JSON.stringify(s);
- const flat=m.project(s,[profile]);assert.deepEqual(Array.from(flat.entries,e=>[e.id,e.parentId,e.title]),s.destinations.map(d=>['v3:'+d.id,'redown','Duplicate']));
+ const flat=m.project(s,[profile]);assert.equal(flat.entries[0].title,'Cloudflare');assert.ok(flat.entries.slice(1).every(e=>e.parentId==='v3:cloudflare'));assert.deepEqual(Array.from(flat.entries.filter(e=>s.destinations.some(d=>'v3:'+d.id===e.id)),e=>e.id),s.destinations.map(d=>'v3:'+d.id));
  for(const d of s.destinations)assert.equal(m.resolve('v3:'+d.id,s,[profile]).prefix,d.prefix);
  const nested=m.project(s,[profile],narrow);assert.equal(nested.entries[1].title,'Duplicate');assert.equal(m.resolve('v3:root',s,[profile],narrow).prefix,'');assert.equal(m.resolve('v3:root:send',s,[profile],narrow),null);
  assert.equal(m.resolve('v3:deep',s,[profile],narrow).prefix,'one/two/three');assert.equal(m.resolve('v3:child:send',s,[profile],simple),null);assert.equal(JSON.stringify(s),before);

@@ -47,7 +47,7 @@ test('status flashes keep the same R shape, preserve alpha, and restore the them
   assert.equal(distance,0);
   assert.equal(h.frames.at(-1).imageData[16].data[0],100);
   assert.deepEqual(h.delays,[120,160,120,...Array(10).fill(60)]);
-  assert.equal(h.titles.at(-1),'REDOWN');
+  assert.equal(h.titles.at(-1),'REDOWN — Your cloud companion');
  }
  assert.equal(h.restores,2);
 });
@@ -64,5 +64,5 @@ test('a newer result cancels the old flash; only the latest restores the theme i
 test('cosmetic action API failures never reject transfers and still attempt theme restoration',async()=>{
  const h=fixture({setIcon:async()=>{throw Error('unavailable');}});
  await assert.doesNotReject(()=>h.feedback('success'));
- assert.equal(h.restores,1);assert.equal(h.titles.at(-1),'REDOWN');
+ assert.equal(h.restores,1);assert.equal(h.titles.at(-1),'REDOWN — Your cloud companion');
 });

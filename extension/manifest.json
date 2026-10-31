@@ -28,7 +28,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "REDOWN-Click2Cloud",
+    "default_title": "REDOWN — Your cloud companion",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

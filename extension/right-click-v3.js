@@ -179,9 +179,44 @@
     }
     return {entries:out,summary:{depth:presentation(settings).depth,knownFolders:Math.max(0,nodes.length-authorized.length),rootsChecked:(inventory.observations||[]).filter(o=>o.checked).length,rootsTotal:authorized.length,ageMs:now-inventory.at},warnings:[...new Set(warnings)],complete:!!inventory.complete&&!warnings.length};
   }
+  // A Simple provider surface is a projection, never an edit to saved labels/paths.
+  function simpleTargets(config,profiles){
+    const ready=profiles.filter(p=>p.type==='cloudflare-r2'&&p.bucketName==='redown'&&typeof p.accountId==='string'&&p.accountId&&p.workerUrl&&p.token&&!config.activatedBuckets?.buckets?.some(d=>d.profileId===p.id&&d.enabled===false)).sort((a,b)=>compare(a.id,b.id));
+    const chosen=config.defaultBucket;
+    const accounts=new Set(ready.map(p=>p.accountId));
+    const main=chosen?ready.find(p=>p.id===chosen.profileId&&p.accountId===chosen.accountId&&chosen.bucketName==='redown'):accounts.size===1?ready[0]:null;
+    const primary=main?{profileId:main.id,accountId:main.accountId,bucketName:'redown',prefix:''}:null;
+    const extra=config.destinations.filter(d=>eligible(d,config,profiles)&&!(primary&&d.accountId===primary.accountId&&d.bucketName==='redown'&&d.prefix===''&&['REDOWN','redown','Cloudflare'].includes(d.label.trim()))).map(d=>({id:'v3:'+d.id,title:d.label.trim(),target:d}));
+    const seen=new Set();
+    for(const d of activated(config,profiles)){
+      const bucket=JSON.stringify([d.accountId,d.bucketName]);
+      if(seen.has(bucket)||primary&&d.accountId===primary.accountId&&d.bucketName==='redown')continue;
+      seen.add(bucket);
+      if(extra.some(e=>e.target.accountId===d.accountId&&e.target.bucketName===d.bucketName&&e.target.prefix===''))continue;
+      extra.push({id:bucketId(d),title:d.bucketName,target:{...d,prefix:''}});
+    }
+    const used=new Set(primary?['REDOWN']:[]);
+    for(const item of extra){
+      const base=item.title;let title=base,i=1;
+      if(extra.some(e=>e!==item&&e.title===base&&e.target.accountId!==item.target.accountId))title=base+' · '+item.target.accountId;
+      const seed=title;while(used.has(title))title=seed+' · '+(++i);used.add(title);item.title=title;
+    }
+    return {primary,extra};
+  }
+  function simpleProjection(config,profiles,root){
+    const {primary,extra}=simpleTargets(config,profiles);
+    if(!extra.length)return {entries:[{id:primary?'v3:cloudflare':'v3:cloudflare-setup',parentId:root,title:'Cloudflare',contexts}],complete:true,warnings:primary?[]:['Choose and activate the default redown bucket.']};
+    const entries=[{id:'v3:cloudflare',parentId:root,title:'Cloudflare',contexts},
+      {id:primary?'v3:cloudflare-default':'v3:cloudflare-default-setup',parentId:'v3:cloudflare',title:primary?'REDOWN':'Set up REDOWN…',contexts}];
+    const overflow=extra.length>limits.entries-2,shown=extra.slice(0,limits.entries-2-(overflow?1:0));
+    entries.push(...shown.map(({id,title})=>({id,title,parentId:'v3:cloudflare',contexts})));
+    if(overflow)entries.push({id:'v3:cloudflare-more',parentId:'v3:cloudflare',title:'More destinations…',contexts});
+    return {entries,complete:!overflow,warnings:[...(!primary?['Choose and activate the default redown bucket.']:[]),...(overflow?['Chrome menu entry limit reached; use More destinations.']:[])]};
+  }
   function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
     if(Array.isArray(config.destinations))config={...config,destinations:config.destinations.filter(d=>prepared(d,profiles))};
     validate(config,profiles);const options=presentation(settings);
+    if(options.style==='simple')return simpleProjection(config,profiles,root);
     if(options.style==='nested'&&options.nested==='level'){
       const plan=levelProjection(config,profiles,options,inventory,root,now);
       const missing=activated(config,profiles).filter(d=>!roots(config,profiles).some(q=>identity(q)===identity(d)));
@@ -201,6 +236,10 @@
     try{
       const plan=project(config,profiles,settings,inventory,'redown',now),item=plan.entries.find(n=>n.id===id);
       if(!item||plan.entries.some(n=>n.parentId===id))return null;
+      if(presentation(settings).style==='simple'&&['v3:cloudflare','v3:cloudflare-default'].includes(id)){
+        const target=simpleTargets(config,profiles).primary,profile=target&&prepared(target,profiles);
+        return profile?{profile,owner:profile,prefix:''}:null;
+      }
       const bucket=activated(config,profiles).find(d=>bucketId(d)===id);
       if(bucket){const profile=prepared(bucket,profiles);return {profile,owner:profile,prefix:''};}
       const options=presentation(settings);
@@ -209,13 +248,13 @@
         if(!node)return null;const profile=prepared(node,profiles);return profile?{profile,owner:profile,prefix:node.prefix||''}:null;
       }
       if(options.style==='nested')return narrowResolve(id,config,profiles);
-      const d=config.destinations.find(d=>'v3:'+d.id===id);const profile=prepared(d,profiles);return {profile,owner:profile,prefix:d.prefix};
+      const d=config.destinations.find(d=>'v3:'+d.id===id);const profile=d&&prepared(d,profiles);return profile?{profile,owner:profile,prefix:d.prefix}:null;
     }catch{return null;}
   }
   const bucketId=d=>'v3:bucket:'+encodeURIComponent(JSON.stringify([d.profileId,d.accountId,d.bucketName]));
   const activated=(config,profiles)=>(config.activatedBuckets?.buckets||[]).filter(d=>d.enabled&&prepared(d,profiles));
   function migrate(stored,profiles){
-    const source=stored.rightClickV3||empty(),config={version:1,revision:(Number.isSafeInteger(source.revision)?source.revision:0)+1,destinations:[]},recovery=[];
+    const source=stored.rightClickV3||empty(),config={...(source.defaultBucket?{defaultBucket:source.defaultBucket}:{}),version:1,revision:(Number.isSafeInteger(source.revision)?source.revision:0)+1,destinations:[]},recovery=[];
     const add=(raw,origin)=>{
       const d={...raw,parentId:null};
       try{validate({...empty(),destinations:[d]},profiles);if(config.destinations.length>=200)throw Error('Destination limit reached.');}

@@ -50,7 +50,7 @@ test('partial inventory, invalid cache and malformed configuration cannot preven
   {rightClickV3Inventory:{version:1,key:'invalid',complete:false,folders:[]},rightClickV3Presentation:{style:'nested',nested:'level',depth:3}},
   {rightClickV3:{version:1,revision:3,destinations:null}}
  ]){
-  const h=worker({...config(),...patch});await h.ready();assert.ok(h.native.has('redown'));assert.ok(h.native.has('redown-manage'));
+  const h=worker({...config(),...patch});await h.ready();assert.ok(h.native.has('redown'));assert.ok(h.native.has('redown-manage')||h.native.has('v3:cloudflare'));
  }
 });
 test('worker restart and concurrent startup/install/storage/alarm events share the registration lane',async()=>{
@@ -151,12 +151,12 @@ test('ordered destination changes recreate siblings while retaining root managem
  const h=worker(initial);await h.ready();
  h.local.rightClickV3.destinations.reverse();await h.rebuild();
  const ids=[...h.native.keys()];assert.ok(ids.indexOf('v3:two')<ids.indexOf('v3:one'));
- assert.ok(h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,1);
+ assert.ok(h.native.has('v3:cloudflare'));assert.ok(!h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,1);
 });
 test('fresh empty storage and no OAuth opens Shelf without destination prerequisites',async()=>{
  const h=worker({});await h.ready();await h.click({id:1,windowId:7});await h.ready();
  assert.equal(h.calls.filter(c=>c[0]==='panel').length,1);assert.ok(!h.calls.some(c=>['attached','window','tab'].includes(c[0])));
- assert.ok(h.native.has('redown-manage'));
+ assert.ok(h.native.has('v3:cloudflare-setup'));
 });
 test('missing native openPopup leaves a next-click attached recovery route without changing preference',async()=>{
  const h=worker(undefined,{panel:true});delete h.chrome.action.openPopup;await h.ready();await h.click({id:1,windowId:7});await h.ready();

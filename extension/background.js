@@ -834,7 +834,8 @@ function createToolbarFeedback(api, loadPixels = async size => {
         }
         images[size]=new ImageData(data,size,size);
       }
-      await api.setTitle?.({title:state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard"});
+      const feedbackTitle=state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard";
+      if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(feedbackTitle);else await api.setTitle?.({title:feedbackTitle});
       // A short, two-hit status flash without switching to mismatched PNG artwork.
       for(const [tinted,hold] of [[true,120],[false,160],[true,120]]){
         if(ticket!==generation)return;
@@ -859,7 +860,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
     finally {
       if(ticket===generation){
         try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
-        if(ticket===generation)try { await api.setTitle?.({title:"REDOWN"}); } catch {}
+        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your cloud companion"}); } catch {}
       }
     }
   };
@@ -1029,6 +1030,13 @@ async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){
     defaultPrefix:former?.defaultPrefix ?? "",
     showInContextMenu:true,explorerManaged:false,simplePrimaryEnabled:true,menuConfigVersion:1};
   await setProfiles(profiles,profile.id);
+  // The explicit account setup establishes one exact default, independently of Explorer selection.
+  await ensureV3Only();
+  const commit=destinationSaveQueue.catch(()=>{}).then(async()=>{
+    const {rightClickV3=RedownRightClickV3.empty()}=await chrome.storage.local.get('rightClickV3');
+    await chrome.storage.local.set({rightClickV3:{...rightClickV3,revision:rightClickV3.revision+1,defaultBucket:{profileId:profile.id,accountId,bucketName:'redown'}}});
+  });
+  destinationSaveQueue=commit;await commit;
   // Setup must preserve the user's selected layout and both configurations.
   await rebuildMenus();
   return {accountId,bucketName:"redown",name:label,verified:true};
@@ -2091,7 +2099,7 @@ function v3MenuTransaction(message,sender){
     if(message.type==='saveRightClickV3'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       if(message.expected!==config.revision)throw Error('V3 destinations changed. Reload before saving.');
-      next={version:1,revision:config.revision+1,destinations:Array.isArray(message.destinations)&&message.destinations.length<=200?message.destinations.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','parentId','prefix','label','enabled'].map(k=>[k,d?.[k]]))):null};
+      next={...config,version:1,revision:config.revision+1,destinations:Array.isArray(message.destinations)&&message.destinations.length<=200?message.destinations.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','parentId','prefix','label','enabled'].map(k=>[k,d?.[k]]))):null};
       RedownRightClickV3.validate(next,stored.profiles||[]);
       await chrome.storage.local.set({rightClickV3:next});
     }else if(message.type==='setRightClickV3LevelScopes'){
@@ -2384,7 +2392,13 @@ async function buildMenus() {
       if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
     }
     const plan=JSON.stringify(description);
-    if(nativeMenuPlan===plan)return;
+    const tidy=async()=>{
+      if(!description.some(item=>item.id==='redown-manage'))await new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>reject(Error('Menu cleanup timed out')),5000);
+        chrome.contextMenus.remove('redown-manage',()=>{clearTimeout(timer);chrome.runtime.lastError?reject(Error('Menu cleanup failed')):resolve();});
+      });
+    };
+    if(nativeMenuPlan===plan){await tidy();return;}
     onStage();
     // Keep root/management installed throughout destination replacement.
     const expectedIds=new Set(description.map(item=>item.id));
@@ -2414,6 +2428,7 @@ async function buildMenus() {
           catch{await acknowledgeMenu('create',item);}
         }else await acknowledgeMenu('create',item);
       }
+      await tidy();
       nativeMenuIds=description.map(item=>item.id);
       await chrome.storage.local.set({rightClickNativeIds:nativeMenuIds});
       nativeMenuPlan=plan;
@@ -2436,7 +2451,7 @@ async function buildMenus() {
   const entries=projection.entries;
   if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
   for(const entry of entries)create(entry);
-  addMenuControls(mode,item=>{if(item.id!=='redown-nested-mode')create(item);});
+  if(RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation).style==='nested')addMenuControls(mode,item=>{if(item.id!=='redown-nested-mode')create(item);});
   await finish();
   // Registration uses cached inventory; explicit refresh and the existing alarm own discovery.
   return {summary:projection?.summary,complete:projection?.complete??true,warnings:projection?.warnings||[],inventoryAt:menuSettings.rightClickV3Inventory?.at||null,presentation:projection?RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation):undefined,engine:'v3',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
@@ -2741,7 +2756,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     // The former saved-URL utility is available through Explorer's Get URL action.
     return openRedownHome(tab);
   }
-  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage") {
+  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage" || ["v3:cloudflare-setup","v3:cloudflare-default-setup","v3:cloudflare-more"].includes(info.menuItemId)) {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 

@@ -1,3 +1,4 @@
+importScripts("toolbar-appearance.js");
 // Shelf-first toolbar. Opening is independent of storage, menus and providers.
 let toolbarAttempt=null,toolbarGeneration=0,toolbarTarget=null,toolbarPhase='idle';
 let entryEvidenceQueue=Promise.resolve();
@@ -15,6 +16,7 @@ function entryEvidence(component,operation,stage,code,recovery,attemptId){
 // One authority: no Chrome-managed parallel panel opening and no detached surfaces.
 let toolbarConfiguration=Promise.resolve();
 function applyToolbarOpenMode(clearTabs=false){
+  void RedownToolbarAppearance.clean({allTabs:true});
   const operation=toolbarConfiguration.catch(()=>{}).then(async()=>{
     try{await boundedEntry(chrome.sidePanel?.setPanelBehavior?.({openPanelOnActionClick:false}),1000);}
     catch{entryEvidence('toolbar','configure','behavior','PANEL_BEHAVIOR_FAILED',false);}
@@ -53,11 +55,9 @@ async function verifyShelf(windowId){
   }
   return false;
 }
-function launchIndication(windowId,code,title,attemptId){
+function launchIndication(windowId,code,attemptId){
   entryEvidence('toolbar','open','chrome',code,false,attemptId);
-  // Native indication only; no automatic alternate surface on an ambiguous open.
-  void chrome.action.setTitle({title}).catch(()=>{});
-  void chrome.action.setBadgeText?.({text:'!'}).catch(()=>{});
+  void RedownToolbarAppearance.clean({allTabs:true});
 }
 async function recoverAttached(tab,attemptId,generation){
   const current=()=>generation===toolbarGeneration;
@@ -66,10 +66,10 @@ async function recoverAttached(tab,attemptId,generation){
   // later race the popup. On supported Chrome also close this window's panel.
   if(chrome.sidePanel?.close){
     try{await boundedEntry(chrome.sidePanel.close({windowId:tab.windowId}),1000);}
-    catch{launchIndication(tab.windowId,'SHELF_CLOSE_UNCONFIRMED','REDOWN could not switch safely. Retry the Shelf.',attemptId);return;}
+    catch{launchIndication(tab.windowId,'SHELF_CLOSE_UNCONFIRMED',attemptId);return;}
   }
   if(!Number.isInteger(tab.id)){
-    launchIndication(tab.windowId,'ATTACHED_POPUP_TARGET_UNAVAILABLE','REDOWN could not target its attached popup. Retry on a browser tab.',attemptId);return;
+    launchIndication(tab.windowId,'ATTACHED_POPUP_TARGET_UNAVAILABLE',attemptId);return;
   }
   try{
     if(chrome.tabs.query){
@@ -92,13 +92,12 @@ async function recoverAttached(tab,attemptId,generation){
       entryEvidence('popup','recover','native-action','ATTACHED_POPUP_ACCEPTED','accepted',attemptId);
     }catch{
       entryEvidence('popup','recover','native-action','ATTACHED_POPUP_NEXT_CLICK','armed',attemptId);
-      await chrome.action.setTitle({tabId:tab.id,title:'REDOWN Shelf could not open. Click once more for the attached recovery panel.'});
-      await chrome.action.setBadgeText?.({tabId:tab.id,text:'!'});
+      await RedownToolbarAppearance.clean({tabId:tab.id});
     }
     });
     toolbarConfiguration=arm;await arm;
   }catch{
-    launchIndication(tab.windowId,'ATTACHED_POPUP_BLOCKED','Chrome blocked REDOWN recovery. Reload REDOWN in Chrome Extensions.',attemptId);
+    launchIndication(tab.windowId,'ATTACHED_POPUP_BLOCKED',attemptId);
   }
 }
 function openToolbarInterface(tab){
@@ -110,26 +109,24 @@ function openToolbarInterface(tab){
   // Synchronous call inside Chrome's delivered gesture; no storage or provider wait.
   try{opening=Promise.resolve(chrome.sidePanel.open({windowId:tab.windowId}));}
   catch(error){opening=Promise.reject(error);}
-  let deadline;
+  let deadline,expired=false;
   // A deadline is an indication, NOT permission to launch a second surface.
   deadline=setTimeout(()=>{
     if(generation!==toolbarGeneration)return;
-    ++toolbarGeneration;toolbarAttempt=null;
-    launchIndication(tab.windowId,'SHELF_OPEN_PENDING','REDOWN is waiting for Chrome. Click again to retry Shelf; no second panel was opened.',attemptId);
+    expired=true;toolbarAttempt=null;
+    launchIndication(tab.windowId,'SHELF_OPEN_PENDING',attemptId);
   },2500);
   toolbarAttempt=opening.then(async()=>{
     clearTimeout(deadline);
+    void RedownToolbarAppearance.clean({tabId:tab.id});
     if(generation!==toolbarGeneration)return;
     const ready=await verifyShelf(tab.windowId);
     if(generation!==toolbarGeneration)return;
     entryEvidence('toolbar','open','shelf',ready?'SHELF_READY':'SHELF_API_ACCEPTED',false,attemptId);
-    if(!ready&&chrome.runtime.getContexts)launchIndication(tab.windowId,'SHELF_READINESS_UNKNOWN','Chrome accepted the Shelf request; local readiness is unconfirmed. No second panel was opened.',attemptId);
-    else{
-      void chrome.action.setBadgeText?.({text:''}).catch(()=>{});
-      void chrome.action.setTitle({title:chrome.runtime.getManifest().name||'REDOWN'}).catch(()=>{});
-    }
-  },()=>{clearTimeout(deadline);if(generation===toolbarGeneration){toolbarPhase='recovery';return recoverAttached(tab,attemptId,generation);}}).catch(()=>{
-    launchIndication(tab.windowId,'LAUNCH_BLOCKED','Chrome blocked REDOWN. Reload the extension in Chrome Extensions.',attemptId);
+    if(!ready&&chrome.runtime.getContexts)launchIndication(tab.windowId,'SHELF_READINESS_UNKNOWN',attemptId);
+
+  },()=>{clearTimeout(deadline);if(!expired&&generation===toolbarGeneration){toolbarPhase='recovery';return recoverAttached(tab,attemptId,generation);}}).catch(()=>{
+    launchIndication(tab.windowId,'LAUNCH_BLOCKED',attemptId);
   }).finally(()=>{if(generation===toolbarGeneration){toolbarAttempt=null;toolbarTarget=null;toolbarPhase='idle';}});
   return toolbarAttempt;
 }
@@ -141,3 +138,6 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 // Worker activation must not erase a tab's armed next-click recovery override.
 void applyToolbarOpenMode().catch(console.error);
+
+chrome.tabs.onActivated?.addListener(tab=>{void RedownToolbarAppearance.clean({tabId:tab.tabId});});
+chrome.windows.onFocusChanged?.addListener(()=>{void RedownToolbarAppearance.clean({allTabs:true});});

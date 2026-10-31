@@ -63,5 +63,6 @@
   "extension/history-navigation.js",
   "extension/beta/history-target.mjs",
   "extension/entry-bootstrap.js",
-  "extension/popup-recovery.js"
+  "extension/popup-recovery.js",
+  "extension/toolbar-appearance.js"
 ]
