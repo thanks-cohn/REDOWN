@@ -2710,9 +2710,9 @@ async function openRedownHome(tab){
     .sort((a,b)=>Number(b.active)-Number(a.active)||(a.index??0)-(b.index??0))[0];
   if(existing){
     // A previous GO TO deep link is not the home screen; remove its navigation token.
-    const options={active:true};
-    if(existing.url!==home)options.url=home;
-    return chrome.tabs.update(existing.id,options);
+    // Go Home is explicit navigation: clear any GO TO or Settings deep link.
+    // Reload even a plain Explorer URL so the home screen is entered afresh.
+    return chrome.tabs.update(existing.id,{active:true,url:home});
   }
   return chrome.tabs.create({url:home,active:true,...(windowId===null?{}:{windowId})});
 }
