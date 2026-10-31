@@ -1,5 +1,21 @@
 # REDOWN bugs
 
+## BUG — V3 Level inventory diagnostics leak into native right-click menu (2026-10-30)
+
+**Status:** Open, owner-reported; source-level investigation required. **Priority: P0 menu polish and diagnostic separation.** Documentation-only report; no production fix or installed-Chrome verification claimed.
+
+**Observed:** When using the V3 right-click menu, the owner sees disabled or explanatory menu entries resembling `Not all folders could be loaded` and `Some folders could not be read; inventory is incomplete.` Exact visible phrasing may differ. These are internal folder-discovery/inventory status messages, not destinations or actions, and make the native menu appear like a debug console.
+
+**Expected:** Chrome's native REDOWN menu shows only legitimate save actions, navigational bucket/folder entries, and other intentional user commands. No inventory-incomplete, timeout, pagination, cache, or registration warning rows appear. Valid verified destinations remain usable during partial discovery, and missing/unreadable folders are never invented. Do not present partial inventory as complete.
+
+**Diagnostics and recovery:** Preserve the underlying failure and completeness state in REDOWN's existing Debug/Diagnostics facilities, including safe account/bucket context, operation, counts, limits, timestamps, sanitized reason and retry guidance. If necessary, show a discreet actionable status in V3 Right-click Setup, not as a Chrome menu item. The planned `Save Changes`/Apply state must never claim full Level coverage when inventory is partial. Provide a legitimate refresh/retry path in Setup.
+
+**Investigation leads (not established root cause):** Inspect `extension/right-click-v3.js` `levelProjection()` and `discover()`, plus `extension/background.js` native menu registration and menu-status projection. Determine exactly where warning strings become disabled native menu items; investigate root scope, listing/pagination, time and node/entry limits, incomplete cache and authorization. Keep error reporting separate from context-menu action projection.
+
+**Acceptance and regression tests:** Synthetic and installed-Chrome checks for (1) no warning or diagnostic menu items in complete, partial, stale and failed discovery, (2) correct selectable IDs and exact save routing for valid entries, (3) warning/completeness information retained in Debug, (4) no false success in Save Changes, (5) refresh/retry behavior, (6) no inadvertent unauthorized folder exposure, and (7) Simple/Narrow/Level functionality preserved. Do not claim installed Chrome evidence from mocks.
+
+---
+
 ## BUG — Simple/Nested right-click destinations show duplicate “Files” labels and omit configured item (2026-10-22)
 
 **Status:** Open; user-reported, source inspected, not reproduced against installed Chrome settings. **Priority: P1 menu reliability.** No application code changed in this investigation.
