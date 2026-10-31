@@ -15,6 +15,10 @@
 
 ## P1 visual trust — false redown toolbar exclamation and technical hover title (2026-10-31)
 
+
+**Latest P0 prioritization:** The owner requires this fixed **in the SAME urgent Codex delivery** as the Simple Cloudflare right-click restructuring: [complete combined implementation contract](../docs/CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md) (section 6A). `SHELF_READINESS_UNKNOWN` / `SHELF_OPEN_PENDING` are not license for `!` or an alarming raw hover tooltip. Repair late-success, generation and per-tab/global badge/title cleanup and preserve the Shelf-first/attached-pop-out-only/no-both rule. Genuine errors belong in local diagnostics/recovery UI; do not claim control over Chrome-owned site-access notices. **Not implemented by this documentation.**
+
+
 **OWNER REPRODUCTION:** The Shelf and REDOWN functionality appear to work, but the Chrome toolbar icon displays an unwanted exclamation badge and hover includes `Chrome accepted the Shelf request; local readiness is unconfirmed. No second panel was opened.` followed by `Wants access to this site`.
 
 **CONFIRMED CODE CAUSE:** `extension/entry-bootstrap.js:56–61` explicitly sets the literal `!` badge and arbitrary title from `launchIndication`. At `entry-bootstrap.js:126`, a resolved Shelf opening with failed readiness handshake invokes that misleading warning. At `entry-bootstrap.js:112–119`, a 2.5-second pending timer also triggers `!` and invalidates its generation so a successful late Shelf result can fail to clear it. Thus functional UI can appear broken. **The Chrome phrase `Wants access to this site` is a separate browser-managed site-permissions string** and must be diagnosed without suppressing Chrome security indicators or broadening grants.
