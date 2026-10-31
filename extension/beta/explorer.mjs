@@ -1,4 +1,5 @@
 import {resolveHistoryTarget} from './history-target.mjs';
+import {positionHistoryGoToLanding} from './history-preview-landing.mjs';
 import {createBreadcrumbs,orderedBreadcrumbPath} from './standard-breadcrumbs.mjs';
 import {installRemoteDialog} from './remote-dialog.mjs';
 import {installTestItTools} from './test-it-tools.mjs';
@@ -1084,8 +1085,18 @@ async function useHistoryNavigation(intent){
     if(!items.some(e=>e.key===item.key))items.push(item);
     $('filter').value='';selected=new Set([item.key]);render();
     const row=[...$('files').querySelectorAll('[data-key]')].find(n=>n.dataset.key===item.key);
-    row?.scrollIntoView({block:'nearest'});row?.focus({preventScroll:true});
+    // On a newly opened History GO TO tab, the file list must not scroll the
+    // entire document before the side preview has its final normal-size height.
+    const initialTabLanding=!Number.isInteger(intent.tabId);
+    if(!initialTabLanding)row?.scrollIntoView({block:'nearest'});
+    row?.focus({preventScroll:true});
     await showPreview(item);active();
+    if(initialTabLanding&&previewMode==='side'){
+      await new Promise(resolve=>requestAnimationFrame(resolve));active();
+      positionHistoryGoToLanding({
+        row,files:$('files'),preview:$('side-preview'),workspace:$('file-workspace')
+      });
+    }
     await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'completed'}});
     status('Saved file selected. '+(!previewType(item.key)&&!/\.(zip|cbz)$/i.test(item.key)?'Preview is unavailable for this format.':''));
   }catch(error){if(ticket===historyNavigationEpoch){status(error.message||'Saved-file navigation was interrupted. Use History GO TO again.');await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'failed',error:error.message}});}}
