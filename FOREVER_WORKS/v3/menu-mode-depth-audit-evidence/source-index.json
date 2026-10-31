@@ -1,0 +1,211 @@
+{
+  "extension/right-click-v3.js": {
+    "sha256": "8f1ca02d6d196eb7ec62300d1147e35022c2a262f5b7c1203d979682153206e6",
+    "anchors": [
+      {
+        "line": 7,
+        "text": "  function validate(config,profiles){"
+      },
+      {
+        "line": 27,
+        "text": "  function eligible(d,config,profiles){"
+      },
+      {
+        "line": 32,
+        "text": "  function narrowEntries(config,profiles,root='redown'){"
+      },
+      {
+        "line": 37,
+        "text": "        out.push({id,parentId:menuParent,title:d.label.trim(),contexts});"
+      },
+      {
+        "line": 39,
+        "text": "          out.push({id:id+':send',parentId:id,title:'Save here',contexts});walk(d.id,id);"
+      },
+      {
+        "line": 70,
+        "text": "  function roots(config,profiles){"
+      },
+      {
+        "line": 75,
+        "text": "  function inventoryKey(config,profiles,settings){"
+      },
+      {
+        "line": 80,
+        "text": "  function childPrefixes(page,prefix){"
+      },
+      {
+        "line": 93,
+        "text": "  async function discover(config,profiles,settings,listPage,clock=()=>Date.now()){"
+      },
+      {
+        "line": 124,
+        "text": "  function levelProjection(config,profiles,settings,inventory,root,now){"
+      },
+      {
+        "line": 134,
+        "text": "      if(children.length)out.push({id:id+':send',parentId:id,title:'Save here',contexts});"
+      },
+      {
+        "line": 144,
+        "text": "        parent='v3:bucket:'+encodeURIComponent(profileId);out.push({id:parent,parentId:root,title:top[0]?.bucketName||'',contexts});"
+      },
+      {
+        "line": 150,
+        "text": "  function project(config,profiles,settings,inventory,root='redown',now=Date.now()){"
+      },
+      {
+        "line": 153,
+        "text": "    const all=options.style==='simple'?config.destinations.filter(d=>eligible(d,config,profiles)).map(d=>({id:'v3:'+d.id,parentId:root,title:d.label.trim(),contexts})):narrowEntries(config,profiles,ro"
+      },
+      {
+        "line": 160,
+        "text": "  function resolve(id,config,profiles,settings,inventory,now=Date.now()){"
+      }
+    ]
+  },
+  "extension/beta/right-click-v3-ui.js": {
+    "sha256": "a1dcddf519e18eae3da1af36c840d39c81e7f8da3ed36cb43b561adb13327b48",
+    "anchors": [
+      {
+        "line": 34,
+        "text": "async function savePresentation(next){"
+      },
+      {
+        "line": 42,
+        "text": "   const r=await request('setRightClickV3Presentation',{expectedPresentation,presentation:target});"
+      },
+      {
+        "line": 53,
+        "text": "function validate(next){RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));}"
+      },
+      {
+        "line": 119,
+        "text": "$('add').onsubmit=e=>{e.preventDefault();const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;const before=config,id=crypto.randomUUID();change(next=>{next.destinations.push({id,profileId:"
+      },
+      {
+        "line": 121,
+        "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickV3Presentation&&!presentationSaving){menuPresentation=RedownRightClickV3.presentation(changes.rightC"
+      }
+    ]
+  },
+  "extension/beta/right-click-v3.css": {
+    "sha256": "47196b31a545066a89155366a5154b6be07286e15c012c2c0d23ca9534938845",
+    "anchors": []
+  },
+  "extension/beta/explorer.html": {
+    "sha256": "d03421ad00dc8249d4c1908482e6d81d3c4600dd2227421f805abc2b2680d54e",
+    "anchors": []
+  },
+  "extension/background.js": {
+    "sha256": "e2a76a1cd1156c2bc46995704803b46faffed68544c4baae549428a910629710",
+    "anchors": [
+      {
+        "line": 910,
+        "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+      },
+      {
+        "line": 931,
+        "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+      },
+      {
+        "line": 1413,
+        "text": "async function listObjectsPage(accountId, bucketName, prefix = \"\", cursor = \"\", delimiter = \"\") {"
+      },
+      {
+        "line": 2077,
+        "text": "function v3MenuTransaction(message,sender){"
+      },
+      {
+        "line": 2091,
+        "text": "    }else if(message.type==='setRightClickV3Presentation'){"
+      },
+      {
+        "line": 2202,
+        "text": "  if(projection?.warnings.length)create({id:'redown-v3-inventory-status',parentId:ROOT_MENU_ID,title:projection.warnings.join(' '),enabled:false,contexts:['link','image','video','audio','page']});"
+      },
+      {
+        "line": 2203,
+        "text": "  if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination\u2026',contexts:['link','image','video','audio','page']});"
+      },
+      {
+        "line": 2213,
+        "text": "  create({id:\"redown-mode-separator\",parentId:ROOT_MENU_ID,type:\"separator\",contexts});"
+      },
+      {
+        "line": 2214,
+        "text": "  create({id:\"redown-nested-mode\",parentId:ROOT_MENU_ID,type:\"checkbox\",title:\"Use nested menu\",checked:mode==='nested',contexts});"
+      },
+      {
+        "line": 2216,
+        "text": "    id:\"redown-saved-urls\",parentId:ROOT_MENU_ID,title:\"View saved object's URLs\u2026\","
+      },
+      {
+        "line": 2220,
+        "text": "    id:\"redown-manage\", parentId:ROOT_MENU_ID, title:\"Manage destinations\u2026\","
+      },
+      {
+        "line": 2389,
+        "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+      },
+      {
+        "line": 2404,
+        "text": "chrome.storage.onChanged.addListener((changes, area) => {"
+      },
+      {
+        "line": 2785,
+        "text": "      if (['saveRightClickV3','setRightClickEngine','setRightClickV3Presentation'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));"
+      },
+      {
+        "line": 2794,
+        "text": "      throw Object.assign(new Error(\"This REDOWN background does not support request \"+String(message?.type||\"(missing type)\").replace(/[^A-Za-z0-9_-]/g,\"\").slice(0,80)+\". Reload the extension in chro"
+      }
+    ]
+  },
+  "tests/right-click-v3.test.mjs": {
+    "sha256": "706adc394ce72b5dff8adcbfb6aad9081d67d888d5ee2f4c89dd9384e8542f21",
+    "anchors": [
+      {
+        "line": 29,
+        "text": " vm.runInContext('let destinationSaveQueue=Promise.resolve();\\n'+bg.slice(bg.indexOf('function v3MenuTransaction('),bg.indexOf('/* Explicit, opt-in gallery capture')),c);"
+      },
+      {
+        "line": 49,
+        "text": " let current=store(),presentation={style:'simple',nested:'narrow',depth:1};w.chrome={runtime:{sendMessage:async m=>{calls.push(structuredClone(m));if(m.type==='rightClickV3Snapshot')return {ok:true,en"
+      },
+      {
+        "line": 198,
+        "text": " const m=model(),s=store();s.destinations[0].prefix='authorized';s.destinations[1].prefix='authorized/sub';s.destinations[2].prefix='authorized/sub/deep';s.destinations.push({...destination('overlap',"
+      },
+      {
+        "line": 236,
+        "text": "  const r=await h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:options});assert.equal(r.menuUpdated,true);previous=options;assert.equal(JSON.stringify"
+      },
+      {
+        "line": 240,
+        "text": " await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(simple),presentation:narrow}),/another window/);"
+      },
+      {
+        "line": 241,
+        "text": " await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:simple},'options.html'),/V3 Setup/);"
+      },
+      {
+        "line": 269,
+        "text": " h.w.chrome.runtime.sendMessage=async m=>{if(m.type==='setRightClickV3Presentation'&&first){first=false;await new Promise(r=>release=r);}return send(m);};"
+      },
+      {
+        "line": 272,
+        "text": " const calls=h.calls.filter(c=>c.type==='setRightClickV3Presentation');assert.equal(calls.length,2);assert.deepEqual(calls.at(-1).presentation,{...level,depth:5});assert.equal(calls.at(-1).expectedPre"
+      }
+    ]
+  },
+  "tests/history-go-to.test.mjs": {
+    "sha256": "6beeb54e6ab4fd22a06f5040f4a32d1289639233f4b2655662c970ee9e5ffa76",
+    "anchors": [
+      {
+        "line": 110,
+        "text": " const missing=await request('oldSetupRequest');assert.equal(missing.ok,false);assert.equal(missing.diagnosticError.code,'UNSUPPORTED_REQUEST');assert.match(missing.error,/oldSetupRequest.*Reload the "
+      }
+    ]
+  }
+}

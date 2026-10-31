@@ -1,0 +1,8 @@
+{
+  "currentFailedNames": 69,
+  "priorFailedNames": 69,
+  "additionalVersusPrior": [],
+  "missingVersusPrior": [],
+  "currentPassed": 621,
+  "note": "NewFailures in runner means versus old registry baseline; not necessarily new in this audit."
+}

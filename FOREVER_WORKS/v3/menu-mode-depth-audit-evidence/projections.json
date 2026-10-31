@@ -1,0 +1,883 @@
+{
+  "cases": {
+    "A": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "photo",
+            "prefix": "Images/Photography",
+            "parentId": null,
+            "label": "photo",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "portrait",
+            "prefix": "Images/Photography/Portraits",
+            "parentId": null,
+            "label": "portrait",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "comic",
+            "prefix": "Comics",
+            "parentId": null,
+            "label": "comic",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:photo",
+            "parentId": "redown",
+            "title": "photo",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:portrait",
+            "parentId": "redown",
+            "title": "portrait",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:comic",
+            "parentId": "redown",
+            "title": "comic",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:photo",
+            "parentId": "redown",
+            "title": "photo",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:portrait",
+            "parentId": "redown",
+            "title": "portrait",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:comic",
+            "parentId": "redown",
+            "title": "comic",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "B": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "x",
+            "parentId": null,
+            "label": "a",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "b",
+            "prefix": "x/y",
+            "parentId": null,
+            "label": "b",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "c",
+            "prefix": "x/y/z",
+            "parentId": null,
+            "label": "c",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:c",
+            "parentId": "redown",
+            "title": "c",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:c",
+            "parentId": "redown",
+            "title": "c",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "C": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "x",
+            "parentId": null,
+            "label": "a",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "b",
+            "prefix": "x/y",
+            "parentId": "a",
+            "label": "b",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "c",
+            "prefix": "x/y/z",
+            "parentId": "b",
+            "label": "c",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:c",
+            "parentId": "redown",
+            "title": "c",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:a:send",
+            "parentId": "v3:a",
+            "title": "Save here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "v3:a",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b:send",
+            "parentId": "v3:b",
+            "title": "Save here",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:c",
+            "parentId": "v3:b",
+            "title": "c",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "D": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "x",
+            "parentId": null,
+            "label": "Same",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "b",
+            "prefix": "y",
+            "parentId": null,
+            "label": "Same",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "Same",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "Same",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "Same",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "Same",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "E": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "one/two/three",
+            "parentId": null,
+            "label": "a",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "F": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "x",
+            "parentId": null,
+            "label": "Off",
+            "enabled": false,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "b",
+            "prefix": "x/y",
+            "parentId": "a",
+            "label": "b",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [],
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "G": {
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "prefix": "Images",
+            "parentId": null,
+            "label": "a",
+            "enabled": true,
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket"
+          },
+          {
+            "id": "b",
+            "prefix": "Images",
+            "parentId": null,
+            "label": "b",
+            "enabled": true,
+            "profileId": "q",
+            "accountId": "b",
+            "bucketName": "My Bucket"
+          }
+        ]
+      },
+      "simple": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "narrow": {
+        "entries": [
+          {
+            "id": "v3:a",
+            "parentId": "redown",
+            "title": "a",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:b",
+            "parentId": "redown",
+            "title": "b",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      }
+    }
+  },
+  "discovery": {
+    "calls": [
+      "Images/Photography/",
+      "Images/Photography/Portraits/"
+    ],
+    "inventory": {
+      "version": 1,
+      "key": "[0,2,[[\"p\",\"a\",\"My Bucket\",\"Images/Photography\",\"https://synthetic.invalid\"]]]",
+      "at": 1793411354591,
+      "depth": 2,
+      "nodes": [
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "My Bucket",
+          "prefix": "Images/Photography",
+          "parent": null,
+          "level": 0
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "My Bucket",
+          "prefix": "Images/Photography/Portraits",
+          "parent": "Images/Photography",
+          "level": 1
+        }
+      ],
+      "pages": 2,
+      "complete": true,
+      "warnings": []
+    },
+    "projection": {
+      "entries": [
+        {
+          "id": "v3:bucket:p",
+          "parentId": "redown",
+          "title": "My Bucket",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:p:Images%2FPhotography",
+          "parentId": "v3:bucket:p",
+          "title": "Photography",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:p:Images%2FPhotography:send",
+          "parentId": "v3:cloud:p:Images%2FPhotography",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:p:Images%2FPhotography%2FPortraits",
+          "parentId": "v3:cloud:p:Images%2FPhotography",
+          "title": "Portraits",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "warnings": [],
+      "complete": true
+    }
+  },
+  "adapter": {
+    "rest": {
+      "page": {
+        "objects": [
+          {
+            "key": "plain.txt"
+          },
+          {
+            "key": "日本/.redown"
+          },
+          {
+            "key": "Images-extra/a"
+          }
+        ],
+        "delimited": [
+          "Images/",
+          "empty/"
+        ],
+        "cursor": "",
+        "truncated": false
+      },
+      "inventory": {
+        "version": 1,
+        "key": "[0,1,[[\"p\",\"a\",\"My Bucket\",\"\",\"https://synthetic.invalid\"]]]",
+        "at": 1793411354599,
+        "depth": 1,
+        "nodes": [
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "",
+            "parent": null,
+            "level": 0
+          },
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "Images",
+            "parent": "",
+            "level": 1
+          },
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "Images-extra",
+            "parent": "",
+            "level": 1
+          },
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "empty",
+            "parent": "",
+            "level": 1
+          },
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "日本",
+            "parent": "",
+            "level": 1
+          }
+        ],
+        "pages": 1,
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "objectsPrefix": {
+      "page": {
+        "objects": [],
+        "delimited": [
+          {
+            "prefix": "Images/"
+          }
+        ],
+        "cursor": "",
+        "truncated": false
+      },
+      "inventory": {
+        "version": 1,
+        "key": "[0,1,[[\"p\",\"a\",\"My Bucket\",\"\",\"https://synthetic.invalid\"]]]",
+        "at": 1793411354599,
+        "depth": 1,
+        "nodes": [
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "",
+            "parent": null,
+            "level": 0
+          }
+        ],
+        "pages": 1,
+        "complete": true,
+        "warnings": []
+      }
+    },
+    "noTrailingSlash": {
+      "page": {
+        "objects": [],
+        "delimited": [
+          "Images"
+        ],
+        "cursor": "",
+        "truncated": false
+      },
+      "inventory": {
+        "version": 1,
+        "key": "[0,1,[[\"p\",\"a\",\"My Bucket\",\"\",\"https://synthetic.invalid\"]]]",
+        "at": 1793411354600,
+        "depth": 1,
+        "nodes": [
+          {
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "My Bucket",
+            "prefix": "",
+            "parent": null,
+            "level": 0
+          }
+        ],
+        "pages": 1,
+        "complete": true,
+        "warnings": []
+      }
+    }
+  }
+}

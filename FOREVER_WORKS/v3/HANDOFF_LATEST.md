@@ -36,3 +36,13 @@ Evidence: `history-navigation-evidence/`.
 Install in an approved Chrome environment and inspect desktop/narrow Setup geometry, all tree interactions and progressive modes. Save a disposable authorized Cloudflare object, including a Keep Both collision, then verify both GO TO opening preferences, exact selection and supported preview. Verify actual panel failure fallback, reload/MV3 interruption and keyboard/screen-reader behavior. Capture the named Setup operation if the owner-reported unsupported request recurs and establish its actual installed source/version mismatch before claiming closure.
 
 The current Beta Explorer has no GLB/GLTF inline preview route; unsupported formats use existing behavior. Existing architecture/test debt remains. These local passes do not certify complete P0 browser/live acceptance.
+
+## P0 menu mode / depth audit continuation, 30 October 2026
+
+Audit-only source baseline `10bd512093e44f09d0b60676f89d1688c44b82ff`, exactly the peeled `V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION` checkpoint. No production code, protected refs or provider state changed. Earlier implementation history and links above are preserved.
+
+Read [P0 audit](P0_MENU_MODE_AND_DEPTH_AUDIT.md) and [implementation-ready reconstruction contract](P0_MENU_MODE_RECONSTRUCTION_CONTRACT.md). Narrow is confirmed to follow explicit parentId only; independent nested paths remain flat. Level is confirmed to discover from configured top-level subfolder roots, not necessarily bucket roots. New contract derives natural configured-only Narrow ancestry and introduces explicit bucket opt-in for true bucket-root Level discovery, without silently expanding old shortcuts' authority. Simple remains frozen. Native budgets, completeness and exact Save here routing are specified.
+
+[Audit evidence](menu-mode-depth-audit-evidence/README.md) includes A–G exact current projections, actual R2 REST adapter synthetic fixtures, source hashes, protected refs, focused results and full reliability log. Focused tests: 54 pass, zero fail. Current handler exists; earlier Unknown request rollback is not attributed to an invented original cause. Installed Chrome and live cloud remain unverified. Next implementation must add combined UI/actual-dispatcher state tests, not claim current snapshot-dispatch coverage proves presentation end-to-end.
+
+Next Work agent: inspect this contract before implementing; do not rebuild the editor. Implementation requires a new implementation instruction. Start with Simple goldens, natural Narrow trie, explicit Level participation, bucket-root depth counting, then bounded partial discovery and state reconciliation. Preserve History GO TO and all protected checkpoints.

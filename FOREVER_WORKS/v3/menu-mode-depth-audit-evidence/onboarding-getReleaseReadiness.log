@@ -1,0 +1,156 @@
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs getReleaseReadiness
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "partial",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "decisions": {
+      "beta": "blocked",
+      "releaseCandidate": "blocked",
+      "publicLaunch": "blocked"
+    },
+    "requirements": [
+      {
+        "id": "local-runtime-contract",
+        "state": "passed",
+        "severity": "medium",
+        "evidence": "Mock/local conformance and bounds tests; runtime adapter installed evidence blocked"
+      },
+      {
+        "id": "auth-generation-and-read-retry",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Mock regressions; not live session proof"
+      },
+      {
+        "id": "progressive-search-local",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Pull engine and actual UI VM regressions; installed and restart-resume gates separate"
+      },
+      {
+        "id": "malformed-listing",
+        "state": "passed",
+        "severity": "high",
+        "evidence": "Actual source function tested against injected malformed/empty replies"
+      },
+      {
+        "id": "upload-ambiguous-replay",
+        "state": "passed",
+        "severity": "critical",
+        "evidence": "Mock transport failure stops automatic replay; no remote byte certification"
+      },
+      {
+        "id": "installed-workflow-matrix",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "Administrator rejects unpacked extension loading; zero extension assertions"
+      },
+      {
+        "id": "real-expiry-and-soak",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "No live credentials/scoped resources; accelerated clocks are mock only"
+      },
+      {
+        "id": "live-worker-object-truth",
+        "state": "blocked",
+        "severity": "critical",
+        "evidence": "No STORAGE Worker revision, HEAD/read/hash evidence"
+      },
+      {
+        "id": "local-upload-conditional-races",
+        "state": "not run",
+        "severity": "critical",
+        "evidence": "Initial absence check and direct PUT still race across clients"
+      },
+      {
+        "id": "remote-write-idempotency",
+        "state": "not run",
+        "severity": "critical",
+        "evidence": "No durable operation receipt to reconcile timeout after committed numbered copy"
+      },
+      {
+        "id": "durable-transfer-recovery",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "General/local queues lack restart-safe File recovery; gallery-specific queue is not universal"
+      },
+      {
+        "id": "full-suite",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "Six historical freshness/corpus assertions retained; classified individually"
+      },
+      {
+        "id": "license-consistency",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+      },
+      {
+        "id": "audit-package-integrity",
+        "state": "passed",
+        "severity": "medium",
+        "evidence": "Allowlist, hashes and deterministic ZIP; audit-only, not release"
+      },
+      {
+        "id": "exact-artifact-installation",
+        "state": "blocked",
+        "severity": "high",
+        "evidence": "Extracted ZIP unpacked install blocked; CRX/store distribution not run"
+      },
+      {
+        "id": "modest-windows-performance",
+        "state": "not run",
+        "severity": "medium",
+        "evidence": "Collector microbenchmark is not product/list/media performance"
+      },
+      {
+        "id": "accessibility-workflow-audit",
+        "state": "not run",
+        "severity": "high",
+        "evidence": "Existing fixtures and aria-live are insufficient full audit"
+      },
+      {
+        "id": "privacy-permissions-current-policy",
+        "state": "not run",
+        "severity": "high",
+        "evidence": "Caller inventory only; current authoritative review and operator URLs missing"
+      },
+      {
+        "id": "store-submission",
+        "state": "explicitly out of scope",
+        "severity": "high",
+        "evidence": "User request prohibits submission; store branch preserved"
+      },
+      {
+        "id": "full-runtime-debug-surface",
+        "state": "failed",
+        "severity": "high",
+        "evidence": "No durable traces, complete span chain or preview/transfer verification adapters"
+      },
+      {
+        "id": "search-durable-resume-and-abort",
+        "state": "failed",
+        "severity": "medium",
+        "evidence": "Restart explicitly interrupted; dispatched reads bounded but not aborted"
+      }
+    ],
+    "authority": "recorded release requirements; historical passes are not fresh runs",
+    "localVerificationCommand": [
+      "node",
+      "scripts/reliability-check.mjs"
+    ],
+    "releaseCheckCommand": [
+      "node",
+      "scripts/reliability-check.mjs",
+      "--strict"
+    ],
+    "installedAndLive": "not established by this offline query"
+  }
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
