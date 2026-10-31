@@ -1,62 +1,65 @@
-# IDEA — Nested-mode branching: geometrically consistent progressive disclosure
+# IDEA — Simple / Nested Chrome menu presentation (revised)
 
-**Status:** Design idea only; NOT authorized for implementation.  
+**Status:** Design proposal only; no runtime implementation authorized by this document.  
 **Project:** REDOWN V3 Right-click Setup  
-**Scope:** One existing tree editor; preserve all existing working UI, API, Explorer, URL and transfer behavior.
+**Supersedes:** The earlier nested-only plus-sign, animated branch creation and virtual hierarchy extension proposals in this file. Those were based on a mistaken assumption that V3 could not add multiple destinations under one bucket.
 
-## Owner intent
+## Corrected owner decision
 
-Simple/Narrow is the default and **must remain exactly as it is**. Nested is selected using a small, obvious mode switch on the existing screen. Selecting Nested introduces new affordances: an elegantly animated `+` by each applicable bucket row to create additional logical branches under the same bucket. It should fade in and settle gently, visually explaining that Nested offers greater capability. Do not change the underlying actual R2 directories, and do not rebuild the entire editor.
+**The existing Right-click Setup interface already permits multiple locations within the same bucket. Nothing about its controls or hierarchy needs to change for Simple/Nested.**
 
-The interface must make **geometric, semantic and logical sense**. Align columns and tree indentation consistently; neither the button's appearance nor its exit should cause the bucket name, chevron, icon, sibling row, or rest of the tree to jump.
+Keep the complete existing setup UI exactly as it is: tree, folder outline, existing plus controls, creation flows, menu label fields, checkboxes, alignment, styling and functionality. Do not add any new `+` buttons, fade-in animations, duplicate location editors or special Nested-only configuration capabilities.
 
-## Geometry and composition
+**Only one new choice is needed: Simple versus Nested.** This selects how the **Chrome native right-click menu** displays the already-configured destinations. It does not change what destinations exist or how they are edited.
 
-A proposed consistent row grid, responsive to available width:
-- Column 1: tree indent and chevron (fixed according to depth).
-- Column 2: icon (fixed width).
-- Column 3: main label and optional subdued actual path (flex).
-- Column 4: selected/included indicator, if applicable (fixed).
-- Column 5: contextual actions, in a stable trailing action slot (fixed).
-- Nested-only `+` appears in that **reserved trailing action slot**, not inserted to the left of the bucket label where it displaces indentation or breaks alignment. If a leading `+` is desirable as a visual identity, reserve an equal-width action slot for both modes and ensure the connecting tree rails/indent remain continuous.
-- All sibling rows have uniform heights and column baselines. Descendant indentation is an exact repeated increment. A virtual branch must appear *beneath* its owning bucket, visually connected with the same established tree indentation and disclosure rules.
-- Inline creation occupies one whole row at the expected child depth, with text field, check ✓, cancel × aligned to the same grid. Focusing it must not activate tree typeahead.
-- User should never confuse `+` with creation of a real cloud bucket/folder. Label the action **Add menu branch** or **Add menu destination**, as appropriate.
+## Mode behavior
 
-## Motion as meaning
+### Simple (default)
+- Preserve the established flat/direct right-click destination entries, using each selected destination's saved **menu label**.
+- No folder submenus are introduced by Simple. The existing setup interface remains identical.
+- Default for fresh installations, with a persisted user mode preference after explicit selection.
 
-On switching Simple → Nested:
-- Nested-only `+` controls become available at the precise row(s) where new branches may be added.
-- Fade opacity 0→1 with gentle ~4px translateY, ease-out, about 180–220 ms.
-- Reserve geometry before animation; animate opacity/transform only, not width/height/padding. No layout shift or collapsing sibling rows.
-- The affordance remains visible and keyboard-focusable after arrival, with descriptive accessible name and tooltip; no hidden hover-only essential actions.
-- Nested → Simple animates out, then becomes non-interactive and removed from tab order. Respect `prefers-reduced-motion` (instant state change).
-- Keep overall editor styling, color, typography and current premium desktop character; only the affordance is new.
+### Nested
+- Use the **same configured destinations and the same saved menu labels**.
+- Display them in Chrome as a conventional expandable submenu hierarchy representing configured parent/child organization.
+- Use native Chrome context-menu submenus, not new application pop-ups or a redesigned Right-click Setup.
+- Existing configured multiple locations in one bucket must continue to work; do not create more destinations just to enable Nested.
+- Preserve the option to save directly to an actionable parent when it has children by using a clear, separate **Save here** submenu entry if required by Chrome's native parent/submenu behavior.
 
-## Data and semantics
+## Invariants
 
-- One canonical configuration and tree. Simple and Nested are **different projections**, not competing editors or destructive modes.
-- Default mode Simple/Narrow; persist chosen setting.
-- Simple exactly preserves its current selected-destination behavior and custom menu labels.
-- Nested may permit multiple separately named **virtual menu branches** under one physical bucket, each pointing to existing or explicitly chosen authorized cloud prefixes. Multiple virtual branches may target the same bucket without renaming or creating physical folders.
-- Menu labels are useful at **every level** of Nested, not just leaves. Editing display names never renames or moves an R2 object/folder.
-- Preserve identities, paths, user labels, selections, ordering and branches when switching modes; Simple should show only its intended flattened active selections, without deleting Nested-specific metadata.
-- Explicitly distinguish group nodes from actionable save destinations; parent group can be a non-save submenu, or support an explicitly labeled **Save here** action if intended. No ambiguous click target.
-- A portable exportable versioned JSON representation of the virtual hierarchy is a **future design requirement**, with stable IDs, parent links, labels and logical target refs. Export never contains secrets or tokens; importing requires account mapping and validation. No export implementation in this phase.
+1. One canonical destination store; both modes are pure projections of the same configuration.
+2. Switching Simple ↔ Nested is non-destructive and reversible: no lost paths, custom labels, order, enabled flags, or destination IDs.
+3. **Menu labels remain available in BOTH modes and at relevant hierarchy depths.** Labels change display text only; they never rename/move cloud buckets or folders.
+4. The Right-click Setup UI has no mode-specific added controls except a modest Simple/Nested switch and any concise mode status indicator. No animated `+` entrance; no layout shifts; no extra virtual grouping system.
+5. Native Chrome submenu layout is generated deterministically, with correct parent-first registration, supported depth and count limits, resolved leaf targets, distinct actionable parent handling, and clean rebuild after switches.
+6. The Legacy engine fallback and its distinct configuration stay intact. The existing File Explorer API, Explorer UI, Cloudflare transfers, URL system, History, auth and neon intro remain untouched.
+7. Existing setup-level creation/editing must never be conflated with actual cloud folder creation.
+8. No automatic discovery of every physical folder or unbounded browsing is implied. Nested uses the explicitly configured hierarchy only.
+9. Mode switching should disclose applied state and registration failures honestly, including across extension restart.
 
-## Acceptance criteria for a later implementation
+## Illustrative example
 
-1. Toggle Simple/Nested and see only the appropriate branch `+` affordances change, without visual movement of existing tree columns or labels.
-2. Simple remains pixel/behavior consistent with its present implementation.
-3. In Nested, click bucket `+` to create a virtual branch in the same bucket; type freely; Enter/✓ confirm; Escape/× cancel; focus stays in input.
-4. Nested allows multiple branches in the same physical bucket with independent display labels and no R2 folder changes.
-5. Switching modes and restarting restores each view, with no loss of virtual hierarchy data.
-6. All controls usable by mouse, keyboard and touch; accessible names, correct focus return, no accidental tree typeahead.
-7. Test desktop and narrow widths, reduced motion, long labels and deep hierarchy without geometry shifts.
-8. No changes to unrelated Explorer, URL, transfers or existing Cloudflare/provider contracts.
+Saved configured destinations and labels:
+- bucket `4chan`, path `images/memes`, label `Memes`
+- bucket `4chan`, path `images/artwork`, label `Art`
+- bucket `4chan`, path `videos/clips`, label `Clips`
 
-## Design philosophy
+**Simple Chrome right-click:** REDOWN → Memes / Art / Clips (direct entries).
 
-Use the golden age of Mac and Windows desktop UI craft as the benchmark: disciplined alignment, deliberate visual rhythm, restrained dimensional polish, instantly recognizable conventions and functional clarity. Geometric uniformity is not decorative; it makes the structure understandable. **Simple is familiar. Nested reveals additional power without disturbing what is already there.**
+**Nested Chrome right-click:** REDOWN → 4chan → Images → Memes / Art; and REDOWN → 4chan → Videos → Clips, with labels from the configured menu nodes as applicable. Do not fabricate or rename actual storage paths; determine parent display nodes using existing configuration and documented menu projection rules.
 
-Do not implement this idea until explicitly requested.
+## Later acceptance tests (when implementation is requested)
+
+- Confirm the existing setup screenshot/visual layout is unchanged apart from the compact mode selector.
+- Create multiple destinations under one bucket in the existing editor and verify both menu presentations.
+- Verify custom menu labels in Simple and Nested, including configured parent nodes.
+- Toggle and restart repeatedly; confirm the same destination IDs, labels, paths, enablement and order survive.
+- Verify parent/child native menu registration and click routing using installed Chrome when permitted.
+- Verify failures/recovery and ensure switching does not touch Explorer, URLs or cloud folder structure.
+
+## Aesthetic and usability principle
+
+Maintain the premium, geometrically aligned desktop design inspired by the golden age of polished Mac and Windows interfaces. **Do not redesign what already works merely to add a mode switch.** The distinction should be instantly obvious from the Chrome menu presentation, not from changing the editor.
+
+**Simple = direct entries. Nested = expandable Chrome submenus. Same destinations, same labels, same interface.**
