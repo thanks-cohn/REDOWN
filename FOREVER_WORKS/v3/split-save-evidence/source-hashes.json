@@ -1,0 +1,11 @@
+{
+  "extension/background.js": "a7182bc4addeb11fe22916acdfbf8fdf482866202b1f2ce6b0d7c9c74fefe959",
+  "extension/beta/explorer.html": "afaeacc3368f820baad11ba42514037a03765bcbbd025b458167b9d9919903a5",
+  "extension/beta/explorer.mjs": "d8ab4842f480206c13da2708b878a05aea3e937641330f15ac239d5480dc656d",
+  "extension/beta/right-click-v3-ui.js": "6343b78508a5358ead77db534e25fb93c99102de5e539f5cea6d71d2cdb1535a",
+  "extension/beta/right-click-v3.css": "5b712be7dcb91c19d84f874840b26bb53b529fb2475d641fe43a9dc02c5935f7",
+  "extension/history-navigation.js": "d15f7d65b1a1a05b498e4c48fafb971df617458385fbf9f3cd9a5c6e687d9fe4",
+  "extension/shelf.html": "8099b531c201dc9fbf55148c07597cafd225cec6998af94f059e97c7bc37a7e1",
+  "tests/history-go-to.test.mjs": "3bce67ba8328af06d43c0c57d244ecdb9bc0f5b6f430c85614a0ee8191cafdfa",
+  "tests/right-click-v3.test.mjs": "d1f49a69ec17041d6436dffe49ed5d8465ceccf501bf4f8838cdbc5f54390ea5"
+}

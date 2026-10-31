@@ -1,0 +1,17 @@
+{
+  "scope": "installed-chrome",
+  "installation": "unpacked directory",
+  "state": "blocked",
+  "scenario": "fresh isolated profile, real service worker and options, passive diagnostics, local persistence",
+  "startedAt": "2026-10-31T02:27:02.216Z",
+  "assertions": [],
+  "limitations": [
+    "No Cloudflare login or remote data",
+    "Not a CRX or store-distributed installation",
+    "Not the complete workflow matrix"
+  ],
+  "extensionId": "mkadkgpekmkknfbniacdlmgikihjjepf",
+  "extensionVersion": "0.5.27",
+  "code": "CHROME_NOT_AVAILABLE_ENOENT",
+  "finishedAt": "2026-10-31T02:27:02.327Z"
+}

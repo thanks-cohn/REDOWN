@@ -1,3 +1,21 @@
+# Latest: native Split View, Shelf preservation and verified menu application
+
+30 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.
+
+Published code commit: **`b2c26948122ff125d3e6fc149bfc3b6c1eff4571`**, identical tested tree to local `937a8c8`. Navigation commit: `c326ba00b796bc77a47568ac02edf6e69ba82db7`. Documentation/evidence delivery follows; final delivery SHA is in branch history and response. All protected checkpoint tag objects are unchanged.
+
+Read [the complete implementation report](P0_SPLIT_VIEW_NESTED_DEPTH_SAVE_APPLY_IMPLEMENTATION.md) and [evidence](split-save-evidence/README.md).
+
+GO TO now uses native Chrome 155+ Split View APIs with Explorer-before-webpage order/membership read-back and matching-window reuse. `side` preference migrates to `split`. **The old Shelf redirect and side-panel handoff are removed**; older handoffs below describe superseded behavior. Tab mode reuses an eligible unsplit Explorer in the current window. API/unready/placement failures offer explicit Open in Tab fallback without changing preference or navigating the webpage.
+
+Right-click Setup retains its unchanged tree renderer and domain semantics. The header has left context/status, compact numeric depth, a bucket-only floating disclosure with restrained scrolling, and Save Changes. Existing autosave remains; explicit Apply uses the same background lane and native callback acknowledgements. Matching opaque configuration receipts, completeness checks and edit epochs prevent false Saved state. Partial/failed application retains choices and Retry Apply. Existing natural Narrow and opted-in bucket-root Level discovery remain unchanged.
+
+Final focused: **78 pass, zero fail**. Required full reliability: **645 pass / 69 failed names / incomplete**, identical failed names to preceding published reconstruction. Syntax, API registry and issue inventory pass; architecture freshness still fails. Native Chrome is **unavailable ENOENT, zero assertions**; real split geometry, native menu application, desktop/narrow visual screenshots, accessibility, actual MV3 behavior and live Cloudflare verification remain open. No release certification is claimed.
+
+---
+
+## Earlier handoffs, retained as history
+
 # Latest: natural Narrow, selected-bucket Level, reuse-first History GO TO
 
 30 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.

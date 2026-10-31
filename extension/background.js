@@ -2101,6 +2101,10 @@ function v3MenuTransaction(message,sender){
       if(message.expectedPresentation!==JSON.stringify(current))throw Error('Menu presentation changed in another window. Reload before saving.');
       const presentation=RedownRightClickV3.validatePresentation(message.presentation);
       await chrome.storage.local.set({rightClickV3Presentation:presentation});
+    }else if(message.type==='applyRightClickV3'){
+      if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
+      if(message.expected!==config.revision||message.expectedScopes!==(stored.rightClickV3LevelScopes?.revision||0)||message.expectedPresentation!==JSON.stringify(RedownRightClickV3.presentation(stored.rightClickV3Presentation)))throw Error('Configuration changed. Reload to reconcile before applying.');
+      await refreshV3Inventory(true);
     }else{
       if(!['legacy','v3'].includes(message.engine))throw Error('Choose Legacy or New Right-click.');
       engine=message.engine;
@@ -2114,7 +2118,7 @@ function v3MenuTransaction(message,sender){
 }
 async function v3PresentationSnapshot(){
   const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickV3LevelScopes','rightClickMenuStatus']);
-  return {levelScopes:s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),menuStatus:s.rightClickMenuStatus||null};
+  return {applicationKey:await menuApplicationKey(),levelScopes:s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),menuStatus:s.rightClickMenuStatus||null};
 }
 let v3InventoryRefresh=null;
 async function refreshV3Inventory(force=false){
@@ -2147,14 +2151,25 @@ async function resolveActiveRightClick(id,profiles){
   return s.rightClickEngine==='v3'?RedownRightClickV3.resolve(id,{...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},profiles,s.rightClickV3Presentation,s.rightClickV3Inventory):RedownRightClickLegacy.resolve(id,profiles,RedownNestedLocations.menuMode(s.rightClickMode,profiles));
 }
 
+// Opaque receipt binds Chrome acknowledgements to every persisted projection input.
+// Hash credentials as part of the input, never expose or log their values.
+async function menuApplicationKey(){
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickV3Inventory','profiles']);
+  const value=JSON.stringify([s.rightClickEngine||'legacy',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickV3Inventory||null,s.profiles||[]]);
+  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
+}
 let menuRebuildQueue=Promise.resolve();
 async function rebuildMenus() {
   // Location verification can save several rows together. Chrome menu rebuilds
   // must finish in order so another removeAll cannot delete a pending parent.
   const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
     try{
+      const applicationKey=await menuApplicationKey();
+      await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       const receipt=await buildMenus();
-      await chrome.storage.local.set({rightClickMenuStatus:{state:receipt.complete===false?'partial':'registered',...receipt}});
+      const current=applicationKey===await menuApplicationKey();
+      await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':receipt.complete===false?'partial':'registered'}});
       return receipt;
     }catch(error){
       await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
@@ -2789,7 +2804,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         return sendResponse({ok:true,...await v3PresentationSnapshot()});
       }
       if (message?.type === 'rightClickV3Snapshot') return sendResponse(await rightClickV3Snapshot(_sender));
-      if (['saveRightClickV3','setRightClickEngine','setRightClickV3Presentation','setRightClickV3LevelScopes'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));
+      if (['saveRightClickV3','setRightClickEngine','setRightClickV3Presentation','setRightClickV3LevelScopes','applyRightClickV3'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
         const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");

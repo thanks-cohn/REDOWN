@@ -549,7 +549,7 @@ $('disconnect').onclick=async()=>{
 document.addEventListener('redown:destinations-ready',event=>{
   if(current&&sameBucket(current,event.detail))void checkActivation(context());
 });
-chrome.storage.onChanged.addListener((changes,area)=>{if(area==='session'&&changes.historySideNavigation)void useHistoryNavigation(changes.historySideNavigation.newValue,{side:true});if(area!=='local')return;if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -1075,13 +1075,8 @@ else{
 
 // Session-backed handoff survives MV3 suspension; only opaque IDs enter the URL.
 let historyNavigationEpoch=0,historyNavigationAbort=null,consumedHistoryToken=null,latestHistoryAt=0,historyNavigationTimer=null;
-async function useHistoryNavigation(intent,{side=false}={}){
+async function useHistoryNavigation(intent){
   if(!globalThis.RedownHistoryNavigation?.valid(intent)||intent.token===consumedHistoryToken)return;
-  if(side){
-    const [tab,win]=await Promise.all([chrome.tabs.getCurrent(),chrome.windows.getCurrent()]);
-    if(tab||win.id!==intent.windowId)return;
-    await chrome.storage.session.set({historySideAcknowledged:{token:intent.token}});
-  }
   if(intent.issuedAt<latestHistoryAt)return;latestHistoryAt=intent.issuedAt||Date.now();
   consumedHistoryToken=intent.token;
   const ticket=++historyNavigationEpoch;
@@ -1127,8 +1122,5 @@ void (async()=>{
     }
     await useHistoryNavigation(intent);
     await chrome.storage.session.remove(key);
-  }else{
-    const data=await chrome.storage.session.get('historySideNavigation');
-    await useHistoryNavigation(data.historySideNavigation,{side:true});
   }
 })().catch(error=>status('Could not restore saved-file navigation: '+error.message));

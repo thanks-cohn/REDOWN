@@ -1,0 +1,73 @@
+{
+  "baseline": "223775c",
+  "checks": [
+    {
+      "path": "extension/manifest.json",
+      "unchanged": true,
+      "sha256": "c8cdc047130d24397af15f30ee1598fe48c3005d7a8328aaa3e6cab884599ef1"
+    },
+    {
+      "path": "extension/shelf-history.js",
+      "unchanged": true,
+      "sha256": "fb5abd2bd932ab96c76bab946b77992d365167b64c4842385051599b5f0e05ae"
+    },
+    {
+      "path": "extension/shelf.css",
+      "unchanged": true,
+      "sha256": "9986ee83e64bc24064b5c3bb00c4ee30f6fed7200f4159840dea7eb7c8b19f3e"
+    },
+    {
+      "path": "extension/right-click-v3.js",
+      "unchanged": true,
+      "sha256": "69835d3881b5d5682d6f7a947cd3ac05946f773c43b4eb1978804aae38b066d0"
+    },
+    {
+      "path": "extension/right-click-legacy.js",
+      "unchanged": true,
+      "sha256": "f348d5917b257f32a8655319b397f0d9e79688cded29663928f3ab692bf6e582"
+    },
+    {
+      "path": "extension/beta/history-target.mjs",
+      "unchanged": true,
+      "sha256": "ebb26b78ebee2f8febe025b38535bc8769ae9bd43f34ffde32c111d31b19acdb"
+    },
+    {
+      "path": "extension/beta/r2-adapter.mjs",
+      "unchanged": true,
+      "sha256": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057"
+    },
+    {
+      "path": "extension/beta/file-api.mjs",
+      "unchanged": true,
+      "sha256": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66"
+    },
+    {
+      "path": "extension/public-addresses.js",
+      "unchanged": true,
+      "sha256": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69"
+    },
+    {
+      "path": "extension/history-archive.js",
+      "unchanged": true,
+      "sha256": "de6d0acdbe2588fc1ddc08d9621b7b661263ed73250566add2e20f664bd3185b"
+    },
+    {
+      "path": "extension/transfer-counter.js",
+      "unchanged": true,
+      "sha256": "261fef8564c5cbfeab41ac3fc184c6d9e11a83980490cd8fa705396f529de9ad"
+    },
+    {
+      "path": "extension/beta/dashboard.css",
+      "unchanged": true,
+      "sha256": "d45f785e9f328411c3000ebb8a916dfd98cf03ca9263879fcef334ea3043cf62"
+    },
+    {
+      "region": "V3 draw() tree renderer",
+      "unchanged": true
+    },
+    {
+      "region": "Shelf document except GO TO setting options",
+      "unchanged": true
+    }
+  ]
+}

@@ -28,19 +28,15 @@ test('default creates and activates a new tab with only an opaque request ID; re
  assert.equal(h.calls.length,1);assert.equal(h.calls[0][0],'tab');const args=h.calls[0][1];assert.equal(args.active,true);assert.match(args.url,/beta\/explorer.html#history=/);assert.ok(!args.url.includes('bucket')&&!args.url.includes('photos'));
  assert.equal(JSON.stringify(good),before);assert.equal(JSON.stringify(good),before);h.dom.window.close();
 });
-test('Side Panel invokes open synchronously in the gesture and never creates or activates a tab',async()=>{
- const h=view({historyGoToMode:'side'});await h.nav.preference;h.nav.open(good);assert.equal(h.calls[0][0],'panel');await settle();assert.equal(h.calls.length,1);assert.equal(h.session.historySideNavigation.windowId,7);assert.equal(h.session.historySideNavigation.locator.key,good.destination.key);h.dom.window.close();
-});
-test('panel failure preserves preference and offers an explicit fallback without opening it',async()=>{
- for(const side of [()=>Promise.reject(Error('gesture denied')),()=>{throw Error('unsupported');}]){
- const h=view({historyGoToMode:'side'},side);await h.nav.preference;h.nav.open(good);await settle();assert.equal(h.calls.filter(x=>x[0]==='tab').length,0);assert.equal(h.local.historyGoToMode,'side');const fallback=h.w.document.querySelector('#history-navigation-status button');assert.equal(fallback.textContent,'Open in New Tab');fallback.click();await settle();assert.equal(h.calls.filter(x=>x[0]==='tab').length,1);h.dom.window.close();}
+test('old side preference migrates to Split View; unsupported API offers explicit Tab fallback and preserves Shelf',async()=>{
+ const h=view({historyGoToMode:'side'});await h.nav.preference;h.nav.open(good);await settle();
+ assert.equal(h.local.historyGoToMode,'split');assert.equal(h.calls.length,0);
+ const b=h.w.document.querySelector('#history-navigation-status button');assert.equal(b.textContent,'Open in Tab');
+ assert.equal(h.w.location.pathname,'/shelf.html');b.click();await settle();assert.equal(h.calls[0][0],'tab');assert.equal(h.local.historyGoToMode,'split');h.dom.window.close();
 });
 test('preference persists on existing storage and initializes after a restart',async()=>{
- const h=view();await h.nav.preference;const select=h.w.document.getElementById('history-go-to-mode');assert.equal(select.value,'tab');select.value='side';select.dispatchEvent(new h.w.Event('change'));await settle();assert.equal(h.local.historyGoToMode,'side');const restarted=view(h.local);await restarted.nav.preference;await settle();assert.equal(restarted.w.document.getElementById('history-go-to-mode').value,'side');h.dom.window.close();restarted.dom.window.close();
-});
-test('rapid panel opens discard a late older opening result',async()=>{
- const releases=[];const h=view({historyGoToMode:'side'},()=>new Promise(r=>releases.push(r)));await h.nav.preference;
- h.nav.open(good);h.nav.open({...good,destination:{...good.destination,key:'photos/new.webp'}});releases[1]();await settle();releases[0]();await settle();assert.equal(h.session.historySideNavigation.locator.key,'photos/new.webp');h.dom.window.close();
+ const h=view();await h.nav.preference;const select=h.w.document.getElementById('history-go-to-mode');select.value='split';select.dispatchEvent(new h.w.Event('change'));await settle();
+ assert.equal(h.local.historyGoToMode,'split');const restarted=view(h.local);await restarted.nav.preference;await settle();assert.equal(restarted.w.document.getElementById('history-go-to-mode').value,'split');h.dom.window.close();restarted.dom.window.close();
 });
 test('expired, future, malformed and reloaded handoffs fail closed',async()=>{
  const h=view();await h.nav.preference;const intent={token:'abc',locator:h.nav.locator(good),issuedAt:Date.now()};assert.ok(h.nav.valid(intent));for(const issuedAt of [0,Date.now()+60000,NaN])assert.ok(!h.nav.valid({...intent,issuedAt}));assert.ok(!h.nav.valid({}));h.dom.window.close();
@@ -152,4 +148,64 @@ test('a new application becomes reusable before the next queued GO TO; no duplic
  };
  h.nav.open(good);await settle();h.nav.open({...good,destination:{...good.destination,key:'photos/second.webp'}});release();await settle();
  assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);assert.equal(h.calls.filter(c=>c[0]==='activate').length,1);assert.deepEqual(received,['photos/second.webp']);h.dom.window.close();
+});
+
+async function splitHarness({existing=false,webPatch={},explorerPatch={}}={}){
+ const h=view({historyGoToMode:'split'});await h.nav.preference;
+ const webpage={id:20,windowId:7,index:1,active:true,pinned:false,groupId:-1,splitViewId:-1,url:'https://original.invalid/unchanged',...webPatch};
+ const explorer={id:2,windowId:7,index:3,active:false,pinned:false,groupId:-1,splitViewId:-1,url:'https://extension.invalid/beta/explorer.html#explorer-destinations',...explorerPatch};
+ const tabs=[webpage,...(existing?[explorer]:[])],received=[];
+ const ack=async intent=>{received.push(intent.locator.key);await h.w.chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'},['historyResult:'+intent.token]:{state:'completed'}});};
+ h.w.chrome.tabs.query=async()=>structuredClone(tabs);
+ h.w.chrome.tabs.get=async id=>{const t=tabs.find(t=>t.id===id);if(!t)throw Error('Tab closed');return structuredClone(t);};
+ h.w.chrome.tabs.update=async(id,options)=>{h.calls.push(['activate',{id,...options}]);tabs.forEach(t=>t.active=t.id===id);};
+ h.w.chrome.tabs.move=async(id,options)=>{h.calls.push(['move',{id,...options}]);const t=tabs.find(t=>t.id===id);webpage.index=options.index+1;t.index=options.index;return {...t};};
+ h.w.chrome.tabs.createSplit=async ids=>{h.calls.push(['split',ids]);for(const t of tabs.filter(t=>ids.includes(t.id)))t.splitViewId=50;return 50;};
+ h.w.chrome.tabs.create=async options=>{
+  h.calls.push(['tab',options]);const created={...explorer,id:8,index:options.index??3,splitViewId:options.splitWithTabId?50:-1};
+  if(options.splitWithTabId){webpage.splitViewId=50;webpage.index=created.index+1;}
+  tabs.push(created);h.w.chrome.tabs.getCurrent=async()=>({id:8});await h.nav.receive(ack,()=>true);
+  const token=options.url.split('#history=')[1];await ack(h.session['historyNavigation:'+token]);return created;
+ };
+ if(existing)await h.nav.receive(ack,()=>true);
+ return {...h,tabs,webpage,explorer,received};
+}
+test('Split View creates Explorer on left via documented splitWithTabId, then reuses with Shelf intact',async()=>{
+ const h=await splitHarness();const original=h.webpage.url;h.nav.open(good);await settle();
+ const call=h.calls.find(c=>c[0]==='tab')[1];assert.equal(call.splitWithTabId,20);assert.equal(call.windowId,7);assert.equal(call.index,1);
+ assert.equal(h.tabs.find(t=>t.id===8).index<h.webpage.index,true);assert.equal(h.w.location.pathname,'/shelf.html');assert.equal(h.webpage.url,original);
+ h.nav.open({...good,destination:{...good.destination,key:'photos/next.webp'}});await settle();
+ assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);assert.equal(h.calls.filter(c=>c[0]==='panel').length,0);assert.deepEqual(h.received,[good.destination.key,'photos/next.webp']);h.dom.window.close();
+});
+test('Split View pairs existing Dashboard/Explorer with createSplit, verifies left order, never reloads either tab',async()=>{
+ const h=await splitHarness({existing:true});h.nav.open(good);await settle();
+ assert.deepEqual(Array.from(h.calls.find(c=>c[0]==='split')[1]),[2,20]);assert.equal(h.calls.filter(c=>c[0]==='tab').length,0);assert.equal(h.explorer.index<h.webpage.index,true);
+ assert.equal(h.calls.find(c=>c[0]==='activate')[1].url,undefined);assert.equal(h.webpage.url,'https://original.invalid/unchanged');assert.deepEqual(h.received,[good.destination.key]);h.dom.window.close();
+});
+test('Split View can find original webpage when paired Explorer is active and reuses current window only',async()=>{
+ const h=await splitHarness({existing:true,webPatch:{active:false,index:2,splitViewId:3},explorerPatch:{active:true,index:1,splitViewId:3}});
+ h.tabs.push({...h.explorer,id:88,windowId:8,active:true});h.nav.open(good);await settle();assert.equal(h.calls[0][0],'activate');assert.equal(h.calls[0][1].id,2);assert.equal(h.calls.length,1);h.dom.window.close();
+});
+test('unrelated split, reversed split and unavailable API refuse without changing tabs, Shelf or preference',async()=>{
+ for(const reverse of [false,true]){
+ const h=await splitHarness({existing:reverse,webPatch:{splitViewId:4,index:reverse?0:1},explorerPatch:{splitViewId:4,index:2}});
+ if(!reverse)h.tabs.push({id:99,windowId:7,splitViewId:4,index:2,url:'https://other.invalid'});
+ h.nav.open(good);await settle();assert.equal(h.calls.length,0);assert.equal(h.local.historyGoToMode,'split');assert.ok(h.w.document.querySelector('#history-navigation-status button'));assert.equal(h.w.location.pathname,'/shelf.html');h.dom.window.close();
+ }
+});
+test('split API failure and tab movement show explicit fallback without navigating original webpage',async()=>{
+ for(const moved of [false,true]){
+ const h=await splitHarness({existing:true});if(moved)h.w.chrome.tabs.get=async()=>({...h.webpage,windowId:8});else h.w.chrome.tabs.createSplit=async()=>{throw Error('Chrome rejected pairing');};
+ h.nav.open(good);await settle();assert.ok(h.w.document.querySelector('#history-navigation-status button'));assert.equal(h.calls.filter(c=>c[0]==='tab'||c[0]==='panel').length,0);assert.equal(h.received.length,0);assert.equal(h.webpage.url,'https://original.invalid/unchanged');h.dom.window.close();
+ }
+});
+test('pinned and grouped original tab uses matching existing Explorer without altering pin or group state',async()=>{
+ const h=await splitHarness({existing:true,webPatch:{pinned:true,groupId:11},explorerPatch:{pinned:true,groupId:11}});h.nav.open(good);await settle();assert.equal(h.calls.filter(c=>c[0]==='split').length,1);assert.equal(h.webpage.pinned,true);assert.equal(h.webpage.groupId,11);h.dom.window.close();
+});
+test('rapid Split View requests choose latest file and do not create duplicate pairs',async()=>{
+ const h=await splitHarness();h.nav.open(good);h.nav.open({...good,destination:{...good.destination,key:'photos/latest.webp'}});await settle();assert.deepEqual(h.received,['photos/latest.webp']);assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);h.dom.window.close();
+});
+test('GO TO production code has no Shelf redirect or side-panel navigation path',()=>{
+ assert.doesNotMatch(script,/sidePanel|location\.href|historySideNavigation|relaySide/);
+ assert.doesNotMatch(read('extension/beta/explorer.mjs'),/historySideNavigation|historySideAcknowledged/);
 });

@@ -1,0 +1,28 @@
+{
+  "comparison": "Archived preceding published implementation report, not a fresh full baseline execution",
+  "previousPassed": 633,
+  "currentPassed": 645,
+  "previousFailedNames": 69,
+  "currentFailedNames": 69,
+  "additionalFailedNames": [],
+  "resolvedFailedNames": [],
+  "incomplete": true,
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ]
+}

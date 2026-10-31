@@ -1,0 +1,2174 @@
+{
+  "version": "1.0.0",
+  "startedAt": "2026-10-31T02:28:50.272Z",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "architecture": "x64",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"state\": \"passed\",\n  \"results\": [\n    {\n      \"file\": \"extension/cloudflare-api.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/cloudflare-auth.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/background.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/nested-locations.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/menu-reorder.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/settings-mascot.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/popup.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/storage-expansion-benchmark.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/storage-signals-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/explorer-operations-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/public-addresses.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/storage-signals.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/options.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"worker/src/index.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/runtime-diagnostics.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/search-session.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-destination-menu.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/runtime/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/runtime/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/installed-chrome.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics-bridge.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics-ui.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/explorer/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/explorer/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-status.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-check.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-policy.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-reporter.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/adapters.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/registry.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/agent-gateway-fixtures.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/check-syntax.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/issues.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/transfer-counter.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/odometer.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/file-api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/r2-adapter.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/explorer.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/configuration.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/dropped-files.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/beta-explorer-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/guided-interaction.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/tour.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/lab.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"tools/lab/bridge.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/lab-local-smoke.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-history.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/destination-config.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-celestial.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/shelf-celestial-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/standard-breadcrumbs.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/url-list.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/remote-dialog.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-v3.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-engine-settings.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/right-click-v3-ui.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-legacy.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-navigation.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/history-target.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "architecture",
+      "state": "failed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"explorerDiagnosticVersion\": \"1.0.0\",\n  \"state\": \"partial\",\n  \"data\": {\n    \"findings\": [\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function showExplorerMenu(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"goLocation\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"browseWorkspace\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"const goPage=async\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"runExplorerSearch\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type===\\\"cfSearchStart\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"browseWorkspace\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"selectExplorerItem\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"showWorkspacePreview\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"setWorkspacePreviewLightbox\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerDownload\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerUploadFiles\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"pasteExplorer\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfTransferObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"transferExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function explorerDirectoryExists(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"pasteExplorer\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfTransferObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"transferExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function explorerDirectoryExists(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"beginExplorerRename\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfRenameEntry\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"renameExplorerEntry\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"deleteSelection\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfDeleteObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"deleteExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"beginNewFolder\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfCreateFolder\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"createExplorerFolder\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"showProperties\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjectProperties\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"assetCorsControl\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfPublicAddresses\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"bucketPublicAddresses\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function urlPopover(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function enableBucketPublicAccess(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"setExplorerClipboard\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function urlPopover(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"goLocation\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"loadExplorerInventory\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfBuckets\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listBuckets\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"async function loginRequest(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"ensurePrepared\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfPrepareBucket\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"preparedProfile\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"openArchive\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfArchiveEntries\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"callBucketWorker\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"workspace-objects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"workspace-preview\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-menu\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-properties\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-operation\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-status\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspaceTarget\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspacePrefix\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerSelected\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerClipboard\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerNextCursor\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspacePreviewRequestId\"\n      },\n      {\n        \"code\": \"MISSING_ANCHOR\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"presetLocationCache\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerDestinationMenus\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerOperation\"\n      }\n    ],\n    \"authority\": \"source navigation, not runtime proof\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "api-registry",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"diagnosticApiVersion\": \"1.2.0\",\n  \"state\": \"available\",\n  \"scope\": \"offline/read-only; repository knowledge and imported observations\",\n  \"data\": {\n    \"findings\": [],\n    \"qualifiedOverlaps\": [\n      {\n        \"name\": \"describe\",\n        \"operations\": [\n          \"diagnostics.describe\",\n          \"project.describe\",\n          \"debug.describe\",\n          \"semantic.describe\",\n          \"runtime.describe\"\n        ]\n      },\n      {\n        \"name\": \"listOperations\",\n        \"operations\": [\n          \"diagnostics.listOperations\",\n          \"project.listOperations\"\n        ]\n      },\n      {\n        \"name\": \"projectOverview\",\n        \"operations\": [\n          \"project.projectOverview\",\n          \"semantic.projectOverview\"\n        ]\n      },\n      {\n        \"name\": \"explainOperation\",\n        \"operations\": [\n          \"project.explainOperation\",\n          \"explorer.explainOperation\"\n        ]\n      }\n    ],\n    \"operationCount\": 55,\n    \"namespaceCount\": 5,\n    \"scope\": \"Registry coverage/version/ownership against native discovery; not runtime or semantic completeness\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"diagnosticApiVersion\": \"1.2.0\",\n  \"state\": \"available\",\n  \"scope\": \"offline/read-only; repository knowledge and imported observations\",\n  \"data\": {\n    \"valid\": true,\n    \"findings\": [\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"REPORT-9d785a223e76\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"REPORT-06ffddcefe46\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"CODE-UPLOAD-CONCURRENT-CREATE\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"BUG-019\"\n      }\n    ],\n    \"coverage\": {\n      \"markdownSections\": 33,\n      \"releaseRequirements\": 21,\n      \"scope\": \"All top-level bugs README sections, recorded release gates, baseline test debt, historical DBG records and the Explorer404 case; not live issue detection\"\n    },\n    \"count\": 67,\n    \"authority\": \"Read-only source projection. Source-implemented is not browser/provider-verified. Original reports and records remain unchanged.\"\n  }\n}\n",
+      "stderr": ""
+    }
+  ],
+  "release": {
+    "state": "blocked",
+    "reason": "Local verification cannot certify browser/cloud/package readiness",
+    "recordedGates": {
+      "schemaVersion": "1.0.0",
+      "decisions": {
+        "beta": "blocked",
+        "releaseCandidate": "blocked",
+        "publicLaunch": "blocked"
+      },
+      "requirements": [
+        {
+          "id": "local-runtime-contract",
+          "state": "passed",
+          "severity": "medium",
+          "evidence": "Mock/local conformance and bounds tests; runtime adapter installed evidence blocked"
+        },
+        {
+          "id": "auth-generation-and-read-retry",
+          "state": "passed",
+          "severity": "high",
+          "evidence": "Mock regressions; not live session proof"
+        },
+        {
+          "id": "progressive-search-local",
+          "state": "passed",
+          "severity": "high",
+          "evidence": "Pull engine and actual UI VM regressions; installed and restart-resume gates separate"
+        },
+        {
+          "id": "malformed-listing",
+          "state": "passed",
+          "severity": "high",
+          "evidence": "Actual source function tested against injected malformed/empty replies"
+        },
+        {
+          "id": "upload-ambiguous-replay",
+          "state": "passed",
+          "severity": "critical",
+          "evidence": "Mock transport failure stops automatic replay; no remote byte certification"
+        },
+        {
+          "id": "installed-workflow-matrix",
+          "state": "blocked",
+          "severity": "critical",
+          "evidence": "Administrator rejects unpacked extension loading; zero extension assertions"
+        },
+        {
+          "id": "real-expiry-and-soak",
+          "state": "blocked",
+          "severity": "critical",
+          "evidence": "No live credentials/scoped resources; accelerated clocks are mock only"
+        },
+        {
+          "id": "live-worker-object-truth",
+          "state": "blocked",
+          "severity": "critical",
+          "evidence": "No STORAGE Worker revision, HEAD/read/hash evidence"
+        },
+        {
+          "id": "local-upload-conditional-races",
+          "state": "not run",
+          "severity": "critical",
+          "evidence": "Initial absence check and direct PUT still race across clients"
+        },
+        {
+          "id": "remote-write-idempotency",
+          "state": "not run",
+          "severity": "critical",
+          "evidence": "No durable operation receipt to reconcile timeout after committed numbered copy"
+        },
+        {
+          "id": "durable-transfer-recovery",
+          "state": "failed",
+          "severity": "high",
+          "evidence": "General/local queues lack restart-safe File recovery; gallery-specific queue is not universal"
+        },
+        {
+          "id": "full-suite",
+          "state": "failed",
+          "severity": "high",
+          "evidence": "Six historical freshness/corpus assertions retained; classified individually"
+        },
+        {
+          "id": "license-consistency",
+          "state": "failed",
+          "severity": "high",
+          "evidence": "Root 2.0 versus extension 1.0; no licensing change authorized/inferred"
+        },
+        {
+          "id": "audit-package-integrity",
+          "state": "passed",
+          "severity": "medium",
+          "evidence": "Allowlist, hashes and deterministic ZIP; audit-only, not release"
+        },
+        {
+          "id": "exact-artifact-installation",
+          "state": "blocked",
+          "severity": "high",
+          "evidence": "Extracted ZIP unpacked install blocked; CRX/store distribution not run"
+        },
+        {
+          "id": "modest-windows-performance",
+          "state": "not run",
+          "severity": "medium",
+          "evidence": "Collector microbenchmark is not product/list/media performance"
+        },
+        {
+          "id": "accessibility-workflow-audit",
+          "state": "not run",
+          "severity": "high",
+          "evidence": "Existing fixtures and aria-live are insufficient full audit"
+        },
+        {
+          "id": "privacy-permissions-current-policy",
+          "state": "not run",
+          "severity": "high",
+          "evidence": "Caller inventory only; current authoritative review and operator URLs missing"
+        },
+        {
+          "id": "store-submission",
+          "state": "explicitly out of scope",
+          "severity": "high",
+          "evidence": "User request prohibits submission; store branch preserved"
+        },
+        {
+          "id": "full-runtime-debug-surface",
+          "state": "failed",
+          "severity": "high",
+          "evidence": "No durable traces, complete span chain or preview/transfer verification adapters"
+        },
+        {
+          "id": "search-durable-resume-and-abort",
+          "state": "failed",
+          "severity": "medium",
+          "evidence": "Restart explicitly interrupted; dispatched reads bounded but not aborted"
+        }
+      ]
+    }
+  },
+  "source": {
+    "commit": "937a8c8d8209308c3e719c0204f653842fa04412",
+    "trackedDirty": false,
+    "files": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "sha256": "2b0479983a825c16b31fb1b535f6a75856ea90f921ff29c6cccca66abfbc8c3b"
+      },
+      {
+        "path": ".github/workflows/package-extension.yml",
+        "sha256": "ee9382257eb20c24e46d7de7863131a749bf32d66a83281b43c6d7a69bb3a54f"
+      },
+      {
+        "path": "agent/api.mjs",
+        "sha256": "a7384efd461c85c58abd451d29c029f436c974c37244d0ecbbee21b3292450a5"
+      },
+      {
+        "path": "agent/catalog.json",
+        "sha256": "c08087fb9b7932ed8a98f29cb86041a2a82f905a6dd0aab3fb2cd43436d7de90"
+      },
+      {
+        "path": "agent/catalog.schema.json",
+        "sha256": "37ab7e7bea911c062993ff56d7e0c01a43134af2798c3e315087efa6a7b65179"
+      },
+      {
+        "path": "agent/cli.mjs",
+        "sha256": "752d68f76e14e0999dc799a13e3f7b2b587d51fa434595db746fa40900d234ef"
+      },
+      {
+        "path": "agent/debug/api.mjs",
+        "sha256": "ce2ddb7a0a08b3be2590cf882e7dcc141c95652cd7b98bc23cf29d12e997ea5b"
+      },
+      {
+        "path": "agent/debug/cli.mjs",
+        "sha256": "a5687e780b6c30294f999338fdc5e8c951e4a5dc4cf94e57e0aff884154af796"
+      },
+      {
+        "path": "agent/debug/schemas/0.1/common.schema.json",
+        "sha256": "94c9f49314d5bb47e37aeddcfefb03b55de9ae40e5f8b48a3686eb06172b9c42"
+      },
+      {
+        "path": "agent/debug/schemas/0.1/event.schema.json",
+        "sha256": "ff9f90c3426074f372e056986ededefebe233dad10225308d8c5f74a76a2447e"
+      },
+      {
+        "path": "agent/debug/schemas/0.1/incident.schema.json",
+        "sha256": "229614e186c05b6198e5c645c9fd08cebd634ea9b8fd2c4f681b4424481ebd5f"
+      },
+      {
+        "path": "agent/debug/schemas/0.1/manifest.schema.json",
+        "sha256": "94c001f90e8785d6f4f268e79ce9e7b614daf40d948f75431e92a5d931c8f5a2"
+      },
+      {
+        "path": "agent/debug/schemas/0.1/result.schema.json",
+        "sha256": "65ce7b1f1cf95ba9d39beecf386cd505492fb68577afc8c32ccadd013b06e4f7"
+      },
+      {
+        "path": "agent/diagnostics/adapters.mjs",
+        "sha256": "52959e957ffa2e0d54f0a5e06fc3f16f22dce6a977984b4b49f954624ffab156"
+      },
+      {
+        "path": "agent/diagnostics/api.mjs",
+        "sha256": "6f44388d3c2cd9530390fe0cc78de3dc196f85e8719f831fa918936164c23a77"
+      },
+      {
+        "path": "agent/diagnostics/cli.mjs",
+        "sha256": "190d7abb4a922cc01d39cb62fc01f34186c22378587860d9f279d87ca132bcff"
+      },
+      {
+        "path": "agent/diagnostics/issue-assessments.json",
+        "sha256": "2806e1faa232ce7a6c05282583d7a7ab6fa9aa0e3aa1e245cf3af9bf670ba18b"
+      },
+      {
+        "path": "agent/diagnostics/issues.mjs",
+        "sha256": "05ce8493c227a23324e87fc9b4da3a1d2ceba5af3b30f995677631a628c650ec"
+      },
+      {
+        "path": "agent/diagnostics/project-map.json",
+        "sha256": "20dc052d57225e73b746d1b9b2829b90c5040999251cfc7762145d8d95e09714"
+      },
+      {
+        "path": "agent/diagnostics/registry.json",
+        "sha256": "017422a9be888c079b14397c68476436c4ef1bbc12e4d1ba00acd08e5874ddb2"
+      },
+      {
+        "path": "agent/diagnostics/registry.mjs",
+        "sha256": "bf48a9575d04d9ea827a0d91b6387175f67e7e3ae5689600c966f3c57d3a0d95"
+      },
+      {
+        "path": "agent/diagnostics/regression-baseline.json",
+        "sha256": "37cf430dd8b7c03f9577076ef9abb47187bef89ea392237a206995d71bb87716"
+      },
+      {
+        "path": "agent/explorer/api.mjs",
+        "sha256": "e5ad4b4bf14592d84f537a0065e0d9281380a3b398f84cbb7ad31ecea4e678f4"
+      },
+      {
+        "path": "agent/explorer/cli.mjs",
+        "sha256": "16d6d0767010353548d2e0e77c78ddf5627deede2adfb9879a6418194a136b61"
+      },
+      {
+        "path": "agent/explorer/model.json",
+        "sha256": "87f279e624e7a1cc17437339475112ee21a5c3b1760efdc24f8bf92a2f9da8fd"
+      },
+      {
+        "path": "agent/explorer/smoke-presets.json",
+        "sha256": "36d71d29aaba0f48e4869b37366dd81b0f022df385f84269793d24eac8852698"
+      },
+      {
+        "path": "agent/result.schema.json",
+        "sha256": "6982b6c4aef01ebb6af44df99bcec2a0fc77453df421c2b9e54d03bfbfd6fc92"
+      },
+      {
+        "path": "agent/runtime/api.mjs",
+        "sha256": "ad38525bebf5026425251979134f8639731283578a188829d3e071c6d0af167c"
+      },
+      {
+        "path": "agent/runtime/cli.mjs",
+        "sha256": "2e6a07efa354960dbad85da701731ec5c71b69e2439dc41b6d747e82efcbfadc"
+      },
+      {
+        "path": "agent/semantic/api.mjs",
+        "sha256": "6097005a2bce659444eb5fd5e84c188aacb4e0ad483cb7a246302af29e52b2c9"
+      },
+      {
+        "path": "agent/semantic/bridge.mjs",
+        "sha256": "56d96e639048c211551ab21a64894393288750c7fd26d99aca93d7d355058e98"
+      },
+      {
+        "path": "agent/semantic/cli.mjs",
+        "sha256": "4c7be175fe6b43b30da2e09417ea39a2bc17a283ecfcc82e3faf10294a4ab668"
+      },
+      {
+        "path": "agent/semantic/examples.mjs",
+        "sha256": "f03a1f78888fa3ae49bab62b64170f324525fd2894cb4a7f8112fbbd950c2e49"
+      },
+      {
+        "path": "agent/semantic/inventory.mjs",
+        "sha256": "9bd957750b86f095bdb7a43a24a0f41e4d17b65d5e9280070a5ccf80ccaebe7e"
+      },
+      {
+        "path": "agent/semantic/io.mjs",
+        "sha256": "23fc8e9722c2771d5ea230229f58e1e92c3ed78cf86e41bfeb8e55fcc5db3405"
+      },
+      {
+        "path": "agent/semantic/migration.mjs",
+        "sha256": "3869ea627a2ab1aee33cdf091a8626250ec6649bbdd505d44a768f2f32ef5daf"
+      },
+      {
+        "path": "agent/semantic/model.json",
+        "sha256": "af87baf563e59019a8a7ec912a4eb81fd850d1cd2968aa061ce4e2edf379b166"
+      },
+      {
+        "path": "agent/semantic/observer.mjs",
+        "sha256": "10e98014a9336dabc76e6cbafab912440513748757e32879e51645526a93a9be"
+      },
+      {
+        "path": "agent/semantic/reproduction.mjs",
+        "sha256": "c83a5439c9a7eb655cf6ea24e31a7d2641edd1d19f5fd319a5efc23d8603fcd0"
+      },
+      {
+        "path": "agent/semantic/schema.mjs",
+        "sha256": "070b98f51ea39d7936f4d9ff05a37f6bf7c42af6276c7cea3d0a6924008167bf"
+      },
+      {
+        "path": "agent/semantic/schemas/0.1/graph.schema.json",
+        "sha256": "a8379c685e3892fb9639f2a496dc5f3d035923e20b22d5d2c7ee0d4d84a63b8b"
+      },
+      {
+        "path": "agent/semantic/schemas/0.1/result.schema.json",
+        "sha256": "cad98b51afe201eb0037b365aab89a61c391bcb876091513f72e62449ff3d0cb"
+      },
+      {
+        "path": "agent/semantic/validate-forever.mjs",
+        "sha256": "00a3463a39999fa95033c28852c80acf11f28e6d776aa36e7a2c177f995b9e21"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/LICENSE",
+        "sha256": "be103b3f6bcc965258d3b1a216f1f67cd012391cba0dd8e95293f7a98d861ad0"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/UPSTREAM.json",
+        "sha256": "872c998c7a83ff9b7dcb21a187ca788b865c59315a90ccfe817b72864c55c8d1"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/package.json",
+        "sha256": "89c47db7851f89caec72da4f215ebc21cf1e294aeef3b45d2583562d846ab035"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/capability.schema.json",
+        "sha256": "a9c0ee5b43fa8ccc9a4471a341429bec21db43ceaf5e724dc7968cd6135b5833"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/common.schema.json",
+        "sha256": "f530df6193696724a565624c8632c8eb091896fbc7c16fc3be15fcc6ce618cb5"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/compatibility-contract.schema.json",
+        "sha256": "51e9fb4b68841ed52fa04240c8ac1b752552359da7e6a7f48997dff8e9dc53e0"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/constraint.schema.json",
+        "sha256": "cc26de703b023e78e215b2c60f802ca3bd6f8721539cdd1721bb64a5ddfcb3c4"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/decision.schema.json",
+        "sha256": "b65c976294cfee2e02ddeec489d42f1055587821b95333d863bcc52533974457"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/dependency-intent.schema.json",
+        "sha256": "3e8c5a5b34b8985025386a0b4efcf833c84f54eaa6c488a49e7a1774dd8248bd"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/evidence.schema.json",
+        "sha256": "1313b16464a0abc3114363ae4165e62521a6c8b57a3e29e213e8ea2485966681"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/implementation.schema.json",
+        "sha256": "967a941f8965bd62e38af4cf98f163e796dee7d60104f737a548c613cb9742f1"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/invariant.schema.json",
+        "sha256": "3ceacc70348d37387c8059a32c2478e2f0f45f38ba0823bebdf1c48d8b3a0efa"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/manifest.schema.json",
+        "sha256": "cb312380c8d5f7ca5aa7e35e16a128ccfe6ab322d68b7c8918355b82e483715e"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/migration.schema.json",
+        "sha256": "1bef23a78cb881a21ec520df83855d28d2c116c25386736c673dbdfa8cd491b3"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/schemas/project-intent.schema.json",
+        "sha256": "09f8466ce4a01ae5406bbd336c1928796107e32da7875e05a4c0b54ba5697430"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/src/index.js",
+        "sha256": "37ab31d4325ecdf9405cbc561e60293384a3f461273b8133246b369145fd6921"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/src/model.js",
+        "sha256": "b2b093efd36fe47f6ca4ccf624bd2468273535f2ce1cafead204b34745cee66f"
+      },
+      {
+        "path": "agent/semantic/vendor/forever-works-0.1/src/node.js",
+        "sha256": "9db21b71f494a8e0f5b4fef5c54704db34641bc5e46e873aa11b915c62f5d58e"
+      },
+      {
+        "path": "agent/semantic/workflow.mjs",
+        "sha256": "b3a2e60ba4f7e45a1cd064def9ce433e972d6ae414a11b15c5a3b54488ee4ed5"
+      },
+      {
+        "path": "extension/LICENSE",
+        "sha256": "51e03f922a331f23ae7fd7a8cb0671e56bf15223bcd48d40b5118e8ae9e29b78"
+      },
+      {
+        "path": "extension/background.js",
+        "sha256": "a7182bc4addeb11fe22916acdfbf8fdf482866202b1f2ce6b0d7c9c74fefe959"
+      },
+      {
+        "path": "extension/beta/account-picker.js",
+        "sha256": "6666992bf1b1c0828951c4c2b29d0bdfee6d8bbaf29f58c4d033cd6d7aea472b"
+      },
+      {
+        "path": "extension/beta/archive-browser.mjs",
+        "sha256": "a483718f0c026bb9a5e391a0211ead5cdd92e9761949d2b2f72e6da77555d2e8"
+      },
+      {
+        "path": "extension/beta/configuration.mjs",
+        "sha256": "3f6c1cf638db85604bd6936f632c881a40514be9f0d88c882324593aaf8113b7"
+      },
+      {
+        "path": "extension/beta/dashboard.css",
+        "sha256": "d45f785e9f328411c3000ebb8a916dfd98cf03ca9263879fcef334ea3043cf62"
+      },
+      {
+        "path": "extension/beta/dropped-files.mjs",
+        "sha256": "cde6f2bac605ccce3dc3cc6bb208a60d621e9bd061102b5d96b0763d4ad934fd"
+      },
+      {
+        "path": "extension/beta/explorer.css",
+        "sha256": "2bc145a166b4770abe2e4c2085886dd918d9a73ea5a69536cb14095e99d654c7"
+      },
+      {
+        "path": "extension/beta/explorer.html",
+        "sha256": "afaeacc3368f820baad11ba42514037a03765bcbbd025b458167b9d9919903a5"
+      },
+      {
+        "path": "extension/beta/explorer.mjs",
+        "sha256": "d8ab4842f480206c13da2708b878a05aea3e937641330f15ac239d5480dc656d"
+      },
+      {
+        "path": "extension/beta/file-api.mjs",
+        "sha256": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66"
+      },
+      {
+        "path": "extension/beta/guided-interaction.mjs",
+        "sha256": "d27a1bb5df1aa221e0065eb1422df139e90b2f48dad61603b28c42a766ff4d3d"
+      },
+      {
+        "path": "extension/beta/history-target.mjs",
+        "sha256": "ebb26b78ebee2f8febe025b38535bc8769ae9bd43f34ffde32c111d31b19acdb"
+      },
+      {
+        "path": "extension/beta/lab.html",
+        "sha256": "baf68cd2c242b2f9ec6d1373e867c1da8aaa5285a1106e518eee140adc518ac0"
+      },
+      {
+        "path": "extension/beta/lab.mjs",
+        "sha256": "3502072578a1b589f4101530e6e69434ea662df77783968058eab48919e79703"
+      },
+      {
+        "path": "extension/beta/quick-links.js",
+        "sha256": "779e252782521e31a67d83bb30be6aac9c4599707ead809110ac6934ddce82f8"
+      },
+      {
+        "path": "extension/beta/r2-adapter.mjs",
+        "sha256": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057"
+      },
+      {
+        "path": "extension/beta/remote-dialog.mjs",
+        "sha256": "47d545ada40e86c7243f0d4b28e2c0f18e590dd4f00063098fccb8c1a671dafa"
+      },
+      {
+        "path": "extension/beta/right-click-v3-ui.js",
+        "sha256": "6343b78508a5358ead77db534e25fb93c99102de5e539f5cea6d71d2cdb1535a"
+      },
+      {
+        "path": "extension/beta/right-click-v3.css",
+        "sha256": "5b712be7dcb91c19d84f874840b26bb53b529fb2475d641fe43a9dc02c5935f7"
+      },
+      {
+        "path": "extension/beta/sidebar-settings.js",
+        "sha256": "743161819bc6e142004c6f8f2c71b6197a152cce423e4e0611588cf88b598669"
+      },
+      {
+        "path": "extension/beta/standard-breadcrumbs.mjs",
+        "sha256": "720c517effdc2930285bacd5a0c1bea4594b5e62b0c2c4562b47550b4c9a00aa"
+      },
+      {
+        "path": "extension/beta/test-it-history.mjs",
+        "sha256": "c334bdb51603dd986f72164fcae36aa8ac405a21a3ee24302419d47bf0254801"
+      },
+      {
+        "path": "extension/beta/test-it-session.mjs",
+        "sha256": "1ac90122cff5f466f5f545a37d394792156aa0666e96c1411a936e70456764fc"
+      },
+      {
+        "path": "extension/beta/test-it-tools.mjs",
+        "sha256": "e7b7c852790b1024eb1ec0cbd1835b4ffa3ffa00b8ddd730399ba1bc93548667"
+      },
+      {
+        "path": "extension/beta/test-it.mjs",
+        "sha256": "3e69e9810cb53f173a6be3eff8f4d6abed1f019dfd0ff1101251f9d3ab312fb5"
+      },
+      {
+        "path": "extension/beta/tour.mjs",
+        "sha256": "8569270933757cf148b3d2bdf0660e101ee453df7fdeddefe5c48926810df549"
+      },
+      {
+        "path": "extension/beta/url-list.mjs",
+        "sha256": "10a6803447af2ae6d9643842aa2bd8154a161a28505568a3abfa8cacb20c0f20"
+      },
+      {
+        "path": "extension/brand-icon.js",
+        "sha256": "b77e38b8311a786076898ef4b55ef0f30dc25c7c215ad628c9bd2842ba02c1cd"
+      },
+      {
+        "path": "extension/cloudflare-api.js",
+        "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64"
+      },
+      {
+        "path": "extension/cloudflare-auth.js",
+        "sha256": "ba2b6ff8450278ddee1198f20158eaf8bdc42acf8a8de9f18bed111dc60a5789"
+      },
+      {
+        "path": "extension/destination-config.js",
+        "sha256": "20edf0063d59481dac271e96d20effe08363bf09e73be18ec02cb9eb2f3fde9e"
+      },
+      {
+        "path": "extension/explorer-destination-menu.js",
+        "sha256": "e15612fb1b5841992f2b9902236a5508aa00e47594aa90a72cf2b9ac8f2ccb4d"
+      },
+      {
+        "path": "extension/explorer-diagnostics-bridge.js",
+        "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c"
+      },
+      {
+        "path": "extension/explorer-diagnostics-ui.js",
+        "sha256": "14482bcec6c690689d4e4e913068b2a35137dfb4855d7435b4cdad8bba46c809"
+      },
+      {
+        "path": "extension/explorer-diagnostics.js",
+        "sha256": "e7ee43dc9a94d39023cca4e63791667541f448e136900c02595bc7bb93eeb9e7"
+      },
+      {
+        "path": "extension/explorer-status.js",
+        "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348"
+      },
+      {
+        "path": "extension/explorer-theme.js",
+        "sha256": "ecde80e15827f81cdbd476b434b2374b6794a6b34db638e64833b38b1b72acfd"
+      },
+      {
+        "path": "extension/fonts/OFL-Bitcount-Prop-Double-Ink.txt",
+        "sha256": "061dfb7681d7fff942e04f5217c40e05d2fe5a3cea6001222039fea4b0432254"
+      },
+      {
+        "path": "extension/fonts/OFL-Jersey-10-Charted.txt",
+        "sha256": "436d5836064cec796c7ddde6fb4faeabdb6f2f17443a24a30d0c38b75d13f922"
+      },
+      {
+        "path": "extension/fonts/OFL.txt",
+        "sha256": "2af94f4fb533be8fa23282eb33e08ca311ddf47c2f32777e2040b282deeec65c"
+      },
+      {
+        "path": "extension/fonts/README.md",
+        "sha256": "566685fdf5611bd21d8baed01eba457fc626dbb5b88c4d448701bdb6e4340334"
+      },
+      {
+        "path": "extension/fonts/bitcount-prop-double-ink-latin.woff2",
+        "sha256": "d914db9a85b119c006d262a07d9c7bc03879e896a38f35779a004eb27096826d"
+      },
+      {
+        "path": "extension/fonts/dm-sans-latin-variable.woff",
+        "sha256": "d94569f0465994cab08cb03bc063dedfbd81729d0dc5ba62bcdc62a58690de14"
+      },
+      {
+        "path": "extension/fonts/jersey-10-charted-latin.woff2",
+        "sha256": "7df34685fef59fd91865c68855ab5c652fc1a88250dc8445cdb0a7e1b44d651a"
+      },
+      {
+        "path": "extension/google-drive-auth.js",
+        "sha256": "9990415b8da2a17092e3afe16d86a0654baa7fcd3a6ec6981b988fe6d268a5cb"
+      },
+      {
+        "path": "extension/history-archive.js",
+        "sha256": "de6d0acdbe2588fc1ddc08d9621b7b661263ed73250566add2e20f664bd3185b"
+      },
+      {
+        "path": "extension/history-navigation.js",
+        "sha256": "d15f7d65b1a1a05b498e4c48fafb971df617458385fbf9f3cd9a5c6e687d9fe4"
+      },
+      {
+        "path": "extension/hitomi-capture.js",
+        "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1"
+      },
+      {
+        "path": "extension/icon.svg",
+        "sha256": "46501f7f9fbe1673f75da271d98bc7c077a952cecb3c59f20115cc631ba9a714"
+      },
+      {
+        "path": "extension/icons/icon128.png",
+        "sha256": "93b29a5a56138d38a9764ff61eb8c84f54c2be23e37df5b2421dfc1a6d8138d7"
+      },
+      {
+        "path": "extension/icons/icon16.png",
+        "sha256": "bf9e03f6d91d9d5e21e80ca258d1e44175991b2c09919056eef919b6753a4245"
+      },
+      {
+        "path": "extension/icons/icon32.png",
+        "sha256": "92d5f1bdb21c8454324d7139f6fdf5190e34c39773ed8c68fe6f8c527a3786a2"
+      },
+      {
+        "path": "extension/icons/icon48.png",
+        "sha256": "269610e0795994b6fafe9b0787f8d8faf2518699cd8f1b48ed2305258e945d80"
+      },
+      {
+        "path": "extension/manifest.json",
+        "sha256": "c8cdc047130d24397af15f30ee1598fe48c3005d7a8328aaa3e6cab884599ef1"
+      },
+      {
+        "path": "extension/menu-reorder.js",
+        "sha256": "8871bcc1b6781fbe2f4e5649d501553325942d8c5b9e53319fd8a4d046d71ace"
+      },
+      {
+        "path": "extension/model-viewer.min.js",
+        "sha256": "8367184a607fbe07a78b650c0d359e5ebbd96f7e2b22f95f761f559b63430386"
+      },
+      {
+        "path": "extension/nested-locations.js",
+        "sha256": "344c8002a55e01ee0f7f3c1686a7e7a7df4b2da02b77696c90b3bb74207f5a6c"
+      },
+      {
+        "path": "extension/odometer.js",
+        "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842"
+      },
+      {
+        "path": "extension/options.html",
+        "sha256": "7ced76fa345c6f29233ceb33c4c9121780a43b7eb7bc83464d3b2585d1be54cb"
+      },
+      {
+        "path": "extension/options.js",
+        "sha256": "cb99d26cba6b57fea19da4a4dbae6e77b4c210ace7ee9b725fb027dc755d362a"
+      },
+      {
+        "path": "extension/popup.html",
+        "sha256": "36b357a472d36758fb84bdf3466f51b94dbaeef3d48c4d37f345b82d7397aa3f"
+      },
+      {
+        "path": "extension/popup.js",
+        "sha256": "cf3bd1445591d3ec7f0c7f5484b0cd7ee247be814a7f2146f7a93716b9025132"
+      },
+      {
+        "path": "extension/provider-opening.js",
+        "sha256": "f41c55befb544e92d954656f6c1394a88682d060e04aaaeb42d7ae25867ffb6d"
+      },
+      {
+        "path": "extension/public-addresses.js",
+        "sha256": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69"
+      },
+      {
+        "path": "extension/rfis-index.js",
+        "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f"
+      },
+      {
+        "path": "extension/right-click-engine-settings.js",
+        "sha256": "ea4f1725b936918d5cace4f7f6dad2f31e816e56356bc83aad9f821f27666687"
+      },
+      {
+        "path": "extension/right-click-legacy.js",
+        "sha256": "f348d5917b257f32a8655319b397f0d9e79688cded29663928f3ab692bf6e582"
+      },
+      {
+        "path": "extension/right-click-v3.js",
+        "sha256": "69835d3881b5d5682d6f7a947cd3ac05946f773c43b4eb1978804aae38b066d0"
+      },
+      {
+        "path": "extension/runtime-diagnostics.js",
+        "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141"
+      },
+      {
+        "path": "extension/search-session.js",
+        "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce"
+      },
+      {
+        "path": "extension/settings-mascot.js",
+        "sha256": "ff0a7ed5a804737a185c5aaa96e589172688a0c553430ac21b603968ccf09b85"
+      },
+      {
+        "path": "extension/settings-mascot.png",
+        "sha256": "9cde0fdaa70a54cf238fa7a865f67f92d5f631385531a613e59d204af9a5f935"
+      },
+      {
+        "path": "extension/shelf-celestial.js",
+        "sha256": "ee683e627082dec33612c3156faa3b8288476659f4d48d4d7a3bb1837ce31ee0"
+      },
+      {
+        "path": "extension/shelf-history.js",
+        "sha256": "fb5abd2bd932ab96c76bab946b77992d365167b64c4842385051599b5f0e05ae"
+      },
+      {
+        "path": "extension/shelf-odometer.js",
+        "sha256": "297250fcd0ec4319c476225c9a5df89ab8facedd746a10192a2e5d64a1420b4d"
+      },
+      {
+        "path": "extension/shelf-theme.js",
+        "sha256": "61ce3551b1d6328d89972eece68ff8ca04cb83b2f8bac1d2452944afc9119eff"
+      },
+      {
+        "path": "extension/shelf.css",
+        "sha256": "9986ee83e64bc24064b5c3bb00c4ee30f6fed7200f4159840dea7eb7c8b19f3e"
+      },
+      {
+        "path": "extension/shelf.html",
+        "sha256": "8099b531c201dc9fbf55148c07597cafd225cec6998af94f059e97c7bc37a7e1"
+      },
+      {
+        "path": "extension/shelf.js",
+        "sha256": "f56e5afe255005958323d44b4e555fb7ae6392f1429ecb9b21da827aaf0c398d"
+      },
+      {
+        "path": "extension/storage-signals.js",
+        "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d"
+      },
+      {
+        "path": "extension/toolbar-preferences.js",
+        "sha256": "fdab53b228c17f5f3074541a68bca352cc79987a42c30db5a754188a2c780735"
+      },
+      {
+        "path": "extension/transfer-counter.js",
+        "sha256": "261fef8564c5cbfeab41ac3fc184c6d9e11a83980490cd8fa705396f529de9ad"
+      },
+      {
+        "path": "local/bridge.mjs",
+        "sha256": "af8baa4b2c31cb3fcf4acf1fda0d2f8cbf9021a3b09b9e39d1cb24639648fd31"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "2f6d1c51deccd29dde241facdba06b14c000783dd545faa5ee4b72cdde155a06"
+      },
+      {
+        "path": "package.json",
+        "sha256": "7ef941e088dd110da51acfd990444a5e3824eaac8126f70f7df1cbff6cc75ea2"
+      },
+      {
+        "path": "schemas/diagnostics/gateway-1.1.0.schema.json",
+        "sha256": "a62808e4fdbfe1a59a3466b62d564b567e39a12c54f1e814639fac36948e71c2"
+      },
+      {
+        "path": "schemas/diagnostics/gateway-1.2.0.schema.json",
+        "sha256": "8dcbef6f73663547ed0d50e3cd59de855d0a7cc0ca3f3dfd30b2f3a3ed3ae47d"
+      },
+      {
+        "path": "schemas/diagnostics/issue-assessments-1.0.0.schema.json",
+        "sha256": "5e5f29574813f7a41346ee9e9efeb2fb19aded32a75a1d7e0b9d9848a1303e08"
+      },
+      {
+        "path": "schemas/diagnostics/registry-1.0.0.schema.json",
+        "sha256": "541b2289f5b077b401d690a4b6c45fb78be6846e4c7800ac40ec58c00a03a46b"
+      },
+      {
+        "path": "schemas/diagnostics/registry-1.1.0.schema.json",
+        "sha256": "850a71caf6b8731a62bdde197d0a5f64da1c55b523b6def81b4585d970a27d7e"
+      },
+      {
+        "path": "schemas/explorer/bundle-1.0.0.schema.json",
+        "sha256": "3e43f52f3f7228b536ff3d075df40265659c137d5f403ac2077aab7500756f92"
+      },
+      {
+        "path": "schemas/explorer/response-1.0.0.schema.json",
+        "sha256": "e0b76f8fd2fcea83aea7af9f49ceebcacfc759fcb08ee2613d5a52f9f138ae3e"
+      },
+      {
+        "path": "schemas/runtime/response-1.0.0.schema.json",
+        "sha256": "46233424618fc5df1a9ea5269f1968f4ef34fb6a6d73ac81db21f56d8cfc78cd"
+      },
+      {
+        "path": "schemas/runtime/support-bundle-1.0.0.schema.json",
+        "sha256": "ea7d0f82ea7a884a618626a8d473fd16899dba0ff52c1f5a3f6ce71f9215a443"
+      },
+      {
+        "path": "scripts/agent-gateway-fixtures.mjs",
+        "sha256": "02610cd686bd4e839a8430879d3c0d01d9ad77ccf7116fd53c3a8b9f439ff26d"
+      },
+      {
+        "path": "scripts/beta-explorer-preview.mjs",
+        "sha256": "1cec5f80b3bc364f7d510bc9d08deb2b39fd427e4065020b740e005ec46c006d"
+      },
+      {
+        "path": "scripts/check-syntax.mjs",
+        "sha256": "8c8f5ae1c8afef98c54d7d1bc6d041e479c4fe86f6bfd90d70cbad937b2da3d2"
+      },
+      {
+        "path": "scripts/explorer-architecture.mjs",
+        "sha256": "dd7607e6a3dd836ae0416f142a36c159f0a297f3a4f03ed85e7d227c635ce0c0"
+      },
+      {
+        "path": "scripts/explorer-diagnostic-fixtures.mjs",
+        "sha256": "6ac78330c468881a494ba27e588a76f2e1174f565be995c534bfab37b393111b"
+      },
+      {
+        "path": "scripts/explorer-diagnostics-benchmark.mjs",
+        "sha256": "d961e79b9cccb8c46b53dc2b9f4bc8f5e4df014ccbc8ee4ddda42fb7752a99e0"
+      },
+      {
+        "path": "scripts/explorer-diagnostics-preview.mjs",
+        "sha256": "a6bc3a61b099596b5e5f9a48f079c123a9bc024fac43fa977bdaeecde8ba05e9"
+      },
+      {
+        "path": "scripts/explorer-operations-preview.mjs",
+        "sha256": "0b598149074d3c813c889286660df671a262fa67f306ca6ce5982eb8ea345d4d"
+      },
+      {
+        "path": "scripts/explorer-smoke.mjs",
+        "sha256": "9122d18c09c41f9b09c914ce94e355970a28033815395e541e9168c9f9fc5a46"
+      },
+      {
+        "path": "scripts/installed-chrome.mjs",
+        "sha256": "8464cd4e5f62e2cd4e0b2e2eed6204f10f8a6477fdb5636ca429314bfbb846ca"
+      },
+      {
+        "path": "scripts/lab-local-smoke.mjs",
+        "sha256": "b49fa4f2be77c6f3dbab5709c2b1472f4b7f7d8474bec1df514a138616f1d602"
+      },
+      {
+        "path": "scripts/package_chrome_store.py",
+        "sha256": "f9f094c7c59cf17f1bf386122d004188e0c81dbb333d3bca2beeb23b79de6f9d"
+      },
+      {
+        "path": "scripts/reliability-check.mjs",
+        "sha256": "ad9daf02b6bd3b5b008e0e40946850e173e812af0504b5726787018bfb755398"
+      },
+      {
+        "path": "scripts/reliability-policy.mjs",
+        "sha256": "60e6ebdebceb1fea54491d8f89179ae33e41bf9000556d05b4352849dc9c298e"
+      },
+      {
+        "path": "scripts/reliability-reporter.mjs",
+        "sha256": "d15c846f7a42f8fb44e6f07a935832b98e365661af488c75fddf5430843b43e1"
+      },
+      {
+        "path": "scripts/right-click-v3-focus.mjs",
+        "sha256": "6ded7c740339ede3aef4681ea9335c7603e9530a21d148d7ade7c93ebda21d44"
+      },
+      {
+        "path": "scripts/runtime-benchmark.mjs",
+        "sha256": "0ec3a27a0c61610ecaf1220562f8304643201520b17d6675a116e03484fef8b0"
+      },
+      {
+        "path": "scripts/runtime-conformance.mjs",
+        "sha256": "064cae0c06ce9eb866bf68196c3b9519dc486b57c111dfa4fb2d6898d8f7146f"
+      },
+      {
+        "path": "scripts/shelf-celestial-preview.mjs",
+        "sha256": "35e104b9e111ee7957ae06b85898b084be86fd98f1bd870068d42f9e9722fde2"
+      },
+      {
+        "path": "scripts/storage-expansion-benchmark.mjs",
+        "sha256": "b7cfd72a799eec06d67b84bfd8166445c65e597e4304f26755a103fadfb1cb9b"
+      },
+      {
+        "path": "scripts/storage-signals-preview.mjs",
+        "sha256": "d1739243fce4123a0246d2500707e8fed7d361fe848c5fe24a9ebef05ca0615e"
+      },
+      {
+        "path": "scripts/syntax-targets.json",
+        "sha256": "8c2064dd9524ed0a6b41793fce15148968cd086bffdd3cf1b6c3965b4746db42"
+      },
+      {
+        "path": "scripts/test-it-benchmark.mjs",
+        "sha256": "7f42684840ec6902912b11a7718e8cd9c523db03775fdbdb14f47e20c9f36c4a"
+      },
+      {
+        "path": "tests/add-menu-location.test.mjs",
+        "sha256": "bd2722fc917ba386f50b2ebd24ef60710d54ebfc53abb2e929d9d23293daff6f"
+      },
+      {
+        "path": "tests/agent-api.test.mjs",
+        "sha256": "2ffaf2c8f2072fcef47d1e03d0b896d1a5b9babfeb27c0cc83911ce4af235ff4"
+      },
+      {
+        "path": "tests/agent-gateway-schema.py",
+        "sha256": "79943d034698ab4115141b5964baa3579a3d1d9b514ab4c9d2cbb13d445ad3c1"
+      },
+      {
+        "path": "tests/agent-gateway.test.mjs",
+        "sha256": "9f4ecf412689a031d344a31fec1b19be74bae526f0d3660e8a7a71dd47c8d4d8"
+      },
+      {
+        "path": "tests/archive-browser.test.mjs",
+        "sha256": "6252812058150c2e8e1dc0df6c3f197c68945ba83c09fe61034378e9c9ea6eb4"
+      },
+      {
+        "path": "tests/beta-bucket-url-consent.test.mjs",
+        "sha256": "58eb7eed0d048453d50edf191557ace77fa421384eca45403c5b1d0250894f84"
+      },
+      {
+        "path": "tests/beta-explorer.test.mjs",
+        "sha256": "a811ce551bb49b248896ec2520c5b7dbc4a858dd56ce06a1f0903af8d76b34e0"
+      },
+      {
+        "path": "tests/beta-popup.test.mjs",
+        "sha256": "ee23ac033e915ace0822cf54657aceeefe81a42ef60cb88a97314c5757aeefc8"
+      },
+      {
+        "path": "tests/brand-and-paginated-history.test.mjs",
+        "sha256": "894ccf5c2086887ff466404741800306c3b7074af63825586fd8b5f84e4bb7ab"
+      },
+      {
+        "path": "tests/cloudflare-files.test.mjs",
+        "sha256": "6efedd7a8437aae7ae13ecef40be2807f56be989191c9a3fc92ab479035f9212"
+      },
+      {
+        "path": "tests/cloudflare-login.test.mjs",
+        "sha256": "78e1b6de12787037404de9dbbe7f84fb3f328a543f6c3acd8fa84604848c0414"
+      },
+      {
+        "path": "tests/cloudflare-reconnect.test.mjs",
+        "sha256": "e49dae82f437166dc08fd01dfb1eb22189f6e78228d410df920de6aaaa6add63"
+      },
+      {
+        "path": "tests/cloudflare-session.test.mjs",
+        "sha256": "e04d8b0d9079097685c4e5e82134dfe022961091e2a6066e258d8811eaed7b15"
+      },
+      {
+        "path": "tests/dashboard-phase1.test.mjs",
+        "sha256": "87dca03dffb1177a7d7eb3e0c4158e2e03b7029f7363730eb6266aedb5da8efc"
+      },
+      {
+        "path": "tests/debug-api.test.mjs",
+        "sha256": "47361fc0e4a1fbbe36b4849788444c0395f777459ae4c3fe1ebc15bbbb515b4d"
+      },
+      {
+        "path": "tests/debug-schema-conformance.py",
+        "sha256": "3c8c48e8d18f09a9cda174c8e1bab280b2f9b1d17f9d8803295737dcf134d1ef"
+      },
+      {
+        "path": "tests/destination-search-regression.test.mjs",
+        "sha256": "d79a59352b1e75a406a2c5019af6502854c372b10a8e25649ae5a2b0f01e4611"
+      },
+      {
+        "path": "tests/diagnostic-foundation.test.mjs",
+        "sha256": "5a9e46ad0bbb4de9c47f05c1fa12b06a901ddecd2fa433e55d6626c445c508d5"
+      },
+      {
+        "path": "tests/download-collisions.test.mjs",
+        "sha256": "82610033d181975a6f393315104d9cf48b8ccc506498514c9f41c378c1a3ff78"
+      },
+      {
+        "path": "tests/explorer-account-and-history-navigation.test.mjs",
+        "sha256": "12f76e80a91a4ef2458310124d620e3f67a637accb74c151503e4cae54b20b9e"
+      },
+      {
+        "path": "tests/explorer-account-picker.test.mjs",
+        "sha256": "bddf7d9d48afa0a11a58becd67864e7ea9e3347b5249cbcb573ce9bde3f1d615"
+      },
+      {
+        "path": "tests/explorer-copy.test.mjs",
+        "sha256": "283a7b1411d55bead1d1ed39da44981753a2268018f01d88a4e6b463378c3437"
+      },
+      {
+        "path": "tests/explorer-destination-menu.test.mjs",
+        "sha256": "91c48674dcc973728dda64c45a281e606365d6fb34b5d5bee94031f15eed9426"
+      },
+      {
+        "path": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "sha256": "c005aeff8ab3b0f22289d3d66aa90c6d3f2b1d82675d713bca986edeae52ad4e"
+      },
+      {
+        "path": "tests/explorer-diagnostic-schema.py",
+        "sha256": "0fea38fc3ae294ff27dfd8a3175ca03e16940d03c26c8ff613f2319d21081246"
+      },
+      {
+        "path": "tests/explorer-diagnostics-ui.test.mjs",
+        "sha256": "22e9cd5586568130248c6f82f5218a7b1699c30d860d0cabf5502de823f5b929"
+      },
+      {
+        "path": "tests/explorer-diagnostics.test.mjs",
+        "sha256": "5bfa406e949dc006c46775b776f08a8b7fb316a7482adeb5f362b7fbe6aa9fe1"
+      },
+      {
+        "path": "tests/explorer-first-paint-and-url-cards.test.mjs",
+        "sha256": "14cfd786c346ba94dae748c0672d09c1ca39f1c17b336a64e8c94e325802b8d7"
+      },
+      {
+        "path": "tests/explorer-login-startup.test.mjs",
+        "sha256": "7806c1576cb3293d43e88ea6ef89d412ecca24cf70c567ed259a45f9304c38ed"
+      },
+      {
+        "path": "tests/explorer-menu-actions.test.mjs",
+        "sha256": "267e3d41c787487fab5d54561d254d8c1c4120d2e0f62d64940a79c15d22ad54"
+      },
+      {
+        "path": "tests/explorer-neon-history.test.mjs",
+        "sha256": "5e6fe8d554b463cb3808516f1851cdbb8ffabe946c0b3824b67204dfbf15a23a"
+      },
+      {
+        "path": "tests/explorer-parity-audit.test.mjs",
+        "sha256": "da6f016a8ca759f0986ec577e72fd9417108ae28999a74916250ba5c85916cb8"
+      },
+      {
+        "path": "tests/explorer-probes.test.mjs",
+        "sha256": "c5a01f5eb16c76aefcf9d999b0c5630f278d994d5eeeb36ea21eb85d2a6d3d60"
+      },
+      {
+        "path": "tests/explorer-release-appearance.test.mjs",
+        "sha256": "03000981413cb51699c1ba3220a1858ed45591f53a979ada7a449931256cd09f"
+      },
+      {
+        "path": "tests/explorer-status.test.mjs",
+        "sha256": "d7af8e4d9345570e84d207ca674813665a309746df714b32fe4a9af47287c46e"
+      },
+      {
+        "path": "tests/explorer-worker.test.mjs",
+        "sha256": "1a7c31531e71f9cc7196223dc4bf13c2be291a5db173b9735dfc6cdbd4c56496"
+      },
+      {
+        "path": "tests/fixtures/agent/requests.json",
+        "sha256": "1a806d1a5ee57d66565e651301e693bb5175af371da9ff19a6ccd81e20ac53f3"
+      },
+      {
+        "path": "tests/fixtures/debug/structure-cases.json",
+        "sha256": "669321fe89b6f35062a07a93c713471f00c9d22910e9c8e3f87a1739e9ed854e"
+      },
+      {
+        "path": "tests/fixtures/debug/v0.1/expected.json",
+        "sha256": "0ddc4bc4712bb7082869edb8b3e3e2c5195a7c3c05efb8d26aa55674edda57cf"
+      },
+      {
+        "path": "tests/fixtures/debug/v0.1/history.jsonl",
+        "sha256": "5a83411254ea13378260f9ae95554efbd1150c9775b4d8735888358d2647fa88"
+      },
+      {
+        "path": "tests/fixtures/debug/v0.1/incident.json",
+        "sha256": "29d7a7f2652681d4fc03f1be6f5cae70aabc61f662a957dc4e199a66d4f0908a"
+      },
+      {
+        "path": "tests/fixtures/debug/v0.1/manifest.json",
+        "sha256": "b13825c4470837242ad9b1f125856d9198877278c0a925f12e80d7f0d179c743"
+      },
+      {
+        "path": "tests/fixtures/semantic/0.1/frozen-contracts.json",
+        "sha256": "b90c79b52d8888ef4bef2b12f42788be300c3ecfddc4f18ffb054ba75dbcd794"
+      },
+      {
+        "path": "tests/fixtures/semantic/0.1/hostile-cases.json",
+        "sha256": "eee24cb94f6bb9f838419591185a07776b195026a2cbc9b0de1ed2b98ac1e040"
+      },
+      {
+        "path": "tests/fixtures/semantic/0.1/model.json",
+        "sha256": "e3ad7e9cb8f731644687a4580c004f508228fb3328cbd8b07013939e4e3c7ed3"
+      },
+      {
+        "path": "tests/fixtures/semantic/0.1/trace.golden.json",
+        "sha256": "071bd269f758a8943310532170eaa8c6f2a7f088800b84269ce4049ef0de2196"
+      },
+      {
+        "path": "tests/get-url.test.mjs",
+        "sha256": "4e3b7ccfbec7cba302500e0b8862f3f0a33c83dd992dc245d67b50ae4052e0b7"
+      },
+      {
+        "path": "tests/helpers/beta-provider.mjs",
+        "sha256": "39d8ce0365f6d14dd87827f7ce04b9e38b562cf31262a8b5c02ba5bbb6243d61"
+      },
+      {
+        "path": "tests/history-go-to.test.mjs",
+        "sha256": "3bce67ba8328af06d43c0c57d244ecdb9bc0f5b6f430c85614a0ee8191cafdfa"
+      },
+      {
+        "path": "tests/issue-inventory.test.mjs",
+        "sha256": "4b3da3942f0c8dcce2cf35dc0525a6e3fc9d51cfdbc80f70a360f4d9b8f8f7ef"
+      },
+      {
+        "path": "tests/lab-bridge.test.mjs",
+        "sha256": "ddb004f5fe725ae1510cf47857e3e402e2a8aef20e3d36ba246ba9693cf9700c"
+      },
+      {
+        "path": "tests/lightbox.test.mjs",
+        "sha256": "60d0e829606f7b86ce038d60d52984397fff15a8620b32bab36b2f7f15ace330"
+      },
+      {
+        "path": "tests/menu-reorder.test.mjs",
+        "sha256": "581e42a13da50fae5509995bc51f79d476abb66a0117730aac03d7763edd88e6"
+      },
+      {
+        "path": "tests/modern-destinations.test.mjs",
+        "sha256": "cc68d0a587dc5dc33baeefa3e44b17940d9627b2fe7ff3a0773a2cd9cd5773bf"
+      },
+      {
+        "path": "tests/nested-locations.test.mjs",
+        "sha256": "2b4879bb2d99b6a36c5049aa663234d371e4b59b75695e3a7948db11fb20a14a"
+      },
+      {
+        "path": "tests/notification-preference.test.mjs",
+        "sha256": "350b7c2f4404d3c995bfc656c7f4eb36bb2e776fd6dfd48986eab6a824b22ff0"
+      },
+      {
+        "path": "tests/odometer.test.mjs",
+        "sha256": "b1f3ec6f161582a3f4a16bd799974e44782f6e7b2130b366bb29db5cffb394a9"
+      },
+      {
+        "path": "tests/options-debug-display.test.mjs",
+        "sha256": "4639ef92f366a431d8ebb43fb5d5e532bb1d6226ee52094bb5c829b93f8456fd"
+      },
+      {
+        "path": "tests/popup-destinations.test.mjs",
+        "sha256": "c322a0a6471aecb03dc4a29a19251b710481b984149c95500d064c5e9544f15f"
+      },
+      {
+        "path": "tests/popup-folders.test.mjs",
+        "sha256": "b3df0819be4d795dcb9dc0c951788037ee4918f9b2c2ea3f0481454a29485e9a"
+      },
+      {
+        "path": "tests/public-addresses.test.mjs",
+        "sha256": "e3fe67c8e9fc015e7987729b3d578165654a2a34236dcb3c7659b6b491b6249b"
+      },
+      {
+        "path": "tests/right-click-v3.test.mjs",
+        "sha256": "d1f49a69ec17041d6436dffe49ed5d8465ceccf501bf4f8838cdbc5f54390ea5"
+      },
+      {
+        "path": "tests/runtime-reliability.test.mjs",
+        "sha256": "8d0cbba310b278c108f1501e7f7cf7dd6e498205af0341c9104c3572f7a955f9"
+      },
+      {
+        "path": "tests/runtime-schema-conformance.py",
+        "sha256": "967b96e52ce1518ace2aecdce01dfa6c369ae6d57da13af24e45e52a0de2a84d"
+      },
+      {
+        "path": "tests/semantic-api.test.mjs",
+        "sha256": "08a88409f01b482111ea7f4f3c5cc357ab3c6a458e40ea87b6b2efd988e871e3"
+      },
+      {
+        "path": "tests/semantic-io-portability.test.mjs",
+        "sha256": "cd18923f26a77ac773960e342348fd8e7cf55a075decb8248f7dd6fcccd95902"
+      },
+      {
+        "path": "tests/semantic-replacement.test.mjs",
+        "sha256": "ce18774ba2c9465a8d88d53ab528822846eae9390f5f4913d86655f92ed04e59"
+      },
+      {
+        "path": "tests/semantic-schema-conformance.py",
+        "sha256": "b3e67375f4aba2da42f292416a27f965544f321f6587aef8e078e2214cfda60c"
+      },
+      {
+        "path": "tests/settings-mascot.test.mjs",
+        "sha256": "227983a7acd3ed198483c9b10e5538f3166bca4656071dd19a68b8949eec96b8"
+      },
+      {
+        "path": "tests/shelf-celestial.test.mjs",
+        "sha256": "a0127e584e674420205a748ebb0da36d6f55af6813de06eb55a646d33295d218"
+      },
+      {
+        "path": "tests/shelf.test.mjs",
+        "sha256": "41035f55b4a49d483cdb19edc1888d151579e4a387ed191a8586a94f4d3f6fa3"
+      },
+      {
+        "path": "tests/simple-location-rows.test.mjs",
+        "sha256": "6b3eaa1494b2f6944046221853f7789227102b66916f1688a8a1480cc946a1be"
+      },
+      {
+        "path": "tests/simple-menu-flat.test.mjs",
+        "sha256": "cb4afdbb33c5387af70e9e6efa5508b255f92ec00ed3655fb5caa959940ef2de"
+      },
+      {
+        "path": "tests/storage-signals.test.mjs",
+        "sha256": "b110ce976ea3ecf4a2f6ce89640908fe295b7c6a9d744321d6904c2f59724e0b"
+      },
+      {
+        "path": "tests/storage-worker-health.test.mjs",
+        "sha256": "ef248f6b1ea170255f0e2fdb5f93ed000612e5feff0223ae298fc8f66b9b7ac1"
+      },
+      {
+        "path": "tests/syntax-portability.test.mjs",
+        "sha256": "16742ac00365d9d9bf71aa54305fc0d57804b419bc59d8cb7d73b877f11b7887"
+      },
+      {
+        "path": "tests/test-it-copy.test.mjs",
+        "sha256": "4b37ec7f3614507b14c62b36161b653cfc083f419d17d7c7f5f6ef41a5d5e636"
+      },
+      {
+        "path": "tests/test-it-history.test.mjs",
+        "sha256": "43aa73925728802c2b2493053f502a84248dabd82bf52311f7c45bd858a41358"
+      },
+      {
+        "path": "tests/test-it-session.test.mjs",
+        "sha256": "761ebfd92f26c73b7fe61b342b115ab8b10a6d34f9dc04d1a07382d65acc4142"
+      },
+      {
+        "path": "tests/test-it-tools.test.mjs",
+        "sha256": "d13b14b6e0dfee1593782e0405ab5866bbd20fd9ce7f0f7f523638d4c233b25d"
+      },
+      {
+        "path": "tests/test_redown_lab.py",
+        "sha256": "707a352a5e6d2a26a219f21d28e4cbd887123cda233ef466221319c8b687e554"
+      },
+      {
+        "path": "tests/toolbar-feedback.test.mjs",
+        "sha256": "c8c9fdd54b6438af5a489c84c2bfa82b791421fec6de7fee005133e16d7ca13b"
+      },
+      {
+        "path": "tests/transfer-counter.test.mjs",
+        "sha256": "1236fb03965477d9c115bdb032f154c9381dd466b46d7dc0f21382387accf3c3"
+      },
+      {
+        "path": "tests/upload-location-builder.test.mjs",
+        "sha256": "0509c9b7f6ad9468f2b2d7114f4cfc62fb5da39987586a78afc405527f838be7"
+      },
+      {
+        "path": "tests/upload-request-context.test.mjs",
+        "sha256": "e82e1b9f1c4384354bdecd467060e004dbc842c855e4e88b2d3f540699b32a9a"
+      },
+      {
+        "path": "worker/src/index.js",
+        "sha256": "b354b3dc77d6f1b4196f137c02dd040ca8f143579b4765595546d751929f17a4"
+      }
+    ],
+    "sha256": "78367e05a0196aa973499ef35002586933da3ab0c58a00a3c472705a82abf744"
+  },
+  "regression": {
+    "state": "failed",
+    "newFailures": [
+      {
+        "type": "fail",
+        "file": "tests/add-menu-location.test.mjs",
+        "name": "one shared add control targets Simple or Nested and asks which destination when needed",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "M0 inventory covers every literal message branch without inventing handlers",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "same-folder copy keeps both and never destroys the source",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Window arrows skip unsupported files and folders, respect visible sort/filter, boundaries and editable controls",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "rapid lightbox arrows abort old reads, revoke late URLs and preserve latest image and mode",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Test It observes real Preview arrow transitions and Escape closes Lightbox with guide focus without dismissing Test It",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Previous uses active preview after extra navigation, for buttons and arrows, without obsolete Next baseline",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "regular Explorer hides stale limitations and keeps new bucket setup optional",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "activation effect only glows success after verified readiness; reduced-motion has a static alternative",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/brand-and-paginated-history.test.mjs",
+        "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "click creates a visible window before network navigation; repeated clicks focus it",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "successful callback exchanges PKCE and verifies access before saving token",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "callback resumes after service worker restart from session state",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "state mismatch fails without token exchange and allows a fresh retry",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "denied consent and missing authorization code fail cleanly",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "closed popup releases attempt and stale window is replaced on next click",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "expired attempt clears secrets, closes popup, and permits retry",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "failed API verification never stores an access token",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "duplicate navigation events exchange a code only once",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "verification network stall aborts and releases the attempt",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "popup creation errors are returned instead of leaving an in-flight lock",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "settings and worker observing the same callback exchange the code once across contexts",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "slow bucket loading does not block locations, Explorer, or connection refresh",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "queries never modify the canonical corpus or cited historical evidence",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "ENOENT",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-account-and-history-navigation.test.mjs",
+        "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "large retained histories render in bounded increments and unrelated storage changes do no history work",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-parity-audit.test.mjs",
+        "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/get-url.test.mjs",
+        "name": "switching files while enabling cannot reopen the old file or overwrite current choices",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/modern-destinations.test.mjs",
+        "name": "tests/modern-destinations.test.mjs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/nested-locations.test.mjs",
+        "name": "tests/nested-locations.test.mjs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "debug-only sections start hidden and toggle exists only inside header disclosure",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "persisted mode combinations restore independently, with Beta off when absent",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "SyntaxError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/popup-destinations.test.mjs",
+        "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "provider order, pending integrations, verified account state and actual history remain honest",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "existing toolbar implementation applies default Shelf and Popup in both directions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: selecting existing folder does not populate creation draft",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: new directory is created under the exact parent only after Create",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: valid names including zero and f create at bucket root",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: invalid path segments never send creation requests",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: stalled creation releases button and explains uncertain outcome",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: refreshing during creation cannot leave a permanent Creating status",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      }
+    ],
+    "knownFailures": [
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      }
+    ],
+    "unseenBaselineTests": [
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      }
+    ],
+    "passed": 645,
+    "skipped": 0,
+    "incomplete": true,
+    "baselineResolved": [],
+    "execution": {
+      "exitCode": 1,
+      "error": null,
+      "stderr": ""
+    }
+  },
+  "state": "failed",
+  "finishedAt": "2026-10-31T02:29:41.493Z"
+}
