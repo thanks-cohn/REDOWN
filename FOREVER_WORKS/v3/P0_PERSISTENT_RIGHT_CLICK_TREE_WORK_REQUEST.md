@@ -1,9 +1,9 @@
 # REDOWN V3 P0 — Persistent Right-Click Directory Memory, Incremental Deltas, Resumable Discovery, and Time Machine Foundation
 
 **Date:** 2026-10-31 · **Owner direction:** recorded and consolidated from the October 31 discussion.  
-**Repository:** thanks-cohn/REDOWN · **Mandatory branch:** \`codex/v3-parity-first-reconstruction\`.  
+**Repository:** thanks-cohn/REDOWN · **Mandatory branch:** `codex/v3-parity-first-reconstruction`.  
 **Status:** **SPECIFICATION / WORK HANDOFF ONLY — NOT IMPLEMENTED OR VERIFIED IN INSTALLED CHROME.**  
-**Protected history/checkpoints:** preserve \`base-V3-2.0.0\`, \`BASE-v3\`, \`V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION\`, \`V3-MENU-MODES-BEFORE-HISTORY-REPAIR\`, and existing user data. Do not move tags.  
+**Protected history/checkpoints:** preserve `base-V3-2.0.0`, `BASE-v3`, `V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION`, `V3-MENU-MODES-BEFORE-HISTORY-REPAIR`, and existing user data. Do not move tags.  
 **Scope:** the *existing* V3 right-click Level/Depth discovery, storage, native menu projection and limited supporting UI. Future Time Machine UI and other cloud providers are explicitly separate.
 
 ## 0. One defining requirement — owner's intended experience
@@ -22,13 +22,13 @@ With Nested → Level → Depth 5 and approximately 18 selected buckets, repeate
 
 The existing production implementation is **not yet** this design:
 
-1. \`extension/background.js:refreshV3Inventory(force)\` currently calls \`discover(..., force ? null : s.rightClickV3Inventory)\`, allowing a force refresh to start with no previous inventory and replace a richer tree with a smaller partial result.
-2. \`extension/right-click-v3.js:inventoryKey()\` includes **Depth**; \`discover()\` restricts reuse when Depth changes, and \`levelProjection()\` drops to bucket roots when the inventory key/TTL is stale. Depth/TTL are presentation/freshness concerns, not proof that known paths vanished.
-3. \`chrome.storage.local['right-click.json']\` currently exists as a **schema-v1 logical snapshot**, containing the current inventory, not an independently protected full known-path graph or versioned append-only history. Snapshot persistence can carry forward the result of a destructive scan.
-4. \`refreshV3Inventory()\` currently shares one in-flight promise across different Depth generations. A new explicit refresh can be absorbed by work for an older Depth; latest-generation correctness must be guaranteed.
-5. Native \`buildMenus()\` currently does \`chrome.contextMenus.removeAll()\` followed by recreation. It does **not** currently apply node-level menu diffs, so atomically patching only one Chrome-native menu entry cannot be assumed. Menu updates must preserve/recover the usable menu as far as the Chrome API allows and truthfully acknowledge partial/native failures.
+1. `extension/background.js:refreshV3Inventory(force)` currently calls `discover(..., force ? null : s.rightClickV3Inventory)`, allowing a force refresh to start with no previous inventory and replace a richer tree with a smaller partial result.
+2. `extension/right-click-v3.js:inventoryKey()` includes **Depth**; `discover()` restricts reuse when Depth changes, and `levelProjection()` drops to bucket roots when the inventory key/TTL is stale. Depth/TTL are presentation/freshness concerns, not proof that known paths vanished.
+3. `chrome.storage.local['right-click.json']` currently exists as a **schema-v1 logical snapshot**, containing the current inventory, not an independently protected full known-path graph or versioned append-only history. Snapshot persistence can carry forward the result of a destructive scan.
+4. `refreshV3Inventory()` currently shares one in-flight promise across different Depth generations. A new explicit refresh can be absorbed by work for an older Depth; latest-generation correctness must be guaranteed.
+5. Native `buildMenus()` currently does `chrome.contextMenus.removeAll()` followed by recreation. It does **not** currently apply node-level menu diffs, so atomically patching only one Chrome-native menu entry cannot be assumed. Menu updates must preserve/recover the usable menu as far as the Chrome API allows and truthfully acknowledge partial/native failures.
 6. Existing scan/projection budgets are **Depth 1–10, 500 discovered folder nodes, 80 page attempts, 20-second scans, and 300 projected entries**. Eighteen buckets can exhaust these before deep paths are reached. **Neither these budgets nor Depth may truncate/delete the durable graph.**
-7. \`extension/beta/right-click-v3-ui.js:draw()\` shows configured destinations and a separate on-demand folder map, **not necessarily** the same full native Level projection; user-facing labels must distinguish them.
+7. `extension/beta/right-click-v3-ui.js:draw()` shows configured destinations and a separate on-demand folder map, **not necessarily** the same full native Level projection; user-facing labels must distinguish them.
 
 These are source-backed design problems, **not proof of one unique cause of the owner's installed-browser symptoms**. Test rather than infer.
 
@@ -36,13 +36,13 @@ These are source-backed design problems, **not proof of one unique cause of the 
 
 Maintain three logically separate but consistent states:
 
-- **Live known directory graph (authoritative local materialization):** one record per canonical identity \`provider/accountId/bucketName/exactPrefix\`, with parent prefix, firstObservedAt, lastVerifiedAt, observations/coverage, authorization-related identity, stable node ID, live state, lastAppliedGeneration, and any needed bounded discovery metadata. Prefixes preserve exact case, Unicode and identity; do not invent paths. R2 "folders" are virtual object-key prefixes, not guaranteed physical directories.
+- **Live known directory graph (authoritative local materialization):** one record per canonical identity `provider/accountId/bucketName/exactPrefix`, with parent prefix, firstObservedAt, lastVerifiedAt, observations/coverage, authorization-related identity, stable node ID, live state, lastAppliedGeneration, and any needed bounded discovery metadata. Prefixes preserve exact case, Unicode and identity; do not invent paths. R2 "folders" are virtual object-key prefixes, not guaranteed physical directories.
 - **Append-only verified change journal:** durable events for discovered prefix, confirmed modification, explicit acknowledged REDOWN mutation, verified removal/tombstone, scope-observation changes, suspension/resumption and authorization state. Use idempotency keys and precise **observedAt** timestamps; don't assert actual external creation/deletion dates without evidence. **Unchanged paths produce no change event** and are not rewritten merely because a scan repeats.
 - **Versioned, reconstructable historical restore points:** immutable original baseline, dated snapshots linked to exact materialized generations and their journal ranges. Store shared records/content hashes or snapshots plus deltas so unchanged days/weeks don't duplicate full trees.
 
-The user asked whether an appended \`right-click.jsonl\` could feed the JSON tree. **Preserve that concept as an append-only journal with a portable, versioned JSONL representation/export; don't depend on physically appending to a bundled extension file or intentionally leave half-written JSONL lines after a crash.** Use transactional IndexedDB (or justified equivalent) as durable primary graph, journal, snapshot, checkpoint store; an exportable versioned \`right-click.json\` is the manifest and read model. Use atomic transactions to commit the changed nodes + journal events + scan checkpoint together. An interrupted transaction leaves no partially committed event line and replays from the last acknowledged checkpoint. A monolithic JSON object rewritten after every individual change is **not** the desired architecture.
+The user asked whether an appended `right-click.jsonl` could feed the JSON tree. **Preserve that concept as an append-only journal with a portable, versioned JSONL representation/export; don't depend on physically appending to a bundled extension file or intentionally leave half-written JSONL lines after a crash.** Use transactional IndexedDB (or justified equivalent) as durable primary graph, journal, snapshot, checkpoint store; an exportable versioned `right-click.json` is the manifest and read model. Use atomic transactions to commit the changed nodes + journal events + scan checkpoint together. An interrupted transaction leaves no partially committed event line and replays from the last acknowledged checkpoint. A monolithic JSON object rewritten after every individual change is **not** the desired architecture.
 
-Separate **schema version** (e.g. migration from current \`right-click.json\` schema v1), **live tree generation**, **discovery job generation**, and **dated historical snapshot version**. Ensure idempotent migration and rollback/recovery without destroying the last usable v1 inventory. Do not copy credentials or private object bytes to the history store.
+Separate **schema version** (e.g. migration from current `right-click.json` schema v1), **live tree generation**, **discovery job generation**, and **dated historical snapshot version**. Ensure idempotent migration and rollback/recovery without destroying the last usable v1 inventory. Do not copy credentials or private object bytes to the history store.
 
 ### Owner's "two copies" and versioning
 
@@ -60,7 +60,7 @@ No claim that scheduled snapshots were captured while Chrome was closed. An actu
 
 **B. Change made outside REDOWN:** without a provider change stream, REDOWN cannot know instantly. Discover it during bounded maintenance or user-targeted **Refresh Folder Listing…**. Compare actual observed scope with the last persisted generation. Only verified differences change node records or the journal. Rechecking an unchanged complete scope produces **zero node mutations / zero change events**, though freshness/checkpoint metadata may advance.
 
-**C. Reload/Save/Depth change:** restore and display authorized known branches first; revalidate and merge asynchronously. \`Reload\` means **check**, never **forget**. Lowering Depth only limits projection; increasing it reveals already known levels immediately. A failed/partial scan, expired TTL, or elapsed time **cannot** remove recorded branches. A scan of Depth 3 may not invalidate previously known Depth 5. Menu registration success and cloud discovery completeness must be reported separately.
+**C. Reload/Save/Depth change:** restore and display authorized known branches first; revalidate and merge asynchronously. `Reload` means **check**, never **forget**. Lowering Depth only limits projection; increasing it reveals already known levels immediately. A failed/partial scan, expired TTL, or elapsed time **cannot** remove recorded branches. A scan of Depth 3 may not invalidate previously known Depth 5. Menu registration success and cloud discovery completeness must be reported separately.
 
 **D. Remove only with credible evidence:** exact REDOWN-confirmed delete/rename/move or complete, stable, authorized listing of the relevant parent scope proving absence; never infer deletions from one partial page, timed-out search, auth disconnection, newly added scope, different Depth, or a changed/expired cursor. Preserve historical tombstones after current entries are removed. Distinguish a directory prefix that no longer has objects from a true intentional folder marker.
 
@@ -88,12 +88,12 @@ Users can therefore repair external edits without REDOWN repeatedly recrawling a
 
 ## 6. Projection into Chrome is not the data store
 
-The full known graph is the source of truth, independent of \`Depth\`, scans, UI state and Chrome's practical native menu constraints.
+The full known graph is the source of truth, independent of `Depth`, scans, UI state and Chrome's practical native menu constraints.
 
 - Build a deterministic native menu **projection** of authorized known paths. Reserve roots, ensure ancestor/child validity and stable IDs. Explicitly surface that menu limits and Depth may hide *some* stored paths; provide a "Browse more destinations…" flow to reach the rest rather than pretending all 10,000 items fit natively.
-- Investigate reducing the current \`removeAll() → recreate every entry\` behavior via a **differential native menu registrar** that can update/create/remove supported items without unnecessary whole-menu clearing. Respect Chromium API parent dependencies and callback acknowledgement. Chrome-native menu updates are not one atomic database transaction; when a safe partial patch is impossible, perform a serialized recoverable rebuild **without ever destroying the persisted graph**.
+- Investigate reducing the current `removeAll() → recreate every entry` behavior via a **differential native menu registrar** that can update/create/remove supported items without unnecessary whole-menu clearing. Respect Chromium API parent dependencies and callback acknowledgement. Chrome-native menu updates are not one atomic database transaction; when a safe partial patch is impossible, perform a serialized recoverable rebuild **without ever destroying the persisted graph**.
 - Ensure live routing rechecks authorization and target identity at invocation time. A stored prefix is a valid routing *address*, not an independent guarantee of a present folder or permissions.
-- Distinguish stable configured destinations, discovered folder browser results, the native menu's currently rendered subset, and historical Time Machine records. Do not let the Setup editor's \`draw()\` imply more than actual registered menu state.
+- Distinguish stable configured destinations, discovered folder browser results, the native menu's currently rendered subset, and historical Time Machine records. Do not let the Setup editor's `draw()` imply more than actual registered menu state.
 
 ## 7. Documentation, product controls and privacy
 
@@ -132,6 +132,6 @@ Do not claim a feature is implemented or tested because this specification was c
 
 ## 10. Delivery requirements for Work/Codex
 
-Read \`AGENTS.md\`, this handoff, \`NEED_TO_DO/10312026.md\`, \`FOREVER_WORKS/v3/P0_RIGHT_CLICK_THREE_FIX_REPAIR.md\`, current implementation sources and tests. Inspect before changing. Implement in focused stages with a small reversible migration. Run appropriate source/domain/integration tests and installed Chrome where available. Report exact evidence and pending blockers. Document confirmed causes, schema version, transactional invariant, migration/rollback, retry behavior, native menu constraints, privacy and storage estimates. Commit and push only authorized work; do not modify protected checkpoint tags.
+Read `AGENTS.md`, this handoff, `NEED_TO_DO/10312026.md`, `FOREVER_WORKS/v3/P0_RIGHT_CLICK_THREE_FIX_REPAIR.md`, current implementation sources and tests. Inspect before changing. Implement in focused stages with a small reversible migration. Run appropriate source/domain/integration tests and installed Chrome where available. Report exact evidence and pending blockers. Document confirmed causes, schema version, transactional invariant, migration/rollback, retry behavior, native menu constraints, privacy and storage estimates. Commit and push only authorized work; do not modify protected checkpoint tags.
 
 **One-line acceptance:** **Immediate confirmed changes; all other previously known authorized branches remain accessible; interruptions resume; Reload only reconciles verified deltas; Daily history is the default.**
