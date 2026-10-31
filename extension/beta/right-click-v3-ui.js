@@ -57,16 +57,11 @@ let menuPresentation=RedownRightClickV3.presentation(),acknowledgedPresentation=
 function menuFeedback(menuStatus){
  lastMenuStatus=menuStatus||lastMenuStatus;
  if(menuStatus?.state==='failed')applyFailed(menuStatus.error||'Chrome registration failed. Retry Apply.');
- else if(menuStatus&&menuStatus.state!=='registered'){applyPending=true;paintApply();}
  const target=$('presentation-status');if(!target)return;
  const options=menuPresentation;
  if(menuStatus?.state==='failed'){target.textContent=menuStatus.error||'Chrome menu registration failed.';return;}
  if(engine!=='v3'){target.textContent='Saved for New Right-click. Legacy is active.';return;}
- if(options.style==='nested'&&options.nested==='level'){
-   const at=menuStatus?.inventoryAt;
-   target.textContent=menuStatus?.warnings?.length?menuStatus.warnings.join(' '):at?'Folders checked '+new Date(at).toLocaleTimeString()+'. Reload refreshes.':'Folder inventory pending. Reload to refresh.';
-   const summary=menuStatus?.summary;if(summary)target.textContent+=' Depth '+summary.depth+' · '+summary.knownFolders+' known folders · '+summary.rootsChecked+'/'+summary.rootsTotal+' bucket roots checked. Explorer shows the full paged directory.';
- }else target.textContent=menuStatus?.state==='registered'?'Chrome menu updated.':'';
+ target.textContent='';
 }
 function paintPresentation(){
  $('context-text').textContent=menuPresentation.style==='simple'?'Flat configured destinations':menuPresentation.nested==='narrow'?'Configured destinations, naturally organized':'Real bucket folders · Depth '+menuPresentation.depth;
@@ -170,7 +165,7 @@ function draw(){
  else if(owned){const row=rows.find(n=>n.dataset.key===key);const replacements=row?[...row.querySelector('.v3-row').querySelectorAll('button,input,select,summary')]:[];const replacement=onItem?row:replacements[controlIndex];(replacement||rows.find(n=>n.dataset.key===selected))?.focus();if(replacement?.hasAttribute('data-edit')&&renameDraft)replacement.setSelectionRange(renameDraft.start,renameDraft.end);}
 
 }
-async function load(){if(saving||presentationSaving||scopeSaving||applying){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();acknowledgedScopes=structuredClone(levelScopes);scopeDraft=false;engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;presentationDraft=false;applicationKey=r.applicationKey;paintPresentation();menuFeedback(r.menuStatus);applyPending=!!pending||r.engine!=='v3'||r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey||r.menuStatus.complete===false||(menuPresentation.style==='nested'&&menuPresentation.nested==='level'&&(!r.menuStatus.inventoryAt||Date.now()-r.menuStatus.inventoryAt>=RedownRightClickV3.limits.ttl));applyError=r.menuStatus?.state==='failed'?r.menuStatus.error:'';paintApply();pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'');}catch(e){status(e.message);}}
+async function load(){if(saving||presentationSaving||scopeSaving||applying){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;levelScopes=r.levelScopes||RedownRightClickV3.emptyScopes();acknowledgedScopes=structuredClone(levelScopes);scopeDraft=false;engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;presentationDraft=false;applicationKey=r.applicationKey;paintPresentation();menuFeedback(r.menuStatus);applyPending=!!pending||r.engine!=='v3'||r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey;applyError=r.menuStatus?.state==='failed'?r.menuStatus.error:'';paintApply();pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'');}catch(e){status(e.message);}}
 $('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load().then(async()=>{if(menuPresentation.style==='nested'&&menuPresentation.nested==='level'){try{const r=await request('refreshRightClickV3Inventory');menuFeedback(r.menuStatus);}catch(e){$('presentation-status').textContent=e.message;}}});}};
 $('undo').onclick=()=>{if(!undo)return;const previous=undo;undo=null;change(next=>{next.destinations=previous;});};
 $('retry').onclick=()=>{if(blocked)return status('Reload to reconcile retained changes first.');pending=true;void flush();};
@@ -199,11 +194,10 @@ $('save').onclick=async()=>{
   applicationKey=r.applicationKey;menuFeedback(r.menuStatus);
   if(ticket!==applyEpoch)throw Error('New changes arrived during application. Apply again to include them.');
   if(r.engine!=='v3')throw Error('V3 choices are saved. Select New Right-click in Settings, then retry Apply.');
-  if(!r.menuUpdated||r.menuStatus?.state!=='registered'||r.menuStatus.complete===false||!applicationKey||r.menuStatus.applicationKey!==applicationKey)throw Error(r.menuStatus?.warnings?.join(' ')||r.error||'Chrome has not confirmed the complete current menu. Retry Apply.');
+  if(!r.menuUpdated||r.menuStatus?.state!=='registered'||!applicationKey||r.menuStatus.applicationKey!==applicationKey)throw Error(r.error||'Chrome has not confirmed the current menu. Retry Apply.');
   applyPending=false;applyError='';
  }catch(e){applyFailed(e.message);}
  finally{applying=false;paintApply();}
 };
-setInterval(()=>{if(!applyPending&&menuPresentation.style==='nested'&&menuPresentation.nested==='level'&&Date.now()-(lastMenuStatus?.inventoryAt||0)>=RedownRightClickV3.limits.ttl){applyPending=true;paintApply();}},30000);
 window.addEventListener('beforeunload',e=>{if(pending||saving||presentationSaving||scopeSaving||scopeDraft||presentationDraft||applying){e.preventDefault();e.returnValue='';}});void load();
 })();

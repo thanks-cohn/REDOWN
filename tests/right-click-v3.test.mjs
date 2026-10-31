@@ -239,7 +239,7 @@ test('presentation transitions serialize independently, retain Level depth 5 and
   const r=await h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:options});assert.equal(r.menuUpdated,true);previous=options;assert.equal(JSON.stringify(h.local.rightClickV3),before);
  }
  h.c.listObjectsPage=async()=>{throw Error('synthetic unavailable');};await h.c.refreshV3Inventory(); // mock provider unavailable: explicitly partial, never fake complete
- const restarted=background(structuredClone(h.local));await restarted.c.rebuildMenus();assert.deepEqual(restarted.local.rightClickV3Presentation,{...level,depth:5});assert.equal(restarted.local.rightClickMenuStatus.state,'partial');assert.ok(restarted.native.some(e=>e.id==='redown-v3-inventory-status'&&e.enabled===false));
+ const restarted=background(structuredClone(h.local));await restarted.c.rebuildMenus();assert.deepEqual(restarted.local.rightClickV3Presentation,{...level,depth:5});assert.equal(restarted.local.rightClickMenuStatus.state,'registered');assert.equal(restarted.local.rightClickMenuStatus.complete,false);assert.ok(restarted.local.rightClickMenuStatus.warnings.length);assert.ok(!restarted.native.some(e=>e.id==='redown-v3-inventory-status'));
  await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(simple),presentation:narrow}),/another window/);
  await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:simple},'options.html'),/V3 Setup/);
 });
@@ -396,12 +396,12 @@ test('failed registration retains persisted edits, Retry Apply repairs without r
  const restarted=background(structuredClone(h.local));await restarted.c.rebuildMenus();assert.equal(restarted.local.rightClickMenuStatus.applicationKey,await restarted.c.menuApplicationKey());
  }finally{h.dom.window.close();}
 });
-test('partial Level inventory stays Retry Apply and never reports a complete saved menu',async()=>{
+test('partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics',async()=>{
  const h=await applyHarness();try{
  h.c.listObjectsPage=async()=>{throw Error('synthetic provider unavailable');};
  h.$('style').querySelector('[value=nested]').click();await settle();h.$('nested').querySelector('[value=level]').click();await settle();
  h.$('level-buckets').querySelector('input').click();await settle();h.$('save').click();await settle();
- assert.equal(h.local.rightClickMenuStatus.state,'partial');assert.equal(h.$('save').textContent,'Retry Apply');assert.match(h.$('apply-status').textContent,/incomplete|could not/);
+ assert.equal(h.local.rightClickMenuStatus.state,'registered');assert.equal(h.local.rightClickMenuStatus.complete,false);assert.ok(h.local.rightClickMenuStatus.warnings.length);assert.equal(h.$('save').textContent,'Saved');assert.equal(h.$('presentation-status').textContent,'');assert.doesNotMatch(h.$('apply-status').textContent,/incomplete|could not|known folders/);assert.ok(!h.native.some(e=>/inventory|could not|not shown/i.test(e.title)));
  }finally{h.dom.window.close();}
 });
 test('bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus',async()=>{
@@ -421,4 +421,39 @@ test('apply endpoint rejects stale snapshots and foreign senders, receipt change
   const before=await h.c.menuApplicationKey();h.local[key]=value;assert.notEqual(await h.c.menuApplicationKey(),before,key);
  }
  assert.notEqual(await h.c.menuApplicationKey(),first);assert.doesNotMatch(await h.c.menuApplicationKey(),/synthetic/);
+});
+
+
+test('durable snapshot restores fresh inventory without a provider rescan and stores no secrets',async()=>{
+ const h=background({profiles:[profile],rightClickEngine:'v3',rightClickV3:store(),rightClickV3LevelScopes:scope(),rightClickV3Presentation:level});
+ h.c.listObjectsPage=async()=>({objects:[],delimited:[]});await h.c.refreshV3Inventory();
+ const snapshot=h.local['right-click.json'];assert.equal(snapshot.schemaVersion,1);assert.equal(snapshot.configurationRevision,0);assert.ok(snapshot.appliedGeneration);assert.ok(snapshot.inventory.observations.length);
+ assert.ok(!JSON.stringify(snapshot).includes(profile.token));
+ const local=structuredClone(h.local);delete local.rightClickV3Inventory;
+ const restarted=background(local);let calls=0;restarted.c.listObjectsPage=async()=>{calls++;throw Error('must use snapshot');};
+ await restarted.c.refreshV3Inventory();await restarted.c.rebuildMenus();assert.equal(calls,0);assert.ok(restarted.native.some(e=>e.id.startsWith('v3:cloud:')));
+});
+test('incremental discovery resumes a failed child without relisting its completed root',async()=>{
+ const m=model(),s={...store(),levelScopes:scope()},calls=[];
+ const first=await m.discover(s,[profile],level,async(a,b,p)=>{if(p)throw Error('temporary');return {objects:[],delimited:['child/']};});
+ assert.equal(first.complete,false);assert.ok(first.frontier.some(f=>f.prefix==='child'));
+ const resumed=await m.discover(s,[profile],level,async(a,b,p)=>{calls.push(p);return {objects:[],delimited:[]};},()=>Date.now(),JSON.parse(JSON.stringify(first)));
+ assert.deepEqual(calls,['child/']);assert.equal(resumed.complete,true);
+});
+test('adding a participating bucket reuses the unchanged bucket and revoked buckets never project',async()=>{
+ const m=model(),s={...store(),levelScopes:scope()},first=await m.discover(s,[profile],level,async()=>({objects:[],delimited:[]}));
+ const other={...profile,id:'second',bucketName:'second'},next={...s,levelScopes:{...scope(),revision:2,buckets:[...scope().buckets,{...scope().buckets[0],id:'second',profileId:'second',bucketName:'second'}]}};
+ const calls=[],inventory=await m.discover(next,[profile,other],level,async(a,b)=>{calls.push(b);return {objects:[],delimited:[]};},()=>Date.now(),first);
+ assert.deepEqual(calls,['second']);const revoked=m.project({...next,destinations:[]},[other],level,inventory);assert.ok(!revoked.entries.some(e=>e.title==='bucket'));
+});
+test('perimeter animation has a reduced-motion override and visible keyboard focus',async()=>{
+ const css=await readFile(new URL('../extension/beta/right-click-v3.css',import.meta.url),'utf8');
+ assert.match(css,/animation:v3-perimeter/);assert.match(css,/prefers-reduced-motion:reduce[^}]*[^]*animation:none/);assert.match(css,/#v3-save:focus-visible/);
+});
+test('restored broad inventory reserves capacity for a newly participating bucket',async()=>{
+ const m=model(),s={...store(),levelScopes:scope()},opts={...level,depth:1};
+ const first=await m.discover(s,[profile],opts,async()=>({objects:[],delimited:Array.from({length:499},(_,i)=>'f'+i+'/')}));
+ const other={...profile,id:'second',bucketName:'second'},next={...s,levelScopes:{...scope(),revision:2,buckets:[...scope().buckets,{...scope().buckets[0],id:'second',profileId:'second',bucketName:'second'}]}};
+ const calls=[],inventory=await m.discover(next,[profile,other],opts,async(a,b)=>{calls.push(b);return {objects:[],delimited:[]};},()=>Date.now(),first);
+ assert.ok(calls.includes('second'));assert.ok(inventory.nodes.length<=m.limits.folders);assert.equal(inventory.complete,false);
 });

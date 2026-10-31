@@ -1,0 +1,25 @@
+{
+  "passed": 650,
+  "failedNames": 69,
+  "incomplete": true,
+  "addedFailedNames": [],
+  "removedFailedNames": [],
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ]
+}

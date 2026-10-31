@@ -61,3 +61,12 @@
 #v3-setup :is(#v3-outline,#v3-level-buckets)::-webkit-scrollbar-thumb:hover{background:#8191b399}
 @container(max-width:500px){#v3-setup .v3-header{grid-template-columns:minmax(0,1fr);gap:10px}#v3-setup .v3-presentation{justify-self:start;width:min(224px,100%)}#v3-setup #v3-context-text{font-size:11px}#v3-setup #v3-level-buckets{inset-inline-end:0}}
 @media(prefers-reduced-motion:reduce){#v3-setup #v3-save{transition:none}}
+
+/* A contained one-pixel perimeter highlight, independent of inventory progress. */
+@property --v3-shimmer-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+#v3-setup #v3-save{position:relative}
+#v3-setup #v3-save[data-state=applying]{opacity:1}
+#v3-setup #v3-save[data-state=applying]::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;background:conic-gradient(from var(--v3-shimmer-angle),transparent 0deg 290deg,#ffffff18 315deg,#ffffffc0 345deg,transparent 360deg);mask:linear-gradient(#fff 0 0) content-box exclude,linear-gradient(#fff 0 0);animation:v3-perimeter 1.8s linear infinite}
+#v3-setup #v3-save:focus-visible{outline:2px solid var(--accent,#789bff);outline-offset:3px}
+@keyframes v3-perimeter{to{--v3-shimmer-angle:360deg}}
+@media(prefers-reduced-motion:reduce){#v3-setup #v3-save[data-state=applying]::after{animation:none}}

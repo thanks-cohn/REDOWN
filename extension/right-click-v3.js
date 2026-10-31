@@ -109,12 +109,29 @@
     }
     return [...children].sort(compare);
   }
-  async function discover(config,profiles,settings,listPage,clock=()=>Date.now()){
+  async function discover(config,profiles,settings,listPage,clock=()=>Date.now(),previous=null){
     const options=presentation(settings),start=clock(),key=inventoryKey(config,profiles,options);
     const nodes=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,prefix:d.prefix,parent:null,level:0}));
     const warnings=new Set();let pages=0,halt=false;
     const perBucket=Math.max(1,Math.floor(limits.folders/Math.max(1,nodes.length)));
-    const queue=nodes.map(node=>({node,cursor:'',seen:[]}));
+    // Reuse only matching authorized buckets with fresh root observations.
+    const oldKey=(()=>{try{return JSON.parse(previous?.key||'null');}catch{return null;}})();
+    const newKey=JSON.parse(key);
+    const reusable=nodes.filter(root=>previous?.version===2&&clock()>=(previous.nodes?.find(n=>identity(n)===identity(root)&&n.prefix==='')?.observedAt||previous.at)&&clock()-(previous.nodes?.find(n=>identity(n)===identity(root)&&n.prefix==='')?.observedAt||previous.at)<limits.ttl*12&&oldKey?.[2]===options.depth&&oldKey?.[3]?.some(tuple=>JSON.stringify(tuple)===JSON.stringify(newKey[3].find(t=>t[1]===root.profileId))));
+    for(const root of reusable){
+      const saved=(previous.nodes||[]).filter(n=>identity(n)===identity(root));
+      if(!saved.length)continue;
+      Object.assign(root,saved.find(n=>n.prefix==='')||{});
+      const children=saved.filter(n=>n.prefix).sort((a,b)=>a.level-b.level||compare(a.prefix,b.prefix));
+      if(children.length>=perBucket)root.partial=true;
+      for(const n of children.slice(0,perBucket-1))if(nodes.length<limits.folders)nodes.push({...n});
+    }
+    const queue=[],retries=[];
+    for(const node of nodes){
+      if(node.level>=options.depth||node.listed&&!node.partial)continue;
+      const frontier=(previous?.frontier||[]).find(t=>t.profileId===node.profileId&&t.prefix===node.prefix);
+      queue.push({node,cursor:reusable.some(r=>identity(r)===identity(node))?frontier?.cursor||'':'',seen:frontier?.seen||[]});
+    }
     while(queue.length&&!halt){
       const task=queue.shift(),node=task.node;if(node.level>=options.depth)continue;
       if(pages>=limits.pages||nodes.length>=limits.folders||clock()-start>=limits.milliseconds){warnings.add('Inventory limit reached; some folders are not shown.');queue.unshift(task);break;}
@@ -131,12 +148,13 @@
         }
         if(page.cursor)queue.push({node,cursor:page.cursor,seen:[...task.seen,page.cursor]});
         node.listed=!page.cursor;node.observedAt=clock();
-      }catch{node.listed=false;warnings.add('Some folders could not be read; inventory is incomplete.');if(timedOut)halt=true;}
+      }catch{node.listed=false;retries.push(task);warnings.add('Some folders could not be read; inventory is incomplete.');if(timedOut)halt=true;}
     }
+    if(nodes.some(n=>n.partial))warnings.add('Folder limit reached; some folders are not shown.');
     // Stable sibling order independent of network completion and provider page order.
     nodes.sort((a,b)=>compare(a.profileId,b.profileId)||compare(a.prefix,b.prefix));
-    const observations=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,checked:!!nodes.find(n=>identity(n)===identity(d)&&n.prefix==='')?.listed,knownFolders:nodes.filter(n=>identity(n)===identity(d)).length-1}));
-    return {version:2,key,at:clock(),depth:options.depth,nodes,pages,observations,frontier:queue.map(t=>({profileId:t.node.profileId,prefix:t.node.prefix,cursor:t.cursor})),unknownRemaining:!!warnings.size,complete:!warnings.size,warnings:[...warnings]};
+    const observations=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,checked:!!nodes.find(n=>identity(n)===identity(d)&&n.prefix==='')?.listed,knownFolders:nodes.filter(n=>identity(n)===identity(d)).length-1,observedAt:nodes.find(n=>identity(n)===identity(d)&&n.prefix==='')?.observedAt||null,complete:!nodes.some(n=>identity(n)===identity(d)&&n.level<options.depth&&(!n.listed||n.partial))}));
+    return {version:2,key,at:clock(),depth:options.depth,nodes,pages,observations,frontier:[...queue,...retries].map(t=>({profileId:t.node.profileId,prefix:t.node.prefix,cursor:t.cursor,seen:t.seen})),unknownRemaining:!!warnings.size,complete:!warnings.size&&!nodes.some(n=>n.partial),warnings:[...warnings]};
   }
   const nodeId=n=>'v3:cloud:'+encodeURIComponent(JSON.stringify([n.profileId,n.accountId,n.bucketName,n.prefix]));
   function levelProjection(config,profiles,settings,inventory,root,now){
