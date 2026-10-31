@@ -1,5 +1,13 @@
 # REDOWN bugs
 
+## EMERGENCY P0 — clean Chrome profile REDOWN toolbar click opens nothing (2026-10-31)
+
+**Status:** **OWNER-REPRODUCED IN INSTALLED CHROME / ROOT CAUSE UNKNOWN / NOT FIXED.** Fresh Chrome profile, newly installed REDOWN, click extension toolbar icon: no visible Shelf, popup or other UI. This is a first-run release blocker even when there is no Cloudflare OAuth state. Previous source repair of `sidePanel.open()` rejection to local Shelf tab was mock-tested but never installed-Chrome-accepted. It does not cover the click never reaching the worker listener.
+
+**Required investigation and implementation:** [Full P0 Codex Work specification](../docs/CODEX_EMERGENCY_P0_FRESH_PROFILE_TOOLBAR_NOOP_AND_FAILSAFE.md). Inspect cold worker evaluation/handler registration, manifest and packaged files, action popup-versus-onClicked conflicts, async preference setup, tab/window and user-gesture rules, side-panel API and UI paint, popup and local-tab/Options fallback. Implement a proven Shelf-first launcher with usable popup/recovery alternative, preserving user preference, source code, and privacy-safe diagnostics. An actual clean installed-profile first-click result is mandatory for acceptance; do not mark fixed from mock tests.
+
+---
+
 ## P0 V3 Level Depth saved, but native menu does not promptly show updated folders (2026-10-31)
 
 **Status:** Owner-reported in installed Chrome; source inspection establishes asynchronous discovery/generation-reconciliation hazards, but exact first-Reload timeline is **not yet reproduced**. **Code fix not yet implemented.**
