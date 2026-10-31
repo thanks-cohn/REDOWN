@@ -44,21 +44,14 @@ test('pointer drop reorders at visible insertion marker and cancellation leaves 
   assert.deepEqual(h.items.map(x=>x.id),['two','three','one']);assert.equal(h.saved.length,1);h.dom.window.close();
 });
 
-test('native Simple context menu follows saved section and additional destination order',async()=>{
-  const {default:vm}=await import('node:vm');
-  const background=await readFile(new URL('../extension/background.js',import.meta.url),'utf8');
-  const created=[];
+test('V3 migration preserves saved section and additional destination order in the native Simple menu',async()=>{
+  const {worker}=await import('./helpers/background-worker.mjs');
   const profiles=[
-    {id:'a',type:'cloudflare-r2',bucketName:'alpha',menuLabel:'Alpha',menuOrder:1,simpleOptions:[{id:'second',prefix:'two',label:'Second'},{id:'first',prefix:'one',label:'First'}]},
-    {id:'b',type:'cloudflare-r2',bucketName:'beta',menuLabel:'Beta',menuOrder:0}
-  ];
-  const ctx=vm.createContext({ROOT_MENU_ID:'REDOWN',getProfiles:async()=>profiles,RedownNestedLocations:{menuMode:()=> 'simple'},addMenuControls:()=>{},chrome:{contextMenus:{removeAll:async()=>{},create:x=>created.push(x)},storage:{local:{get:async()=>({rightClickMode:'simple',simpleLabelFallback:'menu'})}}}});
-  vm.runInContext(await readFile(new URL('../extension/nested-locations.js',import.meta.url),'utf8'),ctx);
-  vm.runInContext(await readFile(new URL('../extension/destination-config.js',import.meta.url),'utf8'),ctx);
-  vm.runInContext(await readFile(new URL('../extension/right-click-legacy.js',import.meta.url),'utf8'),ctx);
-  vm.runInContext(background.slice(background.indexOf('async function buildMenus() {'),background.indexOf('function addMenuControls(mode)')),ctx);
-  await vm.runInContext('buildMenus()',ctx);
-  assert.deepEqual(created.filter(x=>x.id!=='REDOWN').map(x=>x.title),['Beta','Alpha','Second','First']);
+    {id:'a',type:'cloudflare-r2',accountId:'account',bucketName:'alpha',menuLabel:'Alpha',menuOrder:1,simpleOptions:[{id:'second',prefix:'two',label:'Second'},{id:'first',prefix:'one',label:'First'}]},
+    {id:'b',type:'cloudflare-r2',accountId:'account',bucketName:'beta',menuLabel:'Beta',menuOrder:0}
+  ].map(p=>({...p,workerUrl:'https://fixture.invalid',token:'synthetic'}));
+  const h=worker({profiles});await h.ready();assert.equal(h.local.rightClickEngine,'v3');
+  assert.deepEqual([...h.native.values()].filter(x=>x.id.startsWith('v3:')).map(x=>x.title),['Beta','Alpha','Second','First']);
 });
 
 test('drag continues outside grip and gaps are valid insertion targets',async()=>{

@@ -30,26 +30,29 @@ function showActivationGlow(effect,{ongoing=false}={}){
     activationGlowTimer=null;
   },1150);
 }
+let globalActivation=null,activatedBuckets=[],activationProfiles=[],activationMenuStatus=null,activationRequest=false;
+async function loadGlobalActivation(){
+  const s=await chrome.storage.local.get(['rightClickGlobalActivation','rightClickActivatedBuckets','profiles','rightClickMenuStatus']);
+  globalActivation=s.rightClickGlobalActivation;activatedBuckets=s.rightClickActivatedBuckets?.buckets||[];activationProfiles=s.profiles||[];activationMenuStatus=s.rightClickMenuStatus;paintActivation();
+}
 function paintActivation(){
   const action=$('prepare'),label=action.querySelector('.bucket-activation-label');
-  const selected=Boolean(current&&activationSource&&sameBucket(current,activationSource));
-  const state=!current?'unselected':selected?activationState:'idle';
-  // The primary activation action is always in the toolbar beside Grid View.
-  // State affects its message and appearance, never its visibility.
-  action.hidden=false;
-  action.dataset.state=state;
-  action.setAttribute('aria-busy',String(state==='checking'||state==='activating'));
-  action.disabled=busy||state==='checking'||state==='activating';
-  if(label)label.textContent=state==='checking'?'Checking bucket…':state==='activating'?'Activating…':'Activate Buckets';
-  const glyph=action.querySelector('.bucket-activation-glyph');
-  if(glyph)glyph.textContent=state==='ready'?'✓':'✦';
-  action.title=!current?'Choose a storage bucket to activate REDOWN.'
-    :state==='ready'?current.bucketName+' is already activated for REDOWN.'
-    :selected&&activationReason?activationReason
-    :'Check or activate REDOWN for '+current.bucketName+'. Refresh only reloads files.';
-  action.setAttribute('aria-label',!current?'Activate Buckets: choose a storage bucket first'
-    :(state==='ready'?'REDOWN already activated for ':'Activate REDOWN for ')+current.bucketName);
+  const known=accounts.flatMap(a=>(bucketCache.get(a.id)||[]).map(b=>({accountId:a.id,bucketName:b.name})));
+  const prepared=d=>activatedBuckets.some(p=>p.accountId===d.accountId&&p.bucketName===d.bucketName&&p.enabled&&activationProfiles.some(q=>q.id===p.profileId&&q.accountId===p.accountId&&q.bucketName===p.bucketName&&q.workerUrl&&q.token));
+  const running=activationRequest||globalActivation?.state==='running';
+  const ready=globalActivation?.state==='ready'&&activationMenuStatus?.state==='registered'&&known.length>0&&known.every(prepared);
+  const retry=['failed','partial'].includes(globalActivation?.state)||globalActivation?.state==='ready'&&!ready;
+  const state=!cloudflareSignedIn?'unselected':running?'activating':ready?'ready':'needed';
+  action.hidden=false;action.dataset.state=state;
+  document.documentElement.dataset.activationPrerequisite=cloudflareSignedIn&&!ready?'true':'false';
+  action.disabled=!cloudflareSignedIn||running;action.setAttribute('aria-busy',String(running));
+  const done=globalActivation?.buckets?.filter(d=>d.state==='ready').length||0,total=globalActivation?.buckets?.length||0;
+  if(label)label.textContent=running?'Activating Buckets…'+(total?' '+done+'/'+total:''):ready?'Buckets Activated':retry?'Retry Failed Buckets':'Activate Buckets';
+  const glyph=action.querySelector('.bucket-activation-glyph');if(glyph)glyph.textContent=ready?'✓':'✦';
+  action.title=!cloudflareSignedIn?'Connect to Cloudflare first.':ready?'All discovered buckets have acknowledged V3 destinations.':globalActivation?.error||'Prepare private REDOWN save destinations across all connected accounts. Bucket visibility is unchanged.';
+  action.setAttribute('aria-label',label?.textContent||'Activate Buckets');
 }
+
 function resetActivation(){activationEpoch++;clearActivationGlow();activationState='idle';activationSource=null;activationReason='';paintActivation();}
 async function checkActivation(source){
   if(!source||!sameBucket(current,source)){resetActivation();return null;}
@@ -76,7 +79,8 @@ async function checkActivation(source){
   return activationState==='ready'?true:activationState==='needed'?false:null;
 }
 function paintLogout(auth){
-  cloudflareSignedIn=Boolean(auth?.accessToken);
+  cloudflareSignedIn=Boolean(auth?.accessToken&&!auth?.reconnectRequired);
+  void loadGlobalActivation().catch(()=>{paintActivation();});
   $('session-actions').hidden=!cloudflareSignedIn;
   $('disconnect').disabled=busy||!cloudflareSignedIn;
 }
@@ -510,7 +514,7 @@ async function loadAccounts(preferred=current||lastLocation){
     if(target){if(busy){current={...target};const result=await listing();if(result?.folderExists===false&&target.prefix){current.prefix='';await listing();}await rememberLocation(current);}else await navigate(target,true,Boolean(restored));}
     else{current=null;items=[];cursor='';selected.clear();connectionState(all.length?'choose':errors.length?'failed':'empty-buckets',all.length?'Choose a bucket from the sidebar.':'No accessible R2 buckets were found.');render();}
     if(errors.length){if(!all.length)failure(Error(errors.join(' ')));$('refresh').classList.add('attention');status('Some accounts could not be discovered. '+errors.join(' ')+' Use Refresh to retry or Connect Cloudflare to renew authorization.');}
-    try{await loadProfiles();}catch(e){status('Files discovery finished; saved destinations unavailable: '+e.message);}
+    try{await loadProfiles();await loadGlobalActivation();}catch(e){status('Files discovery finished; saved destinations unavailable: '+e.message);}
   }catch(e){if(ticket===discoveryEpoch){failure(e);if(!['unauthorized','disconnected'].includes($('account-chooser').dataset.state))accountVisual('failed');}}
 }
 async function refreshConnection(){
@@ -549,7 +553,7 @@ $('disconnect').onclick=async()=>{
 document.addEventListener('redown:destinations-ready',event=>{
   if(current&&sameBucket(current,event.detail))void checkActivation(context());
 });
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;activationChanged(changes,area);if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -560,52 +564,29 @@ async function loadProfiles(){
 $('profiles').onchange=async()=>{const p=savedProfiles[Number($('profiles').value)];if($('profiles').value===''||!p||busy)return;try{if($('accounts').value!==p.accountId){$('accounts').value=p.accountId;syncAccountPicker();await loadBuckets();}await navigate(p);}catch(e){status(e.message);}};
 $('create-bucket').onclick=async()=>{const accountId=$('accounts').value;if(!accountId||busy)return;const n=await dialog('Create storage bucket',{description:'Creates an R2 bucket in the selected account. Use 3–63 lowercase letters, numbers, or hyphens.',confirm:'Create bucket'});if(n===null)return;await run(async()=>{await request('createBucket',{accountId,name:n});await loadAccounts({accountId,bucketName:n,prefix:''});status('Bucket created and opened. Destination setup remains available in the sidebar.');},{refresh:false});};
 $('prepare').onclick=async()=>{
-  const source=context();
-  if(busy)return;
-  if(!source){
-    showActivationGlow('attention');
-    status('Choose an existing bucket under Storage Buckets before activating REDOWN.');
-    const storage=$('sidebar-storage');if(storage){storage.open=true;storage.scrollIntoView?.({block:'nearest'});}
-    return;
-  }
-  if(activationState==='idle'||activationState==='unknown'||!activationSource||!sameBucket(source,activationSource)){
-    showActivationGlow('checking',{ongoing:true});
-    await checkActivation(source);
-    if(!sameBucket(current,source)){clearActivationGlow();return;}
-  }
-  if(activationState==='ready'){
-    showActivationGlow('success');
-    status(source.bucketName+' is already activated for REDOWN.');
-    return;
-  }
-  if(activationState!=='needed'){
-    showActivationGlow('attention');
-    status('Bucket setup could not be verified. Reconnect or Refresh before activating.');
-    return;
-  }
-  showActivationGlow('confirm');
-  if(!await dialog('Activate '+source.bucketName+' for REDOWN?',{input:false,description:'Sets up or updates the REDOWN Worker for this R2 bucket, saves its destination, and prepares default folders. Existing settings are retained. This changes Cloudflare resources; it does not make the bucket public.',confirm:'Activate Buckets'}))return;
-  if(!sameBucket(current,source)){clearActivationGlow();status('Bucket selection changed. No activation was sent.');return;}
-  activationState='activating';paintActivation();showActivationGlow('working',{ongoing:true});
-  let operationCompleted=false,menuUpdated=true;
-  await run(async signal=>{
-    const result=await request('prepareBucket',{source},{signal});
-    operationCompleted=true;menuUpdated=result.data.menuUpdated!==false;
-    await loadProfiles();
-    document.dispatchEvent(new CustomEvent('redown:destinations-ready',{detail:{accountId:source.accountId,bucketName:source.bucketName}}));
-    status(!menuUpdated?(result.data.menuError||'Bucket activated, but the REDOWN right-click menu could not be updated. Use Save menu to retry.'):result.data.verification?.workerReachable?'Bucket activation returned verification. Checking Worker readiness…':'Setup completed, but Worker readiness has not been confirmed.');
-  },{checkWorker:false});
-  if(!sameBucket(current,source)){clearActivationGlow();return;}
-  await checkActivation(source);
-  if(!sameBucket(current,source)){clearActivationGlow();return;}
-  if(operationCompleted&&menuUpdated&&activationState==='ready'){
-    showActivationGlow('success');
-    status(source.bucketName+' is activated for REDOWN file operations. Add locations in Right-click setup.');
-  }else{
-    showActivationGlow('attention');
-    if(activationState==='needed')status('Bucket setup returned, but the Worker is not yet ready. Check Cloudflare permissions or Worker configuration.');
-  }
+  if(activationRequest||globalActivation?.state==='running'||!cloudflareSignedIn)return;
+  activationRequest=true;clearActivationGlow();paintActivation();
+  try{
+    const result=await chrome.runtime.sendMessage({type:'activateAllBuckets',confirmed:true,retryFailed:['partial','failed'].includes(globalActivation?.state)});
+    if(!result?.ok)throw Error(result?.error||'Activation was not confirmed. Retry.');
+    globalActivation=result.activation;
+    await loadProfiles();await loadGlobalActivation();
+    document.dispatchEvent(new CustomEvent('redown:destinations-ready'));
+    status(globalActivation?.state==='ready'?'All eligible buckets are activated. Chrome acknowledged the V3 menu.':globalActivation?.state==='running'?'Activating buckets. Progress is saved; you can continue browsing.':globalActivation?.error||'Some buckets need attention. Retry Failed Buckets.');
+    if(globalActivation?.state==='ready')showActivationGlow('success');
+  }catch(error){status(error.message);}
+  finally{activationRequest=false;paintActivation();}
 };
+function activationChanged(changes,area){
+  if(area!=='local'||!['rightClickGlobalActivation','rightClickActivatedBuckets','rightClickMenuStatus','profiles'].some(k=>changes[k]))return;
+  void loadGlobalActivation().then(()=>{
+    if(changes.rightClickGlobalActivation){
+      if(globalActivation?.state==='ready'){status('All eligible buckets are activated. Chrome acknowledged the V3 menu.');document.dispatchEvent(new CustomEvent('redown:destinations-ready'));}
+      else if(['partial','failed'].includes(globalActivation?.state))status(globalActivation.error||'Some buckets need attention. Retry Failed Buckets.');
+    }
+  });
+}
+
 
 const preferenceFields={batchConcurrency:['pref-concurrency',1],uploadTimeoutMs:['pref-upload',1000],previewMaxBytes:['pref-preview',1048576]};
 function paintPreferences(){$('pref-folder-quick-add').checked=explorerQuickFolderButtons;$('pref-archive').value=archivePreviewMode;const values={...api.getDefaults(),...api.getPreferences()};for(const [key,[id,scale]] of Object.entries(preferenceFields))$(id).value=values[key]/scale;$('pref-confirm-delete').checked=deletePreferences.confirmBeforeDeleting;$('pref-show-delete').checked=deletePreferences.showDeleteOnDashboard;$('preferences-error').textContent='';}

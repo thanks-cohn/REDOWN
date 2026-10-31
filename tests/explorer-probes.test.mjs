@@ -57,10 +57,11 @@ test('expired diagnoses are unavailable; unknown smoke and connectors cannot imp
 });
 test('provisioning includes explicit public Worker fetch compatibility without weakening verified transfers',()=>{
  const start=bg.indexOf('  const metadata = {',bg.indexOf('const scriptName = existing?.scriptName'));
- const context=vm.createContext({accountId:'a',bucketName:'b',explorerOnly:true,existing:null});
+ const context=vm.createContext({accountId:'a',bucketName:'b',explorerOnly:true,existing:null,publicAssetsEnabled:false});
  vm.runInContext(bg.slice(start,bg.indexOf('  const form = new FormData();',start))+'\nglobalThis.metadata=metadata;',context);
  assert.ok(context.metadata.compatibility_flags.includes('global_fetch_strictly_public'));
  assert.equal(context.metadata.bindings.find(b=>b.name==='STORAGE').bucket_name,'b');
+ assert.equal(context.metadata.bindings.find(b=>b.name==='PUBLIC_ASSETS_ENABLED').text,'false');
 });
 
 test('a multi-file 404 cannot borrow an unrelated preview success to imply path divergence',async()=>{

@@ -974,11 +974,13 @@ test('Activate Buckets remains visible beside Grid View, even before storage sel
  try{
   const d=missing.d,button=d.querySelector('#prepare');
   assert.equal(button.hidden,false);
-  assert.equal(button.dataset.state,'unselected');
+  assert.equal(button.dataset.state,'needed');
   assert.equal(button.previousElementSibling.id,'view');
   assert.match(button.textContent,/Activate Buckets/);
-  button.click();
-  assert.match(d.querySelector('#status').textContent,/Choose an existing bucket/);
+  let requested;missing.w.chrome.runtime={sendMessage:async m=>{requested=m;return {ok:false,error:'Reconnect Cloudflare and retry.'};}};
+  await button.onclick();
+  assert.equal(requested.type,'activateAllBuckets');assert.equal(requested.source,undefined);
+  assert.match(d.querySelector('#status').textContent,/Reconnect Cloudflare/);
   assert.equal(d.querySelector('#dialog').open,false,'no bucket must not trigger activation');
  }finally{missing.dom.window.close();}
  const withBucket=await uiFixture();

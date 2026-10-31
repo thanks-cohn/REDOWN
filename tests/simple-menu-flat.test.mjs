@@ -24,11 +24,10 @@ function harness(profiles,labelFallback){
   });
   vm.runInContext(modelSource,context);
   vm.runInContext(awaitedConfigSource+awaitedLegacySource,context);
-  vm.runInContext(source.slice(begin,end),context);
-  return {created,build:()=>vm.runInContext('buildMenus()',context)};
+  return {created,build:async()=>{created.push(...context.RedownRightClickLegacy.entries(profiles,'simple','REDOWN'));}};
 }
 
-test('Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu',async()=>{
+test('historical Legacy reference: Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu',async()=>{
   const h=harness([{
     id:'p',type:'cloudflare-r2',accountId:'a',bucketName:'bucket-one',
     defaultPrefix:'images/portraits/final',menuLabel:'',
@@ -49,7 +48,7 @@ test('Simple menu places default and extra destinations immediately under REDOWN
   assert.ok(!h.created.some(x=>String(x.id).startsWith('simple:p')));
 });
 
-test('Legacy bucket-label preference cannot override modern path-derived labels or explicit names',async()=>{
+test('historical Legacy reference: Legacy bucket-label preference cannot override modern path-derived labels or explicit names',async()=>{
   const h=harness([{
     id:'p',type:'cloudflare-r2',accountId:'a',bucketName:'bucket-one',
     simpleBucketName:'alternate-bucket',defaultPrefix:'images/portraits/final',menuLabel:'',
@@ -67,7 +66,7 @@ test('Legacy bucket-label preference cannot override modern path-derived labels 
   ]);
 });
 
-test('Menu Label is default for existing profiles without a saved preference',async()=>{
+test('historical Legacy reference: Menu Label is default for existing profiles without a saved preference',async()=>{
   const h=harness([{
     id:'p',type:'cloudflare-r2',bucketName:'gallery',defaultPrefix:'images/final',menuLabel:'My Choice',showInContextMenu:true,
     simpleOptions:[{id:'blank',bucketName:'gallery',prefix:'other/leaf',label:''}]
@@ -75,13 +74,13 @@ test('Menu Label is default for existing profiles without a saved preference',as
   await h.build();
   assert.deepEqual(h.created.filter(x=>String(x.id).startsWith('quick:')||String(x.id).startsWith('simple-option:')).map(x=>x.title),['My Choice','leaf']);
 });
-test('explicit Simple label wins over the lowest-directory fallback',async()=>{
+test('historical Legacy reference: explicit Simple label wins over the lowest-directory fallback',async()=>{
   const h=harness([{id:'p',type:'cloudflare-r2',bucketName:'gallery',defaultPrefix:'images/final',menuLabel:'My Choice',showInContextMenu:true,simpleOptions:[]}],'deepest');
   await h.build();
   assert.equal(h.created.find(x=>x.id==='quick:p').title,'My Choice');
 });
 
-test('blank and whitespace Simple labels retain automatic naming under every fallback setting',async()=>{
+test('historical Legacy reference: blank and whitespace Simple labels retain automatic naming under every fallback setting',async()=>{
  for(const preference of [undefined,'menu','deepest','bucket']){
   const h=harness([{id:'p',type:'cloudflare-r2',bucketName:'gallery',defaultPrefix:'images/final',menuLabel:'   ',simpleOptions:[{id:'named',prefix:'images/other',label:'  My label  '},{id:'blank',prefix:'images/leaf',label:''},{id:'root',prefix:'',label:''}]}],preference);await h.build();
   assert.deepEqual(h.created.filter(x=>String(x.id).startsWith('quick:')||String(x.id).startsWith('simple-option:')).map(x=>x.title),['final','My label','leaf','gallery']);

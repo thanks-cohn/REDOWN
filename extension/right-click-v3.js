@@ -160,9 +160,10 @@
   function levelProjection(config,profiles,settings,inventory,root,now){
     const key=inventoryKey(config,profiles,settings),valid=fresh(inventory,key,now),out=[],warnings=[];
     if(!roots(config,profiles).length)return {entries:out,warnings:['Select participating buckets in Level setup.'],complete:false};
-    if(!valid)return {entries:out,warnings:['Folder inventory is unavailable or stale. Open Right-click Setup to refresh.'],complete:false};
+    if(!valid)inventory={nodes:[],warnings:['Folder discovery is pending.'],observations:[],at:now,complete:false};
     warnings.push(...inventory.warnings||[]);
     const authorized=roots(config,profiles),nodes=(inventory.nodes||[]).filter(n=>authorized.some(d=>d.profileId===n.profileId&&d.accountId===n.accountId&&d.bucketName===n.bucketName&&within(n.prefix,d.prefix)));
+    for(const d of authorized)if(!nodes.some(n=>identity(n)===identity(d)&&n.prefix===''))nodes.push({...d,prefix:'',parent:null,level:0});
     // Reserve every root before breadth-first allocation. Each folder reserves
     // its parent Save here atomically; later buckets cannot be starved by DFS.
     const pending=nodes.filter(n=>n.parent===null).map(n=>({node:n,parentId:root}));
@@ -179,10 +180,18 @@
     return {entries:out,summary:{depth:presentation(settings).depth,knownFolders:Math.max(0,nodes.length-authorized.length),rootsChecked:(inventory.observations||[]).filter(o=>o.checked).length,rootsTotal:authorized.length,ageMs:now-inventory.at},warnings:[...new Set(warnings)],complete:!!inventory.complete&&!warnings.length};
   }
   function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
+    if(Array.isArray(config.destinations))config={...config,destinations:config.destinations.filter(d=>prepared(d,profiles))};
     validate(config,profiles);const options=presentation(settings);
-    if(options.style==='nested'&&options.nested==='level')return levelProjection(config,profiles,options,inventory,root,now);
+    if(options.style==='nested'&&options.nested==='level'){
+      const plan=levelProjection(config,profiles,options,inventory,root,now);
+      const missing=activated(config,profiles).filter(d=>!roots(config,profiles).some(q=>identity(q)===identity(d)));
+      if(missing.length){plan.entries.unshift({id:'v3:buckets',parentId:root,title:'Buckets',contexts},...missing.map(d=>({id:bucketId(d),parentId:'v3:buckets',title:d.bucketName,contexts})));if(plan.entries.length>limits.entries){plan.entries.length=limits.entries;plan.complete=false;}}
+      return plan;
+    }
     const all=options.style==='simple'?config.destinations.filter(d=>eligible(d,config,profiles)).map(d=>({id:'v3:'+d.id,parentId:root,title:d.label.trim(),contexts})):narrowEntries(config,profiles,root);
     // Stop before any orphan could be introduced; the full store is never changed.
+    const buckets=activated(config,profiles);
+    if(buckets.length){const roots=[{id:'v3:buckets',parentId:root,title:'Buckets',contexts},...buckets.map(d=>({id:bucketId(d),parentId:'v3:buckets',title:d.bucketName+(buckets.some(q=>q.bucketName===d.bucketName&&q.accountId!==d.accountId)?' · '+d.accountId:''),contexts}))];all.unshift(...roots);}
     const entries=all.slice(0,limits.entries);
     if(all[entries.length]?.id===entries.at(-1)?.id+':send')entries.pop();
     return {entries,complete:all.length===entries.length,warnings:all.length===entries.length?[]:['Chrome menu entry limit reached; some destinations are not shown.']};
@@ -192,14 +201,46 @@
     try{
       const plan=project(config,profiles,settings,inventory,'redown',now),item=plan.entries.find(n=>n.id===id);
       if(!item||plan.entries.some(n=>n.parentId===id))return null;
+      const bucket=activated(config,profiles).find(d=>bucketId(d)===id);
+      if(bucket){const profile=prepared(bucket,profiles);return {profile,owner:profile,prefix:''};}
       const options=presentation(settings);
       if(options.style==='nested'&&options.nested==='level'){
-        const node=inventory.nodes.find(n=>nodeId(n)===id||nodeId(n)+':send'===id);
-        if(!node)return null;const profile=prepared(node,profiles);return profile?{profile,owner:profile,prefix:node.prefix}:null;
+        const node=[...(inventory?.nodes||[]),...roots(config,profiles)].find(n=>nodeId({...n,prefix:n.prefix||''})===id||nodeId({...n,prefix:n.prefix||''})+':send'===id);
+        if(!node)return null;const profile=prepared(node,profiles);return profile?{profile,owner:profile,prefix:node.prefix||''}:null;
       }
       if(options.style==='nested')return narrowResolve(id,config,profiles);
       const d=config.destinations.find(d=>'v3:'+d.id===id);const profile=prepared(d,profiles);return {profile,owner:profile,prefix:d.prefix};
     }catch{return null;}
   }
-  globalThis.RedownRightClickV3=Object.freeze({empty,validate,entries,resolve,remove,presentation,validatePresentation,emptyScopes,validateScopes,roots,inventoryKey,fresh,discover,project,limits});
+  const bucketId=d=>'v3:bucket:'+encodeURIComponent(JSON.stringify([d.profileId,d.accountId,d.bucketName]));
+  const activated=(config,profiles)=>(config.activatedBuckets?.buckets||[]).filter(d=>d.enabled&&prepared(d,profiles));
+  function migrate(stored,profiles){
+    const source=stored.rightClickV3||empty(),config={version:1,revision:(Number.isSafeInteger(source.revision)?source.revision:0)+1,destinations:[]},recovery=[];
+    const add=(raw,origin)=>{
+      const d={...raw,parentId:null};
+      try{validate({...empty(),destinations:[d]},profiles);if(config.destinations.length>=200)throw Error('Destination limit reached.');}
+      catch(error){recovery.push({origin,record:raw,reason:error.message});return;}
+      if(!config.destinations.some(q=>q.id===d.id||q.profileId===d.profileId&&q.prefix===d.prefix&&q.label===d.label))config.destinations.push(d);
+    };
+    for(const d of Array.isArray(source.destinations)?source.destinations:[])add(d,'v3');
+    // Preserve a valid existing hierarchy; incompatible parent chains stay flat
+    // with their exact original record in the recovery snapshot.
+    for(const d of config.destinations){const original=(Array.isArray(source.destinations)?source.destinations:[]).find(q=>q.id===d.id);if(!original?.parentId)continue;d.parentId=original.parentId;try{validate(config,profiles);}catch{d.parentId=null;recovery.push({origin:'v3-parent',record:original,reason:'Parent hierarchy requires review.'});}}
+    let i=0;
+    const legacy=(owner,bucket,prefix,label,enabled)=>{
+      const profile=profiles.find(p=>p.type==='cloudflare-r2'&&p.accountId===owner.accountId&&p.bucketName===bucket&&p.workerUrl&&p.token);
+      add({id:(()=>{let id;do{id='migrated-'+(++i);}while(config.destinations.some(d=>d.id===id));return id;})(),profileId:profile?.id||owner.id,accountId:owner.accountId,bucketName:bucket,prefix:prefix||'',label:String(label||prefix?.split('/').at(-1)||bucket||'Destination'),enabled:enabled!==false,parentId:null},'legacy');
+    };
+    for(const p of [...profiles].sort((a,b)=>(a.menuOrder??999)-(b.menuOrder??999))){
+      if(p.type!=='cloudflare-r2'||p.explorerManaged)continue;
+      const shortcuts=[{bucketName:p.simpleBucketName||p.bucketName,prefix:p.defaultPrefix,label:p.menuLabel||p.name,enabled:p.simplePrimaryEnabled!==false,order:p.simplePrimaryOrder??999999},...(p.simpleOptions||[])];
+      for(const d of shortcuts.sort((a,b)=>(a.order??999999)-(b.order??999999)))legacy(p,d.bucketName||p.bucketName,d.prefix,d.label,p.showInContextMenu!==false&&d.enabled!==false);
+      try{for(const d of globalThis.RedownNestedLocations.destinations({...p.nestedMenu,enabled:true}))legacy(p,d.bucketName,d.prefix,d.name,p.showInContextMenu!==false&&p.nestedMenu?.enabled===true);}
+      catch{recovery.push({origin:'legacy-nested',record:p.nestedMenu,reason:'Saved folder hierarchy requires review.'});}
+      const walk=nodes=>{for(const n of nodes||[]){legacy(p,p.bucketName,n.prefix,n.label||n.name,p.showInContextMenu!==false&&n.enabled!==false);walk(n.children);}};
+      if(!p.nestedMenu)walk(p.menuTree);
+    }
+    return {config,recovery};
+  }
+  globalThis.RedownRightClickV3=Object.freeze({empty,migrate,validate,entries,resolve,remove,presentation,validatePresentation,emptyScopes,validateScopes,roots,inventoryKey,fresh,discover,project,limits});
 })();

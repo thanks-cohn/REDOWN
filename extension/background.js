@@ -918,7 +918,6 @@ importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
-importScripts("right-click-legacy.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
 importScripts("explorer-diagnostics.js");
@@ -961,6 +960,7 @@ async function listCloudflareAccounts() {
     accounts.push(...batch.map(x => ({ id:x.id, name:x.name })));
     const totalPages = Number(body?.result_info?.total_pages || 0);
     if (!batch.length || batch.length < 50 || (totalPages && page >= totalPages)) break;
+    if(page===20)throw Error("Account pagination limit reached. Retry discovery.");
   }
   return accounts;
 }
@@ -978,7 +978,9 @@ async function listBuckets(accountId) {
     const batch = Array.isArray(result?.buckets) ? result.buckets : (Array.isArray(result) ? result : []);
     buckets.push(...batch.map(x => ({ name:x.name, location:x.location, jurisdiction:x.jurisdiction })));
     const next = result?.cursor || body?.result_info?.cursor || "";
-    if (!next || next === cursor) break;
+    if (!next) break;
+    if(next===cursor)throw Error("Bucket pagination did not advance. Retry discovery.");
+    if(page===99)throw Error("Bucket pagination limit reached. Retry discovery.");
     cursor = next;
   }
   return buckets;
@@ -1056,7 +1058,7 @@ function isVerifiedWorkerHealth(body){
 async function provisionCloudflareProfile(options) {
   return navigator.locks.request("redown-provision-profile", () => deployCloudflareProfile(options));
 }
-async function deployCloudflareProfile({ accountId, accountName, bucketName, profileName, folders, explorerOnly = false, menuActivation = false }) {
+async function deployCloudflareProfile({ accountId, accountName, bucketName, profileName, folders, explorerOnly = false, menuActivation = false, privateActivation = false }) {
   if (!accountId || !bucketName) throw new Error("Choose an account and bucket");
 
   const profiles = await getProfiles();
@@ -1065,6 +1067,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
   );
   const existing = existingIndex >= 0 ? profiles[existingIndex] : null;
 
+  const publicAssetsEnabled = privateActivation ? existing?.publicAssetsEnabled === true : Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged)));
   const secretKey = `redownWorkerSecret:${accountId}:${bucketName}`;
   const storedSecret = (await chrome.storage.session.get(secretKey))[secretKey];
   const secret = existing?.token || storedSecret || randomString(36);
@@ -1082,7 +1085,7 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
       { type: "r2_bucket", name: "STORAGE", bucket_name: bucketName },
       {type:"plain_text",name:"REDOWN_DIAGNOSTIC_BINDING",text:JSON.stringify([accountId,bucketName])},
       { type: "plain_text", name: "MAX_BYTES", text: "314572800" },
-      { type: "plain_text", name: "PUBLIC_ASSETS_ENABLED", text: String(Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged)))) }
+      { type: "plain_text", name: "PUBLIC_ASSETS_ENABLED", text: String(publicAssetsEnabled) }
     ]
   };
   const form = new FormData();
@@ -1210,11 +1213,11 @@ async function deployCloudflareProfile({ accountId, accountName, bucketName, pro
     simplePrimaryEnabled: existing?.simplePrimaryEnabled ?? Boolean(menuActivation&&!explorerOnly),
     workerVersion: 6,
     explorerManaged: Boolean(explorerOnly),
-    publicAssetsEnabled: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
+    publicAssetsEnabled: publicAssetsEnabled,
     capabilities: {
       canBrowse: true,
       canPrivateRead: true,
-      canPublicRead: Boolean(!explorerOnly && (existing?.publicAssetsEnabled ?? (existing && !existing.explorerManaged))),
+      canPublicRead: publicAssetsEnabled,
       canWrite: true,
       canTransfer: true,
       canArchiveInspect: true
@@ -1614,7 +1617,7 @@ async function workerAcceptsProfile(profile,explorerTrace) {
   }
 }
 // Beta opts out of implicit infrastructure changes; Legacy retains its existing defaults.
-async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false, explorerTrace = null, noProvision = false) {
+async function preparedProfile(accountId, bucketName, accountName = "", forceRepair = false, explorerTrace = null, noProvision = false, privateActivation = false) {
   globalThis.redownExplorerBridge?.event(explorerTrace?.operationId,"worker.check","started");
   let profiles = await getProfiles();
   let profile = profiles.find(p => p.type === "cloudflare-r2" && p.accountId === accountId && p.bucketName === bucketName);
@@ -1627,7 +1630,8 @@ async function preparedProfile(accountId, bucketName, accountName = "", forceRep
     bucketName,
     profileName:profile?.name || bucketName,
     folders:profile?.folders || {},
-    explorerOnly:Boolean(profile?.explorerManaged || !profile)
+    explorerOnly:Boolean(profile?.explorerManaged || !profile),
+    privateActivation
   });
 }
 async function callBucketWorker(profile, body, allowRepair = true) {
@@ -2079,9 +2083,10 @@ function v3MenuTransaction(message,sender){
     const page=sender?.url?.split(/[?#]/)[0];
     const explorer=chrome.runtime.getURL('beta/explorer.html');
     if(![explorer,chrome.runtime.getURL('shelf.html'),chrome.runtime.getURL('options.html')].includes(page))throw Error('Open REDOWN Settings or V3 Setup.');
-    const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickMenuStatus']);
+    await ensureV3Only();
+    const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);
     const config=stored.rightClickV3||RedownRightClickV3.empty();
-    let engine=stored.rightClickEngine==='v3'?'v3':'legacy',next=config;
+    let engine='v3',next=config;
     if(message.type==='saveRightClickV3'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       if(message.expected!==config.revision)throw Error('V3 destinations changed. Reload before saving.');
@@ -2106,24 +2111,128 @@ function v3MenuTransaction(message,sender){
       if(message.expected!==config.revision||message.expectedScopes!==(stored.rightClickV3LevelScopes?.revision||0)||message.expectedPresentation!==JSON.stringify(RedownRightClickV3.presentation(stored.rightClickV3Presentation)))throw Error('Configuration changed. Reload to reconcile before applying.');
       // Apply acknowledges the bounded current projection; discovery runs independently.
     }else{
-      if(!['legacy','v3'].includes(message.engine))throw Error('Choose Legacy or New Right-click.');
-      engine=message.engine;
-      if(engine==='v3')RedownRightClickV3.validate(config,stored.profiles||[]);
-      await chrome.storage.local.set({rightClickEngine:engine});
+      if(message.engine!=='v3')throw Error('V3 is the only supported right-click engine.');
+      await chrome.storage.local.set({rightClickEngine:'v3'});
     }
     try{await rebuildMenus();return {ok:true,revision:next.revision,engine,menuUpdated:true,...await v3PresentationSnapshot()};}
     catch{return {ok:true,revision:next.revision,engine,menuUpdated:false,...await v3PresentationSnapshot(),error:'Settings saved; Chrome menu registration failed. Retry Apply or Save.'};}
   });
   destinationSaveQueue=operation;return operation;
 }
+// Migration and global activation reuse the destination lane and native registrar.
+let v3InitializationQueue=Promise.resolve();
+function ensureV3Only(){
+  const operation=v3InitializationQueue.catch(()=>{}).then(async()=>{
+    const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Migration','profiles']);
+    if(!s.rightClickV3Migration){
+      const migrated=RedownRightClickV3.migrate(s,s.profiles||[]);
+      await chrome.storage.local.set({rightClickEngine:'v3',rightClickV3:migrated.config,
+        rightClickV3Presentation:s.rightClickV3Presentation||{style:RedownNestedLocations.menuMode(s.rightClickMode,s.profiles||[])==='nested'?'nested':'simple',nested:'narrow',depth:1},
+        rightClickV3Migration:{version:1,at:Date.now(),imported:migrated.config.destinations.length,recovery:migrated.recovery},
+        rightClickV3Recovery:{version:1,at:Date.now(),original:s}});
+    }else if(s.rightClickEngine!=='v3')await chrome.storage.local.set({rightClickEngine:'v3'});
+  });
+  v3InitializationQueue=operation;return operation;
+}
+const globalBucketIdentity=d=>JSON.stringify([d.accountId,d.bucketName]);
+let globalActivationRunning=null;
+async function activateAllBuckets(message,sender){
+  if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('beta/explorer.html')||message.confirmed!==true)throw Error('Activate Buckets from Explorer.');
+  if(globalActivationRunning)return {ok:true,activation:(await chrome.storage.local.get('rightClickGlobalActivation')).rightClickGlobalActivation};
+  const operation=(async()=>{
+    await ensureV3Only();
+    const stored=await chrome.storage.local.get(['cloudflareAuth','rightClickGlobalActivation']);
+    const auth=stored.cloudflareAuth;
+    if(!auth?.accessToken||auth.reconnectRequired)throw Error('Connect to Cloudflare before activating buckets.');
+    const old=stored.rightClickGlobalActivation;
+    if(old?.state==='running'&&old.sessionId===auth.sessionId)return runGlobalActivation(old);
+    const job={version:1,id:crypto.randomUUID(),sessionId:auth.sessionId,state:'running',phase:'discovering',at:Date.now(),buckets:[],accountErrors:[]};
+    await chrome.storage.local.set({rightClickGlobalActivation:job});
+    let connected;
+    try{connected=await listCloudflareAccounts();}catch(error){job.state='failed';job.error='Account discovery failed. Reconnect Cloudflare or retry.';await chrome.storage.local.set({rightClickGlobalActivation:job});throw error;}
+    for(const account of [...new Map(connected.map(a=>[a.id,a])).values()]){
+      try{
+        for(const bucket of await listBuckets(account.id)){
+          const entry={accountId:account.id,accountName:account.name||'',bucketName:bucket.name,state:'pending'};
+          if(job.buckets.some(d=>globalBucketIdentity(d)===globalBucketIdentity(entry)))continue;
+          const previous=old?.buckets?.find(d=>globalBucketIdentity(d)===globalBucketIdentity(entry));
+          // Retry keeps confirmed successes, but native registration is retried below.
+          if(message.retryFailed&&previous?.state==='ready')Object.assign(entry,previous);
+          job.buckets.push(entry);
+        }
+      }catch{job.accountErrors.push({accountId:account.id,error:'Could not list this account’s buckets. Check R2 permissions or reconnect, then retry.'});}
+      await chrome.storage.local.set({rightClickGlobalActivation:job});
+    }
+    job.phase='preparing';
+    return runGlobalActivation(job);
+  })();
+  globalActivationRunning=operation;
+  try{return {ok:true,activation:await operation};}finally{globalActivationRunning=null;}
+}
+async function runGlobalActivation(job){
+  const started=Date.now();
+  chrome.alarms.create('redown-global-activation',{delayInMinutes:1});
+  for(const bucket of job.buckets.filter(d=>d.state==='pending')){
+    const {cloudflareAuth:auth}=await chrome.storage.local.get('cloudflareAuth');
+    if(!auth?.accessToken||auth.reconnectRequired||auth.sessionId!==job.sessionId){job.state='failed';job.error='Cloudflare connection changed. Reconnect and retry failed buckets.';break;}
+    try{
+      const profile=await preparedProfile(bucket.accountId,bucket.bucketName,bucket.accountName,false,null,false,true);
+      if(!await workerAcceptsProfile(profile))throw Error('Worker readiness was not confirmed.');
+      const latest=await chrome.storage.local.get('cloudflareAuth');
+      if(latest.cloudflareAuth?.sessionId!==job.sessionId||!latest.cloudflareAuth?.accessToken)throw Error('Cloudflare connection changed.');
+      const commit=destinationSaveQueue.catch(()=>{}).then(async()=>{
+        const s=await chrome.storage.local.get(['profiles','rightClickActivatedBuckets','rightClickV3LevelScopes']);
+        if(!(s.profiles||[]).some(p=>p.id===profile.id&&p.accountId===bucket.accountId&&p.bucketName===bucket.bucketName&&p.workerUrl===profile.workerUrl&&p.token===profile.token))throw Error('Saved bucket profile changed. Retry.');
+        const activated=s.rightClickActivatedBuckets||{version:1,revision:0,buckets:[]};
+        const scopes=s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes();
+        const record={id:'bucket-'+profile.id,profileId:profile.id,accountId:bucket.accountId,bucketName:bucket.bucketName,enabled:true};
+        if(!activated.buckets.some(d=>globalBucketIdentity(d)===globalBucketIdentity(record))){activated.buckets.push({...record});activated.revision++;}
+        if(!scopes.buckets.some(d=>globalBucketIdentity(d)===globalBucketIdentity(record))){scopes.buckets.push({...record});scopes.revision++;}
+        RedownRightClickV3.validateScopes({version:1,revision:0,buckets:[record]},s.profiles||[]);
+        if(scopes.buckets.length>200||activated.buckets.length>200)throw Error('Bucket menu limit reached.');
+        await chrome.storage.local.set({rightClickActivatedBuckets:activated,rightClickV3LevelScopes:scopes});
+      });
+      destinationSaveQueue=commit;await commit;
+      bucket.profileId=profile.id;bucket.state='ready';delete bucket.error;
+      // Root availability never waits for folder inventory.
+      await rebuildMenus();
+    }catch{bucket.state=bucket.profileId?'ready':'failed';bucket.error=bucket.profileId?'Bucket prepared; retry menu registration.':'Bucket preparation could not be verified. Check Cloudflare Worker/R2 permissions and retry.';}
+    await chrome.storage.local.set({rightClickGlobalActivation:job});
+    if(Date.now()-started>20000&&job.buckets.some(d=>d.state==='pending'))return job;
+  }
+  if(job.state==='running'){
+    try{
+      await rebuildMenus();
+      const s=await chrome.storage.local.get(['rightClickMenuStatus','rightClickActivatedBuckets','profiles']);
+      const menu=await chrome.storage.local.get(['rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickV3Inventory']);
+      const config={...(menu.rightClickV3||RedownRightClickV3.empty()),levelScopes:menu.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets};
+      const plan=RedownRightClickV3.project(config,s.profiles||[],menu.rightClickV3Presentation,menu.rightClickV3Inventory);
+      const covered=job.buckets.filter(d=>d.state==='ready').every(d=>plan.entries.some(item=>{const target=RedownRightClickV3.resolve(item.id,config,s.profiles||[],menu.rightClickV3Presentation,menu.rightClickV3Inventory);return target&&target.prefix===''&&target.profile.accountId===d.accountId&&target.profile.bucketName===d.bucketName;}));
+      job.menuUpdated=covered&&s.rightClickMenuStatus?.state==='registered'&&s.rightClickMenuStatus.applicationKey===await menuApplicationKey();
+      const ready=job.buckets.filter(d=>d.state==='ready');
+      job.state=job.menuUpdated&&!job.accountErrors.length&&job.buckets.length>0&&ready.length===job.buckets.length?'ready':'partial';
+      job.error=job.menuUpdated?(job.accountErrors.length?'Some accounts need attention. Retry failed buckets.':ready.length!==job.buckets.length?'Some buckets need attention. Retry failed buckets.':job.buckets.length?'':'No accessible buckets were found. Check Cloudflare R2 access.'):'Buckets prepared, but Chrome did not acknowledge the menu. Retry Failed Buckets.';
+    }catch{job.state='partial';job.menuUpdated=false;job.error='Chrome menu registration failed. Retry Failed Buckets.';}
+  }
+  job.at=Date.now();await chrome.storage.local.set({rightClickGlobalActivation:job});
+  return job;
+}
+async function resumeGlobalActivation(){
+  if(globalActivationRunning)return;
+  const {rightClickGlobalActivation:job}=await chrome.storage.local.get('rightClickGlobalActivation');
+  if(job?.state!=='running')return;
+  if(job.phase==='discovering'){job.state='failed';job.error='Bucket discovery was interrupted. Retry Failed Buckets to discover all accounts.';await chrome.storage.local.set({rightClickGlobalActivation:job});return;}
+  globalActivationRunning=runGlobalActivation(job);
+  try{await globalActivationRunning;}finally{globalActivationRunning=null;}
+}
 async function v3PresentationSnapshot(){
-  const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickV3LevelScopes','rightClickMenuStatus']);
+  const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);
   return {applicationKey:await menuApplicationKey(),levelScopes:s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),menuStatus:s.rightClickMenuStatus||null};
 }
 async function restoreV3MenuSnapshot(){
-  const s=await chrome.storage.local.get(['right-click.json','rightClickV3Inventory','rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','profiles']);
+  const s=await chrome.storage.local.get(['right-click.json','rightClickV3Inventory','rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','profiles']);
   const cached=s['right-click.json'];
-  const key=RedownRightClickV3.inventoryKey({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},s.profiles||[],s.rightClickV3Presentation);
+  const key=RedownRightClickV3.inventoryKey({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},s.profiles||[],s.rightClickV3Presentation);
   if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&RedownRightClickV3.fresh(cached.inventory,key))await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});
 }
 // Durable logical JSON artifact. Configuration/authorization remain authoritative.
@@ -2133,8 +2242,8 @@ function persistV3MenuSnapshot(){
   v3SnapshotQueue=operation;return operation;
 }
 async function writeV3MenuSnapshot(){
-  const s=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus','profiles']);
-  const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes};
+  const s=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus','profiles']);
+  const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets};
   const roots=RedownRightClickV3.roots(config,s.profiles||[]);
   const inventory=s.rightClickV3Inventory;
   await chrome.storage.local.set({'right-click.json':{schemaVersion:1,configurationRevision:config.revision,
@@ -2149,17 +2258,17 @@ async function refreshV3Inventory(force=false){
   if(v3InventoryRefresh)return v3InventoryRefresh;
   let superseded=false;
   const operation=(async()=>{
-    const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','profiles','right-click.json'];
+    const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','profiles','right-click.json'];
     const s=await chrome.storage.local.get(keys),options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
-    if(s.rightClickEngine!=='v3'||options.style!=='nested'||options.nested!=='level')return;
-    const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},profiles=s.profiles||[],key=RedownRightClickV3.inventoryKey(config,profiles,options);
+    if(options.style!=='nested'||options.nested!=='level')return;
+    const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},profiles=s.profiles||[],key=RedownRightClickV3.inventoryKey(config,profiles,options);
     const cached=s['right-click.json'];
     if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&cached.inventory?.key===key){s.rightClickV3Inventory=cached.inventory;await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});}
     if(!force&&RedownRightClickV3.fresh(s.rightClickV3Inventory,key))return;
     const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage,()=>Date.now(),force?null:s.rightClickV3Inventory);
     const latest=await chrome.storage.local.get(keys);
     // No late discovery may replace an inventory for changed roots/credentials.
-    if(RedownRightClickV3.presentation(latest.rightClickV3Presentation).style!=='nested'||RedownRightClickV3.presentation(latest.rightClickV3Presentation).nested!=='level'||latest.rightClickEngine!=='v3'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey({...(latest.rightClickV3||RedownRightClickV3.empty()),levelScopes:latest.rightClickV3LevelScopes},latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
+    if(RedownRightClickV3.presentation(latest.rightClickV3Presentation).style!=='nested'||RedownRightClickV3.presentation(latest.rightClickV3Presentation).nested!=='level'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey({...(latest.rightClickV3||RedownRightClickV3.empty()),levelScopes:latest.rightClickV3LevelScopes},latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
     globalThis.redownRuntimeObserver?.record({operation:'api.read',outcome:inventory.complete?'success':'failed',code:inventory.complete?'OK':'UNEXPECTED_RESPONSE'});
     await chrome.storage.local.set({rightClickV3Inventory:inventory});
     await persistV3MenuSnapshot();
@@ -2169,21 +2278,23 @@ async function refreshV3Inventory(force=false){
   try{return await operation;}finally{v3InventoryRefresh=null;if(superseded)void rebuildMenus().catch(()=>{});}
 }
 async function rightClickV3Snapshot(sender){
+  await ensureV3Only();
   if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('beta/explorer.html'))throw Error('Open V3 Setup in Explorer.');
-  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickMenuStatus']);
-  return {ok:true,engine:s.rightClickEngine==='v3'?'v3':'legacy',config:s.rightClickV3||RedownRightClickV3.empty(),...await v3PresentationSnapshot(),
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);
+  return {ok:true,engine:'v3',config:s.rightClickV3||RedownRightClickV3.empty(),...await v3PresentationSnapshot(),
+    migrationRecoveryCount:(await chrome.storage.local.get('rightClickV3Migration')).rightClickV3Migration?.recovery?.length||0,
     profiles:(s.profiles||[]).filter(p=>p.type==='cloudflare-r2'&&p.workerUrl&&p.token).map(p=>({id:p.id,accountId:p.accountId,accountName:p.accountName||p.accountId,bucketName:p.bucketName}))};
 }
 async function resolveActiveRightClick(id,profiles){
-  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes']);
-  return s.rightClickEngine==='v3'?RedownRightClickV3.resolve(id,{...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},profiles,s.rightClickV3Presentation,s.rightClickV3Inventory):RedownRightClickLegacy.resolve(id,profiles,RedownNestedLocations.menuMode(s.rightClickMode,profiles));
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets']);
+  return RedownRightClickV3.resolve(id,{...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},profiles,s.rightClickV3Presentation,s.rightClickV3Inventory);
 }
 
 // Opaque receipt binds Chrome acknowledgements to every persisted projection input.
 // Hash credentials as part of the input, never expose or log their values.
 async function menuApplicationKey(){
-  const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickV3Inventory','profiles']);
-  const value=JSON.stringify([s.rightClickEngine||'legacy',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickV3Inventory||null,s.profiles||[]]);
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);
+  const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
   const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
   return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
 }
@@ -2196,6 +2307,7 @@ async function rebuildMenus() {
       await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       // Establish local access before reading caches, profiles or inventory.
       await ensureMenuAccess();
+      await ensureV3Only();
       await restoreV3MenuSnapshot();
       const applicationKey=await menuApplicationKey();
       const receipt=await buildMenus();
@@ -2248,7 +2360,7 @@ async function buildMenus() {
     // presentation fields. Clicks independently revalidate the saved identity.
     for(const item of description){
       if(!/^(v3:|quick:|simple-option:|nested:|tree:)/.test(item.id))continue;
-      const target=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.resolve(item.id,{...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory):RedownRightClickLegacy.resolve(item.id,profiles,mode);
+      const target=RedownRightClickV3.resolve(item.id,{...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes,activatedBuckets:menuSettings.rightClickActivatedBuckets},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory);
       if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
     }
     await chrome.contextMenus.removeAll();
@@ -2268,18 +2380,18 @@ async function buildMenus() {
   });
 
   const profiles = await getProfiles();
-  const menuSettings=await chrome.storage.local.get(["rightClickMode","rightClickEngine","rightClickV3","rightClickV3Presentation","rightClickV3Inventory","rightClickV3LevelScopes"]);
+  const menuSettings=await chrome.storage.local.get(["rightClickMode","rightClickEngine","rightClickV3","rightClickV3Presentation","rightClickV3Inventory","rightClickV3LevelScopes","rightClickActivatedBuckets"]);
   const storedMode=menuSettings.rightClickMode;
   const mode=RedownNestedLocations.menuMode(storedMode,profiles);
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
-  const projection=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.project({...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory,ROOT_MENU_ID):null;
-  const entries=projection?projection.entries:RedownRightClickLegacy.entries(profiles,mode,ROOT_MENU_ID);
+  const projection=RedownRightClickV3.project({...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes,activatedBuckets:menuSettings.rightClickActivatedBuckets},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory,ROOT_MENU_ID);
+  const entries=projection.entries;
   if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
   for(const entry of entries)create(entry);
-  addMenuControls(mode,item=>{if(menuSettings.rightClickEngine!=='v3'||item.id!=='redown-nested-mode')create(item);});
+  addMenuControls(mode,item=>{if(item.id!=='redown-nested-mode')create(item);});
   await finish();
-  if(menuSettings.rightClickEngine==='v3')void Promise.resolve().then(()=>refreshV3Inventory()).catch(()=>{});
-  return {summary:projection?.summary,complete:projection?.complete??true,warnings:projection?.warnings||[],inventoryAt:menuSettings.rightClickV3Inventory?.at||null,presentation:projection?RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation):undefined,engine:menuSettings.rightClickEngine==='v3'?'v3':'legacy',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
+  void Promise.resolve().then(()=>refreshV3Inventory()).catch(()=>{});
+  return {summary:projection?.summary,complete:projection?.complete??true,warnings:projection?.warnings||[],inventoryAt:menuSettings.rightClickV3Inventory?.at||null,presentation:projection?RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation):undefined,engine:'v3',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
 }
 function addMenuControls(mode){
   const create=arguments[1]|| (item=>chrome.contextMenus.create(item));
@@ -2484,12 +2596,14 @@ chrome.runtime.onStartup.addListener(requestMenuRebuild);
 // onStartup is a browser-start event, not an MV3 worker-activation event.
 // Reconcile on every worker load as well, using the same serialized lane.
 requestMenuRebuild();
+void resumeGlobalActivation().catch(()=>{});
 chrome.alarms.create('redown-v3-inventory',{periodInMinutes:5});
 chrome.alarms.onAlarm.addListener(alarm=>{
+  if(alarm.name==='redown-global-activation'){void resumeGlobalActivation().catch(()=>{});return;}
   if(alarm.name!=='redown-v3-inventory')return;
   void chrome.storage.local.get(['rightClickEngine','rightClickV3Presentation']).then(s=>{
     const options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
-    if(s.rightClickEngine==='v3'&&options.style==='nested'&&options.nested==='level')return rebuildMenus();
+    if(options.style==='nested'&&options.nested==='level')return rebuildMenus();
   }).catch(()=>{});
 });
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -2504,7 +2618,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
       const retained={...inventory,nodes:inventory.nodes.filter(n=>!affected.includes(n.profileId)),frontier:(inventory.frontier||[]).filter(n=>!affected.includes(n.profileId)),at:0};
       return chrome.storage.local.set({rightClickV3Inventory:retained,'right-click.json':null});
     }).then(()=>rebuildMenus()).catch(()=>{});
-  }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes)void rebuildMenus().catch(()=>{});
+  }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes||changes.rightClickActivatedBuckets)void rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2585,18 +2699,8 @@ function launchSaveDroplet(info,tab){
 }
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if(info.menuItemId==='redown-nested-mode'){
-    if((await chrome.storage.local.get('rightClickEngine')).rightClickEngine==='v3')return;
-    // Share the save lane with Dashboard transactions so a stale save cannot
-    // overwrite a native mode switch after its revision check.
-    const operation=destinationSaveQueue.catch(()=>{}).then(async()=>{
-      await chrome.storage.local.set({rightClickMode:info.checked ? 'nested' : 'simple'});
-      await rebuildMenus();
-    });
-    destinationSaveQueue=operation;
-    try{await operation;}catch{await chrome.action?.setBadgeText?.({text:'!'});}
-    return;
-  }
+  if(info.menuItemId==='redown-nested-mode')return; // Retired engine control.
+
   if(info.menuItemId==="redown-saved-urls"){
     const url=String(info.srcUrl||info.linkUrl||info.pageUrl||tab?.url||"");
     const {transferHistory=[]}=await chrome.storage.local.get("transferHistory");
@@ -2750,6 +2854,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfLoginStatus") { return sendResponse({ ok:true, ...(await RedownCloudflareAuth.status()) }); }
       if (message?.type === "cfLoginCancel") { await RedownCloudflareAuth.cancel(message.attemptId); return sendResponse({ ok:true }); }
       if (message?.type === "cfDisconnect") { await disconnectCloudflare(); return sendResponse({ ok:true }); }
+      if(message?.type==='activateAllBuckets')return sendResponse(await activateAllBuckets(message,_sender));
       if (message?.type === "cfAccounts") return sendResponse({ ok:true, accounts:await listCloudflareAccounts() });
       if (message?.type === "cfBuckets") return sendResponse({ ok:true, buckets:await listBuckets(message.accountId) });
       if (message?.type === "cfCreateBucket") return sendResponse({ ok:true, bucket:await createBucket(message.accountId,message.name,message.locationHint) });

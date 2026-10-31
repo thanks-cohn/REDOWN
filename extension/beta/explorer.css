@@ -962,7 +962,7 @@ a:hover{color:var(--text)}
   transition:background .14s ease,border-color .14s ease;
 }
 .actions #prepare.bucket-activation[data-state="needed"]{
-  animation:redown-bucket-activation 2.6s steps(4,end) infinite;
+  animation:redown-bucket-activation 3.2s ease-in-out infinite;
 }
 .actions #prepare.bucket-activation[data-state="unknown"]{
   animation:none;color:#f7d996;border-color:#be9d56;background:#372e1a;
@@ -1005,8 +1005,8 @@ a:hover{color:var(--text)}
     box-shadow .65s cubic-bezier(.2,.8,.2,1),transform .35s ease,opacity .25s ease;
 }
 .actions #prepare.bucket-activation[data-state="needed"]{
-  animation:none;color:#f8dfae;background:linear-gradient(180deg,#42311e,#31281f);
-  border-color:#a88b56;box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #cbaa6633;
+  animation:redown-bucket-activation 3.2s ease-in-out infinite;color:#d9ffe8;background:linear-gradient(180deg,#173b27,#123522);
+  border-color:#78db9f;cursor:pointer;box-shadow:inset 0 1px 0 #fff2,0 0 0 1px #64df9144;
 }
 .actions #prepare.bucket-activation[data-state="checking"],
 .actions #prepare.bucket-activation[data-state="activating"]{opacity:1}
@@ -1143,3 +1143,16 @@ a:hover{color:var(--text)}
 .actions #upload-folder.primary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){
 }
+
+/* One prerequisite owns guidance; ordinary controls keep their normal focus. */
+html[data-activation-prerequisite="true"] .guide-highlight:not(#prepare),
+html[data-activation-prerequisite="true"] #refresh.attention{animation:none!important;box-shadow:none!important}
+@property --rd-activation-angle{syntax:"<angle>";initial-value:0deg;inherits:false}
+.actions #prepare[data-state="needed"]::after{
+  content:"";position:absolute;inset:-2px;padding:2px;border-radius:inherit;pointer-events:none;
+  background:conic-gradient(from var(--rd-activation-angle),transparent 65%,#70e69d 84%,#d5ffe6 92%,transparent);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;
+  animation:rd-activation-border 4s linear infinite;
+}
+@keyframes rd-activation-border{to{--rd-activation-angle:360deg}}
+@media(prefers-reduced-motion:reduce){.actions #prepare[data-state="needed"]::after{animation:none;opacity:.7}}
