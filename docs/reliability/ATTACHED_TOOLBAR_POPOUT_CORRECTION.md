@@ -1,3 +1,5 @@
+> Toolbar branding update: [paired Simple/branding repair](../../FOREVER_WORKS/v3/SIMPLE_CLOUDFLARE_AND_TOOLBAR_BRANDING_REPAIR.md) supersedes this report's launch badge/technical-tooltip indications. Genuine failures remain local diagnostics/recovery state. The attached-only opening contract below is retained.
+
 # Shelf-first, native attached pop-out correction
 
 31 October 2026. Required branch: `codex/v3-parity-first-reconstruction`.

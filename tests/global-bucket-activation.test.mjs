@@ -28,7 +28,7 @@ async function fixture({failBucket,accountFailure=false,mode}={}){
 test('fresh install initializes V3; reload and restored legacy preference cannot reactivate Legacy',async()=>{
  const h=worker({profiles:[]});await h.ready();assert.equal(h.local.rightClickEngine,'v3');assert.equal(h.local.rightClickV3.destinations.length,0);assert.equal(h.local.rightClickV3Migration.version,1);
  h.local.rightClickEngine='legacy';await h.rebuild();assert.equal(h.local.rightClickEngine,'v3');
- const restart=worker(structuredClone(h.local));await restart.ready();assert.equal(restart.local.rightClickEngine,'v3');assert.ok(restart.native.has('v3:cloudflare-setup'));
+ const restart=worker(structuredClone(h.local));await restart.ready();assert.equal(restart.local.rightClickEngine,'v3');assert.ok(restart.native.has('v3:provider:cloudflare:setup'));
  await assert.rejects(h.context.v3MenuTransaction({type:'setRightClickEngine',engine:'legacy'},sender(h)),/only supported/);
 });
 test('migration preserves custom labels, disabled entries, ordering and incompatible originals for recovery',async()=>{

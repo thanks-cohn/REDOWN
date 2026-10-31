@@ -1,3 +1,15 @@
+# Latest: Simple Cloudflare + clean toolbar, then bounded live-memory foundation
+
+Read [the paired implementation and phase report](SIMPLE_CLOUDFLARE_AND_TOOLBAR_BRANDING_REPAIR.md).
+Simple now has one Cloudflare surface with the exact redown root retained first when expanded.
+Launch warnings no longer write `!` or technical hover text; global/tab cleanup preserves transfer feedback.
+The attached-only fallback remains. Following paired urgent verification, a bounded Level-memory phase
+preserves known paths across Depth/TTL and partial Reload and rejects stale generation commits.
+The transactional journal/checkpoint/history/scoped-refresh phases remain incomplete; do not claim Time Machine.
+Installed Chromium remains unavailable under policy, zero visual assertions. Both urgent changes are source/fixture verified.
+
+---
+
 # Latest: corrected native attached toolbar recovery
 
 Read [the correction report](../../docs/reliability/ATTACHED_TOOLBAR_POPOUT_CORRECTION.md).

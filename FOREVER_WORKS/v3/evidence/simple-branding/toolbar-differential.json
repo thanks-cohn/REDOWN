@@ -1,0 +1,43 @@
+{
+  "scope": "Actual old/new bootstrap under whole-worker mock; current shared dependencies, not pristine old extension or installed Chrome",
+  "baseline": "33b6f9b",
+  "unknownReadiness": {
+    "before": {
+      "badge": "!",
+      "title": "Chrome accepted the Shelf request; local readiness is unconfirmed. No second panel was opened.",
+      "codes": [
+        "SHELF_API_ACCEPTED",
+        "SHELF_READINESS_UNKNOWN"
+      ],
+      "secondSurface": false
+    },
+    "after": {
+      "badge": "",
+      "title": "REDOWN — Your cloud companion",
+      "codes": [
+        "SHELF_API_ACCEPTED",
+        "SHELF_READINESS_UNKNOWN"
+      ],
+      "secondSurface": false
+    }
+  },
+  "lateSuccess": {
+    "before": {
+      "badge": "!",
+      "title": "REDOWN is waiting for Chrome. Click again to retry Shelf; no second panel was opened.",
+      "codes": [
+        "SHELF_OPEN_PENDING"
+      ],
+      "secondSurface": false
+    },
+    "after": {
+      "badge": "",
+      "title": "REDOWN — Your cloud companion",
+      "codes": [
+        "SHELF_OPEN_PENDING",
+        "SHELF_API_ACCEPTED"
+      ],
+      "secondSurface": false
+    }
+  }
+}

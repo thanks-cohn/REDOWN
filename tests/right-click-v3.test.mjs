@@ -20,7 +20,7 @@ test('V3 domain projects parent-first exact IDs and resolves branch Save here on
 });
 test('V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect',()=>{
  const m=model(),s=store();s.destinations[0].enabled=false;assert.ok(!m.entries(s,[profile]).some(e=>e.id==='v3:deep'));assert.equal(m.resolve('v3:deep',s,[profile]),null);
- const removed=m.remove(store(),'child');assert.equal(removed.destinations.length,1);assert.equal(m.resolve('v3:deep',removed,[profile]),null);assert.equal(m.entries(m.empty(),[profile])[0].id,'v3:cloudflare-setup');assert.equal(m.resolve('v3:deep',store(),[{...profile,token:''}]),null);
+ const removed=m.remove(store(),'child');assert.equal(removed.destinations.length,1);assert.equal(m.resolve('v3:deep',removed,[profile]),null);assert.equal(m.entries(m.empty(),[profile])[0].id,'v3:provider:cloudflare:setup');assert.equal(m.resolve('v3:deep',store(),[{...profile,token:''}]),null);
 });
 test('V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8',()=>{
  const m=model();for(const mutate of [s=>s.destinations.push(destination()),s=>s.destinations[1].parentId='gone',s=>s.destinations[0].parentId='deep',s=>s.destinations[1].accountId='other',s=>s.destinations[1].prefix='a/../b',s=>s.destinations[1].prefix='a//b',s=>s.destinations[0].prefix='界'.repeat(301),s=>s.destinations[0].id='bad:id']){const s=store();mutate(s);assert.throws(()=>m.validate(s,[profile]));}
@@ -180,7 +180,7 @@ test('tree shortcuts require actual tree focus and ignore composition and modifi
 const simple={style:'simple',nested:'narrow',depth:1},narrow={...simple,style:'nested'},level={style:'nested',nested:'level',depth:2};
 test('Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here',()=>{
  const m=model(),s=store();s.destinations.forEach(d=>d.label='Duplicate');const before=JSON.stringify(s);
- const flat=m.project(s,[profile]);assert.equal(flat.entries[0].title,'Cloudflare');assert.ok(flat.entries.slice(1).every(e=>e.parentId==='v3:cloudflare'));assert.deepEqual(Array.from(flat.entries.filter(e=>s.destinations.some(d=>'v3:'+d.id===e.id)),e=>e.id),s.destinations.map(d=>'v3:'+d.id));
+ const flat=m.project(s,[profile]);assert.equal(flat.entries[0].title,'Cloudflare');assert.ok(flat.entries.slice(1).every(e=>e.parentId==='v3:provider:cloudflare'));assert.deepEqual(Array.from(flat.entries.filter(e=>s.destinations.some(d=>'v3:'+d.id===e.id)),e=>e.id),s.destinations.map(d=>'v3:'+d.id));
  for(const d of s.destinations)assert.equal(m.resolve('v3:'+d.id,s,[profile]).prefix,d.prefix);
  const nested=m.project(s,[profile],narrow);assert.equal(nested.entries[1].title,'Duplicate');assert.equal(m.resolve('v3:root',s,[profile],narrow).prefix,'');assert.equal(m.resolve('v3:root:send',s,[profile],narrow),null);
  assert.equal(m.resolve('v3:deep',s,[profile],narrow).prefix,'one/two/three');assert.equal(m.resolve('v3:child:send',s,[profile],simple),null);assert.equal(JSON.stringify(s),before);
@@ -230,11 +230,11 @@ test('Level bounds folder count, pages, elapsed budget and menu entries with vis
  let clock=0;const timed=await m.discover(s,[profile],level,async()=>({objects:[]}),()=>clock+=m.limits.milliseconds);assert.equal(timed.pages,0);assert.equal(timed.complete,false);
  const ids=new Set(['redown']);for(const entry of plan.entries){assert.ok(ids.has(entry.parentId));assert.ok(!ids.has(entry.id));ids.add(entry.id);}
 });
-test('Level cache survives serialization; expiry, root changes and wrong depth fail closed',async()=>{
+test('Level memory survives serialization, expiry and view changes while current authority gates routes',async()=>{
  const m=model(),s={...store(),destinations:[destination()]},f=folderFixture(),inventory=await m.discover(s,[profile],level,f.list),copy=JSON.parse(JSON.stringify(inventory));
  const id=cloudId('images')+':send';assert.equal(m.resolve(id,s,[profile],level,copy).prefix,'images');
- assert.equal(m.resolve(id,s,[profile],level,copy,copy.at+m.limits.ttl),null);assert.equal(m.project(s,[profile],level,copy,'redown',copy.at+m.limits.ttl).complete,false);
- assert.equal(m.resolve(id,{...s,levelScopes:{...scope(),revision:1}},[profile],level,copy),null);assert.equal(m.resolve(id,s,[profile],{...level,depth:3},copy),null);
+ assert.equal(m.resolve(id,s,[profile],level,copy,copy.at+m.limits.ttl).prefix,'images');assert.equal(m.project(s,[profile],level,copy,'redown',copy.at+m.limits.ttl).complete,false);
+ assert.equal(m.resolve(id,{...s,levelScopes:{...scope(),revision:1}},[profile],level,copy).prefix,'images');assert.equal(m.resolve(id,s,[profile],{...level,depth:3},copy).prefix,'images');
  for(const value of [0,-1,1.5,11,NaN,'2'])assert.throws(()=>m.validatePresentation({...level,depth:value}));
 });
 test('presentation transitions serialize independently, retain Level depth 5 and persist across background restart',async()=>{
@@ -455,10 +455,10 @@ test('perimeter animation has a reduced-motion override and visible keyboard foc
  const css=await readFile(new URL('../extension/beta/right-click-v3.css',import.meta.url),'utf8');
  assert.match(css,/animation:v3-perimeter/);assert.match(css,/prefers-reduced-motion:reduce[^}]*[^]*animation:none/);assert.match(css,/#v3-save:focus-visible/);
 });
-test('restored broad inventory reserves capacity for a newly participating bucket',async()=>{
+test('restored broad inventory retains every known path while checking a newly participating bucket',async()=>{
  const m=model(),s={...store(),levelScopes:scope()},opts={...level,depth:1};
  const first=await m.discover(s,[profile],opts,async()=>({objects:[],delimited:Array.from({length:499},(_,i)=>'f'+i+'/')}));
  const other={...profile,id:'second',bucketName:'second'},next={...s,levelScopes:{...scope(),revision:2,buckets:[...scope().buckets,{...scope().buckets[0],id:'second',profileId:'second',bucketName:'second'}]}};
  const calls=[],inventory=await m.discover(next,[profile,other],opts,async(a,b)=>{calls.push(b);return {objects:[],delimited:[]};},()=>Date.now(),first);
- assert.ok(calls.includes('second'));assert.ok(inventory.nodes.length<=m.limits.folders);assert.equal(inventory.complete,false);
+ assert.ok(calls.includes('second'));assert.ok(inventory.nodes.length<=m.limits.known);assert.ok(first.nodes.every(n=>inventory.nodes.some(q=>q.profileId===n.profileId&&q.prefix===n.prefix)));assert.equal(inventory.complete,true);
 });

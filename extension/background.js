@@ -2242,7 +2242,7 @@ async function restoreV3MenuSnapshot(){
   const s=await chrome.storage.local.get(['right-click.json','rightClickV3Inventory','rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','profiles']);
   const cached=s['right-click.json'];
   const key=RedownRightClickV3.inventoryKey({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},s.profiles||[],s.rightClickV3Presentation);
-  if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&RedownRightClickV3.fresh(cached.inventory,key))await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});
+  if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&(RedownRightClickV3.fresh(cached.inventory,key)||RedownRightClickV3.rememberedNodes({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},s.profiles||[],cached.inventory).length))await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});
 }
 // Durable logical JSON artifact. Configuration/authorization remain authoritative.
 let v3SnapshotQueue=Promise.resolve();
@@ -2262,19 +2262,25 @@ async function writeV3MenuSnapshot(){
     inventory:inventory||null,projectionGeneration:s.rightClickMenuStatus?.applicationKey||null,
     appliedGeneration:s.rightClickMenuStatus?.state==='registered'?s.rightClickMenuStatus.applicationKey:null}});
 }
-let v3InventoryRefresh=null;
+let v3InventoryRefresh=null,v3InventoryRefreshKey=null;
 async function refreshV3Inventory(force=false){
-  if(v3InventoryRefresh)return v3InventoryRefresh;
+  if(v3InventoryRefresh){
+    const state=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','profiles']);
+    const requested=RedownRightClickV3.inventoryKey({...state.rightClickV3,levelScopes:state.rightClickV3LevelScopes},state.profiles||[],state.rightClickV3Presentation);
+    if(requested===v3InventoryRefreshKey)return v3InventoryRefresh;
+    await v3InventoryRefresh.catch(()=>{});return refreshV3Inventory(force);
+  }
   let superseded=false;
   const operation=(async()=>{
     const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','profiles','right-click.json'];
     const s=await chrome.storage.local.get(keys),options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
     if(options.style!=='nested'||options.nested!=='level')return;
     const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},profiles=s.profiles||[],key=RedownRightClickV3.inventoryKey(config,profiles,options);
+    v3InventoryRefreshKey=key;
     const cached=s['right-click.json'];
-    if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&cached.inventory?.key===key){s.rightClickV3Inventory=cached.inventory;await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});}
+    if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&cached.inventory?.version===2){s.rightClickV3Inventory=cached.inventory;await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});}
     if(!force&&RedownRightClickV3.fresh(s.rightClickV3Inventory,key))return;
-    const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage,()=>Date.now(),force?null:s.rightClickV3Inventory);
+    const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage,()=>Date.now(),s.rightClickV3Inventory,force);
     const latest=await chrome.storage.local.get(keys);
     // No late discovery may replace an inventory for changed roots/credentials.
     if(RedownRightClickV3.presentation(latest.rightClickV3Presentation).style!=='nested'||RedownRightClickV3.presentation(latest.rightClickV3Presentation).nested!=='level'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey({...(latest.rightClickV3||RedownRightClickV3.empty()),levelScopes:latest.rightClickV3LevelScopes},latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
@@ -2284,7 +2290,7 @@ async function refreshV3Inventory(force=false){
     await rebuildMenus();
   })();
   v3InventoryRefresh=operation;
-  try{return await operation;}finally{v3InventoryRefresh=null;if(superseded)void rebuildMenus().catch(()=>{});}
+  try{return await operation;}finally{v3InventoryRefresh=null;v3InventoryRefreshKey=null;if(superseded)void rebuildMenus().catch(()=>{});}
 }
 async function rightClickV3Snapshot(sender){
   await ensureV3Only();
@@ -2650,7 +2656,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
       const retained={...inventory,nodes:inventory.nodes.filter(n=>!affected.includes(n.profileId)),frontier:(inventory.frontier||[]).filter(n=>!affected.includes(n.profileId)),at:0};
       return chrome.storage.local.set({rightClickV3Inventory:retained,'right-click.json':null});
     }).then(()=>rebuildMenus()).catch(()=>{});
-  }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes||changes.rightClickActivatedBuckets)void rebuildMenus().catch(()=>{});
+  }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes||changes.rightClickActivatedBuckets)void rebuildMenus().then(()=>changes.rightClickV3Presentation||changes.rightClickV3LevelScopes?refreshV3Inventory():undefined).catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2756,7 +2762,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     // The former saved-URL utility is available through Explorer's Get URL action.
     return openRedownHome(tab);
   }
-  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage" || ["v3:cloudflare-setup","v3:cloudflare-default-setup","v3:cloudflare-more"].includes(info.menuItemId)) {
+  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage" || ["v3:provider:cloudflare:setup","v3:provider:cloudflare:default-setup","v3:provider:cloudflare:more"].includes(info.menuItemId)) {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 

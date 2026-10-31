@@ -1,0 +1,28 @@
+{
+  "baseline": "33b6f9b",
+  "permissionsUnchanged": true,
+  "hostPermissionsUnchanged": true,
+  "permissions": [
+    "contextMenus",
+    "notifications",
+    "storage",
+    "identity",
+    "webNavigation",
+    "alarms",
+    "downloads",
+    "scripting",
+    "activeTab",
+    "sidePanel"
+  ],
+  "hostPermissions": [
+    "https://api.github.com/*",
+    "https://api.cloudflare.com/*",
+    "https://dash.cloudflare.com/*",
+    "https://*.workers.dev/*",
+    "https://hitomi.la/*",
+    "https://*.r2.dev/*",
+    "http://127.0.0.1/*"
+  ],
+  "actionDefaultTitle": "REDOWN \u2014 Your cloud companion",
+  "userConsentChanged": false
+}

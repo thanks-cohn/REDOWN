@@ -51,7 +51,8 @@ test('V3 migration preserves saved section and additional destination order in t
     {id:'b',type:'cloudflare-r2',accountId:'account',bucketName:'beta',menuLabel:'Beta',menuOrder:0}
   ].map(p=>({...p,workerUrl:'https://fixture.invalid',token:'synthetic'}));
   const h=worker({profiles});await h.ready();assert.equal(h.local.rightClickEngine,'v3');
-  assert.deepEqual([...h.native.values()].filter(x=>x.id.startsWith('v3:')).map(x=>x.title),['Beta','Alpha','Second','First']);
+  const entries=[...h.native.values()].filter(x=>h.local.rightClickV3.destinations.some(d=>'v3:'+d.id===x.id));
+  assert.deepEqual(entries.map(x=>x.title),['Beta','Alpha','Second','First']);assert.ok(entries.every(x=>x.parentId==='v3:provider:cloudflare'));
 });
 
 test('drag continues outside grip and gaps are valid insertion targets',async()=>{

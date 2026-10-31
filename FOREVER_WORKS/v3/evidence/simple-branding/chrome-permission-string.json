@@ -1,0 +1,7 @@
+{
+  "url": "https://raw.githubusercontent.com/chromium/chromium/main/chrome/app/generated_resources.grd",
+  "fetchedDate": "2026-10-31",
+  "sha256": "d2883bc98ff60d5080f95a2dfe109bcef2d7460768539e6600197cbe4c663d40",
+  "excerpt": "<message name=\"IDS_EXTENSIONS_WANTS_ACCESS_TO_SITE\" desc=\"The message shown on mouseover when an extension wants to run on a specific site.\">\n          Wants access to this site\n        </message>",
+  "evidenceScope": "upstream source; installed Chrome hover not verified"
+}

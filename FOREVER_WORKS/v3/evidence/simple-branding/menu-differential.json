@@ -1,0 +1,111 @@
+{
+  "scope": "Actual domain differential, fixture authorization only; not native Chrome or provider truth",
+  "baseline": "33b6f9b",
+  "onlyDefault": {
+    "before": [
+      {
+        "id": "v3:buckets",
+        "parentId": "redown",
+        "title": "Buckets"
+      },
+      {
+        "id": "v3:bucket:%5B%22home%22%2C%22a%22%2C%22redown%22%5D",
+        "parentId": "v3:buckets",
+        "title": "redown",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": ""
+        }
+      }
+    ],
+    "after": [
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": ""
+        }
+      }
+    ]
+  },
+  "additional": {
+    "before": [
+      {
+        "id": "v3:buckets",
+        "parentId": "redown",
+        "title": "Buckets"
+      },
+      {
+        "id": "v3:bucket:%5B%22home%22%2C%22a%22%2C%22redown%22%5D",
+        "parentId": "v3:buckets",
+        "title": "redown",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": ""
+        }
+      },
+      {
+        "id": "v3:bucket:%5B%22other%22%2C%22a%22%2C%22Other%20Bucket%22%5D",
+        "parentId": "v3:buckets",
+        "title": "Other Bucket",
+        "target": {
+          "accountId": "a",
+          "bucketName": "Other Bucket",
+          "prefix": ""
+        }
+      },
+      {
+        "id": "v3:photo",
+        "parentId": "redown",
+        "title": "Photography",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": "Photography/2026/final"
+        }
+      }
+    ],
+    "after": [
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare"
+      },
+      {
+        "id": "v3:provider:cloudflare:default",
+        "parentId": "v3:provider:cloudflare",
+        "title": "REDOWN",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": ""
+        }
+      },
+      {
+        "id": "v3:photo",
+        "parentId": "v3:provider:cloudflare",
+        "title": "Photography",
+        "target": {
+          "accountId": "a",
+          "bucketName": "redown",
+          "prefix": "Photography/2026/final"
+        }
+      },
+      {
+        "id": "v3:bucket:%5B%22other%22%2C%22a%22%2C%22Other%20Bucket%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "Other Bucket",
+        "target": {
+          "accountId": "a",
+          "bucketName": "Other Bucket",
+          "prefix": ""
+        }
+      }
+    ]
+  }
+}

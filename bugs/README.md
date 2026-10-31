@@ -1,3 +1,7 @@
+## Latest paired P0 implementation — 31 October 2026
+
+The Simple Cloudflare structure and false REDOWN toolbar warnings are now repaired in production source and tested together. [Implementation, permission ownership, evidence and remaining foundation phases](../FOREVER_WORKS/v3/SIMPLE_CLOUDFLARE_AND_TOOLBAR_BRANDING_REPAIR.md). Normal Simple uses Cloudflare, preserving the verified redown root and flat exact targets; launch pending/unknown/late-success states keep a friendly title and never write `!`. Global/tab cleanup preserves valid transfer feedback. Chrome-owned site-access notices are unaffected. Depth/partial Reload retention is also implemented as a bounded first foundation phase. **Installed Chrome/visual/live-provider acceptance remains pending; original clean-profile incident is not closed.** Older owner reports below are retained as history, not the latest implementation status.
+
 # REDOWN bugs
 
 ## P0 — Simple menu shows Buckets and places custom labels beside it (2026-10-31)

@@ -66,7 +66,7 @@
   }
 
   // Presentation is deliberately independent of destination revisions and Legacy mode.
-  const limits=Object.freeze({depth:10,entries:300,folders:500,pages:80,milliseconds:20000,ttl:300000});
+  const limits=Object.freeze({depth:10,entries:300,folders:500,known:5000,pages:80,milliseconds:20000,ttl:300000});
   function presentation(value){
     return {style:value?.style==='nested'?'nested':'simple',nested:value?.nested==='level'?'level':'narrow',depth:Number.isInteger(value?.depth)&&value.depth>=1&&value.depth<=limits.depth?value.depth:1};
   }
@@ -109,22 +109,30 @@
     }
     return [...children].sort(compare);
   }
-  async function discover(config,profiles,settings,listPage,clock=()=>Date.now(),previous=null){
+  // Depth/TTL affect checking and projection, never deletion of known paths.
+  function rememberedNodes(config,profiles,inventory){
+    let prior;try{prior=JSON.parse(inventory?.key||'null');}catch{return [];}
+    if(inventory?.version!==2||prior?.[0]!==2||!Array.isArray(prior[3])||!Array.isArray(inventory.nodes))return [];
+    const authorized=roots(config,profiles);
+    return inventory.nodes.filter(n=>typeof n.prefix==='string'&&Number.isInteger(n.level)&&n.level>=0&&n.level<=limits.depth&&
+      (!n.prefix||!/[\\\x00-\x1f\x7f]/.test(n.prefix)&&!n.prefix.split('/').some(p=>!p||p==='.'||p==='..'))&&
+      authorized.some(d=>identity(d)===identity(n)&&prior[3].some(t=>t[1]===d.profileId&&t[2]===d.accountId&&t[3]===d.bucketName&&t[5]===prepared(d,profiles).workerUrl)));
+  }
+  async function discover(config,profiles,settings,listPage,clock=()=>Date.now(),previous=null,refresh=false){
     const options=presentation(settings),start=clock(),key=inventoryKey(config,profiles,options);
     const nodes=roots(config,profiles).map(d=>({profileId:d.profileId,accountId:d.accountId,bucketName:d.bucketName,prefix:d.prefix,parent:null,level:0}));
-    const warnings=new Set();let pages=0,halt=false;
+    const warnings=new Set();let pages=0,added=0,halt=false;
     const perBucket=Math.max(1,Math.floor(limits.folders/Math.max(1,nodes.length)));
-    // Reuse only matching authorized buckets with fresh root observations.
-    const oldKey=(()=>{try{return JSON.parse(previous?.key||'null');}catch{return null;}})();
-    const newKey=JSON.parse(key);
-    const reusable=nodes.filter(root=>previous?.version===2&&clock()>=(previous.nodes?.find(n=>identity(n)===identity(root)&&n.prefix==='')?.observedAt||previous.at)&&clock()-(previous.nodes?.find(n=>identity(n)===identity(root)&&n.prefix==='')?.observedAt||previous.at)<limits.ttl*12&&oldKey?.[2]===options.depth&&oldKey?.[3]?.some(tuple=>JSON.stringify(tuple)===JSON.stringify(newKey[3].find(t=>t[1]===root.profileId))));
-    for(const root of reusable){
-      const saved=(previous.nodes||[]).filter(n=>identity(n)===identity(root));
-      if(!saved.length)continue;
-      Object.assign(root,saved.find(n=>n.prefix==='')||{});
-      const children=saved.filter(n=>n.prefix).sort((a,b)=>a.level-b.level||compare(a.prefix,b.prefix));
-      if(children.length>=perBucket)root.partial=true;
-      for(const n of children.slice(0,perBucket-1))if(nodes.length<limits.folders)nodes.push({...n});
+    const remembered=rememberedNodes(config,profiles,previous);
+    const reusable=[];
+    for(const root of [...nodes]){
+      const saved=remembered.filter(n=>identity(n)===identity(root)),old=saved.find(n=>n.prefix==='');
+      const observed=old?.observedAt??previous?.at;
+      const reuse=!refresh&&old&&Number.isFinite(observed)&&clock()>=observed&&clock()-observed<limits.ttl*12;
+      if(reuse)reusable.push(root);
+      if(old)Object.assign(root,old);
+      for(const child of saved.filter(n=>n.prefix).sort((a,b)=>a.level-b.level||compare(a.prefix,b.prefix)))nodes.push({...child});
+      if(!reuse)for(const node of nodes.filter(n=>identity(n)===identity(root)&&n.level<options.depth))node.listed=false;
     }
     const queue=[],retries=[];
     for(const node of nodes){
@@ -134,7 +142,7 @@
     }
     while(queue.length&&!halt){
       const task=queue.shift(),node=task.node;if(node.level>=options.depth)continue;
-      if(pages>=limits.pages||nodes.length>=limits.folders||clock()-start>=limits.milliseconds){warnings.add('Inventory limit reached; some folders are not shown.');queue.unshift(task);break;}
+      if(pages>=limits.pages||added>=limits.folders||nodes.length>=limits.known||clock()-start>=limits.milliseconds){warnings.add('Inventory limit reached; some folders are not shown.');queue.unshift(task);break;}
       let timedOut=false;
       try{
         let timer;const remaining=Math.max(1,Math.min(8000,limits.milliseconds-(clock()-start)));
@@ -143,8 +151,8 @@
         if(page.truncated&&!page.cursor||page.cursor&&(page.cursor===task.cursor||task.seen.includes(page.cursor)))throw Error('pagination');
         for(const prefix of childPrefixes(page,node.prefix)){
           if(nodes.some(n=>identity(n)===identity(node)&&n.prefix===prefix))continue;
-          if(nodes.filter(n=>identity(n)===identity(node)).length>=perBucket){node.partial=true;warnings.add('Folder limit reached; some folders are not shown.');break;}
-          const child={...node,prefix,parent:node.prefix,level:node.level+1};nodes.push(child);queue.push({node:child,cursor:'',seen:[]});
+          if(nodes.length>=limits.known||added>=limits.folders||nodes.filter(n=>identity(n)===identity(node)).length>=perBucket){node.partial=true;warnings.add('Folder limit reached; some folders are not shown.');break;}
+          const child={profileId:node.profileId,accountId:node.accountId,bucketName:node.bucketName,prefix,parent:node.prefix,level:node.level+1,listed:false};nodes.push(child);added++;queue.push({node:child,cursor:'',seen:[]});
         }
         if(page.cursor)queue.push({node,cursor:page.cursor,seen:[...task.seen,page.cursor]});
         node.listed=!page.cursor;node.observedAt=clock();
@@ -160,9 +168,9 @@
   function levelProjection(config,profiles,settings,inventory,root,now){
     const key=inventoryKey(config,profiles,settings),valid=fresh(inventory,key,now),out=[],warnings=[];
     if(!roots(config,profiles).length)return {entries:out,warnings:['Select participating buckets in Level setup.'],complete:false};
-    if(!valid)inventory={nodes:[],warnings:['Folder discovery is pending.'],observations:[],at:now,complete:false};
+    if(!valid)inventory={...inventory,nodes:rememberedNodes(config,profiles,inventory),warnings:['Folder discovery is pending.'],observations:[],at:inventory?.at||now,complete:false};
     warnings.push(...inventory.warnings||[]);
-    const authorized=roots(config,profiles),nodes=(inventory.nodes||[]).filter(n=>authorized.some(d=>d.profileId===n.profileId&&d.accountId===n.accountId&&d.bucketName===n.bucketName&&within(n.prefix,d.prefix)));
+    const authorized=roots(config,profiles),nodes=(inventory.nodes||[]).filter(n=>n.level<=presentation(settings).depth&&authorized.some(d=>d.profileId===n.profileId&&d.accountId===n.accountId&&d.bucketName===n.bucketName&&within(n.prefix,d.prefix)));
     for(const d of authorized)if(!nodes.some(n=>identity(n)===identity(d)&&n.prefix===''))nodes.push({...d,prefix:'',parent:null,level:0});
     // Reserve every root before breadth-first allocation. Each folder reserves
     // its parent Save here atomically; later buckets cannot be starved by DFS.
@@ -195,22 +203,22 @@
       if(extra.some(e=>e.target.accountId===d.accountId&&e.target.bucketName===d.bucketName&&e.target.prefix===''))continue;
       extra.push({id:bucketId(d),title:d.bucketName,target:{...d,prefix:''}});
     }
-    const used=new Set(primary?['REDOWN']:[]);
+    const originalLabels=extra.map(e=>e.title),used=new Set(primary?['REDOWN']:[]);
     for(const item of extra){
       const base=item.title;let title=base,i=1;
-      if(extra.some(e=>e!==item&&e.title===base&&e.target.accountId!==item.target.accountId))title=base+' · '+item.target.accountId;
+      if(extra.some((e,i)=>e!==item&&originalLabels[i]===base&&e.target.accountId!==item.target.accountId))title=base+' · '+item.target.accountId;
       const seed=title;while(used.has(title))title=seed+' · '+(++i);used.add(title);item.title=title;
     }
     return {primary,extra};
   }
   function simpleProjection(config,profiles,root){
     const {primary,extra}=simpleTargets(config,profiles);
-    if(!extra.length)return {entries:[{id:primary?'v3:cloudflare':'v3:cloudflare-setup',parentId:root,title:'Cloudflare',contexts}],complete:true,warnings:primary?[]:['Choose and activate the default redown bucket.']};
-    const entries=[{id:'v3:cloudflare',parentId:root,title:'Cloudflare',contexts},
-      {id:primary?'v3:cloudflare-default':'v3:cloudflare-default-setup',parentId:'v3:cloudflare',title:primary?'REDOWN':'Set up REDOWN…',contexts}];
+    if(!extra.length)return {entries:[{id:primary?'v3:provider:cloudflare':'v3:provider:cloudflare:setup',parentId:root,title:'Cloudflare',contexts}],complete:true,warnings:primary?[]:['Choose and activate the default redown bucket.']};
+    const entries=[{id:'v3:provider:cloudflare',parentId:root,title:'Cloudflare',contexts},
+      {id:primary?'v3:provider:cloudflare:default':'v3:provider:cloudflare:default-setup',parentId:'v3:provider:cloudflare',title:primary?'REDOWN':'Set up REDOWN…',contexts}];
     const overflow=extra.length>limits.entries-2,shown=extra.slice(0,limits.entries-2-(overflow?1:0));
-    entries.push(...shown.map(({id,title})=>({id,title,parentId:'v3:cloudflare',contexts})));
-    if(overflow)entries.push({id:'v3:cloudflare-more',parentId:'v3:cloudflare',title:'More destinations…',contexts});
+    entries.push(...shown.map(({id,title})=>({id,title,parentId:'v3:provider:cloudflare',contexts})));
+    if(overflow)entries.push({id:'v3:provider:cloudflare:more',parentId:'v3:provider:cloudflare',title:'More destinations…',contexts});
     return {entries,complete:!overflow,warnings:[...(!primary?['Choose and activate the default redown bucket.']:[]),...(overflow?['Chrome menu entry limit reached; use More destinations.']:[])]};
   }
   function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
@@ -236,7 +244,7 @@
     try{
       const plan=project(config,profiles,settings,inventory,'redown',now),item=plan.entries.find(n=>n.id===id);
       if(!item||plan.entries.some(n=>n.parentId===id))return null;
-      if(presentation(settings).style==='simple'&&['v3:cloudflare','v3:cloudflare-default'].includes(id)){
+      if(presentation(settings).style==='simple'&&['v3:provider:cloudflare','v3:provider:cloudflare:default'].includes(id)){
         const target=simpleTargets(config,profiles).primary,profile=target&&prepared(target,profiles);
         return profile?{profile,owner:profile,prefix:''}:null;
       }
@@ -281,5 +289,5 @@
     }
     return {config,recovery};
   }
-  globalThis.RedownRightClickV3=Object.freeze({empty,migrate,validate,entries,resolve,remove,presentation,validatePresentation,emptyScopes,validateScopes,roots,inventoryKey,fresh,discover,project,limits});
+  globalThis.RedownRightClickV3=Object.freeze({empty,migrate,validate,entries,resolve,remove,presentation,validatePresentation,emptyScopes,validateScopes,roots,inventoryKey,fresh,rememberedNodes,discover,project,limits});
 })();
