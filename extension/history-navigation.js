@@ -103,7 +103,7 @@
       const intent={token,issuedAt:Date.now(),locator:target,tabId:existing?.id};
       const accepted=waitFor('historyAccepted:'+token,12000);void accepted.catch(()=>{});
       const completed=waitFor('historyResult:'+token,95000);
-      void completed.then(result=>{if(ticket===openingEpoch&&result.state==='failed')report(result.error||'Could not locate saved file.');}).catch(e=>{if(ticket===openingEpoch)report(e.message);}).finally(()=>chrome.storage.session.remove([key,'historyResult:'+token,'historyAccepted:'+token]));
+      void completed.then(result=>{if(ticket!==openingEpoch)return;if(result.state==='failed')report(result.error||'Could not locate saved file.');else if(result.state==='completed')report('');}).catch(e=>{if(ticket===openingEpoch)report(e.message);}).finally(()=>chrome.storage.session.remove([key,'historyResult:'+token,'historyAccepted:'+token]));
       await chrome.storage.session.set({[key]:intent});
       if(existing)await chrome.tabs.update(existing.id,{active:true});
       else{
@@ -126,7 +126,8 @@
   function open(record){
     const target=locator(record);if(!target)return;
     const ticket=++openingEpoch;
-    const fallback=()=>{if(ticket!==openingEpoch)return;void tab(target,ticket).catch(e=>report('Could not open Explorer: '+e.message));};
+    report(''); // A new GO TO owns the status; do not carry a prior attempt's diagnostic.
+    const fallback=()=>{if(ticket!==openingEpoch)return;report('');void tab(target,ticket).catch(e=>{if(ticket===openingEpoch)report('Could not open Explorer: '+e.message);});};
     void preference.then(()=>tab(target,ticket,mode)).catch(e=>{
       if(ticket===openingEpoch)report('Could not open Explorer: '+e.message,mode==='split'?fallback:undefined);
     });
