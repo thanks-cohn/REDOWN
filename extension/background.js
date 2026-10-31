@@ -2094,7 +2094,7 @@ function v3MenuTransaction(message,sender){
       if(message.expected!==current.revision)throw Error('Level buckets changed. Reload before saving.');
       const scopes={version:1,revision:current.revision+1,buckets:message.buckets?.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','enabled'].map(k=>[k,d[k]])))};
       RedownRightClickV3.validateScopes(scopes,stored.profiles||[]);
-      await chrome.storage.local.set({rightClickV3LevelScopes:scopes,rightClickV3Inventory:null});
+      await chrome.storage.local.set({rightClickV3LevelScopes:scopes});
     }else if(message.type==='setRightClickV3Presentation'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       const current=RedownRightClickV3.presentation(stored.rightClickV3Presentation);
@@ -2104,7 +2104,7 @@ function v3MenuTransaction(message,sender){
     }else if(message.type==='applyRightClickV3'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       if(message.expected!==config.revision||message.expectedScopes!==(stored.rightClickV3LevelScopes?.revision||0)||message.expectedPresentation!==JSON.stringify(RedownRightClickV3.presentation(stored.rightClickV3Presentation)))throw Error('Configuration changed. Reload to reconcile before applying.');
-      await refreshV3Inventory(true);
+      // Apply acknowledges the bounded current projection; discovery runs independently.
     }else{
       if(!['legacy','v3'].includes(message.engine))throw Error('Choose Legacy or New Right-click.');
       engine=message.engine;
@@ -2120,21 +2120,49 @@ async function v3PresentationSnapshot(){
   const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickV3LevelScopes','rightClickMenuStatus']);
   return {applicationKey:await menuApplicationKey(),levelScopes:s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),menuStatus:s.rightClickMenuStatus||null};
 }
+async function restoreV3MenuSnapshot(){
+  const s=await chrome.storage.local.get(['right-click.json','rightClickV3Inventory','rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','profiles']);
+  const cached=s['right-click.json'];
+  const key=RedownRightClickV3.inventoryKey({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},s.profiles||[],s.rightClickV3Presentation);
+  if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&RedownRightClickV3.fresh(cached.inventory,key))await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});
+}
+// Durable logical JSON artifact. Configuration/authorization remain authoritative.
+let v3SnapshotQueue=Promise.resolve();
+function persistV3MenuSnapshot(){
+  const operation=v3SnapshotQueue.catch(()=>{}).then(writeV3MenuSnapshot);
+  v3SnapshotQueue=operation;return operation;
+}
+async function writeV3MenuSnapshot(){
+  const s=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus','profiles']);
+  const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes};
+  const roots=RedownRightClickV3.roots(config,s.profiles||[]);
+  const inventory=s.rightClickV3Inventory;
+  await chrome.storage.local.set({'right-click.json':{schemaVersion:1,configurationRevision:config.revision,
+    presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),
+    buckets:roots.map(({id,profileId,accountId,bucketName})=>({id,profileId,accountId,bucketName})),
+    destinations:config.destinations.map(({id,profileId,accountId,bucketName,prefix,enabled})=>({id,profileId,accountId,bucketName,prefix,enabled})),
+    inventory:inventory||null,projectionGeneration:s.rightClickMenuStatus?.applicationKey||null,
+    appliedGeneration:s.rightClickMenuStatus?.state==='registered'?s.rightClickMenuStatus.applicationKey:null}});
+}
 let v3InventoryRefresh=null;
 async function refreshV3Inventory(force=false){
   if(v3InventoryRefresh)return v3InventoryRefresh;
   let superseded=false;
   const operation=(async()=>{
-    const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','profiles'];
+    const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','profiles','right-click.json'];
     const s=await chrome.storage.local.get(keys),options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
     if(s.rightClickEngine!=='v3'||options.style!=='nested'||options.nested!=='level')return;
     const config={...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},profiles=s.profiles||[],key=RedownRightClickV3.inventoryKey(config,profiles,options);
+    const cached=s['right-click.json'];
+    if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&cached.inventory?.key===key){s.rightClickV3Inventory=cached.inventory;await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});}
     if(!force&&RedownRightClickV3.fresh(s.rightClickV3Inventory,key))return;
-    const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage);
+    const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage,()=>Date.now(),force?null:s.rightClickV3Inventory);
     const latest=await chrome.storage.local.get(keys);
     // No late discovery may replace an inventory for changed roots/credentials.
     if(RedownRightClickV3.presentation(latest.rightClickV3Presentation).style!=='nested'||RedownRightClickV3.presentation(latest.rightClickV3Presentation).nested!=='level'||latest.rightClickEngine!=='v3'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey({...(latest.rightClickV3||RedownRightClickV3.empty()),levelScopes:latest.rightClickV3LevelScopes},latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
+    globalThis.redownRuntimeObserver?.record({operation:'api.read',outcome:inventory.complete?'success':'failed',code:inventory.complete?'OK':'UNEXPECTED_RESPONSE'});
     await chrome.storage.local.set({rightClickV3Inventory:inventory});
+    await persistV3MenuSnapshot();
     await rebuildMenus();
   })();
   v3InventoryRefresh=operation;
@@ -2165,11 +2193,13 @@ async function rebuildMenus() {
   // must finish in order so another removeAll cannot delete a pending parent.
   const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
     try{
+      await restoreV3MenuSnapshot();
       const applicationKey=await menuApplicationKey();
       await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       const receipt=await buildMenus();
       const current=applicationKey===await menuApplicationKey();
-      await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':receipt.complete===false?'partial':'registered'}});
+      await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':'registered'}});
+      await persistV3MenuSnapshot();
       return receipt;
     }catch(error){
       await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
@@ -2221,7 +2251,6 @@ async function buildMenus() {
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
   const projection=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.project({...(menuSettings.rightClickV3||RedownRightClickV3.empty()),levelScopes:menuSettings.rightClickV3LevelScopes},profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory,ROOT_MENU_ID):null;
   const entries=projection?projection.entries:RedownRightClickLegacy.entries(profiles,mode,ROOT_MENU_ID);
-  if(projection?.warnings.length)create({id:'redown-v3-inventory-status',parentId:ROOT_MENU_ID,title:projection.warnings.join(' '),enabled:false,contexts:['link','image','video','audio','page']});
   if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
   for(const entry of entries)create(entry);
   addMenuControls(mode,item=>{if(menuSettings.rightClickEngine!=='v3'||item.id!=='redown-nested-mode')create(item);});
@@ -2426,8 +2455,15 @@ chrome.alarms.onAlarm.addListener(alarm=>{
 chrome.storage.onChanged.addListener((changes, area) => {
   if(area!=="local")return;
   if(changes.profiles){
-    // Credential/activation changes invalidate observations even if paths match.
-    void chrome.storage.local.set({rightClickV3Inventory:null}).then(()=>rebuildMenus()).catch(()=>{});
+    // Drop changed authority before rebuilding; unaffected bucket nodes survive.
+    const before=changes.profiles.oldValue||[],after=changes.profiles.newValue||[];
+    const affected=before.filter(p=>!after.some(q=>q.id===p.id&&q.accountId===p.accountId&&q.bucketName===p.bucketName&&q.workerUrl===p.workerUrl&&q.token===p.token)).map(p=>p.id);
+    void chrome.storage.local.get(['rightClickV3Inventory']).then(s=>{
+      const inventory=s.rightClickV3Inventory;
+      if(!inventory)return chrome.storage.local.set({'right-click.json':null,rightClickV3Inventory:null});
+      const retained={...inventory,nodes:inventory.nodes.filter(n=>!affected.includes(n.profileId)),frontier:(inventory.frontier||[]).filter(n=>!affected.includes(n.profileId)),at:0};
+      return chrome.storage.local.set({rightClickV3Inventory:retained,'right-click.json':null});
+    }).then(()=>rebuildMenus()).catch(()=>{});
   }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes)void rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
