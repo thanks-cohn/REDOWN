@@ -1,3 +1,17 @@
+# Latest: P0 toolbar and native-menu access recovery
+
+31 October 2026, America/Chicago. Branch `codex/v3-parity-first-reconstruction`.
+
+Published implementation **`22a86c65ea46b9f67c93a38ad4e302693ebd4431`**, tested tree **`73901a69da2f10a345b4722b8df0b2e8935cdec1`**. Documentation/evidence follows; final delivery SHA is in branch history and final response. Protected tags are unchanged.
+
+Read [the emergency repair report](P0_TOOLBAR_AND_CONTEXT_MENU_EMERGENCY_REPAIR.md). Native rebuild failure previously cleared the entire menu; recovery now acknowledges the existing root/Manage action inside the serialized lane and retains/recreates local access after failure. Worker activation reconciles menus as well as browser startup/install. Toolbar panel rejection/synchronous failure now opens local Shelf, with supported Options escape if tab opening fails. Manifest supplies the default Shelf path; failed panel configuration cannot block the saved popup choice.
+
+**Exact original installed-browser trigger remains unknown.** Full-script local evaluation registers both handlers; no startup exception is reproduced. Focused **98 pass / 0 fail**; original-background entry-point differential **3 pass / 9 fail**. Full reliability **662 pass / 69 failed names / incomplete**, identical failed names to preceding three-fix evidence. Syntax/registry/issues pass; architecture freshness fails. Installed Chrome attempted: **unavailable ENOENT, zero assertions**. Live save, native gestures/menu/restart and manual A–G remain pending, with exact steps in the report. No release certificate or future Health & Repair subsystem.
+
+---
+
+## Earlier handoffs retained as history
+
 # Latest: clean right-click menus, durable snapshot and truthful Apply
 
 31 October 2026, America/Chicago. Required branch `codex/v3-parity-first-reconstruction`.

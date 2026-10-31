@@ -1,0 +1,229 @@
+✖ whole MV3 background with real imports registers handlers and installs root on worker activation (19.34136ms)
+✔ toolbar invokes Shelf synchronously within the gesture without storage/menu prerequisites (8.858941ms)
+✖ rejected, synchronous and unavailable Shelf APIs open the functional local Shelf (3.313777ms)
+✖ popup preference applies even when Shelf configuration fails and manifest provides a cold-start path (5.533972ms)
+✖ failed native child or root creation restores root/management without erasing settings (5.652294ms)
+✖ failed removal retains functional local access; Chrome-wide denial is reported honestly (4.049868ms)
+✖ partial inventory, invalid cache and malformed configuration cannot prevent local menu access (7.430567ms)
+✖ worker restart and concurrent startup/install/storage/alarm events share the registration lane (25.311664ms)
+✔ recovery management entry uses the existing local Explorer click route (3.120606ms)
+✖ missing native acknowledgement times out without deleting the root and a later Apply succeeds (3.278851ms)
+✔ failed folder discovery leaves root and valid configured destinations accessible (5.195225ms)
+✖ a failed rebuild after successful registration preserves a recoverable root instead of clearing everything (4.700109ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 3
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 188.381307
+
+✖ failing tests:
+
+test at ../../../../tmp/redown-entry-baseline.mjs:31:1
+✖ whole MV3 background with real imports registers handlers and installs root on worker activation (19.34136ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(h.native.has('redown'))
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:34:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:40:1
+✖ rejected, synchronous and unavailable Shelf APIs open the functional local Shelf (3.313777ms)
+  TypeError [Error]: Cannot read properties of undefined (reading '1')
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:44:45)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at ../../../../tmp/redown-entry-baseline.mjs:48:1
+✖ popup preference applies even when Shelf configuration fails and manifest provides a cold-start path (5.533972ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(h.calls.some(c=>c[0]==='popup'&&c[1]==='popup.html'))
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:49:113)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:52:1
+✖ failed native child or root creation restores root/management without erasing settings (5.652294ms)
+  AssertionError [ERR_ASSERTION]: v3:one
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:55:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:60:1
+✖ failed removal retains functional local access; Chrome-wide denial is reported honestly (4.049868ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(h.native.has('redown'))
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:61:65)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:64:1
+✖ partial inventory, invalid cache and malformed configuration cannot prevent local menu access (7.430567ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(h.native.has('redown'))
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:70:65)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:73:1
+✖ worker restart and concurrent startup/install/storage/alarm events share the registration lane (25.311664ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'redown',
+  +     {
+  +       contexts: [
+  +         'link',
+  +         'image',
+  +         'video',
+  +         'audio',
+  +         'page'
+  +       ],
+  +       id: 'redown',
+  +       title: 'REDOWN'
+  +     }
+  +   ],
+  +   [
+  +     'v3:one',
+  +     {
+  +       contexts: [
+  +         'link',
+  +         'image',
+  +         'video',
+  +         'audio',
+  +         'page'
+  +       ],
+  +       id: 'v3:one',
+  +       parentId: 'redown',
+  +       title: 'My files'
+  +     }
+  +   ],
+  +   [
+  +     'redown-mode-separator',
+  +     {
+  +       contexts: [
+  +         'link',
+  +         'image',
+  +         'video',
+  +         'audio',
+  +         'page'
+  +       ],
+  +       id: 'redown-mode-separator',
+  +       parentId: 'redown',
+  +       type: 'separator'
+  +     }
+  +   ],
+  +   [
+  +     'redown-saved-urls',
+  +     {
+  +       contexts: [
+  +         'link',
+  +         'image',
+  +         'video',
+  +         'audio',
+  +         'page'
+  +       ],
+  +       id: 'redown-saved-urls',
+  +       parentId: 'redown',
+  +       title: "View saved object's URLs…"
+  +     }
+  +   ],
+  +   [
+  +     'redown-manage',
+  +     {
+  +       contexts: [
+  +         'link',
+  +         'image',
+  +         'video',
+  +         'audio',
+  +         'page'
+  +       ],
+  +       id: 'redown-manage',
+  +       parentId: 'redown',
+  +       title: 'Manage destinations…'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:82:33)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'redown', [Object] ], [ 'v3:one', [Object] ], [ 'redown-mode-separator', [Object] ], [ 'redown-saved-urls', [Object] ], [ 'redown-manage', [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at ../../../../tmp/redown-entry-baseline.mjs:91:1
+✖ missing native acknowledgement times out without deleting the root and a later Apply succeeds (3.278851ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'state')
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:93:44)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at ../../../../tmp/redown-entry-baseline.mjs:108:1
+✖ a failed rebuild after successful registration preserves a recoverable root instead of clearing everything (4.700109ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(h.native.has('v3:one'))
+
+      at TestContext.<anonymous> (file:///tmp/redown-entry-baseline.mjs:109:70)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

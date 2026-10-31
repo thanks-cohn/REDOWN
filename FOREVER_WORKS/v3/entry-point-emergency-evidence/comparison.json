@@ -1,0 +1,28 @@
+{
+  "comparison": "archived immediately preceding three-fix reliability evidence, not a fresh full pristine baseline run",
+  "currentPass": 662,
+  "precedingPass": 650,
+  "currentFailedNames": 69,
+  "precedingFailedNames": 69,
+  "added": [],
+  "removed": [],
+  "incomplete": true,
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "sourceBaseline": "2a66758a64c54363ac75624606214e1484a36c26",
+  "implementationCommit": "22a86c65ea46b9f67c93a38ad4e302693ebd4431",
+  "testedTree": "73901a69da2f10a345b4722b8df0b2e8935cdec1",
+  "localEquivalentCommit": "ff7557d3b295ef17541e1fda3a145c0912c2d97f",
+  "focused": {
+    "pass": 98,
+    "fail": 0
+  },
+  "entryPointBaseline": {
+    "pass": 3,
+    "fail": 9,
+    "scope": "same twelve tests with original background.js substituted; current imports; not a pristine installed extension"
+  },
+  "sourceHashes": {
+    "extension/background.js": "d5764d43e50830e383ec015ae14755d5951e5ecf3d8a7848741042c32d64ccb3",
+    "extension/manifest.json": "b5a4eda610f30b122e4ff01426ecd9d860bb0e4bc636fe76891691c60ed3a543",
+    "tests/entry-point-reliability.test.mjs": "7f3e2b26318910b31671ead6a2771cc484d205d96286506080a5b7d784f57bd2",
+    "tests/right-click-v3.test.mjs": "7969e927bf0db0182cd111f80ddb12fba2c9df0f3e431776f13c9ca87342ba25"
+  },
+  "browser": {
+    "state": "blocked",
+    "code": "CHROME_NOT_AVAILABLE_ENOENT",
+    "assertions": 0
+  },
+  "protectedTags": {
+    "BASE-v3": "322358123d78cebad75ee4503f30c33cfa34459c",
+    "V3-BEFORE-NARROW-DEPTH-RECONSTRUCTION": "20612eb8f181abfe087be8d28995d983cf4c2e1e",
+    "V3-MENU-MODES-BEFORE-HISTORY-REPAIR": "cff7020054885e95a3f313cacd38f37218f9e735"
+  }
+}

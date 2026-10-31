@@ -1,5 +1,13 @@
 # REDOWN bugs
 
+## P0 incident: toolbar opens nothing and native REDOWN menu disappears (2026-10-31)
+
+**Status:** Source-confirmed failure mechanisms repaired and locally tested; original installed trigger and Chrome acceptance remain open. [Emergency report, implementation commit and exact manual tests](../FOREVER_WORKS/v3/P0_TOOLBAR_AND_CONTEXT_MENU_EMERGENCY_REPAIR.md).
+
+A native-create failure after `removeAll()` previously erased every entry again, with no recovery root. Worker-only restart did not necessarily rebuild. Toolbar panel rejection only logged a warning; panel setup failure blocked popup preference application. Repairs preserve/restore root and existing Manage action in the serialized lane, reconcile worker activation, supply the manifest Shelf path, and fall back to the existing local Shelf/Options when panel opening fails. No startup exception is reproduced with real imports; do not attribute the owner incident to a fabricated shared crash.
+
+Published implementation: `22a86c65ea46b9f67c93a38ad4e302693ebd4431`. Focused 98/98; full reliability 662 pass / 69 unchanged failed names / incomplete. Installed Chrome attempted but unavailable (`CHROME_NOT_AVAILABLE_ENOENT`, zero assertions). No live provider verification or future repair/support subsystem. Configurations, accounts, destinations and History are preserved by the local regressions; installed acceptance remains pending.
+
 ## BUG — V3 Level inventory diagnostics leak into native right-click menu (2026-10-30)
 
 **Status:** Open, owner-reported; source-level investigation required. **Priority: P0 menu polish and diagnostic separation.** Documentation-only report; no production fix or installed-Chrome verification claimed.
