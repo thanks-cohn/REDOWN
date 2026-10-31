@@ -57,3 +57,17 @@ test('existing toolbar implementation applies default Shelf and Popup in both di
  for(const selected of [undefined,'popup','shelf']){mode=selected;await vm.runInContext('applyToolbarOpenMode()',context);}
  assert.deepEqual(calls,[['panel',true],['popup',''],['panel',false],['popup','popup.html'],['panel',true],['popup','']]);
 });
+
+test('Shelf and compact popup Home controls use a clear small house icon instead of a diagonal launch arrow',()=>{
+ const shelfDom=new JSDOM(html),popupDom=new JSDOM(readFileSync('extension/popup.html','utf8'));
+ try{
+  const shelfHome=shelfDom.window.document.querySelector('#dashboard');
+  assert.equal(shelfHome.getAttribute('aria-label'),'Open REDOWN Home');
+  assert.ok(shelfHome.querySelector('svg.home-glyph path'),'Shelf Home must have an actual vector house');
+  assert.doesNotMatch(shelfHome.textContent,/↗/);
+  const popupHome=popupDom.window.document.querySelector('#dashboard');
+  assert.match(popupHome.textContent,/Go to Dashboard/);
+  assert.ok(popupHome.querySelector('svg path'),'compact popup must show a vector house');
+  assert.doesNotMatch(popupHome.textContent,/↗/);
+ }finally{shelfDom.window.close();popupDom.window.close();}
+});
