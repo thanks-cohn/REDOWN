@@ -1,3 +1,4 @@
+import {resolveHistoryTarget} from './history-target.mjs';
 import {createBreadcrumbs,orderedBreadcrumbPath} from './standard-breadcrumbs.mjs';
 import {installRemoteDialog} from './remote-dialog.mjs';
 import {installTestItTools} from './test-it-tools.mjs';
@@ -548,7 +549,7 @@ $('disconnect').onclick=async()=>{
 document.addEventListener('redown:destinations-ready',event=>{
   if(current&&sameBucket(current,event.detail))void checkActivation(context());
 });
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area==='session'&&changes.historySideNavigation)void useHistoryNavigation(changes.historySideNavigation.newValue,{side:true});if(area!=='local')return;if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -1058,7 +1059,7 @@ $('archive-extract').onclick=async()=>{
 const tour=installTour({document,storage:chrome.storage.local});
 installTestItTools(document);
 practice=installTestIt({document,api,storage:chrome.storage.local,stopTour:()=>tour.guide.stop(),approve:(title,description)=>dialog(title,{input:false,description,confirm:title==='Practice with this file?'?'Yes, use this file':'Approve',cancel:title==='Practice with this file?'?'No':'Cancel'}),getState:()=>({current:context(),selected:chosen().map(e=>({...e})),visible:visible().map(e=>({...e})),grid:$('files').classList.contains('grid'),previewMode,previewKey:previewItem?.key||null,sideState,previewWidth,lightbox})});
-render();void (async()=>{try{const preferences=await chrome.storage.local?.get(['betaExplorerPreview','betaExplorerArchivePreview']);archivePreviewMode=preferences?.betaExplorerArchivePreview==='classic'?'classic':'reader';const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}else setPreviewMode('side');}catch{setPreviewMode('side');}try{
+render();const explorerInitialization=(async()=>{try{const preferences=await chrome.storage.local?.get(['betaExplorerPreview','betaExplorerArchivePreview']);archivePreviewMode=preferences?.betaExplorerArchivePreview==='classic'?'classic':'reader';const savedPreview=preferences?.betaExplorerPreview;if(savedPreview){previewWidth=Math.max(280,Math.min(720,Number(savedPreview.width)||400));setPreviewMode(savedPreview.mode);}else setPreviewMode('side');}catch{setPreviewMode('side');}try{
   const saved=await chrome.storage.local?.get(['betaExplorerLocation','cloudflareAuth']);
   lastLocation=saved?.betaExplorerLocation||null;
   paintLogout(saved?.cloudflareAuth);
@@ -1071,3 +1072,57 @@ else{
   connectionState('disconnected');
   render();
 }})();
+
+// Session-backed handoff survives MV3 suspension; only opaque IDs enter the URL.
+let historyNavigationEpoch=0,historyNavigationAbort=null,consumedHistoryToken=null;
+async function useHistoryNavigation(intent,{side=false}={}){
+  if(!globalThis.RedownHistoryNavigation?.valid(intent)||intent.token===consumedHistoryToken)return;
+  if(side){
+    const [tab,win]=await Promise.all([chrome.tabs.getCurrent(),chrome.windows.getCurrent()]);
+    if(tab||win.id!==intent.windowId)return;
+    await chrome.storage.session.set({historySideAcknowledged:{token:intent.token}});
+  }
+  consumedHistoryToken=intent.token;
+  const ticket=++historyNavigationEpoch;
+  historyNavigationAbort?.abort();
+  const abort=new AbortController();historyNavigationAbort=abort;
+  const timer=setTimeout(()=>{discoveryEpoch++;epoch++;status('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.');abort.abort(Error('Saved-file navigation timed out. Use History GO TO again or reconnect Cloudflare.'));},90000);
+  const active=()=>{abort.signal.throwIfAborted();if(ticket!==historyNavigationEpoch)throw Error('Navigation superseded.');};
+  try{
+    await explorerInitialization;active();
+    if(busy)throw Error('Explorer is busy. Finish or cancel the current operation, then use GO TO again.');
+    if(!cloudflareSignedIn)throw Error('Connect Cloudflare, then use History GO TO again.');
+    const target=intent.locator;
+    status('Locating the exact saved file…');
+    await loadAccounts(target);active();
+    if(!accounts.some(a=>a.id===target.accountId)||!(bucketCache.get(target.accountId)||[]).some(b=>b.name===target.bucketName))throw Error('The recorded account or bucket is unavailable. Refresh or reconnect Cloudflare, then use GO TO again.');
+    await navigate(target);active();
+    if(!sameBucket(current,target)||current.prefix!==target.prefix||listingState!=='ready')throw Error('Could not load the recorded folder. Refresh or reconnect Cloudflare, then use GO TO again.');
+    const locationEpoch=epoch;
+    const item=await resolveHistoryTarget(api,target,{signal:abort.signal});active();
+    if(epoch!==locationEpoch||!sameBucket(current,target)||current.prefix!==target.prefix)throw Error('Explorer location changed. Use GO TO again.');
+    if(!items.some(e=>e.key===item.key))items.push(item);
+    $('filter').value='';selected=new Set([item.key]);render();
+    const row=[...$('files').querySelectorAll('[data-key]')].find(n=>n.dataset.key===item.key);
+    row?.scrollIntoView({block:'nearest'});row?.focus({preventScroll:true});
+    await showPreview(item);active();
+    status('Saved file selected. '+(!previewType(item.key)&&!/\.(zip|cbz)$/i.test(item.key)?'Preview is unavailable for this format.':''));
+  }catch(error){if(ticket===historyNavigationEpoch)status(error.message||'Saved-file navigation was interrupted. Use History GO TO again.');}
+  finally{clearTimeout(timer);if(ticket===historyNavigationEpoch)historyNavigationAbort=null;}
+}
+void (async()=>{
+  if(!globalThis.RedownHistoryNavigation)return;
+  const token=new URLSearchParams(location.hash.slice(1)).get('history');
+  if(token&&/^[a-zA-Z0-9-]{1,80}$/.test(token)){
+    const key='historyNavigation:'+token,data=await chrome.storage.session.get(key);
+    const intent=data[key];
+    if(!globalThis.RedownHistoryNavigation?.valid(intent)){
+      await explorerInitialization;status('Saved-file navigation expired or was interrupted by an extension reload. Use History GO TO again.');return;
+    }
+    await useHistoryNavigation(intent);
+    await chrome.storage.session.remove(key);
+  }else{
+    const data=await chrome.storage.session.get('historySideNavigation');
+    await useHistoryNavigation(data.historySideNavigation,{side:true});
+  }
+})().catch(error=>status('Could not restore saved-file navigation: '+error.message));

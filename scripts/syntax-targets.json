@@ -59,5 +59,7 @@
   "extension/right-click-v3.js",
   "extension/right-click-engine-settings.js",
   "extension/beta/right-click-v3-ui.js",
-  "extension/right-click-legacy.js"
+  "extension/right-click-legacy.js",
+  "extension/history-navigation.js",
+  "extension/beta/history-target.mjs"
 ]

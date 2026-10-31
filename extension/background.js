@@ -2010,9 +2010,9 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
   if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
   return body.publicUrl || publicAssetUrl(prepared, key);
 }
-async function ingestCloudflare(profile, sourceUrl, category, filename) {
+async function ingestCloudflare(profile, sourceUrl, category, filename, receipt = null) {
   const folder = profile.folders?.[category] || category;
-  return ingestCloudflareAtPrefix(profile, sourceUrl, folder, filename);
+  return ingestCloudflareAtPrefix(profile, sourceUrl, folder, filename, receipt);
 }
 async function ingestGitHub(profile, sourceUrl, category, filename) {
   const repo = String(profile.repository || "").trim();
@@ -2037,10 +2037,10 @@ async function ingestGitHub(profile, sourceUrl, category, filename) {
   if (!response.ok) throw new Error(`GitHub dispatch failed (${response.status})`);
   return `${repo} → ${destinationPath}`;
 }
-async function ingest(profile, sourceUrl, category, filename) {
+async function ingest(profile, sourceUrl, category, filename, receipt = null) {
   const finalFilename = filename || basenameFromUrl(sourceUrl);
   if (!/^https:\/\//i.test(sourceUrl)) throw new Error("REDOWN accepts public HTTPS source URLs");
-  if (profile.type === "cloudflare-r2") return ingestCloudflare(profile, sourceUrl, category, finalFilename);
+  if (profile.type === "cloudflare-r2") return ingestCloudflare(profile, sourceUrl, category, finalFilename, receipt);
   if (profile.type === "github") return ingestGitHub(profile, sourceUrl, category, finalFilename);
   throw new Error("Unsupported destination type");
 }
@@ -2636,10 +2636,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const category = message.category || "files";
         try {
           if(Object.hasOwn(message,"prefix")&&typeof message.prefix!=="string")throw new Error("Choose a valid destination folder.");
+          const receipt={};
           const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
-            ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,null,message.betaNoProvision===true)
-            : await ingest(profile, sourceUrl, category, message.filename || undefined);
-          await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location });
+            ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,receipt,message.betaNoProvision===true)
+            : await ingest(profile, sourceUrl, category, message.filename || undefined, receipt);
+          await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
           return sendResponse({ ok:true, location });
         } catch (error) {
           const errorMessage = error?.message || String(error);
@@ -2768,6 +2769,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           profileName: message.profileName,
           category: message.category || "files",
           location: message.location,
+          ...(message.ok!==false&&message.destination?.accountId&&message.destination?.bucketName&&message.destination?.key?{destination:{accountId:String(message.destination.accountId),bucketName:String(message.destination.bucketName),key:cleanExplorerKey(message.destination.key),prefix:cleanExplorerKey(message.destination.key).split('/').slice(0,-1).join('/')}}:{}),
           error: message.error
         });
         return sendResponse({ ok:true });
@@ -2789,7 +2791,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "renameTransfer") {
         return sendResponse({ ok:true, item:await renameTransferHistoryItem(message.id, message.newFilename) });
       }
-      throw new Error("Unknown request");
+      throw Object.assign(new Error("This REDOWN background does not support request "+String(message?.type||"(missing type)").replace(/[^A-Za-z0-9_-]/g,"").slice(0,80)+". Reload the extension in chrome://extensions, then reload Explorer."),{code:"UNSUPPORTED_REQUEST"});
     } catch (error) {
       if(message?.type==="cfTransferObjects")void toolbarFeedback("failure");
       sendResponse({ ok:false, error:error?.message || String(error),diagnosticError:{code:error?.code,status:error?.status,stage:error?.stage,component:"background"} });

@@ -656,7 +656,7 @@ async function uploadLocalFiles(fileList){
       if(!uploaded)throw new Error("Cloudflare did not confirm this upload.");
       completed++;
 
-      await send({type:"recordLocalTransfer",ok:true,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),location:profile?publicObjectUrl(profile,key):`R2: ${target.bucketName}/${key}`}).catch(()=>{});
+      await send({type:"recordLocalTransfer",ok:true,profileId:profile?.id||"",profileName:profile?.name||target.bucketName,category:categoryFromPrefix(prefix),location:profile?publicObjectUrl(profile,key):`R2: ${target.bucketName}/${key}`,destination:{accountId:target.accountId,bucketName:target.bucketName,prefix:key.split("/").slice(0,-1).join("/"),key}}).catch(()=>{});
       status.className="status ok";
       feedback(`Uploaded ${completed}/${files.length} · ${file.name}`,queue.length?"running":permanentFailures.length||skipped?"partial":"success");
     }catch(error){
@@ -3159,6 +3159,11 @@ async function renderHistory({markSeen=true}={}){
       if(parts.profile?.type==="cloudflare-r2"&&parts.key)openTransferLocation(item,parts);
     });
     nameCell.append(name);
+    if(globalThis.RedownHistoryNavigation?.locator(item)){
+      const go=document.createElement('button');go.type='button';go.textContent='GO TO';go.className='history-go-to';
+      go.setAttribute('aria-label','Go to saved file '+parts.filename);
+      go.onclick=event=>{event.stopPropagation();globalThis.RedownHistoryNavigation.open(item);};nameCell.append(go);
+    }
     if(isNew){
       const sticker=document.createElement("span");sticker.className="new-sticker";sticker.textContent="NEW";nameCell.append(sticker);
     }
