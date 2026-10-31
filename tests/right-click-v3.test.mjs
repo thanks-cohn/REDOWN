@@ -9,11 +9,11 @@ const [domain,bg,ui,html,legacy,legacyModel,legacyEngine]=await Promise.all(['ex
 const profile={id:'p',type:'cloudflare-r2',accountId:'a',accountName:'Account A',bucketName:'bucket',workerUrl:'https://fixture.invalid',token:'synthetic',menuConfigVersion:1,simplePrimaryEnabled:true,menuLabel:'Legacy',defaultPrefix:'legacy-folder'};
 const destination=(id='root',prefix='',parentId=null)=>({id,profileId:'p',accountId:'a',bucketName:'bucket',parentId,prefix,label:id,enabled:true});
 const store=()=>({version:1,revision:0,destinations:[destination(),destination('child','one/two','root'),destination('deep','one/two/three','child')]});
-function model(){const c=vm.createContext({TextEncoder});vm.runInContext(domain,c);return c.RedownRightClickV3;}
-test('V3 domain projects parent-first exact IDs and resolves branch Send here only',()=>{
- const m=model(),s=store(),p=[profile];assert.equal(m.validate(s,p),s);
- assert.deepEqual(Array.from(m.entries(s,p),e=>[e.id,e.parentId]),[['v3:root','redown'],['v3:root:send','v3:root'],['v3:child','v3:root'],['v3:child:send','v3:child'],['v3:deep','v3:child']]);
- assert.equal(m.resolve('v3:deep',s,p).prefix,'one/two/three');assert.equal(m.resolve('v3:child',s,p),null);assert.equal(m.resolve('v3:child:send',s,p).prefix,'one/two');assert.equal(m.resolve('v3:deep:send',s,p),null);assert.equal(m.resolve('quick:p',s,p),null);
+function model(timers={}){const c=vm.createContext({TextEncoder,setTimeout,clearTimeout,...timers});vm.runInContext(domain,c);return c.RedownRightClickV3;}
+test('V3 domain projects parent-first exact IDs and resolves branch Save here only',()=>{
+ const m=model(),s=store(),p=[profile],options={style:'nested',nested:'narrow',depth:1};assert.equal(m.validate(s,p),s);
+ assert.deepEqual(Array.from(m.entries(s,p,'redown',options),e=>[e.id,e.parentId]),[['v3:root','redown'],['v3:root:send','v3:root'],['v3:child','v3:root'],['v3:child:send','v3:child'],['v3:deep','v3:child']]);
+ assert.equal(m.resolve('v3:deep',s,p,options).prefix,'one/two/three');assert.equal(m.resolve('v3:child',s,p,options),null);assert.equal(m.resolve('v3:child:send',s,p,options).prefix,'one/two');assert.equal(m.resolve('v3:deep:send',s,p,options),null);assert.equal(m.resolve('quick:p',s,p,options),null);
 });
 test('V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect',()=>{
  const m=model(),s=store();s.destinations[0].enabled=false;assert.equal(m.entries(s,[profile]).length,0);assert.equal(m.resolve('v3:deep',s,[profile]),null);
@@ -46,7 +46,7 @@ const settle=async()=>{for(let i=0;i<12;i++)await new Promise(r=>setImmediate(r)
 async function view(engine='legacy'){
  const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://extension.invalid/beta/explorer.html'}),calls=[],listeners=[];
  const w=dom.window;w.TextEncoder=TextEncoder;w.structuredClone=structuredClone;w.confirm=()=>true;
- let current=store();w.chrome={runtime:{sendMessage:async m=>{calls.push(structuredClone(m));if(m.type==='rightClickV3Snapshot')return {ok:true,engine,config:structuredClone(current),profiles:[profile]};if(m.type==='saveRightClickV3'){current={...current,revision:current.revision+1,destinations:m.destinations};return {ok:true,revision:current.revision,engine,menuUpdated:false,error:'Saved; registration failed.'};}if(m.type==='cfDestinationFolders')return {ok:true,folders:[{prefix:'one/two/'}],cursor:''};throw Error(m.type);}},storage:{onChanged:{addListener:f=>listeners.push(f)}}};
+ let current=store(),presentation={style:'simple',nested:'narrow',depth:1};w.chrome={runtime:{sendMessage:async m=>{calls.push(structuredClone(m));if(m.type==='rightClickV3Snapshot')return {ok:true,engine,config:structuredClone(current),presentation,profiles:[profile]};if(m.type==='setRightClickV3Presentation'){presentation=m.presentation;return {ok:true,presentation,engine,menuUpdated:true,menuStatus:{state:'registered'}};}if(m.type==='refreshRightClickV3Inventory')return {ok:true,menuStatus:{state:'partial',warnings:['Inventory is incomplete.']}};if(m.type==='saveRightClickV3'){current={...current,revision:current.revision+1,destinations:m.destinations};return {ok:true,revision:current.revision,engine,menuUpdated:false,error:'Saved; registration failed.'};}if(m.type==='cfDestinationFolders')return {ok:true,folders:[{prefix:'one/two/'}],cursor:''};throw Error(m.type);}},storage:{onChanged:{addListener:f=>listeners.push(f)}}};
  w.eval(domain);w.eval(ui);await settle();return {dom,w,calls,listeners,$:id=>w.document.getElementById('v3-'+id)};
 }
 test('tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data',async()=>{
@@ -168,4 +168,119 @@ test('tree shortcuts require actual tree focus and ignore composition and modifi
  h.$('search').focus();root.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'F2',bubbles:true}));assert.equal(h.$('outline').querySelector('[data-edit]'),null);
  root.focus();for(const flags of [{isComposing:true},{ctrlKey:true},{metaKey:true},{altKey:true}])root.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'F2',bubbles:true,...flags}));
  assert.equal(h.$('outline').querySelector('[data-edit]'),null);assert.equal(h.w.document.activeElement,root);h.dom.window.close();
+});
+
+const simple={style:'simple',nested:'narrow',depth:1},narrow={...simple,style:'nested'},level={style:'nested',nested:'level',depth:2};
+test('Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here',()=>{
+ const m=model(),s=store();s.destinations.forEach(d=>d.label='Duplicate');const before=JSON.stringify(s);
+ const flat=m.project(s,[profile]);assert.deepEqual(Array.from(flat.entries,e=>[e.id,e.parentId,e.title]),s.destinations.map(d=>['v3:'+d.id,'redown','Duplicate']));
+ for(const d of s.destinations)assert.equal(m.resolve('v3:'+d.id,s,[profile]).prefix,d.prefix);
+ const nested=m.project(s,[profile],narrow);assert.equal(nested.entries[1].title,'Save here');assert.equal(m.resolve('v3:root',s,[profile],narrow),null);assert.equal(m.resolve('v3:root:send',s,[profile],narrow).prefix,'');
+ assert.equal(m.resolve('v3:deep',s,[profile],narrow).prefix,'one/two/three');assert.equal(m.resolve('v3:child:send',s,[profile],simple),null);assert.equal(JSON.stringify(s),before);
+});
+function folderFixture(){
+ const calls=[];const tree={'':['images','videos'],'images':['memes','artwork'],'images/memes':['funny'],'videos':['clips']};
+ return {calls,list:async(a,b,p,cursor,delimiter)=>{calls.push({a,b,p,cursor,delimiter});return {delimited:(tree[p.replace(/\/$/,'')]||[]).map(n=>p+n+'/'),objects:[],cursor:''};}};
+}
+test('Level depth 1–10 is counted from authorized root; true names, siblings and exact routing',async()=>{
+ const m=model(),s={version:1,revision:0,destinations:[{...destination(),label:'Virtual label'}]},before=JSON.stringify(s);
+ for(let depth=1;depth<=10;depth++){
+  const fixture=folderFixture(),settings={...level,depth};const inventory=await m.discover(s,[profile],settings,fixture.list);const plan=m.project(s,[profile],settings,inventory);
+  assert.equal(plan.complete,true);assert.equal(plan.entries[0].title,'bucket');assert.ok(plan.entries.some(e=>e.title==='images'));assert.ok(plan.entries.some(e=>e.title==='videos'));assert.ok(!plan.entries.some(e=>e.title==='Virtual label'));
+  assert.equal(plan.entries.some(e=>e.title==='memes'),depth>=2);assert.equal(plan.entries.some(e=>e.title==='funny'),depth>=3);
+  assert.equal(m.resolve('v3:cloud:p::send',s,[profile],settings,inventory).prefix,'');
+  for(const entry of plan.entries){const target=m.resolve(entry.id,s,[profile],settings,inventory);if(!target)continue;assert.equal(target.profile.accountId,'a');assert.equal(target.profile.bucketName,'bucket');assert.equal(target.owner.id,'p');}
+  assert.ok(fixture.calls.every(c=>c.a==='a'&&c.b==='bucket'&&c.delimiter==='/'));
+ }
+ assert.equal(JSON.stringify(s),before);
+});
+test('Level scopes configured roots, collapses overlapping roots and never reads unrelated profiles',async()=>{
+ const m=model(),s=store();s.destinations[0].prefix='authorized';s.destinations[1].prefix='authorized/sub';s.destinations[2].prefix='authorized/sub/deep';s.destinations.push({...destination('overlap','authorized/sub'),parentId:null});
+ const unrelated={...profile,id:'other',accountId:'unrelated',bucketName:'secret'};const calls=[];
+ const inventory=await m.discover(s,[profile,unrelated],level,async(a,b,p)=>{calls.push([a,b,p]);return {delimited:[p+'child/','outside/'],objects:[]};});
+ assert.equal(m.roots(s,[profile,unrelated]).length,1);assert.ok(calls.every(([a,b,p])=>a==='a'&&b==='bucket'&&p.startsWith('authorized/')));
+ const entries=m.project(s,[profile,unrelated],level,inventory).entries;assert.equal(entries[0].title,'bucket');assert.equal(entries[1].title,'authorized');assert.ok(!entries.some(e=>e.title==='secret'||e.title==='outside'));
+ assert.equal(m.resolve('v3:bucket:p',s,[profile,unrelated],level,inventory),null);
+ const revoked={...profile,token:''};assert.equal(m.resolve(entries.at(-1).id,s,[revoked],level,inventory),null);
+});
+test('Level paginates files-only pages, deduplicates and sorts exact cloud names without writes',async()=>{
+ const m=model(),s={...store(),destinations:[destination()]},calls=[];
+ const inventory=await m.discover(s,[profile],{...level,depth:1},async(a,b,p,c)=>{calls.push(c);return c?{delimited:['Z/','A/','Z/'],objects:[{key:'A/.redown'}]}:{objects:[{key:'plain.txt'}],cursor:'next',truncated:true};});
+ assert.deepEqual(calls,['','next']);assert.equal(inventory.complete,true);
+ assert.deepEqual(Array.from(m.project(s,[profile],{...level,depth:1},inventory).entries,e=>e.title),['bucket','Save here','A','Z']);
+});
+test('Level rejects broken pagination, provider failures and unsupported paths as incomplete',async()=>{
+ const m=model(),s={...store(),destinations:[destination()]};
+ for(const list of [async()=>({objects:[],truncated:true}),async()=>({delimited:[],cursor:'same'}),async()=>{throw Error('synthetic private provider response');},async()=>({delimited:['bad\\name/']})]){
+  const inventory=await m.discover(s,[profile],level,list);assert.equal(inventory.complete,false);assert.ok(inventory.warnings.length);assert.ok(!JSON.stringify(inventory).includes('private provider response'));
+ }
+});
+test('Level bounds folder count, pages, elapsed budget and menu entries with visible partial status',async()=>{
+ const m=model(),s={...store(),destinations:[destination()]};
+ const many=await m.discover(s,[profile],{...level,depth:1},async()=>({delimited:Array.from({length:1000},(_,i)=>'folder'+i+'/')}));assert.equal(many.nodes.length,m.limits.folders);assert.equal(many.complete,false);
+ const plan=m.project(s,[profile],{...level,depth:1},many);assert.ok(plan.entries.length<=m.limits.entries);assert.ok(plan.warnings.some(w=>/menu entry limit/.test(w)));
+ let page=0;const paged=await m.discover(s,[profile],level,async()=>({objects:[],cursor:String(++page)}));assert.equal(page,m.limits.pages);assert.equal(paged.complete,false);
+ let clock=0;const timed=await m.discover(s,[profile],level,async()=>({objects:[]}),()=>clock+=m.limits.milliseconds);assert.equal(timed.pages,0);assert.equal(timed.complete,false);
+ const ids=new Set(['redown']);for(const entry of plan.entries){assert.ok(ids.has(entry.parentId));assert.ok(!ids.has(entry.id));ids.add(entry.id);}
+});
+test('Level cache survives serialization; expiry, root changes and wrong depth fail closed',async()=>{
+ const m=model(),s={...store(),destinations:[destination()]},f=folderFixture(),inventory=await m.discover(s,[profile],level,f.list),copy=JSON.parse(JSON.stringify(inventory));
+ const id='v3:cloud:p:images:send';assert.equal(m.resolve(id,s,[profile],level,copy).prefix,'images');
+ assert.equal(m.resolve(id,s,[profile],level,copy,copy.at+m.limits.ttl),null);assert.equal(m.project(s,[profile],level,copy,'redown',copy.at+m.limits.ttl).complete,false);
+ assert.equal(m.resolve(id,{...s,revision:1},[profile],level,copy),null);assert.equal(m.resolve(id,s,[profile],{...level,depth:3},copy),null);
+ for(const value of [0,-1,1.5,11,NaN,'2'])assert.throws(()=>m.validatePresentation({...level,depth:value}));
+});
+test('presentation transitions serialize independently, retain Level depth 5 and persist across background restart',async()=>{
+ const h=background({profiles:[profile],rightClickV3:store(),rightClickEngine:'v3'}),before=JSON.stringify(h.local.rightClickV3);let previous=simple;
+ for(const options of [narrow,{...level,depth:5},narrow,{...level,depth:5},{style:'simple',nested:'level',depth:5},{...level,depth:5}]){
+  const r=await h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:options});assert.equal(r.menuUpdated,true);previous=options;assert.equal(JSON.stringify(h.local.rightClickV3),before);
+ }
+ h.c.listObjectsPage=async()=>{throw Error('synthetic unavailable');};await h.c.refreshV3Inventory(); // mock provider unavailable: explicitly partial, never fake complete
+ const restarted=background(structuredClone(h.local));await restarted.c.rebuildMenus();assert.deepEqual(restarted.local.rightClickV3Presentation,{...level,depth:5});assert.equal(restarted.local.rightClickMenuStatus.state,'partial');assert.ok(restarted.native.some(e=>e.id==='redown-v3-inventory-status'&&e.enabled===false));
+ await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(simple),presentation:narrow}),/another window/);
+ await assert.rejects(h.call('setRightClickV3Presentation',{expectedPresentation:JSON.stringify(previous),presentation:simple},'options.html'),/V3 Setup/);
+});
+test('actual Level background inventory registration and click resolver retain exact authorized targets across restart',async()=>{
+ const h=background({profiles:[profile],rightClickV3:{...store(),destinations:[destination()]},rightClickEngine:'v3',rightClickV3Presentation:level});const f=folderFixture();h.c.listObjectsPage=f.list;
+ await h.c.refreshV3Inventory();assert.equal(h.local.rightClickMenuStatus.state,'registered');assert.ok(h.native.some(e=>e.title==='artwork'));assert.ok(h.native.every(e=>!Object.hasOwn(e,'destination')));
+ const id='v3:cloud:p:images:send';assert.equal((await h.c.resolveActiveRightClick(id,h.local.profiles)).prefix,'images');assert.equal(await h.c.resolveActiveRightClick('v3:root',h.local.profiles),null);
+ const restarted=background(structuredClone(h.local));restarted.c.listObjectsPage=()=>{throw Error('Fresh cache must avoid network');};await restarted.c.rebuildMenus();await restarted.c.refreshV3Inventory();assert.equal((await restarted.c.resolveActiveRightClick(id,restarted.local.profiles)).prefix,'images');
+ assert.equal(h.local.rightClickV3.destinations.length,1);assert.deepEqual(h.local.profiles,[profile]);
+});
+test('late Level discovery cannot apply after roots change; concurrent refreshes share one inventory',async()=>{
+ const h=background({profiles:[profile],rightClickV3:{...store(),destinations:[destination()]},rightClickEngine:'v3',rightClickV3Presentation:{...level,depth:1}});let release,calls=0;
+ h.c.listObjectsPage=async()=>{calls++;await new Promise(r=>release=r);return {delimited:['stale/']};};
+ const first=h.c.refreshV3Inventory(),second=h.c.refreshV3Inventory();await settle();assert.equal(calls,1);
+ h.local.rightClickV3={version:1,revision:1,destinations:[]};release();await Promise.all([first,second]);await settle();assert.ok(!h.local.rightClickV3Inventory?.nodes.some(n=>n.prefix==='stale'));
+});
+test('header progressive controls preserve the tree and form focus, validate depth and remember hidden choices',async()=>{
+ const h=await view('v3'),tree=h.$('outline'),row=tree.querySelector('[data-key=root]');
+ assert.equal(h.$('nested').hidden,true);assert.equal(h.$('depth-row').hidden,true);
+ h.$('style').querySelector('[value=nested]').click();await settle();assert.equal(h.$('nested').hidden,false);assert.equal(h.$('depth-row').hidden,true);assert.equal(tree.querySelector('[data-key=root]'),row);
+ h.$('nested').querySelector('[value=level]').click();await settle();assert.equal(h.$('depth-row').hidden,false);
+ h.$('depth').value='5';h.$('depth').dispatchEvent(new h.w.Event('change'));await settle();h.$('style').querySelector('[value=simple]').click();await settle();h.$('style').querySelector('[value=nested]').click();await settle();assert.equal(h.$('depth').value,'5');assert.equal(h.$('nested').querySelector('[value=level]').checked,true);
+ h.$('depth').value='1.5';h.$('depth').dispatchEvent(new h.w.Event('change'));assert.equal(h.$('depth').value,'5');assert.match(h.$('presentation-status').textContent,/integer/);
+ h.$('outline').querySelector('[aria-label="Add destination in bucket"]').click();h.$('prefix').value='draft';h.$('prefix').focus();
+ for(const listener of h.listeners)listener({rightClickMenuStatus:{newValue:{state:'partial',warnings:['Some folders are not shown.']}}},'local');assert.equal(h.w.document.activeElement,h.$('prefix'));assert.equal(h.$('prefix').value,'draft');
+ assert.equal(h.calls.filter(c=>c.type==='saveRightClickV3').length,0);assert.ok(h.$('style').querySelector('legend'));assert.equal(h.$('depth').getAttribute('aria-label'),'Cloud directory depth');h.dom.window.close();
+});
+test('rapid presentation changes retain native radio focus and serialize the latest desired mode',async()=>{
+ const h=await view('v3'),send=h.w.chrome.runtime.sendMessage;let release,first=true;
+ h.w.chrome.runtime.sendMessage=async m=>{if(m.type==='setRightClickV3Presentation'&&first){first=false;await new Promise(r=>release=r);}return send(m);};
+ const radio=h.$('style').querySelector('[value=nested]');radio.focus();radio.click();assert.equal(h.$('style').disabled,false);assert.equal(h.w.document.activeElement,radio);
+ h.$('nested').querySelector('[value=level]').click();h.$('depth').value='5';h.$('depth').dispatchEvent(new h.w.Event('change'));release();await settle();
+ const calls=h.calls.filter(c=>c.type==='setRightClickV3Presentation');assert.equal(calls.length,2);assert.deepEqual(calls.at(-1).presentation,{...level,depth:5});assert.equal(calls.at(-1).expectedPresentation,JSON.stringify(narrow));assert.equal(h.$('depth').value,'5');h.dom.window.close();
+});
+test('a timed-out read halts traversal instead of accumulating unresolved remote requests',async()=>{
+ const m=model({setTimeout:fn=>{queueMicrotask(fn);return 0;},clearTimeout(){}}),s={...store(),destinations:[destination(),destination('other','other')]};let calls=0;
+ const inventory=await m.discover(s,[profile],level,()=>{calls++;return new Promise(()=>{});});assert.equal(calls,1);assert.equal(inventory.complete,false);assert.ok(inventory.warnings.length);
+});
+test('periodic maintenance leaves Legacy and non-Level V3 alone; credential changes clear inventory before rebuilding',async()=>{
+ const alarms=[],listeners=[],calls=[],local={rightClickEngine:'legacy',rightClickV3Presentation:level};
+ const c=vm.createContext({RedownRightClickV3:model(),chrome:{runtime:{onInstalled:{addListener(){}},onStartup:{addListener(){}}},alarms:{create:(...args)=>alarms.push(args),onAlarm:{addListener:fn=>listeners.push(fn)}},storage:{local:{get:async()=>local,set:async patch=>{calls.push('invalidate');Object.assign(local,patch);}},onChanged:{addListener:fn=>listeners.push(fn)}}},rebuildMenus:async()=>calls.push('rebuild')});
+ vm.runInContext(bg.slice(bg.indexOf('chrome.runtime.onInstalled.addListener(rebuildMenus);'),bg.indexOf('/* Cosmetic only. A context-menu gesture')),c);
+ assert.equal(alarms[0][1].periodInMinutes,5);listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,[]);
+ local.rightClickEngine='v3';local.rightClickV3Presentation=narrow;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,[]);
+ local.rightClickV3Presentation=level;listeners[0]({name:'redown-v3-inventory'});await settle();assert.deepEqual(calls,['rebuild']);calls.length=0;
+ listeners[1]({profiles:{newValue:[profile]}},'local');await settle();assert.deepEqual(calls,['invalidate','rebuild']);assert.equal(local.rightClickV3Inventory,null);
 });

@@ -24,3 +24,23 @@
 #v3-setup #v3-folders{display:flex;flex-wrap:wrap;gap:8px}
 #v3-setup :is(button,input,select,summary,[role=treeitem]):focus-visible{outline:2px solid var(--accent,#789bff);outline-offset:2px}
 @container(max-width:500px){#v3-setup [role=group]{margin-inline-start:8px}#v3-setup .v3-row{flex-wrap:wrap}#v3-setup .v3-actions{flex-basis:100%;justify-content:flex-start;padding-left:24px}#v3-setup .v3-name{max-width:calc(100% - 90px)}#v3-setup #v3-add{grid-template-columns:1fr}}
+
+/* Presentation-only header addition. The three control slots reserve stable height. */
+#v3-setup .v3-header{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start;min-height:156px}
+#v3-setup .v3-header h3{margin-top:0}
+#v3-setup .v3-presentation{display:grid;grid-template-rows:30px 30px 30px 44px;gap:6px;width:220px;justify-self:end}
+#v3-setup .v3-presentation fieldset{display:flex;align-items:stretch;gap:0;padding:2px;margin:0;border:1px solid var(--line);border-radius:7px;background:var(--accent-soft,#293858);min-width:0}
+#v3-setup .v3-presentation legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#v3-setup .v3-presentation label{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;font-size:12px;cursor:pointer;border-radius:4px}
+#v3-setup .v3-presentation label:has(input:checked){background:var(--bg);box-shadow:0 1px 2px #0003;color:var(--text)}
+#v3-setup .v3-presentation input[type=radio]{appearance:none;position:absolute;opacity:0;width:1px;height:1px}
+#v3-setup .v3-presentation label:has(input:focus-visible){outline:2px solid var(--accent,#789bff);outline-offset:2px}
+#v3-setup #v3-style{grid-row:1}
+#v3-setup #v3-nested{grid-row:2}
+#v3-setup #v3-depth-row{grid-row:3;justify-content:flex-end;gap:10px}
+#v3-setup #v3-depth{width:100px;height:30px;padding:3px 8px;font:inherit}
+#v3-setup #v3-presentation-status{grid-row:4;color:var(--muted);font-size:11px;line-height:1.35;overflow-wrap:anywhere;text-align:right;max-height:44px;overflow:auto}
+#v3-setup :is(#v3-nested,#v3-depth-row):not([hidden]){animation:v3-disclose 200ms ease-out both}
+@keyframes v3-disclose{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#v3-setup :is(#v3-nested,#v3-depth-row):not([hidden]){animation:none}}
+@container(max-width:500px){#v3-setup .v3-header{grid-template-columns:minmax(0,1fr);gap:8px}#v3-setup .v3-presentation{width:min(220px,100%)}#v3-setup .v3-header{min-height:224px}}

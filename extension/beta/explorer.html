@@ -137,7 +137,15 @@
     <button id="quick-tab-urls" type="button" role="tab" aria-selected="false" aria-controls="quick-panel-urls" tabindex="-1"><span class="quick-tab-number" aria-hidden="true">02</span><span>Bucket URLs</span></button>
   </div>
   <section id="v3-setup" role="tabpanel" aria-labelledby="quick-tab-setup">
-      <h3>Right-click Setup · V3</h3><p id="v3-engine" role="status"></p>
+      <header class="v3-header">
+        <div><h3>Right-click Setup · V3</h3><p id="v3-engine" role="status"></p></div>
+        <div class="v3-presentation" aria-label="V3 menu presentation">
+          <fieldset id="v3-style" disabled><legend>Menu style</legend><label><input type="radio" name="v3-style" value="simple" checked>Simple</label><label><input type="radio" name="v3-style" value="nested">Nested</label></fieldset>
+          <fieldset id="v3-nested" hidden disabled><legend>Nested options</legend><label><input type="radio" name="v3-nested" value="narrow" checked>Narrow</label><label><input type="radio" name="v3-nested" value="level">Level</label></fieldset>
+          <label id="v3-depth-row" hidden>Depth: <input id="v3-depth" type="number" min="1" max="10" step="1" value="1" aria-label="Cloud directory depth" aria-describedby="v3-presentation-status"></label>
+          <small id="v3-presentation-status" role="status" aria-live="polite"></small>
+        </div>
+      </header>
       <div class="v3-toolbar"><input id="v3-search" type="search" aria-label="Search V3 destinations" placeholder="Find a folder or destination…"><button id="v3-retry" type="button" hidden>Retry</button><button id="v3-reload" type="button">Reload</button><button id="v3-undo" type="button" hidden>Undo deletion</button></div>
       <div id="v3-outline" aria-label="Account, bucket and folder outline"></div>
       <form id="v3-add" aria-label="Add V3 destination" hidden>

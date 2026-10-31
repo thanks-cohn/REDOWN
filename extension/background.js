@@ -2079,7 +2079,7 @@ function v3MenuTransaction(message,sender){
     const page=sender?.url?.split(/[?#]/)[0];
     const explorer=chrome.runtime.getURL('beta/explorer.html');
     if(![explorer,chrome.runtime.getURL('shelf.html'),chrome.runtime.getURL('options.html')].includes(page))throw Error('Open REDOWN Settings or V3 Setup.');
-    const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles']);
+    const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus']);
     const config=stored.rightClickV3||RedownRightClickV3.empty();
     let engine=stored.rightClickEngine==='v3'?'v3':'legacy',next=config;
     if(message.type==='saveRightClickV3'){
@@ -2088,26 +2088,56 @@ function v3MenuTransaction(message,sender){
       next={version:1,revision:config.revision+1,destinations:Array.isArray(message.destinations)&&message.destinations.length<=200?message.destinations.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','parentId','prefix','label','enabled'].map(k=>[k,d?.[k]]))):null};
       RedownRightClickV3.validate(next,stored.profiles||[]);
       await chrome.storage.local.set({rightClickV3:next});
+    }else if(message.type==='setRightClickV3Presentation'){
+      if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
+      const current=RedownRightClickV3.presentation(stored.rightClickV3Presentation);
+      if(message.expectedPresentation!==JSON.stringify(current))throw Error('Menu presentation changed in another window. Reload before saving.');
+      const presentation=RedownRightClickV3.validatePresentation(message.presentation);
+      await chrome.storage.local.set({rightClickV3Presentation:presentation});
     }else{
       if(!['legacy','v3'].includes(message.engine))throw Error('Choose Legacy or New Right-click.');
       engine=message.engine;
       if(engine==='v3')RedownRightClickV3.validate(config,stored.profiles||[]);
       await chrome.storage.local.set({rightClickEngine:engine});
     }
-    try{await rebuildMenus();return {ok:true,revision:next.revision,engine,menuUpdated:true};}
-    catch{return {ok:true,revision:next.revision,engine,menuUpdated:false,error:'Settings saved; Chrome menu registration failed. Retry Apply or Save.'};}
+    try{await rebuildMenus();return {ok:true,revision:next.revision,engine,menuUpdated:true,...await v3PresentationSnapshot()};}
+    catch{return {ok:true,revision:next.revision,engine,menuUpdated:false,...await v3PresentationSnapshot(),error:'Settings saved; Chrome menu registration failed. Retry Apply or Save.'};}
   });
   destinationSaveQueue=operation;return operation;
 }
+async function v3PresentationSnapshot(){
+  const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickMenuStatus']);
+  return {presentation:RedownRightClickV3.presentation(s.rightClickV3Presentation),menuStatus:s.rightClickMenuStatus||null};
+}
+let v3InventoryRefresh=null;
+async function refreshV3Inventory(force=false){
+  if(v3InventoryRefresh)return v3InventoryRefresh;
+  let superseded=false;
+  const operation=(async()=>{
+    const keys=['rightClickEngine','rightClickV3','rightClickV3Presentation','rightClickV3Inventory','profiles'];
+    const s=await chrome.storage.local.get(keys),options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
+    if(s.rightClickEngine!=='v3'||options.style!=='nested'||options.nested!=='level')return;
+    const config=s.rightClickV3||RedownRightClickV3.empty(),profiles=s.profiles||[],key=RedownRightClickV3.inventoryKey(config,profiles,options);
+    if(!force&&RedownRightClickV3.fresh(s.rightClickV3Inventory,key))return;
+    const inventory=await RedownRightClickV3.discover(config,profiles,options,listObjectsPage);
+    const latest=await chrome.storage.local.get(keys);
+    // No late discovery may replace an inventory for changed roots/credentials.
+    if(latest.rightClickEngine!=='v3'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey(latest.rightClickV3||RedownRightClickV3.empty(),latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
+    await chrome.storage.local.set({rightClickV3Inventory:inventory});
+    await rebuildMenus();
+  })();
+  v3InventoryRefresh=operation;
+  try{return await operation;}finally{v3InventoryRefresh=null;if(superseded)void rebuildMenus().catch(()=>{});}
+}
 async function rightClickV3Snapshot(sender){
   if(sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('beta/explorer.html'))throw Error('Open V3 Setup in Explorer.');
-  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles']);
-  return {ok:true,engine:s.rightClickEngine==='v3'?'v3':'legacy',config:s.rightClickV3||RedownRightClickV3.empty(),
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus']);
+  return {ok:true,engine:s.rightClickEngine==='v3'?'v3':'legacy',config:s.rightClickV3||RedownRightClickV3.empty(),...await v3PresentationSnapshot(),
     profiles:(s.profiles||[]).filter(p=>p.type==='cloudflare-r2'&&p.workerUrl&&p.token).map(p=>({id:p.id,accountId:p.accountId,accountName:p.accountName||p.accountId,bucketName:p.bucketName}))};
 }
 async function resolveActiveRightClick(id,profiles){
-  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode']);
-  return s.rightClickEngine==='v3'?RedownRightClickV3.resolve(id,s.rightClickV3||RedownRightClickV3.empty(),profiles):RedownRightClickLegacy.resolve(id,profiles,RedownNestedLocations.menuMode(s.rightClickMode,profiles));
+  const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Inventory']);
+  return s.rightClickEngine==='v3'?RedownRightClickV3.resolve(id,s.rightClickV3||RedownRightClickV3.empty(),profiles,s.rightClickV3Presentation,s.rightClickV3Inventory):RedownRightClickLegacy.resolve(id,profiles,RedownNestedLocations.menuMode(s.rightClickMode,profiles));
 }
 
 let menuRebuildQueue=Promise.resolve();
@@ -2117,7 +2147,7 @@ async function rebuildMenus() {
   const operation=menuRebuildQueue.catch(()=>{}).then(async()=>{
     try{
       const receipt=await buildMenus();
-      await chrome.storage.local.set({rightClickMenuStatus:{state:'registered',...receipt}});
+      await chrome.storage.local.set({rightClickMenuStatus:{state:receipt.complete===false?'partial':'registered',...receipt}});
       return receipt;
     }catch(error){
       await chrome.storage.local.set({rightClickMenuStatus:{state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});
@@ -2140,7 +2170,7 @@ async function buildMenus() {
     // presentation fields. Clicks independently revalidate the saved identity.
     for(const item of description){
       if(!/^(v3:|quick:|simple-option:|nested:|tree:)/.test(item.id))continue;
-      const target=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.resolve(item.id,menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles):RedownRightClickLegacy.resolve(item.id,profiles,mode);
+      const target=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.resolve(item.id,menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory):RedownRightClickLegacy.resolve(item.id,profiles,mode);
       if(target){item.destination={profileId:target.owner.id,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix};item.operation='remote-save';}
     }
     await chrome.contextMenus.removeAll();
@@ -2163,16 +2193,19 @@ async function buildMenus() {
   });
 
   const profiles = await getProfiles();
-  const menuSettings=await chrome.storage.local.get(["rightClickMode","rightClickEngine","rightClickV3"]);
+  const menuSettings=await chrome.storage.local.get(["rightClickMode","rightClickEngine","rightClickV3","rightClickV3Presentation","rightClickV3Inventory"]);
   const storedMode=menuSettings.rightClickMode;
   const mode=RedownNestedLocations.menuMode(storedMode,profiles);
   if(storedMode!=="simple" && storedMode!=="nested")await chrome.storage.local.set({rightClickMode:mode});
-  const entries=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.entries(menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles,ROOT_MENU_ID):RedownRightClickLegacy.entries(profiles,mode,ROOT_MENU_ID);
+  const projection=menuSettings.rightClickEngine==='v3'?RedownRightClickV3.project(menuSettings.rightClickV3||RedownRightClickV3.empty(),profiles,menuSettings.rightClickV3Presentation,menuSettings.rightClickV3Inventory,ROOT_MENU_ID):null;
+  const entries=projection?projection.entries:RedownRightClickLegacy.entries(profiles,mode,ROOT_MENU_ID);
+  if(projection?.warnings.length)create({id:'redown-v3-inventory-status',parentId:ROOT_MENU_ID,title:projection.warnings.join(' '),enabled:false,contexts:['link','image','video','audio','page']});
   if(!entries.length)create({id:'redown-setup',parentId:ROOT_MENU_ID,title:'Set up a destination…',contexts:['link','image','video','audio','page']});
   for(const entry of entries)create(entry);
   addMenuControls(mode,item=>{if(menuSettings.rightClickEngine!=='v3'||item.id!=='redown-nested-mode')create(item);});
   await finish();
-  return {engine:menuSettings.rightClickEngine==='v3'?'v3':'legacy',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
+  if(menuSettings.rightClickEngine==='v3')void Promise.resolve().then(()=>refreshV3Inventory()).catch(()=>{});
+  return {complete:projection?.complete??true,warnings:projection?.warnings||[],inventoryAt:menuSettings.rightClickV3Inventory?.at||null,presentation:projection?RedownRightClickV3.presentation(menuSettings.rightClickV3Presentation):undefined,engine:menuSettings.rightClickEngine==='v3'?'v3':'legacy',revision:menuSettings.rightClickV3?.revision||0,entries:description.length,at:Date.now()};
 }
 function addMenuControls(mode){
   const create=arguments[1]|| (item=>chrome.contextMenus.create(item));
@@ -2360,8 +2393,20 @@ void applyToolbarOpenMode().catch(console.error);
 
 chrome.runtime.onInstalled.addListener(rebuildMenus);
 chrome.runtime.onStartup.addListener(rebuildMenus);
+chrome.alarms.create('redown-v3-inventory',{periodInMinutes:5});
+chrome.alarms.onAlarm.addListener(alarm=>{
+  if(alarm.name!=='redown-v3-inventory')return;
+  void chrome.storage.local.get(['rightClickEngine','rightClickV3Presentation']).then(s=>{
+    const options=RedownRightClickV3.presentation(s.rightClickV3Presentation);
+    if(s.rightClickEngine==='v3'&&options.style==='nested'&&options.nested==='level')return rebuildMenus();
+  }).catch(()=>{});
+});
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && (changes.profiles || changes.rightClickMode || changes.rightClickEngine || changes.rightClickV3)) rebuildMenus().catch(()=>{});
+  if(area!=="local")return;
+  if(changes.profiles){
+    // Credential/activation changes invalidate observations even if paths match.
+    void chrome.storage.local.set({rightClickV3Inventory:null}).then(()=>rebuildMenus()).catch(()=>{});
+  }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation)void rebuildMenus().catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
    No persistent page injection, tracking, or new host permissions. Chrome does
@@ -2729,8 +2774,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       if (message?.type === "deliveryCount") return sendResponse({ok:true,counter:await transferCounter.read()});
       if (message?.type === "saveStoragePreferences") return sendResponse(await saveStoragePreferences(message,_sender));
+      if(message?.type==='refreshRightClickV3Inventory'){
+        await rightClickV3Snapshot(_sender); // exact Explorer sender gate
+        await refreshV3Inventory(true);
+        return sendResponse({ok:true,...await v3PresentationSnapshot()});
+      }
       if (message?.type === 'rightClickV3Snapshot') return sendResponse(await rightClickV3Snapshot(_sender));
-      if (['saveRightClickV3','setRightClickEngine'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));
+      if (['saveRightClickV3','setRightClickEngine','setRightClickV3Presentation'].includes(message?.type)) return sendResponse(await v3MenuTransaction(message,_sender));
       if (message?.type === "profiles") return sendResponse({ ok:true, profiles:await getProfiles() });
       if (message?.type === "transferHistory") {
         const { transferHistory = [] } = await chrome.storage.local.get("transferHistory");

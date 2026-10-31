@@ -9,6 +9,46 @@ let addAnchor='',typeahead='',typedAt=0;
 const status=t=>{$('status').textContent=t;};
 const request=async(type,fields={})=>{let timer;try{const r=await Promise.race([chrome.runtime.sendMessage({type,...fields}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Outcome unknown: request timed out.')),30000);})]);if(!r?.ok)throw Error(r?.error||'Request not acknowledged.');return r;}finally{clearTimeout(timer);}};
 function button(text,label,fn){const b=el('button',text);b.type='button';b.setAttribute('aria-label',label);b.onclick=e=>{e.stopPropagation();const owner=b.closest('[role=treeitem]');if(owner)select(owner.dataset.key);fn();};return b;}
+let menuPresentation=RedownRightClickV3.presentation(),acknowledgedPresentation=menuPresentation,presentationSaving=false;
+function menuFeedback(menuStatus){
+ const target=$('presentation-status');if(!target)return;
+ const options=menuPresentation;
+ if(menuStatus?.state==='failed'){target.textContent=menuStatus.error||'Chrome menu registration failed.';return;}
+ if(engine!=='v3'){target.textContent='Saved for New Right-click. Legacy is active.';return;}
+ if(options.style==='nested'&&options.nested==='level'){
+   const at=menuStatus?.inventoryAt;
+   target.textContent=menuStatus?.warnings?.length?menuStatus.warnings.join(' '):at?'Folders checked '+new Date(at).toLocaleTimeString()+'. Reload refreshes.':'Folder inventory pending. Reload to refresh.';
+ }else target.textContent=menuStatus?.state==='registered'?'Chrome menu updated.':'';
+}
+function paintPresentation(){
+ const active=document.activeElement;
+ for(const kind of ['style','nested']){
+  $(kind).disabled=false;
+  for(const input of $(kind).querySelectorAll('input'))input.checked=input.value===menuPresentation[kind];
+ }
+ $('nested').hidden=menuPresentation.style!=='nested';
+ $('depth-row').hidden=menuPresentation.style!=='nested'||menuPresentation.nested!=='level';
+ $('depth').value=menuPresentation.depth;$('depth').disabled=false;
+ if($('nested').hidden&&$('nested').contains(active)||$('depth-row').hidden&&$('depth-row').contains(active))$('style').querySelector('input:checked')?.focus();
+}
+async function savePresentation(next){
+ try{menuPresentation=RedownRightClickV3.validatePresentation(next);}catch(e){$('presentation-status').textContent=e.message;return;}
+ paintPresentation();if(presentationSaving)return;
+ presentationSaving=true;$('presentation-status').textContent='Updating Chrome…';
+ try{
+  // Native radio keys keep focus while rapid changes queue behind acknowledged saves.
+  do{
+   const target={...menuPresentation},expectedPresentation=JSON.stringify(acknowledgedPresentation);
+   const r=await request('setRightClickV3Presentation',{expectedPresentation,presentation:target});
+   acknowledgedPresentation=r.presentation||target;menuFeedback(r.menuStatus);
+   if(!r.menuUpdated)$('presentation-status').textContent=r.error||'Saved; Chrome menu registration failed.';
+   if(JSON.stringify(menuPresentation)===JSON.stringify(target))break;
+  }while(true);
+ }catch(e){menuPresentation=acknowledgedPresentation;$('presentation-status').textContent=e.message;}
+ finally{presentationSaving=false;paintPresentation();}
+}
+for(const kind of ['style','nested'])$(kind).onchange=e=>{if(e.target.matches('input[type=radio]'))void savePresentation({...menuPresentation,[kind]:e.target.value});};
+$('depth').onchange=()=>{if(!$('depth').validity.valid||!$('depth').value){$('presentation-status').textContent='Depth must be an integer from 1 to 10.';$('depth').value=menuPresentation.depth;return;}void savePresentation({...menuPresentation,depth:Number($('depth').value)});};
 function note(){$('engine').textContent=engine==='v3'?'New Right-click (V3) controls Chrome.':'Legacy Right-click is active. V3 edits do not control Chrome until selected in Settings.';}
 function validate(next){RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));}
 function change(fn){try{const next=structuredClone(config);fn(next);validate(next);undo=structuredClone(config.destinations);config=next;pending=true;sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));draw();void flush();}catch(e){status(e.message);}}
@@ -70,14 +110,14 @@ function draw(){
  else if(owned){const row=rows.find(n=>n.dataset.key===key);const replacements=row?[...row.querySelector('.v3-row').querySelectorAll('button,input,select,summary')]:[];const replacement=onItem?row:replacements[controlIndex];(replacement||rows.find(n=>n.dataset.key===selected))?.focus();if(replacement?.hasAttribute('data-edit')&&renameDraft)replacement.setSelectionRange(renameDraft.start,renameDraft.end);}
 
 }
-async function load(){if(saving)return;try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;engine=r.engine;pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'Saved configuration loaded. Chrome readiness has not been checked.');}catch(e){status(e.message);}}
-$('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load();}};
+async function load(){if(saving||presentationSaving){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=true;}else sessionStorage.removeItem('redown-v3-recovery');}profiles=r.profiles;engine=r.engine;menuPresentation=RedownRightClickV3.presentation(r.presentation);acknowledgedPresentation=menuPresentation;paintPresentation();menuFeedback(r.menuStatus);pending=!!sessionStorage.getItem('redown-v3-recovery');blocked=pending;$('profile').replaceChildren(...profiles.map(p=>new Option(p.accountName+' · '+p.bucketName,p.id)));for(const p of profiles){expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);}draw();status(pending?'Retained edits restored. Reload after reviewing to reconcile with saved configuration.':'Saved configuration loaded. Chrome readiness has not been checked.');}catch(e){status(e.message);}}
+$('search').oninput=()=>config&&draw();$('reload').onclick=()=>{if(!pending||confirm('Reload saved configuration and discard retained local changes?')){sessionStorage.removeItem('redown-v3-recovery');void load().then(async()=>{if(menuPresentation.style==='nested'&&menuPresentation.nested==='level'){try{const r=await request('refreshRightClickV3Inventory');menuFeedback(r.menuStatus);}catch(e){$('presentation-status').textContent=e.message;}}});}};
 $('undo').onclick=()=>{if(!undo)return;const previous=undo;undo=null;change(next=>{next.destinations=previous;});};
 $('retry').onclick=()=>{if(blocked)return status('Reload to reconcile retained changes first.');pending=true;void flush();};
 $('cancel').onclick=()=>{$('add').hidden=true;select(addAnchor);focusSelected();};$('add').onclick=e=>e.stopPropagation();$('add').onkeydown=e=>{e.stopPropagation();if(e.key==='Escape'){e.preventDefault();$('add').hidden=true;select(addAnchor);focusSelected();}};
 $('folders').onkeydown=e=>{if(e.key==='Escape'&&!$('add').hidden){e.preventDefault();e.stopPropagation();$('cancel').click();}};
 $('add').onsubmit=e=>{e.preventDefault();const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;const before=config,id=crypto.randomUUID();change(next=>{next.destinations.push({id,profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,parentId:$('parent').value||null,prefix:$('prefix').value.replace(/\/$/,''),label:$('label').value,enabled:true});});if(config!==before){$('add').hidden=true;let parent=$('parent').value;while(parent){expanded.add(parent);parent=config.destinations.find(d=>d.id===parent)?.parentId;}expanded.add('account:'+p.accountId);expanded.add('bucket:'+p.id);selected=id;draw();focusSelected();}};
 $('browse').onclick=async()=>{const p=profiles.find(p=>p.id===$('profile').value);if(!p)return;try{const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix:$('prefix').value});$('folders').replaceChildren();const filter=el('input');filter.type='search';filter.placeholder='Filter folders…';filter.setAttribute('aria-label','Filter existing folders');filter.oninput=()=>{for(const choice of $('folders').querySelectorAll('button'))choice.hidden=!choice.textContent.toLowerCase().includes(filter.value.toLowerCase());};$('folders').append(filter);for(const f of r.folders||[]){const path=(typeof f==='string'?f:f.prefix).replace(/\/$/,'');$('folders').append(button(path,'Choose '+path,()=>{$('prefix').value=path;$('label').value||=path.split('/').at(-1)||p.bucketName;$('prefix').focus();}));}status(r.cursor?'More folders exist. Enter a narrower path to browse.':'Folders loaded.');}catch(e){status(e.message);}};
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickEngine){engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
-window.addEventListener('beforeunload',e=>{if(pending||saving){e.preventDefault();e.returnValue='';}});void load();
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.rightClickV3Presentation&&!presentationSaving){menuPresentation=RedownRightClickV3.presentation(changes.rightClickV3Presentation.newValue);acknowledgedPresentation=menuPresentation;paintPresentation();}if(changes.rightClickMenuStatus)menuFeedback(changes.rightClickMenuStatus.newValue);if(changes.rightClickEngine){engine=changes.rightClickEngine.newValue==='v3'?'v3':'legacy';note();}if(changes.rightClickV3&&!saving){if(pending){blocked=true;status('Configuration changed in another window. Local changes retained; reload to reconcile.');}else void load();}});
+window.addEventListener('beforeunload',e=>{if(pending||saving||presentationSaving){e.preventDefault();e.returnValue='';}});void load();
 })();
