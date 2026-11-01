@@ -3140,3 +3140,5 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   })();
   return true;
 });
+// Guarded entrypoint uses this marker only if core evaluation aborts.
+globalThis.RedownCoreMessageHandlerRegistered = true;
