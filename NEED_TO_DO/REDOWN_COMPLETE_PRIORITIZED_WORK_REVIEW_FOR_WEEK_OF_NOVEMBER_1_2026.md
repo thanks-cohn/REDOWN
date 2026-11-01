@@ -527,3 +527,28 @@ This is a desire for **a thriving skin ecosystem with a maintainable, protected 
 - **Sequence:** Complete BOOT API → complete and real-Chrome-verify right-click API → validate data safety and stable core UI contracts → implement `C-SKIN-01` SKIN API separation and compatibility tests → open simple theme imports → expand native desktop creator tools and community themes.
 
 **Development handoff:** When the stability gates are met, create a scoped `NEED_TO_DO/CODEX/` implementation request for SKIN API engineering with source inspection, exact tests, commits and a rollback plan. This weekly list is a priority/architecture record, not an instruction to prematurely ship a new theme API now.
+
+
+---
+
+## IMPORTANT NEW IDEAS — DAILY FINDINGS CAROUSEL, CLICK-TO-OPEN, CHUTE DRAG-OUT, AND LOGO IDENTITY
+
+**Captured:** November 1, 2026. **Status: NOT IMPLEMENTED.** This is the consolidated weekly master entry. The dated actionable task list is [NEED_TO_DO/11012026.md](11012026.md), entries **P1.9–P1.11, P2.9, P3.6**. Existing P0 stability and V3/Boot work take precedence.
+
+### Daily image findings, source-aware vertical rolling Shelf carousel (high priority)
+
+- [ ] **Today's visual discoveries:** A premium vertical roulette/carousel of the **actual saved image findings**, available directly in the REDOWN Shelf's existing History experience. Source records must distinguish the original webpage URL, source image/file URL, actual saved cloud object, timestamp, provider/account/container and filename. Real thumbnails and source links, not fabricated ones.
+- [ ] **Default-open behavior:** **ON by default**, displaying the findings carousel automatically when the user enters/opens History so they immediately see what they saved or clicked without finding a separate gallery. Shelf Settings offers a toggle to **OFF**, switching to an explicit accessible click-to-open control within History. Keep all existing History entries, navigation, GO TO and state intact.
+- [ ] **Strict lazy-load envelope:** Current finding + **7 next + 5 previous** (13 potential positions total). Load thumbnails on demand in that moving bounded window; release out-of-window resources; cap concurrent loads, reject stale completions and handle day boundaries. No bulk eager-loading all historical image bytes or unrelated files. Do not expose private signed URLs or prefetch without authorized data access. Empty, missing, failed, non-image and deleted items have truthful representations.
+- [ ] **Writable/annotatable discoveries stream:** User may add optional short notes/labels to a finding, stored as portable per-object metadata separately from cloud content, without automatically altering the actual saved file. Smooth premium scrolling, responsive size, touch, keyboard, focus and reduced-motion controls, plus persisted selection/scroll where reasonable.
+
+### Chute framework integration: drag from REDOWN into Google/Yandex/ChatGPT (research + demo)
+
+- [ ] Audit actual **Chute** code/contract, browser drag payload formats and the current Shelf surface; prototype user-initiated drag of compatible images/files or their authorized URLs from carousel into **Google Images**, **Yandex Images** and **ChatGPT**. This is a **product demo idea**, not guaranteed cross-site functionality; external sites decide accepted drag payloads and may refuse browser-extension cross-origin or URL-only drags. Provide copy-URL/manual-save alternatives when native drag cannot work.
+- [ ] Never auto-upload or silently submit private images to outside search/AI services. An originating webpage URL is not interchangeable with image bytes; a private R2/Drive/Dropbox/OneDrive object is not a public URL. Explicit user intent, provider permissions, readable error/fallback, privacy safeguards and real installed-Chrome tests required. Preserve independent cloud connectors and Chute ownership.
+
+### New brand-logo direction (design candidate only)
+
+- [ ] Explore a **massively recognizable solid bright blood-red R, upper-left weighted, on black**, with a **single rising bottom-left-to-top-right diagonal slash integrated into the red letter**, visually conveying **sliding/forward movement**. Sharp and unmistakable even as a tiny toolbar icon; restrained, not over-ornamented. Develop large SVG and small PNG export options for same-brand use across extension, redown.online, Google, Dropbox and OneDrive. Owner must choose/approve before any replacement; existing icon/website/OAuth configuration remains unchanged by this note.
+
+**Acceptance/priority:** Carousel and default-on History setting are P1 product features; bounded lazy-loading is a performance requirement, not optional polish. Drag-to-other-sites is a P2 feasibility + demo project contingent on actual destination support. Logo is a design decision, not an automatic code/app identity change. **No development is marked complete by this documentation.**
