@@ -56,6 +56,31 @@ The owner will perform manual Google Cloud Console setup. Do not make up credent
 - Use Chrome's supported extension identity and OAuth mechanism (including `chrome.identity.getAuthToken` and `oauth2` manifest configuration where compatible), or document and implement an equally secure browser-extension flow. Obtain only needed scope and bind results to the correct Google account.
 - Provide the owner the exact remaining one-time console fields and client-ID injection steps at completion.
 
+## P0 Shelf UI: Google Drive login button at top (owner clarification, November 1, 2026)
+
+**This is a LOGIN / CONNECTION control, not a file-transfer or upload action.**
+
+**Exact placement:** In `extension/shelf.html`, within `#clouds-view > section.overview`, insert the Google Drive connection control **immediately after**:
+
+```html
+<p class="eyebrow">YOUR SPACE <span class="eyebrow-dot" aria-hidden="true">·</span> TRUE REMOTE</p>
+```
+
+and **before** the existing `<h1 class="overview-title">The Future Is Now. / True Remote Is Here.</h1>`.
+
+Keep the current eyebrow anchored in its existing position. **Push the existing headline and all content beneath it downward naturally using document flow.** Preserve the headline's typography, celestial effects, positioning relationships, connection summary, Cloudflare card, odometer, history, settings, theme switching, and all other Shelf structure. No absolute positioning, overlap, covering, disappearing controls, forced fixed heights, or unexpected scroll jumps.
+
+**Visual requirements:**
+- A professional, polished, clearly clickable and keyboard-accessible Google Drive authentication button.
+- **Official Google Drive logo on the LEFT**, visually aligned, recognizable, crisp at Shelf widths and high-DPI screens. Bundle a suitable local logo asset with its appropriate rights/attribution. Do not fetch brand assets from the network at runtime.
+- The primary unconnected label should be **"Log in to Google Drive"**, not "Send file" or "Upload to Drive". The button launches the authorized Google OAuth connection flow.
+- Design follows the currently selected REDOWN Shelf theme with good contrast and restrained, professional outlines, shadows, hover, press, and visible focus behavior. The logo retains accurate brand colors. Use responsive spacing; no giant marketing card or unrelated imagery.
+- Loading: "Connecting to Google Drive…" with disabled duplicate-click state; connected: "Google Drive connected" plus a clear action to open the app's `REDOWN` folder; expired/disconnected/error: "Reconnect Google Drive" or "Log in to Google Drive" as appropriate. Do not claim connected before verifying authorization and folder readiness.
+- Keep an appropriately labeled status/description adjacent for accessibility without duplicating large panels. Don't make the entire Shelf cloud view conditional on Google connection. Cloudflare remains independently connectable.
+- Add/update targeted DOM, keyboard and responsive visual regression tests for this **exact** placement, all supported Shelf themes, small Shelf widths, connection states, and zero overlap/layout displacement.
+
+**No placeholder button:** Wire to the real Google OAuth flow as part of this implementation. If a manual prerequisite blocks live OAuth, report the blocker without showing fake success; do not quietly ship a non-working login button.
+
 ## Functional milestones
 
 ### A. Connection and user-visible state
