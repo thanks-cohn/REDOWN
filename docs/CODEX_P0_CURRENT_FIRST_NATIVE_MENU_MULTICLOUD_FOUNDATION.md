@@ -1,3 +1,5 @@
+> November 1 supersession: [logic-tables.md](../NEED_TO_DO/CODEX/logic-tables.md) and Explanation.md control menu semantics. Expanded providers use configured siblings, a native separator, then **Home last**, saving to the verified provider default. Older default-first examples below are historical.
+
 # REDOWN V3 EMERGENCY P0 — CURRENT-FIRST INSTANT NATIVE RIGHT-CLICK, DAILY DUAL-COPY MEMORY, CRASH RECOVERY, AND PROVIDER-FIRST MULTI-CLOUD FOUNDATION
 
 **Repository:** `thanks-cohn/REDOWN`  

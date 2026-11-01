@@ -1,3 +1,5 @@
+> November 1 supersession: [logic-tables.md](../NEED_TO_DO/CODEX/logic-tables.md) and Explanation.md control menu semantics. Expanded providers use configured siblings, a native separator, then **Home last**, saving to the verified provider default. Older default-first examples below are historical.
+
 # NEED_TO_DO:fundamentals
 
 **REDOWN V3 — authoritative owner-approved right-click behavior and durable directory memory**  

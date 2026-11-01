@@ -1,3 +1,5 @@
+> November 1 supersession: [logic-tables.md](../NEED_TO_DO/CODEX/logic-tables.md) and Explanation.md control menu semantics. Expanded providers use configured siblings, a native separator, then **Home last**, saving to the verified provider default. Older default-first examples below are historical.
+
 # REDOWN V3 EMERGENCY P0 — SIMPLE MUST STAY SIMPLE: CLOUDFLARE-FIRST RIGHT-CLICK AND RELIABLE DIRECTORY FOUNDATION
 
 **Repository:** `thanks-cohn/REDOWN`  

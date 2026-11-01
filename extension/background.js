@@ -2766,10 +2766,10 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 
-  if(/^(v3:|quick:|simple-option:|nested:|tree:)/.test(String(info.menuItemId)))launchSaveDroplet(info,tab);
   const profiles = await getProfiles();
   const resolved=await resolveActiveRightClick(info.menuItemId,profiles);
   if(!resolved)return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
+  launchSaveDroplet(info,tab);
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.

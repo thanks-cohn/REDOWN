@@ -15,7 +15,7 @@ const store=()=>({version:1,revision:0,levelScopes:scope(),destinations:[destina
 function model(timers={}){const c=vm.createContext({TextEncoder,setTimeout,clearTimeout,...timers});vm.runInContext(domain,c);return c.RedownRightClickV3;}
 test('V3 domain projects parent-first exact IDs and resolves branch Save here only',()=>{
  const m=model(),s=store(),p=[profile],options={style:'nested',nested:'narrow',depth:1};assert.equal(m.validate(s,p),s);
- const plan=m.entries(s,p,'redown',options);assert.equal(plan[0].title,'bucket');assert.equal(plan[1].id,'v3:root');assert.equal(plan[2].title,'one');assert.equal(plan[3].id,'v3:child');assert.equal(plan[4].id,'v3:child:send');assert.equal(plan[5].id,'v3:deep');
+ const projected=m.entries(s,p,'redown',options);assert.equal(projected[0].title,'Cloudflare');const plan=projected.slice(1);assert.equal(plan[0].title,'bucket');assert.equal(plan[1].id,'v3:root');assert.equal(plan[2].title,'one');assert.equal(plan[3].id,'v3:child');assert.equal(plan[4].id,'v3:child:send');assert.equal(plan[5].id,'v3:deep');
  assert.equal(m.resolve('v3:deep',s,p,options).prefix,'one/two/three');assert.equal(m.resolve('v3:child',s,p,options),null);assert.equal(m.resolve('v3:child:send',s,p,options).prefix,'one/two');assert.equal(m.resolve('v3:deep:send',s,p,options),null);assert.equal(m.resolve('quick:p',s,p,options),null);
 });
 test('V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect',()=>{
@@ -182,7 +182,7 @@ test('Simple defaults to ordered direct shortcuts; Narrow preserves duplicate id
  const m=model(),s=store();s.destinations.forEach(d=>d.label='Duplicate');const before=JSON.stringify(s);
  const flat=m.project(s,[profile]);assert.equal(flat.entries[0].title,'Cloudflare');assert.ok(flat.entries.slice(1).every(e=>e.parentId==='v3:provider:cloudflare'));assert.deepEqual(Array.from(flat.entries.filter(e=>s.destinations.some(d=>'v3:'+d.id===e.id)),e=>e.id),s.destinations.map(d=>'v3:'+d.id));
  for(const d of s.destinations)assert.equal(m.resolve('v3:'+d.id,s,[profile]).prefix,d.prefix);
- const nested=m.project(s,[profile],narrow);assert.equal(nested.entries[1].title,'Duplicate');assert.equal(m.resolve('v3:root',s,[profile],narrow).prefix,'');assert.equal(m.resolve('v3:root:send',s,[profile],narrow),null);
+ const nested=m.project(s,[profile],narrow);assert.equal(nested.entries[2].title,'Duplicate');assert.equal(m.resolve('v3:root',s,[profile],narrow).prefix,'');assert.equal(m.resolve('v3:root:send',s,[profile],narrow),null);
  assert.equal(m.resolve('v3:deep',s,[profile],narrow).prefix,'one/two/three');assert.equal(m.resolve('v3:child:send',s,[profile],simple),null);assert.equal(JSON.stringify(s),before);
 });
 function folderFixture(){
@@ -193,7 +193,7 @@ test('Level depth 1–10 is counted from authorized root; true names, siblings a
  const m=model(),s={version:1,revision:0,levelScopes:scope(),destinations:[{...destination(),label:'Virtual label'}]},before=JSON.stringify(s);
  for(let depth=1;depth<=10;depth++){
   const fixture=folderFixture(),settings={...level,depth};const inventory=await m.discover(s,[profile],settings,fixture.list);const plan=m.project(s,[profile],settings,inventory);
-  assert.equal(plan.complete,true);assert.equal(plan.entries[0].title,'bucket');assert.ok(plan.entries.some(e=>e.title==='images'));assert.ok(plan.entries.some(e=>e.title==='videos'));assert.ok(!plan.entries.some(e=>e.title==='Virtual label'));
+  assert.equal(plan.complete,true);assert.equal(plan.entries[1].title,'bucket');assert.ok(plan.entries.some(e=>e.title==='images'));assert.ok(plan.entries.some(e=>e.title==='videos'));assert.ok(!plan.entries.some(e=>e.title==='Virtual label'));
   assert.equal(plan.entries.some(e=>e.title==='memes'),depth>=2);assert.equal(plan.entries.some(e=>e.title==='funny'),depth>=3);
   assert.equal(m.resolve(cloudId('')+':send',s,[profile],settings,inventory).prefix,'');
   for(const entry of plan.entries){const target=m.resolve(entry.id,s,[profile],settings,inventory);if(!target)continue;assert.equal(target.profile.accountId,'a');assert.equal(target.profile.bucketName,'bucket');assert.equal(target.owner.id,'p');}
@@ -206,7 +206,7 @@ test('Level uses opted-in bucket roots and never reads unrelated profiles',async
  const unrelated={...profile,id:'other',accountId:'unrelated',bucketName:'secret'};const calls=[];
  const inventory=await m.discover(s,[profile,unrelated],level,async(a,b,p)=>{calls.push([a,b,p]);return {delimited:[p+'child/','outside/'],objects:[]};});
  assert.equal(m.roots(s,[profile,unrelated]).length,1);assert.ok(calls.every(([a,b,p])=>a==='a'&&b==='bucket'&&!p.startsWith('authorized/')));
- const entries=m.project(s,[profile,unrelated],level,inventory).entries;assert.equal(entries[0].title,'bucket');assert.equal(entries[1].title,'Save here');assert.ok(!entries.some(e=>e.title==='secret'));assert.ok(entries.some(e=>e.title==='outside'),'unconfigured sibling at bucket root is included');
+ const entries=m.project(s,[profile,unrelated],level,inventory).entries;assert.equal(entries[1].title,'bucket');assert.equal(entries[2].title,'Save here');assert.ok(!entries.some(e=>e.title==='secret'));assert.ok(entries.some(e=>e.title==='outside'),'unconfigured sibling at bucket root is included');
  assert.equal(m.resolve('v3:bucket:p',s,[profile,unrelated],level,inventory),null);
  const revoked={...profile,token:''};assert.equal(m.resolve(entries.at(-1).id,s,[revoked],level,inventory),null);
 });
@@ -214,7 +214,7 @@ test('Level paginates files-only pages, deduplicates and sorts exact cloud names
  const m=model(),s={...store(),destinations:[destination()]},calls=[];
  const inventory=await m.discover(s,[profile],{...level,depth:1},async(a,b,p,c)=>{calls.push(c);return c?{delimited:['Z/','A/','Z/'],objects:[{key:'A/.redown'}]}:{delimited:[],objects:[{key:'plain.txt'}],cursor:'next',truncated:true};});
  assert.deepEqual(calls,['','next']);assert.equal(inventory.complete,true);
- assert.deepEqual(Array.from(m.project(s,[profile],{...level,depth:1},inventory).entries,e=>e.title),['bucket','Save here','A','Z']);
+ assert.deepEqual(Array.from(m.project(s,[profile],{...level,depth:1},inventory).entries,e=>e.title),['Cloudflare','bucket','Save here','A','Z']);
 });
 test('Level rejects broken pagination, provider failures and unsupported paths as incomplete',async()=>{
  const m=model(),s={...store(),destinations:[destination()]};
@@ -296,20 +296,20 @@ test('periodic maintenance uses V3 regardless of stale engine settings and leave
 test('natural Narrow synthesizes real ancestors, retains exact configured-only targets and stable order',()=>{
  const m=model(),s={version:1,revision:0,destinations:[destination('photo','Images/Photography'),destination('portrait','Images/Photography/Portraits'),destination('comic','Comics')]};
  s.destinations[0].label='My Photos';const before=JSON.stringify(s),plan=m.project(s,[profile],narrow);
- assert.deepEqual(Array.from(plan.entries,e=>e.title),['bucket','Images','My Photos','Save here','portrait','comic']);
+ assert.deepEqual(Array.from(plan.entries,e=>e.title),['Cloudflare','bucket','Images','My Photos','Save here','portrait','comic']);
  assert.equal(m.resolve('v3:photo:send',s,[profile],narrow).prefix,'Images/Photography');assert.equal(m.resolve('v3:portrait',s,[profile],narrow).prefix,'Images/Photography/Portraits');
  for(const item of plan.entries.filter(e=>e.id.startsWith('v3:path:')))assert.equal(m.resolve(item.id,s,[profile],narrow),null);
  assert.equal(JSON.stringify(s),before);
- const single={...s,destinations:[destination('deep','one/two/three')]};assert.deepEqual(Array.from(m.project(single,[profile],narrow).entries,e=>e.title),['bucket','one','two','deep']);
+ const single={...s,destinations:[destination('deep','one/two/three')]};assert.deepEqual(Array.from(m.project(single,[profile],narrow).entries,e=>e.title),['Cloudflare','bucket','one','two','deep']);
  const duplicate={...s,destinations:[{...destination('a','x'),label:'Same'},{...destination('b','x'),label:'Same'},destination('c','x/y')]};
- const entries=m.project(duplicate,[profile],narrow).entries;assert.deepEqual(Array.from(entries,e=>e.title),['bucket','x','Same','Same','c']);assert.equal(m.resolve('v3:a',duplicate,[profile],narrow).prefix,'x');assert.equal(m.resolve('v3:b',duplicate,[profile],narrow).prefix,'x');
+ const entries=m.project(duplicate,[profile],narrow).entries;assert.deepEqual(Array.from(entries,e=>e.title),['Cloudflare','bucket','x','Same','Same','c']);assert.equal(m.resolve('v3:a',duplicate,[profile],narrow).prefix,'x');assert.equal(m.resolve('v3:b',duplicate,[profile],narrow).prefix,'x');
 });
 test('Narrow handles explicit skipped ancestors, independent disabled prefixes and distinct accounts',()=>{
  const m=model(),s={version:1,revision:0,destinations:[destination('a','x'),destination('c','x/y/z','a'),{...destination('disabled','q'),enabled:false},destination('independent','q/r')]};
- assert.deepEqual(Array.from(m.project(s,[profile],narrow).entries,e=>e.title),['bucket','a','Save here','y','c','q','independent']);
+ assert.deepEqual(Array.from(m.project(s,[profile],narrow).entries,e=>e.title),['Cloudflare','bucket','a','Save here','y','c','q','independent']);
  s.destinations[0].enabled=false;assert.equal(m.resolve('v3:c',s,[profile],narrow),null);assert.equal(m.resolve('v3:independent',s,[profile],narrow).prefix,'q/r');
  const other={...profile,id:'p2',accountId:'b'},two={...s,destinations:[destination('one','Images'),{...destination('two','Images'),profileId:'p2',accountId:'b'}]};
- const entries=m.project(two,[profile,other],narrow).entries;assert.equal(entries.filter(e=>e.parentId==='redown').length,2);assert.equal(new Set(entries.map(e=>e.id)).size,entries.length);assert.equal(m.resolve('v3:two',two,[profile,other],narrow).profile.accountId,'b');
+ const entries=m.project(two,[profile,other],narrow).entries;assert.equal(entries.filter(e=>e.parentId==='v3:provider:cloudflare').length,2);assert.equal(new Set(entries.map(e=>e.id)).size,entries.length);assert.equal(m.resolve('v3:two',two,[profile,other],narrow).profile.accountId,'b');
 });
 test('Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions',async()=>{
  const m=model(),s={version:1,revision:0,destinations:[destination('sub','private/subfolder')]};let reads=0;
@@ -461,4 +461,32 @@ test('restored broad inventory retains every known path while checking a newly p
  const other={...profile,id:'second',bucketName:'second'},next={...s,levelScopes:{...scope(),revision:2,buckets:[...scope().buckets,{...scope().buckets[0],id:'second',profileId:'second',bucketName:'second'}]}};
  const calls=[],inventory=await m.discover(next,[profile,other],opts,async(a,b)=>{calls.push(b);return {objects:[],delimited:[]};},()=>Date.now(),first);
  assert.ok(calls.includes('second'));assert.ok(inventory.nodes.length<=m.limits.known);assert.ok(first.nodes.every(n=>inventory.nodes.some(q=>q.profileId===n.profileId&&q.prefix===n.prefix)));assert.equal(inventory.complete,true);
+});
+
+test('T01–T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default',async()=>{
+ const m=model(),p={...profile,bucketName:'redown',defaultPrefix:'Explorer/ignored'},s={...m.empty()},before=JSON.stringify(p);
+ assert.deepEqual(Array.from(m.project(s,[p]).entries,e=>e.title),['Cloudflare']);
+ assert.equal(m.resolve('v3:provider:cloudflare',s,[p]).prefix,'');
+ for(let count=1;count<=3;count++){
+  s.destinations=Array.from({length:count},(_,i)=>({...destination('extra'+i,'photos/'+i),bucketName:'redown',label:i?'Projects':'Home'}));
+  const entries=m.project(s,[p]).entries;
+  assert.equal(entries.at(-1).title,'Home');assert.equal(entries.at(-2).type,'separator');
+  assert.equal(entries.at(-2).parentId,'v3:provider:cloudflare');
+  assert.equal(entries[1].title,'Home · 2');assert.equal(s.destinations[0].label,'Home');
+  assert.equal(m.resolve(entries[0].id,s,[p]),null);
+  const home=m.resolve(entries.at(-1).id,s,[p]);assert.equal(home.profile.id,'p');assert.equal(home.profile.bucketName,'redown');assert.equal(home.prefix,'');
+  assert.equal(m.resolve(entries.at(-2).id,s,[p]),null);
+ }
+ s.destinations=[];assert.equal(m.project(s,[p]).entries.length,1);assert.equal(JSON.stringify(p),before);
+ const h=background({profiles:[p],rightClickV3:s,rightClickV3Migration:{version:1}});await h.c.rebuildMenus();assert.equal(h.native.find(n=>n.id==='v3:provider:cloudflare').title,'Cloudflare');
+ assert.equal((await h.c.resolveActiveRightClick('v3:provider:cloudflare',[p])).prefix,'');
+});
+test('T06 T08 T09 T10 Narrow only configured endpoints in distinct buckets and no false Home',()=>{
+ const m=model(),profiles=['redown','works','archive','screenshots'].map((bucketName,i)=>({...profile,id:'p'+i,bucketName}));
+ const destinations=[['redown','a/b'],['redown','a/b/c'],['works','clients/acme'],['works','portfolio/web'],['archive','2025/photos']].map(([bucketName,prefix],i)=>({...destination('d'+i,prefix),profileId:profiles.find(p=>p.bucketName===bucketName).id,bucketName}));
+ const s={...m.empty(),destinations,levelScopes:{version:1,revision:0,buckets:profiles.map(p=>({profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,enabled:true,id:p.id}))},activatedBuckets:{buckets:profiles.map(p=>({...p,profileId:p.id,enabled:true}))}};
+ const plan=m.project(s,profiles,narrow),actions=plan.entries.map(e=>m.resolve(e.id,s,profiles,narrow)).filter(Boolean);
+ assert.equal(actions.length,6);assert.ok(plan.entries.some(e=>e.id==='v3:d0:send'));assert.ok(!plan.entries.some(e=>e.title==='screenshots'||e.title==='Buckets'));
+ assert.equal(plan.entries.at(-1).title,'Home');assert.equal(plan.entries.at(-2).type,'separator');
+ const noDefault=m.project(s,profiles.filter(p=>p.bucketName!=='redown'),narrow);assert.ok(!noDefault.entries.some(e=>e.title==='Home'));
 });

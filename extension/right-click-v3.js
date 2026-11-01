@@ -203,7 +203,7 @@
       if(extra.some(e=>e.target.accountId===d.accountId&&e.target.bucketName===d.bucketName&&e.target.prefix===''))continue;
       extra.push({id:bucketId(d),title:d.bucketName,target:{...d,prefix:''}});
     }
-    const originalLabels=extra.map(e=>e.title),used=new Set(primary?['REDOWN']:[]);
+    const originalLabels=extra.map(e=>e.title),used=new Set(primary?['Home']:[]);
     for(const item of extra){
       const base=item.title;let title=base,i=1;
       if(extra.some((e,i)=>e!==item&&originalLabels[i]===base&&e.target.accountId!==item.target.accountId))title=base+' · '+item.target.accountId;
@@ -214,37 +214,44 @@
   function simpleProjection(config,profiles,root){
     const {primary,extra}=simpleTargets(config,profiles);
     if(!extra.length)return {entries:[{id:primary?'v3:provider:cloudflare':'v3:provider:cloudflare:setup',parentId:root,title:'Cloudflare',contexts}],complete:true,warnings:primary?[]:['Choose and activate the default redown bucket.']};
-    const entries=[{id:'v3:provider:cloudflare',parentId:root,title:'Cloudflare',contexts},
-      {id:primary?'v3:provider:cloudflare:default':'v3:provider:cloudflare:default-setup',parentId:'v3:provider:cloudflare',title:primary?'REDOWN':'Set up REDOWN…',contexts}];
-    const overflow=extra.length>limits.entries-2,shown=extra.slice(0,limits.entries-2-(overflow?1:0));
-    entries.push(...shown.map(({id,title})=>({id,title,parentId:'v3:provider:cloudflare',contexts})));
-    if(overflow)entries.push({id:'v3:provider:cloudflare:more',parentId:'v3:provider:cloudflare',title:'More destinations…',contexts});
+    const parentId='v3:provider:cloudflare';
+    const entries=[{id:parentId,parentId:root,title:'Cloudflare',contexts}];
+    const reserved=primary?3:1;
+    const overflow=extra.length>limits.entries-reserved,shown=extra.slice(0,limits.entries-reserved-(overflow?1:0));
+    entries.push(...shown.map(({id,title})=>({id,title,parentId,contexts})));
+    if(overflow)entries.push({id:parentId+':more',parentId,title:'More destinations…',contexts});
+    if(primary)entries.push({id:parentId+':separator',parentId,type:'separator',contexts},
+      {id:parentId+':default',parentId,title:'Home',contexts});
     return {entries,complete:!overflow,warnings:[...(!primary?['Choose and activate the default redown bucket.']:[]),...(overflow?['Chrome menu entry limit reached; use More destinations.']:[])]};
   }
   function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
     if(Array.isArray(config.destinations))config={...config,destinations:config.destinations.filter(d=>prepared(d,profiles))};
     validate(config,profiles);const options=presentation(settings);
     if(options.style==='simple')return simpleProjection(config,profiles,root);
-    if(options.style==='nested'&&options.nested==='level'){
-      const plan=levelProjection(config,profiles,options,inventory,root,now);
-      const missing=activated(config,profiles).filter(d=>!roots(config,profiles).some(q=>identity(q)===identity(d)));
-      if(missing.length){plan.entries.unshift({id:'v3:buckets',parentId:root,title:'Buckets',contexts},...missing.map(d=>({id:bucketId(d),parentId:'v3:buckets',title:d.bucketName,contexts})));if(plan.entries.length>limits.entries){plan.entries.length=limits.entries;plan.complete=false;}}
-      return plan;
-    }
-    const all=options.style==='simple'?config.destinations.filter(d=>eligible(d,config,profiles)).map(d=>({id:'v3:'+d.id,parentId:root,title:d.label.trim(),contexts})):narrowEntries(config,profiles,root);
-    // Stop before any orphan could be introduced; the full store is never changed.
-    const buckets=activated(config,profiles);
-    if(buckets.length){const roots=[{id:'v3:buckets',parentId:root,title:'Buckets',contexts},...buckets.map(d=>({id:bucketId(d),parentId:'v3:buckets',title:d.bucketName+(buckets.some(q=>q.bucketName===d.bucketName&&q.accountId!==d.accountId)?' · '+d.accountId:''),contexts}))];all.unshift(...roots);}
-    const entries=all.slice(0,limits.entries);
-    if(all[entries.length]?.id===entries.at(-1)?.id+':send')entries.pop();
-    return {entries,complete:all.length===entries.length,warnings:all.length===entries.length?[]:['Chrome menu entry limit reached; some destinations are not shown.']};
+    const parentId='v3:provider:cloudflare';
+    const plan=options.nested==='level'
+      ?levelProjection(config,profiles,options,inventory,parentId,now)
+      :{entries:narrowEntries(config,profiles,parentId),complete:true,warnings:[]};
+    if(!plan.entries.length&&options.nested==='narrow')return simpleProjection({...config,activatedBuckets:null},profiles,root);
+    const primary=simpleTargets(config,profiles).primary;
+    const reserved=primary?3:1;
+    const overflow=plan.entries.length>limits.entries-reserved||!plan.complete;
+    const capacity=limits.entries-reserved-(overflow?1:0);
+    const rows=plan.entries.slice(0,capacity);
+    if(plan.entries[rows.length]?.id===rows.at(-1)?.id+':send')rows.pop();
+    plan.entries=[{id:parentId,parentId:root,title:'Cloudflare',contexts},...rows];
+    if(overflow)plan.entries.push({id:parentId+':more',parentId,title:'More destinations…',contexts});
+    if(primary)plan.entries.push({id:parentId+':separator',parentId,type:'separator',contexts},
+      {id:parentId+':default',parentId,title:'Home',contexts});
+    plan.complete=plan.complete&&!overflow;
+    return plan;
   }
   function entries(config,profiles,root='redown',settings,inventory){return project(config,profiles,settings,inventory,root).entries;}
   function resolve(id,config,profiles,settings,inventory,now=Date.now()){
     try{
       const plan=project(config,profiles,settings,inventory,'redown',now),item=plan.entries.find(n=>n.id===id);
       if(!item||plan.entries.some(n=>n.parentId===id))return null;
-      if(presentation(settings).style==='simple'&&['v3:provider:cloudflare','v3:provider:cloudflare:default'].includes(id)){
+      if(['v3:provider:cloudflare','v3:provider:cloudflare:default'].includes(id)){
         const target=simpleTargets(config,profiles).primary,profile=target&&prepared(target,profiles);
         return profile?{profile,owner:profile,prefix:''}:null;
       }
