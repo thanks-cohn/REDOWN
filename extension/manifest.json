@@ -24,6 +24,12 @@
     "https://*.r2.dev/*",
     "http://127.0.0.1/*"
   ],
+  "oauth2": {
+    "client_id": "763628402500-55kpvvm33fvrtcggva4tp2m4te67dghm.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
   "background": {
     "service_worker": "service-worker.js"
   },
