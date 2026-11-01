@@ -68,5 +68,7 @@
   "extension/right-click-current.js",
   "extension/right-click-backup.js",
   "extension/right-click-backup-settings.js",
-  "extension/right-click-chooser.js"
+  "extension/right-click-chooser.js",
+  "extension/beta/window-preview.mjs",
+  "extension/beta/test-it.mjs"
 ]

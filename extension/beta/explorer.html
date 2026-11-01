@@ -77,9 +77,9 @@
 </div>
 </header>
 <div class="toolbar">
-<button id="back" title="Back" aria-label="Back">←</button>
-<button id="forward" title="Forward" aria-label="Forward">→</button>
-<button id="up" title="Parent folder" aria-label="Parent folder">↑</button>
+<button id="back" title="Back" aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7M8 12h13"/></svg></button>
+<button id="forward" title="Forward" aria-label="Forward"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7M3 12h13"/></svg></button>
+<button id="up" title="Parent folder" aria-label="Parent folder"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 10l7-7 7 7M12 3v18"/></svg></button>
 <button id="refresh" title="Refresh files from Cloudflare (does not activate buckets)" aria-label="Refresh files">↻</button>
 
 <button id="path" title="Go to a folder path" aria-label="Go to a folder path">/</button>
@@ -230,7 +230,7 @@
 </form></dialog>
 <dialog id="preview-dialog" class="preview-dialog" tabindex="-1" aria-labelledby="preview-title">
 <div id="preview-viewer">
-<div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><div class="preview-controls"><select id="preview-mode-inline" aria-label="Change preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select><button id="preview-minimize" aria-label="Minimize preview" title="Minimize preview" hidden>−</button><button id="preview-expand" aria-label="Expand preview" title="Expand preview" hidden>⤢</button><button id="preview-lightbox" aria-label="Open image lightbox" title="Open image lightbox" hidden disabled>⤢</button><button id="preview-close" aria-label="Close preview" title="Close preview">✕</button></div></div>
+<div class="preview-header"><div><span class="eyebrow">FILE PREVIEW</span><h2 id="preview-title"></h2></div><div class="preview-controls"><select id="preview-mode-inline" aria-label="Change preview mode"><option value="window">Window Preview</option><option value="side">Side Preview</option></select><button id="preview-minimize" aria-label="Minimize preview" title="Minimize preview" hidden>−</button><button id="preview-expand" aria-label="Expand preview" title="Expand preview" hidden>⤢</button><button id="preview-lightbox" aria-label="Open image lightbox" title="Open image lightbox" hidden disabled>Lightbox</button><button id="preview-close" aria-label="Close preview" title="Close preview">✕</button></div></div>
 <div id="preview-content" aria-live="polite"></div>
 <div class="preview-footer"><button id="preview-previous" aria-label="Previous file">← Previous</button><span id="preview-info"></span><button id="preview-next" aria-label="Next file">Next →</button></div>
 </div>

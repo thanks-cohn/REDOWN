@@ -150,3 +150,12 @@ test('the three left-sidebar controls use one header and chevron layout',()=>{
     assert.doesNotMatch(css,/\.sidebar-storage #create-bucket\s*\{[^}]*position:absolute/,'create button belongs in expanded body, not the summary');
   }finally{dom.window.close();}
 });
+
+test('primary history navigation uses scoped 48px glossy vector controls and theme tokens',()=>{
+ const dom=new JSDOM(html),d=dom.window.document;
+ for(const id of ['back','forward','up']){const b=d.getElementById(id);assert.ok(b.querySelector('svg path'));assert.ok(b.getAttribute('aria-label'));assert.ok(b.title);assert.equal(b.querySelector('svg').getAttribute('aria-hidden'),'true');}
+ assert.match(css,/:is\(#back,#forward,#up\)\{width:48px;height:48px;min-width:44px;min-height:44px/);
+ assert.match(css,/linear-gradient\(180deg,#ffffff38[\s\S]*var\(--accent\)/);
+ for(const state of [':hover:not(:disabled)',':active:not(:disabled)',':focus-visible',':disabled'])assert.ok(css.includes(':is(#back,#forward,#up)'+state));
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{:is\(#back,#forward,#up\)\{transition:none/);dom.window.close();
+});

@@ -1,3 +1,4 @@
+import {createWindowPreview,renderPreview} from '../extension/beta/window-preview.mjs';
 import {createBreadcrumbs,orderedBreadcrumbPath} from '../extension/beta/standard-breadcrumbs.mjs';
 import {installRemoteDialog} from '../extension/beta/remote-dialog.mjs';
 import {installTestItTools} from '../extension/beta/test-it-tools.mjs';
@@ -83,18 +84,22 @@ async function uiFixture({archivePreference=null,deletePreferences=null,inlineFo
   const dom=new JSDOM(html,{url:'https://extension.fixture/beta/explorer.html',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   w.HTMLMediaElement.prototype.pause=function(){};w.HTMLMediaElement.prototype.load=function(){};w.fetch=fetch;w.URL.createObjectURL=URL.createObjectURL;w.URL.revokeObjectURL=URL.revokeObjectURL;
   w.eval(await readFile(new URL('../extension/public-addresses.js',import.meta.url),'utf8'));
-  w.createBreadcrumbs=createBreadcrumbs;w.orderedBreadcrumbPath=orderedBreadcrumbPath;w.installRemoteDialog=installRemoteDialog;w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;Object.assign(w,{normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent});w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
+  w.createWindowPreview=options=>createWindowPreview({...options,urls:w.URL});w.renderPreview=renderPreview;w.createBreadcrumbs=createBreadcrumbs;w.orderedBreadcrumbPath=orderedBreadcrumbPath;w.installRemoteDialog=installRemoteDialog;w.installTestItTools=installTestItTools;w.installTestIt=installTestIt;w.installTour=installTour;w.collectDroppedFiles=collectDroppedFiles;Object.assign(w,{normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent});w.prefix=prefix;w.name=name;w.previewType=previewType;w.createFileApi=createFileApi;w.createR2Adapter=()=>Object.fromEntries(Object.entries(f.adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
   }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,betaExplorerInlineFolderButtons:inlineFolderButtons,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
-  if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
+  if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded]),.window-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
-  return {...f,dom,w,d:w.document,settle};
+  // Legacy fixture callers ask for the active preview. Explicit #side-preview queries
+  // continue to inspect the persistent surface, including while a modal is open.
+  const aliases={'#preview-content':'.window-content','#preview-title':'.window-viewer h2','#preview-info':'.window-info','#preview-close':'.window-viewer [data-close]','#preview-lightbox':'.window-viewer [data-lightbox]','#preview-previous':'.window-viewer [data-previous]','#preview-next':'.window-viewer [data-next]'};
+  const d=new Proxy(w.document,{get(target,key){if(key==='querySelector')return selector=>{const modal=target.querySelector('#preview-dialog'),active=modal.open&&!modal.querySelector('.window-viewer').hidden;if(active)for(const [from,to] of Object.entries(aliases))if(selector===from||selector.startsWith(from+' '))return modal.querySelector(selector.replace(from,to));return target.querySelector(selector);};const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;}});
+  return {...f,dom,w,d,settle};
 }
 test('a fresh user gets Side Preview by default, while an existing Window preference remains respected',async()=>{
   const first=await uiFixture({previewPreferences:null});
@@ -400,20 +405,20 @@ test('session invalidation clears the old bucket and ignores its delayed respons
 });
 
 function switchPreview(f,mode){f.d.querySelector('#preview-mode').value=mode;f.d.querySelector('#preview-mode').dispatchEvent(new f.w.Event('change'));}
-test('dual preview moves one loaded viewer between window and side without another read',async()=>{
-  let reads=0;const f=await uiFixture({adapterSetup:a=>{const preview=a.preview;a.preview=(...args)=>{reads++;return preview(...args);};}});
-  try{const {d,settle}=f;d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));const viewer=d.querySelector('#preview-content pre');assert.ok(d.querySelector('#preview-dialog').open);
-    d.querySelector('#preview-mode-inline').value='side';d.querySelector('#preview-mode-inline').dispatchEvent(new f.w.Event('change'));
-    assert.equal(d.querySelector('#preview-dialog').open,false);assert.equal(d.querySelector('#side-preview').hidden,false);assert.equal(d.querySelector('#side-preview pre'),viewer);assert.equal(reads,1);assert.equal(f.storage.betaExplorerPreview.mode,'side');
-    switchPreview(f,'window');assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog pre'),viewer);assert.equal(reads,1);d.querySelector('#preview-close').click();assert.equal(d.querySelector('#preview-content').children.length,0);
-  }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
+test('double-click has independent window content and preserves side mode and node on close',async()=>{
+ const f=await uiFixture({previewPreferences:{mode:'side',width:400}});try{const {d,w,settle}=f;
+ d.querySelector('[data-key="root.txt"]').click();await settle(()=>d.querySelector('#side-preview pre'));const side=d.querySelector('#side-preview pre');
+ d.querySelector('[data-key="root.txt"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('#preview-dialog pre'));
+ assert.notEqual(d.querySelector('#preview-dialog pre'),side);assert.equal(d.querySelector('#side-preview pre'),side);assert.equal(f.storage.betaExplorerPreview.mode,'side');
+ d.querySelector('#preview-close').click();assert.equal(d.querySelector('#preview-dialog').open,false);assert.equal(d.querySelector('#side-preview').hidden,false);assert.equal(d.querySelector('#side-preview pre'),side);
+ }finally{f.dom.window.close();}
 });
 test('side minimize, close, reopen, expand, resize keyboard, selection and saved settings work',async()=>{
   let reads=0;const f=await uiFixture({previewPreferences:{mode:'side',width:480},adapterSetup:a=>{const preview=a.preview;a.preview=(...args)=>{reads++;return preview(...args);};}});
   try{const {d,w,settle}=f;assert.equal(d.querySelector('#preview-mode').value,'side');assert.equal(d.querySelector('#file-workspace').style.getPropertyValue('--preview-width'),'480px');
     d.querySelector('[data-key="root.txt"]').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#side-preview pre').textContent,'payload');
     d.querySelector('#preview-minimize').click();assert.ok(d.querySelector('#side-preview').classList.contains('minimized'));d.querySelector('#preview').click();assert.ok(!d.querySelector('#side-preview').classList.contains('minimized'));assert.equal(reads,1);
-    d.querySelector('#preview-expand').click();assert.ok(d.querySelector('#file-workspace').classList.contains('preview-expanded'));d.querySelector('#preview-expand').click();assert.ok(!d.querySelector('#file-workspace').classList.contains('preview-expanded'));
+    assert.equal(d.querySelector('#preview-expand').hidden,true);assert.equal(d.querySelector('#preview-lightbox').textContent,'Lightbox');assert.equal(d.querySelector('#preview-lightbox').disabled,true);
     d.querySelector('#preview-divider').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(f.storage.betaExplorerPreview.width,504);
     d.querySelector('#preview-close').click();assert.equal(d.querySelector('#side-preview').hidden,true);assert.ok(!d.querySelector('#file-workspace').classList.contains('with-preview'));d.querySelector('#preview').click();await settle(()=>d.querySelector('#side-preview pre'));assert.equal(reads,2);
     d.querySelector('[data-key="Photos/"]').click();await settle(()=>/File 1 of/.test(d.querySelector('#preview-info').textContent));assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.equal(d.querySelector('#preview').disabled,false);
@@ -428,13 +433,13 @@ test('side unsupported file metadata and Download fallback make no preview read'
 test('rapid selections discard stale success/failure URLs, abort reads, and keep navigation unlocked',async()=>{
   for(const rejectOld of [false,true]){
     let release,oldSignal;const revoked=[];const f=await uiFixture({adapterSetup:a=>{const preview=a.preview;a.preview=(input,options)=>input.entry.key==='root.txt'?new Promise((resolve,reject)=>{oldSignal=options.signal;release=()=>rejectOld?reject(Error('old failure')):resolve({url:URL.createObjectURL(new Blob(['old'],{type:'text/plain'})),type:'text/plain',size:3});}):preview(input,options);}});
-    try{const {d,settle}=f;const original=URL.revokeObjectURL;f.w.URL.revokeObjectURL=url=>{revoked.push(url);original(url);};switchPreview(f,'side');d.querySelector('[data-key="root.txt"]').click();await settle(()=>release);assert.equal(d.querySelector('#refresh').disabled,false);assert.equal(d.querySelector('#copy').disabled,false);d.querySelector('[data-key="Photos/"]').click();assert.equal(oldSignal.aborted,true);release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.match(d.querySelector('#preview-content').textContent,/Folder/);assert.equal(revoked.length,rejectOld?0:1);assert.equal(d.querySelector('#dropzone').dataset.state,'ready');
+    try{const {d,settle}=f;const original=URL.revokeObjectURL;f.w.URL.revokeObjectURL=url=>{revoked.push(url);original(url);};switchPreview(f,'side');d.querySelector('[data-key="root.txt"]').click();await settle(()=>release);assert.equal(d.querySelector('#refresh').disabled,false);assert.equal(d.querySelector('#copy').disabled,false);d.querySelector('[data-key="Photos/"]').click();assert.equal(oldSignal.aborted,true);release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#preview-title').textContent,'Photos');assert.ok(d.querySelector('#preview-content img'));assert.equal(revoked.length,rejectOld?0:1);assert.equal(d.querySelector('#dropzone').dataset.state,'ready');
     }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
   }
 });
 test('both modes render images PDF text video audio; side double click and previous/next share renderer',async()=>{
   const f=await uiFixture();try{const {d,w,settle}=f;const files=[['a.jpg','img'],['b.pdf','iframe'],['c.txt','pre'],['d.mp4','video'],['e.mp3','audio']];for(const [key] of files)await f.bucket.put(key,'fixture payload');d.querySelector('#refresh').click();await settle(()=>d.querySelector('[data-key="a.jpg"]'));
-    for(const mode of ['window','side']){switchPreview(f,mode);for(const [key,tag] of files){d.querySelector('[data-key="'+key+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('#preview-title').textContent===key&&d.querySelector('#preview-content '+tag));assert.equal(d.querySelector('#preview-dialog').open,mode==='window');if(mode==='window')d.querySelector('#preview-close').click();} }
+    for(const mode of ['window','side']){switchPreview(f,mode);for(const [key,tag] of files){d.querySelector('[data-key="'+key+'"]').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await settle(()=>d.querySelector('#preview-dialog .window-viewer h2').textContent===key&&d.querySelector('#preview-dialog .window-content '+tag));assert.equal(d.querySelector('#preview-dialog').open,true);d.querySelector('#preview-close').click();} }
     d.querySelector('[data-key="a.jpg"]').click();await settle(()=>d.querySelector('#preview-content img'));d.querySelector('#preview-next').click();await settle(()=>d.querySelector('#preview-title').textContent==='b.pdf'&&d.querySelector('#preview-content iframe'));d.querySelector('#preview-previous').click();await settle(()=>d.querySelector('#preview-title').textContent==='a.jpg');
   }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
 });
@@ -455,7 +460,7 @@ test('pointer divider respects list/pane bounds and persists width; media cleanu
 });
 test('truncation is explicit in shared preview metadata and survives mode changes',async()=>{
   const f=await uiFixture({adapterSetup:a=>{a.preview=async()=>({url:URL.createObjectURL(new Blob(['bounded text'],{type:'text/plain'})),type:'text/plain',size:12,truncated:true});}});
-  try{const {d,settle}=f;d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));assert.match(d.querySelector('#preview-info').textContent,/Text preview truncated at 12 B/);switchPreview(f,'side');assert.equal(d.querySelector('#side-preview pre').textContent,'bounded text');assert.match(d.querySelector('#preview-info').textContent,/truncated/);
+  try{const {d,settle}=f;d.querySelector('[data-key="root.txt"]').click();d.querySelector('#preview').click();await settle(()=>d.querySelector('#preview-content pre'));assert.match(d.querySelector('#preview-info').textContent,/Text preview truncated at 12 (?:B|bytes)/);d.querySelector('#preview-close').click();switchPreview(f,'side');await settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#side-preview pre').textContent,'bounded text');assert.match(d.querySelector('#preview-info').textContent,/truncated/);
   }finally{f.d.querySelector('#preview-close').click();f.dom.window.close();}
 });
 test('side preview stays usable through copy, rename, Refresh and deleted selection pruning',async()=>{
@@ -488,12 +493,12 @@ test('Window arrows skip unsupported files and folders, respect visible sort/fil
 test('image lightbox reuses the same URL/node, skips non-images, handles backdrop and two-level Escape/cancel',async()=>{
   let reads=0;const f=await imageNavigationFixture({adapterSetup:a=>{const original=a.preview;a.preview=(...args)=>{reads++;return original(...args);};}});const {d,settle}=f,dialog=d.querySelector('#preview-dialog');
   try{
-    const image=d.querySelector('#preview-content img'),url=image.src,open=d.querySelector('#preview-lightbox');assert.equal(open.nextElementSibling.id,'preview-close');assert.equal(open.hidden,false);assert.equal(open.disabled,false);
-    open.click();assert.ok(dialog.classList.contains('image-lightbox'));assert.equal(d.querySelector('#preview-content img'),image);assert.equal(reads,1);image.click();assert.ok(dialog.classList.contains('image-lightbox'));
-    previewKey(f,'ArrowRight');await settle(()=>d.querySelector('#preview-title').textContent==='d.png'&&d.querySelector('#preview-content img'));assert.ok(dialog.classList.contains('image-lightbox'));previewKey(f,'ArrowLeft');await settle(()=>d.querySelector('#preview-title').textContent==='a.jpg'&&d.querySelector('#preview-content img'));
-    const last=d.querySelector('#preview-content img');previewKey(f,'Escape');assert.equal(dialog.classList.contains('image-lightbox'),false);assert.equal(dialog.open,true);assert.equal(d.querySelector('#preview-content img'),last);assert.equal(reads,3);assert.notEqual(last.src,url);
-    open.click();d.querySelector('#preview-content').click();assert.equal(dialog.classList.contains('image-lightbox'),false);assert.equal(dialog.open,true);
-    open.click();const cancel=new f.w.Event('cancel',{cancelable:true});dialog.dispatchEvent(cancel);assert.equal(cancel.defaultPrevented,true);assert.equal(dialog.classList.contains('image-lightbox'),false);assert.equal(dialog.open,true);
+    const image=d.querySelector('#preview-content img'),url=image.src,open=d.querySelector('#preview-lightbox');assert.ok(open.nextElementSibling.matches('[data-close]'));assert.equal(open.hidden,false);assert.equal(open.disabled,false);
+    open.click();assert.ok(dialog.classList.contains('window-lightbox'));assert.equal(d.querySelector('#preview-content img'),image);assert.equal(reads,1);image.click();assert.ok(dialog.classList.contains('window-lightbox'));
+    previewKey(f,'ArrowRight');await settle(()=>d.querySelector('#preview-title').textContent==='d.png'&&d.querySelector('#preview-content img'));assert.ok(dialog.classList.contains('window-lightbox'));previewKey(f,'ArrowLeft');await settle(()=>d.querySelector('#preview-title').textContent==='a.jpg'&&d.querySelector('#preview-content img'));
+    const last=d.querySelector('#preview-content img');previewKey(f,'Escape');assert.equal(dialog.classList.contains('window-lightbox'),false);assert.equal(dialog.open,true);assert.equal(d.querySelector('#preview-content img'),last);assert.equal(reads,3);assert.notEqual(last.src,url);
+    open.click();d.querySelector('#preview-content').click();assert.equal(dialog.classList.contains('window-lightbox'),false);assert.equal(dialog.open,true);
+    open.click();const cancel=new f.w.Event('cancel',{cancelable:true});dialog.dispatchEvent(cancel);assert.equal(cancel.defaultPrevented,true);assert.equal(dialog.classList.contains('window-lightbox'),false);assert.equal(dialog.open,true);
     previewKey(f,'Escape');assert.equal(dialog.open,false);assert.equal(d.querySelector('#preview-content').childElementCount,0);
   }finally{d.querySelector('#preview-close').click();f.dom.window.close();}
 });
@@ -503,9 +508,9 @@ test('rapid lightbox arrows abort old reads, revoke late URLs and preserve lates
   const {d,settle}=f;try{
     const original=URL.revokeObjectURL;f.w.URL.revokeObjectURL=url=>{revoked.push(url);original(url);};
     d.querySelector('#preview-lightbox').click();previewKey(f,'ArrowRight');await settle(()=>release);previewKey(f,'ArrowRight');await settle(()=>d.querySelector('#preview-title').textContent==='f.webp'&&d.querySelector('#preview-content img'));assert.equal(signal.aborted,true);
-    const latest=d.querySelector('#preview-content img').src;release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#preview-content img').src,latest);assert.ok(d.querySelector('#preview-dialog').classList.contains('image-lightbox'));assert.equal(revoked.length,2);
+    const latest=d.querySelector('#preview-content img').src;release();await new Promise(r=>setTimeout(r,20));assert.equal(d.querySelector('#preview-content img').src,latest);assert.ok(d.querySelector('#preview-dialog').classList.contains('window-lightbox'));assert.equal(revoked.length,2);
     previewKey(f,'ArrowRight');await settle(()=>d.querySelector('#preview-title').textContent==='g.gif'&&d.querySelector('#preview-content img'));previewKey(f,'ArrowRight');assert.equal(d.querySelector('#preview-title').textContent,'g.gif');
-    d.querySelector('#preview-close').click();assert.equal(revoked.length,4);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);
+    d.querySelector('#preview-close').click();assert.equal(revoked.length,4);assert.equal(d.querySelector('#preview-dialog').classList.contains('window-lightbox'),false);
   }finally{d.querySelector('#preview-close').click();f.dom.window.close();}
 });
 
@@ -619,9 +624,9 @@ test('Test It observes real Preview arrow transitions and Escape closes Lightbox
  d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
  d.querySelector('#preview-dialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
  d.querySelector('#preview-lightbox').click();await settle(()=>!d.querySelector('[data-guide-next]').disabled);d.querySelector('[data-guide-next]').click();
- assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 18 of 60');assert.ok(d.querySelector('#preview-dialog').classList.contains('image-lightbox'));
+ assert.equal(d.querySelector('[data-guide-progress]').textContent,'Question 18 of 60');assert.ok(d.querySelector('#preview-dialog').classList.contains('window-lightbox'));
  d.querySelector('[data-guide-exit]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
- assert.ok(d.querySelector('.guide-card'));assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog').classList.contains('image-lightbox'),false);assert.equal(d.querySelector('[data-guide-next]').disabled,false);
+ assert.ok(d.querySelector('.guide-card'));assert.ok(d.querySelector('#preview-dialog').open);assert.equal(d.querySelector('#preview-dialog').classList.contains('window-lightbox'),false);assert.equal(d.querySelector('[data-guide-next]').disabled,false);
  await settle(()=>f.storage.betaExplorerTestIt?.records[17].verdict==='PASSED');d.querySelector('[data-guide-exit]').click();
  }finally{f.dom.window.close();}
 });
@@ -1069,4 +1074,31 @@ test('activation effect only glows success after verified readiness; reduced-mot
  assert.match(ui,/showActivationGlow\\('success'\\)/);
  assert.match(css,/\\[data-effect="success"\\]/);
  assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
+});
+
+test('double-click and Enter preserve open, minimized and closed side ownership and saved preference',async()=>{
+ for(const state of ['open','minimized','closed'])for(const key of ['dblclick','Enter']){
+  const f=await uiFixture({previewPreferences:{mode:'side',width:480},tourPreferences:{invitationDismissed:true}});
+  try{const d=f.w.document,row=d.querySelector('[data-key="root.txt"]');row.click();await f.settle(()=>d.querySelector('#side-preview pre'));const node=d.querySelector('#side-preview pre');
+   if(state==='minimized')d.querySelector('#preview-minimize').click();if(state==='closed')d.querySelector('#preview-close').click();
+   const content=d.querySelector('#side-preview #preview-content').innerHTML;
+   if(key==='Enter')row.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));else row.dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));
+   await f.settle(()=>d.querySelector('#preview-dialog .window-content pre'));assert.equal(d.querySelector('#side-preview').hidden,state==='closed');assert.equal(d.querySelector('#side-preview').classList.contains('minimized'),state==='minimized');
+   d.querySelector('#preview-dialog [data-close]').click();assert.equal(d.querySelector('#side-preview #preview-content').innerHTML,content);if(state!=='closed')assert.equal(d.querySelector('#side-preview pre'),node);assert.equal(f.storage.betaExplorerPreview.mode,'side');assert.equal(f.storage.betaExplorerPreview.width,480);
+  }finally{f.dom.window.close();}
+ }
+});
+test('opening and cancelling a window does not abort the side request or revoke its surviving URL',async()=>{
+ let release,sideSignal,calls=0;const f=await uiFixture({previewPreferences:{mode:'side',width:400},adapterSetup:a=>{const original=a.preview;a.preview=(input,options)=>++calls===1?new Promise(resolve=>{sideSignal=options.signal;release=()=>original(input,options).then(resolve);}):original(input,options);}});
+ try{const d=f.w.document,row=d.querySelector('[data-key="root.txt"]');row.click();await f.settle(()=>release);row.dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await f.settle(()=>d.querySelector('#preview-dialog pre'));assert.equal(sideSignal.aborted,false);d.querySelector('#preview-dialog').dispatchEvent(new f.w.Event('cancel',{cancelable:true}));assert.equal(sideSignal.aborted,false);release();await f.settle(()=>d.querySelector('#side-preview pre'));assert.equal(d.querySelector('#side-preview pre').textContent,'payload');assert.equal(d.querySelector('#side-preview').hidden,false);
+ }finally{f.dom.window.close();}
+});
+
+test('Side Preview Lightbox is labeled, independently loaded, and returns to the exact side image',async()=>{
+ const f=await uiFixture({previewPreferences:{mode:'side',width:400}});try{const d=f.w.document;
+ d.querySelector('[data-key="Photos/"]').dispatchEvent(new f.w.MouseEvent('dblclick',{bubbles:true}));await f.settle(()=>d.querySelector('[data-key="Photos/one.jpg"]'));d.querySelector('[data-key="Photos/one.jpg"]').click();await f.settle(()=>d.querySelector('#side-preview img'));
+ const side=d.querySelector('#side-preview img'),button=d.querySelector('#preview-lightbox');assert.equal(button.textContent,'Lightbox');assert.equal(button.disabled,false);button.click();await f.settle(()=>d.querySelector('#immersive-preview-dialog img'));
+ const overlay=d.querySelector('#immersive-preview-dialog');assert.ok(overlay.open);assert.ok(overlay.classList.contains('window-lightbox'));assert.notEqual(overlay.querySelector('img').src,side.src);
+ overlay.dispatchEvent(new f.w.Event('cancel',{cancelable:true}));assert.ok(!overlay.open);assert.equal(d.querySelector('#side-preview img'),side);assert.equal(d.querySelector('#side-preview').hidden,false);assert.equal(d.activeElement,button);
+ }finally{f.dom.window.close();}
 });

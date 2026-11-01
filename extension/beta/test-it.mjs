@@ -144,10 +144,10 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
     if(k==='filter'||k==='find-owned')ok=action==='ui'&&lastInput.target==='filter'&&$('filter').value.trim()&&s.visible.length>0&&s.visible.every(e=>e.displayName.toLocaleLowerCase().includes($('filter').value.toLocaleLowerCase()))&&(k!=='find-owned'||s.visible.some(e=>session.owned(s.current,e.key)&&session.state.objects.some(o=>o.id===session.owned(s.current,e.key)?.id&&o.deleted&&o.key!==e.key)));
     if(k==='sort')ok=action==='ui'&&lastInput.target==='sort'&&$('sort').value==='name'&&s.visible.every((e,i,a)=>i===0||a[i-1].folder&&!e.folder||a[i-1].folder===e.folder&&a[i-1].displayName.localeCompare(e.displayName,undefined,{numeric:true})<=0);
     if(k==='grid'||k==='list')ok=action==='switch-view'&&s.grid===(k==='grid');
-    if(k==='image')ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-content img'));
+    if(k==='image')ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&Boolean(doc.querySelector('#preview-dialog .window-content img, #preview-content img'));
     if(k==='next-image'||k==='previous-image'){
       const direction=k==='next-image'?1:-1;
-      ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&!s.lightbox&&Boolean(doc.querySelector('#preview-content img'))&&detail.direction===direction&&['button','keyboard'].includes(detail.invocation)&&Boolean(detail.previousKey)&&detail.currentKey===s.previewKey&&s.previewKey!==detail.previousKey;
+      ok=action==='preview-open'&&detail.rendered===true&&s.previewMode==='window'&&!s.lightbox&&Boolean(doc.querySelector('#preview-dialog .window-content img, #preview-content img'))&&detail.direction===direction&&['button','keyboard'].includes(detail.invocation)&&Boolean(detail.previousKey)&&detail.currentKey===s.previewKey&&s.previewKey!==detail.previousKey;
       if(k==='next-image'&&ok){previousImage=detail.previousKey;session.state.workflow={...session.state.workflow,previousImage};}
     }
     if(k==='lightbox')ok=['ui','lightbox-change'].includes(action)&&s.lightbox;
@@ -160,7 +160,7 @@ export function installTestIt({document:doc,api,storage,getState,approve,stopTou
       checking=true;const ticket=generation;try{const inventory=await session.reconcile();ok=inventory.originals>0&&(k!=='inventory'||inventory.copies>=2||index===58);if(ticket!==generation)return;record().independentlyObservedResult={inventory,sha256:'All recorded originals and live copies matched their saved SHA-256 and metadata.'};if(ticket!==generation)ok=false;}catch(e){if(ticket===generation){guide?.message(e.message);const a=history.h.active[index+1];if(a)history.finish(index+1,a.id,'BLOCKED',e.message);await save();}}finally{checking=false;}
     }
     if(k==='copy-preview'||k==='document'){
-      ok=action==='preview-open'&&Boolean(s.previewKey)&&Boolean(doc.querySelector('#preview-content img, #preview-content pre, #preview-content iframe'));
+      ok=action==='preview-open'&&Boolean(s.previewKey)&&Boolean(doc.querySelector('#preview-dialog .window-content img, #preview-dialog .window-content pre, #preview-dialog .window-content iframe, #preview-content img, #preview-content pre, #preview-content iframe'));
       if(k==='copy-preview'){const own=session.owned(s.current,s.previewKey);ok=ok&&Boolean(own)&&own.id===(lastCreated||session.state.records[22]?.testOwnedObjectIdentities?.[0]);if(ok){checking=true;try{await session.check(own);}catch{ok=false;if(observationGeneration===generation)guide.message('This copy could not be checked.');}finally{checking=false;}}}else ok=ok&&/\.(pdf|txt|md|json|csv|log|js|mjs|css|html)$/i.test(s.previewKey);
     }
     if(observationGeneration===generation&&k==='resize-side')void save();

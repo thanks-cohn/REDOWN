@@ -1,0 +1,331 @@
+{
+  "scope": "Local Node/jsdom and source checks only; no installed Chrome, screenshot or provider acceptance",
+  "baselineCommit": "8267986",
+  "upstreamDocumentationCommit": "5572079",
+  "node": "v24.22.1",
+  "focused": {
+    "lifecycleAndAppearance": {
+      "passed": 15,
+      "failed": 0
+    },
+    "productionUI": {
+      "passed": 5,
+      "failed": 0
+    }
+  },
+  "fullBaseline": {
+    "tests": 805,
+    "passed": 734,
+    "failed": 71
+  },
+  "fullImplementation": {
+    "tests": 815,
+    "passed": 750,
+    "failed": 65,
+    "skipped": 0,
+    "failures": [
+      {
+        "file": "tests/add-menu-location.test.mjs",
+        "name": "one shared add control targets Simple or Nested and asks which destination when needed"
+      },
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "M0 inventory covers every literal message branch without inventing handlers"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "same-folder copy keeps both and never destroys the source"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "regular Explorer hides stale limitations and keeps new bucket setup optional"
+      },
+      {
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "activation effect only glows success after verified readiness; reduced-motion has a static alternative"
+      },
+      {
+        "file": "tests/brand-and-paginated-history.test.mjs",
+        "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "click creates a visible window before network navigation; repeated clicks focus it"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "successful callback exchanges PKCE and verifies access before saving token"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "callback resumes after service worker restart from session state"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "state mismatch fails without token exchange and allows a fresh retry"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "denied consent and missing authorization code fail cleanly"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "closed popup releases attempt and stale window is replaced on next click"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "expired attempt clears secrets, closes popup, and permits retry"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "failed API verification never stores an access token"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "duplicate navigation events exchange a code only once"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "verification network stall aborts and releases the attempt"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "popup creation errors are returned instead of leaving an in-flight lock"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "settings and worker observing the same callback exchange the code once across contexts"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Worker deployments cannot overlap and a failed deployment releases the lock"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network"
+      },
+      {
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "destination folder pages preserve parent prefix, immediate children and continuation"
+      },
+      {
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests"
+      },
+      {
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "slow bucket loading does not block locations, Explorer, or connection refresh"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "queries never modify the canonical corpus or cited historical evidence"
+      },
+      {
+        "file": "tests/explorer-account-and-history-navigation.test.mjs",
+        "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens"
+      },
+      {
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input"
+      },
+      {
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes"
+      },
+      {
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed"
+      },
+      {
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "large retained histories render in bounded increments and unrelated storage changes do no history work"
+      },
+      {
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager"
+      },
+      {
+        "file": "tests/explorer-parity-audit.test.mjs",
+        "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP"
+      },
+      {
+        "file": "tests/get-url.test.mjs",
+        "name": "switching files while enabling cannot reopen the old file or overwrite current choices"
+      },
+      {
+        "file": "tests/history-go-to.test.mjs",
+        "name": "real Explorer integration selects, scrolls, focuses and invokes the existing preview"
+      },
+      {
+        "file": "tests/history-go-to.test.mjs",
+        "name": "unsupported format is selected and passed to existing preview with truthful navigation status"
+      },
+      {
+        "file": "tests/history-go-to.test.mjs",
+        "name": "reopening loaded History removes stale Explorer readiness diagnostics without hiding transfers"
+      },
+      {
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open"
+      },
+      {
+        "file": "tests/modern-destinations.test.mjs",
+        "name": "tests/modern-destinations.test.mjs"
+      },
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "tests/nested-locations.test.mjs"
+      },
+      {
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "debug-only sections start hidden and toggle exists only inside header disclosure"
+      },
+      {
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready"
+      },
+      {
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating"
+      },
+      {
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "persisted mode combinations restore independently, with Beta off when absent"
+      },
+      {
+        "file": "tests/popup-destinations.test.mjs",
+        "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page"
+      },
+      {
+        "file": "tests/shelf.test.mjs",
+        "name": "provider order, pending integrations, verified account state and actual history remain honest"
+      },
+      {
+        "file": "tests/shelf.test.mjs",
+        "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: selecting existing folder does not populate creation draft"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: new directory is created under the exact parent only after Create"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: valid names including zero and f create at bucket root"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: invalid path segments never send creation requests"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: stalled creation releases button and explains uncertain outcome"
+      },
+      {
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: refreshing during creation cannot leave a permanent Creating status"
+      },
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions"
+      },
+      {
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest"
+      },
+      {
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression"
+      },
+      {
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links"
+      }
+    ],
+    "failuresAbsentFromBaseline": []
+  },
+  "reliability": {
+    "state": "failed",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "failed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "architectureBoundary": "Existing stale source references and missing presetLocationCache anchor, in untouched legacy sources. Map refresh was inspected then reverted; historical source hashes are not refreshed."
+  },
+  "sourceHashes": {
+    "extension/beta/explorer.mjs": "e984bdf414ecbcd73f146323ac6d48d9c4c517c4cc9c29c081394916f38d6715",
+    "extension/beta/explorer.html": "7c865bd98347f48fbf5acef6946aef85878b659a8b3701a94930c3ad1f92f140",
+    "extension/beta/explorer.css": "3172e570c17ae76946936d94bc416e82ef0716b956732cb313b19ae41f561775",
+    "extension/beta/window-preview.mjs": "eaebe3642172a45d9aae0b5004e442d95679587c973d1f16ff8b8fe0b720d462",
+    "extension/beta/test-it.mjs": "ae6475c50e70b3e068440ddcae944d41357ebb486d91c06f31cf34cdedb0253e",
+    "tests/beta-explorer.test.mjs": "41824cdfcef2877c5110ea98fa65f6b98a7f5c5eeb44823b0e37db7229d016b7",
+    "tests/window-preview-independence.test.mjs": "b2e5f82e47be9f0bef2357696f68564523850083e2288a19141a71b750e442aa",
+    "tests/explorer-release-appearance.test.mjs": "45a56e0cc4f20573061b43bec655af0a7ae06248ca960b2ac529d70034c197a5",
+    "scripts/syntax-targets.json": "3f9c0e7bb9db07a265f3f39a2f82add80bc954f85646e0ac0892ff6cd37d1c75"
+  },
+  "notVerified": [
+    "installed Chrome extension",
+    "live Cloudflare",
+    "actual codec playback",
+    "visual screenshots in all themes and compact viewports",
+    "measured WCAG contrast",
+    "separate upstream P1.2A visual overhaul acceptance"
+  ]
+}
