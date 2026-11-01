@@ -50,6 +50,8 @@ Future: Reader ecosystems, visual spectacle and business experiments after relia
 
 **15. Private storage and public URL permission safety.** Never infer public access or write permission from an OAuth login. Require consent and verified addresses before exposing shareable URLs. **Time required: 8–16 hours; Urgency level: CRITICAL.**
 
+**C-SKIN-01. CRITICAL: SKIN API after BOOT and right-click API stabilization.** Once the existing BOOT startup API and V3 right-click API have both passed actual installed-Chrome reliability and save-routing acceptance, implement one formally versioned SKIN API exposing controlled CSS variables, layout zones, component states, orb colors and importable theme manifests to independent creators. Keep REDOWN's proprietary functional core separate from public skin contracts, compile eligible native/helper internals into distributable binaries where appropriate, validate every pack inside the extension, and prove that user customization never compromises permissions, transfers, secure controls or startup. **Time required: 32–64 hours for initial SKIN API separation, conformance suite and prototype; Urgency level: CRITICAL (GATED: AFTER BOOT + RIGHT-CLICK API STABILITY).**
+
 ## Priority 2 — HIGH: core saving, navigation and first-use usability
 
 **16. Provider identities and capability contracts.** Define independent account/container/item IDs and verified operations for each provider. Keep R2 assumptions out of native Drive and other provider connectors. **Time required: 20–40 hours; Urgency level: HIGH.**
@@ -466,3 +468,62 @@ Separately, a creator should be able to **download or build a REDOWN theme pack,
 - **Sequencing:** Stabilize REDOWN core → establish the theme manifest/validator → ship extension-only simple import → add Desktop creator tooling and sync → optional theme orbs/community submission. The exact schedule may change with measured readiness and security testing.
 
 **Status:** Owner-approved conceptual direction recorded here only. **No production code or theme import feature is implemented by this documentation edit.**
+
+---
+
+## CRITICAL FOLLOW-UP — SKIN API, CREATOR CONTROL, AND PROPRIETARY CORE SEPARATION
+
+**Task ID:** `C-SKIN-01`  
+**Urgency:** **CRITICAL, gated**  
+**Trigger:** **BEGIN ONLY AFTER** REDOWN's BOOT API and native V3 right-click API have stable, source-backed and real installed-Chrome acceptance evidence; do not interrupt incident repairs or unsafe transfers for cosmetic work.  
+**Status:** Owner-directed architectural requirement, NOT IMPLEMENTED.  
+**Location in ranked work:** Explicitly listed under **Priority 1 — CRITICAL** as `C-SKIN-01`; the same identifier appears here for its detailed contract.
+
+### Owner vision
+
+> Once REDOWN's two critical operational APIs are stable, **MAKE THE SKIN API**. Let creators control how REDOWN looks, its themed balls/orbs, visual states and responsive design, without handing over REDOWN's proprietary file-transfer, cloud and startup implementation code. The public interface can be generously customizable while eligible internals are supplied in compiled/binary distributions instead of a copy-ready source tree.
+
+This is a desire for **a thriving skin ecosystem with a maintainable, protected proprietary engine**, rather than giving theme makers unrestricted access to the source or producing separate builds of the product for every visual era.
+
+### Why separate the two layers
+
+- **Stable engine:** Owns provider identities, authenticated remote/local file operations, BOOT, native context-menu registration, CURRENT/metadata, History, Favorites/tags, permissions, error reporting and non-negotiable keyboard semantics.
+- **Public SKIN API:** Defines theme manifests, semantic UI slots, customizable CSS design tokens, approved layout variants, icons/orbs, badges, surfaces, shadows, typography, motion and safe breakpoints/overflow behavior. Supported creators customize those without changing a save destination or injecting privileged code.
+- **Shared styling contract:** Both the desktop manager and direct extension importer use the same spec, compiler/validator fixtures, compatibility version rules and rendering tests. Native Desktop is the recommended creator workshop, not required for simple theme imports.
+- **Commercial separation:** REDOWN may publish documentation, schemas, examples and an intentionally narrow SDK while retaining proprietary operational code under an appropriate commercial license; skin creators do not require the private source repository.
+
+### Binary distribution idea, with the real technical boundary
+
+**Owner preference:** If separating CSS makes creator access possible, keep as much **proprietary functional implementation** as practical in compiled binary artifacts, especially in a native desktop companion, so consumers are not receiving a neatly readable copy of the core. Preserve ease of skin creation without handing out the engine's source.
+
+**Critical reality check:** A browser extension is delivered to a user's machine and its HTML, CSS and client-side JavaScript are inspectable. Minification, obfuscation or WebAssembly can make some code harder to understand but cannot make shipped client-side logic impossible to extract or reverse engineer; they also create performance, debugging, accessibility and store-policy tradeoffs. A native compiled executable or library can reduce casual copying of the desktop portion, but binaries themselves can still be reverse engineered. Never put credentials, secret signing keys or access-control authority in client-side binaries and assume they cannot be discovered.
+
+**Recommended feasible architecture:**
+
+1. Keep **extension-required JavaScript and declarative CSS/theme tokens** packaged in the extension, built/minified if appropriate, with a stable public SKIN API and private application source repository.
+2. Put **native-only capabilities** such as authorized desktop-file access, local indexing and selected proprietary algorithms into signed compiled native companion modules behind a narrow, authenticated IPC/Native Messaging contract where practical, without moving browser-owned action/context-menu logic to an unavailable helper.
+3. Keep genuinely secret or abuse-sensitive functions on a trusted server when justified and feasible; do not require constant connectivity for ordinary file browsing or installed skins.
+4. Expose **only versioned data schemas, token names, component slots, sample skin code and tests** necessary to build skins. Do not publish internal cloud transfer source merely to enable design changes.
+5. Prefer demonstrable quality, brand, creator ecosystem and license protection over claiming that code cannot be copied. Never advertise a binary as unbreakable or rely on obscurity to enforce permissions.
+
+### First SKIN API deliverables and acceptance
+
+1. **Inventory/architectural audit:** Map every current inline CSS, theme override and hardcoded color/size to a semantic UI component without prematurely rewriting BOOT, right-click or file transfer internals.
+2. **Versioned `skin.json` / design token contract:** Cover recognized theme IDs, compatible app versions, safe asset types, optional layout variants, light/dark baselines, typography, focus and hover, accent/orb colors, animations, responsive rules and required fallback styles.
+3. **Public minimal developer kit:** Ship sample themes, visual slot documentation, a manifest schema validator, screenshot/regression fixtures and clear rights/creator attribution, without sharing proprietary application source.
+4. **One renderer and validator:** Validate and apply themes in the extension, even when Desktop helped prepare them; reject unsafe style injection, scripts, unsupported resources and attempts to conceal security-critical controls.
+5. **Safe creator freedom:** Allow personalization of theme backgrounds, shadows, borders, image cards, layout composition in documented zones and decorative orb/ball colors while preserving readable navigation, accessible keyboard focus and responsive fallback.
+6. **Atomic theme application and rollback:** Preserve a last-known-good skin and built-in fallback; malformed or incompatible themes must not prevent the app, Shelf, context menu or Explorer from opening.
+7. **Binary/native helper assessment:** Identify what functionality actually benefits from native compilation and what must remain in the browser extension; document realistic limitations and existing app store/policy requirements before introducing packaging complexity.
+8. **Honest proof:** Test built-in and external themes in installed Chrome at narrow and wide viewports, 200% zoom where practical, dark/light themes, reduced motion, offline desktop absence and failed/partial theme imports. Report exact failed tests and distinguish preview from installed acceptance.
+
+### Explicit non-goals and ordering
+
+- **Do not** replace REDOWN's stable provider engine, create a new menu writer, introduce a second BOOT entrypoint or rewrite cloud saving under the guise of skin isolation.
+- **Do not** gate essential startup recovery or file safety behind a desktop app or subscription.
+- **Do not** let creators modify browser/extension privileges, security and permission prompts, exact save routes or arbitrary privileged JavaScript through theme packs.
+- **Do not** make complicated native binaries a prerequisite for an ordinary CSS/theme-only importer.
+- **Do not** claim the extension's shipped implementation is secret because its presentation CSS is isolated.
+- **Sequence:** Complete BOOT API → complete and real-Chrome-verify right-click API → validate data safety and stable core UI contracts → implement `C-SKIN-01` SKIN API separation and compatibility tests → open simple theme imports → expand native desktop creator tools and community themes.
+
+**Development handoff:** When the stability gates are met, create a scoped `NEED_TO_DO/CODEX/` implementation request for SKIN API engineering with source inspection, exact tests, commits and a rollback plan. This weekly list is a priority/architecture record, not an instruction to prematurely ship a new theme API now.
