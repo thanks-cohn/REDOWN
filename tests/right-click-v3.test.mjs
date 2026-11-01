@@ -5,6 +5,8 @@ import {webcrypto} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import {JSDOM} from 'jsdom';
+import {IDBFactory} from 'fake-indexeddb';
+const currentSource=await readFile(new URL('../extension/right-click-current.js',import.meta.url),'utf8');
 const read=p=>readFile(new URL('../'+p,import.meta.url),'utf8');
 const [domain,bg,ui,html,legacy,legacyModel,legacyEngine]=await Promise.all(['extension/right-click-v3.js','extension/background.js','extension/beta/right-click-v3-ui.js','extension/beta/explorer.html','extension/destination-config.js','extension/nested-locations.js','extension/right-click-legacy.js'].map(read));
 const profile={id:'p',type:'cloudflare-r2',accountId:'a',accountName:'Account A',bucketName:'bucket',workerUrl:'https://fixture.invalid',token:'synthetic',menuConfigVersion:1,simplePrimaryEnabled:true,menuLabel:'Legacy',defaultPrefix:'legacy-folder'};
@@ -25,9 +27,10 @@ test('V3 disabled ancestors, removed subtrees, empty stores and revoked readines
 test('V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8',()=>{
  const m=model();for(const mutate of [s=>s.destinations.push(destination()),s=>s.destinations[1].parentId='gone',s=>s.destinations[0].parentId='deep',s=>s.destinations[1].accountId='other',s=>s.destinations[1].prefix='a/../b',s=>s.destinations[1].prefix='a//b',s=>s.destinations[0].prefix='界'.repeat(301),s=>s.destinations[0].id='bad:id']){const s=store();mutate(s);assert.throws(()=>m.validate(s,[profile]));}
 });
-function background(local={profiles:[structuredClone(profile)]},failure={}){
+function background(local={profiles:[structuredClone(profile)]},failure={},database=null){
  local.rightClickV3Migration??={version:1};
  const native=[],writes=[],c=vm.createContext({TextEncoder,structuredClone,setTimeout,clearTimeout,crypto:webcrypto});
+ if(database){c.indexedDB=database;vm.runInContext(currentSource,c);}
  c.chrome={runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,lastError:null},storage:{local:{get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])])),set:async patch=>{writes.push(structuredClone(patch));Object.assign(local,structuredClone(patch));}}},contextMenus:{remove(id,cb){const index=native.findIndex(x=>x.id===id);if(index>=0)native.splice(index,1);cb?.();},update(id,patch,cb){const item=native.find(x=>x.id===id);if(item)Object.assign(item,patch);else c.chrome.runtime.lastError={message:'missing'};cb?.();c.chrome.runtime.lastError=null;},removeAll:async()=>{if(failure.remove)throw Error('remove failed');native.length=0;},create(item,callback){if(failure.create)c.chrome.runtime.lastError={message:'create failed'};else native.push(item);callback?.();c.chrome.runtime.lastError=null;}}};
  vm.runInContext(domain+legacyModel+legacy+legacyEngine,c);c.getProfiles=async()=>structuredClone(local.profiles||[]);c.ROOT_MENU_ID='redown';
  vm.runInContext('let destinationSaveQueue=Promise.resolve();\n'+bg.slice(bg.indexOf('function v3MenuTransaction('),bg.indexOf('/* Explicit, opt-in gallery capture')),c);
@@ -489,4 +492,21 @@ test('T06 T08 T09 T10 Narrow only configured endpoints in distinct buckets and n
  assert.equal(actions.length,6);assert.ok(plan.entries.some(e=>e.id==='v3:d0:send'));assert.ok(!plan.entries.some(e=>e.title==='screenshots'||e.title==='Buckets'));
  assert.equal(plan.entries.at(-1).title,'Home');assert.equal(plan.entries.at(-2).type,'separator');
  const noDefault=m.project(s,profiles.filter(p=>p.bucketName!=='redown'),narrow);assert.ok(!noDefault.entries.some(e=>e.title==='Home'));
+});
+test('T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart',async()=>{
+ const database=new IDBFactory(),h=background(undefined,{create:true},database);
+ const saved=await h.call('saveRightClickV3',{expected:0,destinations:store().destinations});assert.equal(saved.menuUpdated,false);
+ const durable=h.c.RedownRightClickCurrent.create(database);assert.equal((await durable.readState()).rightClickV3.destinations.length,3);
+ const pending=await durable.generations();assert.ok(pending.length);
+ const local=structuredClone(h.local);delete local.rightClickV3;delete local.rightClickV3Inventory;
+ const restarted=background(local,{},database);await restarted.c.rebuildMenus();
+ assert.equal(restarted.local.rightClickV3.destinations.length,3);assert.ok(restarted.native.some(n=>n.id==='v3:deep'));
+ const dump=await durable.dump();assert.ok(dump.stores.pointers.every(p=>p.applied===p.desired));
+});
+test('T24 native capacity preserves Home and full projection resolves omitted authorized routes',()=>{
+ const m=model(),profiles=Array.from({length:10},(_,i)=>({...profile,id:'p'+i,bucketName:i?'bucket'+i:'redown'})),config={...m.empty(),levelScopes:{version:1,revision:0,buckets:profiles.map(p=>({id:p.id,profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,enabled:true}))}};
+ const inventory={version:2,key:m.inventoryKey(config,profiles,level),at:Date.now(),complete:true,nodes:profiles.flatMap(p=>[{profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,prefix:'',parent:null,level:0},...Array.from({length:60},(_,i)=>({profileId:p.id,accountId:p.accountId,bucketName:p.bucketName,prefix:'folder'+i,parent:'',level:1}))])};
+ const bounded=m.project(config,profiles,level,inventory),full=m.project(config,profiles,level,inventory,'redown',Date.now(),100000);
+ assert.ok(bounded.entries.length<=300);assert.equal(bounded.entries.at(-1).title,'Home');assert.equal(bounded.entries.at(-2).type,'separator');assert.ok(bounded.entries.some(e=>e.id.endsWith(':more')));
+ assert.ok(full.entries.length>600);const omitted=full.entries.find(e=>!bounded.entries.some(b=>b.id===e.id)&&m.resolve(e.id,config,profiles,level,inventory,Date.now(),100000));assert.ok(omitted);assert.equal(m.resolve(omitted.id,config,profiles,level,inventory),null);assert.ok(m.resolve(omitted.id,config,profiles,level,inventory,Date.now(),100000));
 });

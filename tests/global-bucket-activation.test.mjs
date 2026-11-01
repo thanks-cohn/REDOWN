@@ -80,15 +80,19 @@ test('real paginated account and bucket discovery handles both pages and rejects
  assert.equal((await c.listCloudflareAccounts()).length,51);assert.deepEqual(Array.from(await c.listBuckets('a'),d=>d.name),['first','second']);assert.ok(urls.some(u=>u.includes('cursor=next')));
  c.cfFetch=async()=>({ok:true,json:async()=>({result:{buckets:[],cursor:'same'}})});await assert.rejects(c.listBuckets('a'),/did not advance/);
 });
-test('Simple and Narrow retain shortcuts; Level roots resolve without inventory and disabled deep participation retains root access',async()=>{
+test('Simple retains roots; Narrow only configured paths; Depth only participating roots',async()=>{
  const h=await fixture();await activate(h);const profiles=h.local.profiles;const m=h.context.RedownRightClickV3;
  const cfg={...h.local.rightClickV3,activatedBuckets:h.local.rightClickActivatedBuckets,levelScopes:h.local.rightClickV3LevelScopes};
  cfg.destinations=[{id:'custom',profileId:profiles[0].id,accountId:'a',bucketName:'alpha',label:'Custom path',prefix:'Images/Photos',enabled:true,parentId:null}];
  for(const presentation of [{style:'simple'},{style:'nested',nested:'narrow'},{style:'nested',nested:'level',depth:10}]){
-  const plan=m.project(cfg,profiles,presentation,null);for(const b of ['alpha','beta']){const target=plan.entries.map(e=>m.resolve(e.id,cfg,profiles,presentation,null)).find(t=>t?.profile.bucketName===b&&t.prefix==='');assert.ok(target,b);}
-  if(presentation.nested!=='level')assert.equal(m.resolve('v3:custom',cfg,profiles,presentation,null)?.prefix,'Images/Photos');
+  const plan=m.project(cfg,profiles,presentation,null);
+  if(presentation.nested==='narrow'){
+    assert.ok(!plan.entries.some(e=>e.title==='beta'));
+    assert.equal(m.resolve('v3:custom',cfg,profiles,presentation,null)?.prefix,'Images/Photos');
+  }else for(const b of ['alpha','beta'])assert.ok(plan.entries.map(e=>m.resolve(e.id,cfg,profiles,presentation,null)).some(t=>t?.profile.bucketName===b&&t.prefix===''),b);
+  if(!presentation.nested)assert.equal(m.resolve('v3:custom',cfg,profiles,presentation,null)?.prefix,'Images/Photos');
  }
- cfg.levelScopes.buckets[1].enabled=false;const level={style:'nested',nested:'level',depth:10};const plan=m.project(cfg,profiles,level,null);assert.ok(plan.entries.some(e=>m.resolve(e.id,cfg,profiles,level,null)?.profile.bucketName==='beta'));
+ cfg.levelScopes.buckets[1].enabled=false;const level={style:'nested',nested:'level',depth:10};const plan=m.project(cfg,profiles,level,null);assert.ok(!plan.entries.some(e=>m.resolve(e.id,cfg,profiles,level,null)?.profile.bucketName==='beta'));
 });
 test('two native root clicks use distinct save destinations and verify the existing transfer completion path',async()=>{
  const h=await fixture();await activate(h);const transfers=[],receipts=[];

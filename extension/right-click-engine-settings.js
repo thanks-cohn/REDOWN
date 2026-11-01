@@ -11,7 +11,7 @@
       // Export menu data only, never profile tokens or Worker credentials.
       const fields=['id','type','accountId','accountName','bucketName','name','defaultPrefix','simpleBucketName','menuLabel','menuOrder','simplePrimaryEnabled','simplePrimaryOrder','showInContextMenu','simpleOptions','nestedMenu','menuTree','explorerManaged'];
       const recovery={version:1,migration:s.rightClickV3Migration,config:original.rightClickV3,profiles:(original.profiles||[]).map(p=>Object.fromEntries(fields.filter(k=>Object.hasOwn(p,k)).map(k=>[k,p[k]])))};
-      const url=URL.createObjectURL(new Blob([JSON.stringify(recovery,null,2)],{type:'application/json'}));
+      const url=URL.createObjectURL(new Blob([JSON.stringify(RedownRightClickCurrent.safe(recovery),null,2)],{type:'application/json'}));
       const a=document.createElement('a');a.href=url;a.download='redown-destination-recovery.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
       status.textContent='Destination recovery exported. Original paths and labels remain saved locally.';
     }catch{status.textContent='Recovery export failed. Retry from Settings.';}

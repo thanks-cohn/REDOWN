@@ -14,10 +14,10 @@ test('Simple default leaf routes only to literal redown root, independent of Exp
  assert.deepEqual(structuredClone(plan.entries.map(e=>[e.id,e.parentId,e.title])),[['v3:provider:cloudflare','redown','Cloudflare']]);
  const route=m.resolve('v3:provider:cloudflare',c,[other,p],options);assert.equal(route.profile.id,'home');assert.equal(route.prefix,'');assert.equal(JSON.stringify(c),before);
 });
-test('additional deep labels and activated buckets are flat Cloudflare siblings, default first',()=>{
+test('additional deep labels and activated buckets are flat Cloudflare siblings, native separator and Home last',()=>{
  const m=domain(),p=profile(),b=profile('other','a','Other Bucket'),c={...config([target(p)]),activatedBuckets:{buckets:[{...target(p,'root','','REDOWN')},{...target(b,'other','','Other Bucket')}]}};
- const plan=m.project(c,[p,b],options);assert.deepEqual(Array.from(plan.entries,e=>e.title),['Cloudflare','REDOWN','Photography','Other Bucket']);
- assert.ok(plan.entries.slice(1).every(e=>e.parentId==='v3:provider:cloudflare'));assert.ok(!plan.entries.some(e=>e.title==='Buckets'));assert.equal(m.resolve('v3:provider:cloudflare',c,[p,b],options),null);
+ const plan=m.project(c,[p,b],options);assert.deepEqual(Array.from(plan.entries,e=>e.title),['Cloudflare','Photography','Other Bucket',undefined,'Home']);
+ assert.equal(plan.entries.at(-2).type,'separator');assert.ok(plan.entries.slice(1).every(e=>e.parentId==='v3:provider:cloudflare'));assert.ok(!plan.entries.some(e=>e.title==='Buckets'));assert.equal(m.resolve('v3:provider:cloudflare',c,[p,b],options),null);
  assert.equal(m.resolve('v3:provider:cloudflare:default',c,[p,b],options).prefix,'');assert.equal(m.resolve('v3:custom',c,[p,b],options).prefix,'photos/2026/final');
  c.destinations=[];c.activatedBuckets.buckets=[c.activatedBuckets.buckets[0]];assert.equal(m.project(c,[p,b],options).entries.length,1);
 });

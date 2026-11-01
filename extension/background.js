@@ -920,6 +920,7 @@ importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
+importScripts("right-click-current.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
 importScripts("explorer-diagnostics.js");
@@ -2101,20 +2102,20 @@ function v3MenuTransaction(message,sender){
       if(message.expected!==config.revision)throw Error('V3 destinations changed. Reload before saving.');
       next={...config,version:1,revision:config.revision+1,destinations:Array.isArray(message.destinations)&&message.destinations.length<=200?message.destinations.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','parentId','prefix','label','enabled'].map(k=>[k,d?.[k]]))):null};
       RedownRightClickV3.validate(next,stored.profiles||[]);
-      await chrome.storage.local.set({rightClickV3:next});
+      await commitV3Current({rightClickV3:next});
     }else if(message.type==='setRightClickV3LevelScopes'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       const current=stored.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes();
       if(message.expected!==current.revision)throw Error('Level buckets changed. Reload before saving.');
       const scopes={version:1,revision:current.revision+1,buckets:message.buckets?.map(d=>Object.fromEntries(['id','profileId','accountId','bucketName','enabled'].map(k=>[k,d[k]])))};
       RedownRightClickV3.validateScopes(scopes,stored.profiles||[]);
-      await chrome.storage.local.set({rightClickV3LevelScopes:scopes});
+      await commitV3Current({rightClickV3LevelScopes:scopes});
     }else if(message.type==='setRightClickV3Presentation'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       const current=RedownRightClickV3.presentation(stored.rightClickV3Presentation);
       if(message.expectedPresentation!==JSON.stringify(current))throw Error('Menu presentation changed in another window. Reload before saving.');
       const presentation=RedownRightClickV3.validatePresentation(message.presentation);
-      await chrome.storage.local.set({rightClickV3Presentation:presentation});
+      await commitV3Current({rightClickV3Presentation:presentation});
     }else if(message.type==='applyRightClickV3'){
       if(page!==explorer)throw Error('Open V3 Setup in Explorer.');
       if(message.expected!==config.revision||message.expectedScopes!==(stored.rightClickV3LevelScopes?.revision||0)||message.expectedPresentation!==JSON.stringify(RedownRightClickV3.presentation(stored.rightClickV3Presentation)))throw Error('Configuration changed. Reload to reconcile before applying.');
@@ -2128,10 +2129,40 @@ function v3MenuTransaction(message,sender){
   });
   destinationSaveQueue=operation;return operation;
 }
+// The IndexedDB model owns committed menu data; storage.local is a compatibility
+// mirror for existing UI/message contracts. A failed mirror is repaired on wake.
+let currentMenuLane=Promise.resolve(),currentMenuDatabase;
+function withCurrentMenu(work){
+  const operation=currentMenuLane.catch(()=>{}).then(work);currentMenuLane=operation;return operation;
+}
+function currentMenuStore(){return currentMenuDatabase??=globalThis.RedownRightClickCurrent?.create();}
+async function commitV3Current(patch){
+  return withCurrentMenu(async()=>{
+    const store=currentMenuStore();
+    if(store){const {profiles=[],rightClickHistoryPolicy='daily'}=await chrome.storage.local.get(['profiles','rightClickHistoryPolicy']);await store.commitPatch(patch,{profiles,policy:rightClickHistoryPolicy});}
+    await chrome.storage.local.set(patch);
+  });
+}
+async function restoreDurableV3(){
+  return withCurrentMenu(async()=>{
+    const store=currentMenuStore();if(!store)return;
+    const {profiles=[]}=await chrome.storage.local.get('profiles');
+    let state=await store.readState(profiles);
+    if(!state.rightClickV3){
+      const source=await chrome.storage.local.get(['rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles','rightClickHistoryPolicy']);
+      if(!source.rightClickV3)return;
+      await store.commitPatch(source,{profiles:source.profiles||[],policy:source.rightClickHistoryPolicy||'daily'});state=await store.readState(profiles);
+    }else await store.commitPatch({}, {policy:(await chrome.storage.local.get('rightClickHistoryPolicy')).rightClickHistoryPolicy||'daily'});
+    const mirror=await chrome.storage.local.get(Object.keys(state));
+    const changed=Object.fromEntries(Object.entries(state).filter(([key,value])=>JSON.stringify(mirror[key])!==JSON.stringify(value)));
+    if(Object.keys(changed).length)await chrome.storage.local.set(changed);
+  });
+}
 // Migration and global activation reuse the destination lane and native registrar.
 let v3InitializationQueue=Promise.resolve();
 function ensureV3Only(){
   const operation=v3InitializationQueue.catch(()=>{}).then(async()=>{
+    await restoreDurableV3();
     const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Migration','profiles']);
     if(!s.rightClickV3Migration){
       const migrated=RedownRightClickV3.migrate(s,s.profiles||[]);
@@ -2199,7 +2230,7 @@ async function runGlobalActivation(job){
         if(!scopes.buckets.some(d=>globalBucketIdentity(d)===globalBucketIdentity(record))){scopes.buckets.push({...record});scopes.revision++;}
         RedownRightClickV3.validateScopes({version:1,revision:0,buckets:[record]},s.profiles||[]);
         if(scopes.buckets.length>200||activated.buckets.length>200)throw Error('Bucket menu limit reached.');
-        await chrome.storage.local.set({rightClickActivatedBuckets:activated,rightClickV3LevelScopes:scopes});
+        await commitV3Current({rightClickActivatedBuckets:activated,rightClickV3LevelScopes:scopes});
       });
       destinationSaveQueue=commit;await commit;
       bucket.profileId=profile.id;bucket.state='ready';delete bucket.error;
@@ -2285,7 +2316,7 @@ async function refreshV3Inventory(force=false){
     // No late discovery may replace an inventory for changed roots/credentials.
     if(RedownRightClickV3.presentation(latest.rightClickV3Presentation).style!=='nested'||RedownRightClickV3.presentation(latest.rightClickV3Presentation).nested!=='level'||JSON.stringify(latest.profiles)!==JSON.stringify(profiles)||RedownRightClickV3.inventoryKey({...(latest.rightClickV3||RedownRightClickV3.empty()),levelScopes:latest.rightClickV3LevelScopes},latest.profiles||[],latest.rightClickV3Presentation)!==key){superseded=true;return;}
     globalThis.redownRuntimeObserver?.record({operation:'api.read',outcome:inventory.complete?'success':'failed',code:inventory.complete?'OK':'UNEXPECTED_RESPONSE'});
-    await chrome.storage.local.set({rightClickV3Inventory:inventory});
+    await commitV3Current({rightClickV3Inventory:inventory});
     await persistV3MenuSnapshot();
     await rebuildMenus();
   })();
@@ -2301,6 +2332,8 @@ async function rightClickV3Snapshot(sender){
     profiles:(s.profiles||[]).filter(p=>p.type==='cloudflare-r2'&&p.workerUrl&&p.token).map(p=>({id:p.id,accountId:p.accountId,accountName:p.accountName||p.accountId,bucketName:p.bucketName}))};
 }
 async function resolveActiveRightClick(id,profiles){
+  await restoreDurableV3();
+  profiles=await getProfiles();
   const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets']);
   return RedownRightClickV3.resolve(id,{...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes,activatedBuckets:s.rightClickActivatedBuckets},profiles,s.rightClickV3Presentation,s.rightClickV3Inventory);
 }
@@ -2330,6 +2363,7 @@ async function rebuildMenus() {
       await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now()}});
       stage='migration';await ensureV3Only();
       stage='snapshot';await restoreV3MenuSnapshot();
+      const durableGenerations=await currentMenuStore()?.generations();
       const applicationKey=await menuApplicationKey();
       stage='projection';
       const receipt=await buildMenus(()=>{stage='native-registration';});
@@ -2337,6 +2371,7 @@ async function rebuildMenus() {
       const current=applicationKey===await menuApplicationKey();
       await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,state:!current?'superseded':'registered'}});
       await persistV3MenuSnapshot();
+      if(current)await currentMenuStore()?.acknowledge(durableGenerations);
       return receipt;
     }catch(error){
       // Also covers interrupted/failed removal and malformed projection inputs.
@@ -2653,7 +2688,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
     void chrome.storage.local.get(['rightClickV3Inventory']).then(s=>{
       const inventory=s.rightClickV3Inventory;
       if(!inventory)return chrome.storage.local.set({'right-click.json':null,rightClickV3Inventory:null});
-      const retained={...inventory,nodes:inventory.nodes.filter(n=>!affected.includes(n.profileId)),frontier:(inventory.frontier||[]).filter(n=>!affected.includes(n.profileId)),at:0};
+      const retained={...inventory,nodes:inventory.nodes,frontier:(inventory.frontier||[]).filter(n=>!affected.includes(n.profileId)),at:0};
       return chrome.storage.local.set({rightClickV3Inventory:retained,'right-click.json':null});
     }).then(()=>rebuildMenus()).catch(()=>{});
   }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes||changes.rightClickActivatedBuckets)void rebuildMenus().then(()=>changes.rightClickV3Presentation||changes.rightClickV3LevelScopes?refreshV3Inventory():undefined).catch(()=>{});
@@ -2762,13 +2797,21 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     // The former saved-URL utility is available through Explorer's Get URL action.
     return openRedownHome(tab);
   }
-  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage" || ["v3:provider:cloudflare:setup","v3:provider:cloudflare:default-setup","v3:provider:cloudflare:more"].includes(info.menuItemId)) {
+  if(info.menuItemId==='v3:provider:cloudflare:more'){
+    const id=crypto.randomUUID();
+    await chrome.storage.session.set({['rightClickChoice:'+id]:{info,tab,at:Date.now()}});
+    return chrome.tabs.create({url:chrome.runtime.getURL('right-click-chooser.html')+'#'+id});
+  }
+  if (info.menuItemId === "redown-setup" || info.menuItemId === "redown-manage" || ["v3:provider:cloudflare:setup","v3:provider:cloudflare:default-setup"].includes(info.menuItemId)) {
     return chrome.tabs.create({url:chrome.runtime.getURL("beta/explorer.html#explorer-destinations")});
   }
 
   const profiles = await getProfiles();
   const resolved=await resolveActiveRightClick(info.menuItemId,profiles);
   if(!resolved)return notify("REDOWN","That destination is inactive or was removed. Open Right-click setup in Explorer.");
+  return saveResolvedRightClick(info,tab,resolved,profiles);
+});
+async function saveResolvedRightClick(info,tab,resolved,profiles){
   launchSaveDroplet(info,tab);
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
@@ -2822,7 +2865,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await recordTransfer({pageUrl,ok:false,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",error:message,...receipt});
     await notify("REDOWN failed",message);
   }
-});
+}
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   const traceId=crypto.randomUUID();
@@ -2835,6 +2878,34 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   };
   (async () => {
     try {
+      if(message?.type==='rightClickRestoreCommitted'){
+        if(_sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))throw Error('Restore from Shelf Settings.');
+        await rebuildMenus();return sendResponse({ok:true});
+      }
+      if(['rightClickChooserList','rightClickChooserSave'].includes(message?.type)){
+        if(_sender?.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('right-click-chooser.html'))throw Error('Open the destination chooser from a right-click.');
+        const key='rightClickChoice:'+message.id;
+        const intent=(await chrome.storage.session.get(key))[key];
+        if(!intent||Date.now()-intent.at>600000)throw Error('This save request expired. Right-click the item again.');
+        await restoreDurableV3();
+        const stored=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','rightClickV3Inventory']);
+        const config={...(stored.rightClickV3||RedownRightClickV3.empty()),levelScopes:stored.rightClickV3LevelScopes,activatedBuckets:stored.rightClickActivatedBuckets};
+        const profiles=await getProfiles(),settings=RedownRightClickV3.presentation(stored.rightClickV3Presentation);
+        if(settings.nested==='level')settings.depth=10;
+        const plan=RedownRightClickV3.project(config,profiles,settings,stored.rightClickV3Inventory,'redown',Date.now(),100000);
+        const resolve=id=>RedownRightClickV3.resolve(id,config,profiles,settings,stored.rightClickV3Inventory,Date.now(),100000,plan);
+        if(message.type==='rightClickChooserList'){
+          return sendResponse({ok:true,entries:plan.entries.flatMap(row=>{const target=resolve(row.id);return target?[{id:row.id,title:row.title,accountId:target.profile.accountId,bucketName:target.profile.bucketName,prefix:target.prefix}]:[]})});
+        }
+        const target=resolve(message.destinationId);if(!target)throw Error('That destination is no longer authorized.');
+        // Claim before any transfer await: another chooser tab cannot replay this intent.
+        const claims=globalThis.redownChooserClaims??=new Set();
+        if(claims.has(key))throw Error('This save request was already used.');
+        claims.add(key);
+        await chrome.storage.session.remove(key);
+        await saveResolvedRightClick({...intent.info,menuItemId:message.destinationId},intent.tab,target,profiles);
+        return sendResponse({ok:true});
+      }
       if(message?.type==="runtimeDiagnosticsV1"){
         const allowed=_sender?.url===chrome.runtime.getURL("options.html");
         const {debugModeEnabled}=await chrome.storage.local.get("debugModeEnabled");

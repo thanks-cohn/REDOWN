@@ -90,7 +90,7 @@ test('failed folder discovery leaves root and valid configured destinations acce
 
 test('a failed rebuild after successful registration preserves a recoverable root instead of clearing everything',async()=>{
  const failure={},h=worker(undefined,failure);await h.ready();assert.ok(h.native.has('v3:one'));
- h.local.rightClickV3.destinations[0].id='changed';failure.create='v3:changed';await assert.rejects(h.rebuild(),/rebuild failed/);
+ h.local.rightClickV3.destinations[0].id='changed';await h.context.commitV3Current({rightClickV3:h.local.rightClickV3});failure.create='v3:changed';await assert.rejects(h.rebuild(),/rebuild failed/);
  assert.ok(h.native.has('redown'));assert.ok(h.native.has('redown-manage'));assert.equal(h.local.rightClickMenuStatus.state,'failed');
  await h.click({windowId:4});assert.ok(h.calls.some(c=>c[0]==='panel'));
  await h.rebuild();assert.ok(h.native.has('v3:changed'));
@@ -149,7 +149,7 @@ test('an unrelated Shelf window never wins the readiness first-response race',as
 test('ordered destination changes recreate siblings while retaining root management',async()=>{
  const initial=config();initial.rightClickV3.destinations.push({...initial.rightClickV3.destinations[0],id:'two',label:'Second',prefix:'second'});
  const h=worker(initial);await h.ready();
- h.local.rightClickV3.destinations.reverse();await h.rebuild();
+ h.local.rightClickV3.destinations.reverse();await h.context.commitV3Current({rightClickV3:h.local.rightClickV3});await h.rebuild();
  const ids=[...h.native.keys()];assert.ok(ids.indexOf('v3:two')<ids.indexOf('v3:one'));
  assert.ok(h.native.has('v3:provider:cloudflare'));assert.ok(!h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,1);
 });

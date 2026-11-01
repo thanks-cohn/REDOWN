@@ -64,5 +64,9 @@
   "extension/beta/history-target.mjs",
   "extension/entry-bootstrap.js",
   "extension/popup-recovery.js",
-  "extension/toolbar-appearance.js"
+  "extension/toolbar-appearance.js",
+  "extension/right-click-current.js",
+  "extension/right-click-backup.js",
+  "extension/right-click-backup-settings.js",
+  "extension/right-click-chooser.js"
 ]

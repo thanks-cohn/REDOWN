@@ -165,7 +165,7 @@
     return {version:2,key,at:clock(),depth:options.depth,nodes,pages,observations,frontier:[...queue,...retries].map(t=>({profileId:t.node.profileId,prefix:t.node.prefix,cursor:t.cursor,seen:t.seen})),unknownRemaining:!!warnings.size,complete:!warnings.size&&!nodes.some(n=>n.partial),warnings:[...warnings]};
   }
   const nodeId=n=>'v3:cloud:'+encodeURIComponent(JSON.stringify([n.profileId,n.accountId,n.bucketName,n.prefix]));
-  function levelProjection(config,profiles,settings,inventory,root,now){
+  function levelProjection(config,profiles,settings,inventory,root,now,budget=limits.entries){
     const key=inventoryKey(config,profiles,settings),valid=fresh(inventory,key,now),out=[],warnings=[];
     if(!roots(config,profiles).length)return {entries:out,warnings:['Select participating buckets in Level setup.'],complete:false};
     if(!valid)inventory={...inventory,nodes:rememberedNodes(config,profiles,inventory),warnings:['Folder discovery is pending.'],observations:[],at:inventory?.at||now,complete:false};
@@ -174,11 +174,12 @@
     for(const d of authorized)if(!nodes.some(n=>identity(n)===identity(d)&&n.prefix===''))nodes.push({...d,prefix:'',parent:null,level:0});
     // Reserve every root before breadth-first allocation. Each folder reserves
     // its parent Save here atomically; later buckets cannot be starved by DFS.
+    nodes.sort((a,b)=>compare(identity(a),identity(b))||compare(a.prefix,b.prefix));
     const pending=nodes.filter(n=>n.parent===null).map(n=>({node:n,parentId:root}));
     const byParent=n=>nodes.filter(c=>identity(c)===identity(n)&&c.parent===n.prefix&&c.level===n.level+1);
     while(pending.length){
       const {node,parentId}=pending.shift(),id=nodeId(node),children=byParent(node),cost=children.length?2:1;
-      if(out.length+cost>limits.entries){warnings.push('Chrome menu entry limit reached; some folders are not shown.');continue;}
+      if(out.length+cost>budget){warnings.push('Chrome menu entry limit reached; some folders are not shown.');continue;}
       const collision=nodes.filter(n=>n.parent===null&&n.bucketName===node.bucketName).length>1;
       const title=node.prefix.split('/').at(-1)||node.bucketName+(collision?' · '+node.accountId+' · '+node.profileId:'');
       out.push({id,parentId,title,contexts});
@@ -192,9 +193,9 @@
     const ready=profiles.filter(p=>p.type==='cloudflare-r2'&&p.bucketName==='redown'&&typeof p.accountId==='string'&&p.accountId&&p.workerUrl&&p.token&&!config.activatedBuckets?.buckets?.some(d=>d.profileId===p.id&&d.enabled===false)).sort((a,b)=>compare(a.id,b.id));
     const chosen=config.defaultBucket;
     const accounts=new Set(ready.map(p=>p.accountId));
-    const main=chosen?ready.find(p=>p.id===chosen.profileId&&p.accountId===chosen.accountId&&chosen.bucketName==='redown'):accounts.size===1?ready[0]:null;
+    const main=chosen?ready.find(p=>p.id===chosen.profileId&&p.accountId===chosen.accountId&&chosen.bucketName==='redown'):ready.length===1?ready[0]:null;
     const primary=main?{profileId:main.id,accountId:main.accountId,bucketName:'redown',prefix:''}:null;
-    const extra=config.destinations.filter(d=>eligible(d,config,profiles)&&!(primary&&d.accountId===primary.accountId&&d.bucketName==='redown'&&d.prefix===''&&['REDOWN','redown','Cloudflare'].includes(d.label.trim()))).map(d=>({id:'v3:'+d.id,title:d.label.trim(),target:d}));
+    const extra=config.destinations.filter(d=>eligible(d,config,profiles)&&!(primary&&d.profileId===primary.profileId&&d.accountId===primary.accountId&&d.bucketName==='redown'&&d.prefix==='')).map(d=>({id:'v3:'+d.id,title:d.label.trim(),target:d}));
     const seen=new Set();
     for(const d of activated(config,profiles)){
       const bucket=JSON.stringify([d.accountId,d.bucketName]);
@@ -211,32 +212,32 @@
     }
     return {primary,extra};
   }
-  function simpleProjection(config,profiles,root){
+  function simpleProjection(config,profiles,root,budget=limits.entries){
     const {primary,extra}=simpleTargets(config,profiles);
     if(!extra.length)return {entries:[{id:primary?'v3:provider:cloudflare':'v3:provider:cloudflare:setup',parentId:root,title:'Cloudflare',contexts}],complete:true,warnings:primary?[]:['Choose and activate the default redown bucket.']};
     const parentId='v3:provider:cloudflare';
     const entries=[{id:parentId,parentId:root,title:'Cloudflare',contexts}];
     const reserved=primary?3:1;
-    const overflow=extra.length>limits.entries-reserved,shown=extra.slice(0,limits.entries-reserved-(overflow?1:0));
+    const overflow=extra.length>budget-reserved,shown=extra.slice(0,budget-reserved-(overflow?1:0));
     entries.push(...shown.map(({id,title})=>({id,title,parentId,contexts})));
     if(overflow)entries.push({id:parentId+':more',parentId,title:'More destinations…',contexts});
     if(primary)entries.push({id:parentId+':separator',parentId,type:'separator',contexts},
       {id:parentId+':default',parentId,title:'Home',contexts});
     return {entries,complete:!overflow,warnings:[...(!primary?['Choose and activate the default redown bucket.']:[]),...(overflow?['Chrome menu entry limit reached; use More destinations.']:[])]};
   }
-  function project(config,profiles,settings,inventory,root='redown',now=Date.now()){
+  function project(config,profiles,settings,inventory,root='redown',now=Date.now(),budget=limits.entries){
     if(Array.isArray(config.destinations))config={...config,destinations:config.destinations.filter(d=>prepared(d,profiles))};
     validate(config,profiles);const options=presentation(settings);
-    if(options.style==='simple')return simpleProjection(config,profiles,root);
+    if(options.style==='simple')return simpleProjection(config,profiles,root,budget);
     const parentId='v3:provider:cloudflare';
     const plan=options.nested==='level'
-      ?levelProjection(config,profiles,options,inventory,parentId,now)
+      ?levelProjection(config,profiles,options,inventory,parentId,now,budget)
       :{entries:narrowEntries(config,profiles,parentId),complete:true,warnings:[]};
-    if(!plan.entries.length&&options.nested==='narrow')return simpleProjection({...config,activatedBuckets:null},profiles,root);
+    if(!plan.entries.length&&options.nested==='narrow')return simpleProjection({...config,activatedBuckets:null},profiles,root,budget);
     const primary=simpleTargets(config,profiles).primary;
     const reserved=primary?3:1;
-    const overflow=plan.entries.length>limits.entries-reserved||!plan.complete;
-    const capacity=limits.entries-reserved-(overflow?1:0);
+    const overflow=plan.entries.length>budget-reserved||!plan.complete;
+    const capacity=budget-reserved-(overflow?1:0);
     const rows=plan.entries.slice(0,capacity);
     if(plan.entries[rows.length]?.id===rows.at(-1)?.id+':send')rows.pop();
     plan.entries=[{id:parentId,parentId:root,title:'Cloudflare',contexts},...rows];
@@ -247,9 +248,9 @@
     return plan;
   }
   function entries(config,profiles,root='redown',settings,inventory){return project(config,profiles,settings,inventory,root).entries;}
-  function resolve(id,config,profiles,settings,inventory,now=Date.now()){
+  function resolve(id,config,profiles,settings,inventory,now=Date.now(),budget=limits.entries,existingPlan=null){
     try{
-      const plan=project(config,profiles,settings,inventory,'redown',now),item=plan.entries.find(n=>n.id===id);
+      const plan=existingPlan||project(config,profiles,settings,inventory,'redown',now,budget),item=plan.entries.find(n=>n.id===id);
       if(!item||plan.entries.some(n=>n.parentId===id))return null;
       if(['v3:provider:cloudflare','v3:provider:cloudflare:default'].includes(id)){
         const target=simpleTargets(config,profiles).primary,profile=target&&prepared(target,profiles);

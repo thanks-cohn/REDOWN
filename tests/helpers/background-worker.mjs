@@ -1,4 +1,5 @@
 import vm from 'node:vm';
+import {IDBFactory} from 'fake-indexeddb';
 import {readFileSync} from 'node:fs';
 import {webcrypto} from 'node:crypto';
 const source=readFileSync('extension/background.js','utf8');
@@ -12,7 +13,7 @@ export function worker(local=config(),failure={}){
  const popupState=failure.popupState||{global:'',tabs:new Map()},openTabs=[{id:1,windowId:7,active:true}];
  const appearance=failure.appearance||{title:'REDOWN-Click2Cloud',badge:'',tabTitles:new Map(),tabBadges:new Map()};
  const effective=id=>popupState.tabs.has(id)?popupState.tabs.get(id):popupState.global;let active=0,maxActive=0;
- const storage={async get(keys){if(failure.storage)throw Error('storage unavailable');return Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])]));},async set(patch){Object.assign(local,structuredClone(patch));},remove:noop};
+ const storage={async get(keys){if(failure.storage)throw Error('storage unavailable');return Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,structuredClone(local[k])]));},async set(patch){Object.assign(local,structuredClone(patch));},remove:async keys=>{for(const key of Array.isArray(keys)?keys:[keys])delete local[key];}};
  const chrome={runtime:{id:'test',lastError:null,getURL:p=>'chrome-extension://test/'+p,getManifest:()=>({version:'0.5.27'}),onStartup:event(),onInstalled:event(),onMessage:event(),openOptionsPage:async()=>calls.push(['options'])},identity:{getRedirectURL:()=> 'https://test.chromiumapp.org/'},action:{onClicked:event(),getPopup:async o=>{const popup=effective(o.tabId);return popup?'chrome-extension://test/'+popup:'';},setPopup:async o=>{
    calls.push(['popup',o.popup,o.tabId]);if(failure.setPopup)throw Error('popup registration blocked');
    if(Number.isInteger(o.tabId))popupState.tabs.set(o.tabId,o.popup);else popupState.global=o.popup;
@@ -28,7 +29,7 @@ export function worker(local=config(),failure={}){
    if(item.parentId&&!native.has(item.parentId))return callback(cb,'missing parent');
    native.set(item.id,structuredClone(item));if(failure.dropCallback===item.id){failure.dropCallback=null;return;}callback(cb);
  }};
- const context=vm.createContext({chrome,console:{warn:(...x)=>warnings.push(x),error:(...x)=>warnings.push(x)},navigator:{locks:{request:async(n,f)=>f()}},crypto:webcrypto,TextEncoder,TextDecoder,URL,URLSearchParams,setTimeout:(fn,ms,...args)=>setTimeout(fn,ms===5000?25:ms===2500?30:ms,...args),clearTimeout,setInterval,clearInterval,structuredClone,atob,btoa,performance});
+ const context=vm.createContext({indexedDB:failure.database||new IDBFactory(),chrome,console:{warn:(...x)=>warnings.push(x),error:(...x)=>warnings.push(x)},navigator:{locks:{request:async(n,f)=>f()}},crypto:webcrypto,TextEncoder,TextDecoder,URL,URLSearchParams,setTimeout:(fn,ms,...args)=>setTimeout(fn,ms===5000?25:ms===2500?30:ms,...args),clearTimeout,setInterval,clearInterval,structuredClone,atob,btoa,performance});
  context.importScripts=(...paths)=>paths.forEach(p=>{if(failure.import===p)throw Error('injected import error');return vm.runInContext(readFileSync('extension/'+p,'utf8'),context,{filename:p});});
  let evaluationError;try{vm.runInContext(source,context,{filename:'background.js'});}catch(error){if(!failure.import)throw error;evaluationError=error;}
  const ready=async()=>{await vm.runInContext('menuRebuildQueue',context).catch(()=>{});await new Promise(r=>setImmediate(r));};
