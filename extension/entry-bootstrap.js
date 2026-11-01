@@ -135,6 +135,8 @@ function openToolbarInterface(tab){
   return toolbarAttempt;
 }
 chrome.action.onClicked.addListener(tab=>{void openToolbarInterface(tab);});
+// Tells the guarded MV3 entrypoint this exact original listener is registered.
+globalThis.RedownEntryListenerRegistered = true;
 chrome.runtime.onInstalled.addListener(details=>{entryEvidence('worker','lifecycle','installed',details?.reason==='update'?'WORKER_UPDATE':'WORKER_INSTALL',false);void applyToolbarOpenMode(true).catch(console.error);});
 chrome.runtime.onStartup.addListener(()=>{entryEvidence('worker','lifecycle','startup','BROWSER_START',false);void applyToolbarOpenMode(true).catch(console.error);});
 chrome.storage.onChanged.addListener((changes,area)=>{
