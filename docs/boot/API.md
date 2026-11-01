@@ -85,3 +85,55 @@ cannot prevent toolbar opening. Persisted history cannot survive extension-origi
 data deletion/uninstall. Ordinary page refresh, HTTP cache clearing, worker
 restart, extension update and deleting `chrome.storage`/IndexedDB are distinct.
 Independent verified backups are required after actual data deletion.
+
+
+## Fresh-profile protected entrypoint (new recovery hardening, installed acceptance OPEN)
+
+The MV3 manifest now points to `extension/service-worker.js`, a small classic worker
+entrypoint that imports the **existing** `background.js` without changing its
+single `entry-bootstrap.js` toolbar launcher or native menu writer. In normal
+operation `background.js` imports that early launcher and all current handlers
+exactly once. The small outer entrypoint catches a synchronous failure to load
+the large core (including a broken core import) and, when the original toolbar
+listener was never registered, imports the **same** early launcher as a degraded
+recovery route. No duplicate action listener is installed if the first import
+already registered it.
+
+`RedownWorkerCoreStatus` reports `ready` or `failed` in the worker, while
+`boot.status()` reports `components.worker.state: "failed"` and
+`overall: "blocked"` after a trapped core failure, even if Shelf can still
+be opened. A `CORE_IMPORT_FAILED` receipt is added to the existing bounded
+`entryPointEvidence` ring, visible in Debug Mode through BOOT history/audit.
+The worker's Chrome Errors view remains authoritative for the actual underlying
+JavaScript/extension registration exception. No provider calls, login or menu
+reconstruction are added to the early emergency path.
+
+**Important limitation:** This catches core import or evaluation failures
+*after the small entrypoint itself can run*. It cannot force Chrome to start
+an extension worker whose manifest, initial entrypoint or Chrome registration
+fails before any script runs; nor does it prove that the owner's observed
+first-install dead click had that particular cause. An inactive worker between
+clicks is normal in MV3; the important failure is failure to wake/dispatch
+a click or to open a usable UI.
+
+**Installed Chrome reproduction acceptance:**
+1. Install REDOWN unpacked in an **entirely new Chrome profile** and keep the
+   first-failure state without pressing Reload.
+2. On `chrome://extensions` inspect the REDOWN card's Errors and
+   service-worker status **before** pressing Reload. Capture exact exception
+   type/line, extension ID/version, and any registration failure. Do not include
+   tokens or private URLs.
+3. Click the toolbar icon on a normal website or new tab; it must open Shelf,
+   or the existing attached popup on a definitive, supported failure, before
+   any Cloudflare login.
+4. Separately run a controlled **core import failure fixture**, confirm that
+   the original toolbar listener remains usable and `boot.status()` truthfully
+   reports a blocked core with `CORE_IMPORT_FAILED`.
+5. Repeat first install and cold wake across independent profiles; verify the
+   normal core registers the correct native root/Manage and saving still works.
+6. Compare the *same* profile after clicking Chrome's Reload only if needed,
+   and use the before/after errors to identify which actual transition failed.
+
+Automated fixture: `node --test tests/worker-bootstrap-first-install.test.mjs`.
+Use `npm run reliability:check` for repository gates. The bootstrap fallback
+and syntax checks do **not** replace installed Chrome visual/gesture tests.
