@@ -369,3 +369,66 @@ These are **design inspirations**, not claims of any formal association, license
 - **No production code change requested by this appendix.** Any implementation must have an approved scoped work request, proper tests and real browser validation.
 
 **Concept references for research, not copied assets:** [Tumblr Help: tagging](https://help.tumblr.com/knowledge-base/organizing-with-tags/), [Tumblr Help: dashboard](https://help.tumblr.com/knowledge-base/getting-started-on-tumblr/), and [Winamp Skin Museum](https://www.prandor.com/skins/). Historical platform styling must be reinterpreted rather than imported wholesale.
+
+---
+
+## IMPORTANT NEW IDEAS — NATIVE DESKTOP COMPANION, LOCAL FILE BRIDGE, AND INSTALLABLE CREATOR THEMES
+
+**Added:** Week of November 1, 2026.  
+**Status:** OWNER-DIRECTED PRODUCT VISION / FUTURE IMPLEMENTATION, not currently shipped.  
+**Placement:** Deliberately **below** the internet-era theme ecosystem section as a continuation, leaving all earlier weekly priorities and entries intact.  
+**Dependency:** Stabilize REDOWN's Chrome extension, Cloudflare saves, BOOT startup, file operations, metadata and theme contracts first; do not destabilize the extension to build these future features.
+
+### The owner's integrated product experience
+
+The optional **REDOWN Native Desktop App** is envisioned as an **included benefit with either a paid monthly subscription or a paid yearly subscription**, with no separate desktop-app surcharge in the proposed offer. This is proposed future packaging and must not be advertised as currently available or guaranteed until pricing, entitlement and platform support are implemented.
+
+The desktop companion runs a **native local worker/bridge**, with explicit authorization to selected local folders. Once paired with the browser extension, a user can browse a meaningful **Local Desktop / Local Files** surface inside the familiar REDOWN Explorer, view actual folder trees, and move/copy files between authorized local directories and supported cloud locations with ordinary Explorer interactions such as drag/drop, Copy, Cut, Paste and Move. This would let REDOWN become a cohesive file manager spanning the desktop and clouds without needing a completely different application every time the user changes storage location.
+
+Separately, a creator should be able to **download or build a REDOWN theme pack, install it into the native desktop application, and have that theme become an available one-click choice in the REDOWN browser extension**. The desktop companion may serve as a local theme library and validation/distribution helper, while the extension remains functional with its own preinstalled themes if the companion is unavailable.
+
+### New weekly entries
+
+**134. Desktop app included with monthly OR annual REDOWN subscription.** Define a future subscription entitlement that bundles access to the native desktop companion with either the monthly or yearly paid plan, rather than charging a separate desktop-app fee. Clearly document whether the extension remains independently usable, how offline access works, how optional free trials and renewal affect desktop functions, and whether locally owned files remain accessible after a subscription expires. **Time required: 8–16 hours of product/entitlement design; Urgency level: LOW (FUTURE PACKAGING).**
+
+**135. Native local-file worker and secure extension-to-desktop bridge.** Build a signed local companion/worker that can enumerate and perform supported operations inside **explicitly user-authorized** local directories and expose them through REDOWN's existing provider-neutral file API. Prefer an authenticated Chrome Native Messaging host or another deliberately secured local IPC design; verify extension identity, origin, permitted folders, request types and user grants, rather than allowing arbitrary websites, browser tabs or untrusted theme code to read the filesystem. **Time required: 40–80 hours for a secure cross-platform prototype; Urgency level: MEDIUM (AFTER CORE STABILITY).**
+
+**136. Browse and freely organize authorized Desktop files inside REDOWN Explorer.** Add a **Local Desktop / Local Files** source to the extension Explorer so users can list/search/preview local authorized folders and copy, move, upload or download to supported cloud destinations via the same selection and operation patterns. Preserve existing cloud identity and file safety, handle Windows paths and other platform differences, distinguish copy from move, apply Keep Both and read-back/verification where possible, and never delete a local source before the destination has been reliably confirmed. **Time required: 40–80 hours for initial local/cloud operations and interaction tests; Urgency level: MEDIUM (FUTURE).**
+
+**137. Creator theme installation through Desktop, available instantly in Extension.** Separate REDOWN's stable functional interface from its theme-specific CSS/tokens and provide a versioned **creator theme pack** format, so a creator can publish or share a pack that a user downloads into the desktop app. After validating it, the paired extension discovers the installed theme and exposes it as a simple one-click option (including the choice to restore built-in Porcelain, Ocean, Midnight or NEON), with installed themes optionally cached in extension storage so they survive temporary desktop disconnection. **Time required: 32–64 hours following the shared theme contract; Urgency level: LOW (CREATOR ECOSYSTEM).**
+
+**138. Orb/ball customization and theme-controlled accent colors.** Allow creators and users to configure the **colors, finish, accent/glow and permitted appearance variants of REDOWN's decorative/navigation orbs or balls** using theme tokens, an accessible color picker or a theme manifest. Where appropriate, an installed theme may occupy one configurable theme-selection orb or replace a purely decorative existing ball, so users can select the theme with one click; **do not silently replace or remove an orb that has an essential functional action**, and always retain a discoverable alternative and accessible label. **Time required: 8–20 hours for configuration UI, validation and theme hooks; Urgency level: LOW (PERSONALIZATION).**
+
+**139. Creator submission, versioning and safe theme sharing.** Develop a straightforward workflow to package, preview, export/import and optionally submit theme packs from the desktop app into a future community catalog. Treat CSS and visual configuration as a constrained presentation surface, never blanket privileged-code access: enforce per-component styling boundaries, permissions, resource/CSP restrictions, schema compatibility, creator attribution, moderation/rights checks, reversible install/uninstall and safe fallback if a pack is broken or malicious. **Time required: 32–64 hours for an initial controlled creator pipeline; Urgency level: LOW (COMMUNITY PLATFORM).**
+
+### User journey (desired, not implemented)
+
+1. User subscribes monthly or yearly and installs the **included REDOWN Desktop App**; the extension continues working without it for ordinary supported cloud tasks.
+2. On first desktop connection, REDOWN securely pairs its own extension with the signed local worker and asks the user to **choose which local folders** can be browsed or changed. Nothing is granted just because a program is installed.
+3. In REDOWN Extension → Explorer, **Local Files** appears alongside authorized clouds. Users can browse their local desktop folders and copy/move selected files between authorized local and R2 locations using familiar workflows.
+4. User downloads a creator-made original theme or creates one with REDOWN's styling controls, then chooses **Install Theme** in the desktop app. The native app validates and stores its declarative pack and communicates the installed theme manifest/assets to the paired extension.
+5. The extension exposes the new style in its Theme Settings and optionally as a **theme orb/ball** that the user clicks once to apply. Creators can define suitable ball/orb colors through supported tokens, while core save, menu, login and navigation semantics remain intact.
+6. When the desktop app closes or the computer disconnects, the extension falls back gracefully: cached compatible visual themes may remain selectable, but unavailable **local filesystem access is reported as disconnected**, never simulated or silently replaced with cloud data.
+
+### Architecture and safety contracts
+
+- **Core remains independent of appearance.** Extension launch, Chrome native right-click menu, Cloudflare auth, file operations, identity, Favorites, user reactions, tags, transfer receipts and metadata live in versioned stable core modules; theme CSS is a separate replaceable layer.
+- **Meaning of “full access.”** Offer creators broad access to documented design tokens, layout zones, supported themed components and visuals, not arbitrary privileged JavaScript execution or unrestricted read access to files, tokens, tabs or browser APIs. Strong isolation is part of making third-party themes safe enough for a large userbase.
+- **One semantic file API, multiple providers.** The desktop adapter is a genuine new provider/capability implementation (e.g. `local-desktop`) under REDOWN's existing typed provider/connection/object-reference contracts, not a competing Explorer or a parallel transfer engine. Desktop paths are treated as local paths with platform-specific permissions and durability, not fictitious R2 object keys.
+- **Safely “move files around.”** Between local folders, cloud buckets or local/cloud boundaries, present Copy, Move, Rename and Delete only when actually supported and authorized; use staged writes, conflict policies and verification to protect data, and show partial/uncertain outcomes. Cloud-to-cloud TRUE REMOTE transfers and local-to-cloud uploads are **different transfer modes** and must be labeled honestly.
+- **Local authority is explicit and revocable.** Permission to browse a user-selected folder does not authorize browsing the whole device. Provide a simple accessible control to revoke directories, unpair the local bridge and remove installed themes; prevent path traversal, symlink escape and cross-profile data leakage.
+- **Cross-environment theme distribution.** Desktop and extension agree on manifest version, asset hashes, theme-ID provenance, cache invalidation and rollback; a corrupt theme or outdated desktop build cannot block extension startup or hide critical controls.
+- **Themes are portable.** Support an original, documented exportable theme pack so a creator can distribute their style outside an eventual REDOWN catalog. User-owned Favorites and tags are independent of aesthetic packs and never lost when switching appearance.
+- **Presentation orbs are not permission controls.** A creator may recolor or customize **decorative** orbs, and a selectable theme orb can be user-configured, but security prompts, destructive action confirmations, focus indicators and status icons must remain recognizable and trustworthy.
+- **Business model is a proposal.** “Included with monthly or yearly subscription” is a proposed marketing/entitlement choice, not a live paid plan guarantee. It must not become an excuse to lock people out of their local files or make essential extension reliability premium-only.
+
+### Implementation ordering and acceptance
+
+1. **First:** Finish the weekly CRITICAL/HIGH work, especially BOOT, native saving, file safety, working previews and manual Favorites/Tags.
+2. **Second:** Extract a stable shared theme contract and build a basic no-code/manual theme importer with original assets, validated manifest, live preview and safe rollback.
+3. **Third:** Prototype the secure native worker pairing and authorized local-folder listing without performing destructive operations.
+4. **Fourth:** Implement verified copy/upload/download/rename/move behavior incrementally, including identical filename conflicts, unavailable desktop bridge and interrupted operations.
+5. **Fifth:** Add desktop-installed themes that sync to extension selectors, user-programmable orb colors, compatibility checks and one-click application.
+6. **Last:** Consider creator submission, public catalog, distribution and subscription entitlements only after permission, platform, performance and marketplace governance are tested.
+
+**Status and authority:** This appendix is a detailed future feature record in the weekly review, **not** a Codex implementation handoff, product release announcement, or permission to inspect local files or perform cloud mutations. Create scoped approved implementation requests only once the project is stabilized.
