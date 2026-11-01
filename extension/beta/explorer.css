@@ -1249,3 +1249,13 @@ html[data-activation-prerequisite="true"] #refresh.attention{animation:none!impo
   :is(#preview-dialog,#immersive-preview-dialog).window-lightbox{padding:10px}
   :is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-content{padding-block:4px}
 }
+
+/* Compact by default: keep the premium glossy artwork but give breadcrumbs room.
+   The optional Shelf Settings checkbox restores the original 48px controls. */
+:root:not([data-explorer-navigation-size="big"]) :is(#back,#forward,#up){
+  width:36px;height:36px;min-width:36px;min-height:36px;
+  padding:7px;border-radius:11px;
+}
+:root:not([data-explorer-navigation-size="big"]) :is(#back,#forward,#up) svg.directory-nav-glyph{
+  width:20px;height:20px;
+}
