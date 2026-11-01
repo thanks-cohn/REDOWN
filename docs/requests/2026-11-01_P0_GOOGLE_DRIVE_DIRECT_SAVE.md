@@ -14,9 +14,9 @@ Confirmed in the owner's Google Auth Platform screenshots:
 - **Data Access:** `drive.file` was selected and the console displayed **“Data access changes saved!”**.
 - **Audience:** **External** / **Testing**, with **one test user** displayed. Do not publish the OAuth app merely to test this implementation.
 - **Chrome Extension OAuth Client ID supplied November 1, 2026:** `763628402500-55kpvvm33fvrtcggva4tp2m4te67dghm.apps.googleusercontent.com`. This is a public client identifier, not a client secret. It has been configured under `oauth2` in `extension/manifest.json`, with **only** `https://www.googleapis.com/auth/drive.file` as the OAuth scope. Do not replace it with a web application client or request a client secret.
-- **Next action:** Go to **Clients**, open this OAuth client, and confirm its **Application type = Chrome Extension** and its **Item ID = actual installed REDOWN extension ID**. The 32-character ID calculated from the currently committed `manifest.key` is `mkadkgpekmkknfbniacdlmgikihjjepf`. This calculated value must be checked against `chrome://extensions` and the planned Chrome Web Store item; the Client ID alone does NOT prove the Google Console Item ID matches.
+- **Confirmed by owner screenshot, November 1, 2026:** In Google Auth Platform → Clients, the existing OAuth client is of type **Chrome Extension** and its **Item ID is exactly `mkadkgpekmkknfbniacdlmgikihjjepf`**, matching the owner's installed REDOWN extension ID and the extension's committed public key. The displayed OAuth Client ID matches `extension/manifest.json`. **Do not create a replacement OAuth client.**
 - **Implementation still required:** A configured manifest is not functional login, token exchange, automatic REDOWN folder creation, or Google Drive remote upload. Codex must implement and test the full workflow before marking the feature complete.
-- **Remaining independent check:** Confirm Google Drive API is enabled in the same project.
+- **Google Drive API:** Confirmed **Enabled** in the same `redown-click2cloud` project in the owner's Google Cloud API/Service Details screenshot.
 - **Privacy:** Do **not** copy the owner's test-user email, OAuth tokens, private information, or passwords into this public repository. Screenshots are evidence of setup only; live OAuth and Drive transfer are **not** yet proven.
 
 ## Product result required
