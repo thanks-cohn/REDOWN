@@ -1,4 +1,4 @@
-# REDOWN V3 — P0: Google Drive Test OAuth + Direct Save
+# REDOWN V3 — P0: Google Drive Test OAuth + Browser-Mediated Save
 
 **Repository:** `thanks-cohn/REDOWN`  
 **Required implementation branch:** `codex/v3-parity-first-reconstruction`  
@@ -15,7 +15,7 @@ Confirmed in the owner's Google Auth Platform screenshots:
 - **Audience:** **External** / **Testing**, with **one test user** displayed. Do not publish the OAuth app merely to test this implementation.
 - **Chrome Extension OAuth Client ID supplied November 1, 2026:** `763628402500-55kpvvm33fvrtcggva4tp2m4te67dghm.apps.googleusercontent.com`. This is a public client identifier, not a client secret. It has been configured under `oauth2` in `extension/manifest.json`, with **only** `https://www.googleapis.com/auth/drive.file` as the OAuth scope. Do not replace it with a web application client or request a client secret.
 - **Confirmed by owner screenshot, November 1, 2026:** In Google Auth Platform → Clients, the existing OAuth client is of type **Chrome Extension** and its **Item ID is exactly `mkadkgpekmkknfbniacdlmgikihjjepf`**, matching the owner's installed REDOWN extension ID and the extension's committed public key. The displayed OAuth Client ID matches `extension/manifest.json`. **Do not create a replacement OAuth client.**
-- **Implementation still required:** A configured manifest is not functional login, token exchange, automatic REDOWN folder creation, or Google Drive remote upload. Codex must implement and test the full workflow before marking the feature complete.
+- **Implementation still required:** A configured manifest is not functional login, token exchange, automatic REDOWN folder creation, or Google Drive browser-mediated upload. Codex must implement and test the full workflow before marking the feature complete.
 - **Google Drive API:** Confirmed **Enabled** in the same `redown-click2cloud` project in the owner's Google Cloud API/Service Details screenshot.
 - **Privacy:** Do **not** copy the owner's test-user email, OAuth tokens, private information, or passwords into this public repository. Screenshots are evidence of setup only; live OAuth and Drive transfer are **not** yet proven.
 
@@ -28,12 +28,12 @@ A first-time user can:
 3. Authorize their Google account using REDOWN's configured Google OAuth client and the **single** Drive permission `https://www.googleapis.com/auth/drive.file`.
 4. See a folder named **REDOWN** automatically created in **My Drive** on first successful connection, or reuse a previously created and verified REDOWN app folder on reconnect.
 5. Right-click an eligible web file and choose **REDOWN → Google Drive → REDOWN**.
-6. Save that file directly into the Google Drive REDOWN folder, **without downloading or staging the file's content on the user's computer** for the supported direct-transfer route.
+6. For supported files, **Chrome/REDOWN receives the file bytes and uploads them into the Google Drive REDOWN folder**. This is a browser-mediated transfer, not cloud-to-cloud TRUE REMOTE. Use transient browser memory/streaming; do not leave an ordinary file in the user's Downloads folder or other persistent local location.
 7. See actual success only when Google Drive confirms the saved object. Offer **Open in Google Drive** and record provider, destination and outcome in REDOWN's transfer history.
 
-The first working slice must handle a normal public PNG and PDF, and must not require public OAuth app verification or Chrome Web Store publication for the owner to test with an explicitly authorized Google OAuth **Testing** user.
+The first working slice must handle a normal public PNG and PDF through a browser-mediated fetch-and-upload path, and must not require public OAuth app verification or Chrome Web Store publication for the owner to test with an explicitly authorized Google OAuth **Testing** user.
 
-**Scope:** Google Drive is distinct from Google Cloud Storage and distinct from Cloudflare R2. Do not pretend Drive is an S3 bucket, do not create fake R2 destinations, and do not require R2 to use Drive.
+**Scope and architecture distinction:** Google Drive is distinct from Google Cloud Storage and Cloudflare R2. **The Google Drive path is deliberately browser-mediated, unlike REDOWN's existing R2 TRUE REMOTE path.** Do not pretend Drive is an S3 bucket, create fake R2 destinations, require R2 to use Drive, or provision a new server-side transfer service for this Google Drive feature.
 
 ## Before touching code
 
@@ -130,30 +130,36 @@ Once a user has authorized Drive:
 - Serialize concurrent first-run creation attempts. Avoid extra duplicate folders from retries or service-worker races. If an ambiguous create response occurs, reconcile using only permitted app-owned resources rather than blindly repeating.
 - Do not ask the user to create a folder manually or click a separate bucket-activation button.
 
-### C. Direct remote URL → Google Drive
+### C. Browser-mediated file transfer → Google Drive (NOT remote/cloud-to-cloud)
 
-- Implement the smallest real **Google Drive provider** route through REDOWN's existing destination/operation architecture, and use the existing V3 context-menu selection and history system.
-- The direct remote route must transfer **file payload bytes without fetching them into Chrome, downloading them to the user's disk, or passing the payload through the extension**. Only destination metadata and controls needed to initiate/observe the operation should traverse Chrome.
-- Implement or reuse a secure remote transfer execution boundary without exposing the user's Google credential to untrusted source hosts or unrelated recipients. Do not log, publish or unnecessarily persist credentials, sensitive source URLs, or transfer payloads. Validate redirects, source eligibility and address safety; enforce resource limits.
-- Use the official Google Drive v3 file upload API. Support correct metadata (including `parents: [REDOWN_FOLDER_ID]`), original filename/MIME type when available, reliable upload completion and appropriate resumable upload/retry handling. Implement honest size limits rather than pretending any large file works.
-- REDOWN's conflict default is **KEEP BOTH**. Do not overwrite or destroy existing same-named Drive files; Drive IDs, not bucket/object keys, identify saved files.
-- After upload, record and verify the resulting Drive file `id`, name and parent folder, and check size/checksum when available. Preserve a clear difference between `completed`, `failed`, `cancelled`, `blocked` and `uncertain`. An upload with an ambiguous network result must not be labeled completed.
-- Return a safe user-usable Google Drive file link and show it in **Open in Google Drive** / transfer history.
-- Eligible first test sources: a public PNG URL and a public PDF URL, saved into REDOWN on the user's own Drive.
-- If a URL is behind authentication, is a `blob:` / locally generated file, denies remote fetching, or cannot be directly transferred safely, **do not silently use a browser download as a fallback and call it direct**. Explain the limitation.
+**Authoritative owner correction, November 1, 2026: The browser gets the file and hands it off to Google Drive. This is an intentional SaveAnywhere-style, browser-mediated flow. Never implement the earlier server-side TRUE REMOTE requirement for Google Drive.**
+
+- Implement the smallest real **Google Drive provider** route through REDOWN's existing destination/operation architecture, using the current V3 context-menu selection and transfer history. The transfer executor **runs in an appropriate Chrome extension context**, fetching eligible file bytes from the source and then uploading those bytes with the user's authorized Google Drive access token to Google Drive.
+- **Browser flow:** select a file URL → obtain applicable source access → receive bytes through the extension's permitted `fetch`/streaming mechanism → send them to Drive's upload endpoint → confirm Drive returned the saved file. The data is intentionally **handled by Chrome/REDOWN in memory**. **Do not write a permanent file into Downloads or another local directory** as part of the normal flow; do not invoke `chrome.downloads.download` to simulate a zero-disk path. Transient memory buffering is allowed and expected. Do not falsely call this path TRUE REMOTE.
+- **Avoid a separate backend** for this Drive slice: no automatic new Worker/server/relay provisioning, no requirement for user Cloudflare setup, and no passing Drive credentials to arbitrary servers or source websites. The extension fetches the source with narrowly scoped host access and sends authenticated uploads only to Google Drive; preserve browser/OAuth privacy. Evaluate optional host permissions and per-site consent instead of indiscriminately requesting all URLs.
+- Choose a runtime robust to MV3 service-worker suspension. Inspect existing extension/Shelf/offscreen/background architecture and use the smallest supportable browser-owned transfer context. Bound queues/memory; stream or chunk when platform constraints require; keep transfer session state and user-visible progress. Provide honest size limits, recoverability and clear partial/uncertain states. Never load an unbounded large file as a single in-memory Blob.
+- **Use official Google Drive v3 file upload APIs**, preferably resumable upload for variable/large sizes: start upload session, send correctly aligned chunks where supported, handle `308` continuation, `401` reauthorization, quota/rate limits, aborts and retries, and independently verify the resulting file. Set correct `name`, MIME type and `parents: [REDOWN_FOLDER_ID]`; preserve arbitrary binary bytes. Resumable upload is a **transfer protocol**, not a claim that every interrupted Chrome tab/worker session can automatically recover.
+- Some sites need cookies, headers, a temporary grant, or a tab-specific user gesture; others block extension fetch, require login or generate `blob:` links. Implement supported source-handling paths **only with user authorization and accurate success signals**. Don't claim every website works or access content in a manner that bypasses authentication or permissions. If a source is inaccessible, say so rather than silently writing a browser download or claiming a remote transfer.
+- Never include Google OAuth tokens in source fetches, site-facing requests, logs, export bundles, telemetry or untrusted pages. Avoid leaking private source URLs. Verify redirects and source integrity; handle aborts and errors safely.
+- REDOWN's conflict default is **KEEP BOTH**. Google Drive identifies files by Drive IDs and permits duplicate names. Never destructively overwrite an existing file as the default.
+- After upload, record and verify the Drive file `id`, name and parent folder, and compare size/checksum when available. Distinguish `completed`, `failed`, `cancelled`, `blocked` and `uncertain`; do not mark success from a local fetch alone.
+- Return a safe **Open in Google Drive** link. Record the correct provider and destination in REDOWN history.
+- Required first tests: a public PNG and PDF using real bytes sent **through Chrome** to the test user's `My Drive/REDOWN` folder. Inspect binary integrity, progress and whether a persistent local file was created.
+- **No change whatsoever to the existing Cloudflare R2 TRUE REMOTE route.** The two transport models are intentionally different and must never get conflated.
+
 
 ### D. Preserve existing REDOWN behavior
 
 - The Cloudflare R2 route must remain functional. No regressions to the main Shelf, Explorer, preview/lightbox navigation, service worker startup/fallback, saved settings, menus, history, or bucket activation.
 - The V3 right-click menu should contain **REDOWN → Google Drive → REDOWN** when ready. A disconnected destination can offer a connection action, but must never navigate to Dashboard Home and falsely imply a save occurred.
-- Do not expose implementation machinery in customer-facing copy or modify `thanks-cohn/redown-website`. Product copy should focus on the outcome: **"Save supported web files directly to your cloud without downloading them to your computer first."**
+- Do not expose implementation machinery in customer-facing copy or modify `thanks-cohn/redown-website`. Product copy should focus on the accurate user outcome: **"Save supported web files to your Google Drive without saving a permanent copy to your computer."** Distinguish this browser-mediated Drive path from the TRUE REMOTE R2 path in any user-facing explanation of how transfer types differ.
 - The repository is currently public. Treat all committed text and code as publicly visible; do not commit sensitive credentials, private architecture notes or unpublished deployment details.
 
 ## Test and acceptance requirements
 
 Automated tests must cover at least: authorized Testing-mode login; denied/cancelled login; 401/reconnect and revoked scope; account isolation; manifest extension ID/client mismatch; folder create and reconnect reuse; race/duplicate prevention; public PNG and PDF; correct destination folder; KEEP BOTH; real Drive response parsing; upload interruption/ambiguous status; 403/429/5xx; ordinary MV3 worker restart; URL redirect/safety restrictions; and preservation of the V3/R2 boot/right-click paths.
 
-**Critical invariant test:** In the eligible direct-transfer route, file content must never pass through the browser's download API, local storage or an extension payload buffer. A fake/mock server asserting no browser payload is useful, but is not live proof.
+**Critical invariant test (corrected):** For Google Drive, **file bytes MUST pass through an authorized browser/extension transfer context** and reach the Google upload API unchanged. A bounded buffer or stream is valid; a permanent file written to Downloads or disk is not the normal path. Assert there is no `chrome.downloads.download` call or persistent file creation in the successful browser-mediated flow. Validate upload chunks, size, MIME type, failure/abort and accuracy of the destination receipt. Browserless mocks do not prove real Chrome behavior.
 
 **Required real-owner acceptance (mark BLOCKED until credentials/test user exist):**
 
@@ -164,7 +170,7 @@ Automated tests must cover at least: authorized Testing-mode login; denied/cance
 5. Repeat with a disposable public PDF. Confirm the original file contents and accurate Drive size/checksum evidence where possible.
 6. Restart Chrome and reconnect. Confirm the same folder is reused and a new save works.
 7. Revoke Google Drive permission and verify REDOWN shows a clear recovery path.
-8. Verify the direct-transfer test did not store the file on the computer.
+8. Verify the **browser-mediated** transfer relayed the real bytes through Chrome, did not create a permanent file in Downloads, and did not provision or use a separate server-side file relay.
 
 Record exact files modified, commits, test commands/results, a real browser/provider evidence matrix, any required one-time owner action, and remaining limits. Do not claim OAuth production verification, Google approval, or Chrome Store acceptance.
 
