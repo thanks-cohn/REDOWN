@@ -2,15 +2,16 @@ importScripts("toolbar-appearance.js");
 // Shelf-first toolbar. Opening is independent of storage, menus and providers.
 let toolbarAttempt=null,toolbarGeneration=0,toolbarTarget=null,toolbarPhase='idle';
 let entryEvidenceQueue=Promise.resolve();
-function entryEvidence(component,operation,stage,code,recovery,attemptId){
-  const event={schemaVersion:1,at:new Date().toISOString(),component,operation,stage,code,
+function entryEvidence(component,operation,stage,code,recovery,attemptId,details={}){
+  const status=/FAILED|BLOCKED|UNAVAILABLE|REJECTED|DEGRADED/.test(code)?'failed':/STARTED|LOAD|INSTALL|UPDATE|START$/.test(code)?'started':/READY|ACKNOWLEDGED|CONFIGURED|ACCEPTED/.test(code)?'acknowledged':'unknown';
+  const event={...details,status,workerEpoch:globalThis.RedownBoot?.workerEpoch||null,schemaVersion:1,at:new Date().toISOString(),component,operation,stage,code,
     summary:code==='SHELF_UNAVAILABLE'?'Shelf did not become available.':code==='ACCESS_BLOCKED'?'Chrome blocked recovery.':code==='MENU_REGISTRATION_FAILED'?'Native menu registration did not complete.':code,
     recovery:{attempted:!!recovery,status:recovery||'not-needed'},
     attemptId:attemptId||crypto.randomUUID(),version:chrome.runtime.getManifest().version};
   entryEvidenceQueue=entryEvidenceQueue.catch(()=>{}).then(async()=>{
-    const data=await chrome.storage.local.get(['entryPointEvidence','rightClickV3']);
+    const data=await boundedEntry(chrome.storage.local.get(['entryPointEvidence','rightClickV3']),1000);
     if(component==='context-menu')event.configurationRevision=data.rightClickV3?.revision??null;
-    await chrome.storage.local.set({entryPointEvidence:[...(Array.isArray(data.entryPointEvidence)?data.entryPointEvidence:[]).slice(-63),event]});
+    await boundedEntry(chrome.storage.local.set({entryPointEvidence:[...(Array.isArray(data.entryPointEvidence)?data.entryPointEvidence:[]).slice(-63),event]}),1000);
   }).catch(()=>console.warn('REDOWN local entry-point evidence unavailable'));
 }
 // One authority: no Chrome-managed parallel panel opening and no detached surfaces.
@@ -18,13 +19,14 @@ let toolbarConfiguration=Promise.resolve();
 function applyToolbarOpenMode(clearTabs=false){
   void RedownToolbarAppearance.clean({allTabs:true});
   const operation=toolbarConfiguration.catch(()=>{}).then(async()=>{
-    try{await boundedEntry(chrome.sidePanel?.setPanelBehavior?.({openPanelOnActionClick:false}),1000);}
-    catch{entryEvidence('toolbar','configure','behavior','PANEL_BEHAVIOR_FAILED',false);}
-    try{await boundedEntry(chrome.sidePanel?.setOptions({path:'shelf.html',enabled:true}),1000);}
-    catch{entryEvidence('toolbar','configure','panel','SHELF_CONFIGURATION_FAILED',false);}
+    let configurationFailed=false;
+    try{if(!chrome.sidePanel?.setPanelBehavior)throw Error('unsupported');await boundedEntry(chrome.sidePanel.setPanelBehavior?.({openPanelOnActionClick:false}),1000);}
+    catch{configurationFailed=true;entryEvidence('toolbar','configure','behavior','PANEL_BEHAVIOR_FAILED',false);}
+    try{if(!chrome.sidePanel?.setOptions)throw Error('unsupported');await boundedEntry(chrome.sidePanel.setOptions({path:'shelf.html',enabled:true}),1000);}
+    catch{configurationFailed=true;entryEvidence('toolbar','configure','panel','SHELF_CONFIGURATION_FAILED',false);}
     let mode='shelf';
     try{const data=await boundedEntry(chrome.storage.local.get('toolbarOpenMode'),500);mode=data.toolbarOpenMode==='popup'?'popup':'shelf';}
-    catch{entryEvidence('toolbar','configure','storage','PREFERENCE_STORAGE_UNAVAILABLE',false);}
+    catch{configurationFailed=true;entryEvidence('toolbar','configure','storage','PREFERENCE_STORAGE_UNAVAILABLE',false);}
     if(clearTabs&&chrome.tabs.query){
       for(const tab of await boundedEntry(chrome.tabs.query({}),1000)){
         if(!Number.isInteger(tab.id))continue;
@@ -34,8 +36,10 @@ function applyToolbarOpenMode(clearTabs=false){
       }
     }
     await boundedEntry(chrome.action.setPopup({popup:mode==='popup'?'popup.html':''}),1000);
+    entryEvidence('toolbar','configure','popup',configurationFailed?'TOOLBAR_CONFIGURATION_DEGRADED':'TOOLBAR_CONFIGURED',false);
   });
-  toolbarConfiguration=operation;return operation;
+  const observed=operation.catch(error=>{entryEvidence('toolbar','configure','popup','TOOLBAR_CONFIGURATION_FAILED',false);throw error;});
+  toolbarConfiguration=observed;return observed;
 }
 function boundedEntry(operation,ms=150){
   let timer;
@@ -131,8 +135,8 @@ function openToolbarInterface(tab){
   return toolbarAttempt;
 }
 chrome.action.onClicked.addListener(tab=>{void openToolbarInterface(tab);});
-chrome.runtime.onInstalled.addListener(()=>{void applyToolbarOpenMode(true).catch(console.error);});
-chrome.runtime.onStartup.addListener(()=>{void applyToolbarOpenMode(true).catch(console.error);});
+chrome.runtime.onInstalled.addListener(details=>{entryEvidence('worker','lifecycle','installed',details?.reason==='update'?'WORKER_UPDATE':'WORKER_INSTALL',false);void applyToolbarOpenMode(true).catch(console.error);});
+chrome.runtime.onStartup.addListener(()=>{entryEvidence('worker','lifecycle','startup','BROWSER_START',false);void applyToolbarOpenMode(true).catch(console.error);});
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==='local'&&changes.toolbarOpenMode){++toolbarGeneration;toolbarAttempt=null;void applyToolbarOpenMode('preference').catch(console.error);}
 });
@@ -141,3 +145,6 @@ void applyToolbarOpenMode().catch(console.error);
 
 chrome.tabs.onActivated?.addListener(tab=>{void RedownToolbarAppearance.clean({tabId:tab.tabId});});
 chrome.windows.onFocusChanged?.addListener(()=>{void RedownToolbarAppearance.clean({allTabs:true});});
+
+importScripts("boot.js");
+entryEvidence("worker","lifecycle","activation","WORKER_LOAD",false);

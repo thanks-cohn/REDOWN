@@ -41,7 +41,7 @@ test('failed native child or root creation restores root/management without eras
  }
 });
 test('failed removal retains functional local access; Chrome-wide denial is reported honestly',async()=>{
- const h=worker(undefined,{remove:true});await h.ready();assert.ok(h.native.has('redown'));assert.ok(h.native.has('redown-manage'));assert.equal(h.local.rightClickMenuStatus.state,'failed');
+ const failure={},h=worker(undefined,failure);await h.ready();failure.removeId='v3:one';h.local.rightClickV3.destinations[0].id='changed';await h.context.commitV3Current({rightClickV3:h.local.rightClickV3});await assert.rejects(h.rebuild(),/removal failed/);assert.ok(h.native.has('redown'));assert.ok(h.native.has('redown-manage'));assert.equal(h.local.rightClickMenuStatus.state,'failed');
  const blocked=worker(undefined,{allCreates:true});await blocked.ready();assert.equal(blocked.native.size,0);assert.equal(blocked.local.rightClickMenuStatus.state,'failed');assert.ok(blocked.warnings.length);
 });
 test('partial inventory, invalid cache and malformed configuration cannot prevent local menu access',async()=>{
@@ -151,7 +151,7 @@ test('ordered destination changes recreate siblings while retaining root managem
  const h=worker(initial);await h.ready();
  h.local.rightClickV3.destinations.reverse();await h.context.commitV3Current({rightClickV3:h.local.rightClickV3});await h.rebuild();
  const ids=[...h.native.keys()];assert.ok(ids.indexOf('v3:two')<ids.indexOf('v3:one'));
- assert.ok(h.native.has('v3:provider:cloudflare'));assert.ok(!h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,1);
+ assert.ok(h.native.has('v3:provider:cloudflare'));assert.ok(h.native.has('redown-manage'));assert.equal(h.calls.filter(c=>c[0]==='removeAll').length,0);
 });
 test('fresh empty storage and no OAuth opens Shelf without destination prerequisites',async()=>{
  const h=worker({});await h.ready();await h.click({id:1,windowId:7});await h.ready();

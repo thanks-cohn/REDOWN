@@ -1,0 +1,820 @@
+{
+  "baselineCommit": "5fbcfc07cb16773250692f6c8f304ad65131e345",
+  "scope": "local harness only; not a release certificate",
+  "baseline": {
+    "tests": 824,
+    "pass": 731,
+    "fail": 93
+  },
+  "final": {
+    "reportedTests": 834,
+    "pass": 750,
+    "fail": 84,
+    "skipped": 0,
+    "runnerIncomplete": true,
+    "unseenHistoricalBaselineTests": [
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "introducedFailureNamesComparedWithFreshBaseline": [],
+  "noLongerFailingNames": [
+    "T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer",
+    "T24 authenticated chooser preserves original object, consumes intent once and rejects stale routes",
+    "a newer requested Depth waits for stale discovery and commits its own generation without a second Reload",
+    "accepted unknown readiness and late Shelf success retain clean branding and never open a second surface",
+    "global and tab launch warnings clear without touching valid progress badges or transfer titles",
+    "package closure includes V3 and recovery Settings, excludes retired Legacy runtime and excludes all retired setup code",
+    "real UI, dispatcher and transaction preserve mode acknowledgements and reconcile a lost reply",
+    "tab/window switches, preference changes, worker restart and real rejection never leave launch warnings",
+    "toolbar configuration preserves explicit popup and defaults unknown modes to Shelf"
+  ],
+  "remainingFailures": [
+    {
+      "file": "tests/add-menu-location.test.mjs",
+      "name": "one shared add control targets Simple or Nested and asks which destination when needed",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "M0 inventory covers every literal message branch without inventing handlers",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "same-folder copy keeps both and never destroys the source",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "regular Explorer hides stale limitations and keeps new bucket setup optional",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/beta-explorer.test.mjs",
+      "name": "activation effect only glows success after verified readiness; reduced-motion has a static alternative",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/brand-and-paginated-history.test.mjs",
+      "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "click creates a visible window before network navigation; repeated clicks focus it",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "successful callback exchanges PKCE and verifies access before saving token",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "callback resumes after service worker restart from session state",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf cancelled or failed login never opens Explorer",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Shelf login remains connected when Chrome cannot open Explorer tab",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "state mismatch fails without token exchange and allows a fresh retry",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "denied consent and missing authorization code fail cleanly",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "closed popup releases attempt and stale window is replaced on next click",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "expired attempt clears secrets, closes popup, and permits retry",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "failed API verification never stores an access token",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "duplicate navigation events exchange a code only once",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "verification network stall aborts and releases the attempt",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "popup creation errors are returned instead of leaving an in-flight lock",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "settings and worker observing the same callback exchange the code once across contexts",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-login.test.mjs",
+      "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/cloudflare-reconnect.test.mjs",
+      "name": "slow bucket loading does not block locations, Explorer, or connection refresh",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "queries never modify the canonical corpus or cited historical evidence",
+      "error": {
+        "name": "Error",
+        "code": "ENOENT",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/explorer-account-and-history-navigation.test.mjs",
+      "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+      "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "large retained histories render in bounded increments and unrelated storage changes do no history work",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/explorer-neon-history.test.mjs",
+      "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/explorer-parity-audit.test.mjs",
+      "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/get-url.test.mjs",
+      "name": "switching files while enabling cannot reopen the old file or overwrite current choices",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/history-go-to.test.mjs",
+      "name": "real Explorer integration selects, scrolls, focuses and invokes the existing preview",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/history-go-to.test.mjs",
+      "name": "unsupported format is selected and passed to existing preview with truthful navigation status",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/history-go-to.test.mjs",
+      "name": "reopening loaded History removes stale Explorer readiness diagnostics without hiding transfers",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/issue-inventory.test.mjs",
+      "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "=="
+      }
+    },
+    {
+      "file": "tests/modern-destinations.test.mjs",
+      "name": "tests/modern-destinations.test.mjs",
+      "error": {
+        "name": "Error",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/nested-locations.test.mjs",
+      "name": "tests/nested-locations.test.mjs",
+      "error": {
+        "name": "Error",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "debug-only sections start hidden and toggle exists only inside header disclosure",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating",
+      "error": {
+        "name": "TypeError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/options-debug-display.test.mjs",
+      "name": "persisted mode combinations restore independently, with Beta off when absent",
+      "error": {
+        "name": "SyntaxError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/popup-destinations.test.mjs",
+      "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "V3 save/register/resolve persists across restart and refuses Legacy selection",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "actual click listener waits for V3 read-back before recording completion and never falls back",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "presentation transitions serialize independently, retain Level depth 5 and persist across background restart",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "actual Level background inventory registration and click resolver retain exact authorized targets across restart",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "failed registration retains persisted edits, Retry Apply repairs without rewriting destinations",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "durable snapshot restores fresh inventory without a provider rescan and stores no secrets",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "T01\u2013T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/right-click-v3.test.mjs",
+      "name": "T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "provider order, pending integrations, verified account state and actual history remain honest",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/shelf.test.mjs",
+      "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "match"
+      }
+    },
+    {
+      "file": "tests/simple-cloudflare-branding.test.mjs",
+      "name": "native registered Simple menu contains only Cloudflare and actual click retains verified root receipt",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: selecting existing folder does not populate creation draft",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: new directory is created under the exact parent only after Create",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: valid names including zero and f create at bucket root",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: invalid path segments never send creation requests",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: stalled creation releases button and explains uncertain outcome",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/simple-location-rows.test.mjs",
+      "name": "Simple: refreshing during creation cannot leave a permanent Creating status",
+      "error": {
+        "name": "ReferenceError",
+        "code": "UNKNOWN",
+        "operator": null
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "offline discovery advertises only implemented operations and distinct versions",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/agent-api.test.mjs",
+      "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "real discovery, case, history, filters and validation are deterministic and honest",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "deepStrictEqual"
+      }
+    },
+    {
+      "file": "tests/debug-api.test.mjs",
+      "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    },
+    {
+      "file": "tests/semantic-api.test.mjs",
+      "name": "full finite public coverage inventory resolves strata and all canonical case links",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "operator": "strictEqual"
+      }
+    }
+  ],
+  "stagedVerification": {
+    "startedAt": "2026-11-01T04:23:49.472Z",
+    "finishedAt": "2026-11-01T04:24:50.319Z",
+    "node": "v24.19.0",
+    "platform": "linux",
+    "sourceSha256": "00ce5f8b0856b94daf27597f1c7d377aa31114e6d8b940f417c2fd88d5a7a741",
+    "trackedDirty": true,
+    "state": "failed",
+    "sourceCommitBeforeImplementation": "5fbcfc07cb16773250692f6c8f304ad65131e345"
+  }
+}

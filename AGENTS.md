@@ -152,3 +152,12 @@ Get URL and shared status states: read [GET_URL_AND_STATUS.md](docs/explorer/GET
 Get URL enable follow-up: `cfPublicAddresses` remains read-only. The user-authorized `cfEnablePublicAccess` is a separate exact-options-sender/confirmed:true mutation of managed r2.dev access only, with independent settings read-back and fresh URL discovery. Preserve the inline whole-bucket confirmation, cancellation, stale UI protection and redacted diagnostic mapping. See GET_URL_AND_STATUS.md; no live public-access change was performed for implementation testing.
 
 Current issue triage: see docs/reliability/ISSUE_INVENTORY.md. `listIssues`, `getIssue` and `validateIssues` project existing reports through the same gateway. Review notes are source-hash-bound and cannot close browser/platform acceptance by assertion. Prefer native Node/Git/JSON Schema facilities; the syntax target list is scripts/syntax-targets.json.
+
+Startup BOOT follow-up: read [BOOT API](docs/boot/API.md) and
+[implementation/acceptance](docs/boot/IMPLEMENTATION.md). `bootV1` is an exact
+Settings-sender/Debug-gated internal coordinator, not an offline gateway mutation.
+Keep the single toolbar opener/menu writer, non-destructive update-before-create,
+root/Manage, CURRENT and acknowledged-vs-visible distinction. Explicit native
+repair invalidates the cached plan but never resets the whole menu. Run focused
+BOOT tests and `python3 tests/boot-schema-conformance.py`. Installed Chrome remains
+administrator-blocked; the owner's intermittent startup cause remains OPEN.

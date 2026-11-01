@@ -1,10 +1,12 @@
 // One cross-platform syntax check, launched directly by Node; no npm.cmd or shell.
+import {validateStartupPackage} from './startup-package.mjs';
 import {spawnSync} from 'node:child_process';
 import {resolve,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import targets from './syntax-targets.json' with {type:'json'};
 export function checkSyntax({files=targets,root=fileURLToPath(new URL('../',import.meta.url))}={}){
  const results=[];
+ if(files===targets){const startup=validateStartupPackage(root);results.push({file:'manifest classic worker import closure',...startup});}
  for(const file of files){
   if(typeof file!=='string'||isAbsolute(file)||file.split(/[\\/]/).some(p=>p==='..'||p==='.')||!file.endsWith('.mjs')&&!file.endsWith('.js'))return {state:'failed',results,code:'INVALID_SYNTAX_TARGET'};
   const run=spawnSync(process.execPath,['--check',resolve(root,file)],{cwd:root,encoding:'utf8',timeout:15000,maxBuffer:1024*1024});

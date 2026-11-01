@@ -1,0 +1,490 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redown.invalid/schemas/boot/v1",
+  "title": "REDOWN local BOOT API v1 results",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/status"
+    },
+    {
+      "$ref": "#/$defs/audit"
+    },
+    {
+      "$ref": "#/$defs/repair"
+    },
+    {
+      "$ref": "#/$defs/history"
+    }
+  ],
+  "$defs": {
+    "status": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "bootId": {
+          "type": "string"
+        },
+        "workerEpoch": {
+          "type": "string"
+        },
+        "extensionVersion": {
+          "type": "string"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "observedAt": {
+          "type": "string"
+        },
+        "overall": {
+          "enum": [
+            "ready",
+            "degraded",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "worker": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "ready",
+                    "degraded",
+                    "failed",
+                    "unknown"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "state"
+              ],
+              "additionalProperties": false
+            },
+            "toolbar": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "ready",
+                    "degraded",
+                    "failed",
+                    "unknown"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "state"
+              ],
+              "additionalProperties": false
+            },
+            "shelf": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "ready",
+                    "degraded",
+                    "failed",
+                    "unknown"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "state"
+              ],
+              "additionalProperties": false
+            },
+            "nativeMenu": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "registered",
+                    "repairing",
+                    "failed",
+                    "unknown"
+                  ]
+                },
+                "desiredGeneration": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "appliedGeneration": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lastAcknowledgedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                },
+                "visibleRows": {
+                  "enum": [
+                    "not-verifiable"
+                  ]
+                }
+              },
+              "required": [
+                "state",
+                "desiredGeneration",
+                "appliedGeneration",
+                "lastAcknowledgedAt"
+              ],
+              "additionalProperties": false
+            },
+            "cloudflare": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "disconnected",
+                    "connected",
+                    "expired",
+                    "unknown"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "state"
+              ],
+              "additionalProperties": false
+            },
+            "defaultDestination": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "enum": [
+                    "ready",
+                    "needs-setup",
+                    "not-writable",
+                    "unknown"
+                  ]
+                },
+                "evidenceLevel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "state"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "worker",
+            "toolbar",
+            "shelf",
+            "nativeMenu",
+            "cloudflare",
+            "defaultDestination"
+          ],
+          "additionalProperties": false
+        },
+        "lastFailure": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "component": {
+                  "type": "string"
+                },
+                "stage": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "at": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "component",
+                "stage",
+                "code",
+                "at"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "bootId",
+        "workerEpoch",
+        "extensionVersion",
+        "startedAt",
+        "observedAt",
+        "overall",
+        "components",
+        "lastFailure"
+      ],
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "snapshot": {
+          "$ref": "#/$defs/status"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "component": {
+                "type": "string"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "evidenceLevel": {
+                "type": "string"
+              },
+              "at": {
+                "type": "string"
+              },
+              "generation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recoveryHint": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "component",
+              "stage",
+              "code",
+              "source",
+              "evidenceLevel",
+              "at",
+              "generation",
+              "recoveryHint"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "snapshot",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "repair": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "attemptId": {
+          "type": "string"
+        },
+        "attempted": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "toolbar",
+              "nativeMenu"
+            ]
+          },
+          "maxItems": 2
+        },
+        "acknowledged": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "toolbar",
+              "nativeMenu"
+            ]
+          },
+          "maxItems": 2
+        },
+        "snapshot": {
+          "$ref": "#/$defs/status"
+        },
+        "manualActionRequired": {
+          "type": "boolean"
+        },
+        "code": {
+          "enum": [
+            "REPAIR_COMPLETE",
+            "REPAIR_BOUNDED"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "attemptId",
+        "attempted",
+        "acknowledged",
+        "snapshot",
+        "manualActionRequired",
+        "code"
+      ],
+      "additionalProperties": false
+    },
+    "history": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "workerEpoch": {
+          "type": "string"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "at": {
+                "type": "string"
+              },
+              "component": {
+                "type": "string"
+              },
+              "operation": {
+                "type": "string"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "attemptId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "schemaVersion": {
+                "const": 1
+              },
+              "workerEpoch": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recovery": {
+                "type": "object",
+                "properties": {
+                  "attempted": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "attempted",
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              "generation": {
+                "type": "string"
+              },
+              "nativeIdHash": {
+                "type": "string"
+              },
+              "durationMs": {
+                "type": "number"
+              },
+              "errorCategory": {
+                "enum": [
+                  "CHROME_API_REJECTED",
+                  "CHROME_ITEM_MISSING",
+                  "CHROME_DUPLICATE_ID",
+                  "CHROME_ACK_TIMEOUT",
+                  "CHROME_OR_LOCAL_STATE"
+                ]
+              }
+            },
+            "required": [
+              "schemaVersion",
+              "at",
+              "component",
+              "operation",
+              "stage",
+              "code",
+              "attemptId",
+              "version",
+              "status",
+              "workerEpoch",
+              "recovery"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        },
+        "limit": {
+          "const": 64
+        },
+        "missingIntervals": {
+          "const": "unknown"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "workerEpoch",
+        "events",
+        "limit",
+        "missingIntervals"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

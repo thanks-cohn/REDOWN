@@ -70,5 +70,9 @@
   "extension/right-click-backup-settings.js",
   "extension/right-click-chooser.js",
   "extension/beta/window-preview.mjs",
-  "extension/beta/test-it.mjs"
+  "extension/beta/test-it.mjs",
+  "extension/boot.js",
+  "scripts/startup-package.mjs",
+  "scripts/boot-fixtures.mjs",
+  "scripts/boot-reproduction.mjs"
 ]

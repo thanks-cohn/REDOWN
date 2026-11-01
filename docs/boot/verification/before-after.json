@@ -1,0 +1,20 @@
+{
+  "scope": "harness only; pinned baseline background, current shared imports; no installed Chrome or live provider",
+  "baseline": "5fbcfc07cb16773250692f6c8f304ad65131e345",
+  "before": {
+    "freshResets": 1,
+    "missingCacheWakeResets": 1,
+    "root": true,
+    "manage": false,
+    "destination": true,
+    "registration": "registered"
+  },
+  "after": {
+    "freshResets": 0,
+    "missingCacheWakeResets": 0,
+    "root": true,
+    "manage": true,
+    "destination": true,
+    "registration": "registered"
+  }
+}

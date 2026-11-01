@@ -3707,3 +3707,18 @@ for(const [id,operation] of [["runtime-diagnostics-status","snapshot"],["runtime
     }
   });
 }
+
+// Uses BOOT's existing local coordinator, only on explicit Debug actions.
+for(const [id,operation] of [['boot-status','audit'],['boot-repair','repair'],['boot-export','history']]){
+  $(id)?.addEventListener('click',async()=>{
+    const button=$(id);button.disabled=true;
+    try{
+      const response=await send({type:'bootV1',operation,...(operation==='repair'?{input:{target:'all'}}:{})});
+      $('runtime-diagnostics-output').textContent=JSON.stringify(response.result||{code:response.code},null,2);
+      if(operation==='history'&&response.ok){
+        const url=URL.createObjectURL(new Blob([JSON.stringify(response.result,null,2)],{type:'application/json'}));
+        const link=document.createElement('a');link.href=url;link.download='redown-startup.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      }
+    }finally{button.disabled=false;}
+  });
+}
