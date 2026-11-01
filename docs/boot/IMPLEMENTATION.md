@@ -168,3 +168,45 @@ readiness and native menu visibility by user interaction. Save only with explici
 disposable-provider test authorization. Retest the owner's broken profile before
 closing the incident; compare extension identity/version, worker epochs and desired/
 applied generation receipts. Do not delete their storage to manufacture recovery.
+
+
+## Fresh-install guarded entrypoint follow-up (November 1, 2026)
+
+**New owner observation:** On an entirely new Chrome profile, REDOWN was
+installed and the toolbar click displayed nothing. Without reinstalling,
+pressing **Reload** for REDOWN on `chrome://extensions` made the toolbar icon
+work. The owner suspects the MV3 worker failed to start. This is **valuable
+first-install reproduction evidence**, but *inactive worker*, failed worker
+registration/evaluation, missing event dispatch and an accepted-but-invisible
+Shelf are still different possible causes; no errors/stack or pre-reload
+worker status were captured in this report.
+
+**Source implementation in the follow-up:** The manifest uses a tiny guarded
+`service-worker.js` instead of placing `background.js` itself in the manifest.
+The wrapper imports the unchanged background and catches synchronous core
+script/import failures so the existing, already-early
+`entry-bootstrap.js` toolbar opener survives. If no original action
+listener was registered, it imports that same launcher once. It does not
+create a second launcher or menu writer, make cloud API calls, or assume a
+service worker is permanently resident. `boot.status()` now differentiates
+a trapped core failure (`worker.failed`, `overall.blocked`) from a healthy
+full import; `CORE_IMPORT_FAILED` enters the existing bounded diagnostic ring.
+The new bootstrap file is included in startup syntax/package validation.
+
+**Automated coverage added:** `tests/worker-bootstrap-first-install.test.mjs`
+models (a) normal core import with one action/menu/message listener,
+(b) a core import failure before toolbar registration and fallback to the
+same opener with BOOT blocked status, and (c) a failure after early
+toolbar registration without duplicate listeners. These are harness
+assertions, not the owner's installed-Chrome first-click acceptance. The
+existing whole-worker harness still loads `background.js` directly for
+backward-compatible core regression coverage.
+
+**Acceptance remains OPEN:** A real fresh-profile installation must now
+succeed on its first toolbar click without using the Reload button, and
+the Chrome Errors/service-worker status **before** any Reload must be
+captured if it still fails. If Chrome refuses to register/launch the small
+worker itself, no in-worker BOOT API can revive it; that must be diagnosed
+from manifest/package validation and Chrome's extension Errors, not
+misreported as a repaired core import. Release and live-provider
+verification remain unclaimed until observed in an authorized browser.
