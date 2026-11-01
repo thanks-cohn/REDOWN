@@ -1,0 +1,104 @@
+/* One bounded worker queue. No tabs, windows, downloads, relay or native writer. */
+(() => {
+  'use strict';
+  const KEY='dropbox:jobs',LIMIT=8,terminal=new Set(['completed','failed','blocked','cancelled','uncertain','interrupted']);
+  function create({chrome=globalThis.chrome,auth=RedownDropboxAuth.create(),api,record=async()=>{}}={}){
+    api=api||RedownDropboxAPI.create({auth});let lane=Promise.resolve(),running=null,controller=null,stopping=false;const seenClicks=new WeakSet();const pendingAuth=new Set();
+    const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
+    const get=async key=>(await chrome.storage.local.get(key))[key];
+    const jobs=async()=>await get(KEY)||[];
+    async function save(job){await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}
+    async function receipt(job){
+      const success=job.status==='completed',r=job.result;
+      await record({provider:'Dropbox',providerKind:'dropbox',profileId:'dropbox:'+job.accountId,profileName:'Dropbox root',deliveryId:'dropbox:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:!success&&job.error&&!['failed','blocked'].includes(job.status)?job.status+' · '+job.error:job.status,ok:success?true:['failed','blocked'].includes(job.status)?false:undefined,verified:success,sourceUrl:job.source?.sourceUrl,pageUrl:job.source?.pageUrl,frameUrl:job.source?.frameUrl,linkUrl:job.source?.linkUrl,location:success?'https://www.dropbox.com/home/'+encodeURIComponent(r.name):'',destination:{provider:'dropbox',accountId:job.accountId,connectionId:job.connectionId,root:'/',...r},bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
+      job.reported=true;await save(job);
+    }
+    async function pump(){
+      if(running)return running;
+      running=(async()=>{
+        for(const saved of await jobs()){
+          if(stopping)break;
+          const job=(await jobs()).find(j=>j.id===saved.id);if(!job)continue;
+          if(terminal.has(job.status)){if(!job.reported)await receipt(job);continue;}
+          if(job.status==='awaiting-auth'){
+            if(pendingAuth.has(job.id))continue;
+            job.status='interrupted';job.error='Dropbox login was interrupted. Reconnect and click Save again.';await save(job);await receipt(job);continue;
+          }
+          controller=new AbortController();
+          try{
+            job.status='active';await save(job);
+            job.result=await api.upload(job,save,controller.signal);job.status='completed';job.error='';
+          }catch(e){job.status=terminal.has(e.status)?e.status:'interrupted';job.error=e.status?e.message:'Dropbox save was interrupted. Check Dropbox before retrying.';if(job.phase==='committing'&&job.status==='cancelled'){job.status='uncertain';job.error='Dropbox commit was cancelled or interrupted. Check Dropbox before retrying.';}}
+          finally{controller=null;}
+          await save(job);await receipt(job);
+        }
+      })().finally(async()=>{running=null;const pending=(await jobs()).some(j=>!terminal.has(j.status)||!j.reported);if(!pending)await chrome.alarms.clear?.('dropbox:resume');});return running;
+    }
+    async function enqueue(source,identity,status='queued'){
+      return serial(async()=>{
+        const all=await jobs();if(all.filter(j=>!terminal.has(j.status)||!j.reported).length>=LIMIT){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox queue is full (8 saves). Wait, then click again.'}});return null;}
+        const job={id:crypto.randomUUID(),provider:'dropbox',source,...identity,status,offset:0,phase:'source',at:Date.now()};all.push(job);await chrome.storage.local.set({[KEY]:all,'dropbox:transfer':{id:job.id,status,bytes:0}});return job;
+      });
+    }
+    async function dispatch(info){
+      if(!['provider:dropbox','provider:dropbox:connect'].includes(info.menuItemId)||seenClicks.has(info))return;seenClicks.add(info);
+      let source,permission;
+      try{
+        source=RedownDropboxAPI.sourceSnapshot(info);
+        // Invoke the browser prompt directly in the native click gesture, before awaiting storage.
+        permission=chrome.permissions.request({origins:[RedownDropboxAPI.sourceURL(source.url).origin+'/*']});
+      }catch(e){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:e.message||'No supported file was clicked.'}});return;}
+      try{
+        if(!await permission)throw RedownDropboxAuth.fail('Source access was not granted. Click again to retry.');
+        const s=await get('dropbox:state');
+        if(info.menuItemId==='provider:dropbox'&&s?.phase==='connected'){
+          const job=await enqueue(source,{accountId:s.accountId,connectionId:s.connectionId});if(job)void wake();return;
+        }
+        if(info.menuItemId==='provider:dropbox')throw RedownDropboxAuth.fail('Dropbox is no longer connected. Use Reconnect Dropbox.');
+        if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}
+        const old=await get('dropbox:auth'),job=await enqueue(source,{},'awaiting-auth');if(!job)return;pendingAuth.add(job.id);
+        try{
+          const identity=await auth.connect();if((await jobs()).find(j=>j.id===job.id)?.status!=='awaiting-auth')return;if(old?.accountId&&old.accountId!==identity.accountId)throw RedownDropboxAuth.fail('Dropbox account changed. Click the file again to save to this account.');
+          if(Date.now()-job.at>10*60*1000)throw RedownDropboxAuth.fail('Pending save expired. Click the file again.');
+          Object.assign(job,{accountId:identity.accountId,connectionId:identity.connectionId,status:'queued'});await save(job);void wake();
+        }catch(e){job.status='blocked';job.error=e.status?e.message:'Dropbox login could not be completed.';await save(job);await receipt(job);}
+        finally{pendingAuth.delete(job.id);}
+      }catch(e){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:e.status?e.message:'Dropbox could not start saving.'}});}
+    }
+    async function wake(){
+      // Periodic alarm is a recovery trigger, not a permanent worker keepalive.
+      await chrome.alarms.create('dropbox:resume',{periodInMinutes:0.5});return pump();
+    }
+    const ownsMessage=m=>['dropboxConnect','dropboxDisconnect','dropboxStatus','dropboxCancel'].includes(m?.type);
+    async function message(m,sender){
+      if(sender.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
+      try{
+        if(m.type==='dropboxConnect'){await auth.connect();return {ok:true};}
+        if(m.type==='dropboxDisconnect'){
+          stopping=true;controller?.abort();await running?.catch(()=>{});
+          for(const job of await jobs())if(!terminal.has(job.status)){job.status='cancelled';job.error='Dropbox disconnected.';await save(job);await receipt(job);}
+          await auth.disconnect();stopping=false;return {ok:true};
+        }
+        if(m.type==='dropboxCancel'){
+          controller?.abort();
+          for(const job of await jobs())if(['queued','awaiting-auth'].includes(job.status)){job.status='cancelled';job.error='Dropbox save cancelled.';await save(job);await receipt(job);}
+          return {ok:true};
+        }
+        if(m.type==='dropboxStatus'){
+          const a=await get('dropbox:auth');if(a)await auth.ready(undefined,true);
+          else if((await get('dropbox:state'))?.phase==='connecting')await chrome.storage.local.set({'dropbox:state':{phase:'reconnect'}});
+          void wake();return {ok:true};
+        }
+      }catch{return {ok:false,error:'Dropbox connection needs attention. Reconnect or try again.'};}
+      return {ok:false};
+    }
+    function install(){
+      chrome.alarms.onAlarm.addListener(a=>{if(a.name==='dropbox:resume')void pump().catch(()=>{});});
+      chrome.runtime.onStartup.addListener(()=>{void wake().catch(()=>{});});
+      chrome.runtime.onInstalled.addListener(()=>{void wake().catch(()=>{});});
+      void wake().catch(()=>{});
+    }
+    return {dispatch,message,ownsMessage,install,pump};
+  }
+  globalThis.RedownDropboxProvider={create};
+})();

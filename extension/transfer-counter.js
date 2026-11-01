@@ -22,6 +22,9 @@
       }),
       record:entry=>serial(async()=>{
         const {counter,history}=await state(),now=new Date().toISOString();
+        const dropboxId=entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
+        const deliveredIds=dropboxId?(await storage.get('dropbox:deliveries'))['dropbox:deliveries']||[]:[];
+        if(dropboxId&&deliveredIds.includes(dropboxId))return;
         const cleaned=entry?.ok&&entry?.sourceUrl?history.filter(item=>{
           if(item?.ok||item?.sourceUrl!==entry.sourceUrl||entry.profileId&&item?.profileId&&item.profileId!==entry.profileId)return true;
           const age=Math.abs(Date.now()-new Date(item?.at||0).getTime());return !Number.isFinite(age)||age>5*60*1000;
@@ -34,7 +37,7 @@
           console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
         }
         const next=[saved,...cleaned].slice(0,50);
-        await storage.set({transferHistory:next,transferCounter:increment(counter,delivered(entry)?1:0)});
+        await storage.set({transferHistory:next,transferCounter:increment(counter,delivered(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
       })
     };
   }

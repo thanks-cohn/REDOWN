@@ -1,0 +1,22 @@
+{
+  "getStartGuide": {
+    "state": "available",
+    "operation": null,
+    "note": "Offline diagnostic only; not browser/provider readiness"
+  },
+  "validateRegistry": {
+    "state": "available",
+    "operation": null,
+    "note": "Offline diagnostic only; not browser/provider readiness"
+  },
+  "listIssues": {
+    "state": "partial",
+    "operation": null,
+    "note": "Offline diagnostic only; not browser/provider readiness"
+  },
+  "getReleaseReadiness": {
+    "state": "partial",
+    "operation": null,
+    "note": "Offline diagnostic only; not browser/provider readiness"
+  }
+}

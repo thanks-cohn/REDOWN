@@ -1,0 +1,1562 @@
+{
+  "baselineCommit": "0297d0f4439face79e2a16e39d430f1fc7a84e5e",
+  "scope": "Working-tree source and synthetic deterministic route replay; not installed-browser evidence",
+  "hashes": {
+    "extension/right-click-v3.js": {
+      "before": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "after": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/right-click-current.js": {
+      "before": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "after": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/nested-locations.js": {
+      "before": "344c8002a55e01ee0f7f3c1686a7e7a7df4b2da02b77696c90b3bb74207f5a6c",
+      "after": "344c8002a55e01ee0f7f3c1686a7e7a7df4b2da02b77696c90b3bb74207f5a6c",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/destination-config.js": {
+      "before": "20edf0063d59481dac271e96d20effe08363bf09e73be18ec02cb9eb2f3fde9e",
+      "after": "20edf0063d59481dac271e96d20effe08363bf09e73be18ec02cb9eb2f3fde9e",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/right-click-engine-settings.js": {
+      "before": "eeed4e5516bbce76f2023bc1b524280cc16e1ed1120e08339dc8a5658c18f882",
+      "after": "eeed4e5516bbce76f2023bc1b524280cc16e1ed1120e08339dc8a5658c18f882",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/beta/right-click-v3-ui.js": {
+      "before": "9880cbbb4fcbaf590a586c65c2e74efcf8d5f2258195b43e02adee6640fabddc",
+      "after": "9880cbbb4fcbaf590a586c65c2e74efcf8d5f2258195b43e02adee6640fabddc",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/cloudflare-api.js": {
+      "before": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "after": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/cloudflare-auth.js": {
+      "before": "3b75d87d43b902f7822dfde93bd337019a71a440cf6779718694260826c96912",
+      "after": "3b75d87d43b902f7822dfde93bd337019a71a440cf6779718694260826c96912",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/beta/r2-adapter.mjs": {
+      "before": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+      "after": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-menu.js": {
+      "before": "391744985139e4b9497a9c19c5d85da7feae1914d01dcaf1ef666083e2f5253f",
+      "after": "d16dabcbb8800a416d86fabb3cdbb2cfbb5596c3071c85b282ac4c0813b3b231",
+      "identical": false,
+      "scope": "authorized shared composition seam"
+    },
+    "extension/google-drive-auth.js": {
+      "before": "9990415b8da2a17092e3afe16d86a0654baa7fcd3a6ec6981b988fe6d268a5cb",
+      "after": "9990415b8da2a17092e3afe16d86a0654baa7fcd3a6ec6981b988fe6d268a5cb",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-transfer.html": {
+      "before": "22d63fdddfdbfdef929873ae412de176d875d552202fdd478a27942e27ef5e1f",
+      "after": "22d63fdddfdbfdef929873ae412de176d875d552202fdd478a27942e27ef5e1f",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-controls.css": {
+      "before": "c93efdf990328ca407855320ec5a5c93f99bbecf33624eaaf83b583b3e608718",
+      "after": "c93efdf990328ca407855320ec5a5c93f99bbecf33624eaaf83b583b3e608718",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-transfer.mjs": {
+      "before": "6506363408f1be1c0219b7f8e9a15a18f7f051e14cf75bf61f9283254050caf0",
+      "after": "6506363408f1be1c0219b7f8e9a15a18f7f051e14cf75bf61f9283254050caf0",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-api.mjs": {
+      "before": "71aba1768de6c69e419c72d12691b16d5fb8fe2cf65cb46d2effbfa337a2ff45",
+      "after": "71aba1768de6c69e419c72d12691b16d5fb8fe2cf65cb46d2effbfa337a2ff45",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/google-drive-provider.js": {
+      "before": "cdeb5c2ae78880bed5383b12f06d862d6e35184593992b343bcb494f68cb0d84",
+      "after": "cdeb5c2ae78880bed5383b12f06d862d6e35184593992b343bcb494f68cb0d84",
+      "identical": true,
+      "scope": "protected"
+    },
+    "extension/shelf-google-drive.js": {
+      "before": "1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc",
+      "after": "1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc",
+      "identical": true,
+      "scope": "protected"
+    }
+  },
+  "plans": [
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "filteredCandidateSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "filteredCandidateSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "filteredCandidateSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "filteredCandidateSHA256": "bdacc4bea96b13285be7116f53c5d51c23bdb4955a785a27c9681efc10a4915c",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "filteredCandidateSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "filteredCandidateSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "filteredCandidateSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "filteredCandidateSHA256": "f3efb56c7ba1e1cfa8154df78a0a889ece0298aa4f2eda6cf2a90a23a1b3b3ad",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "filteredCandidateSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "filteredCandidateSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "filteredCandidateSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "filteredCandidateSHA256": "43061df0c22bf3a31c259a67e309b52c3501b26ff4fc6a90cc5fc475bbee8546",
+      "routesSHA256": "12b70624612fe0dc0e1b4f1b463b2b62f0b8ef1bf826bfbe4733f937fb9d880f",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "filteredCandidateSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "filteredCandidateSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "filteredCandidateSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "filteredCandidateSHA256": "5e30ad807f078c0d456cb16842bce752c260d6d141720f0ca84b7150f365ef96",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "filteredCandidateSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "filteredCandidateSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "filteredCandidateSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "filteredCandidateSHA256": "e277fe2bab3c88c2701ff6f8c62eb04db824b3ea2c0564c2a45e275d4b13678e",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "filteredCandidateSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "filteredCandidateSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "filteredCandidateSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "simple"
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "filteredCandidateSHA256": "9455c4ad9827b1220c0a28b9f516e08b6b6da190d9ea4e658d944b7a5f355af8",
+      "routesSHA256": "c7910e49b3dd57223cad8870ade3fa35e8a34f91eed251bad9904615e4f403a9",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "filteredCandidateSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "filteredCandidateSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "filteredCandidateSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "filteredCandidateSHA256": "53126765ea06c10fcb03792aeaae86e6c7fb6328e3ba8ac497804a43c62293f4",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "filteredCandidateSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "filteredCandidateSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "filteredCandidateSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "filteredCandidateSHA256": "7dea287a6acfeda79ad61d6d3aa523d54dff8bd95845f68a9cb4cab334b06ef0",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "filteredCandidateSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "filteredCandidateSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "filteredCandidateSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "filteredCandidateSHA256": "5c91b360303bb7f7402f4693f173c0605593110d201229f859fc51e668eaf2d5",
+      "routesSHA256": "fa26c0c7e5f6e3138cb5fdbef3101678a25feca60ceb3aeb351a7d941d8da09c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "filteredCandidateSHA256": "6454feb50ec2e1f319f03bdde4e8359be07aa8ec7cb89185694137b0a872318e",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "filteredCandidateSHA256": "ae2aa97d7a9e4ce794a22cb88082e05d0e8c3c3ccbd50b9cc1f7085f223b7db8",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "filteredCandidateSHA256": "bda431a34f3a54b81fbfe250f1e276c10217c85ee15a7bd2abe28fca2e89e826",
+      "routesSHA256": "5d54d2b966c1255a86b59f72bd8a9ac1ffa16581c2a0925eb3c1359b069be0ba",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "filteredCandidateSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "filteredCandidateSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "filteredCandidateSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "filteredCandidateSHA256": "aa0f85f0c257b4db26c3d14f22adf2e08f9aca29a60ff90be0282be6adde5973",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "filteredCandidateSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "filteredCandidateSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "filteredCandidateSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "filteredCandidateSHA256": "841cddd3efd322948b781bbf20db43a90b57ebea54229c4c9bc58d91425cdba2",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "filteredCandidateSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "filteredCandidateSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "filteredCandidateSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "filteredCandidateSHA256": "4c9729321265a08a6233a648651b858621cc719bde8857bef4c5d8109cfd6f33",
+      "routesSHA256": "ec6e9aee9c367d3864a95cd5af1f8560c63a1fe785522220f9556682773b4df2",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "filteredCandidateSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "filteredCandidateSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "filteredCandidateSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "filteredCandidateSHA256": "92f2bead756c2ce4fe00f5c1151a3ef95fb6170ea8177c7a965a65b086699a34",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "filteredCandidateSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "filteredCandidateSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "filteredCandidateSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "filteredCandidateSHA256": "07ae69db64d70feca84cf5076051d75a134e34a42fda9e69a0eff45d39375c2d",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "filteredCandidateSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "filteredCandidateSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "filteredCandidateSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "active",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "filteredCandidateSHA256": "9d0c69052ffc514aeb9b60ac7e520cf75f6b2a9171b727e3c8a3ed712bf4f4d7",
+      "routesSHA256": "9af69e4faf5fdebca8ff058284feb6c98ced86ff344cb85c2f039dc04cde9850",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "filteredCandidateSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "filteredCandidateSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "filteredCandidateSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "filteredCandidateSHA256": "ee7524ce55ef01066b0b04f797f807cb2ac7a6b37ef87658cd0f5fc1d62602c3",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "filteredCandidateSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "filteredCandidateSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "filteredCandidateSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "filteredCandidateSHA256": "a3728a22356802e7169b195fdcb46ddee484dcd5e4ee8aee9518364243e4bd79",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "filteredCandidateSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "filteredCandidateSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "filteredCandidateSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "no-profiles",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "filteredCandidateSHA256": "0ba81e372ae1180767b550eb8c049510980d8f61c51890bd4242b36c09e71653",
+      "routesSHA256": "3e97a84447e214fba75f52116f5ce539e84fbb33bdac71369af756ceb05ebc9e",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "filteredCandidateSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "filteredCandidateSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "filteredCandidateSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "connected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "filteredCandidateSHA256": "281f61ab49456f097146b9068fa626307163724746d77dd9958e2906c6a41a7c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connected",
+      "originalPlanSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "filteredCandidateSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "filteredCandidateSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "filteredCandidateSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "disconnected",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "filteredCandidateSHA256": "09f384263304ba9b3a2e233d14a3758bb2dba8980a4a52d18c3a9ad84f296f8f",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connected",
+      "originalPlanSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "filteredCandidateSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "connecting",
+      "originalPlanSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "filteredCandidateSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "disconnected",
+      "originalPlanSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "filteredCandidateSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    },
+    {
+      "mode": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "variant": "unactivated",
+      "google": "reconnect",
+      "dropbox": "reconnect",
+      "originalPlanSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "filteredCandidateSHA256": "8e0dcec58cc8a9431d50dd3889a23890c3e02082bc42be3f93888eed72ac5d8c",
+      "routesSHA256": "e82c4a333405aa92cbe174457d1a637c3c415b507961bbafb41983fb90d4300c",
+      "identical": true
+    }
+  ],
+  "routines": {
+    "ingestCloudflareAtPrefix": {
+      "before": "9a5be05e0e6a48ce6fc8931868763d23f8a785bad08cd0f5fdb2bb6940ec5f97",
+      "after": "9a5be05e0e6a48ce6fc8931868763d23f8a785bad08cd0f5fdb2bb6940ec5f97",
+      "identical": true
+    },
+    "saveResolvedRightClick": {
+      "before": "c360162e47dbda41b973d9b4f0777242422d047dac0e84e5043e9bd875764993",
+      "after": "c360162e47dbda41b973d9b4f0777242422d047dac0e84e5043e9bd875764993",
+      "identical": true
+    }
+  }
+}

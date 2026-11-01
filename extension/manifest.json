@@ -23,7 +23,10 @@
     "https://hitomi.la/*",
     "https://*.r2.dev/*",
     "http://127.0.0.1/*",
-    "https://www.googleapis.com/*"
+    "https://www.googleapis.com/*",
+    "https://api.dropboxapi.com/*",
+    "https://content.dropboxapi.com/*",
+    "https://www.dropbox.com/*"
   ],
   "oauth2": {
     "client_id": "763628402500-55kpvvm33fvrtcggva4tp2m4te67dghm.apps.googleusercontent.com",
@@ -35,14 +38,16 @@
     "service_worker": "service-worker.js"
   },
   "action": {
-    "default_title": "REDOWN — Your cloud companion",
+    "default_title": "REDOWN \u2014 Your cloud companion",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
       "48": "icons/icon48.png"
     }
   },
-  "side_panel": { "default_path": "shelf.html" },
+  "side_panel": {
+    "default_path": "shelf.html"
+  },
   "options_page": "options.html",
   "icons": {
     "16": "icons/icon16.png",

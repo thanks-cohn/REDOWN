@@ -1,0 +1,35 @@
+{
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "state": "failed",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "regression": {
+    "state": "failed",
+    "passed": 835,
+    "incomplete": true,
+    "newAgainstHistoricalRegistry": 84,
+    "knownAgainstHistoricalRegistry": 6,
+    "execution": {
+      "exitCode": 1,
+      "error": null,
+      "stderr": ""
+    }
+  },
+  "note": "Historical regression registry is stale for this branch. Compare suite-comparison.json for fresh branch baseline: no new failure identities. No frozen architecture/evidence hashes refreshed."
+}

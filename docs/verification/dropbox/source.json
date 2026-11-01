@@ -1,0 +1,18 @@
+{
+  "scope": "Tested working-tree source, before implementation commit",
+  "baselineCommit": "0297d0f4439face79e2a16e39d430f1fc7a84e5e",
+  "sha256": {
+    "extension/dropbox-auth.js": "ad45969b3870d113480004cfb90af2cfbb8dbc7dbfd6cb464267f38d3c5b2ec1",
+    "extension/dropbox-api.js": "f9e0278cb248aeb607ce59936958feb42e15ced0652a77b96a925af5e1a97b2c",
+    "extension/dropbox-menu.js": "082dddde3bbfbc6d01f41ffe6a8340a2c33c847279ebc1639f622eeb3268b9ab",
+    "extension/dropbox-controls.css": "92726ff1fd241b57c09b235dfd83b6c9d98f6df716e255b811f99c78c90e66fa",
+    "extension/dropbox-provider.js": "a1ab80fc0480a82278baf0e86cd2d2f809aa1d6f79afe78f0f9d24d7c7dc425d",
+    "extension/shelf-dropbox.js": "d843697ffec35f68bc963c9d136591b2ed1dc37778b7c194b9f1fad68c68d51b",
+    "extension/background.js": "60028796616641be8a6667ce0ceb9001e69cb7fb31a06c2955d2070d209aafb8",
+    "extension/google-drive-menu.js": "d16dabcbb8800a416d86fabb3cdbb2cfbb5596c3071c85b282ac4c0813b3b231",
+    "extension/manifest.json": "3012fb758ab62f9ed2d3d869b1485635ef1d38e8004a97d9d9799215beb43322",
+    "extension/shelf.html": "d320d4170e64c8ea4360d23d6d38e0f5fdcf1d1e828a42b01bec39b3374f652a",
+    "extension/transfer-counter.js": "b2392f9345a45f52b22ca3d82ad94d428d635a362592fd24fb8a6816159e5b5b",
+    "tests/dropbox.test.mjs": "fcb48c87bb063d74af974f6fd7dbb1d1db3ed1950e3f96b9e5cfb4949816b585"
+  }
+}

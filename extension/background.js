@@ -924,6 +924,12 @@ importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
+importScripts("dropbox-auth.js");
+importScripts("dropbox-api.js");
+importScripts("dropbox-menu.js");
+importScripts("dropbox-provider.js");
+const dropboxProvider=RedownDropboxProvider.create({record:recordTransfer});
+dropboxProvider.install();
 importScripts("right-click-current.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
@@ -2349,7 +2355,9 @@ async function menuApplicationKey(){
   const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
   const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
   const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
-  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value+providerRevision));
+  const dropbox=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];
+  const dropboxRevision=globalThis.RedownDropboxMenu?.revision(dropbox)||'';
+  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value+providerRevision+dropboxRevision));
   return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
 }
 let menuRebuildQueue=Promise.resolve(),menuRebuildActive=null,menuRebuildPending=false;
@@ -2446,6 +2454,11 @@ async function buildMenus() {
       const combined=RedownGoogleDriveMenu.compose(description,RedownGoogleDriveMenu.fragment(state,ROOT_MENU_ID),ROOT_MENU_ID);
       if(combined!==description)description.splice(0,description.length,...combined);
     }
+    if(globalThis.RedownDropboxMenu){
+      const state=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];
+      const combined=RedownGoogleDriveMenu.composeSibling(description,RedownDropboxMenu.fragment(state,ROOT_MENU_ID),ROOT_MENU_ID);
+      if(combined!==description)description.splice(0,description.length,...combined);
+    }
     const seen=new Set();
     for(const item of description){
       if(seen.has(item.id)||item.parentId&&!seen.has(item.parentId))throw Error('Invalid menu hierarchy. Repair destinations in Explorer.');
@@ -2463,7 +2476,7 @@ async function buildMenus() {
     onStage();
     // Keep root/management installed throughout destination replacement.
     const expectedIds=new Set(description.map(item=>item.id));
-    for(const id of globalThis.RedownGoogleDriveMenu?.obsolete(expectedIds)||[]){
+    for(const id of [...(globalThis.RedownGoogleDriveMenu?.obsolete(expectedIds)||[]),...(globalThis.RedownDropboxMenu?.obsolete(expectedIds)||[])]){
       try{await acknowledgeMenu('remove',{id});}
       catch(error){if(error.code!=='CHROME_ITEM_MISSING')throw error;}
     }
@@ -2823,10 +2836,13 @@ async function openRedownHome(tab){
 }
 
 chrome.storage.onChanged.addListener((changes,area)=>{
-  if(area==='local'&&changes.googleDriveState)void rebuildMenus().catch(()=>{});
+  if(area==='local'&&(changes.googleDriveState||changes['dropbox:state']))void rebuildMenus().catch(()=>{});
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
+    await dropboxProvider.dispatch(info);return;
+  }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
@@ -2911,6 +2927,9 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
 }
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if(globalThis.RedownDropboxMenu&&dropboxProvider.ownsMessage(message)){
+    dropboxProvider.message(message,_sender).then(sendResponse,()=>sendResponse({ok:false}));return true;
+  }
   if(globalThis.RedownGoogleDriveProvider?.ownsMessage(message)){
     RedownGoogleDriveProvider.message(message,_sender).then(sendResponse,()=>sendResponse({ok:false}));return true;
   }

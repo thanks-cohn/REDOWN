@@ -82,5 +82,12 @@
   "extension/google-drive-transfer.mjs",
   "extension/shelf-google-drive.js",
   "scripts/google-drive-visual.mjs",
-  "scripts/google-drive-preservation.mjs"
+  "scripts/google-drive-preservation.mjs",
+  "extension/dropbox-auth.js",
+  "extension/dropbox-api.js",
+  "extension/dropbox-menu.js",
+  "extension/dropbox-provider.js",
+  "extension/shelf-dropbox.js",
+  "scripts/dropbox-visual.mjs",
+  "scripts/dropbox-preservation.mjs"
 ]

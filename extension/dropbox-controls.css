@@ -1,0 +1,10 @@
+.dropbox-control { display:flex; flex-direction:column; align-items:flex-start; gap:.4rem; margin:.4rem 0 1rem; min-width:0; }
+.dropbox-button { display:inline-flex; align-items:center; justify-content:center; gap:.6rem; max-width:100%; padding:.65rem .9rem; border:1px solid color-mix(in srgb,currentColor 22%,transparent); border-radius:12px; color:inherit; background:color-mix(in srgb,#0061ff 8%,transparent); font:inherit; font-size:.85rem; font-weight:650; cursor:pointer; }
+.dropbox-mark { color:#0061ff; font-size:1.6rem; line-height:1; }
+.dropbox-button:focus-visible,.dropbox-actions :focus-visible { outline:2px solid #438aff; outline-offset:3px; }
+.dropbox-button:disabled { opacity:.7; cursor:wait; }
+.dropbox-actions { display:flex; flex-wrap:wrap; gap:.7rem; font-size:.75rem; }
+.dropbox-actions a { color:inherit; }
+.dropbox-actions button { border:0; background:transparent; padding:0; color:inherit; text-decoration:underline; font:inherit; cursor:pointer; }
+.dropbox-control small { font-size:.72rem; line-height:1.5; opacity:.78; overflow-wrap:anywhere; }
+.dropbox-control [hidden] { display:none; }
