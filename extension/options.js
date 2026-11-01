@@ -3609,13 +3609,28 @@ function wireSettingsDisclosure(){
   });
 }
 wireSettingsDisclosure();
+// R2-Ask is an isolated Debug Mode-only visual preview. No provider messages.
+const r2AskDialog=$("r2-ask-dialog"),r2AskTrigger=$("debug-r2-ask");
+r2AskTrigger.addEventListener("click",()=>{
+  if(!debugModeEnabled||!document.querySelector("[data-debug-detail]")||r2AskTrigger.closest("[data-debug-detail]").hidden)return;
+  if(r2AskDialog.open)return;
+  r2AskDialog.showModal();
+  $("r2-ask-dismiss").focus({preventScroll:true});
+});
+function closeR2Ask(){
+  if(r2AskDialog.open)r2AskDialog.close();
+}
+$("r2-ask-dismiss").addEventListener("click",closeR2Ask);
+$("r2-ask-later").addEventListener("click",closeR2Ask);
+r2AskDialog.addEventListener("close",()=>{if(debugModeEnabled)r2AskTrigger.focus({preventScroll:true});});
+
 function applyDebugMode(){
   applyOnboarding();
   document.documentElement.classList.toggle("debug-mode",debugModeEnabled);
   $("debug-mode-enabled").checked=debugModeEnabled;
   document.querySelectorAll("[data-debug-detail]").forEach(el=>{el.hidden=!debugModeEnabled;});
   applyBetaMode();
-  if(!debugModeEnabled)storageTraining?.exit({focus:false});
+  if(!debugModeEnabled){closeR2Ask();storageTraining?.exit({focus:false});}
 }
 function applyBetaMode(){
   document.documentElement.classList.toggle("beta-mode",betaModeEnabled);
