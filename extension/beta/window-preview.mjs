@@ -11,7 +11,7 @@ export function renderPreview(document,{type,url,text,title}){
 }
 export function createWindowPreview({document,dialog,request,previewType,getContext,getItems,pauseSide,onSelection=()=>{},onEvent=()=>{},onDownload=null,label="Window Preview",urls=URL}){
   const viewer=document.createElement('div');viewer.className='window-viewer';
-  viewer.innerHTML='<div class="preview-header"><h2></h2><div class="preview-controls"><button type="button" data-lightbox>Lightbox</button><button type="button" data-close aria-label="Close Window Preview">✕</button></div></div><div class="window-content" aria-live="polite"></div><p class="window-info"></p><div class="preview-footer"><button data-previous>← Previous</button><button data-next>Next →</button></div>';
+  viewer.innerHTML='<div class="preview-header"><h2></h2><div class="preview-controls"><button type="button" data-lightbox>LIGHTBOX</button><button type="button" data-close aria-label="Close Window Preview">✕</button></div></div><div class="window-content" aria-live="polite"></div><p class="window-info"></p><div class="preview-footer"><button data-previous>← Previous</button><button data-next>Next →</button></div>';
   dialog.append(viewer);dialog.removeAttribute('aria-labelledby');dialog.setAttribute('aria-label',label);
   const content=viewer.querySelector('.window-content'),title=viewer.querySelector('h2'),light=viewer.querySelector('[data-lightbox]');
   const info=viewer.querySelector('.window-info');
