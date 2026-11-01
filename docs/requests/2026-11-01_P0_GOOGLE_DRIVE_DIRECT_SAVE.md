@@ -6,6 +6,17 @@
 **Action:** Inspect, implement, test, document, commit, and push. **Do not stop at a proposal, scaffold, or audit.**  
 **Status of this document:** Implementation request, NOT a claim of completed functionality or approved OAuth.
 
+## Owner Google Cloud setup checkpoint (November 1, 2026)
+
+Confirmed in the owner's Google Auth Platform screenshots:
+
+- Google Cloud project: `redown-click2cloud`.
+- **Data Access:** `drive.file` was selected and the console displayed **“Data access changes saved!”**.
+- **Audience:** **External** / **Testing**, with **one test user** displayed. Do not publish the OAuth app merely to test this implementation.
+- **Next action:** Go to **Clients**, open the Chrome Extension OAuth client, confirm the Item ID equals the installed REDOWN extension ID, and give Codex its non-secret `.apps.googleusercontent.com` Client ID for the extension configuration. If no valid Chrome Extension OAuth client exists, create one for the correct extension ID.
+- **Remaining independent check:** Confirm Google Drive API is enabled in the same project.
+- **Privacy:** Do **not** copy the owner's test-user email, OAuth tokens, private information, or passwords into this public repository. Screenshots are evidence of setup only; live OAuth and Drive transfer are **not** yet proven.
+
 ## Product result required
 
 A first-time user can:
