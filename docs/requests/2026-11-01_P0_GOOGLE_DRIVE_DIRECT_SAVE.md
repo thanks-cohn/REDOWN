@@ -56,6 +56,34 @@ The owner will perform manual Google Cloud Console setup. Do not make up credent
 - Use Chrome's supported extension identity and OAuth mechanism (including `chrome.identity.getAuthToken` and `oauth2` manifest configuration where compatible), or document and implement an equally secure browser-extension flow. Obtain only needed scope and bind results to the correct Google account.
 - Provide the owner the exact remaining one-time console fields and client-ID injection steps at completion.
 
+## P0 Context menu: independent Google Drive entry under REDOWN (owner clarification, November 1, 2026)
+
+**Invariant: Google Drive is a direct child of the ONE existing `REDOWN` Chrome right-click root regardless of Cloudflare's presentation mode.** This is independent of Cloudflare's own Simple, Nested/Narrow, and Nested/Level(Depth) settings, bucket activation, selected account, destinations and connection state.
+
+**Illustrative target (exact Cloudflare children remain whatever V3 already produces):**
+
+```text
+Right-click file/link/image
+└─ REDOWN
+   ├─ Google Drive  ▸                   [always a direct child]
+   │  └─ REDOWN                         [save to app folder, if connected]
+   │     or Log in to Google Drive…     [connection action, if disconnected]
+   ├─ [Cloudflare V3 destination rows, using whichever display mode owner chose]
+   └─ Manage destinations…
+```
+
+- Do **not** put Google Drive under a Cloudflare account, bucket, `Cloudflare setup`, nested category, or Cloudflare mode-specific subtree.
+- Do **not** introduce another top-level REDOWN root or a second independent Chrome menu writer. Use the existing authoritative `extension/background.js` `buildMenus()`/reconciliation system to combine provider-independent root children and Cloudflare V3's existing projection. Keep the current `ROOT_MENU_ID` and Chrome context applicability; order with provider entries clearly distinguishable.
+- The Google entry remains present across **Simple, Nested/Narrow, and Nested/Level(Depth)**, including when Cloudflare is disconnected, has zero profiles, or has not activated buckets. Cloudflare's own children may vary, but Google Drive's root child is NOT controlled by Cloudflare's selected display mode.
+- Give Google menu IDs an isolated, deterministic namespace (e.g., `v3:provider:google-drive:root`, `v3:provider:google-drive:save-redown`, `v3:provider:google-drive:connect`), separate from Cloudflare's IDs. Provider-specific click dispatch must route the Drive IDs to the Google Drive adapter **before** Cloudflare's existing `resolveActiveRightClick()` / R2 destination save path; never fall through to Cloudflare setup, Dashboard Home, or an R2 bucket.
+- Native menu updates/rebuilds must **atomically reconcile the combined plan** using unique IDs and parent-first ordering. No duplicate entries, missing parent, stranded stale IDs, lost provider menus, or transient contradictory actions during mode changes/connection changes/service-worker restarts. Existing `redown-setup`, `redown-manage` and `v3:provider:cloudflare:* ` actions retain their original meaning.
+- **Connected:** `REDOWN → Google Drive → REDOWN` initiates the eligible file save to the verified app-owned Drive folder; **disconnected:** `REDOWN → Google Drive → Log in to Google Drive…` takes the user to the actual Google OAuth flow; **connecting/not ready:** provide safe non-saving guidance or a disabled/not-ready state. Menu clicks must never report successful transfer until Google confirms the operation.
+- Keep the Shelf's separately specified Google login button. The right-click connection entry complements it, not substitutes for it.
+- No forced Cloudflare restructure. Preserve current V3 Simple/Narrow/Depth labels, ordering, settings, selection, existing destination paths and operation routing.
+- Tests: assert correct root parentage, uniqueness, stable Google appearance and click routing for each Cloudflare mode and disconnected/connected transitions, Cloudflare no-profiles setup, rapid mode switching, repeated menu rebuilds, fresh installation, and MV3 worker restart. Confirm a Google save cannot invoke R2 handling or Dashboard navigation, and Cloudflare operations still work.
+
+**Acceptance:** No matter what Cloudflare mode the user chooses, the REDOWN right-click menu retains a direct **Google Drive** child, and selecting its REDOWN folder saves to Drive without collision with Cloudflare.
+
 ## P0 Shelf UI: Google Drive login button at top (owner clarification, November 1, 2026)
 
 **This is a LOGIN / CONNECTION control, not a file-transfer or upload action.**
