@@ -432,3 +432,37 @@ Separately, a creator should be able to **download or build a REDOWN theme pack,
 6. **Last:** Consider creator submission, public catalog, distribution and subscription entitlements only after permission, platform, performance and marketplace governance are tested.
 
 **Status and authority:** This appendix is a detailed future feature record in the weekly review, **not** a Codex implementation handoff, product release announcement, or permission to inspect local files or perform cloud mutations. Create scoped approved implementation requests only once the project is stabilized.
+
+
+---
+
+## IMPORTANT NEW IDEAS — RECOMMENDED DESKTOP THEME MANAGER, OPTIONAL DIRECT EXTENSION IMPORT
+
+**Owner's design decision (week of November 1, 2026):** **Recommend REDOWN Desktop as the best, easiest, safest place to install and manage creator-made themes, but do not require it for ordinary safe themes.** Both desktop-assisted and direct-to-extension imports must pass the **same versioned validation and compatibility contract**. Desktop performs the extra asset preparation and creator management; the extension remains the final authority on what styling it will accept and display.
+
+**140. Recommended desktop-first theme manager, not a forced desktop dependency.** Advertise REDOWN Desktop (proposed to be included with either monthly or yearly subscription) as the recommended installation and creator-management experience, with convenient pack previews, asset preparation, conflict detection, compatibility checks, theme libraries and one-click sync into the browser extension. Still let a user download a supported simple theme pack and import it **directly into the extension** without installing Desktop or granting local-file access, so the application remains approachable and independently useful. **Time required: 12–24 hours for dual-path import design and first compatible implementation; Urgency level: LOW (AFTER CORE STABILITY).**
+
+**141. Shared theme compliance, namespace isolation and safe fallback.** Maintain one documented versioned manifest/schema and common validation conformance suite for both installation paths: scoped design tokens, approved assets, compatibility/size limits, required accessible states, responsive layout invariants and restricted styling surfaces. Desktop may reject or repair malformed packages before installation, but **the extension must independently validate** any installed/cached theme and never trust it merely because the native companion says it is valid; reject theme scripts, unsafe URLs, privileged code and styling that would obscure save destinations, permission prompts, focus, Delete confirmations or error states. **Time required: 16–32 hours for validator, fault tests and rollback; Urgency level: MEDIUM (ARCHITECTURAL, AFTER STABILITY).**
+
+**142. One-click theme selection and independently themed orbs.** After installation, list each compatible theme in the extension's existing theme controls and optionally represent chosen packs with configurable **theme-selector balls/orbs** whose colors, gradients, gloss, glow and decorative appearance can be edited through allowed theme tokens. A theme may replace a purely decorative orb or take an optional selector slot, but **may not hijack a core functional control**; preserve keyboard access, accessible labels, built-in themes, a one-click revert option and cached offline appearance if Desktop is closed. **Time required: 8–20 hours for theme selector and orb tokens; Urgency level: LOW.**
+
+### Two supported installation routes, one trustworthy result
+
+| Experience | Import and management | Final validation | Offline and failure behavior |
+| --- | --- | --- | --- |
+| **Recommended: REDOWN Desktop** | Download/open a creator pack, preview and validate it, resolve supported token or asset conflicts, then offer **Install to REDOWN Extension** | Extension applies its own manifest/schema/content checks before activation, even when Desktop prepared the pack | Previously installed compatible themes stay usable when Desktop is closed; local-file capabilities appropriately show disconnected |
+| **Simple: REDOWN Extension only** | Choose a downloaded theme pack in an extension-owned import UI; parse only allowed declarative tokens/assets | Exactly the same extension validator and conformance rules as the Desktop route | Theme is cached in appropriate extension-owned storage, with a built-in theme fallback and clear errors if unsupported |
+
+**Compliance is not a promise of arbitrary CSS access.** Give creators rich documented customization through CSS custom properties, constrained component variants, approved layout/zone tokens and decorative asset slots, not unrestricted replacement of the extension's code or controls. The exact accepted format must be designed around Chrome extension security/CSP and current store rules, verified against current authoritative requirements at implementation time. Direct import means importing a pack as data into extension-controlled storage; users do not edit or overwrite the installed Chrome extension files.
+
+### Practical product and release rules
+
+- **Desktop = workshop and trusted convenience layer; extension = independent safe renderer.** Keeping security checks in both places minimizes collisions from incomplete or incompatible packs and prevents a malicious or broken Desktop installation from bypassing extension safety.
+- **One theme engine.** Avoid separate desktop-only and extension-only renderers whose behavior eventually diverges; implement a common versioned token contract, reference fixtures and deterministic conflict rules.
+- **A failed theme cannot break the app.** Before activating a new pack, retain a known-good active theme; apply validated changes in a bounded preview/commit step, and roll back automatically on missing required styles/assets or startup failures.
+- **Creator-made packs should be portable.** Allow import/export of original themes, stable theme IDs, hashes, declared creator/license and compatible-version ranges, with opt-in distribution and proper rights.
+- **No automatic broad local disk access.** Installing a theme or using the extension-only route should not grant authorization to browse Desktop files; Local Files remains a separately opted-in native capability.
+- **Product positioning:** “Create anywhere. Customize everything. Install with REDOWN Desktop for the complete experience.” This is suggested future marketing copy, not a currently shipping claim.
+- **Sequencing:** Stabilize REDOWN core → establish the theme manifest/validator → ship extension-only simple import → add Desktop creator tooling and sync → optional theme orbs/community submission. The exact schedule may change with measured readiness and security testing.
+
+**Status:** Owner-approved conceptual direction recorded here only. **No production code or theme import feature is implemented by this documentation edit.**
