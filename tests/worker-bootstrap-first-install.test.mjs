@@ -28,10 +28,22 @@ test('fresh worker with failing heavy core still registers the original toolbar 
   assert.equal(h.chrome.action.onClicked.listeners.length,1);
   assert.equal(h.chrome.runtime.onInstalled.listeners.length,1);
   assert.equal(h.chrome.contextMenus.onClicked.listeners.length,0);
+  assert.equal(h.chrome.runtime.onMessage.listeners.length,1);
   const status=await h.context.RedownBoot.status();
   assert.equal(status.components.worker.state,'failed');
   assert.equal(status.overall,'blocked');
   assert.ok(h.local.entryPointEvidence.some(e=>e.code==='CORE_IMPORT_FAILED'));
+  h.local.debugModeEnabled=true;
+  const diagnostics=await new Promise(resolve => {
+    const done=h.chrome.runtime.onMessage.listeners[0](
+      {type:'bootV1',operation:'status'},
+      {id:'test',url:'chrome-extension://test/options.html'},
+      resolve
+    );
+    assert.equal(done,true);
+  });
+  assert.equal(diagnostics.ok,true);
+  assert.equal(diagnostics.result.components.worker.state,'failed');
   h.calls.length=0;
   h.chrome.action.onClicked.listeners[0]({id:1,windowId:7});
   assert.deepEqual(structuredClone(h.calls[0]),['panel',{windowId:7}]);
