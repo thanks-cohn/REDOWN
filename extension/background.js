@@ -936,7 +936,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 const searchSessions = RedownSearchSessions.create({listPage:listObjectsPage,score:explorerSearchScore});
 
-async function connectCloudflare() { return RedownCloudflareAuth.connect(); }
+async function connectCloudflare(options = {}) { return RedownCloudflareAuth.connect(options); }
 async function disconnectCloudflare() {
   return navigator.locks.request("redown-cloudflare-token",async()=>{
   const { cloudflareAuth } = await chrome.storage.local.get("cloudflareAuth");
@@ -2964,7 +2964,12 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           throw error;
         }
       }
-      if (message?.type === "cfConnect") return sendResponse({ ok:true, ...(await connectCloudflare()) });
+      if (message?.type === "cfConnect") {
+        // Only an explicit login initiated from the actual Shelf requests a new Explorer tab.
+        // Settings/Explorer logins and automatic refresh must not open a new tab.
+        const fromShelf = _sender?.url?.split(/[?#]/)[0] === chrome.runtime.getURL("shelf.html");
+        return sendResponse({ ok:true, ...(await connectCloudflare({ openExplorerAfterLogin: fromShelf })) });
+      }
       if (message?.type === "cfLoginStatus") { return sendResponse({ ok:true, ...(await RedownCloudflareAuth.status()) }); }
       if (message?.type === "cfLoginCancel") { await RedownCloudflareAuth.cancel(message.attemptId); return sendResponse({ ok:true }); }
       if (message?.type === "cfDisconnect") { await disconnectCloudflare(); return sendResponse({ ok:true }); }
