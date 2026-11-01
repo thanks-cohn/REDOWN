@@ -24,7 +24,7 @@
     const shelf=events.filter(e=>e.stage==='shelf'&&e.operation==='open').at(-1);
     const auth=s.cloudflareAuth;
     let defaultReady=false;try{defaultReady=!!adapters?.defaultReady(s);}catch{}
-    const components={worker:{state:adapters?'ready':'degraded'},
+    const components={worker:{state:globalThis.RedownWorkerCoreStatus==='failed'?'failed':adapters?'ready':'degraded'},
       toolbar:{state:toolbarUnhealthy?'degraded':configured?'ready':'unknown',evidenceLevel:toolbarFailure||configured?'api-result':'not-verifiable'},
       shelf:{state:shelf?.code==='SHELF_READY'?'ready':shelf?'degraded':'unknown',evidenceLevel:shelf?.code==='SHELF_READY'?'document-handshake':'not-verifiable'},
       nativeMenu:{state:matched?'registered':menu.state==='failed'?'failed':menu.state==='applying'?'repairing':'unknown',desiredGeneration:generation(desired),appliedGeneration:generation(menu.appliedGeneration),lastAcknowledgedAt:menu.lastAcknowledgedAt||null,evidenceLevel:matched?'acknowledged':'not-verifiable',visibleRows:'not-verifiable'},
@@ -32,7 +32,7 @@
       defaultDestination:{state:defaultReady?'ready':'needs-setup',evidenceLevel:'local-authorized-route'}};
     // Connected credentials and acknowledged menus are never a render/transfer certificate.
     const failure=events.filter(e=>/FAILED|BLOCKED|UNAVAILABLE|REJECTED/.test(e.code)).at(-1);
-    return {schemaVersion:1,bootId:workerEpoch,workerEpoch,extensionVersion:chrome.runtime.getManifest().version,startedAt,observedAt:new Date().toISOString(),overall:!adapters?'blocked':!matched||toolbarUnhealthy?'degraded':components.shelf.state==='ready'?'ready':'unknown',components,
+    return {schemaVersion:1,bootId:workerEpoch,workerEpoch,extensionVersion:chrome.runtime.getManifest().version,startedAt,observedAt:new Date().toISOString(),overall:globalThis.RedownWorkerCoreStatus==='failed'||!adapters?'blocked':!matched||toolbarUnhealthy?'degraded':components.shelf.state==='ready'?'ready':'unknown',components,
       lastFailure:failure?{component:failure.component,stage:failure.stage,code:failure.code,at:failure.at}:null};
   }
   async function history(input={}){
