@@ -1,0 +1,486 @@
+{
+  "scope": "Per-file isolated local runs, 25-second wall bound per file. beta-explorer times out in both revisions. This is not a green full suite.",
+  "before": {
+    "files": 82,
+    "passedFiles": 58,
+    "nonpassingFiles": [
+      {
+        "file": "add-menu-location.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "agent-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 9",
+          "ℹ pass 6",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "beta-explorer.test.mjs",
+        "timeout": true,
+        "summary": []
+      },
+      {
+        "file": "brand-and-paginated-history.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 4",
+          "ℹ pass 3",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "cloudflare-login.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 23",
+          "ℹ pass 3",
+          "ℹ fail 20",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "cloudflare-reconnect.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 3",
+          "ℹ pass 1",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "debug-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 24",
+          "ℹ pass 21",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-account-and-history-navigation.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 2",
+          "ℹ pass 1",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-diagnostic-fixtures.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 20",
+          "ℹ pass 19",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-neon-history.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 14",
+          "ℹ pass 10",
+          "ℹ fail 4",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-parity-audit.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 6",
+          "ℹ pass 5",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "get-url.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 17",
+          "ℹ pass 16",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "history-go-to.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 29",
+          "ℹ pass 26",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "issue-inventory.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 5",
+          "ℹ pass 4",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "modern-destinations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "nested-locations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "options-debug-display.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 19",
+          "ℹ pass 14",
+          "ℹ fail 5",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "popup-destinations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 13",
+          "ℹ pass 12",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "right-click-v3.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 60",
+          "ℹ pass 46",
+          "ℹ fail 14",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "semantic-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 21",
+          "ℹ pass 19",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "shelf.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 6",
+          "ℹ pass 4",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "simple-cloudflare-branding.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 11",
+          "ℹ pass 10",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "simple-location-rows.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 8",
+          "ℹ pass 0",
+          "ℹ fail 8",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "worker-bootstrap-first-install.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 3",
+          "ℹ pass 1",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      }
+    ]
+  },
+  "after": {
+    "files": 83,
+    "passedFiles": 59,
+    "nonpassingFiles": [
+      {
+        "file": "add-menu-location.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "agent-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 9",
+          "ℹ pass 6",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "beta-explorer.test.mjs",
+        "timeout": true,
+        "summary": []
+      },
+      {
+        "file": "brand-and-paginated-history.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 4",
+          "ℹ pass 3",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "cloudflare-login.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 23",
+          "ℹ pass 3",
+          "ℹ fail 20",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "cloudflare-reconnect.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 3",
+          "ℹ pass 1",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "debug-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 24",
+          "ℹ pass 21",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-account-and-history-navigation.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 2",
+          "ℹ pass 1",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-diagnostic-fixtures.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 20",
+          "ℹ pass 19",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-neon-history.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 14",
+          "ℹ pass 10",
+          "ℹ fail 4",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "explorer-parity-audit.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 6",
+          "ℹ pass 5",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "get-url.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 17",
+          "ℹ pass 16",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "history-go-to.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 29",
+          "ℹ pass 26",
+          "ℹ fail 3",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "issue-inventory.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 5",
+          "ℹ pass 4",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "modern-destinations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "nested-locations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 1",
+          "ℹ pass 0",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "options-debug-display.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 19",
+          "ℹ pass 14",
+          "ℹ fail 5",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "popup-destinations.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 13",
+          "ℹ pass 12",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "right-click-v3.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 60",
+          "ℹ pass 46",
+          "ℹ fail 14",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "semantic-api.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 21",
+          "ℹ pass 19",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "shelf.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 6",
+          "ℹ pass 4",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "simple-cloudflare-branding.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 11",
+          "ℹ pass 10",
+          "ℹ fail 1",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "simple-location-rows.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 8",
+          "ℹ pass 0",
+          "ℹ fail 8",
+          "ℹ cancelled 0"
+        ]
+      },
+      {
+        "file": "worker-bootstrap-first-install.test.mjs",
+        "timeout": false,
+        "summary": [
+          "ℹ tests 3",
+          "ℹ pass 1",
+          "ℹ fail 2",
+          "ℹ cancelled 0"
+        ]
+      }
+    ]
+  },
+  "newNonpassingFiles": []
+}

@@ -14,7 +14,7 @@ SOURCE = ROOT / 'extension'
 FILES = (
     'beta/dashboard.css', 'beta/standard-breadcrumbs.mjs', 'beta/url-list.mjs', 'beta/remote-dialog.mjs', 'beta/explorer.html', 'beta/explorer.css', 'beta/explorer.mjs', 'beta/file-api.mjs', 'beta/r2-adapter.mjs',
     'shelf.html', 'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
-    'hitomi-capture.js', 'nested-locations.js',
+    'hitomi-capture.js', 'nested-locations.js', 'assets/GOOGLE_DRIVE_ATTRIBUTION.md',
     'right-click-chooser.html', 'right-click-chooser.js', 'right-click-chooser.css', 'right-click-backup.js', 'right-click-backup-settings.js', 'right-click-current.js', 'right-click-v3.js', 'right-click-engine-settings.js', 'beta/right-click-v3-ui.js', 'beta/right-click-v3.css', 'storage-signals.js', 'public-addresses.js', 'explorer-status.js', 'options.html', 'options.js', 'popup.html',
     'popup.js', 'odometer.js', 'transfer-counter.js', 'rfis-index.js', 'model-viewer.min.js', 'manifest.json',
     'icon.svg', 'settings-mascot.js', 'settings-mascot.png', 'LICENSE', 'fonts/OFL.txt', 'fonts/README.md',

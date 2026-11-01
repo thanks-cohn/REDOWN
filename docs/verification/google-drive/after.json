@@ -1,0 +1,781 @@
+{
+  "commit": "b1c2c162ed207513cbc18c9b4e7494ad1f5e46f8",
+  "hashes": {
+    "extension/right-click-v3.js": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+    "extension/right-click-current.js": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+    "extension/nested-locations.js": "344c8002a55e01ee0f7f3c1686a7e7a7df4b2da02b77696c90b3bb74207f5a6c",
+    "extension/destination-config.js": "20edf0063d59481dac271e96d20effe08363bf09e73be18ec02cb9eb2f3fde9e",
+    "extension/beta/right-click-v3-ui.js": "9880cbbb4fcbaf590a586c65c2e74efcf8d5f2258195b43e02adee6640fabddc",
+    "extension/beta/right-click-v3.css": "9b0e82e18d297f5de6da6e04cc730c007a99c060e732ad9b71b8d635dc95c52c"
+  },
+  "plans": [
+    {
+      "style": {
+        "style": "simple"
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:root",
+            "title": "Root",
+            "parentId": "v3:provider:cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:leaf",
+            "title": "Images",
+            "parentId": "v3:provider:cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": [
+          "Choose and activate the default redown bucket."
+        ]
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:root",
+          "action": "remote-save",
+          "target": {
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "v3:leaf",
+          "action": "remote-save",
+          "target": {
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "prefix": "images/png"
+          }
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "simple"
+      },
+      "profiles": [],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": [
+          "Choose and activate the default redown bucket."
+        ]
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare:setup",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "simple"
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": ""
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": [
+          "Choose and activate the default redown bucket."
+        ]
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare:setup",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22%22%5D",
+            "parentId": "v3:provider:cloudflare",
+            "title": "bucket",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:root",
+            "parentId": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22%22%5D",
+            "title": "Root",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22images%22%5D",
+            "parentId": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22%22%5D",
+            "title": "images",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:leaf",
+            "parentId": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22images%22%5D",
+            "title": "Images",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": []
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22%22%5D",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:root",
+          "action": "remote-save",
+          "target": {
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "prefix": ""
+          }
+        },
+        {
+          "id": "v3:path:%5B%22fixture%22%2C%22account%22%2C%22bucket%22%2C%22images%22%5D",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:leaf",
+          "action": "remote-save",
+          "target": {
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "prefix": "images/png"
+          }
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "profiles": [],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": [
+          "Choose and activate the default redown bucket."
+        ]
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare:setup",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": ""
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "complete": true,
+        "warnings": [
+          "Choose and activate the default redown bucket."
+        ]
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare:setup",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:provider:cloudflare:more",
+            "parentId": "v3:provider:cloudflare",
+            "title": "More destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "warnings": [
+          "Select participating buckets in Level setup."
+        ],
+        "complete": false
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:provider:cloudflare:more",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "profiles": [],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:provider:cloudflare:more",
+            "parentId": "v3:provider:cloudflare",
+            "title": "More destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "warnings": [
+          "Select participating buckets in Level setup."
+        ],
+        "complete": false
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:provider:cloudflare:more",
+          "action": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "style": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "profiles": [
+        {
+          "id": "fixture",
+          "type": "cloudflare-r2",
+          "accountId": "account",
+          "bucketName": "bucket",
+          "workerUrl": "https://fixture.invalid",
+          "token": ""
+        }
+      ],
+      "state": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": null,
+            "prefix": "",
+            "label": "Root",
+            "enabled": true
+          },
+          {
+            "id": "leaf",
+            "profileId": "fixture",
+            "accountId": "account",
+            "bucketName": "bucket",
+            "parentId": "root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ]
+      },
+      "projection": {
+        "entries": [
+          {
+            "id": "v3:provider:cloudflare",
+            "parentId": "redown",
+            "title": "Cloudflare",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          },
+          {
+            "id": "v3:provider:cloudflare:more",
+            "parentId": "v3:provider:cloudflare",
+            "title": "More destinations…",
+            "contexts": [
+              "link",
+              "image",
+              "video",
+              "audio",
+              "page"
+            ]
+          }
+        ],
+        "warnings": [
+          "Select participating buckets in Level setup."
+        ],
+        "complete": false
+      },
+      "routes": [
+        {
+          "id": "v3:provider:cloudflare",
+          "action": null,
+          "target": null
+        },
+        {
+          "id": "v3:provider:cloudflare:more",
+          "action": null,
+          "target": null
+        }
+      ]
+    }
+  ]
+}

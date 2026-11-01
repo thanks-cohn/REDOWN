@@ -1,0 +1,53 @@
+diff --git a/extension/background.js b/extension/background.js
+index 6140c1b..4cb8dff 100644
+--- a/extension/background.js
++++ b/extension/background.js
+@@ -923,0 +924,3 @@ importScripts("right-click-v3.js");
++importScripts("google-drive-menu.js");
++importScripts("google-drive-provider.js");
++RedownGoogleDriveProvider.install(recordTransfer);
+@@ -2347 +2350,3 @@ async function menuApplicationKey(){
+-  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
++  const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
++  const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
++  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value+providerRevision));
+@@ -2415 +2420,2 @@ function acknowledgeMenu(method,item){
+-      if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}
++      if(method==='remove')chrome.contextMenus.remove(item.id,done);
++      else if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}
+@@ -2437,0 +2444,5 @@ async function buildMenus() {
++    if(globalThis.RedownGoogleDriveMenu){
++      const state=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
++      const combined=RedownGoogleDriveMenu.compose(description,RedownGoogleDriveMenu.fragment(state,ROOT_MENU_ID),ROOT_MENU_ID);
++      if(combined!==description)description.splice(0,description.length,...combined);
++    }
+@@ -2454,0 +2466,4 @@ async function buildMenus() {
++    for(const id of globalThis.RedownGoogleDriveMenu?.obsolete(expectedIds)||[]){
++      try{await acknowledgeMenu('remove',{id});}
++      catch(error){if(error.code!=='CHROME_ITEM_MISSING')throw error;}
++    }
+@@ -2468,0 +2484 @@ async function buildMenus() {
++      let recreatedProvider=false;
+@@ -2474 +2490 @@ async function buildMenus() {
+-          catch{await acknowledgeMenu('create',item);}
++          catch{await acknowledgeMenu('create',item);if(item.parentId===ROOT_MENU_ID)recreatedProvider=true;}
+@@ -2476,0 +2493,6 @@ async function buildMenus() {
++      // Chrome cannot reorder siblings by update. Move only the shared control
++      // after the providers on structural changes; recovery restores it on error.
++      if(description.some(item=>item.id==='provider:google-drive')&&(!nativeMenuIds||reorder||recreatedProvider)){
++        await acknowledgeMenu('remove',{id:'redown-manage'});
++        await acknowledgeMenu('create',description.find(item=>item.id==='redown-manage'));
++      }
+@@ -2802,0 +2825,4 @@ async function openRedownHome(tab){
++chrome.storage.onChanged.addListener((changes,area)=>{
++  if(area==='local'&&changes.googleDriveState)void rebuildMenus().catch(()=>{});
++});
++
+@@ -2803,0 +2830,3 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
++  if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
++    await RedownGoogleDriveProvider.dispatch(info);return;
++  }
+@@ -2884,0 +2914,3 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
++  if(globalThis.RedownGoogleDriveProvider?.ownsMessage(message)){
++    RedownGoogleDriveProvider.message(message,_sender).then(sendResponse,()=>sendResponse({ok:false}));return true;
++  }

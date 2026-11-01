@@ -1,0 +1,3652 @@
+{
+  "scope": "Supplemental replay of immutable Git baseline and candidate, including multi-account active Depth inventory",
+  "baseline": "b1c2c162ed207513cbc18c9b4e7494ad1f5e46f8",
+  "cases": [
+    {
+      "variant": "active",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "simple"
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "title": "Images · account-a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "title": "media",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "title": "Images · account-b",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "title": "Images · account-a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "title": "media",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "title": "Images · account-b",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "no-profiles",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [],
+      "options": {
+        "style": "simple"
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare:setup",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare:setup",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "unactivated",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        },
+        "activatedBuckets": {
+          "buckets": [
+            {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": false
+            },
+            {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": false
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "simple"
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "title": "redown",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "title": "Images · account-a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "title": "media",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "title": "Images · account-b",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "title": "redown",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "title": "Images · account-a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "title": "media",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "title": "Images · account-b",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "active",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "no-profiles",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [],
+      "options": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare:setup",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare:setup",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": [
+            "Choose and activate the default redown bucket."
+          ]
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare:setup",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "unactivated",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        },
+        "activatedBuckets": {
+          "buckets": [
+            {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": false
+            },
+            {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": false
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "nested",
+        "nested": "narrow",
+        "depth": 1
+      },
+      "inventory": null,
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-root",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:primary-images",
+              "parentId": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-root",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:media-images",
+              "parentId": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "complete": true,
+          "warnings": []
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:primary-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-root",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:path:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:media-images",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "active",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "inventory": {
+        "version": 2,
+        "key": "[2,1,2,[[\"primary\",\"primary\",\"account-a\",\"redown\",\"\",\"https://fixture.invalid\"],[\"media\",\"media\",\"account-b\",\"media\",\"\",\"https://fixture.invalid\"]]]",
+        "at": 2000000,
+        "depth": 2,
+        "nodes": [
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          }
+        ],
+        "pages": 4,
+        "observations": [
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          }
+        ],
+        "frontier": [],
+        "unknownRemaining": false,
+        "complete": true,
+        "warnings": []
+      },
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "summary": {
+            "depth": 2,
+            "knownFolders": 4,
+            "rootsChecked": 2,
+            "rootsTotal": 2,
+            "ageMs": 0
+          },
+          "warnings": [],
+          "complete": true
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "summary": {
+            "depth": 2,
+            "knownFolders": 4,
+            "rootsChecked": 2,
+            "rootsTotal": 2,
+            "ageMs": 0
+          },
+          "warnings": [],
+          "complete": true
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:provider:cloudflare:separator",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:default",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "no-profiles",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "profiles": [],
+      "options": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "inventory": {
+        "version": 2,
+        "key": "[2,1,2,[[\"primary\",\"primary\",\"account-a\",\"redown\",\"\",\"https://fixture.invalid\"],[\"media\",\"media\",\"account-b\",\"media\",\"\",\"https://fixture.invalid\"]]]",
+        "at": 2000000,
+        "depth": 2,
+        "nodes": [
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          }
+        ],
+        "pages": 4,
+        "observations": [
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          }
+        ],
+        "frontier": [],
+        "unknownRemaining": false,
+        "complete": true,
+        "warnings": []
+      },
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:more",
+              "parentId": "v3:provider:cloudflare",
+              "title": "More destinations…",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "warnings": [
+            "Select participating buckets in Level setup."
+          ],
+          "complete": false
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:more",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:more",
+              "parentId": "v3:provider:cloudflare",
+              "title": "More destinations…",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "warnings": [
+            "Select participating buckets in Level setup."
+          ],
+          "complete": false
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:provider:cloudflare:more",
+            "action": null,
+            "target": null
+          }
+        ]
+      },
+      "identical": true
+    },
+    {
+      "variant": "unactivated",
+      "state": {
+        "version": 1,
+        "revision": 3,
+        "destinations": [
+          {
+            "id": "primary-root",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": null,
+            "prefix": "",
+            "label": "redown",
+            "enabled": true
+          },
+          {
+            "id": "primary-images",
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "parentId": "primary-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          },
+          {
+            "id": "media-root",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": null,
+            "prefix": "",
+            "label": "media",
+            "enabled": true
+          },
+          {
+            "id": "media-images",
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "parentId": "media-root",
+            "prefix": "images/png",
+            "label": "Images",
+            "enabled": true
+          }
+        ],
+        "levelScopes": {
+          "version": 1,
+          "revision": 1,
+          "buckets": [
+            {
+              "id": "primary",
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": true
+            },
+            {
+              "id": "media",
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": true
+            }
+          ]
+        },
+        "activatedBuckets": {
+          "buckets": [
+            {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "enabled": false
+            },
+            {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "enabled": false
+            }
+          ]
+        }
+      },
+      "profiles": [
+        {
+          "id": "primary",
+          "type": "cloudflare-r2",
+          "accountId": "account-a",
+          "bucketName": "redown",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        },
+        {
+          "id": "media",
+          "type": "cloudflare-r2",
+          "accountId": "account-b",
+          "bucketName": "media",
+          "workerUrl": "https://fixture.invalid",
+          "token": "synthetic"
+        }
+      ],
+      "options": {
+        "style": "nested",
+        "nested": "level",
+        "depth": 2
+      },
+      "inventory": {
+        "version": 2,
+        "key": "[2,1,2,[[\"primary\",\"primary\",\"account-a\",\"redown\",\"\",\"https://fixture.invalid\"],[\"media\",\"media\",\"account-b\",\"media\",\"\",\"https://fixture.invalid\"]]]",
+        "at": 2000000,
+        "depth": 2,
+        "nodes": [
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "",
+            "parent": null,
+            "level": 0,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images",
+            "parent": "",
+            "level": 1,
+            "listed": true,
+            "observedAt": 2000000
+          },
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "prefix": "images/png",
+            "parent": "images",
+            "level": 2,
+            "listed": false
+          }
+        ],
+        "pages": 4,
+        "observations": [
+          {
+            "profileId": "primary",
+            "accountId": "account-a",
+            "bucketName": "redown",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          },
+          {
+            "profileId": "media",
+            "accountId": "account-b",
+            "bucketName": "media",
+            "checked": true,
+            "knownFolders": 2,
+            "observedAt": 2000000,
+            "complete": true
+          }
+        ],
+        "frontier": [],
+        "unknownRemaining": false,
+        "complete": true,
+        "warnings": []
+      },
+      "at": 2000000,
+      "before": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "summary": {
+            "depth": 2,
+            "knownFolders": 4,
+            "rootsChecked": 2,
+            "rootsTotal": 2,
+            "ageMs": 0
+          },
+          "warnings": [],
+          "complete": true
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "after": {
+        "projection": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "media",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "images",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+              "parentId": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+              "title": "png",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "summary": {
+            "depth": 2,
+            "knownFolders": 4,
+            "rootsChecked": 2,
+            "rootsTotal": 2,
+            "ageMs": 0
+          },
+          "warnings": [],
+          "complete": true
+        },
+        "routes": [
+          {
+            "id": "v3:provider:cloudflare",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": ""
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D",
+            "action": null,
+            "target": null
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%22%5D:send",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22media%22%2C%22account-b%22%2C%22media%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "media",
+              "accountId": "account-b",
+              "bucketName": "media",
+              "prefix": "images/png"
+            }
+          },
+          {
+            "id": "v3:cloud:%5B%22primary%22%2C%22account-a%22%2C%22redown%22%2C%22images%2Fpng%22%5D",
+            "action": "remote-save",
+            "target": {
+              "profileId": "primary",
+              "accountId": "account-a",
+              "bucketName": "redown",
+              "prefix": "images/png"
+            }
+          }
+        ]
+      },
+      "identical": true
+    }
+  ]
+}

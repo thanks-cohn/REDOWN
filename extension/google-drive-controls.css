@@ -1,0 +1,13 @@
+.google-drive-control {margin:1rem 0 1.4rem;display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;max-width:100%;min-width:0}
+.google-drive-button {display:inline-flex;align-items:center;justify-content:center;gap:.65rem;padding:.7rem 1rem;border:1px solid currentColor;border-radius:12px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer;max-width:100%;box-shadow:0 2px 5px #0001;white-space:normal;text-align:left}
+.google-drive-button img {width:24px;height:24px;flex:0 0 24px;object-fit:contain}
+.google-drive-button:hover {background:#8882;box-shadow:0 3px 8px #0002}
+.google-drive-button:active {transform:translateY(1px)}
+.google-drive-button:focus-visible,.google-drive-control a:focus-visible {outline:3px solid #4285f4;outline-offset:4px}
+.google-drive-button:disabled {opacity:.65;cursor:wait}
+.google-drive-control small {display:block;flex-basis:100%;line-height:1.5;overflow-wrap:anywhere}
+.google-drive-control a {color:inherit;text-underline-offset:3px}
+.drive-transfer {font:16px/1.5 system-ui,sans-serif;color:CanvasText;background:Canvas;color-scheme:light dark;margin:auto;padding:clamp(1rem,5vw,3rem);max-width:46rem}
+.drive-transfer progress {width:100%}
+.drive-transfer button {font:inherit;padding:.65rem 1rem;margin:.3rem;border-radius:.6rem;cursor:pointer}
+.drive-transfer a {color:LinkText}

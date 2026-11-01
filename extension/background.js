@@ -921,6 +921,9 @@ importScripts("cloudflare-api.js");
 importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
+importScripts("google-drive-menu.js");
+importScripts("google-drive-provider.js");
+RedownGoogleDriveProvider.install(recordTransfer);
 importScripts("right-click-current.js");
 importScripts("rfis-index.js");
 importScripts("runtime-diagnostics.js");
@@ -2344,7 +2347,9 @@ async function resolveActiveRightClick(id,profiles){
 async function menuApplicationKey(){
   const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);
   const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
-  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
+  const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
+  const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
+  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value+providerRevision));
   return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
 }
 let menuRebuildQueue=Promise.resolve(),menuRebuildActive=null,menuRebuildPending=false;
@@ -2412,7 +2417,8 @@ function acknowledgeMenu(method,item){
     const timer=setTimeout(()=>reject(Object.assign(Error('Chrome menu update timed out. Retry Apply.'),{code:'CHROME_ACK_TIMEOUT'})),5000);
     const done=()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error?reject(Object.assign(Error(error.message),{code:/cannot find|not found|missing/i.test(error.message)?'CHROME_ITEM_MISSING':/duplicate/i.test(error.message)?'CHROME_DUPLICATE_ID':'CHROME_API_REJECTED'})):resolve();};
     try{
-      if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}
+      if(method==='remove')chrome.contextMenus.remove(item.id,done);
+      else if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}
       else chrome.contextMenus.create(item,done);
     }catch(error){clearTimeout(timer);reject(error);}
   });
@@ -2435,6 +2441,11 @@ async function buildMenus() {
   const description=[];
   const create=item=>description.push(item);
   const finish=async()=>{
+    if(globalThis.RedownGoogleDriveMenu){
+      const state=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
+      const combined=RedownGoogleDriveMenu.compose(description,RedownGoogleDriveMenu.fragment(state,ROOT_MENU_ID),ROOT_MENU_ID);
+      if(combined!==description)description.splice(0,description.length,...combined);
+    }
     const seen=new Set();
     for(const item of description){
       if(seen.has(item.id)||item.parentId&&!seen.has(item.parentId))throw Error('Invalid menu hierarchy. Repair destinations in Explorer.');
@@ -2452,6 +2463,10 @@ async function buildMenus() {
     onStage();
     // Keep root/management installed throughout destination replacement.
     const expectedIds=new Set(description.map(item=>item.id));
+    for(const id of globalThis.RedownGoogleDriveMenu?.obsolete(expectedIds)||[]){
+      try{await acknowledgeMenu('remove',{id});}
+      catch(error){if(error.code!=='CHROME_ITEM_MISSING')throw error;}
+    }
     // Chrome update cannot move sibling order. Recreate destinations only when
     // the ordered ID structure changes; label-only edits stay incremental.
     const reorder=nativeMenuIds&&JSON.stringify(nativeMenuIds)!==JSON.stringify([...expectedIds]);
@@ -2466,13 +2481,20 @@ async function buildMenus() {
       if(reorder)nativeMenuIds=[ROOT_MENU_ID,'redown-manage'];
     } // Missing ID cache is not permission to destroy Chrome's surviving rows.
     try{
+      let recreatedProvider=false;
       for(const {destination,operation,...item} of description){
         if(item.id===ROOT_MENU_ID||item.id==='redown-manage')continue;
         if(!chrome.runtime?.id){chrome.contextMenus.create(item);continue;}
         {
           try{await acknowledgeMenu('update',item);}
-          catch{await acknowledgeMenu('create',item);}
+          catch{await acknowledgeMenu('create',item);if(item.parentId===ROOT_MENU_ID)recreatedProvider=true;}
         }
+      }
+      // Chrome cannot reorder siblings by update. Move only the shared control
+      // after the providers on structural changes; recovery restores it on error.
+      if(description.some(item=>item.id==='provider:google-drive')&&(!nativeMenuIds||reorder||recreatedProvider)){
+        await acknowledgeMenu('remove',{id:'redown-manage'});
+        await acknowledgeMenu('create',description.find(item=>item.id==='redown-manage'));
       }
       nativeMenuIds=description.map(item=>item.id);
       await chrome.storage.local.set({rightClickNativeIds:nativeMenuIds});
@@ -2800,7 +2822,14 @@ async function openRedownHome(tab){
   return chrome.tabs.create({url:home,active:true,...(windowId===null?{}:{windowId})});
 }
 
+chrome.storage.onChanged.addListener((changes,area)=>{
+  if(area==='local'&&changes.googleDriveState)void rebuildMenus().catch(()=>{});
+});
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
+    await RedownGoogleDriveProvider.dispatch(info);return;
+  }
   const attemptId=crypto.randomUUID();
   const route=info.menuItemId==='redown-go-home'?'dashboard':/setup|^redown-manage$/.test(String(info.menuItemId))?'setup':info.menuItemId==='v3:provider:cloudflare:more'?'chooser':'save';
   void crypto.subtle.digest('SHA-256',new TextEncoder().encode(menuDiagnosticSalt+String(info.menuItemId))).then(bytes=>entryEvidence('context-menu','click','dispatch','MENU_CLICK_'+route.toUpperCase(),false,attemptId,{nativeIdHash:Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('')}));
@@ -2882,6 +2911,9 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
 }
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if(globalThis.RedownGoogleDriveProvider?.ownsMessage(message)){
+    RedownGoogleDriveProvider.message(message,_sender).then(sendResponse,()=>sendResponse({ok:false}));return true;
+  }
   const traceId=crypto.randomUUID();
   const traceStart=performance.now();
   const respond=sendResponse;

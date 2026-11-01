@@ -75,5 +75,12 @@
   "extension/boot.js",
   "scripts/startup-package.mjs",
   "scripts/boot-fixtures.mjs",
-  "scripts/boot-reproduction.mjs"
+  "scripts/boot-reproduction.mjs",
+  "extension/google-drive-menu.js",
+  "extension/google-drive-provider.js",
+  "extension/google-drive-api.mjs",
+  "extension/google-drive-transfer.mjs",
+  "extension/shelf-google-drive.js",
+  "scripts/google-drive-visual.mjs",
+  "scripts/google-drive-preservation.mjs"
 ]

@@ -1,0 +1,28 @@
+{
+  "state": "failed",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "regression": {
+    "state": "failed",
+    "passed": 782,
+    "incomplete": true
+  },
+  "release": "blocked"
+}
