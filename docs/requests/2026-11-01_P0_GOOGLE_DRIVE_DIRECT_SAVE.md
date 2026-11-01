@@ -6,6 +6,47 @@
 **Action:** Inspect, implement, test, document, commit, and push. **Do not stop at a proposal, scaffold, or audit.**  
 **Status of this document:** Implementation request, NOT a claim of completed functionality or approved OAuth.
 
+## READ FIRST — authoritative browser-mediated transport contract (do not restart the architecture)
+
+**Owner decision, confirmed November 1, 2026:** Google Drive saves are **browser-mediated fetch → upload**. This is the non-negotiable transport model for this P0. It supersedes all older proposals/requests/summaries that refer to Google Drive as TRUE REMOTE, a server-to-server transfer, or a remote relay. **Do not resurrect a server-side transfer solution**, whether a new service, Cloudflare Worker, GitHub Action, backend fetch proxy, server-side URL import, or R2-to-Drive hop. None is needed for the initial Drive feature. **Cloudflare R2's current TRUE REMOTE implementation is an entirely separate workflow and must remain unchanged.**
+
+### Exact data route to implement
+
+```text
+User right-clicks a supported web image/file/link
+  → REDOWN → Google Drive → REDOWN
+  → authenticated Google account and app-owned REDOWN folder ID are resolved
+  → Chrome extension fetches the actual source file bytes (subject to permissions/source access)
+  → extension keeps those bytes temporarily in a bounded browser transfer context
+  → extension uploads the bytes to the Google Drive v3 upload API
+  → Drive responds with a real saved file ID and metadata
+  → REDOWN verifies the destination/receipt and reports success + Open in Google Drive
+
+NO required Cloudflare login    NO R2 bucket    NO external transfer relay
+NO Chrome download dialog       NO user-selected local download directory
+NO claim of Google TRUE REMOTE  NO successful status before a Drive receipt
+```
+
+The browser **does receive/process the actual payload bytes**. Browser-managed memory, buffering, and streaming are permitted, with explicit size/resource limits. The requirement is **no deliberate saved local copy or `chrome.downloads.download` in the normal Google Drive flow**, **not** a guarantee that Chrome or the operating system will never cache, buffer, or page memory to disk internally. Do not falsely describe browser-mediated Drive as zero local processing or confuse it with the Cloudflare R2 remote-only path.
+
+### Mandatory design and implementation decisions
+
+1. Implement through the existing V3 right-click engine and a **provider-specific Google Drive route** with independent IDs and authentication state. Do not introduce another menu writer, new REDOWN root, or alter Cloudflare Simple/Narrow/Depth mode behavior.
+2. Choose a **supported Chrome extension execution context** able to run the source fetch and Drive upload. Inspect MV3 background/service-worker lifecycle, required host permissions, redirects and response streaming capabilities; use a persistent extension-owned page/offscreen document when justified, not a brittle worker-only giant buffer. Use bounded chunks, explicit progress/uncertain states and user-visible cancellation. Explain any platform lifetime limitations.
+3. For permitted public sources, obtain actual bytes using `fetch`/streaming in the extension's authorized context. Request only appropriate host access, ideally optional per-source origins instead of excessive wildcard permissions. If a site blocks access, requires credentials not available to the extension, or serves an unsupported `blob:` URL, return a truthful limitation instead of silently falling back to a disk download.
+4. Upload **those same bytes** directly from the Chrome extension to the Google Drive v3 upload endpoint using a token obtained from the configured Chrome OAuth client. Authorization headers go **only** to Google's permitted API hosts, never to arbitrary website URLs. Protect token, sensitive URLs and bytes from logs, public pages and untrusted site contexts.
+5. Create/reuse the **single app-owned `My Drive/REDOWN` folder** for that Google account, with stable Drive ID, correct parent on each file, safe race handling and KEEP BOTH semantics. A file is **not** saved just because the source fetch completed; require a verified Google Drive file receipt.
+6. A first-time user needs only **Log in to Google Drive** in the Shelf, then the independent **REDOWN → Google Drive → REDOWN** menu to save. The Shelf login button belongs **immediately under `YOUR SPACE · TRUE REMOTE`**, with Google's logo on the left; the existing headline and everything below move downward naturally without layout redesign. Google Drive is always a direct child of the REDOWN right-click root regardless of Cloudflare's chosen mode.
+7. Keep the previous Cloudflare R2 TRUE REMOTE flow and all established Shelf, menu, history, Explorer, and service-worker boot functions intact; add no changes to the public website in this engineering task.
+
+### Stop conditions and proof: when this is NOT complete
+
+Mark an acceptance case **FAIL** or **BLOCKED**, not PASS, if: Google OAuth is only configured but no login works; a Google Drive folder is only drawn in the UI, not created or reused in the real account; the browser payload transfer is replaced by a remote service; `chrome.downloads.download` or an explicit local file is required for an eligible normal save; a Google menu option sends the user to Cloudflare setup/dashboard or an R2 bucket; Drive returns no verified file ID/parent; a cancelled or interrupted upload reports completed; or R2 behavior regresses.
+
+**Evidence expected:** (a) real Chrome login with the listed Google OAuth Testing user; (b) right-click public PNG and PDF, with source bytes passing through Chrome, no intentional local download; (c) matching Drive bytes/file metadata under the **REDOWN** folder, with real Drive IDs; (d) Google menu stays independent across Cloudflare Simple/Nested Narrow/Depth/Disconnected; (e) reconnect and worker restart; (f) saved logs/results with sensitive data redacted. Automated mocks help, but are not an adequate substitute for the live installed-extension test.
+
+**Implementation priority:** Deliver a small end-to-end functioning slice first, not a new architectural proposal. If a platform limit blocks an individual source or file size, document the exact limit, implement the smallest safe supported behavior, and mark the unsupported case clearly. **Never change the owner's browser-mediated decision to avoid a test blocker.**
+
 ## Owner Google Cloud setup checkpoint (November 1, 2026)
 
 Confirmed in the owner's Google Auth Platform screenshots:
