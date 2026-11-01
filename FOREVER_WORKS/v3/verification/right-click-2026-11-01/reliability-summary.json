@@ -1,0 +1,29 @@
+{
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "state": "failed",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "fullSuite": {
+    "total": 801,
+    "pass": 730,
+    "fail": 71
+  },
+  "installedChrome": "blocked; administrator prohibits unpacked extensions",
+  "liveProvider": "not run; no authorized test connection/resources"
+}

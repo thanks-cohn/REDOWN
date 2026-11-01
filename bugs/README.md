@@ -777,3 +777,12 @@ Verification and next steps: docs/reliability/WINDOWS_PORTABILITY.md.
 **Investigation lead, not proven cause:** The sweep may be following an earlier measured outline path or a separate animation layer whose coordinates/transforms are not updated in sync with the moving border. Inspect the animation's coordinate space, transform origin, resize/reflow behavior, and timing before changing the implementation.
 
 **Acceptance:** In real Chrome, repeatedly move/reposition the outline during the electric pass at normal and reduced animation speed and at narrow/wide viewport widths. The sweep must coincide with the visible border in every frame, without displaced ghost traces or a one-frame snap. Preserve the existing aesthetic and animation timing unless a change is necessary to correct alignment.
+
+### November 1 right-click implementation evidence — incident remains OPEN
+
+The owner-approved Home-last/provider hierarchy and CURRENT/export foundation have
+production changes and local fault-injection coverage. Fresh installed Chromium
+rejects unpacked extensions by administrator policy, so the first-install
+Cloudflare→Explorer report has no verified live root cause or closure. Full
+acceptance gaps and exact test evidence are recorded in
+`FOREVER_WORKS/v3/RIGHT_CLICK_IMPLEMENTATION_2026_11_01.md`.

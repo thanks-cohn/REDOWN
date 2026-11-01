@@ -1,0 +1,13 @@
+{
+  "scope": "production background with fake-indexeddb and simulated Chrome acknowledgments; not installed Chrome latency",
+  "cold": {
+    "n": 10,
+    "p50Ms": 3.491010000000003,
+    "p95Ms": 20.460279999999997
+  },
+  "warmApply": {
+    "n": 20,
+    "p50Ms": 1.1444979999999987,
+    "p95Ms": 4.458406999999994
+  }
+}
