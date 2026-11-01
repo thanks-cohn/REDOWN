@@ -73,10 +73,10 @@ async function expireCloudflareLogin() {
     await finishCloudflareLogin(attempt.id, "failed", "Cloudflare sign-in timed out. Click Connect Cloudflare to try again.");
   }
 }
-async function startCloudflareLogin() {
-  return navigator.locks.request("redown-cloudflare-login-start", startCloudflareLoginUnlocked);
+async function startCloudflareLogin(options = {}) {
+  return navigator.locks.request("redown-cloudflare-login-start", () => startCloudflareLoginUnlocked(options));
 }
-async function startCloudflareLoginUnlocked() {
+async function startCloudflareLoginUnlocked({ openExplorerAfterLogin = false } = {}) {
   await expireCloudflareLogin();
   const stored = await chrome.storage.session.get(CF_LOGIN_SESSION);
   const previous = stored[CF_LOGIN_SESSION];
@@ -106,7 +106,9 @@ async function startCloudflareLoginUnlocked() {
     const state = randomString(24);
     const attempt = {
       id, windowId: loginWindow.id, tabId, redirectUri, verifier, state,
-      phase: "opening", expiresAt: Date.now() + CF_LOGIN_TIMEOUT_MS
+      phase: "opening", expiresAt: Date.now() + CF_LOGIN_TIMEOUT_MS,
+      // An explicit Shelf LOGIN! request only; never infer this from token refresh or startup.
+      openExplorerAfterLogin: openExplorerAfterLogin === true
     };
     await chrome.storage.session.set({ [CF_LOGIN_SESSION]: attempt });
     await chrome.alarms.create(CF_LOGIN_ALARM, { when: attempt.expiresAt });
@@ -133,9 +135,9 @@ async function startCloudflareLoginUnlocked() {
     throw error;
   }
 }
-async function connectCloudflare() {
+async function connectCloudflare(options = {}) {
   if (!cloudflareAuthInFlight) {
-    cloudflareAuthInFlight = startCloudflareLogin().finally(() => { cloudflareAuthInFlight = null; });
+    cloudflareAuthInFlight = startCloudflareLogin(options).finally(() => { cloudflareAuthInFlight = null; });
   }
   return cloudflareAuthInFlight;
 }
@@ -212,12 +214,23 @@ async function completeCloudflareLogin(details) {
     }
     if (!verified) console.warn("REDOWN Cloudflare token received; account API verification deferred after network interruption.");
     const user = null;
-    await navigator.locks.request(CF_LOGIN_STATE_LOCK, async () => {
+    // Only the context that finalizes this exact OAuth attempt may open Explorer.
+    // The same callback can be observed by Settings and the MV3 worker; the lock
+    // prevents duplicate tabs, and a tab failure must not invalidate a valid login.
+    const openExplorer = await navigator.locks.request(CF_LOGIN_STATE_LOCK, async () => {
       const current = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];
-      if (current?.id !== attempt.id || current.phase !== "verifying" || Date.now() >= attempt.expiresAt) return;
+      if (current?.id !== attempt.id || current.phase !== "verifying" || Date.now() >= attempt.expiresAt) return false;
       await storeCloudflareToken(token, { user });
       await finishCloudflareLoginLocked(attempt.id, "connected");
+      return current.openExplorerAfterLogin === true;
     });
+    if (openExplorer) {
+      try {
+        await chrome.tabs.create({ url: chrome.runtime.getURL("beta/explorer.html"), active: true });
+      } catch (error) {
+        console.warn("REDOWN signed in, but could not open Explorer:", error?.message || String(error));
+      }
+    }
   } catch (error) {
     await finishCloudflareLogin(attempt.id, "failed", error?.message || "Cloudflare sign-in failed. Try again.");
   }
