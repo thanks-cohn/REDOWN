@@ -1,6 +1,7 @@
 [
   "extension/cloudflare-api.js",
   "extension/cloudflare-auth.js",
+  "extension/service-worker.js",
   "extension/background.js",
   "extension/nested-locations.js",
   "extension/menu-reorder.js",
