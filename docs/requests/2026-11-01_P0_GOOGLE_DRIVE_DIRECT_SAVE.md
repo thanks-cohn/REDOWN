@@ -6,6 +6,38 @@
 **Action:** Inspect, implement, test, document, commit, and push. **Do not stop at a proposal, scaffold, or audit.**  
 **Status of this document:** Implementation request, NOT a claim of completed functionality or approved OAuth.
 
+## P0 HARD SAFETY GATE — V3 ENGINE IS FROZEN, GOOGLE DRIVE IS ADDITIVE ONLY
+
+**Owner's explicit instruction (November 1, 2026): DO NOT TOUCH, REWRITE, REFACTOR, REPAIR, REPLACE, REFORMAT, MIGRATE OR ALTER THE EXISTING V3 RIGHT-CLICK ENGINE.** This is a stronger requirement than ordinary "preserve existing functionality." The successful design is a **new Google Drive provider and a thin additive integration at the existing shared Chrome menu boundary**, not a new version of V3.
+
+### Protected engine and behavior: NO source edits
+
+1. **`extension/right-click-v3.js` is READ-ONLY.** This file owns the existing V3 menu domain, project/resolve semantics, presentation selection, Simple/Nested Narrow/Level(Depth) behavior, location/depth/bucket logic, IDs and configuration validation. Do not modify a single line of it. Do not subclass, wrap, monkeypatch or override its APIs in a way that changes results.
+2. Treat the existing V3 state, selected Cloudflare destinations, setup/editor, bucket activation, and V3's right-click menu projection as **immutable inputs** to the new integration. Do not modify the stored `rightClickV3`, `rightClickV3Presentation`, `rightClickV3LevelScopes`, `rightClickActivatedBuckets`, `rightClickV3Inventory` or current Cloudflare profile semantics for Google Drive. Never migrate Google Drive into Cloudflare destination records.
+3. Protect existing V3 and legacy support modules, including `extension/right-click-current.js`, `extension/nested-locations.js`, `extension/destination-config.js` and existing editor modules. Do not modify them to add Google Drive.
+4. Do not change Cloudflare R2 transfer implementation, bucket setup, storage, authentication, existing right-click destination resolution, Shelf boot/fallback, or its TRUE REMOTE path. Do not take this opportunity to clean up other bugs or rebuild anything.
+5. Preserve current V3 menu actions exactly as they are in all three modes. **No reinterpretation or renaming of Cloudflare IDs**. Existing V3 `project()` and `resolve()` MUST receive unchanged inputs, and for any given state return the same output as before this Google Drive feature.
+
+### Only allowed shared-menu integration, if unavoidable
+
+- Chrome has a **single REDOWN root** and the current Chrome menu writer lives in `extension/background.js`. Adding a direct sibling under this root necessarily requires a tiny **additive hook to the menu composition / registration boundary**. This **does not authorize edits to V3's projection, resolver, modes or engine internals.**
+- Implement Google Drive-specific behavior in **new, isolated modules** (e.g., a Google provider adapter, Drive OAuth/folder/upload logic, and `google-drive-menu.js` generating unique namespaced child entries). Integrate via the existing menu plan's `create(item)` collection after V3 produces its original entries; append the independent Google entry with `parentId: ROOT_MENU_ID`. Let the **existing one menu writer** reconcile the unified plan. Do NOT create another `chrome.contextMenus.onClicked` listener or a second root/menu registration engine.
+- In `extension/background.js`, **permit only the narrowest additive glue** to load the Google module, append its root-level menu entry to the existing `buildMenus()` description, route Google-namespaced clicks **before** existing Cloudflare resolution, and trigger normal reconciliation when Google connection state changes. The pre-existing V3 projection, Cloudflare menu generation, click routes and resolver must be retained without behavioral changes. Avoid extracting or rewriting functions.
+- Existing `extension/manifest.json` already contains the Google OAuth Client ID and `drive.file`; changes there, if any, are limited to strictly necessary, separately justified permissions/module registration. Shelf HTML/CSS/JS may gain the requested Google login control, but must not refactor existing Shelf structure or behavior.
+- **Prefer an additional function call and early return over modifying any existing V3 condition.** No duplicated `ROOT_MENU_ID`; no alternate authoritative V3 engine; no provider impersonation; no separate `rightClickEngine` toggle; no unrelated changes in `background.js`. Google actions must be isolated from existing `resolveActiveRightClick()` and the R2 save routine.
+- **If Google Drive cannot be integrated without modifying V3 core behavior or protected engine files, STOP that portion and explain the exact blocker to the owner. Do not silently violate this gate to make the feature appear complete.** It is acceptable to report a precise integration blocker; not acceptable to retrofit or replace V3 without explicit new authorization.
+
+### Required before/after proof of non-interference
+
+- **Before edits**, record current commit and SHA-256 hashes of the protected V3 engine/support files, and capture authoritative V3 menu plans, projected IDs, targets, account/bucket/prefix resolutions and native-click actions for representative Simple, Nested Narrow, and Nested Level/Depth scenarios. Store redacted, deterministic fixtures/receipts.
+- **After edits**, confirm protected file hashes are **identical**. Attach a limited, reviewable `git diff` for the additive `extension/background.js` changes. A changed protected file hash is a **FAIL** and must be reverted before completion.
+- Run existing V3 tests unchanged. Test identical Cloudflare menu projection and resolved account/bucket/prefix **before vs. after** adding Google; compare all original entries, labels, parents, order, click routes and actions after filtering out ONLY the new Google-namespaced IDs.
+- Test mixed states: Cloudflare Simple + Google connected/disconnected; Nested Narrow + Google connected/disconnected; Nested Level/Depth + Google connected/disconnected; zero Cloudflare profiles; unactivated R2 buckets; repeated provider login/logout; MV3 restart; rapid mode changes; history/shelf. Google must remain a **direct child of REDOWN** with independent Google login/save dispatch; Cloudflare output must remain identical.
+- A working Google upload **does not compensate for any change/regression in V3**. Do not report PASS if V3 hashes, behaviors or original routes differ, even if the Drive feature works.
+- Commit only narrow, auditable additive changes; explicitly list each modified file and why it was necessary. If additional integration points are needed, seek owner approval rather than making speculative engine changes.
+
+**Priority order:** (1) Preserve V3 engine *exactly*, (2) preserve Cloudflare TRUE REMOTE and existing UI, (3) add independent Google Drive login and browser-mediated save, (4) prove no regression. Never sacrifice (1) or (2) for (3).
+
 ## READ FIRST — authoritative browser-mediated transport contract (do not restart the architecture)
 
 **Owner decision, confirmed November 1, 2026:** Google Drive saves are **browser-mediated fetch → upload**. This is the non-negotiable transport model for this P0. It supersedes all older proposals/requests/summaries that refer to Google Drive as TRUE REMOTE, a server-to-server transfer, or a remote relay. **Do not resurrect a server-side transfer solution**, whether a new service, Cloudflare Worker, GitHub Action, backend fetch proxy, server-side URL import, or R2-to-Drive hop. None is needed for the initial Drive feature. **Cloudflare R2's current TRUE REMOTE implementation is an entirely separate workflow and must remain unchanged.**
