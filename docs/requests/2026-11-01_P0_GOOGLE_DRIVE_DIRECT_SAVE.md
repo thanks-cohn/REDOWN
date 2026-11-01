@@ -38,6 +38,66 @@
 
 **Priority order:** (1) Preserve V3 engine *exactly*, (2) preserve Cloudflare TRUE REMOTE and existing UI, (3) add independent Google Drive login and browser-mediated save, (4) prove no regression. Never sacrifice (1) or (2) for (3).
 
+## P0 MULTI-PROVIDER ROOT MENU AUTHORITY — explicit ownership, deterministic positions, zero V3 engine changes
+
+**Owner decision, November 1, 2026:** Establish a small, explicit **shared root-menu authority now**, so current and future clouds can sit beside one another under the single `REDOWN` menu without collisions. This must be an ADDITIVE composition boundary, **not** a replacement V3 engine. The shared registrar takes precedence **only for root ownership, sibling placement, unique ID validation, native menu reconciliation, and provider click dispatch**, NOT for provider-specific configuration, destinations, authentication, or transfer behavior.
+
+### Existing architecture, confirmed against the V3 branch
+
+- `extension/background.js` already owns `ROOT_MENU_ID = "redown"`, `ensureMenuAccess()`, `buildMenus()`, `rebuildMenus()`, `reconcileMenus()`, `menuApplicationKey()`, the single native Chrome menu writer and click dispatcher.
+- `extension/right-click-v3.js` already projects `Cloudflare` as a direct child of `redown` in BOTH Simple and Nested variants. Its projection/resolve logic is **FROZEN AND READ-ONLY**. No V3 engine modification is required for sibling providers.
+- `buildMenus()` already builds a parent-first menu description, checks duplicate/missing-parent IDs, and reconciles through Chrome's contextMenus API. Make the smallest additive changes at THIS shared boundary. Do not introduce a second Chrome menu registrar, a second `REDOWN` root, or an alternate click listener.
+- `buildMenus()` currently applies a broad V3/legacy ID resolver to `v3:`, `quick:`, `simple-option:`, `nested:`, `tree:` prefixes. **Use a new provider namespace outside those prefixes** to prevent Google Drive IDs from being accidentally passed into Cloudflare's resolver.
+
+### Authority table: what each component may own
+
+| Component | Sole authority | Explicitly forbidden |
+| --- | --- | --- |
+| **REDOWN shared root registrar (existing background.js)** | Single `redown` root; stable provider sibling ordering; global ID uniqueness and allowed parentage; combined menu plan; native create/update/remove; reconciliation; safe namespace-based routing | Changing V3 projection, Cloudflare destinations/account/bucket/prefix or provider upload/OAuth logic |
+| **Cloudflare V3 (existing, unchanged)** | Its own `v3:provider:cloudflare` subtree and original Simple/Narrow/Level(Depth) destination and click semantics | Registering other clouds, hiding/reordering Google, managing other providers' states |
+| **Google Drive (new, isolated)** | Its `provider:google-drive` branch; OAuth status; Drive app-folder state; browser-mediated upload and Google action handler | Chrome menu writer, shared root ownership, V3 logic/records, R2 behavior |
+| **Later providers (not implemented now)** | Their own distinct provider namespace/subtree when integrated | Other provider branches and shared root |
+
+**Shared registrar precedence is administrative, not behavioral:** it owns *where* providers appear and who gets each ID. It does NOT determine the folder/bucket decisions made inside a provider, nor act as an intermediary for Google file bytes.
+
+### Required stable menu structure
+
+```text
+REDOWN                       [existing root, ONE owner]
+├─ Cloudflare  ▸             [original V3 output, untouched]
+│  └─ (unchanged V3 Simple, Narrow, or Depth menu entries)
+├─ Google Drive ▸            [NEW peer, always directly beneath REDOWN]
+│  ├─ REDOWN                 [when connected: save to existing Drive REDOWN folder]
+│  └─ Log in / Reconnect…    [when disconnected: OAuth action instead]
+└─ Manage destinations…     [existing behavior retained]
+```
+
+- **Cloudflare first, Google Drive second**, maintain the rest of existing controls/management entries without changing their meaning. Do not displace, rename, or reinterpret V3 children. A future provider may add another sibling only when implemented.
+- A cloud's **sign-in status determines its submenu actions**, NOT whether the cloud has a reserved root-level spot. Google Drive must remain visible when signed out and must not depend on Cloudflare's connected state, bucket activation, V3 mode, or folder inventory.
+- The registrar must place the Google branch separately even when the Cloudflare V3 projection shows its setup fallback instead of active destinations.
+
+### Minimal implementation contract, designed to prevent future collisions
+
+1. Add one small, pure menu-fragment boundary: Google exports a deterministic declaration of its root-level branch and descendants (e.g., `{ providerId:"google-drive", parentId:"redown", entries:[...], stateRevision }`), **without calling `chrome.contextMenus` itself**. Keep the Cloudflare V3 `project()` invocation exactly as it is and collect its untouched entries.
+2. Reserve all current IDs and prefixes for existing REDOWN/V3. Google uses IDs such as `provider:google-drive`, `provider:google-drive:save-redown`, `provider:google-drive:connect` or a consistently scoped equivalent. **Do not give Google `v3:`-prefixed IDs** and do not send them through `RedownRightClickV3.resolve()`.
+3. Merge provider fragments in deterministic root-child order and validate globally unique IDs, valid parent-first relationships, allowed reserved namespaces, provider ownership of descendants, absence of cycles, and Chrome menu capacity. Keep the single native menu writer. **If a new provider fragment is invalid, fail safely without destroying the existing working Cloudflare menu.**
+4. Add a **tiny early-return dispatch** for Google IDs in the existing `chrome.contextMenus.onClicked` handler, before original Cloudflare resolution. Dispatch to the Google-specific provider handler and then `return`. Unknown Google IDs must never fall through to Cloudflare setup, Dashboard, or R2 save.
+5. Existing `menuApplicationKey()` currently reflects V3 state. Extend only the shared registrar's freshness/generation logic with a bounded, provider-specific status/revision so Google login/logout/folder provisioning updates menu labels/actions **without changing any existing V3 storage or snapshots**. Do not perform network/OAuth calls in the root menu composition step.
+6. Preserve the current serialized `reconcileMenus()` implementation. Native Chrome menu mutations are not an atomic multi-item transaction; explicitly handle/update/recreate only as necessary, acknowledge Chrome API errors, retain the root and management entries, and recover from partial failure/service-worker restart. Stable IDs and provider-local changes should avoid unnecessary mass rebuilds.
+7. **No V3 source edits:** do not edit `extension/right-click-v3.js`, `extension/right-click-current.js`, `extension/nested-locations.js`, `extension/destination-config.js`, or V3 editor modules. No changed `rightClickV3` configuration, `rightClickV3Presentation`, V3 destination IDs, Cloudflare profile data, bucket logic or R2 remote-transfer engine. `extension/background.js` may receive only a tiny, reviewable additive root registration/dispatch/generation hook. Put Google behavior in NEW isolated modules.
+8. **No new generic framework for its own sake.** Keep the current V3 working and introduce just enough declarative shared-menu structure for safe siblings. If accomplishing this would require changes to protected V3 internals, STOP that integration portion and report the concrete blocker rather than modifying V3 without owner approval.
+
+### Acceptance and proof required
+
+- Capture baseline V3 engine/support-file hashes and original Cloudflare menu plans for Simple, Nested/Narrow, Nested/Level(Depth), with representative buckets/accounts. All protected file hashes identical after implementation. Compare existing Cloudflare entries (ID, title, parentId, order, click route, account/bucket/prefix), allowing ONLY new Google peer entries.
+- Assert exactly one `REDOWN` root, one shared Chrome menu writer and one click dispatcher; one Cloudflare direct child, one Google direct child; stable Cloudflare-then-Google ordering; no duplicate/reused IDs or wrong parentage.
+- Test each V3 display mode with Google connected, disconnected, connecting, reauthorizing, and with Cloudflare disconnected/empty/unactivated. Neither provider's changes may suppress, modify or misroute the other.
+- Test duplicate IDs, invalid provider subtrees, abrupt OAuth failure, simultaneous V3 mode switch and Google login/logout, repeated menu rebuild, stale native ID cache, partial Chrome API failure, MV3 service-worker restart and installation/update migration.
+- Assert Google clicks NEVER invoke Cloudflare resolution, an R2 upload, Cloudflare setup or Dashboard navigation. Assert original Cloudflare clicks retain identical destination/transfer behavior.
+- Report exact files changed, V3 before/after hashes, baseline-vs-current menu snapshot comparisons, native Chrome integration evidence, and remaining blockers. **Working Google Drive does not excuse a single V3 regression.**
+
+**Final architectural invariant:** The V3 engine does not have to accommodate Google internally; the existing shared root registrar accommodates both V3 Cloudflare and Google as independent siblings. This is the permanent authority boundary for future supported clouds.
+
 ## READ FIRST — authoritative browser-mediated transport contract (do not restart the architecture)
 
 **Owner decision, confirmed November 1, 2026:** Google Drive saves are **browser-mediated fetch → upload**. This is the non-negotiable transport model for this P0. It supersedes all older proposals/requests/summaries that refer to Google Drive as TRUE REMOTE, a server-to-server transfer, or a remote relay. **Do not resurrect a server-side transfer solution**, whether a new service, Cloudflare Worker, GitHub Action, backend fetch proxy, server-side URL import, or R2-to-Drive hop. None is needed for the initial Drive feature. **Cloudflare R2's current TRUE REMOTE implementation is an entirely separate workflow and must remain unchanged.**
