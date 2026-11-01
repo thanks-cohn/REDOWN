@@ -299,3 +299,73 @@ Future: Reader ecosystems, visual spectacle and business experiments after relia
 - [Standalone Codex work requests](CODEX/) — BOOT API and V3 context-menu implementation specs; do **not** replace them with this weekly planning document.
 - [Bug reports and fix histories](../bugs/) — unresolved failures, source patches awaiting browser proof and experimental ideas.
 - This weekly review is **planning documentation only**; no implementation, real Chrome tests, cloud changes or release acceptance are implied.
+
+
+---
+
+## IMPORTANT NEW IDEAS — INTERNET ERAS IN AMBER, RETRO CAPTURE, AND COMMUNITY-CREATED REDOWN THEMES
+
+**Added to weekly review:** Week of November 1, 2026.  
+**Status:** OWNER CONCEPTS / LONG-TERM PRODUCT ROADMAP; documentation only, no production implementation or public launch promised.  
+**Owner vision:** REDOWN should preserve the feeling and useful interaction patterns of beloved internet eras as **optional aesthetics and organization experiences**. People could revisit the eras they love while still using a dependable modern file manager, effectively a personal time machine for their files, memories, visual organization and creative styles.
+
+**Priority rule:** Finish startup BOOT, native right-click reliability, authorized saving, safe file operations, Favorites, user-chosen reactions and manual tags FIRST. Theme packs and community customization must not delay critical stability or introduce a second Explorer engine.
+
+### Historical eras worth translating into original REDOWN theme families
+
+| Proposed REDOWN style | Historical reference | The useful behavior and emotional appeal to preserve | Avoid |
+| --- | --- | --- | --- |
+| **Porcelain / Red-and-White** | Pinterest-era image boards and polished pinboards | At-a-glance tile collections, visual browsing, simple saving and personal curation; this already overlaps with REDOWN's existing white/red aesthetic | Reproducing protected logos or an exact proprietary screenshot |
+| **True Blue / Tumblr-era** | Early-2010s Tumblr dashboard and customizable blogs | Warm blue/dark navy, spacious content cards, photo sets, quote and text cards, chronological collections, powerful tags and expressive personal pages | Assuming reblogging and public social feeds belong in the private file-manager core |
+| **Hearts / We Heart It-era** | Simple visual inspiration boards and hearted collections | Dreamy soft colors, rounded image tiles, simple hearts, mood collections, personal aesthetics, highly legible favorites | Reusing proprietary branding or misrepresenting REDOWN as the original service |
+| **Homestead / GeoCities-era** | Late-1990s to early-2000s personal homepages | Personal ownership, tiled/patterned backgrounds, custom borders, visitor-book *presentation*, badges, custom text blocks and playful self-expression | Auto-playing music, inaccessible flashing, spammy elements, unsafe custom HTML |
+| **Profile Studio / MySpace-era** | Personalized social profiles and early custom page designs | User-customizable colors, background patterns, panels and self-expression; profile-like collections in a private/local-first setting | Executing arbitrary untrusted scripts or rebuilding a public social network |
+| **Journal / LiveJournal & early blogs** | Blogrolls, dated posts, moods and community journals | Chronological memories, annotations, tagged daily collections and thoughtful long-form captions | Unrequested public sharing of personal notes |
+| **Skin Lab / Winamp-era** | Thousands of community-created music-player skins | The ability to personalize the same underlying functionality through reusable small theme packages | Bundling copyrighted character art or allowing skins to run privileged code |
+| **Classic Desktop / Mac System 7–OS 9** | Early Macintosh Finder-style file management | Clean folders, recognizable desktop metaphors, nostalgic type, restrained monochrome or early color treatments | Deliberately reintroducing weak accessibility or blocking modern file tasks |
+| **Classic Desktop / Windows 95–XP** | Historic desktop windows and iconography | Bold controls, generous affordances, playful window chrome, deliberate bitmap/pixel styling | Impersonating a modern system permission dialog |
+| **Futurist Console / PS2-era** | Retro console dashboards and visual system menus | Glossy materials, layered depth, gentle animation and satisfying input feedback | Expensive animations that delay files or hide loading state |
+| **Kernel Lab (humorous experimental)** | Terminal and systems-development culture, including modern Rust-in-kernel jokes | A playful diagnostic/terminal-inspired skin for technically inclined users, without replacing REDOWN's actual implementation | Pretending that a CSS theme changes the OS/kernel or app's programming language |
+
+These are **design inspirations**, not claims of any formal association, license, original userbase transfer or access to another platform's private data.
+
+### New weekly entries
+
+**125. Optional theme packs celebrating recognizable internet eras.** Expand existing Porcelain, Midnight, Ocean and NEON styling with original **Tumblr-era blue, GeoCities-inspired personal homepage, We Heart It-style heart collections and classic desktop** options, while keeping a familiar default and the same working Explorer semantics. Launch one small fully tested theme at a time, preserve the user preference across restarts, and test narrow windows, accessibility, reduced motion and every essential file operation. **Time required: 24–48 hours for a first additional theme plus theme contracts; Urgency level: LOW (AFTER STABILITY).**
+
+**126. Tumblr-era True Blue and expressive post-style collections.** Offer a beautiful blue/navy palette with warm cards, photo sets, tagged media and optional quote/note treatments, borrowing the usefulness of classic chronological dashboards without copying the platform's exact assets. Keep these as presentation slices over existing REDOWN objects so switching back to ordinary file management never changes file identity or permissions. **Time required: 12–24 hours; Urgency level: LOW.**
+
+**127. GeoCities, We Heart It and expressive personal homepages.** Explore original handmade homepage layouts, backgrounds, personal badges, heart-first collections and mood boards as optional user choices. Let users preserve old-web playfulness while constraining animation, controlling contrast and never requiring unsafe script execution or external publication. **Time required: 20–40 hours; Urgency level: LOW.**
+
+**128. Classic file-system skins and retro desktop capture.** Offer optional classic Mac Finder, Windows 95/XP and humorous modern terminal/kernel-lab styling that preserves the actual file operations and data model. Treat retro capture as a curated mode or screenshot/theme recipe, not permission to impersonate a browser security prompt, copy copyrighted interface assets or replace the real OS. **Time required: 20–40 hours; Urgency level: LOW.**
+
+**129. REDOWN Retro Capture as a personal time machine.** Let users deliberately assemble dated collections, save page/screenshot references and annotations, and browse their own files through chronological “internet-era” views backed by exact provider identity, provenance and the evolving JSON tag/metadata system. Capture only content the user owns or is authorized to preserve, make provenance/availability honest, and keep this distinct from Time Machine's real-object version restoration. **Time required: 32–64 hours; Urgency level: LOW.**
+
+**130. Separate visual presentation from REDOWN's stable functionality.** After the application stabilizes, create a versioned theme contract that maps semantic components and states to CSS variables/tokens, layout zones and responsive invariants, without moving save logic, permissions, keyboard semantics or object identity into theme code. Every theme must preserve native right-click functionality, Shelf launch, Explorer accessibility, safe overflow behavior and sensible fallback when a style is incomplete. **Time required: 24–48 hours for staged extraction and conformance tooling; Urgency level: MEDIUM (ARCHITECTURAL, AFTER STABILITY).**
+
+**131. Community-created REDOWN theme and skin ecosystem.** Allow creators to build, import, share and preview custom themes via small declarative manifests, scoped CSS tokens and controlled assets so REDOWN can continue evolving through community creativity. Validate schemas, bound asset sizes, reject privileged JavaScript and unsafe URL/script injection, provide sandboxed previews and safe rollback, and respect creator copyright/licensing and compatibility versions. **Time required: 40–80 hours for a secure first creator SDK and importer; Urgency level: LOW.**
+
+**132. Era Gallery / Theme Museum and safe compatibility rules.** Build an optional browsable gallery of user-installed or creator-shared designs, sortable by era, mood, accessibility and compatibility, rather than turning core Settings into an overwhelming theme marketplace. Preserve old compatible packs when possible, offer modern fallbacks when interfaces evolve, and avoid claiming REDOWN owns the third-party aesthetic movements it celebrates. **Time required: 24–48 hours; Urgency level: LOW.**
+
+**133. Long-run creator economics and mass-market viability.** Model affordability, broad participation, creators' ability to share their designs and optional revenue sharing without depending on unverified billion-user forecasts. A hypothetical **1,000,000,000 paying users × $5/month × 12 months × 20 years = $1.2 trillion gross nominal subscription revenue**, before all fees, taxes, expenses, churn or discounts; this is arithmetic, **not a realistic subscriber forecast**. **Time required: 8–16 hours of scenario/financial modeling; Urgency level: LOW (EXPLORATORY).**
+
+### How to make a theme ecosystem sustainable rather than fragile
+
+1. **The engine is not the skin.** File API, storage, transfer routes, metadata, keyboard actions, permission prompts, safety confirmations, search, Favorites, reactions, tagging and real archives remain in the core; a theme cannot redefine them.
+2. **Theme manifest rather than arbitrary application code.** Introduce a tested versioned manifest (theme ID, version, creator/rights, compatible REDOWN versions, tokens, optional assets, zones/variants, reduced-motion settings and fallbacks). Prefer JSON plus CSS custom properties; author extensions under strictly controlled scopes rather than allowing unreviewed CSS/JS to change security-critical UI.
+3. **Any-shape responsiveness and accessibility.** Every skin must satisfy component minimums, readable breadcrumbs, focus visibility, 200% zoom where practical, overflow-to-More rules and keyboard usability at narrow widths. Preserve the stable navigation/preview contract no matter how wildly the surface looks.
+4. **Profiles, not data silos.** A favorite, tag or reaction belongs to its actual file/folder in stable provider-scoped metadata; it remains intact across Porcelain, Blue, GeoCities and classic OS skins. User-defined archive/story layouts are separate exportable presentations over those references.
+5. **User consent and rights.** Retro themes are original derivatives or properly licensed creator works. Do not bundle copyrighted brand logos, old website assets, third-party profile content or Apple/social-platform proprietary emojis without permission. Use a clear import safety screen for externally authored packs.
+6. **Offline-first aesthetic continuity.** Previously installed compatible skins should render without dependency on a defunct theme provider, and the built-in stable theme must always be available. Theme failures cannot prevent the extension icon, right-click menu or Explorer from opening.
+7. **No speculative subscriber claim.** Revenue scale depends on actual paying active users, retention, price, platform/store rules and meaningful net margins. Treat $1.2 trillion as a fixed-input twenty-year gross mathematical illustration, not a target or prediction.
+
+### How this relates to previous important entries
+
+- **121 Favorites, 122 Reactions, 123 Manual Tags** remain required earlier foundation features and should not wait for the theme marketplace.
+- **124 Atlas-style JSON tagging-model compatibility** can later supply provenance and searchable archives, but does not authorize model scanning as part of theme selection.
+- **72 Time Machine and 75 What Changed?** track real observed objects and history; Retro Capture can present those records but cannot resurrect missing file bytes.
+- **91 Collection Studio and 93 The Grand Story** can use optional era skins without forking the file engine.
+- **104 NEON reveal and 114 Unified Branding** should reuse the future declarative theme system rather than multiplying fragile UI-specific overrides.
+- **No production code change requested by this appendix.** Any implementation must have an approved scoped work request, proper tests and real browser validation.
+
+**Concept references for research, not copied assets:** [Tumblr Help: tagging](https://help.tumblr.com/knowledge-base/organizing-with-tags/), [Tumblr Help: dashboard](https://help.tumblr.com/knowledge-base/getting-started-on-tumblr/), and [Winamp Skin Museum](https://www.prandor.com/skins/). Historical platform styling must be reinterpreted rather than imported wholesale.
