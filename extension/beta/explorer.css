@@ -1158,7 +1158,11 @@ html[data-activation-prerequisite="true"] #refresh.attention{animation:none!impo
 @media(prefers-reduced-motion:reduce){.actions #prepare[data-state="needed"]::after{animation:none;opacity:.7}}
 /* Primary directory navigation, deliberately scoped to the three history controls. */
 :is(#back,#forward,#up){width:48px;height:48px;min-width:44px;min-height:44px;flex-shrink:0;display:inline-grid;place-items:center;padding:10px;border-radius:14px;color:var(--bg);border:1px solid color-mix(in srgb,var(--accent),var(--text) 20%);background:linear-gradient(180deg,#ffffff38 0%,#ffffff08 47%,#00000018 52%,#00000030 100%),var(--accent);box-shadow:inset 0 1px 0 #ffffff80,inset 0 -2px 3px #00000025,0 3px 7px #00000024;transition:filter .14s,box-shadow .14s,transform .14s}
-:is(#back,#forward,#up) svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+/* Same optically centered silhouette in all three directions: rotate the artwork, not text glyphs. */
+:is(#back,#forward,#up) svg.directory-nav-glyph{display:block;width:24px;height:24px;flex:none;fill:currentColor;stroke:none;overflow:visible;transform-origin:50% 50%;filter:drop-shadow(0 1px 0 #ffffff30)}
+:is(#back,#forward,#up) .directory-nav-glyph-glint{fill:#fff;opacity:.25}
+#forward svg.directory-nav-glyph{transform:rotate(180deg)}
+#up svg.directory-nav-glyph{transform:rotate(90deg)}
 :is(#back,#forward,#up):hover:not(:disabled){filter:brightness(1.12);box-shadow:inset 0 1px 0 #ffffffaa,0 4px 10px color-mix(in srgb,var(--accent),transparent 65%)}
 :is(#back,#forward,#up):active:not(:disabled){transform:translateY(1px);box-shadow:inset 0 2px 5px #00000040}
 :is(#back,#forward,#up):focus-visible{outline:3px solid var(--text);outline-offset:3px}
@@ -1171,3 +1175,77 @@ html[data-activation-prerequisite="true"] #refresh.attention{animation:none!impo
 .window-viewer[hidden]{display:none}
 .window-viewer .preview-header{flex-wrap:wrap}.window-viewer .preview-header h2{min-width:0;margin:0;font-size:22px}.window-info{margin:0;font-size:12px;color:var(--muted)}.window-content audio{width:min(600px,100%)}.window-content img{flex-shrink:1}
 .window-lightbox .window-info{color:#ccc}.window-lightbox button{background:#222;color:#fff;border-color:#666}.window-lightbox button:focus-visible{outline-color:#fff}
+
+/* Window Preview and immersive Lightbox: the outer dialog never owns a vertical scrollbar.
+   Scroll only the media/content region, leaving close/previous/next in a reserved control rail. */
+:is(#preview-dialog,#immersive-preview-dialog):has(> .window-viewer:not([hidden])){
+  box-sizing:border-box;
+  overflow:hidden;
+  overscroll-behavior:contain;
+}
+#preview-dialog > .window-viewer:not([hidden]){
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto auto;
+  gap:clamp(8px,1.35dvh,16px);
+  height:min(78dvh,850px);
+  max-height:calc(92dvh - 56px);
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+}
+:is(#preview-dialog,#immersive-preview-dialog) .window-viewer .window-content{
+  min-width:0;
+  min-height:0;
+  max-height:none;
+  box-sizing:border-box;
+  overflow:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  padding:12px clamp(20px,2vw,34px) 12px 12px;
+}
+:is(#preview-dialog,#immersive-preview-dialog) .window-viewer .preview-header,
+:is(#preview-dialog,#immersive-preview-dialog) .window-viewer .preview-footer{
+  min-width:0;
+  flex-shrink:0;
+  padding-inline-end:clamp(24px,2.8vw,48px);
+}
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox{
+  box-sizing:border-box;
+  overflow:hidden;
+  width:100vw;
+  max-width:100vw;
+  height:100dvh;
+  max-height:100dvh;
+  padding:clamp(12px,1.5vw,24px);
+}
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox > .window-viewer:not([hidden]){
+  height:100%;
+  max-height:100%;
+  min-height:0;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto auto;
+  gap:clamp(8px,1.35dvh,16px);
+}
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-content{
+  height:100%;
+  min-height:0;
+  max-height:none;
+  padding:8px clamp(25px,3vw,54px) 8px clamp(15px,2vw,32px);
+  scrollbar-gutter:stable;
+  overflow:auto;
+}
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-content :is(img,video,iframe){
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-viewer .preview-header,
+:is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-viewer .preview-footer{
+  padding-inline:clamp(8px,1.3vw,22px) clamp(30px,3vw,54px);
+}
+@media(max-height:500px){
+  #preview-dialog > .window-viewer:not([hidden]){height:calc(92dvh - 36px);max-height:calc(92dvh - 36px)}
+  :is(#preview-dialog,#immersive-preview-dialog).window-lightbox{padding:10px}
+  :is(#preview-dialog,#immersive-preview-dialog).window-lightbox .window-content{padding-block:4px}
+}
