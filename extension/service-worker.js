@@ -25,5 +25,21 @@
         globalThis.entryEvidence('worker', 'load', 'core', 'CORE_IMPORT_FAILED', 'toolbar-recovery');
       } catch { /* Evidence must never prevent toolbar access. */ }
     }
+    // Only on a failed core load: preserve the existing BOOT Debug API route.
+    // No duplicate listener in normal operation; no cloud or mutation handlers.
+    if (globalThis.RedownCoreMessageHandlerRegistered !== true) {
+      chrome.runtime.onMessage.addListener((message, sender, respond) => {
+        if (message?.type !== 'bootV1') return false;
+        (async () => {
+          const enabled = (await boundedEntry(chrome.storage.local.get('debugModeEnabled'), 1000)).debugModeEnabled;
+          if (sender?.id !== chrome.runtime.id ||
+              sender?.url !== chrome.runtime.getURL('options.html') ||
+              enabled !== true) return {ok:false,code:'DIAGNOSTICS_DISABLED'};
+          if (!globalThis.RedownBoot) return {ok:false,code:'BOOT_UNAVAILABLE'};
+          return {ok:true,result:await globalThis.RedownBoot.query(message.operation,message.input)};
+        })().then(respond, () => respond({ok:false,code:'BOOT_DIAGNOSTIC_UNAVAILABLE'}));
+        return true;
+      });
+    }
   }
 })();
