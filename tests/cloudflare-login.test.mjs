@@ -48,7 +48,10 @@ function harness(shared = {}) {
       },
       async remove(id) { calls.push(['remove', id]); windows.delete(id); }
     },
-    tabs: { async update(id, options) { calls.push(['navigate', id, options]); navigationReady(); } },
+    tabs: {
+      async create(options) { calls.push(['open-tab', options]); return {id:30}; },
+      async update(id, options) { calls.push(['navigate', id, options]); navigationReady(); }
+    },
     alarms: {
       onAlarm:event(), async create(name, details) { alarms.set(name, details); },
       async clear(name) { alarms.delete(name); }
@@ -151,6 +154,59 @@ test('callback resumes after service worker restart from session state', async (
   await next.callback();
   assert.equal(next.session.cloudflareLogin.phase, 'connected');
   assert.equal(next.local.cloudflareAuth.accessToken, 'verified-token');
+});
+
+test('Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth', async () => {
+  const h=harness();
+  const listener=h.chrome.runtime.onMessage.listeners[0];
+  const started=await new Promise(resolve=>listener({type:'cfConnect'},{url:'chrome-extension://testid/shelf.html#clouds'},resolve));
+  assert.equal(started.ok,true);
+  assert.equal(h.session.cloudflareLogin.openExplorerAfterLogin,true);
+  assert.equal(h.calls.filter(call=>call[0]==='open-tab').length,0,'do not navigate before successful OAuth');
+  await Promise.all([h.callback(),h.callback()]);
+  assert.equal(h.session.cloudflareLogin.phase,'connected');
+  const opened=h.calls.filter(call=>call[0]==='open-tab');
+  assert.equal(opened.length,1,'double callback must not create duplicate Explorer tabs');
+  assert.deepEqual(structuredClone(opened[0][1]),{
+    url:'chrome-extension://testid/beta/explorer.html',active:true
+  });
+  assert.ok(!opened[0][1].url.includes('#explorer-destinations'),'open Explorer Home, not Right-click Setup');
+  assert.equal(h.local.cloudflareAuth.accessToken,'verified-token');
+});
+
+test('Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab',async()=>{
+  for(const url of ['chrome-extension://testid/options.html','chrome-extension://testid/beta/explorer.html']){
+    const h=harness();
+    const listener=h.chrome.runtime.onMessage.listeners[0];
+    const started=await new Promise(resolve=>listener({type:'cfConnect'},{url},resolve));
+    assert.equal(started.ok,true);
+    assert.equal(h.session.cloudflareLogin.openExplorerAfterLogin,false);
+    await h.callback();
+    assert.equal(h.session.cloudflareLogin.phase,'connected');
+    assert.equal(h.calls.filter(call=>call[0]==='open-tab').length,0);
+  }
+});
+
+test('Shelf cancelled or failed login never opens Explorer',async()=>{
+  for(const query of ['error=access_denied','state=wrong&code=bad']){
+    const h=harness();
+    const listener=h.chrome.runtime.onMessage.listeners[0];
+    await new Promise(resolve=>listener({type:'cfConnect'},{url:'chrome-extension://testid/shelf.html'},resolve));
+    const attempt=h.session.cloudflareLogin;
+    await h.callback({url:attempt.redirectUri+'?'+query});
+    assert.equal(h.session.cloudflareLogin.phase,'failed');
+    assert.equal(h.calls.filter(call=>call[0]==='open-tab').length,0);
+  }
+});
+
+test('Shelf login remains connected when Chrome cannot open Explorer tab',async()=>{
+  const h=harness();
+  const listener=h.chrome.runtime.onMessage.listeners[0];
+  await new Promise(resolve=>listener({type:'cfConnect'},{url:'chrome-extension://testid/shelf.html'},resolve));
+  h.chrome.tabs.create=async()=>{throw Error('tab creation blocked');};
+  await h.callback();
+  assert.equal(h.session.cloudflareLogin.phase,'connected');
+  assert.equal(h.local.cloudflareAuth.accessToken,'verified-token');
 });
 
 test('unrelated tab, subframe, lookalike host, and wrong callback path are ignored', async () => {
