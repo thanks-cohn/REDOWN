@@ -1259,3 +1259,26 @@ html[data-activation-prerequisite="true"] #refresh.attention{animation:none!impo
 :root:not([data-explorer-navigation-size="big"]) :is(#back,#forward,#up) svg.directory-nav-glyph{
   width:20px;height:20px;
 }
+
+/* Mode-specific Lightbox control: a fixed-size icon in Side Preview, a
+   content-sized label in Window Preview. Never clip text into Close. */
+#preview-lightbox{
+  display:inline-flex;align-items:center;justify-content:center;
+  flex:none;box-sizing:border-box;white-space:nowrap;
+  font-size:12px;line-height:1.2;font-weight:750;
+}
+#preview-lightbox[hidden]{display:none}
+#preview-lightbox .preview-lightbox-icon{display:none;flex:none;width:20px;height:20px}
+#side-preview #preview-lightbox{
+  width:36px;min-width:36px;height:36px;padding:0;
+}
+#side-preview #preview-lightbox .preview-lightbox-icon{display:block}
+#side-preview #preview-lightbox .preview-lightbox-label{display:none}
+#preview-dialog #preview-lightbox{
+  width:auto;min-width:88px;height:36px;padding:0 11px;
+}
+#preview-dialog #preview-lightbox .preview-lightbox-label{display:inline}
+.window-viewer [data-lightbox]{
+  min-width:88px;min-height:36px;padding:7px 12px;
+  font-size:12px;line-height:1.2;font-weight:750;white-space:nowrap;
+}
