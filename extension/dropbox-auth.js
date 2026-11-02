@@ -36,11 +36,19 @@
       if(connection)return connection;
       connection=(async()=>{
         const ticket=epoch;let uri;try{await secure();uri=redirect();}catch(e){await state({phase:'reconnect',error:e.status?e.message:'Dropbox secure storage is unavailable.'});throw e;}await state({phase:'connecting'});
-        const verifier=random(),nonce=random(),challenge=b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
-        const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});
         try{
+          // Include PKCE creation/session writes in the protected region so an
+          // early failure cannot strand the Shelf in an unclickable state.
+          const verifier=random(),nonce=random(),challenge=b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
+          const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});
           const u=new URL('https://www.dropbox.com/oauth2/authorize');u.search=new URLSearchParams({client_id:APP_KEY,response_type:'code',redirect_uri:uri,code_challenge:challenge,code_challenge_method:'S256',state:nonce,token_access_type:'offline',scope:SCOPES.join(' ')});
-          let response;try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}catch{throw fail('Dropbox login was cancelled.','cancelled');}
+          if(typeof chrome.identity.launchWebAuthFlow!=='function')throw fail('Chrome cannot open Dropbox authorization in this extension. Reload REDOWN and retry.');
+          let response;
+          try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}
+          catch(e){
+            const cancelled=/cancel|denied|closed|user rejected/i.test(String(e?.message||''));
+            throw fail(cancelled?'Dropbox login was cancelled.':'Chrome could not open Dropbox sign-in. Verify this extension’s registered ID and OAuth redirect, then retry.',cancelled?'cancelled':'blocked');
+          }
           const saved=(await chrome.storage.session.get('dropbox:oauth'))['dropbox:oauth'];
           await chrome.storage.session.remove('dropbox:oauth'); // consume before token exchange; no replay
           const result=new URL(response);
