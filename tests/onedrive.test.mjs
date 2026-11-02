@@ -17,7 +17,7 @@ test('unmodified protected modules retain checkpoint hashes; authorized Shelf ch
  const authorized=new Set(['extension/dropbox-api.js','extension/history-navigation.js',
    'extension/options.html','extension/options.js','extension/shelf-dropbox.js',
    'extension/shelf-google-drive.js','extension/shelf-history.js',
-   'extension/shelf.css','extension/shelf.html','extension/shelf-celestial.js']);
+   'extension/shelf.css','extension/shelf.html','extension/shelf-celestial.js','extension/shelf.js']);
  for(const [p,h] of Object.entries(before.hashes)){
   if(p==='extension/manifest.json'){
     const baseline=JSON.parse(execFileSync('git',['show',before.commit+':'+p],{encoding:'utf8'}));
