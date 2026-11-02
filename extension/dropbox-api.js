@@ -5,7 +5,10 @@
   const fail=(message,status='blocked')=>Object.assign(Error(message),{status});
   function sourceURL(value){
     let u;try{u=new URL(value);}catch{throw fail('No supported file URL was clicked.');}
-    if(u.protocol!=='https:'||u.username||u.password||!u.hostname.includes('.')||/^(localhost|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/.test(u.hostname)||u.hostname.startsWith('[')||u.hostname.endsWith('.local')||u.hostname.endsWith('.localhost'))throw fail('Dropbox supports public HTTPS file URLs only.');
+    // Chrome fetches the clicked source; Dropbox receives bytes, never this source URL.
+    // Dropbox itself does not require public HTTPS source URLs.
+    if(!['http:','https:'].includes(u.protocol))throw fail('REDOWN cannot directly fetch browser-only or local file URLs. Use an HTTP(S) link that Chrome can fetch.');
+    if(u.username||u.password)throw fail('REDOWN cannot fetch a source URL containing embedded credentials.');
     u.hash='';return u;
   }
   function filename(value){
