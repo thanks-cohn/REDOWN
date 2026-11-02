@@ -89,7 +89,7 @@ test('disconnected cloud tiles show LOGIN rather than opening a provider website
  ];
  for(const [provider,override] of cases){
    const h=await mount(provider,override);
-   assert.equal(h.button.textContent.trim(),'LOGIN');
+   assert.equal(h.button.querySelector('.destination-word').textContent.trim(),'LOGIN');
    assert.equal(h.opened.length,0);
    h.dom.window.close();
  }
