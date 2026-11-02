@@ -6,6 +6,12 @@
 **Protected checkpoint:** `BASE-v3`
 **Last consolidated:** 2026-10-30
 
+## NEW IDEA — AMOEBE, the morphing rainbow liquid-chrome helper (2026-11-01)
+
+**Status: idea only.** AMOEBE remains an amorphous glittering chrome-and-rainbow creature that morphs with the active tooltip or action: **rename → pencil**, **move → tiny moving box/trolley**, and later copying, saving, searching, uploading and other playful forms. Every transformation retains the same prismatic liquid-metal material and flows back to an expressive floating blob. Respect reduced motion, accessible tooltips, real action states and isolated mascot visuals. Do not replace existing mascot branding or V3/product code just by recording the idea.
+
+[Full AMOEBE concept and first two-pose proof of concept](AMOEBE_CONTEXTUAL_LIQUID_CHROME_MASCOT_2026-11-01.md).
+
 ## Product promise
 
 REDOWN is a polished, reliable universal cloud file explorer and browser right-click remote saver. Core file management stays useful and free. Premium Elite expands the number of enhanced directories and adds compelling collection, history, archive and automation workflows. Preserve existing REDOWN Explorer UX, its attractive V3 right-click editor, URL system, History, neon intro, mascot, and Money Machine personality. Reuse the current CBZ/ZIP preview paths rather than inventing duplicate readers.
