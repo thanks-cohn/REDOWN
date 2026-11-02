@@ -9,7 +9,7 @@
     const connected=state.phase==='connected'&&state.rootReady===true;
     const connecting=busy||state.phase==='connecting';
     button.disabled=connecting;
-    button.textContent=connecting?'Connecting to OneDrive…':connected?'OneDrive connected':
+    button.textContent=connecting?'Connecting to OneDrive…':connected?'GO TO OneDrive':
       state.phase==='reconnect'?'Reconnect OneDrive':'Connect OneDrive';
     open.hidden=!connected;disconnect.hidden=!connected&&state.phase!=='reconnect';
     cancel.hidden=!['active','queued'].includes(transfer.status);
@@ -26,6 +26,7 @@
   button.addEventListener('click',async()=>{
     if(busy)return;
     const alreadyConnected=state.phase==='connected'&&state.rootReady===true;
+    if(alreadyConnected){try{await chrome.tabs.create({url:'https://onedrive.live.com/'});}catch{uiError='Could not open OneDrive. Try again.';paint();}return;}
     busy=true;uiError='';paint();
     try{
       // Chrome host access is an extension-level install/update permission.
