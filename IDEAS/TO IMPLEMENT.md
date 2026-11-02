@@ -146,3 +146,14 @@ The current History GO TO can open a new REDOWN tab for each different file. **T
 **Proof of concept:** Verify 2,000 confirmed saves accumulate with the Shelf closed while the visible checkpoint remains unchanged; then reveal the true total in roughly 10 seconds, with accurate continuation after interruption, correct daily and per-provider accounting, no fictitious success animations, and accessible reduced-motion behavior.
 
 **Tracking:** [November 2 NEED_TO_DO](../NEED_TO_DO/11022026.md) — *The Unseen Odometer*.
+
+
+### Special-effects velocity and the millionth save
+
+**Future odometer enhancement, not implemented:** React to the **rate of verified saves within a set time window**. Higher actual save velocity may unlock progressively more dramatic, theme-specific mechanical, light, electricity and sound effects. Exact thresholds and rolling windows remain design choices. The effect should reflect real receipts, never the number of frames or digit transitions in a catch-up animation.
+
+**The million milestone sequence:** As the visible odometer reaches **999,999**, it shudders in anticipation. When the real verified lifetime count crosses to **1,000,000**, an **additional leftmost digit tile** appears, shines/glows, clicks into **1**, and the existing six tiles become **000000**. The expanded display then cycles through the theme palette/available colors in a celebratory flourish before smoothly returning to its original selected theme. Keep the count permanent at 1,000,000 and continue from there; palette cycling is a temporary visual effect, not a theme-setting change.
+
+**Unseen Shelf integration:** If the last shown count was below one million and authentic verified saves crossed the threshold while the Shelf was closed, the delayed ~10-second catch-up can reveal the million-digit emergence once upon return. Persist milestone-played/presentation state to avoid repetitive celebration across reloads and simultaneous Shelf instances. Respect reduced motion/mute and avoid forced long animation for accessibility. Daily badge and all provider/history data remain promptly and correctly updated independent of the effect.
+
+**To design/test later:** rate windows/tiers, triggering mechanics, sound and color choreography per theme, long-count digit growth, 999,999 → 1,000,000 and interruption behavior, high-velocity load, provider proof integration, and once-only milestone replay. **IDEA ONLY; no implementation or change to verified-save accounting is implied.**
