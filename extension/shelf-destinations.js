@@ -58,19 +58,25 @@
       cancelClose();for(const other of menus)if(other!==details)other.open=false;
       details.open=true;
     };
-    const scheduleClose=()=>{
+    const scheduleClose=(fromPointer=false)=>{
       cancelClose();
       closing=setTimeout(()=>{
         closing=null;
         if(hoverEnabled()&&(trigger.matches(':hover')||popup.matches(':hover')))return;
-        if(popup.contains(document.activeElement))return; // Keyboard users can navigate the menu.
+        // Hover-opened menus must still close when the pointer leaves, even if
+        // someone clicked a menu action and it has retained keyboard focus.
+        if(!fromPointer&&popup.contains(document.activeElement))return;
         details.open=false;
-      },160); // Bridge the small visual gap between the dots and the popup.
+      },180);
     };
     trigger.addEventListener('mouseenter',()=>{if(hoverEnabled())open();});
     popup.addEventListener('mouseenter',()=>{if(hoverEnabled())cancelClose();});
-    trigger.addEventListener('mouseleave',()=>{if(hoverEnabled())scheduleClose();});
-    popup.addEventListener('mouseleave',()=>{if(hoverEnabled())scheduleClose();});
+    trigger.addEventListener('mouseleave',event=>{
+      if(hoverEnabled()&&!popup.contains(event.relatedTarget))scheduleClose(true);
+    });
+    popup.addEventListener('mouseleave',event=>{
+      if(hoverEnabled()&&event.relatedTarget!==trigger)scheduleClose(true);
+    });
     // A mouse click must not toggle a panel that hover already opened.
     // Touch activation retains the browser's native details/summary toggle.
     trigger.addEventListener('click',event=>{
