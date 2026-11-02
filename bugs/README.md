@@ -1,3 +1,8 @@
+## P0 — Cloudflare falsely appears connected after Activate Buckets (2026-11-02)
+
+**OPEN, code investigated, live root cause not proven.** The user reports that both Shelf Cloudflare Manage and Explorer can appear connected after initial sign-in, yet after Activate Buckets/returning to Manage REDOWN asks for another Cloudflare login. The Shelf separately checks `cfAccounts`; Explorer's `paintLogout()` initially trusts the presence of a stored token. Cloudflare API reads may refresh/mark the grant as requiring reconnect. Activation can surface a more stringent real account/bucket/Worker check, but does not explicitly log out in the traced path. The state disparity is real in code; exact live trigger requires redacted event tracing. Preserve one OAuth authority, never silently assume “logged in”, never erase valid credentials on transient network failure. **[Full forensic P0 and acceptance plan](CRITICAL/2026-11-02_P0_CLOUDFLARE_FALSE_CONNECTED_AFTER_ACTIVATE_BUCKETS.md).**
+
+
 ## P0 — Logged-out save balls and daily verified toolbar badge (2026-11-02)
 
 **SOURCE REPAIRED, REAL-CHROME TEST OPEN.** A right-click save ball previously launched without checking whether Cloudflare (or another destination) was signed in. It is now gated before page injection by the selected provider's existing authenticated session. A daily `chrome.action` badge displays the number of verified cloud saves today and resets at local midnight, independent of the lifetime odometer. **30/30 targeted Node checks passed.** See [full P0 report](CRITICAL/2026-11-02_P0_UNAUTHENTICATED_SAVE_BALLS_AND_DAILY_TOOLBAR_BADGE.md).
