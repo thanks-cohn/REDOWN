@@ -247,7 +247,7 @@ test('connected Shelf GO TO opens home without prompts or restarting Microsoft l
   assert.ok(messages.includes('onedriveStatus'));
   assert.ok(!messages.includes('onedriveConnect'));
   assert.equal(dom.window.document.getElementById('shelf-onedrive').textContent,'GO TO');
-  assert.deepEqual(opened,[{url:'https://onedrive.live.com/'}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(opened)),[{url:'https://onedrive.live.com/'}]);
   dom.window.close();
 });
 test('Graph upload host requires no permission API and never receives the source URL',async()=>{
