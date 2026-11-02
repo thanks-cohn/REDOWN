@@ -10,6 +10,12 @@ The Simple Cloudflare structure and false REDOWN toolbar warnings are now repair
 
 # REDOWN bugs
 
+## P0 — Dropbox reconnect fails namespace verification; earlier saved files not visible (2026-11-01)
+
+**Status:** OPEN, owner reproduced in installed Chrome; exact Dropbox root guard identified in `extension/dropbox-auth.js`; no live Dropbox files inspected and no repair claimed. REDOWN reports `Dropbox connection needs attention. Reconnect or try again.`; every reconnect yields `This Dropbox namespace is restricted or ambiguous. A Full Dropbox user root is required.`; previously saved files cannot be located. Current code rejects non-`user` roots or `root_namespace_id !== home_namespace_id` without testing the effective authorized root and hides Open Dropbox during reconnect. Distinguish an unsupported app-folder/restricted grant from an authorized team namespace; preserve `dropbox:jobs` and History, reconcile exact completed receipts remotely and do not assume file deletion or retry uncertain commits. **Required:** evidence-preserving account/root diagnostics, correct authorized namespace handling, actionable errors, always-accessible Open Dropbox, and installed-Chrome/live-provider acceptance. [Full critical P0 bug, precise reproduction and tests](CRITICAL/2026-11-01_P0_DROPBOX_RECONNECT_NAMESPACE_REJECTION_AND_MISSING_SAVED_FILES.md). [Dated task P0.8](../NEED_TO_DO/11012026.md).
+
+---
+
 ## P0 — Simple menu shows Buckets and places custom labels beside it (2026-10-31)
 
 **CORRECTED OWNER MODE HIERARCHY (supersedes mistaken assistant three-peer proposal):** Keep **TWO top-level modes, Simple and Nested**; Nested offers **Narrow** (only explicitly configured destinations in their natural hierarchy, no bucket-wide discovery) **OR Depth** (actual authorized discovered directory hierarchy with depth 1–10). Do NOT move Narrow outside Nested, create three peer modes, erase old saved submode values or change the current polished selector needlessly. Internal `nested:'narrow'` remains Narrow and `nested:'level'` remains Depth. Recheck UI, mode switching and native menu routing with regression tests. [Corrected canonical P0 work request](../docs/CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md).
