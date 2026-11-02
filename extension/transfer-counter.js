@@ -45,10 +45,12 @@
       typeof entry.destination?.fileId==='string'&&
       /^[\w-]+$/.test(entry.destination.fileId)&&
       entry.deliveryId==='google:'+entry.destination.fileId;
-    const providerProof=entry=>entry?.providerKind==='cloudflare'?cloudflareProof(entry):
-      entry?.providerKind==='google'?googleProof(entry):
-      entry?.providerKind==='dropbox'?dropboxProof(entry):
-      entry?.providerKind==='onedrive'?onedriveProof(entry):false;
+    const providerProof=entry=>entry?.ok===true&&entry?.verified===true&&
+      entry?.status==='completed'&&(
+      entry.providerKind==='cloudflare'?cloudflareProof(entry):
+      entry.providerKind==='google'?googleProof(entry):
+      entry.providerKind==='dropbox'?dropboxProof(entry):
+      entry.providerKind==='onedrive'?onedriveProof(entry):false);
     // Provider-attributed saves can advance the lifetime odometer only through
     // the SAME verifier that authorizes the card and daily toolbar badge.
     // Legacy un-attributed History keeps its historical compatibility rule.
