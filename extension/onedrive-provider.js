@@ -75,11 +75,19 @@
     }
     const ownsMessage=m=>['onedriveConnect','onedriveDisconnect','onedriveStatus','onedriveCancel','onedriveDiagnostic'].includes(m?.type);
     async function message(m,sender){
-      if(sender?.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))
-        return result('ONEDRIVE_UNTRUSTED_SENDER','Only REDOWN Shelf can manage OneDrive.');
-      if(m.type==='onedriveDiagnostic')
+      const trusted=sender?.id===chrome.runtime.id&&typeof sender.url==='string';
+      const page=trusted?sender.url.split(/[?#]/)[0]:'';
+      const shelf=page===chrome.runtime.getURL('shelf.html');
+      const options=page===chrome.runtime.getURL('options.html');
+      if(!shelf&&!(options&&m.type==='onedriveDiagnostic'))
+        return result('ONEDRIVE_UNTRUSTED_SENDER','Only REDOWN trusted controls can manage OneDrive.');
+      if(m.type==='onedriveDiagnostic'){
+        // Debug-only action. The user must explicitly click OneDrive Test.
+        const debug=(await get('debugModeEnabled'))===true;
+        if(!debug)return result('ONEDRIVE_DEBUG_DISABLED','Enable Debug Mode to run OneDrive Test.');
         return globalThis.RedownOneDriveOAuthDiagnostic?.create().run()||
           result('ONEDRIVE_DIAGNOSTIC_UNAVAILABLE','Microsoft diagnostic is unavailable.');
+      }
       try{
         if(m.type==='onedriveConnect'){
           if(busy)return result('ONEDRIVE_BUSY','Finish the current OneDrive save first.');
