@@ -163,3 +163,16 @@ The current History GO TO can open a new REDOWN tab for each different file. **T
 **Unseen Shelf integration:** If the last shown count was below one million and authentic verified saves crossed the threshold while the Shelf was closed, the delayed ~10-second catch-up can reveal the million-digit emergence once upon return. Persist milestone-played/presentation state to avoid repetitive celebration across reloads and simultaneous Shelf instances. Respect reduced motion/mute and avoid forced long animation for accessibility. Daily badge and all provider/history data remain promptly and correctly updated independent of the effect.
 
 **To design/test later:** rate windows/tiers, triggering mechanics, sound and color choreography per theme, long-count digit growth, 999,999 → 1,000,000 and interruption behavior, high-velocity load, provider proof integration, and once-only milestone replay. **IDEA ONLY; no implementation or change to verified-save accounting is implied.**
+
+
+## IDEA — Matrix as a complete REDOWN dimension/theme
+
+**Date:** November 2, 2026. **Status: IDEA ONLY; not implemented.**
+
+**Matrix** is an additional standalone REDOWN visual dimension alongside the existing themes, not a recolor of Neon. It should feel like entering a distinct miniature operating system: cinematic dark/near-black surfaces, layered digital-green glyphs, subtle falling-code depth, crisp glass/gloss panels, readable instrumentation, and context-sensitive transitions. Offer restrained and intensified effects, retaining good contrast and excellent legibility rather than sacrificing navigation to visual noise.
+
+The shared mascot **Chute** wears playful **3D glasses** and holds a **Zippy Drippy** drink with a straw in Matrix. AMEOBO can retain fluid chrome shape while reflecting green/coded light. Mascot accessories are theme-specific and purely decorative; no changes to cloud-provider logic or permissions.
+
+**Architecture:** Isolate Matrix CSS/tokens/animations as a separate theme adapter; switching does not reset the permanent odometer, per-provider verified totals, daily badge, Shelf History, V3 menus or auth. Theme-specific SUCCESS!, ball/impact behavior and future Unseen Odometer milestones must still be triggered by real verified events rather than timers or decoration. Respect reduced motion, pause/disable animated code, mute/volume, performance budgets and keyboard accessibility. On exit, return cleanly to the previously selected theme with no lingering Matrix overlays.
+
+**Later acceptance:** layout parity across narrow/wide Shelf; readable numbers, GO TO and URL data; premium 3D-glass Chute with Zippy Drippy; unchanged verified remote-save/Cloudflare OAuth behavior; no CSS leakage to other themes. This is a product idea, not a claim of implementation.
