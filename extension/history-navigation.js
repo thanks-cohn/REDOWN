@@ -59,11 +59,41 @@
       record.providerKind&&!['cloudflare','cloudflare-r2'].includes(record.providerKind)||
       record.provider&&!['cloudflare','cloudflare-r2','Cloudflare R2'].includes(record.provider))return null;
     const match=/^R2: ([a-z0-9][a-z0-9.-]{0,62})\/(.+)$/.exec(record.location||'');
-    if(!match)return null;
-    const [,bucketName,key]=match;
-    if(key.endsWith('/')||/[\\\x00-\x1f]/.test(key)||
-       key.split('/').some(part=>!part||part==='.'||part==='..'))return null;
-    return {profileId:record.profileId,bucketName,key};
+    if(match){
+      const [,bucketName,key]=match;
+      if(key.endsWith('/')||/[\\\x00-\x1f]/.test(key)||
+         key.split('/').some(part=>!part||part==='.'||part==='..'))return null;
+      return {profileId:record.profileId,bucketName,key};
+    }
+    // Older Cloudflare receipts sometimes stored the Worker asset URL rather
+    // than "R2: bucket/key". A URL is a candidate only; on click match its
+    // exact origin and configured asset-path prefix to the original profile.
+    let u;try{u=new URL(record.location||'');}catch{return null;}
+    if(u.protocol!=='https:'||u.username||u.password||u.search||u.hash)return null;
+    return {profileId:record.profileId,assetUrl:u.href};
+  }
+  function legacyAssetKey(url,profile){
+    const roots=[profile.publicBaseUrl,
+      typeof profile.workerUrl==='string'?profile.workerUrl.replace(/\/+$/,'')+'/assets':''];
+    for(const raw of roots){
+      let origin,asset;
+      try{origin=new URL(url);asset=new URL(raw);}catch{continue;}
+      if(origin.protocol!=='https:'||asset.protocol!=='https:'||
+         origin.origin!==asset.origin||asset.username||asset.password||
+         asset.search||asset.hash)continue;
+      const prefix=asset.pathname.replace(/\/+$/,'')+'/';
+      if(!origin.pathname.startsWith(prefix))continue;
+      const rest=origin.pathname.slice(prefix.length);
+      if(!rest)return null;
+      const segments=rest.split('/');
+      try{
+        const parts=segments.map(segment=>decodeURIComponent(segment));
+        if(parts.some(part=>!part||part==='.'||part==='..'||
+          /[\\/\x00-\x1f]/.test(part)))return null;
+        return parts.join('/');
+      }catch{return null;}
+    }
+    return null;
   }
   function savedDropboxTarget(record){
     if(record?.ok!==true||record.verified!==true||record.status!=='completed'||
@@ -221,11 +251,16 @@
     const resolved=historical?chrome.storage.local.get('profiles').then(data=>{
       const matches=(Array.isArray(data.profiles)?data.profiles:[]).filter(p=>
         p.id===historical.profileId&&p.type==='cloudflare-r2'&&
-        p.bucketName===historical.bucketName&&typeof p.accountId==='string'&&p.accountId);
+        (!historical.bucketName||p.bucketName===historical.bucketName)&&
+        typeof p.accountId==='string'&&p.accountId&&
+        typeof p.bucketName==='string'&&p.bucketName);
       if(matches.length!==1)throw Error('Original Cloudflare bucket/profile is no longer configured. Restore that exact destination before using GO TO.');
-      const p=matches[0],prefix=historical.key.slice(0,historical.key.lastIndexOf('/')+1);
+      const p=matches[0],key=historical.assetUrl?
+        legacyAssetKey(historical.assetUrl,p):historical.key;
+      if(!key)throw Error('Saved asset URL no longer matches the original Cloudflare Worker or bucket. No other object was selected.');
+      const prefix=key.slice(0,key.lastIndexOf('/')+1);
       const checked=locator({ok:true,verified:true,destination:{
-        accountId:p.accountId,bucketName:p.bucketName,key:historical.key,prefix}});
+        accountId:p.accountId,bucketName:p.bucketName,key,prefix}});
       if(!checked)throw Error('Historical R2 destination is invalid.');
       return checked;
     }):Promise.resolve(target);
@@ -254,7 +289,7 @@
     chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));
     return {tab:ownTab,windowId:win.id};
   }
-  globalThis.RedownHistoryNavigation={locator,cloudTarget,legacyR2,savedDropboxTarget,openable,valid,open,preference,receive};
+  globalThis.RedownHistoryNavigation={locator,cloudTarget,legacyR2,legacyAssetKey,savedDropboxTarget,openable,valid,open,preference,receive};
   const select=document.getElementById('history-go-to-mode');
   if(select){void preference.then(()=>{select.value=mode;});select.onchange=async()=>{try{await chrome.storage.local.set({historyGoToMode:normalized(select.value)});}catch(e){report('Could not save navigation preference: '+e.message);}};}
 })();
