@@ -1,4 +1,4 @@
-# OneDrive staged integration — BLOCKED, not P0 accepted
+> **Later implementation update (November 1, 2026):** The original staging report below reflects Codex's earlier blocked test environment, not the current branch implementation. The owner successfully ran the installed Chrome diagnostic (`ONEDRIVE_OAUTH_DIAGNOSTIC_PASSED`), proving code+PKCE redemption and a readable OneDrive root. A new provider-owned persistent Shelf login and right-click **Save to OneDrive root** implementation has been committed, but the **live upload remains NOT_TESTED**. See [ONEDRIVE_CONNECTED_ROOT_TEST.md](ONEDRIVE_CONNECTED_ROOT_TEST.md) for current behavior, exact testing steps and outstanding release gates. No V3 or other provider authentication has been modified. The original report is retained as historical evidence.\n\n# OneDrive staged integration — BLOCKED, not P0 accepted
 
 Request: `docs/requests/2026-11-01_P0_ONEDRIVE_OAUTH_DIRECT_ONE_CLICK_ISOLATED_MENU.md`.
 Branch: `codex/v3-parity-first-reconstruction`. Initial head: `db8916a46f6a1a04feca3489e6566582c8a86cbe`.
