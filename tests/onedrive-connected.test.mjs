@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 import {webcrypto} from 'node:crypto';
+import {JSDOM} from 'jsdom';
 const ID='mkadkgpekmkknfbniacdlmgikihjjepf';
 const redirect=`https://${ID}.chromiumapp.org/onedrive`;
 const load=(c,path)=>vm.runInContext(readFileSync('extension/'+path,'utf8'),c,{filename:path});
@@ -270,4 +271,48 @@ test('Graph destination URL rejects private, insecure and credential-bearing add
   }
   assert.equal(api.validUploadURL('https://new-graph-origin.public-cloud.net/up?token=private').hostname,
     'new-graph-origin.public-cloud.net');
+});
+
+
+test('Shelf grants only an exact upload origin and never persists opaque session tokens',async()=>{
+  const dom=new JSDOM('<button id="shelf-onedrive"></button>'+
+    '<small id="shelf-onedrive-status"></small>'+
+    '<a id="shelf-onedrive-open" hidden></a>'+
+    '<button id="shelf-onedrive-disconnect" hidden></button>'+
+    '<button id="shelf-onedrive-cancel" hidden></button>'+
+    '<button id="shelf-onedrive-allow-upload-host" hidden></button>'+
+    '<button id="shelf-onedrive-diagnostic"></button>',{runScripts:'outside-only'});
+  const local={
+    'onedrive:state':{phase:'connected',rootReady:true,connectionId:'connection-1'},
+    'onedrive:transfer':{status:'blocked',code:'ONEDRIVE_UPLOAD_HOST_PERMISSION',
+      uploadOrigin:'https://new-graph-origin.public-cloud.net',
+      error:'Approve this destination in Shelf.'}
+  },listeners=[],requests=[];
+  const chrome={
+    runtime:{sendMessage:async()=>({ok:true})},
+    permissions:{request:async detail=>{requests.push(detail);return true;}},
+    storage:{local:{
+      get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,local[k]])),
+      set:async changes=>{
+        const previous=Object.fromEntries(Object.keys(changes).map(k=>[k,{newValue:changes[k],oldValue:local[k]}]));
+        Object.assign(local,changes);
+        for(const listener of listeners)listener(previous,'local');
+      }
+    },onChanged:{addListener:fn=>listeners.push(fn)}}
+  };
+  dom.window.chrome=chrome;
+  dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
+  await new Promise(r=>setImmediate(r));
+  const button=dom.window.document.getElementById('shelf-onedrive-allow-upload-host');
+  assert.equal(button.hidden,false);
+  assert.match(button.textContent,/new-graph-origin.public-cloud.net/);
+  button.click();
+  await new Promise(r=>setImmediate(r));
+  assert.deepEqual(requests,[{origins:['https://new-graph-origin.public-cloud.net/*']}]);
+  assert.equal(local['onedrive:trustedUploadOrigins'].connectionId,'connection-1');
+  assert.deepEqual(local['onedrive:trustedUploadOrigins'].origins,['https://new-graph-origin.public-cloud.net']);
+  assert.equal(local['onedrive:transfer'].code,'ONEDRIVE_UPLOAD_HOST_READY');
+  assert.equal(JSON.stringify(local).includes('uploadToken'),false);
+  assert.equal(button.hidden,true);
+  dom.window.close();
 });
