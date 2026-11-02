@@ -16,4 +16,4 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - name: Verify receipt, count, animation and menu contracts
-        run: node --test tests/transfer-counter.test.mjs tests/shelf-save-feedback.test.mjs tests/consolidated-flat-providers.test.mjs
+        run: node --test tests/transfer-counter.test.mjs tests/daily-save-badge.test.mjs tests/shelf-save-feedback.test.mjs tests/consolidated-flat-providers.test.mjs
