@@ -109,7 +109,7 @@ test('extensionless OneDrive files recover safe names from response headers and 
   const fetch=async(target,init={})=>{
     if(target===url)return {ok:true,status:200,
       headers:headers({'content-length':String(png.length),'content-type':'application/octet-stream'}),
-      body:new ReadableStream({start(c){c.enqueue(png);c.close();}})};
+      body:new ReadableStream({start(c){for(let i=0;i<png.length;i+=2)c.enqueue(png.subarray(i,i+2));c.close();}})};
     if(target.endsWith('/createUploadSession')){
       savedName=JSON.parse(init.body).item.name;
       assert.ok(target.includes(encodeURIComponent(savedName)));
