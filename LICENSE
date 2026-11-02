@@ -1,8 +1,22 @@
-REDOWN Proprietary Source License 2.0
-Effective date: 21 October 2026
+REDOWN Proprietary Source License 2.1
+Effective date: 1 November 2026
 
 Copyright (c) 2026 the respective REDOWN copyright holders.
 All rights reserved.
+
+IMPORTANT: PUBLIC SOURCE VISIBILITY DOES NOT GRANT PERMISSION TO USE REDOWN.
+
+This repository is publicly visible for the rights holders' own development,
+recordkeeping, and other purposes they choose. It is NOT an invitation or
+license for anyone else to install, run, execute, copy, modify, redistribute,
+build upon, publish, host, or commercialize original REDOWN software or assets,
+including for personal, educational, research, charitable, or other
+noncommercial purposes. All such uses require the relevant rights holders'
+prior express written authorization, except to the extent separate rights
+are provided by applicable law, a valid earlier grant, relevant third-party
+licenses, or the GitHub Terms of Service for viewing and forking.
+
+NO PUBLIC LICENSE IS GRANTED. REDOWN IS NOT OPEN SOURCE OR FREEWARE.
 
 1. Subject matter and ownership
 
@@ -32,7 +46,7 @@ duration, and any applicable conditions. An inquiry or unanswered request
 does not constitute consent.
 
 Request permission through the maintainer of the canonical repository:
-https://github.com/thanks-cohn/remote-download-2-cloudfare
+https://github.com/thanks-cohn/REDOWN
 
 3. Commercial exploitation and negotiated compensation
 
