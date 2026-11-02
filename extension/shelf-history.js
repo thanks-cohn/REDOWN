@@ -42,18 +42,30 @@
     const provider=isCloudflare?'Cloudflare R2':providerKind.includes('google')?'Google Drive':
       providerKind.includes('onedrive')?'OneDrive':providerKind.includes('dropbox')?'Dropbox':
       text(record.provider)||text(record.profileName)||'Cloud provider';
-    const bucket=text(destination.bucketName),key=text(destination.key).replace(/^\/+/, '');
-    // A bucket is named exactly once, even if a legacy object key or profile
-    // name already embeds it. Source/profile metadata is not destination text.
-    const path=bucket?(key?bucket+'/'+(key.startsWith(bucket+'/')?key.slice(bucket.length+1):key):bucket):
-      (key||text(destination.path)||text(record.filename));
+    const bucket=text(destination.bucketName),key=text(destination.key).split('/').filter(Boolean).join('/');
     const delivered=record.ok===true&&record.verified===true&&record.status==='completed';
+    const file=text(destination.name)||text(record.filename);
+    const join=(...parts)=>parts.filter(Boolean).map(part=>text(part).split('/').filter(Boolean).join('/')).filter(Boolean).join('/');
+    // Only include an actual remote destination, never the original page URL.
+    let path='';
+    if(delivered&&isCloudflare&&bucket)
+      path=join(bucket,key.startsWith(bucket+'/')?key.slice(bucket.length+1):key);
+    if(delivered&&provider==='Dropbox')
+      path=join(destination.path); // Authenticated Dropbox metadata path_display.
+    if(delivered&&provider==='OneDrive'&&destination.root==='/'&&file)
+      path=join('OneDrive',file); // The OneDrive API writes to verified root.
+    if(delivered&&provider==='Google Drive'&&file){
+      const knownPath=text(destination.path)||text(destination.folderPath);
+      if(knownPath)path=join(knownPath,file);
+      else if(!destination.folderId)path=join('My Drive',file);
+      else path=join('Folder ID '+text(destination.folderId),file);
+    }
     return {
       name:name||text(record.sourceUrl)||'Transfer',
       status:record.ok===false?(text(record.status)||'Failed'):delivered?'Successful (verified)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
       state:record.ok===false?'failed':delivered?'success':'unknown',
       provider,
-      detail:isCloudflare&&path?provider+' · '+path:provider,
+      detail:path?provider+' · '+path:provider,
       isCloudflare
     };
   }
