@@ -227,16 +227,17 @@ test('right-click saves never invoke Chrome permission APIs on any source hostna
   }
   assert.equal(requests.length,0);
 });
-test('connected Shelf checks status without prompts or restarting Microsoft login',async()=>{
+test('connected Shelf GO TO opens home without prompts or restarting Microsoft login',async()=>{
   const dom=new JSDOM('<button id="shelf-onedrive"></button>'+
     '<small id="shelf-onedrive-status"></small><a id="shelf-onedrive-open"></a>'+
     '<button id="shelf-onedrive-disconnect"></button><button id="shelf-onedrive-cancel"></button>',
     {runScripts:'outside-only'});
   const state={'onedrive:state':{phase:'connected',rootReady:true},'onedrive:transfer':{}};
-  const messages=[];
+  const messages=[],opened=[];
   dom.window.chrome={
     runtime:{sendMessage:async message=>{messages.push(message.type);return {ok:true,phase:'connected'};}},
     permissions:{request:async()=>{throw Error('No permission requests in Shelf');}},
+    tabs:{create:async options=>opened.push(options)},
     storage:{local:{get:async()=>state},onChanged:{addListener:()=>{}}}
   };
   dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
@@ -245,6 +246,8 @@ test('connected Shelf checks status without prompts or restarting Microsoft logi
   await new Promise(r=>setImmediate(r));
   assert.ok(messages.includes('onedriveStatus'));
   assert.ok(!messages.includes('onedriveConnect'));
+  assert.equal(dom.window.document.getElementById('shelf-onedrive').textContent,'GO TO OneDrive');
+  assert.deepEqual(opened,[{url:'https://onedrive.live.com/'}]);
   dom.window.close();
 });
 test('Graph upload host requires no permission API and never receives the source URL',async()=>{
