@@ -88,7 +88,7 @@ test('three-dot options open on hover, allow travel to popup, and close after le
   await delay(190);
   assert.equal(first.open,true,'crossing the gap must not close the popup');
   popup.dispatchEvent(evt(h,'mouseleave'));
-  await delay(190);
+  await delay(240);
   assert.equal(first.open,false,'leaving both areas dismisses automatically');
   first.querySelector('summary').dispatchEvent(evt(h,'mouseenter'));
   second.querySelector('summary').dispatchEvent(evt(h,'mouseenter'));
@@ -140,4 +140,28 @@ test('other Shelf windows can update Beta Aesthetics without a reload',async()=>
   assert.equal(d.window.document.documentElement.dataset.destinationDisplay,'slant');
   assert.equal(d.window.document.documentElement.dataset.destinationArrow,'true');
   d.window.close();h.dom.window.close();
+});
+
+test('hover popup remains in front while open and has no gap at the trigger boundary',async()=>{
+  const h=fixture(),[first]=h.menus;
+  const popup=first.querySelector('.destination-options-menu');
+  first.querySelector('summary').dispatchEvent(evt(h,'mouseenter'));
+  assert.equal(first.open,true);
+  assert.match(css,/destination-tile:has\(\.destination-options\[open\]\)\{z-index:30/);
+  assert.match(css,/destination-options-menu\{position:absolute;right:0;top:calc\(100% - 1px\)/);
+  assert.ok(!css.includes('destination-options-menu{position:absolute;right:0;top:calc(100% + 8px)'));
+  assert.ok(popup);
+  h.dom.window.close();
+});
+test('leaving a hover popup closes it even when a menu action retained focus',async()=>{
+  const h=fixture(),details=h.menus[1],dots=details.querySelector('summary');
+  const popup=details.querySelector('.destination-options-menu');
+  dots.dispatchEvent(evt(h,'mouseenter'));
+  const action=h.d.createElement('button');action.textContent='View';popup.append(action);
+  action.focus();
+  assert.equal(details.open,true);
+  popup.dispatchEvent(evt(h,'mouseleave'));
+  await delay(240);
+  assert.equal(details.open,false);
+  h.dom.window.close();
 });
