@@ -35,7 +35,7 @@
       return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
     };
     const validDaily=(v,day)=>v?.version===1&&v.day===day&&
-      typeof v.total==='string'&&/^(0|[1-9]\\d*)$/.test(v.total);
+      typeof v.total==='string'&&/^(0|[1-9]\d*)$/.test(v.total);
     const freshDaily=day=>({version:1,day,total:'0'});
     async function dailyState(){
       const today=localDay(clock());
