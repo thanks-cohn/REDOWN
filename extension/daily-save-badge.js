@@ -20,9 +20,12 @@
     const render=state=>{
       // Serialize cosmetic updates to avoid delayed older badge calls winning.
       renderLane=renderLane.catch(()=>{}).then(async()=>{
+        // Always draw the latest durable count. A previous read/change event
+        // may complete after a newer remote save; never repaint it backwards.
+        const authoritative=await readDaily();
         await chrome.action.setBadgeBackgroundColor({color:themeColor()});
         if(chrome.action.setBadgeTextColor)await chrome.action.setBadgeTextColor({color:'#ffffff'});
-        await chrome.action.setBadgeText({text:preview(state)});
+        await chrome.action.setBadgeText({text:preview(authoritative)});
       });
       return renderLane;
     };
