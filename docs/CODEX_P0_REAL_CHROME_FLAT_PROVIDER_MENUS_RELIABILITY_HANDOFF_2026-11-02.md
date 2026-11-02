@@ -1,151 +1,202 @@
-# CODEX P0: Verify and repair REAL Chrome native right-click menus; Cloudflare-only nesting
+# CODEX READ-ONLY FORENSIC AUDIT: REDOWN right-click menus
 
-**Owner request, 2026-11-02.** This is an IMPLEMENTATION + BROWSER-VERIFICATION task, not a mock-only audit.
+**CURRENT OWNER DIRECTIVE, November 2, 2026: FULL AUDIT ONLY. NO IMPLEMENTATION OR CHANGES.**
 
-**Repository:** thanks-cohn/REDOWN  
-**Starting feature branch:** codex/flat-provider-native-menus  
-**Starting commit:** d692a0da878268d504f1ab9e5a9e130919f65043  
-**Original pre-feature baseline:** 34b5f73de064172da915832d51c235bb110d7914  
-**Current main:** reverted the feature through 455911af99ced82058588e57efd406236ae16192  
-**Protected checkpoint:** checkpoint/2026-11-01-amoebe-before-flat-provider-menus (annotated tag 049542becd50a1e04a0ebfe2ecb6fbfa764d8f80). Do not rewrite, move or delete it.
+**SUPERSEDES AND REVOKES** the previous version of this document, which incorrectly directed an agent to repair, implement, commit, push and test live changes. ALL such directions are CANCELLED. The historical file name includes the word REPAIR; the present contents supersede that name and are strictly AUDIT ONLY. A link to this file merely opens instructions for reading. It does not execute them.
 
-**Branch discipline:** Work on codex/flat-provider-native-menus (or a new explicitly named child repair branch). First fetch and check the branch/head, verify the working tree, then inspect. Do not reset or force-push, and do not merge or push changes to main. Preserve all owner work; commit and push to the feature branch only when a real solution is implemented and verified. The owner locally checked out d692a0d, but did not observe a visible difference. The exact menu/screenshot/state from that observation is NOT yet known. Do not invent it.
+## 0. Absolute rules: do not change anything
 
-## 1. User-visible, non-negotiable product contract
+The owner requests a detailed technical forensic audit, not a solution, patch, prototype, action plan, or implementation.
 
-Only **Cloudflare** may be hierarchical/nested. Google Drive, Dropbox and OneDrive must be **flat, single, directly clickable native menu rows** under REDOWN in every state. No provider nested menu, no second-click Connect/Save child, no duplicate row. Preserve provider independence and isolated OAuth/transfer engines.
+1. Do NOT edit, create, delete, rename, generate or reformat ANY source, tests, fixtures, documents, archives, reports, lock files, configuration or scripts in the repository.
+2. Do NOT commit, push, merge, revert, rebase, reset, checkout a different branch, cherry-pick, create branches, create PRs, move tags, update the default branch, or manipulate Git history. Do NOT modify main or the feature branch.
+3. Do NOT install/update dependencies, compile with outputs in the tree, write test snapshots, regenerate diagnostics, touch package-lock, run code formatters, apply menu changes, or let a tool silently modify a repo file.
+4. Do NOT connect accounts, request OAuth/permissions, upload files, perform live saves, refresh/change cloud data, modify Chrome's user's persistent profile, or deploy to any cloud.
+5. Review a test command's side effects before running it. If it may modify state and an isolated non-writing execution cannot be guaranteed, mark it NOT RUN and explain. Git read-only commands and static source/previous result analysis are preferred.
+6. Do not write an audit-report file in the repo. Deliver the entire detailed audit in the final conversation only, with source links and evidence tables. Do not output code changes or patch diffs.
+7. Record branch, commit SHA and worktree status before/after with read-only observations; if the tree is already dirty, leave it dirty. No cleanup, stashing or resets.
+8. If other repository documents require implementation or pushing, THIS document's explicit non-mutation directive overrides them for this task. Read those documents as historical source material only.
+9. Audit what is built and what is verified, not what one hopes to build. Do not claim browser acceptance from simulations.
 
-Desired structure when Cloudflare has multiple configured eligible destinations:
+**Stop after delivering the analysis.** Any future repair requires a new, explicit owner authorization.
+
+## 1. Repository, baseline, and exact question
+
+Repo: https://github.com/thanks-cohn/REDOWN
+
+Feature branch under investigation: codex/flat-provider-native-menus
+
+Feature application commit: d692a0da878268d504f1ab9e5a9e130919f65043
+
+Its immediate parent: 34b5f73de064172da915832d51c235bb110d7914
+
+Current main reverted feature via: 455911af99ced82058588e57efd406236ae16192. Audit whether its tree really matches 34b5f73. Do not change main.
+
+Protected checkpoint: checkpoint/2026-11-01-amoebe-before-flat-provider-menus; annotated tag SHA 049542becd50a1e04a0ebfe2ecb6fbfa764d8f80. Do not modify.
+
+Owner used Windows Command Prompt on the feature branch and confirmed git rev-parse --short HEAD = d692a0d. The owner previously tested the feature but noticed NO obvious difference in the native context menu. The exact screenshot, profile, extension ID, loaded path, target webpage/context, provider state and service-worker error state have not been supplied. The owner's observation is a report; the precise reason is UNKNOWN. Do not invent a user reproduction, assume it was Chrome cache, or call a suspected bug proven.
+
+**Main audit question:** What did d692a0d really change, where does Chrome's real native menu come from, why might it appear unchanged, what does the evidence prove, and what do existing tests fail to verify? Differentiate baseline behavior, simulated proof, Chrome API callbacks, visible UI, click dispatch, and actual provider save outcomes.
+
+## 2. The product requirement: compare against it, DO NOT IMPLEMENT IT
+
+At REDOWN's first submenu level, Google Drive, Dropbox and OneDrive should each be EXACTLY ONE directly clickable leaf. No arrows, second-level provider submenus, nested Save/Connect children, duplicate provider rows, or provider-owned nested folder hierarchy.
+
+Only Cloudflare is permitted to contain nested descendants. Its existing V3 Simple / Nested Narrow / Nested Depth (internally Level) semantics are authoritative. If Cloudflare has just one eligible authorized destination, it may be a leaf according to the existing V3 contract; if it has multiple, its destination structure can expand. Addition of other providers must not itself change the shape or identity of Cloudflare destinations.
+
+Expected conceptual shape with a multilevel Cloudflare tree:
 
 ~~~text
 REDOWN
-  Cloudflare     > [existing V3 Simple or Nested hierarchy, unchanged]
-  Google Drive     [ONE direct action, never arrow]
-  Dropbox          [ONE direct action, never arrow]
-  OneDrive         [ONE direct action, never arrow]
-  ---------------- [existing eligible controls, if any]
-  Home/Manage      [existing navigation semantics; resolve approved final order]
+  Cloudflare >      [Cloudflare V3 destinations ONLY]
+  Google Drive      [one directly actionable leaf]
+  Dropbox           [one directly actionable leaf]
+  OneDrive          [one directly actionable leaf]
+  [existing separator and existing approved Home / Manage controls]
 ~~~
 
-If Cloudflare itself has only a verified single destination, follow its *existing approved V3 leaf semantics*; introducing other providers must NOT force Cloudflare into a submenu. If Cloudflare has no configured destination, preserve V3 setup affordances. Cloudflare Simple and Nested/Narrow/Depth(=internal Level) must remain correct, including verified root defaults and exact prefix resolution. The one-click non-Cloudflare rows are visible even while disconnected if the existing approved design uses them to initiate explicit connection. During a connecting/busy state, a single row can be disabled; it must never be replaced with a child. If an unusable provider state requires reauthentication, the same row must route into the existing authorized connect/reconnect mechanism. Never treat an attempted login as a verified save.
+Connected should route the respective provider's existing authorized save; disconnected/expired should route its existing connection/reconnection behavior; connecting/busy should keep the same single row, potentially disabled. None of this permits changing OAuth/transfer logic in this audit.
 
-**Important ambiguity to resolve against authoritative current specs:** older documents sometimes say a separator then 'Home last'; current code renders 'Go Home' and 'Manage destinations…' as distinct controls, and Simple may not add that separator. Preserve the user's actual current approved controls, but document and test the agreed final order. Do not silently delete Manage or redesign Cloudflare to make screenshots look simpler.
+Compare current code and historical product documentation regarding Home last, Go Home, Manage destinations, separators and setup actions. Do not quietly assume conflicting layouts are equivalent. Classify which contract is current and what is unknown.
 
-## 2. Investigation already conducted for this handoff: grounded source map
+## 3. FULL end-to-end architecture trace with source evidence
 
-Read source at feature commit d692a0d; do not assume later branches or historical design reports are runtime truth.
+Inspect ACTUAL source at commit d692a0d and source at its immediate parent. For every key point, include FILE + FUNCTION + LINE RANGE, trigger, input/state, output, failure behavior, and authority. No generic summaries without code anchors.
 
-- extension/manifest.json: Manifest V3, actual background.service_worker is **service-worker.js**, version 0.5.27. All loaded extension files must come from the feature branch's extension/ directory.
-- extension/service-worker.js: invokes background.js by importScripts; only the fallback toolbar bootstrap runs if core loading fails. A fallback toolbar is NOT proof the native menu writer loaded.
-- extension/background.js:1 and extension/entry-bootstrap.js: toolbar starts before other dependency imports. The native menu registration path is later and can fail independently.
-- extension/background.js:903-946: many imports and provider initializations occur before native menu listener/reconciliation installation. Any import/evaluation failure here can leave toolbar recovery working while menus do not register.
-- extension/background.js:2358-2371: menuApplicationKey includes a 'v3-flat-providers-1' revision string plus provider states, so previous acknowledgement should be invalidated.
-- extension/background.js:2372-2429: rebuildMenus and reconcileMenus: serialized rebuild, first ensureMenuAccess, status 'applying', V3 migration/snapshot, deterministic build, callback acknowledgement, state 'registered'/'superseded' or 'failed'.
-- extension/background.js:2431-2453: callback-bound Chrome contextMenus update/create/remove and ROOT 'redown' plus 'redown-manage' access.
-- extension/background.js:2454-2556: the ONE shared native writer. Cloudflare V3.project generates its branch. Google Drive compose, Dropbox composeSibling, OneDrive compose add top-level rows. Every old child ID is removed by obsolete(); the ordered structure is reconciled through native callbacks and cached rightClickNativeIds. No removeAll was added by d692a0d.
-- extension/background.js:2721-2733: register onInstalled, onStartup **and on every worker load**, after dependencies evaluate.
-- extension/background.js:2855-2892: changes to provider state trigger rebuildMenus; ONE contextMenus.onClicked listener delegates to OneDrive, Dropbox, Google Drive by namespace, then Cloudflare V3. Click action and visible menu shape must be verified separately.
-- extension/google-drive-menu.js: fragment emits exactly provider:google-drive with parent redown, compose inserts after Cloudflare subtree. Old :connect and :save-redown are obsolete.
-- extension/dropbox-menu.js: fragment emits exactly provider:dropbox; old :connect obsolete; insertion uses Google Drive's shared composeSibling.
-- extension/onedrive-menu.js: fragment emits exactly provider:onedrive; compose requires Dropbox predecessor; old :connect and :save-root obsolete.
-- extension/google-drive-provider.js:19-21 connected + valid folder ID -> save via existing transfer page; otherwise connect. No new seamless/background transfer implementation.
-- extension/dropbox-provider.js:43-66 direct row dispatch; source-host permissions.request currently runs before reading provider state, even on the connect path. This may cause prompts or block clicks and must be separately truthfully documented, not hidden by a menu-only fix.
-- extension/onedrive-provider.js:60-76 direct row dispatch; disconnected -> existing auth.connect, connected -> source snapshot, auth.ready and upload; stale child ID receives explicit error.
-- tests/flat-provider-menus.test.mjs: mock source tests assert exact native IDs, 125 state combinations, no child IDs, upgrade cleanup, click dispatch and status variants. These tests passed in the reported run, **but a mock Map is NOT Chrome's visible menu**.
-- tests/helpers/background-worker.mjs: Chrome native calls are mocked by an in-memory Map, including simplified callback/error semantics. Test assertions cannot establish real native rendering or extension policy behavior.
-- docs/FLAT_PROVIDER_MENUS_REPORT.md and docs/verification/flat-provider-menus/{results.json,native-trees.json,installed-chrome.json}: prior implementation report and evidence. Do not promote synthetic native-trees.json entries to actual Chrome screen evidence.
+### A. Manifest, Chrome load and background survival
+- extension/manifest.json: actual MV3 service worker name, extension version and ID/key behavior, permissions, contexts, extension startup.
+- extension/service-worker.js: exact importScripts behavior and failure fallback; possibility of the toolbar opening while native menu initialization is absent.
+- extension/background.js import order, entry-bootstrap.js and boot.js: what registers before or after major provider imports; core parse/evaluation failures; toolbar recovery vs independent menu readiness; exact registration points and lifecycle hooks.
+- Inspect all imported modules prior to contextMenus listeners. Determine if the listener can fail to register while other UI appears healthy.
+- Trace onInstalled, onStartup, worker activation/re-activation and whether menus are reconciled after MV3 worker restart. Note Chrome native menu lifetime assumptions and limits.
+- Identify competing registration/listener code, if any; enumerate actual contextMenus.create, update, remove, removeAll, and onClicked locations and who owns them.
 
-## 3. Confirmed verification gap and concrete harness defects
+### B. Shared menu writer and persistence
+- extension/background.js: menuApplicationKey, rebuildMenus, reconcileMenus, acknowledgeMenu, ensureMenuAccess, buildMenus, addMenuControls, and any relevant dependencies.
+- Walk actual code path: persisted V3/CURRENT configuration -> Cloudflare projection -> sibling provider declarations -> parent-child plan -> registration operations -> callbacks -> local acknowledgement -> visible native menu.
+- Analyze rightClickNativeIds, rightClickMenuStatus, nativeMenuPlan, application revisions, rightClickV3Presentation, rightClickV3LevelScopes, rightClickV3Inventory, rightClickActivatedBuckets, right-click.json and indexed CURRENT state as actually used.
+- Analyze callback lastError lifetime, update/create fallback, removal failure, timeouts, partial menu preservation, order changes, stale/unknown IDs, failed parent create, missing child removal, repeated Apply, storage unavailable and interrupted restart.
+- Explain exact distinction between state='registered', an API-acknowledged plan, and actual screen-visible rendered rows. No unsupported native inventory claims.
+- Assess whether in-memory early-return (nativeMenuPlan matches plan) could matter after native state changes, without asserting it happened.
+- Identify composition failures silently returning original descriptions; check whether failures propagate or are stored and can cause a missing row.
+- Document registered context types and expected browser context-dependent menu visibility.
 
-The prior installed Chrome attempt was **BLOCKED**, not a failed menu simulation and not a successful browser test: Linux Chrome 154 returned 'Loading of unpacked extensions is disabled by the administrator'. No installed-native arrows, actual user click, transfer receipts or visual screenshots were verified.
+### C. Provider fragments and one-click dispatch
+- extension/google-drive-menu.js, dropbox-menu.js, onedrive-menu.js: IDs, allowed fragments, parent root, compose/composeSibling semantics, ordering, validation, revision and obsolete functions. Determine if source strictly prevents all non-Cloudflare nested children and when it may not.
+- extension/background.js's single contextMenus.onClicked listener: exact routing precedence, ownership, stale IDs, setup versus remote save fallback and possible collisions.
+- extension/google-drive-provider.js: current state -> connected/verified-folder save vs connect; pre-existing transfer-tab constraints, page context source selection, stale child behavior.
+- extension/dropbox-provider.js: direct dispatch, request for source-host permission before saved provider-state read, busy/connecting/identity/queued auth, potential prompts and silent outcomes. This is source behavior to audit, not permission to change it.
+- extension/onedrive-provider.js: direct dispatch, connecting vs connect vs forced ready/root revalidation, upload and stale child ID behavior. Discuss known upload-host limitations.
+- Retired known IDs to trace specifically: provider:google-drive:connect; provider:google-drive:save-redown; provider:dropbox:connect; provider:onedrive:connect; provider:onedrive:save-root.
+- Confirm which adapters receive actual clicked menuItemId and which states disable the row.
+- Audit privacy boundary at code level: source page/link/media URLs and provenance are REDOWN-owned and should not be sent to Google/Dropbox/Microsoft storage API calls; providers should receive only actual bytes and necessary filename/extension/destination metadata. Do not initiate requests.
 
-There is ALSO a separately inspectable harness mismatch: scripts/installed-chrome.mjs currently searches for a Target.getTargets service_worker target ending in **/background.js**; the actual manifest entrypoint is **/service-worker.js**. Fix this assertion before interpreting any future installed-worker result. This mismatch has NOT yet been exercised past the policy blocker, so do not label it the original cause of the owner's observed menu problem.
+### D. Cloudflare isolation
+- extension/right-click-v3.js, right-click-current.js, nested-locations.js, destination-config.js, background.js and related actual configuration. Examine Cloudflare Simple, Nested Narrow and Depth(=Level), multiple buckets/destinations, exact prefix resolution, default redown root and no-R2 setup handling.
+- Establish whether the flat menu feature edited Cloudflare engine/registrar/dispatcher. If not, distinguish 'unchanged Cloudflare' from 'proved Cloudflare working.'
+- Check interactions where new top-level siblings could affect Cloudflare ordering, menu depth/capacity, root/child parentage or click routing despite leaving the engine's main source file unchanged.
 
-The same installed-chrome.mjs script only checks options/worker/debug/persistence and does not assert the visual native context-menu tree or actual menu-click routing. Add a scoped real-browser test path where browser policy allows, and a Windows manual verification protocol for cases where native menu UI cannot be automated. Do not bypass administrator policy or simulate successful installation. Browser policy, headless limitations and native menu automation limitations must be reported precisely.
+## 4. Exact change inventory and branch comparison
 
-## 4. Root-cause hypotheses; DISPROVE OR CONFIRM, do not assume
+Produce a complete changed-file table for commit d692a0d versus 34b5f73, grouping each file by:
+- native menu generation/ordering;
+- provider click dispatch;
+- deletion of obsolete IDs/upgrade state;
+- tests and altered assertions;
+- documentation/evidence;
+- unrelated additions or non-changes.
 
-H1. User primarily inspected Cloudflare. Cloudflare was deliberately unchanged in d692a0d, so 'no visual difference' there is expected and not a failure. Establish what provider submenu the user saw and on what right-click target.
+Explain whether reverting d692a0d from main returned source contents to the previous tree, and why the feature branch still contains the candidate. Documentation-only later commits on the feature branch must NOT be mistaken for changes to feature behavior.
 
-H2. Wrong extension/build/profile loaded (old unpacked copy, duplicate installed Store+unpacked REDOWN, stale extension ID/path/profile, worker not reloaded). Compare chrome://extensions unpacked path, extension ID and manifest version against checked out commit. Report without exposing tokens.
+Distinguish visible differences for a user looking only at Cloudflare versus a user looking at Google, Dropbox, OneDrive. Assess dual installed copies, Store vs unpacked extensions, current profile, extension file path and extension ID only as hypotheses unless grounded.
 
-H3. Native menu rebuild never successfully finished. Check actual core import, rightClickMenuStatus.state / desiredGeneration / appliedGeneration / applicationKey, lastAcknowledgedAt, entryPointEvidence, worker console errors and BOOT diagnostics. 'registered' means APIs acknowledged a projection, NOT proof of human-visible rows. Confirm all on fresh profile and upgraded profile.
+## 5. Evidence and test-quality audit
 
-H4. Prior native children survive upgrade because the old ID inventory is missing or callbacks fail; previous menu versions/half-removed nested children remain. Test native deletion order, missing callbacks, 'not found', duplicate IDs, transient loss and restart. Never claim removeAll is a safe universal repair. Retired IDs are:
-  provider:google-drive:connect
-  provider:google-drive:save-redown
-  provider:dropbox:connect
-  provider:onedrive:connect
-  provider:onedrive:save-root
+Examine tests/flat-provider-menus.test.mjs, tests/helpers/background-worker.mjs, existing provider/V3/BOOT/native tests, package.json scripts and evidence archives.
 
-H5. Parent/child or sibling-order composition diverges in real Chrome from the in-memory Map or from the requested final menu. Compare expected projection, actual registered IDs, callbacks and screenshot; make no assumption that Chrome supports querying all menu items. Note conditions when root/setup, separators, 'Go Home' and Manage render differently. Audit contexts ['link','image','video','audio','page'] against the clicked DOM target.
+Make a test-to-claim mapping:
+- every meaningful assertion and what it directly establishes;
+- whether Map-based mocks truly match Chrome callback semantics, especially runtime.lastError timing, contextMenus.update/create/remove, ordering and parent constraints;
+- which tests only check synthetic menu-plan IDs;
+- which tests actually start an installed MV3 extension;
+- which tests verify a human-visible native Chrome submenu arrow;
+- which tests click native menu items with real events;
+- which tests verify OAuth and remote upload receipts rather than mocked actions;
+- what tests are absent or insufficient, and why this prevents confidence.
 
-H6. Listener registration/evaluation ordering or background crash: if any imported module fails before onClicked/addListener, the toolbar fallback may work but menus do not. Introduce only minimal safe startup/reconciliation hardening; preserve single authority.
+**Known specific harness issue to VERIFY, not fix:** scripts/installed-chrome.mjs looks for a service_worker Target URL ending with /background.js while the manifest declares /service-worker.js. It may falsely report missing worker once execution reaches that assertion. The previously recorded installed Chrome attempt did not reach it.
 
-H7. State transition introduces unexpected disable/false save: provider phase 'connecting', stale/missing folder/root identity, previous transfer tab, permissions prompt. Verify a menu leaf exists separately from whether saving actually starts, and from whether transfer completes.
+**Recorded browser attempt:** Linux Chrome 154, blocked because the administrator disabled loading unpacked extensions. Report says zero installed-browser assertions passed. Do not interpret as real menu failure or success, and do not attempt a policy bypass. Inspect scripts/installed-chrome.mjs to determine whether it even has any native menu UI/gesture assertions; it appeared limited to extension options, worker presence, diagnostics and local persistence.
 
-H8. The existing documentation/test contracts are inconsistent (older nested-other-provider proposals versus November 1 supersession; 'Home last' vs current Manage). Establish precedence using owner-approved November 1 text, not historical tests.
+No local or installed test command may write the repo or a real user profile. If test effects cannot be guaranteed harmless, omit running them and analyze the existing result files instead.
 
-Make an evidence table of H1-H8 with observed proof (file:line, real logs/screenshots, test output), result CONFIRMED/REFUTED/UNVERIFIED, effect and actual fix. Identify the root cause(s) before changing production code.
+## 6. The 97 failing tests and relevance to this feature
 
-## 5. Required implementation architecture
+Audit the exact result data in docs/verification/flat-provider-menus/results.json and supporting logs, without inventing missing test output.
 
-**Do not rebuild the V3 engine.** Keep extension/background.js as sole chrome.contextMenus writer and the sole onClicked dispatcher, with provider-owned pure fragments and provider-owned dispatchers. Use deterministic validation to guarantee:
-1. For each of the three non-Cloudflare providers, EXACTLY one entry with id provider:<provider>, parentId redown, type normal, no other native entry with parentId that provider ID. No generic provider can ask for nested children. Reject extra children even if another module proposes them.
-2. Cloudflare-only V3.project may produce descendants; preserve destination identity, user-selected prefix, CURRENT/INDEXEDDB authority, Simple / Narrow / Depth, registration and repair.
-3. Flat provider order Cloudflare, Google Drive, Dropbox, OneDrive, then existing approved controls; parent-first creation, child-first removal, strict namespace routing, no collision.
-4. Reliable migration of all five historical child IDs and unknown old registrations without using an unsafe global removeAll; storage cache is advisory, not proof an ID exists. Explain behavior when callback fails midway and worker reloads.
-5. A verified application key, native acknowledgements, retryable failure, stable in-worker plan caching, explicit user-facing pending/failed state without claiming 'applied' prematurely.
-6. Button click chooses connected save vs disconnected connect; proper busy/reconnect/expired state. No implicit multi-provider login, no unauthorized save, no silent source permission scope expansion.
-7. Never leak source pageUrl/srcUrl/frameUrl/linkUrl or browsing/history provenance to Google/Dropbox/Microsoft cloud APIs; if a provider needs source bytes, browser-mediated retrieval is REDOWN-owned. Preserve correct destination filename/extension and limited necessary metadata. DO NOT rewrite OAuth, cloud transfer transport or privacy boundaries merely to fix menu display. Separately identify existing permission-dialog/transfer limitations.
+Documented baseline before feature: 980 total, 883 passed, 97 failed.
+Documented candidate d692a0d: 985 total, 888 passed, 97 failed.
+Newly failing names: 0; 5 extra tests passed.
+Targeted provider set: 114 total, 112 pass, 2 fail.
+Broader provider/V3/BOOT selection: 196 total, 180 pass, 16 fail.
+Reliability check: failed; syntax passed; architecture gate failed.
 
-Do not put any provider menu builder in a second service worker, page, extension script or independent registrar. Keep Cloudflare namespace and Chrome menu ownership unchanged. Refactor only if tests prove it is necessary.
+Categorize all 97 failing *test names* by actual subsystem with totals and no double counting. For tests related to menu registration/startup/projections/provider click routing, explain exactly what those failures assert, whether the failure predated d692a0d, what the historical baseline proves, and what remains unproven. A failing test name is NOT necessarily a validated defect; a passing mock is NOT browser proof. Do not change baselines or skip any failing tests to manufacture green status.
 
-## 6. Real verification: required matrix
+Do not imply all 97 originated from the latest feature; the report says they did not. Do not imply the new feature works in Chrome merely because none were newly introduced.
 
-A. **Fresh clean profile, clean extension install**, no cloud connections: real right-click on image, link, video, audio, page. REDOWN exists; each of Google Drive/Dropbox/OneDrive is a direct leaf (no right arrow); Cloudflare correctly exposes setup/eligible V3 choices. Clicking one non-Cloudflare row initiates ONLY that provider's existing authorized connect path, never another provider. Capture screenshot/video or independently witnessed native tree and service-worker logs.
+## 7. Hypothesis investigation matrix: evidence, not guesses
 
-B. **Existing/upgraded profile**: install prior pre-flat build (34b5f73) in an isolated copy, create legacy menu/ID state, then upgrade to candidate with same extension ID and profile. Verify all five stale children disappear; parent row is actionable; no duplicate menu ID or stray submenu. Reload extension, restart Chrome and terminate/restart MV3 worker; verify re-registration and persistence.
+Assess each question explicitly, assigning CONFIRMED / REFUTED / POSSIBLE BUT UNVERIFIED / UNKNOWN; include source/log/screenshot support, counter-evidence and what one additional observation would distinguish it.
 
-C. **Connected**: with consented test accounts only, each leaf triggers exactly one appropriate save action with valid filename/extension and verified provider-specific destination. Record actual provider receipt; do not claim end-to-end PASS from fake API responses. Test identity mismatch, expired auth and reconnect; failed/uncertain transfer does not become success.
+H1: User primarily inspected Cloudflare; Cloudflare was intentionally not visually changed.
+H2: Different unpacked path/Chrome profile/extension ID or duplicate installation led to testing old code.
+H3: Worker core import failed after toolbar fallback registered but before native menus registered.
+H4: Menu reconciliation was stuck applying, failed, or superseded; desired vs applied generations differ.
+H5: Historical child IDs survived an upgrade because cache, callback deletion or Chrome state diverged.
+H6: Provider composition/ordering validation silently left off a row.
+H7: Context type, enabled/connecting state or browser-specific UI affected row visibility.
+H8: Leaf was correctly present but provider click routing, permissions, login state or transfer tab failed, making it seem ineffective.
+H9: Mock native Map semantics hid actual Chrome registration/order/worker behavior.
+H10: Cloudflare V3 interactions or controls made change hard to notice.
+H11: Main/feature confusion, a previous revert or differing test versions explained perceived mismatch.
+H12: Additional discovered causes not covered above.
 
-D. **Connecting/busy/error states**: disabled/inert when appropriate; no duplicate login, no stale submenu, bounded retry and honest error.
+Avoid claiming a specific root cause when no real Chrome traces exist. A confidence ranking is welcome but does not substitute for proof.
 
-E. **Cloudflare isolation**: V3 Simple default leaf/subtree, Nested Narrow, Nested Level/Depth 1-10, user-configured siblings, exact bucket/prefix, Apply and native acknowledgement, restarts and independent child click. Snapshot V3 config and verify unchanged after provider menu repairs.
+## 8. Verification coverage MATRIX — distinct evidence levels
 
-F. **Fault injection**: contextMenus.create/update/remove failures, callback lastError, callback never invoked/timeouts, missing parent, stale rightClickNativeIds, storage failure, core import failure, concurrent Apply + provider auth change, forced MV3 worker restart. Ensure no false green. Retain usable root/Manage recovery.
+For each case report: SOURCE-VERIFIED / MOCK-VERIFIED / REAL-CHROME-VERIFIED / LIVE-PROVIDER-VERIFIED / BLOCKED / NOT RUN / UNKNOWN, with explicit evidence:
+- fresh clean browser profile with disconnected cloud providers;
+- upgraded existing profile with obsolete submenu children;
+- verified connected provider, expired state, reconnect, busy/connecting;
+- all five context types: image, link, page, video, audio;
+- real top-level submenu arrows and whether provider rows are leaves;
+- Cloudflare Simple, Narrow and Depth with single or multiple destinations;
+- exact ordering and Home/Manage controls;
+- worker suspend/restart, Chrome restart, reload, installed extension identity;
+- callback errors, missing parents, duplicate IDs, stale ID cache and interrupted native registration;
+- actual click -> provider adapter -> authenticated action -> remote provider receipt, keeping each stage separate.
 
-G. **Browser duplication/cache isolation**: prove which Chrome profile, extension path, extension ID, manifest version and commit is loaded. Avoid assuming a new Chrome profile removes enterprise policies or the browser's restrictions. Test reload and cache separately; do not attribute to 'cache' without proof.
+Do not perform state-changing browser actions for this audit. If a real-browser step requires such action, mark NOT RUN/BLOCKED and instead provide short **manual read-only screenshot/console evidence instructions** for the owner to do later. Never pretend real-browser proof already exists.
 
-H. **Expected controls**: verify separators and Home/Manage arrangement under both Simple and Nested. The three flat provider rows never change to submenus under any state.
+## 9. Required final deliverable: LONG, rigorous forensic audit IN CHAT
 
-Run relevant node tests, npm run check, npm test and npm run reliability:check, with exact baseline comparisons and unfiltered counts. The previous full baseline 980 tests / 883 pass / 97 fail; candidate was 985 / 888 pass / 97 fail with zero newly failing names. These 97 are PRE-EXISTING and **NOT evidence that the flat feature caused them**. Do not 'repair' historical assertions just to greenwash; classify any newly failing tests and clearly separate unrelated 97.
+Do not save the report anywhere. Deliver comprehensive analysis with these headings:
 
-## 7. Diagnostic additions required (safe and bounded)
+1. Non-mutation and environment verification (branch, SHA, worktree before/after, read-only tools used).
+2. Executive findings with verified facts, most material uncertainties and whether the owner's issue was reproduced.
+3. Owner's flat-provider contract vs current implementation, annotated expected tree and state table.
+4. Architecture and lifecycle diagram from manifest -> service-worker -> background imports -> V3 and provider fragments -> ONE shared native writer -> Chrome callbacks/status -> native UI -> ONE click listener -> provider dispatch -> receipt.
+5. Exact commit diff with changed files, real behavior shifts and unchanged Cloudflare elements.
+6. Native state/cache/registration/recovery analysis (including failed/partial states).
+7. Provider-specific deep dives: Google Drive, Dropbox, OneDrive and Cloudflare.
+8. Chrome actual-install evidence versus mocked/synthetic evidence, including harness mismatch, policy blocker and coverage gaps.
+9. All 97 failures categorized with test names, exact subsystem association and whether relevant to current complaint.
+10. Twelve-hypothesis evidence matrix and uncertainty/confidence assessment.
+11. Gaps and observations needed to establish a real root cause, including safe user-side screenshot instructions.
+12. Final forensic verdict: what is source-proven, mock-proven, installed-Chrome-proven, remote-provider-proven, BLOCKED or UNKNOWN. Do not state that the issue was fixed.
 
-Add a debug-only, read-only, sanitized 'Native Menu Truth' inspection/export (or extend BOOT's existing diagnostic lane) that distinguishes:
-- expected projection (root+parent-child IDs, names, states, configuration revision) calculated in extension
-- most recently attempted vs acknowledged native operations (method, stable ID, success/error category, time, generation)
-- stored menu status and ID cache, manifest version/worker epoch/extension ID (only if safe)
-- last dispatch ID/owner/action type/blocked reason, with no URLs/tokens/private filenames
-- 'Chrome's actually displayed menu' = UNKNOWN until real-browser visual evidence; do not manufacture a native inventory API.
+For all key assertions supply an anchored code citation (commit permalink when possible), test name, log or other actual evidence. Include direct contradictions between specs and implementation. Separate intentional design changes from defects. Include credible counterexamples and fault paths, without running mutating fault injection.
 
-No source URLs, access tokens, OAuth codes, account IDs, bucket secrets, private history, file names or raw page data in diagnostics. Avoid adding a second authority or excessive persistent events. Make exporting/debugging opt-in, disabled normally, preserve user privacy.
-
-## 8. Required handoff and receipts
-
-Produce an evidence-backed report in docs/ with:
-- architecture diagram: browser activation -> service-worker.js -> background imports -> rebuildMenus -> shared writer -> Chrome native tree -> one onClicked -> provider adapter or Cloudflare V3 -> verified receipt
-- exact bug root cause with file:line, minimal reproduction and before/after source/installed evidence
-- evidence table for H1-H8 (CONFIRMED/REFUTED/UNVERIFIED)
-- screenshot(s) or truthful reason unavailable; a clean-profile screenshot of the submenu is mandatory for **browser-verified** status
-- unit/mock matrix and real-browser matrix, distinct PASS/FAIL/BLOCKED/NOT_TESTED columns, installed Chrome/OS/version/profile/build details (sanitized)
-- full command logs, SHA/commit, test names introduced/resolved, reliability result, baseline failure accounting
-- explicit limitations of Google Drive transfer-page save, Dropbox permissions, OneDrive upload-host issues not solved by flat menus
-- final change inventory, preserved V3 identity/config proof, protected tag proof, exact commit SHA/feature branch
-- practical Windows test instructions for the owner and a minimal screenshot/error bundle request only if Codex cannot run real Chrome.
-- commit and push completed repair only on the feature branch; NEVER merge into main absent the owner's later explicit approval.
-
-**Acceptance criterion:** An actual, properly identified Chrome installation on d692a0d+repair shows REDOWN -> Cloudflare (its authorized V3) + Google Drive/Dropbox/OneDrive (each EXACTLY one direct native leaf), and direct clicks route correctly after fresh install, upgrade, and worker restart. If browser verification is policy-blocked, report the implementation as unverified and prepare a reproducible owner-run Windows verification protocol; do not claim the incident resolved.
-
-**Process:** INSPECT -> REPRODUCE -> ROOT-CAUSE -> MINIMAL PATCH -> NEGATIVE/REGRESSION TESTS -> REAL CHROME PROOF -> REPORT -> COMMIT -> PUSH TO FEATURE BRANCH. No force push, reset, tag changes or unrequested main merge.
+**NO code or test modifications, NO solution proposal, NO commits or pushes, NO PR, NO transfers, NO browser profile modifications. STOP after the audit.**
