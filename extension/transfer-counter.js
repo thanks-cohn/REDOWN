@@ -25,6 +25,30 @@
       typeof entry.destination?.driveId==='string'&&!!entry.destination.driveId&&
       typeof entry.destination?.rootId==='string'&&!!entry.destination.rootId&&
       Number.isSafeInteger(entry.bytes)&&entry.bytes>=0;
+    // Verifier-backed cloud proofs are required before the provider card,
+    // daily badge or SUCCESS! is allowed to claim a new save.
+    const cloudflareProof=entry=>{
+      const v=entry?.verification,d=entry?.destination;
+      return entry?.providerKind==='cloudflare'&&entry?.ok===true&&
+        entry?.verified===true&&entry?.status==='completed'&&
+        /^cloudflare:[\\w-]+$/.test(entry.deliveryId||'')&&
+        v?.kind==='r2-head-v1'&&typeof v.sessionId==='string'&&!!v.sessionId&&
+        typeof d?.accountId==='string'&&!!d.accountId&&
+        typeof d.bucketName==='string'&&!!d.bucketName&&
+        typeof d.key==='string'&&!!d.key&&d.key===v.key&&
+        Number.isSafeInteger(entry.bytes)&&entry.bytes>=0&&v.bytes===entry.bytes&&
+        typeof v.etag==='string'&&!!v.etag;
+    };
+    const googleProof=entry=>entry?.providerKind==='google'&&
+      entry?.ok===true&&entry?.verified===true&&entry?.status==='completed'&&
+      /^google:[\\w-]+$/.test(entry.deliveryId||'')&&
+      typeof entry.destination?.fileId==='string'&&
+      /^[\\w-]+$/.test(entry.destination.fileId)&&
+      entry.deliveryId==='google:'+entry.destination.fileId;
+    const providerProof=entry=>entry?.providerKind==='cloudflare'?cloudflareProof(entry):
+      entry?.providerKind==='google'?googleProof(entry):
+      entry?.providerKind==='dropbox'?dropboxProof(entry):
+      entry?.providerKind==='onedrive'?onedriveProof(entry):false;
     const counted=entry=>entry?.providerKind==='dropbox'?entry.ok===true&&dropboxProof(entry):
       delivered(entry)||onedriveProof(entry);
     function increment(counter,amount){return {...counter,total:String(BigInt(counter.total)+BigInt(amount))};}
@@ -60,16 +84,15 @@
         // Future verified receipts only: never infer provider lifetime totals from
         // the bounded legacy History window. IDs persist across worker restarts.
         const provider=entry?.providerKind;
-        const confirmed=entry?.ok===true&&entry?.verified===true&&
-          ['cloudflare','google','dropbox','onedrive'].includes(provider)&&
-          typeof entry.deliveryId==='string'&&entry.deliveryId.startsWith(provider+':');
+        const confirmed=providerProof(entry);
         const storedProviders=confirmed?await storage.get('providerSaveReceipts'):{};
         const providers=storedProviders.providerSaveReceipts||{version:1,startedAt:now,totals:{},ids:[]};
-        if(confirmed&&providers.ids.includes(entry.deliveryId))return;
+        if(confirmed&&providers.ids.includes(entry.deliveryId))return {newVerified:false,duplicate:true};
         const providerPatch=confirmed?{providerSaveReceipts:{...providers,
           totals:{...providers.totals,[provider]:String(BigInt(providers.totals[provider]||'0')+1n)},
           ids:[...providers.ids,entry.deliveryId],
-          latest:{id:entry.deliveryId,provider,at:Date.now(),verified:true,accountId:entry.destination?.accountId,connectionId:entry.destination?.connectionId}}}:{};
+          latest:{id:entry.deliveryId,provider,at:Date.now(),verified:true,accountId:entry.destination?.accountId,connectionId:entry.destination?.connectionId,
+            ...(provider==='cloudflare'?{sessionId:entry.verification.sessionId,proof:'r2-head-v1'}:{})}}}:{};
         // This badge is a calendar-day count of VERIFIED new cloud files, not
         // attempted clicks, local browser downloads, or the lifetime odometer.
         // Commit the daily increment atomically alongside the provider receipt.
@@ -78,7 +101,7 @@
         const dailyPatch=confirmed?{redownDailyVerified:{...day,total:String(BigInt(day.total)+1n)}}:{};
         const dropboxId=counted(entry)&&entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
         const deliveredIds=dropboxId?(await storage.get('dropbox:deliveries'))['dropbox:deliveries']||[]:[];
-        if(dropboxId&&deliveredIds.includes(dropboxId))return;
+        if(dropboxId&&deliveredIds.includes(dropboxId))return {newVerified:false,duplicate:true};
         const cleaned=entry?.providerKind!=='dropbox'&&entry?.ok&&entry?.sourceUrl?history.filter(item=>{
           if(item?.ok||item?.sourceUrl!==entry.sourceUrl||entry.profileId&&item?.profileId&&item.profileId!==entry.profileId)return true;
           const age=Math.abs(Date.now()-new Date(item?.at||0).getTime());return !Number.isFinite(age)||age>5*60*1000;
@@ -92,6 +115,7 @@
         }
         const next=[saved,...cleaned].slice(0,50);
         await storage.set({...providerPatch,...dailyPatch,transferHistory:next,transferCounter:increment(counter,counted(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
+        return {newVerified:confirmed};
       })
     };
   }
