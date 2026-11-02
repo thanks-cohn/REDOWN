@@ -16,6 +16,12 @@ The Simple Cloudflare structure and false REDOWN toolbar warnings are now repair
 
 ---
 
+## P1 — Dropbox naming, shared cloud ball animation and temporary SNES SUCCESS! (2026-11-02)
+
+**Status: OPEN, owner reported after the last Codex run; filename issue needs more testing, and no installed-Chrome/live-provider/visual acceptance is claimed.** Four separately verifiable corrections: **(1)** Dropbox must prefer the real safe file name **with extension**, retaining the existing numerical collision fallback and sending no new source/page/History metadata to Dropbox; **(2)** the small verified-save ball animation must also play for other cloud-provider cards, not only the already-styled provider; **(3)** NEON provider-card save counts must be beautifully styled, not displayed as a bare lone number, while the lifetime confirmed count continues growing and fits large values; **(4)** a green/yellow-shadow **SUCCESS!** must **flash briefly like a classic SNES game only when a file is genuinely saved, then disappear**, never stay permanently attached to the card. The permanent count and transient celebration are distinct. Require actual installed Chrome/provider save receipts, visual recordings, theme/responsive tests and no false success on error/retry/restore. [Full November 2 bug report, design contract and test matrix](2026-11-02_P1_DROPBOX_FILENAME_AND_SHELF_PROVIDER_CELEBRATION_REGRESSIONS.md). [November 2 to-do](../NEED_TO_DO/11022026.md).
+
+---
+
 ## P0 — Simple menu shows Buckets and places custom labels beside it (2026-10-31)
 
 **CORRECTED OWNER MODE HIERARCHY (supersedes mistaken assistant three-peer proposal):** Keep **TWO top-level modes, Simple and Nested**; Nested offers **Narrow** (only explicitly configured destinations in their natural hierarchy, no bucket-wide discovery) **OR Depth** (actual authorized discovered directory hierarchy with depth 1–10). Do NOT move Narrow outside Nested, create three peer modes, erase old saved submode values or change the current polished selector needlessly. Internal `nested:'narrow'` remains Narrow and `nested:'level'` remains Depth. Recheck UI, mode switching and native menu routing with regression tests. [Corrected canonical P0 work request](../docs/CODEX_V3_P0_SIMPLE_CLOUDFLARE_AND_RIGHT_CLICK_FOUNDATION.md).
