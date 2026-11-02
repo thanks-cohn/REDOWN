@@ -5,6 +5,8 @@
 **Required working branch:** `codex/v3-parity-first-reconstruction`  
 **Priority:** P1, owner-observed Shelf presentation regression, below unresolved P0 reliability/data safety.  
 **Status:** Implementation request / NOT DONE / no live Chrome results claimed.
+
+**2026-11-02 OWNER CORRECTION / AUTHORITY:** The separate [P0 Dropbox false-success and verified SUCCESS! choreography request](CODEX_REQUEST_P0_DROPBOX_FALSE_SUCCESS_AND_VERIFIED_SAVE_ANIMATIONS_2026-11-02.md) supersedes this document if animation colors, Times New Roman font choices or completion gating conflict. This document continues to govern the separate all-cloud save-impact pulse and working falling-ball preservation.
 **Tracking:** [2026-11-02 bug report](../../bugs/2026-11-02_P1_DROPBOX_FILENAME_AND_SHELF_PROVIDER_CELEBRATION_REGRESSIONS.md) and [daily NEED_TO_DO](../11022026.md).
 
 ## Scope: two related Shelf UX repairs, NO unrelated features
@@ -50,18 +52,17 @@ ACTUAL CLOUD SAVE COMMIT IS INDEPENDENTLY VERIFIED:
 
 **Idle state:** Normal provider logo/name, honest connection/status, GO TO when valid, existing FREE GB copy and durable count. No visible `SUCCESS!`, no pulsing overlay, no stuck success class. On failed/blocked/cancelled/uncertain save, show truthful failure/uncertainty, never a success celebration.
 
-### NEON — monetary green and yellow, not classical typography
+### NEON — money-green alternating with regular Neon colors, SNES style
 
-- The *whole* `SUCCESS!` displays simultaneously in prominent **money green** with **bright yellow offset/double-impression/shadow**. It briefly **flashes in its DUAL-COLOR state**, and **completely disappears**. No letter-by-letter introduction, and **no non-Neon two-flash-plus-third-held choreography**.
-- NEON's **persistent per-provider numeric count must begin BIG** and be a complementary designed arcade/SNES-like readout, not a tiny orphan digit. Reduce only as the actual number of digits increases beyond available width, preferably using text measurement or robust tested fit rules. Must work for 0, 1, 10, 999, 10,000 and much larger values, and across responsive Shelf/card widths.
-- Preserve provider-specific brand accent and actions. The flashy word is a timed celebration, **never a permanent status badge or an eternal decorative row**. Previous owner layout preference: NEON success briefly inside its card below FREE GB if it fits.
+- The **whole** SUCCESS! appears at once. It **flashes between vivid money/neon green and the ordinary established Neon-theme SUCCESS! colors** with a crisp SNES-style cadence. Preserve established offset/shadow aesthetics where appropriate but do not force a different palette over the normal theme. Then SUCCESS! **disappears by itself**, without waiting for a click. No letter-by-letter entrance and no non-Neon three-appearance choreography.
+- NEON's persistent per-provider numeric count begins BIG and remains an integrated arcade/SNES-style readout. Reduce only when digit growth actually requires it to fit. Keep provider identity and card actions intact. The transient word appears inside the corresponding card, never permanently.
+- Every subsequent independently verified save starts another temporary celebration. No verified provider commit, no SUCCESS!, no +1.
 
-### ALL non-Neon palettes — classically sophisticated italic serif
+### ALL non-Neon palettes — italic Times New Roman with letter-by-letter reveal
 
-- `SUCCESS!` should appear **elegant, tasteful, professional, italic**, borrowing the character of **Roman inscription/classical print typography**, but not as shouty faux-Roman or cartoon faux script. Prefer a **refined high-quality italic serif**, e.g. the look of classic book typography with subtly calligraphic stroke modulation, comfortable readable letterspacing, good weight and theme-appropriate contrast. Porcelain is clean and graceful with restrained ruby/warm accents; Midnight uses elegant pale/chrome-ink contrast with subdued red highlight; Ocean should harmonize with its existing sea/teal palette. Avoid gaudy outlines, randomly mixed fonts, fake bold, clipped italic overhangs, and an excessive letter spacing that hurts readability.
-- **Exact choreography:** build letter by letter `S` → `SU` → `SUC` ... → `SUCCESS!`; then completed word **ON → OFF** (first flash); **ON → OFF** (second flash); **ON and HOLD** for a distinct longer beat (third appearance); then fade/snap away leaving **NO SUCCESS!** element or permanent reserved label. A new independently verified save **starts again from S**, even after the previous run. Keep timing smooth, polished, short and accessible.
-- Use existing licensed/system font stacks if possible (possible system fallbacks `Iowan Old Style`, `Palatino Linotype`, `Book Antiqua`, `Georgia`, `serif` with italic CSS). If an additional bundled typeface is genuinely required, verify font redistribution rights and bundle legally; do not fetch remote Google Fonts dynamically or ship an unlicensed commercial font. **Do not commit to one font choice without showing owner a side-by-side real-rendered preview** of a few tasteful options.
-- Place temporary text **inside the correct provider card** without covering GO TO, FREE GB, status or count; earlier owner preference suggested between GO TO and FREE GB for non-Neon when the layout permits. The card returns to its original resting geometry after cleanup.
+- Use **Times New Roman italic** as the requested classical, professional typography, with accessible system serif fallbacks. Use theme-specific coloring and appropriate contrast. Do not apply Neon arcade lettering to Porcelain, Midnight, Ocean or any other non-Neon palette.
+- **Exact choreography:** materialize S → SU → SUC → SUCC → SUCCE → SUCCES → SUCCESS → SUCCESS! slowly letter by letter; then complete word flashes ON → OFF **twice briefly**, followed by a **third visible appearance with a longer hold**; finally fade/remove all SUCCESS! text. Remain invisible until next separately confirmed save.
+- Do not turn the word into a permanent label or reserve awkward blank space. Place it inside the correct provider card without obscuring GO TO, FREE GB, status or cumulative count. Replay a new sequence on each verified save; no animation on login, failure, pending or uncertain status. Respect reduced motion.
 
 ### Shared success correctness
 
