@@ -203,13 +203,13 @@ test('truncated source never sends a final upload chunk or claims success',async
 
 
 test('right-click saves never invoke Chrome permission APIs on any source hostname',async()=>{
-  const local={'onedrive:state':{phase:'connected'}},requests=[];
+  const local={},requests=[];
   const chrome={permissions:{
     contains:async()=>{throw Error('No host permission checks belong in a save');},
     request:async value=>{requests.push(value);throw Error('Permission dialog on save');}
-  },storage:{local:{get:async key=>({[key]:local[key]}),set:async data=>Object.assign(local,data)}}};
+  },storage:{local:{set:async data=>Object.assign(local,data)}}};
   const context=vm.createContext({chrome,crypto:{randomUUID:()=> 'job-1'},AbortController,console,
-    RedownOneDriveMenu:{owns:id=>id==='provider:onedrive'||id.startsWith('provider:onedrive:')},
+    RedownOneDriveMenu:{owns:id=>id.startsWith('provider:onedrive:')},
     RedownOneDriveAuth:{create:()=>({ready:async()=>({
       token:'token',accountId:'acct',rootId:'root',driveId:'drive',connectionId:'conn'})})},
     RedownOneDriveAPI:{
@@ -220,7 +220,7 @@ test('right-click saves never invoke Chrome permission APIs on any source hostna
   load(context,'onedrive-provider.js');
   const provider=vm.runInContext('RedownOneDriveProvider.create()',context);
   for(const host of ['cdn-one.example.org','another-site.example.net']){
-    await provider.dispatch({menuItemId:'provider:onedrive',
+    await provider.dispatch({menuItemId:'provider:onedrive:save-root',
       srcUrl:'https://'+host+'/different.png'});
     await new Promise(r=>setImmediate(r));
     assert.equal(local['onedrive:transfer'].status,'completed');

@@ -161,12 +161,3 @@ root/Manage, CURRENT and acknowledged-vs-visible distinction. Explicit native
 repair invalidates the cached plan but never resets the whole menu. Run focused
 BOOT tests and `python3 tests/boot-schema-conformance.py`. Installed Chrome remains
 administrator-blocked; the owner's intermittent startup cause remains OPEN.
-
-Flat provider native menus (November 1 directive): read
-[implementation and verification](docs/FLAT_PROVIDER_MENUS_REPORT.md).
-Only Cloudflare retains V3 submenu projection. Google Drive, Dropbox and OneDrive
-are single native provider-ID leaves in every auth state; obsolete children are
-retired by the shared acknowledgement writer and never initiate actions. Keep the
-versioned application key, exact namespace dispatch, existing transfer engines and
-protected checkpoint tag. Current local full suite: 985/888/97, same failing names
-as fresh main 980/883/97; installed Chrome remains administrator-blocked.

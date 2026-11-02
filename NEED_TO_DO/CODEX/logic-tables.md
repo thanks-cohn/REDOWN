@@ -1,5 +1,3 @@
-> November 1 flat-provider supersession: `CODEX_REQUEST_CLOUDFLARE_ONLY_NESTED_MENU_FLAT_OTHER_PROVIDERS_2026-11-01.md` overrides older non-Cloudflare submenu proposals below. Google Drive, Dropbox and OneDrive each use one direct native leaf; only Cloudflare retains V3 nested menus. Implementation and verification: `docs/FLAT_PROVIDER_MENUS_REPORT.md`.
-
 # REDOWN V3 — RIGHT-CLICK LOGIC TABLES AND PROOF OBLIGATIONS
 
 **Date:** 2026-11-01  

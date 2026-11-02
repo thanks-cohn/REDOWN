@@ -2359,7 +2359,7 @@ async function resolveActiveRightClick(id,profiles){
 // Hash credentials as part of the input, never expose or log their values.
 async function menuApplicationKey(){
   const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);
-  const value=JSON.stringify(['v3-flat-providers-1',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
+  const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
   const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
   const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
   const dropbox=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];

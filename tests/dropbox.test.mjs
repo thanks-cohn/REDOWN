@@ -126,7 +126,7 @@ test('connected native saves, repeated clicks and multi-chunk transfer use no vi
  await f.provider.dispatch({...click});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,2);assert.notEqual(f.records[0].deliveryId,f.records[1].deliveryId);assert.equal(f.records[0].pageUrl,click.pageUrl);assert.doesNotMatch(JSON.stringify(f.records),/PRIVATE_/);
 });
 test('login via native action resumes exactly one pending click; Shelf login alone creates no job',async()=>{
- const f=fixture();await f.provider.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/file'});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,1);assert.equal(f.calls.filter(c=>c.oauth).length,1);
+ const f=fixture();await f.provider.dispatch({menuItemId:'provider:dropbox:connect',linkUrl:'https://source.invalid/file'});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,1);assert.equal(f.calls.filter(c=>c.oauth).length,1);
  const shelf=fixture();assert.equal((await shelf.provider.message({type:'dropboxConnect'},{id:shelf.chrome.runtime.id,url:shelf.chrome.runtime.getURL('shelf.html')})).ok,true);assert.equal(shelf.store['dropbox:jobs'],undefined);
 });
 test('unknown native IDs and untrusted Shelf messages fail closed; denied source consent cannot save',async()=>{
@@ -145,7 +145,7 @@ test('shared composer preserves every V3/Google plan and route, Dropbox leaf ord
  for(const x of b.cases)for(const phase of ['disconnected','connecting','connected','reconnect'])for(const googlePhase of ['connected','disconnected']){
  const projection=c.RedownRightClickV3.project(x.state,x.profiles,x.options,x.inventory,'redown',x.at);assert.deepEqual(plain(projection),x.before.projection);
  for(const route of x.before.routes){const r=c.RedownRightClickV3.resolve(route.id,x.state,x.profiles,x.options,x.inventory,x.at);assert.deepEqual(r?plain({profileId:r.owner.id,accountId:r.profile.accountId,bucketName:r.profile.bucketName,prefix:r.prefix}):null,route.target);}
- const original=g.compose([{id:'redown'},...projection.entries,{id:'redown-manage',parentId:'redown'}],g.fragment({phase:googlePhase,folderId:'folder'},'redown'),'redown');const f=d.fragment({phase,root:'/',rootReady:true,accountId:'dbid:a',connectionId:'connection'},'redown');const combined=g.composeSibling(original,f,'redown');assert.deepEqual(plain(combined.filter(e=>!d.owns(e.id))),plain(original));const idx=combined.findIndex(e=>e.id==='provider:dropbox');assert.ok(g.owns(combined[idx-1].id));assert.equal(combined.at(-1).id,'redown-manage');assert.equal(f.entries.length,1);
+ const original=g.compose([{id:'redown'},...projection.entries,{id:'redown-manage',parentId:'redown'}],g.fragment({phase:googlePhase,folderId:'folder'},'redown'),'redown');const f=d.fragment({phase,root:'/',rootReady:true,accountId:'dbid:a',connectionId:'connection'},'redown');const combined=g.composeSibling(original,f,'redown');assert.deepEqual(plain(combined.filter(e=>!d.owns(e.id))),plain(original));const idx=combined.findIndex(e=>e.id==='provider:dropbox');assert.ok(g.owns(combined[idx-1].id));assert.equal(combined.at(-1).id,'redown-manage');assert.equal(f.entries.length,phase==='connected'?1:2);
  for(const entries of [[{id:'redown',parentId:'redown'}],[{id:'provider:dropbox',parentId:'provider:google-drive'}],[f.entries[0],{id:'provider:dropbox:alien',parentId:'provider:dropbox'}],[f.entries[0],f.entries[0]],[f.entries[0],{id:'provider:dropbox:connect',parentId:'provider:dropbox:connect'}],Array(1001).fill(f.entries[0])])assert.equal(g.composeSibling(original,{providerId:'dropbox',entries},'redown'),original);
  }
 });
@@ -153,7 +153,7 @@ test('actual single native writer reconciles transitions/restart/lost IDs and re
  const h=worker();await h.ready();
  for(const phase of ['connected','disconnected','connecting','connected','reconnect']){
  h.local['dropbox:state']={phase,rootReady:true,root:'/',accountId:'dbid:a',connectionId:'connection'};
- await Promise.all([h.rebuild(),h.rebuild()]);assert.equal(h.local.rightClickMenuStatus.state,'registered');const list=[...h.native.values()],roots=list.filter(e=>e.parentId==='redown');assert.equal(roots.at(-1).id,'redown-manage');assert.equal(roots.findIndex(e=>e.id==='provider:dropbox'),roots.findIndex(e=>e.id==='provider:google-drive')+1);assert.equal(list.filter(e=>e.id==='redown').length,1);assert.equal(list.filter(e=>e.parentId==='provider:dropbox').length,0);
+ await Promise.all([h.rebuild(),h.rebuild()]);assert.equal(h.local.rightClickMenuStatus.state,'registered');const list=[...h.native.values()],roots=list.filter(e=>e.parentId==='redown');assert.equal(roots.at(-1).id,'redown-manage');assert.equal(roots.findIndex(e=>e.id==='provider:dropbox'),roots.findIndex(e=>e.id==='provider:google-drive')+1);assert.equal(list.filter(e=>e.id==='redown').length,1);assert.equal(list.filter(e=>e.parentId==='provider:dropbox').length,phase==='connected'?0:1);
  }
  const restart=worker(structuredClone(h.local));await restart.ready();await restart.rebuild();assert.equal(restart.local.rightClickMenuStatus.state,'registered');restart.native.delete('provider:dropbox');await vm.runInContext('nativeMenuPlan=null;rebuildMenus()',restart.context);assert.ok(restart.native.has('provider:dropbox'));assert.equal(restart.calls.some(c=>c[0]==='removeAll'),false);
 });
@@ -165,8 +165,7 @@ test('Shelf Google then Dropbox then original headline; semantic controls and po
  const dom=new JSDOM(await read('extension/shelf.html')),d=dom.window.document;assert.ok(d.querySelector('.google-drive-control').nextElementSibling.matches('.dropbox-control'));assert.ok(d.querySelector('.dropbox-control').nextElementSibling.matches('.onedrive-control'));assert.ok(d.querySelector('.onedrive-control').parentElement.matches('.destinations-grid'));assert.ok(d.querySelector('.destinations-grid').nextElementSibling.matches('.eyebrow'));assert.equal(d.querySelector('#shelf-dropbox').tagName,'BUTTON');assert.equal(d.querySelector('#shelf-dropbox-status').getAttribute('aria-live'),'polite');assert.equal(d.querySelector('#shelf-dropbox-open').textContent,'Open Dropbox');assert.match(await read('extension/dropbox-controls.css'),/focus-visible/);dom.window.close();
 });
 test('protected bytes unchanged except explicitly authorized shared composer hook',async()=>{
- const b=JSON.parse(await read('docs/verification/dropbox/before.json'));for(const [p,h] of Object.entries(b.hashes)){// November 1 directive authorizes only these provider projection/dispatch edits.
- if(['extension/google-drive-menu.js','extension/google-drive-provider.js'].includes(p))continue;assert.equal(createHash('sha256').update(await readFile(p)).digest('hex'),h,p);}
+ const b=JSON.parse(await read('docs/verification/dropbox/before.json'));for(const [p,h] of Object.entries(b.hashes)){if(p==='extension/google-drive-menu.js')continue;assert.equal(createHash('sha256').update(await readFile(p)).digest('hex'),h,p);}
  for(const n of ['dropbox-auth','dropbox-api','dropbox-menu','dropbox-provider'])assert.doesNotMatch(sources[n],/chrome\.(tabs|windows|downloads|contextMenus)\.|create_folder|workers\.dev|client_secret/);
 });
 test('history and counter deduplicate Dropbox receipt atomically without changing other provider semantics',async()=>{
@@ -198,15 +197,4 @@ test('cancel and disconnect stop queued work without cross-account uploads',asyn
 });
 test('explicit 429 backoff is bounded and can recover; readback retries do not replay finish',async()=>{
  const f=fixture(),j=await job(f);let append=0,metadata=0,sleeps=0;const api=f.c.RedownDropboxAPI.create({auth:f.auth,sleep:async()=>sleeps++,fetch:async(u,o)=>{if(u.endsWith('append_v2')&&append++===0)return json({},429,{'Retry-After':'1'});if(u.endsWith('get_metadata')&&metadata++===0)return json({},503);return f.c.fetch(u,o);}});assert.equal((await api.upload(j,async()=>{},new AbortController().signal)).bytes,f.source.length);assert.equal(sleeps,2);assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,1);
-});
-
-test('retired Dropbox connect row is inert and reconnect uses the sole native row',async()=>{
- const f=fixture();await f.provider.dispatch({menuItemId:'provider:dropbox:connect',linkUrl:'https://source.invalid/file'});
- assert.equal(f.calls.length,0);assert.equal(f.store['dropbox:jobs'],undefined);
- for(const phase of ['reconnect','expired']){
-  f.store['dropbox:state']={phase};await f.provider.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/file'});await f.provider.pump();
- }
- assert.equal(f.calls.filter(c=>c.oauth).length,2);assert.equal(f.records.filter(r=>r.ok).length,2);
- f.store['dropbox:state']={phase:'connecting'};await f.provider.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/file'});
- assert.equal(f.calls.filter(c=>c.oauth).length,2);
 });

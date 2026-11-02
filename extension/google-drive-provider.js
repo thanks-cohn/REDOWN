@@ -9,16 +9,14 @@
       const state=await chrome.storage.local.get(['googleDriveTransfer','googleDriveState']);
       if(tabs.length&&(state.googleDriveTransfer?.status==='active'||state.googleDriveState?.phase==='connecting')){await chrome.tabs.update(tabs[0].id,{active:true});return;}
       const id=crypto.randomUUID();
-      await chrome.storage.session.set({['googleDriveJob:'+id]:{action,sourceUrl:info.srcUrl||info.linkUrl||info.pageUrl||'',at:Date.now()}});
+      await chrome.storage.session.set({['googleDriveJob:'+id]:{action,sourceUrl:info.srcUrl||info.linkUrl||'',at:Date.now()}});
       if(tabs.length)await chrome.tabs.update(tabs[0].id,{active:true,url:page+'?job='+id+'#'+id});
       else await chrome.tabs.create({url:page+'?job='+id+'#'+id});
     });opening=operation;return operation;
   }
   async function dispatch(info){
-    if(info.menuItemId!=='provider:google-drive')return;
-    const {googleDriveState:state}=await chrome.storage.local.get('googleDriveState');
-    if(state?.phase==='connecting')return;
-    return open(state?.phase==='connected'&&/^[\w-]+$/.test(state.folderId||'')?'save':'connect',info);
+    if(!['provider:google-drive:connect','provider:google-drive:save-redown'].includes(info.menuItemId))return;
+    return open(info.menuItemId.endsWith(':connect')?'connect':'save',info);
   }
   let record;
   function install(recorder){
