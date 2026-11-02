@@ -4,21 +4,19 @@
   const namespace='provider:google-drive';
   const owns=id=>id===namespace||String(id).startsWith(namespace+':');
   function fragment(state={},root){
-    const ready=state.phase==='connected'&&/^[\w-]+$/.test(state.folderId||'');
-    const busy=state.phase==='connecting';
     const contexts=['link','image','video','audio','page'];
     return {providerId:'google-drive',entries:[
-      {id:namespace,parentId:root,title:'Google Drive',contexts},
-      {id:namespace+(ready?':save-redown':':connect'),parentId:namespace,title:ready?'REDOWN':busy?'Connecting to Google Drive…':state.phase==='reconnect'?'Reconnect Google Drive…':'Log in to Google Drive…',enabled:!busy,contexts}
+      {id:namespace,parentId:root,title:'Google Drive',enabled:state.phase!=='connecting',contexts}
     ]};
   }
+
   // Invalid additive fragments never invalidate or remove the original plan.
   function compose(original,provider,root,sibling){
     const ns=sibling?'provider:dropbox':namespace;
     const owned=sibling?(id=>id===ns||String(id).startsWith(ns+':')):owns;
     try{
-      if(provider.providerId!==(sibling?'dropbox':'google-drive')||!Array.isArray(provider.entries)||provider.entries.length>16||original.length+provider.entries.length>1000)throw Error('capacity');
-      if(sibling&&(!original.some(e=>e.id==='provider:google-drive')||provider.entries.length>2||provider.entries.some(e=>![ns,ns+':connect'].includes(e.id))))throw Error('action');
+      if(provider.providerId!==(sibling?'dropbox':'google-drive')||!Array.isArray(provider.entries)||provider.entries.length!==1||original.length+provider.entries.length>1000)throw Error('capacity');
+      if(sibling&&(!original.some(e=>e.id==='provider:google-drive')||provider.entries.some(e=>e.id!==ns)))throw Error('action');
       const seen=new Set(original.map(e=>e.id));
       for(const [i,e] of provider.entries.entries()){
         if(!owned(e.id)||seen.has(e.id)||!seen.has(e.parentId)||i===0&&(e.id!==ns||e.parentId!==root)||i>0&&!owned(e.parentId)||e.parentId===root&&i>0)throw Error('ownership');
