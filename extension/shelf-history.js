@@ -176,7 +176,7 @@
       const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'');
       if(day.date&&Number.isFinite(item.ms))time.dateTime=new Date(item.ms).toISOString();
       header.append(time);
-      if(globalThis.RedownHistoryNavigation?.locator(record)){
+      if(globalThis.RedownHistoryNavigation?.openable(record)){
         const go=create('button','GO TO','history-go-to');go.type='button';
         go.setAttribute('aria-label','Go to saved file '+info.name);
         go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};
