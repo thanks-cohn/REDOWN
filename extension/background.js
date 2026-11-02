@@ -874,9 +874,12 @@ async function recordTransfer(entry) {
   if(entry?.provider==='Google Drive'&&entry.verified===true&&entry.ok===true&&
      /^[\w-]+$/.test(entry.destination?.fileId||''))
     entry={...entry,providerKind:'google',deliveryId:'google:'+entry.destination.fileId};
+  // Do not flash green from a URL, POST acknowledgement or decorative timer.
+  // The counter commits a *new*, provider-verifier-backed receipt first.
+  const outcome=await transferCounter.record(entry);
   if(entry?.ok===false)void toolbarFeedback("failure");
-  else if(entry?.ok===true&&typeof entry.location==="string"&&/^(https?:\/\/|R2: )/.test(entry.location))void toolbarFeedback("success");
-  return transferCounter.record(entry);
+  else if(outcome?.newVerified===true)void toolbarFeedback("success");
+  return outcome;
 }
 async function notify(title, message) {
   try {
