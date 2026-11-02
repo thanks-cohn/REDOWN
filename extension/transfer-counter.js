@@ -14,7 +14,19 @@
       if(stored.transferCounter?.version===1&&typeof stored.transferCounter.total==='string'&&/^(0|[1-9]\d*)$/.test(stored.transferCounter.total))return {counter:stored.transferCounter,history};
       return {counter:{version:1,total:String(history.filter(delivered).length),startedAt:new Date().toISOString(),basis:'retained-history-plus-completions'},history};
     }
-    const counted=entry=>entry?.providerKind==='dropbox'?entry.ok===true&&dropboxProof(entry):delivered(entry);
+    // OneDrive's Graph upload path independently GET-verifies the exact
+    // uploaded item ID, parent root and byte count. A missing optional webUrl
+    // must not erase a genuine completed save from the lifetime odometer.
+    const onedriveProof=entry=>entry?.providerKind==='onedrive'&&entry.ok===true&&
+      entry.verified===true&&entry.status==='completed'&&
+      /^onedrive:[\w-]+$/.test(entry.deliveryId||'')&&
+      typeof entry.destination?.accountId==='string'&&!!entry.destination.accountId&&
+      typeof entry.destination?.itemId==='string'&&!!entry.destination.itemId&&
+      typeof entry.destination?.driveId==='string'&&!!entry.destination.driveId&&
+      typeof entry.destination?.rootId==='string'&&!!entry.destination.rootId&&
+      Number.isSafeInteger(entry.bytes)&&entry.bytes>=0;
+    const counted=entry=>entry?.providerKind==='dropbox'?entry.ok===true&&dropboxProof(entry):
+      delivered(entry)||onedriveProof(entry);
     function increment(counter,amount){return {...counter,total:String(BigInt(counter.total)+BigInt(amount))};}
     return {
       read:()=>serial(async()=>{const {counter}=await state();await storage.set({transferCounter:counter});return counter;}),
