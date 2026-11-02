@@ -56,7 +56,7 @@
       for(const count of card.querySelectorAll('.provider-save-count,.provider-save-success')){
         count.style.fontSize='';
         const parentStyle=getComputedStyle(count.parentElement);
-        const available=count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
+        const available=count.classList.contains('provider-save-count')?Math.min(40,count.parentElement.clientWidth*.25):count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
         if(available&&count.scrollWidth>available){
           const size=parseFloat(getComputedStyle(count).fontSize);
           count.style.fontSize=Math.max(1,size*available/count.scrollWidth*.96)+'px';
@@ -77,10 +77,10 @@
   }
   for(const card of cards.values()){
     const readout=document.createElement('div');readout.className='provider-save-readout';
-    const caption=document.createElement('small');caption.className='provider-save-caption';caption.textContent='Verified · from this update';
     const count=document.createElement('span');count.className='provider-save-count';count.textContent='0';
     const announcement=document.createElement('span');announcement.className='provider-save-announcement';announcement.setAttribute('role','status');
-    readout.append(count,caption,announcement);card.append(readout);
+    readout.append(announcement);card.append(readout);
+    card.querySelector('.destination-action-copy')?.append(count);
   }
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;

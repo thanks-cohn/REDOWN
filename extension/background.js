@@ -927,6 +927,7 @@ importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
+importScripts("google-drive-stream.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
 importScripts("dropbox-auth.js");
@@ -2364,7 +2365,7 @@ async function resolveActiveRightClick(id,profiles){
 // Hash credentials as part of the input, never expose or log their values.
 async function menuApplicationKey(){
   const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);
-  const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
+  const value=JSON.stringify(['v3-consolidated-flat-providers-1',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
   const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
   const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
   const dropbox=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];
@@ -2867,15 +2868,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:onedrive:save-root')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
+    if(info.menuItemId==='provider:onedrive')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
     if(info.menuItemId==='provider:dropbox')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
-    await dropboxProvider.dispatch(info);return;
+    await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:google-drive:save-redown')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
+    if(info.menuItemId==='provider:google-drive')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();

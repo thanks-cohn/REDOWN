@@ -659,3 +659,13 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 /* Keep the existing options target alongside its action as the readout grows. */
 .overview .destinations-grid .destination-options>summary{top:32px}
 @media(max-width:399px){.overview .destinations-grid .destination-options>summary{top:28px}}
+
+/* CONSOLIDATED: balanced SNES-like provider totals, preserving the verified SUCCESS overlay. */
+.overview .destinations-grid .destination-tile{position:relative;flex-wrap:nowrap;min-height:62px}
+.overview .destinations-grid .destination-action-copy{gap:7px;flex-wrap:nowrap;padding-right:16px;justify-content:space-between}
+.overview .destinations-grid .provider-save-count{display:inline-flex;align-items:center;justify-content:center;margin:0 4px;flex:none;min-width:10px;max-width:40px;font:italic 600 13px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;font-variant-numeric:tabular-nums;color:var(--text)}
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{font:400 16px/1 "Jersey 10 Charted",monospace;color:#b3ffe0;text-shadow:1px 1px 0 #385f71}
+.overview .destinations-grid .destination-tile .provider-save-readout{position:absolute;inset:0;max-width:none;padding:0;border:0;pointer-events:none;flex:none}
+.overview .destinations-grid .provider-save-success{inset:auto 4px 2px 4px;height:27px;min-width:0;padding:0;font-size:clamp(13px,4vw,20px);border-radius:6px;z-index:2}
+.overview .destinations-grid .destination-options>summary{top:50%;transform:translateY(-50%)}
+@media(max-width:399px){.overview .destinations-grid .destination-action-copy{gap:5px}.overview .destinations-grid .provider-save-count{margin:0 2px}.overview .destinations-grid .destination-options>summary{top:50%;transform:translateY(-50%)}}
