@@ -3,6 +3,8 @@
 Request: `docs/requests/2026-11-01_P0_ONEDRIVE_OAUTH_DIRECT_ONE_CLICK_ISOLATED_MENU.md`.
 Branch: `codex/v3-parity-first-reconstruction`. Initial head: `db8916a46f6a1a04feca3489e6566582c8a86cbe`.
 
+**Follow-up (November 1, 2026):** An isolated, explicitly triggered Microsoft OAuth/PKCE Chrome diagnostic has been added to the Shelf. It does not enable production OneDrive authentication, root uploads, or save actions. See [ONEDRIVE_OAUTH_DIAGNOSTIC.md](ONEDRIVE_OAUTH_DIAGNOSTIC.md) for the owner's live-browser test, sanitized outcomes and conditional Entra remediation. No real Chrome token redemption has been claimed yet.
+
 **One-click OneDrive uploads are NOT working or enabled in this change.** This is the safe non-auth portion allowed by the request's feasibility gate, not the complete production integration. No successful Microsoft login, token exchange, refresh, root verification or OneDrive transfer is claimed. Do not release this as OneDrive support.
 
 ## Auth feasibility gate
