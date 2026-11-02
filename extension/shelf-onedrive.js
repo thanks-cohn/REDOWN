@@ -64,9 +64,20 @@
       if(!await chrome.permissions.request({origins:[origin+'/*']})){
         uiError='Chrome did not grant access to the upload host.';return;
       }
+      const connected=(await chrome.storage.local.get('onedrive:state'))['onedrive:state'];
+      if(connected?.phase!=='connected'||!connected.connectionId){
+        uiError='Connect OneDrive before approving an upload destination.';return;
+      }
+      const prior=(await chrome.storage.local.get('onedrive:trustedUploadOrigins'))['onedrive:trustedUploadOrigins'];
+      const list=prior?.connectionId===connected.connectionId&&Array.isArray(prior.origins)?
+        prior.origins.filter(x=>typeof x==='string'&&x.startsWith('https://')):[];
+      const origins=[...new Set([...list,origin])].slice(-32);
       const {uploadOrigin,...rest}=transfer;
-      await chrome.storage.local.set({'onedrive:transfer':{...rest,status:'blocked',
-        code:'ONEDRIVE_UPLOAD_HOST_READY',error:'Upload host approved. Right-click the file again to save it.'}});
+      await chrome.storage.local.set({
+        'onedrive:trustedUploadOrigins':{connectionId:connected.connectionId,origins},
+        'onedrive:transfer':{...rest,status:'blocked',code:'ONEDRIVE_UPLOAD_HOST_READY',
+          error:'Upload host approved. Right-click the file again to save it.'}
+      });
       uiError='';
     }catch{uiError='Unable to request the upload-host permission. Try again from the Shelf.';}
     finally{allowHost.disabled=false;paint();}
