@@ -3624,6 +3624,22 @@ $("r2-ask-dismiss").addEventListener("click",closeR2Ask);
 $("r2-ask-later").addEventListener("click",closeR2Ask);
 r2AskDialog.addEventListener("close",()=>{if(debugModeEnabled)r2AskTrigger.focus({preventScroll:true});});
 
+const oneDriveTest=$("debug-onedrive-test"),oneDriveTestStatus=$("debug-onedrive-test-status");
+oneDriveTest?.addEventListener("click",async()=>{
+  if(!debugModeEnabled||oneDriveTest.disabled||oneDriveTest.closest("[data-debug-detail]")?.hidden)return;
+  oneDriveTest.disabled=true;
+  oneDriveTestStatus.textContent="Running the Microsoft sign-in diagnostic…";
+  try{
+    const response=await chrome.runtime.sendMessage({type:"onedriveDiagnostic"});
+    const message=typeof response?.message==="string"?response.message:
+      typeof response?.error==="string"?response.error:"The OneDrive test could not finish.";
+    oneDriveTestStatus.textContent=(response?.ok?"Passed: ":"Not verified: ")+message+
+      (response?.code?" ["+response.code+"]":"");
+  }catch{oneDriveTestStatus.textContent="OneDrive Test could not reach the diagnostic. Try again.";}
+  finally{oneDriveTest.disabled=false;}
+});
+
+
 function applyDebugMode(){
   applyOnboarding();
   document.documentElement.classList.toggle("debug-mode",debugModeEnabled);
