@@ -86,7 +86,10 @@
           // digit glyphs so single-digit counts stay BIG, not shrunken at 0.
           const range=document.createRange();
           range.selectNodeContents(count);
-          required=range.getBoundingClientRect().width||0;
+          required=typeof range.getBoundingClientRect==='function'?
+            range.getBoundingClientRect().width||0:0;
+          // Chrome supports Range geometry; constrained DOMs may not. In the
+          // latter case avoid shrinking and NEVER stop the receipt painter.
         }
         if(available&&required>available){
           const size=parseFloat(getComputedStyle(count).fontSize);
