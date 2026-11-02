@@ -14,6 +14,36 @@
     if(d.prefix!==undefined&&d.prefix.replace(/\/$/,'')!==prefix.replace(/\/$/,''))return null;
     return {provider:'cloudflare-r2',accountId:d.accountId,bucketName:d.bucketName,key:d.key,prefix,filename:d.key.split('/').at(-1)};
   }
+  // Cloud providers use verified provider-owned file links; Cloudflare keeps its
+  // existing Explorer/instance/split navigation. Never open the source or page URL.
+  function cloudTarget(record){
+    if(record?.ok!==true||record.verified!==true||record.uncertain===true||record.error||
+      /pending|cancel|uncertain|incomplete|failed|started|accepted/i.test([record.status,record.state].filter(Boolean).join(' ')))return null;
+    const d=record.destination||{};
+    const provider=String(d.provider||record.providerKind||'').toLowerCase();
+    let u;try{u=new URL(record.location);}catch{return null;}
+    if(u.protocol!=='https:'||u.username||u.password||u.hash)return null;
+    if(provider==='google-drive'){
+      if(!/^[\\w-]+$/.test(d.fileId||'')||u.hostname!=='drive.google.com'||
+        u.pathname!=='/file/d/'+d.fileId+'/view'||u.search)return null;
+      return u.href;
+    }
+    if(provider==='onedrive'){
+      if(typeof d.itemId!=='string'||!d.itemId||!
+        (u.hostname==='onedrive.live.com'||u.hostname.endsWith('.sharepoint.com')||
+         u.hostname.endsWith('.onedrive.com')))return null;
+      return u.href;
+    }
+    if(provider==='dropbox'){
+      if(!/^id:[\\w-]+$/.test(d.fileId||'')||u.hostname!=='www.dropbox.com'||
+        !u.pathname.startsWith('/home/')||u.search)return null;
+      try{if(decodeURIComponent(u.pathname.slice('/home/'.length))!==d.name)return null;}
+      catch{return null;}
+      return u.href;
+    }
+    return null;
+  }
+  const openable=record=>!!(locator(record)||cloudTarget(record));
   function valid(intent){return intent?.locator&&locator({ok:true,verified:true,destination:intent.locator})&&typeof intent.token==='string'&&Number.isFinite(intent.issuedAt)&&Date.now()-intent.issuedAt<lifetime&&intent.issuedAt<=Date.now()+1000;}
   let mode='tab',openingEpoch=0;
   const normalized=value=>value==='side'||value==='split'?'split':'tab';
@@ -124,6 +154,14 @@
     tabLane=operation;return operation;
   }
   function open(record){
+    const external=cloudTarget(record);
+    if(external){
+      const ticket=++openingEpoch;report('');
+      void chrome.tabs.create({url:external,active:true}).catch(()=>{
+        if(ticket===openingEpoch)report('Could not open the saved file in its cloud. Check your cloud login.');
+      });
+      return;
+    }
     const target=locator(record);if(!target)return;
     const ticket=++openingEpoch;
     report(''); // A new GO TO owns the status; do not carry a prior attempt's diagnostic.
@@ -147,7 +185,7 @@
     chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));
     return {tab:ownTab,windowId:win.id};
   }
-  globalThis.RedownHistoryNavigation={locator,valid,open,preference,receive};
+  globalThis.RedownHistoryNavigation={locator,cloudTarget,openable,valid,open,preference,receive};
   const select=document.getElementById('history-go-to-mode');
   if(select){void preference.then(()=>{select.value=mode;});select.onchange=async()=>{try{await chrome.storage.local.set({historyGoToMode:normalized(select.value)});}catch(e){report('Could not save navigation preference: '+e.message);}};}
 })();
