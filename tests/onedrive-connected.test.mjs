@@ -87,6 +87,55 @@ test('OneDrive source filter rejects local/private links and filename path injec
   assert.equal(api.sourceSnapshot({srcUrl:'https://cdn.example.org/picture.png?token=secret'}).sourceUrl,
     'https://cdn.example.org/picture.png');
 });
+test('extensionless OneDrive files recover safe names from response headers and first streamed bytes',async()=>{
+  const f=fixture();load(f.context,'onedrive-api.js');
+  const resolver=f.context.RedownOneDriveAPI.uploadFileName;
+  const headers=fields=>({get:k=>fields[k.toLowerCase()]||null});
+  const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
+  const zip=new Uint8Array([80,75,3,4,0,0,0,0]);
+  assert.equal(resolver('images 2',headers({'content-type':'application/octet-stream'}),png),'images 2.png');
+  assert.equal(resolver('images 2',headers({'content-type':'image/jpeg'}),new Uint8Array([1,2,3])),'images 2.jpg');
+  assert.equal(resolver('download',headers({'content-disposition':"attachment; filename*=UTF-8''caf%C3%A9.png",
+    'content-type':'application/octet-stream'}),png),'café.png');
+  assert.equal(resolver('archive',headers({'content-type':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}),zip),'archive.docx');
+  assert.equal(resolver('unknown',headers({}),new Uint8Array([1,2,3])),'unknown.bin');
+  assert.equal(resolver('original.gif',headers({'content-type':'image/png'}),png),'original.gif');
+  assert.equal(resolver('download',headers({'content-disposition':'attachment; filename="../unsafe?.png"'}),png),
+    '.._unsafe_.png');
+
+  const url='https://cdn.example.org/images%202',uploadUrl='https://sn3302.up.1drv.com/up/fixture';
+  let savedName='',bytesSent=0;
+  const fetch=async(target,init={})=>{
+    if(target===url)return {ok:true,status:200,
+      headers:headers({'content-length':String(png.length),'content-type':'application/octet-stream'}),
+      body:new ReadableStream({start(c){c.enqueue(png);c.close();}})};
+    if(target.endsWith('/createUploadSession')){
+      savedName=JSON.parse(init.body).item.name;
+      assert.ok(target.includes(encodeURIComponent(savedName)));
+      return {ok:true,status:200,json:async()=>({uploadUrl})};
+    }
+    if(target===uploadUrl){
+      bytesSent+=init.body.length;
+      assert.deepEqual(Array.from(init.body),Array.from(png));
+      return {ok:true,status:201,json:async()=>({id:'image-item'})};
+    }
+    if(target.includes('/me/drive/items/image-item?'))
+      return {ok:true,status:200,json:async()=>({id:'image-item',name:savedName,size:png.length,
+        parentReference:{id:'root',driveId:'drive'},file:{}})};
+    throw Error('Unexpected fetch '+target);
+  };
+  const c=vm.createContext({chrome:f.chrome,fetch,URL,URLSearchParams,TextEncoder,
+    Uint8Array,ReadableStream,AbortSignal,AbortController,Date,console,setTimeout,clearTimeout});
+  load(c,'onedrive-api.js');
+  const source=c.RedownOneDriveAPI.sourceSnapshot({srcUrl:url});
+  const receipt=await c.RedownOneDriveAPI.create().upload(source,{
+    token:'access',driveId:'drive',rootId:'root',connectionId:'fixture-connection'});
+  assert.equal(savedName,'images 2.png');
+  assert.equal(receipt.name,'images 2.png');
+  assert.equal(receipt.bytes,png.length);
+  assert.equal(bytesSent,png.length);
+});
 test('root session uses Keep Both, sequential 320 KiB aligned parts and verified returned name',async()=>{
   const f=fixture();load(f.context,'onedrive-api.js');
   const size=6*1024*1024+123,bytes=new Uint8Array(size);bytes.fill(31);
@@ -152,7 +201,7 @@ test('truncated source never sends a final upload chunk or claims success',async
 });
 
 
-test('opaque Graph-provided host requires account-bound approval, never the source-site grant alone',async()=>{
+test('Graph upload host uses one-time site grant, never a per-host confirmation or source URL',async()=>{
   const f=fixture();
   const source='https://cdn.example.org/file.bin?private=source-query';
   const opaque='https://edge-upload.public-cloud.net/new/session?uploadToken=SECRET';
@@ -174,24 +223,18 @@ test('opaque Graph-provided host requires account-bound approval, never the sour
   load(context,'onedrive-api.js');
   const api=context.RedownOneDriveAPI.create();
   const identity={token:'synthetic-graph-token',driveId:'drive',rootId:'root',connectionId:'account-1'};
-  // Chrome may already permit this host as a *source* site. That is not consent to upload there.
+  f.chrome.permissions.contains=async()=>false;
   const denied=await api.upload({kind:'url',url:source,name:'file.bin'},identity).catch(e=>e);
-  assert.equal(denied.code,'ONEDRIVE_UPLOAD_HOST_PERMISSION');
-  assert.equal(denied.uploadOrigin,'https://edge-upload.public-cloud.net');
-  assert.equal(JSON.stringify(denied).includes('uploadToken'),false);
+  assert.equal(denied.code,'ONEDRIVE_SITE_PERMISSION_REQUIRED');
   assert.equal(chunks.length,0);
-  f.local['onedrive:trustedUploadOrigins']={
-    connectionId:'different-account',origins:['https://edge-upload.public-cloud.net']};
-  const wrongAccount=await api.upload({kind:'url',url:source,name:'file.bin'},identity).catch(e=>e);
-  assert.equal(wrongAccount.code,'ONEDRIVE_UPLOAD_HOST_PERMISSION');
-  f.local['onedrive:trustedUploadOrigins']={
-    connectionId:'account-1',origins:['https://edge-upload.public-cloud.net']};
+  f.chrome.permissions.contains=async()=>true;
   const receipt=await api.upload({kind:'url',url:source,name:'file.bin'},identity);
   assert.equal(receipt.itemId,'uploaded-item');
   assert.equal(chunks.length,1);
   assert.equal(chunks[0].headers.Authorization,undefined);
   assert.equal(chunks[0].referrerPolicy,'no-referrer');
   assert.equal(JSON.stringify(chunks[0]).includes(source),false);
+  assert.equal(JSON.stringify(chunks[0]).includes('synthetic-graph-token'),false);
 });
 test('source link provenance stays in REDOWN; Graph gets filename and bytes only',async()=>{
   const f=fixture();
