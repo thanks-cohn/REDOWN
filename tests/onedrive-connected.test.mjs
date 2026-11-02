@@ -94,6 +94,7 @@ test('extensionless OneDrive files recover safe names from response headers and 
   const png=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
   const zip=new Uint8Array([80,75,3,4,0,0,0,0]);
   assert.equal(resolver('images 2',headers({'content-type':'application/octet-stream'}),png),'images 2.png');
+  assert.equal(resolver('images 2',headers({'content-type':'image/jpeg'}),png),'images 2.png');
   assert.equal(resolver('images 2',headers({'content-type':'image/jpeg'}),new Uint8Array([1,2,3])),'images 2.jpg');
   assert.equal(resolver('download',headers({'content-disposition':"attachment; filename*=UTF-8''caf%C3%A9.png",
     'content-type':'application/octet-stream'}),png),'café.png');
