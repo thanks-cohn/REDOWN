@@ -72,15 +72,32 @@
         if(!await permission)throw RedownDropboxAuth.fail('Source access was not granted. Click again to retry.');
         await captureDownloadName(source,info,tab);
         const s=await get('dropbox:state');
+        // The stored state is only a projection: MV3 can suspend the worker
+        // while "connecting" or after refresh expiry. Never silently return
+        // or enqueue a save on state alone.
         if(s?.phase==='connected'&&s.rootReady===true&&s.accountId&&s.connectionId&&s.namespace){
-          const job=await enqueue(source,{accountId:s.accountId,connectionId:s.connectionId,namespace:s.namespace});if(job){await receipt(job);void wake();}return;
+          try{
+            const identity=await auth.ready(undefined,false);
+            if(identity.accountId!==s.accountId||identity.connectionId!==s.connectionId||identity.namespace!==s.namespace)
+              throw RedownDropboxAuth.fail('Dropbox account state changed. Reconnect before saving.');
+            const job=await enqueue(source,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace});
+            if(job){await receipt(job);void wake();}
+            return;
+          }catch{
+            // ready() marks stale credentials as reconnect. Authenticate below.
+            // Never reuse an unverified old account/root as upload authority.
+          }
         }
-        // Disconnected flat menu: authenticate, then resume this exact queued click.
-        if(s?.phase==='connecting')return;
+        // Disconnected, stale "connecting", or failed refresh: login and then
+        // continue this same click. Auth client deduplicates active OAuth.
         if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}
-        const old=await get('dropbox:auth'),job=await enqueue(source,{},'awaiting-auth');if(!job)return;pendingAuth.add(job.id);await receipt(job);
+        const old=await get('dropbox:auth');
+        const login=auth.connect(); // Start OAuth before queuing and History work.
+        void login.catch(()=>{}); // Paired with awaited login below; no unhandled rejection.
+        const job=await enqueue(source,{},'awaiting-auth');if(!job){await login.catch(()=>{});return;}
+        pendingAuth.add(job.id);await receipt(job);
         try{
-          const identity=await auth.connect();if((await jobs()).find(j=>j.id===job.id)?.status!=='awaiting-auth')return;if(old?.accountId&&old.accountId!==identity.accountId)throw RedownDropboxAuth.fail('Dropbox account changed. Click the file again to save to this account.');
+          const identity=await login;if((await jobs()).find(j=>j.id===job.id)?.status!=='awaiting-auth')return;if(old?.accountId&&old.accountId!==identity.accountId)throw RedownDropboxAuth.fail('Dropbox account changed. Click the file again to save to this account.');
           if(Date.now()-job.at>10*60*1000)throw RedownDropboxAuth.fail('Pending save expired. Click the file again.');
           Object.assign(job,{accountId:identity.accountId,connectionId:identity.connectionId,namespace:identity.namespace,status:'queued'});await save(job);await receipt(job);void wake();
         }catch(e){job.status='blocked';job.error=e.status?e.message:'Dropbox login could not be completed.';await save(job);await receipt(job);}
