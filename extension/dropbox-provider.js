@@ -69,9 +69,14 @@
         permission=chrome.permissions.request({origins:[RedownDropboxAPI.sourceURL(source.url).origin+'/*']});
       }catch(e){const job={id:crypto.randomUUID(),status:'blocked',error:e.status?e.message:'No supported file was clicked.'};await save(job);await receipt(job);return;}
       try{
-        if(!await permission)throw RedownDropboxAuth.fail('Source access was not granted. Click again to retry.');
-        await captureDownloadName(source,info,tab);
         const s=await get('dropbox:state');
+        const wasConnected=s?.phase==='connected'&&s.rootReady===true&&s.accountId&&s.connectionId&&s.namespace;
+        // Opening Dropbox login must not be hidden behind a separate source-host
+        // permission result. Both are independently required for a remote save.
+        const earlyLogin=wasConnected?null:auth.connect();
+        void earlyLogin?.catch(()=>{});
+        if(!await permission)throw RedownDropboxAuth.fail('Source access was not granted. Dropbox login may continue, but no file was saved. Click again after granting access.');
+        await captureDownloadName(source,info,tab);
         // The stored state is only a projection: MV3 can suspend the worker
         // while "connecting" or after refresh expiry. Never silently return
         // or enqueue a save on state alone.
@@ -92,7 +97,7 @@
         // continue this same click. Auth client deduplicates active OAuth.
         if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}
         const old=await get('dropbox:auth');
-        const login=auth.connect(); // Start OAuth before queuing and History work.
+        const login=earlyLogin||auth.connect(); // Start OAuth before queuing and History work.
         void login.catch(()=>{}); // Paired with awaited login below; no unhandled rejection.
         const job=await enqueue(source,{},'awaiting-auth');if(!job){await login.catch(()=>{});return;}
         pendingAuth.add(job.id);await receipt(job);
