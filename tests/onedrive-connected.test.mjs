@@ -116,7 +116,7 @@ test('root session uses Keep Both, sequential 320 KiB aligned parts and verified
   const item=await api.upload({url:source,name:'image.png'},
     {token:'access',driveId:'drive',rootId:'root'},p=>{checkpoints.push({...p});});
   assert.equal(item.name,'image (1).png');assert.equal(item.bytes,size);
-  assert.equal(created.length,1);assert.match(created[0].url,/items\\/root:.*createUploadSession/);
+  assert.equal(created.length,1);assert.ok(created[0].url.includes('/items/root:'));assert.ok(created[0].url.endsWith(':/createUploadSession'));
   const requestBody=JSON.parse(created[0].init.body);
   assert.equal(requestBody.item['@microsoft.graph.conflictBehavior'],'rename');
   assert.equal(uploads.length,2);
