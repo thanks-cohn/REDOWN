@@ -308,9 +308,9 @@ test('Shelf grants only an exact upload origin and never persists opaque session
   assert.match(button.textContent,/new-graph-origin.public-cloud.net/);
   button.click();
   await new Promise(r=>setImmediate(r));
-  assert.deepEqual(requests,[{origins:['https://new-graph-origin.public-cloud.net/*']}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[{origins:['https://new-graph-origin.public-cloud.net/*']}]);
   assert.equal(local['onedrive:trustedUploadOrigins'].connectionId,'connection-1');
-  assert.deepEqual(local['onedrive:trustedUploadOrigins'].origins,['https://new-graph-origin.public-cloud.net']);
+  assert.deepEqual(JSON.parse(JSON.stringify(local['onedrive:trustedUploadOrigins'].origins)),['https://new-graph-origin.public-cloud.net']);
   assert.equal(local['onedrive:transfer'].code,'ONEDRIVE_UPLOAD_HOST_READY');
   assert.equal(JSON.stringify(local).includes('uploadToken'),false);
   assert.equal(button.hidden,true);
