@@ -74,7 +74,7 @@
     // A mouse click must not toggle a panel that hover already opened.
     // Touch activation retains the browser's native details/summary toggle.
     trigger.addEventListener('click',event=>{
-      if(hoverEnabled()){event.preventDefault();open();}
+      if(hoverEnabled())event.preventDefault(); // Hover controls opening; click never toggles it on desktop.
       else {cancelClose();for(const other of menus)if(other!==details)other.open=false;}
     });
     details.addEventListener('focusin',()=>open());
