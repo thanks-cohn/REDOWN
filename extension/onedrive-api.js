@@ -126,11 +126,12 @@
     const preferred=headerName?fileName(headerName):supplied;
     if(/\.[\p{L}\p{N}]{1,16}$/u.test(preferred))return preferred;
     const mime=String(headers?.get?.('content-type')||'').split(';')[0].trim().toLowerCase();
-    // Trust a specific declared media type before generic ZIP magic, so EPUB,
-    // Office documents and comic archives do not become ordinary .zip files.
+    // A strong byte signature outranks a mistaken server MIME type, except
+    // that ZIP-based Office/EPUB/comic files need their more specific MIME.
     const specific=MIME_EXTENSIONS[mime]||'';
     const magic=magicExtension(firstBytes);
-    const ext=specific&&specific!=='.zip'?specific:magic||specific||'.bin';
+    const wrappedZip=magic==='.zip'&&['.docx','.xlsx','.pptx','.epub','.cbz'].includes(specific);
+    const ext=wrappedZip?specific:magic||specific||'.bin';
     return fileName(preferred+ext);
   }
   function sourceSnapshot(info){
