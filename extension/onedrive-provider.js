@@ -9,7 +9,10 @@
     const get=async key=>(await chrome.storage.local.get(key))[key];
     const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':s});
     const problem=e=>({code:e?.code||'ONEDRIVE_FAILED',error:e?.code?e.message:'OneDrive operation failed.',
-      status:terminal.has(e?.status)?e.status:'failed'});
+      status:terminal.has(e?.status)?e.status:'failed',
+      ...(e?.code==='ONEDRIVE_UPLOAD_HOST_PERMISSION'&&
+         typeof e.uploadOrigin==='string'&&e.uploadOrigin.startsWith('https://')?
+        {uploadOrigin:e.uploadOrigin}:{})});
     async function saveRecord(job){
       const ok=job.status==='completed',item=job.item||{},src=job.source||{};
       try{await record({provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
@@ -46,7 +49,7 @@
           }
           job.status=p.status;job.code=p.code;job.error=p.error;
           await setTransfer({status:job.status,code:job.code,error:job.error,name:job.name,
-            bytes:job.bytes,total:job.total});
+            bytes:job.bytes,total:job.total,...(p.uploadOrigin?{uploadOrigin:p.uploadOrigin}:{})});
         }finally{
           await saveRecord(job);
           if(active===job)active=null;
