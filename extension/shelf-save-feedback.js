@@ -10,7 +10,8 @@
   // A verified upload's storage notification may reach an inactive Shelf just
   // before Chrome reveals it again. Allow a brief live-event handoff, NEVER
   // replay a receipt merely because it was read during startup hydration.
-  const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<20000;
+  const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<3000;
+  const freshReceipt=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<20000;
   function impact(value){
     const at=typeof value==='number'?value:value?.at,id=value?.id||at;
     if(!fresh(at)||id===impactId||at<impactAt)return;
@@ -26,7 +27,7 @@
   }
   function celebrate(receipt){
     if(receipt?.verified!==true||!receipt.id?.startsWith(receipt.provider+':')||seen.has(receipt.id)||!cards.has(receipt.provider))return;
-    if(!fresh(receipt.at))return;
+    if(!freshReceipt(receipt.at))return;
     // One worker may commit the proven Dropbox receipt before its connection
     // state change reaches this Shelf. Do not consume the celebration ID until
     // its original account/connection identity is validated.
@@ -79,9 +80,17 @@
           Math.max(1,count.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2):
           isNumber?Math.max(1,count.clientWidth||40):
           count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
-        if(available&&count.scrollWidth>available){
+        let required=count.scrollWidth;
+        if(neonNumber){
+          // scrollWidth includes the bezel's hot-pink padding; measure actual
+          // digit glyphs so single-digit counts stay BIG, not shrunken at 0.
+          const range=document.createRange();
+          range.selectNodeContents(count);
+          required=range.getBoundingClientRect().width||0;
+        }
+        if(available&&required>available){
           const size=parseFloat(getComputedStyle(count).fontSize);
-          count.style.fontSize=Math.max(1,size*available/count.scrollWidth*.96)+'px';
+          count.style.fontSize=Math.max(1,size*available/required*.96)+'px';
         }
       }
     }
