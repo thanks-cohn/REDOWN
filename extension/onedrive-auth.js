@@ -161,7 +161,7 @@
     }
     async function disconnect(){
       epoch++;cached=null;
-      await chrome.storage.local.remove(['onedrive:auth','onedrive:transfer']);
+      await chrome.storage.local.remove(['onedrive:auth','onedrive:transfer','onedrive:trustedUploadOrigins']);
       await chrome.storage.session.remove('onedrive:oauth').catch(()=>{});
       await setState({phase:'disconnected'});
     }
