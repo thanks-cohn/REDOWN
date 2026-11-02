@@ -206,6 +206,72 @@
         line.append(display);values.append(line);
       }
       disclosure.append(values);content.append(disclosure);
+      // Public addresses can be enabled or changed long after the original
+      // save. Refresh only when the user opens THIS item's URL drawer.
+      // Historical provenance remains immutable and fully visible offline.
+      const safeKey=typeof d.key==='string'&&d.key&&!d.key.endsWith('/')&&
+        !/[\\\x00-\x1f]/.test(d.key)&&d.key.split('/').every(part=>
+          part&&part!=='.'&&part!=='..');
+      const refreshable=verified&&info.isCloudflare&&safeKey&&
+        typeof d.accountId==='string'&&!!d.accountId&&
+        typeof d.bucketName==='string'&&!!d.bucketName;
+      if(refreshable){
+        const live=create('div','','history-live-bucket-urls');
+        const note=create('small','','history-live-url-status');
+        note.setAttribute('role','status');
+        live.append(note);values.prepend(live);
+        let serial=0;
+        const currentUrl=(base,key)=>{
+          try{
+            const url=new URL(base);
+            if(url.protocol!=='https:'||url.username||url.password||
+               url.search||url.hash||!url.pathname.endsWith('/')||
+               !url.hostname||url.port&&url.port!=='443')return null;
+            return url.href+key.split('/').map(encodeURIComponent).join('/');
+          }catch{return null;}
+        };
+        const refresh=async()=>{
+          const ticket=++serial;
+          live.replaceChildren(note);
+          note.textContent='Checking current bucket addresses…';
+          const isCurrent=()=>ticket===serial&&disclosure.open&&live.isConnected;
+          try{
+            // Object existence is checked before public address derivation.
+            // Configured bucket domains alone do not establish the file exists.
+            const object=await chrome.runtime.sendMessage({type:'cfObjectProperties',
+              accountId:d.accountId,bucketName:d.bucketName,key:d.key});
+            if(!isCurrent())return;
+            if(object?.ok!==true||object.object?.key!==d.key)
+              throw Error('Saved object could not be verified.');
+            const addresses=await chrome.runtime.sendMessage({type:'cfPublicAddresses',
+              accountId:d.accountId,bucketName:d.bucketName});
+            if(!isCurrent())return;
+            if(addresses?.ok!==true||!Array.isArray(addresses.addresses))
+              throw Error('Bucket addresses are unavailable.');
+            const fresh=new Set();
+            for(const address of addresses.addresses){
+              if(address?.state!=='configured')continue;
+              const url=currentUrl(address.base,d.key);
+              if(!url||fresh.has(url)||seen.has(url))continue;
+              fresh.add(url);
+              const line=create('div','','history-entry-url');
+              line.append(create('span',(text(address.label)||'Cloudflare')+' · current configured URL','history-entry-url-label'));
+              const value=create('code',url,'history-entry-url-text');
+              value.title=url;line.append(value);live.append(line);
+            }
+            note.textContent=fresh.size?
+              'Current bucket addresses · access depends on public settings':
+              'No additional configured file URLs found.';
+            if(addresses.errors?.length)note.textContent+=' Some addresses could not be checked.';
+          }catch{
+            if(isCurrent())note.textContent='Current bucket URLs could not be refreshed. Original History URLs are unchanged.';
+          }
+        };
+        disclosure.addEventListener('toggle',()=>{
+          if(disclosure.open)void refresh();
+          else serial++;
+        });
+      }
     }
     if(record.error){
       const technical=create('details','','history-technical-details');
