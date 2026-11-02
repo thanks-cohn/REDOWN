@@ -1,52 +1,88 @@
-/* Worker glue only: no source bytes, OAuth tokens or native menu writer here. */
+/* One worker-owned queue. Receipts are journaled before History, replayed by ID. */
 (() => {
   'use strict';
-  let opening=Promise.resolve();
-  function open(action,info={}){
-    const operation=opening.catch(()=>{}).then(async()=>{
-      const page=chrome.runtime.getURL('google-drive-transfer.html');
-      const tabs=await chrome.tabs.query({url:page+'*'});
-      const state=await chrome.storage.local.get(['googleDriveTransfer','googleDriveState']);
-      if(tabs.length&&(state.googleDriveTransfer?.status==='active'||state.googleDriveState?.phase==='connecting')){await chrome.tabs.update(tabs[0].id,{active:true});return;}
-      const id=crypto.randomUUID();
-      await chrome.storage.session.set({['googleDriveJob:'+id]:{action,sourceUrl:info.srcUrl||info.linkUrl||info.pageUrl||'',at:Date.now()}});
-      if(tabs.length)await chrome.tabs.update(tabs[0].id,{active:true,url:page+'?job='+id+'#'+id});
-      else await chrome.tabs.create({url:page+'?job='+id+'#'+id});
-    });opening=operation;return operation;
-  }
-  async function dispatch(info){
-    if(info.menuItemId!=='provider:google-drive')return;
-    const {googleDriveState:state}=await chrome.storage.local.get('googleDriveState');
-    if(state?.phase==='connecting')return;
-    return open(state?.phase==='connected'&&/^[\w-]+$/.test(state.folderId||'')?'save':'connect',info);
-  }
-  let record;
-  function install(recorder){
-    record=recorder;
-    async function recoverClosedPage(){
-      if((await chrome.tabs.query({url:chrome.runtime.getURL('google-drive-transfer.html')+'*'})).length)return;
-      const s=await chrome.storage.local.get(['googleDriveState','googleDriveTransfer']);
-      if(s.googleDriveState?.phase==='connecting')await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});
-      if(s.googleDriveTransfer?.status==='active'){
-        await chrome.storage.local.set({googleDriveTransfer:{status:'uncertain'}});
-        await record({provider:'Google Drive',profileName:'REDOWN',status:'uncertain',transport:'browser-mediated',error:'Transfer tab closed or interrupted. Check Google Drive before retrying.'});
-      }
+  const KEY='googleDriveJobs',terminal=new Set(['completed','failed','blocked','cancelled','uncertain']);
+  function create({chrome=globalThis.chrome,api,record=async()=>{}}={}){
+    let client;const getClient=()=>client||(client=RedownGoogleDriveStream.create({chrome}));
+    api=api||{connect:(...args)=>getClient().connect(...args),upload:(...args)=>getClient().upload(...args)};
+    let lane=Promise.resolve(),running=null,controller=null,connecting=null;
+    const clicks=new WeakSet();
+    const serial=fn=>{const p=lane.catch(()=>{}).then(fn);lane=p;return p;};
+    const jobs=async()=>(await chrome.storage.local.get(KEY))[KEY]||[];
+    async function save(job){return serial(async()=>{
+      const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;
+      const done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24),pending=all.filter(j=>!terminal.has(j.status)||!j.reported);
+      await chrome.storage.local.set({[KEY]:[...done,...pending],googleDriveTransfer:{id:job.id,status:job.status,bytes:job.offset||0,total:job.total??null,error:job.error||''}});
+    });}
+    async function receipt(job){
+      const ok=job.status==='completed',r=job.result;
+      await record({provider:'Google Drive',providerKind:'google-drive',profileId:'google-drive:'+job.accountId,profileName:job.folderId?'Google Drive destination':'My Drive',deliveryId:'google-drive:'+job.id,transferId:job.id,filename:r?.name||job.name||'Web file',status:job.status,ok:ok?true:['blocked','failed'].includes(job.status)?false:undefined,verified:ok,location:ok?'https://drive.google.com/file/d/'+r.fileId+'/view':'',destination:{provider:'google-drive',...r},bytes:r?.bytes||job.offset||0,transport:'browser-mediated',error:job.error});
+      job.reported=true;await save(job);
     }
-    chrome.tabs.onRemoved.addListener(()=>{void recoverClosedPage().catch(()=>{});});
-    void recoverClosedPage().catch(()=>{});
+    async function pump(){
+      if(running)return running;
+      running=(async()=>{
+        const attempted=new Set();
+        while(true){
+          const job=(await jobs()).find(j=>!attempted.has(j.id)&&(!terminal.has(j.status)||!j.reported));if(!job)break;attempted.add(job.id);
+          if(terminal.has(job.status)){if(!job.reported)await receipt(job);continue;}
+          controller=new AbortController();
+          try{job.status='active';await save(job);job.result=await api.upload(job,save,controller.signal);job.status='completed';job.error='';}
+          catch(e){job.error=e.message||'Google save interrupted. Check Drive.';job.status=terminal.has(e.status)?e.status:'interrupted';job.attempts=(job.attempts||0)+1;if(job.status==='interrupted'&&job.attempts>=3)job.status='uncertain';}
+          finally{controller=null;}
+          await save(job);if(terminal.has(job.status))await receipt(job);
+        }
+      })().finally(async()=>{running=null;if(!(await jobs()).some(j=>!terminal.has(j.status)||!j.reported))await chrome.alarms.clear?.('google-drive:resume');});return running;
+    }
+    async function wake(){
+      const legacy=(await chrome.storage.local.get('googleDriveTransfer')).googleDriveTransfer;
+      if(legacy?.status==='active'&&!(await jobs()).some(j=>j.id===legacy.id))await chrome.storage.local.set({googleDriveTransfer:{status:'uncertain',error:'An earlier transfer-page save was interrupted. Check Drive before saving again.'}});
+      await chrome.alarms.create('google-drive:resume',{periodInMinutes:.5});return pump();
+    }
+    async function enqueue(source,accountId){return serial(async()=>{
+      const all=await jobs();if(all.filter(j=>!terminal.has(j.status)||!j.reported).length>=8)throw Error('Google Drive queue is full. Wait, then try again.');
+      const job={id:crypto.randomUUID(),accountId,source,status:'queued',offset:0,phase:'source',at:Date.now()};
+      all.push(job);await chrome.storage.local.set({[KEY]:all});return job;
+    });}
+    async function connect(){
+      if(connecting)return connecting;
+      // Called only from a native click or the Shelf's explicit login button.
+      connecting=api.connect(true).finally(()=>{connecting=null;});return connecting;
+    }
+    async function dispatch(info){
+      if(info.menuItemId!=='provider:google-drive'||clicks.has(info))return;clicks.add(info);
+      try{
+        const source={url:RedownGoogleDriveStream.sourceURL(info.srcUrl||info.linkUrl||info.pageUrl||'').href,...(info.downloadFilename?{downloadFilename:String(info.downloadFilename)}:{})};
+        // Existing broad source grants normally make this unnecessary; request
+        // new access only during the initiating browser gesture.
+        const access={origins:[new URL(source.url).origin+'/*']};
+        const permission=chrome.permissions.request(access);
+        const current=await chrome.storage.local.get('googleDriveState');
+        if(current.googleDriveState?.phase==='connecting')return;
+        const identity=current.googleDriveState?.phase==='connected'&&current.googleDriveState.accountId?Promise.resolve(current.googleDriveState.accountId):connect();
+        const [granted,accountId]=await Promise.all([permission,identity]);if(!granted)throw Error('Source access was not granted. Click again to retry.');
+        await enqueue(source,accountId);void wake().catch(()=>{});
+      }catch(e){await chrome.storage.local.set({googleDriveTransfer:{status:'blocked',error:e.message||'Reconnect Google Drive and try again.'}});}
+    }
+    const ownsMessage=m=>['googleDriveOpen','googleDriveStatus','googleDriveCancel'].includes(m?.type);
+    async function message(m,sender){
+      if(sender.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false};
+      try{
+        if(m.type==='googleDriveOpen'){await connect();return {ok:true};}
+        if(m.type==='googleDriveStatus'){void wake().catch(()=>{});return {ok:true};}
+        if(m.type==='googleDriveCancel'){
+          controller?.abort();for(const j of await jobs())if(['queued','interrupted'].includes(j.status)){j.status='cancelled';j.error='Save cancelled.';await save(j);await receipt(j);}return {ok:true};
+        }
+      }catch{return {ok:false,error:'Google Drive needs attention. Reconnect and try again.'};}return {ok:false};
+    }
+    function install(){
+      chrome.alarms.onAlarm.addListener(a=>{if(a.name==='google-drive:resume')void pump().catch(()=>{});});
+      chrome.runtime.onStartup.addListener(()=>void wake().catch(()=>{}));
+      chrome.runtime.onInstalled.addListener(()=>void wake().catch(()=>{}));
+      void wake().catch(()=>{});
+    }
+    return {dispatch,message,ownsMessage,install,pump};
   }
-  const ownsMessage=message=>['googleDriveOpen','googleDriveReceipt'].includes(message?.type);
-  async function message(message,sender){
-    const allowed=[chrome.runtime.getURL('shelf.html'),chrome.runtime.getURL('google-drive-transfer.html')];
-    if(sender.id!==chrome.runtime.id||!allowed.includes(sender.url?.split(/[?#]/)[0]))return {ok:false};
-    if(message.type==='googleDriveOpen'){await open('connect');return {ok:true};}
-    if(message.type!=='googleDriveReceipt'||sender.url?.split(/[?#]/)[0]!==allowed[1])return {ok:false};
-    const r=message.receipt;
-    if(!r||!['completed','failed','cancelled','blocked','uncertain'].includes(r.status))return {ok:false};
-    const complete=r.status==='completed'&&/^[\w-]+$/.test(r.fileId||'')&&/^[\w-]+$/.test(r.folderId||'')&&Number.isSafeInteger(r.bytes)&&r.bytes>=0;
-    if(r.status==='completed'&&!complete)return {ok:false};
-    await record({provider:'Google Drive',profileName:'REDOWN',filename:String(r.name||'Web file').slice(0,240),status:r.status,ok:complete?true:r.status==='failed'||r.status==='blocked'?false:undefined,verified:complete,location:complete?'https://drive.google.com/file/d/'+r.fileId+'/view':'',destination:{provider:'google-drive',folderId:r.folderId,fileId:r.fileId},bytes:r.bytes,transport:'browser-mediated',error:complete?undefined:'Google Drive: '+r.status});
-    return {ok:true};
-  }
-  globalThis.RedownGoogleDriveProvider={dispatch,install,ownsMessage,message};
+  let instance;
+  globalThis.RedownGoogleDriveProvider={create,install(record){instance=create({record});instance.install();},dispatch:info=>instance.dispatch(info),message:(m,s)=>instance.message(m,s),ownsMessage:m=>['googleDriveOpen','googleDriveStatus','googleDriveCancel'].includes(m?.type)};
 })();

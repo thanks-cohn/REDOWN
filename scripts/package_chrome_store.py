@@ -18,7 +18,7 @@ FILES = (
     'right-click-chooser.html', 'right-click-chooser.js', 'right-click-chooser.css', 'right-click-backup.js', 'right-click-backup-settings.js', 'right-click-current.js', 'right-click-v3.js', 'right-click-engine-settings.js', 'beta/right-click-v3-ui.js', 'beta/right-click-v3.css', 'storage-signals.js', 'public-addresses.js', 'explorer-status.js', 'options.html', 'options.js', 'popup.html',
     'popup.js', 'odometer.js', 'transfer-counter.js', 'rfis-index.js', 'model-viewer.min.js', 'manifest.json',
     'icon.svg', 'settings-mascot.js', 'settings-mascot.png', 'LICENSE', 'fonts/OFL.txt', 'fonts/README.md',
-    'fonts/dm-sans-latin-variable.woff',
+    'fonts/dm-sans-latin-variable.woff', 'assets/fonts/BitcountGridDoubleInk-OFL.txt',
     'icons/icon16.png', 'icons/icon32.png', 'icons/icon48.png', 'icons/icon128.png',
 )
 

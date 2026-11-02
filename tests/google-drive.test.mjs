@@ -89,17 +89,19 @@ test('actual shared native writer mode/provider races, restart, stale cache, par
 for(const uploadHttp of [401,403,429,500])test('mid-upload HTTP '+uploadHttp+' never reports success or replays a file create',async()=>{const f=fixture({uploadHttp});await f.drive.connect(true);await assert.rejects(f.drive.upload('https://source.invalid/file',{signal:new AbortController().signal}),e=>['blocked','uncertain'].includes(e.status));assert.equal(f.requests.filter(r=>r.url.includes('uploadType=resumable')).length,1);if(uploadHttp===401)assert.equal(f.store.googleDriveState.phase,'reconnect');});
 test('unknown-length overflow and HTML fail before any Drive upload',async()=>{for(const opts of [{source:new Uint8Array(MAX_BYTES+1),unknownLength:true},{mime:'text/html'}]){const f=fixture(opts);await f.drive.connect(true);await assert.rejects(f.drive.upload('https://source.invalid/file',{signal:new AbortController().signal}),e=>e.status==='blocked');assert.ok(!f.requests.some(r=>r.url.includes('/upload/')));}});
 test('cross-page folder creation uses an extension-origin Web Lock',async()=>{const f=fixture();let queue=Promise.resolve(),locksUsed=0;const locks={request:(name,fn)=>{assert.equal(name,'redown-google-drive-connection');locksUsed++;const p=queue.then(fn);queue=p.catch(()=>{});return p;}};const a=makeDrive({chrome:f.chrome,fetch:f.fetch,crypto:webcrypto,locks}),b=makeDrive({chrome:f.chrome,fetch:f.fetch,crypto:webcrypto,locks});await Promise.all([a.connect(true),b.connect(true)]);assert.equal(locksUsed,2);assert.equal(f.createCount,1);});
-test('provider receipt gate rejects untrusted pages and malformed success; history retains provider and verified file identity',async()=>{
- const records=[],c=vm.createContext({crypto:webcrypto,chrome:{runtime:{id:'extension',getURL:p=>'chrome-extension://extension/'+p},tabs:{query:async()=>[{}],onRemoved:{addListener(){}}}}});vm.runInContext(await read('extension/google-drive-provider.js'),c);const p=c.RedownGoogleDriveProvider;p.install(async r=>records.push(r));
+test('Google external receipt gate rejects page-supplied success and never credits untrusted pages',async()=>{
+ const records=[],data={},c=vm.createContext({URL,crypto:webcrypto,chrome:{}});vm.runInContext(await read('extension/google-drive-provider.js'),c);
+ const chrome={runtime:{id:'extension',getURL:p=>'chrome-extension://extension/'+p},storage:{local:{get:async()=>data,set:async v=>Object.assign(data,v)}}};
+ const p=c.RedownGoogleDriveProvider.create({chrome,api:{},record:async r=>records.push(r)});
  const receipt={status:'completed',fileId:'file1',folderId:'folder',bytes:10,name:'file.png'};
- assert.equal((await p.message({type:'googleDriveReceipt',receipt},{id:'evil',url:'https://evil.invalid'})).ok,false);assert.equal(records.length,0);
- const sender={id:'extension',url:'chrome-extension://extension/google-drive-transfer.html#session'};
- assert.equal((await p.message({type:'googleDriveReceipt',receipt:{...receipt,fileId:'https://evil.invalid'}},sender)).ok,false);
- assert.equal((await p.message({type:'googleDriveReceipt',receipt},sender)).ok,true);assert.equal(records[0].provider,'Google Drive');assert.equal(records[0].verified,true);assert.equal(records[0].destination.fileId,'file1');
+ for(const sender of [{id:'evil',url:'https://evil.invalid'},{id:'extension',url:'chrome-extension://extension/google-drive-transfer.html#session'},{id:'extension',url:'chrome-extension://extension/shelf.html'}])assert.equal((await p.message({type:'googleDriveReceipt',receipt},sender)).ok,false);
+ assert.equal(records.length,0);
 });
-test('repeated saves reuse the owned tab with a fresh job; active transfer is never replaced',async()=>{
- let tabs=[],store={googleDriveState:{phase:'connected',folderId:'folder'}},jobs=[],updates=[];const c=vm.createContext({crypto:webcrypto,chrome:{runtime:{getURL:p=>'chrome-extension://extension/'+p},storage:{local:{get:async k=>Object.fromEntries((Array.isArray(k)?k:[k]).map(key=>[key,store[key]]))},session:{set:async v=>jobs.push(v)}},tabs:{query:async()=>tabs,update:async(id,o)=>updates.push(o),create:async o=>{tabs=[{id:1,url:o.url}];}}}});vm.runInContext(await read('extension/google-drive-provider.js'),c);const p=c.RedownGoogleDriveProvider;
- await p.dispatch({menuItemId:'provider:google-drive',srcUrl:'https://source.invalid/first'});assert.equal(jobs.length,1);await p.dispatch({menuItemId:'provider:google-drive',srcUrl:'https://source.invalid/second'});assert.equal(jobs.length,2);assert.ok(updates[0].url.includes('?job='));store.googleDriveTransfer={status:'active'};await p.dispatch({menuItemId:'provider:google-drive',srcUrl:'https://source.invalid/third'});assert.equal(jobs.length,2);assert.equal(updates.at(-1).url,undefined);
+test('ordinary Google save route has no transfer tab or page-sized buffer; durable worker owns receipt creation',async()=>{
+ const provider=await read('extension/google-drive-provider.js'),client=await read('extension/google-drive-stream.js');
+ assert.doesNotMatch(provider,/chrome\.tabs|google-drive-transfer\.html|storage\.session/);
+ assert.match(provider,/googleDriveJobs/);assert.match(provider,/deliveryId:'google-drive:'/);
+ assert.match(client,/getReader/);assert.match(client,/new Uint8Array\(CHUNK\)/);assert.doesNotMatch(client,/32\s*\*\s*1024\s*\*\s*1024|arrayBuffer\(/);
 });
 test('multi-account active Depth inventory keeps exact native entries, order and per-prefix actions across every Google state',async()=>{
  const receipt=JSON.parse(await read('docs/verification/google-drive/mode-parity.json'));const c=vm.createContext({TextEncoder});vm.runInContext(domain,c);const m=c.RedownRightClickV3,g=menu();

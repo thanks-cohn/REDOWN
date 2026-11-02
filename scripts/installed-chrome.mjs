@@ -38,7 +38,7 @@ try{
  let loaded=false;for(let i=0;i<50;i++){loaded=await evaluate('typeof chrome?.runtime?.getManifest === "function" && !!document.getElementById("debug-mode-enabled")');if(loaded)break;await pause(100);}
  if(!loaded){const info=await call('Target.getTargets');record.targetTypes=info.targetInfos.map(t=>({type:t.type,extension:t.url.startsWith('chrome-extension://')}));record.pageTitle=await evaluate('document.title');throw Error('EXTENSION_NOT_LOADED_OR_AUTOMATION_UNSUPPORTED');}
  record.assertions.push({id:'real-options-context',passed:true});
- const targets=await call('Target.getTargets');if(!targets.targetInfos.some(t=>t.type==='service_worker'&&t.url===`chrome-extension://${extensionId}/background.js`))throw Error('BACKGROUND_SERVICE_WORKER_MISSING');
+ const targets=await call('Target.getTargets');if(!targets.targetInfos.some(t=>t.type==='service_worker'&&t.url===`chrome-extension://${extensionId}/${manifest.background.service_worker}`))throw Error('BACKGROUND_SERVICE_WORKER_MISSING');
  record.assertions.push({id:'real-service-worker',passed:true});
  const disabled=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"snapshot"})');
  if(disabled.code!=='DIAGNOSTICS_DISABLED')throw Error('DEBUG_GATE_FAILED');record.assertions.push({id:'debug-disabled',passed:true});

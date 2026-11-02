@@ -922,6 +922,7 @@ importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
+importScripts("google-drive-stream.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
 importScripts("dropbox-auth.js");
@@ -2770,9 +2771,10 @@ function launchSaveDroplet(info,tab){
     world:"ISOLATED",
     args:[sources],
     func:(clicked)=>{
-      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches||globalThis.matchMedia?.('(forced-colors: active)')?.matches)return;
       if(!document.documentElement||!document.body)return;
-      void chrome.storage.local.get('shelfColorScheme').then(data=>{
+      void chrome.storage.local.get(['shelfColorScheme','providerCelebrationPreferences']).then(data=>{
+        if(data.providerCelebrationPreferences?.effects===false)return;
         const colors={
           porcelain:['#bda3f4','#6743a2'],midnight:['#c0e6ff','#82c4fc'],
           ocean:['#9cf4e6','#2ccfc9'],neon:['#ff9ddb','#81fff0']
@@ -2858,12 +2860,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
+    if(typeof launchSaveDroplet==='function')launchSaveDroplet(info,tab);
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
-    await dropboxProvider.dispatch(info);return;
+    if(typeof launchSaveDroplet==='function')launchSaveDroplet(info,tab);
+    await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
+    if(typeof launchSaveDroplet==='function')launchSaveDroplet(info,tab);
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2926,7 +2931,7 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
   // Resolve from the active saved model at click time, never from a legacy
   // default or the previous native-menu snapshot.
   const {profile,owner,prefix}=resolved;
-  const receipt={};
+  const receipt={transferId:crypto.randomUUID()};
   try{
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
@@ -3045,7 +3050,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         const category = message.category || "files";
         try {
           if(Object.hasOwn(message,"prefix")&&typeof message.prefix!=="string")throw new Error("Choose a valid destination folder.");
-          const receipt={};
+          const receipt={transferId:crypto.randomUUID()};
           const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
             ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,receipt,message.betaNoProvision===true)
             : await ingest(profile, sourceUrl, category, message.filename || undefined, receipt);

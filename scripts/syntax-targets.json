@@ -95,5 +95,7 @@
   "extension/onedrive-api.js",
   "extension/onedrive-auth.js",
   "extension/onedrive-provider.js",
-  "extension/shelf-onedrive.js"
+  "extension/shelf-onedrive.js",
+  "extension/google-drive-stream.js",
+  "extension/shelf-celebrations.js"
 ]

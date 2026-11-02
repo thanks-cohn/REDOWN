@@ -49,18 +49,19 @@ test('upgrade retires every old child with missing or persisted ID cache, remova
   const again=worker(structuredClone(next.local),{nativeEntries:[...next.native]});await again.ready();await again.rebuild();assertFlat(again);
  }
 });
-test('Google direct action selects save/connect; busy and retired IDs create no jobs',async()=>{
- const w=worker();await w.ready();const jobs=[];
- w.chrome.tabs.query=async()=>[];w.chrome.tabs.create=async()=>{};
- w.chrome.storage.session.set=async v=>jobs.push(...Object.values(v));
- const p=w.context.RedownGoogleDriveProvider;
+test('Google direct action queues background save/connect; busy and retired IDs create no jobs',async()=>{
+ const w=worker();w.context.AbortController=AbortController;await w.ready();const sources=[],records=[];let connects=0;
+ w.chrome.permissions={request:async()=>true};
+ const p=w.context.RedownGoogleDriveProvider.create({chrome:w.chrome,record:async r=>records.push(r),api:{connect:async()=>{connects++;return 'account';},upload:async job=>{sources.push(job.source.url);return {name:'media.png',fileId:'file',bytes:1};}}});
  for(const phase of ['connected','disconnected','reconnect','expired']){
-  w.local.googleDriveState={phase,folderId:'folder'};
-  await p.dispatch({menuItemId:'provider:google-drive',srcUrl:'https://source.invalid/media.png',linkUrl:'https://source.invalid/link'});
-  assert.equal(jobs.at(-1).action,phase==='connected'?'save':'connect');assert.equal(jobs.at(-1).sourceUrl,'https://source.invalid/media.png');
+  w.local.googleDriveState={phase,accountId:'account'};
+  await p.dispatch({menuItemId:'provider:google-drive',srcUrl:'https://source.invalid/media.png',linkUrl:'https://source.invalid/link'});await p.pump();
+  assert.equal(sources.at(-1),'https://source.invalid/media.png');assert.equal(records.at(-1).verified,true);
  }
- const count=jobs.length;w.local.googleDriveState={phase:'connecting'};
- for(const id of ['provider:google-drive',...retired])await p.dispatch({menuItemId:id});assert.equal(jobs.length,count);
+ assert.equal(connects,3);assert.equal(records.length,4);
+ const count=w.local.googleDriveJobs.length;w.local.googleDriveState={phase:'connecting'};
+ for(const id of ['provider:google-drive',...retired])await p.dispatch({menuItemId:id,srcUrl:'https://source.invalid/media.png'});assert.equal(w.local.googleDriveJobs.length,count);
+ assert.ok(!w.calls.some(c=>c[0]==='tab'));
 });
 test('OneDrive direct state routing preserves exact source and revalidation; obsolete actions never connect or save',async()=>{
  let connects=0,uploads=0,checks=0;const local={};

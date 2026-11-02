@@ -36,8 +36,19 @@
     note.textContent=value===null?'Count unavailable. Reopen REDOWN to retry.':value==='0'?'Your first delivery awaits.':'Every delivery, a little further.';
     displayed=label;
   };
+  let soundEnabled=false,effectsEnabled=true,audio=null;
+  async function unlockAudio(){
+    if(!soundEnabled||!effectsEnabled||reduced())return;
+    try{const Context=globalThis.AudioContext||globalThis.webkitAudioContext;if(!Context)return;audio||=new Context();if(audio.state==='suspended')await audio.resume();}catch{}
+  }
+  function tickSound(){
+    if(!soundEnabled||!effectsEnabled||reduced()||audio?.state!=='running')return;
+    try{const buffer=audio.createBuffer(1,Math.ceil(audio.sampleRate*.018),audio.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length)**4;
+      const source=audio.createBufferSource(),gain=audio.createGain();gain.gain.value=.09;source.buffer=buffer;source.connect(gain);gain.connect(audio.destination);source.onended=()=>{source.disconnect();gain.disconnect();};source.start();}catch{}
+  }
+  document.addEventListener('pointerdown',()=>void unlockAudio(),{passive:true});document.addEventListener('keydown',()=>void unlockAudio());
   const roller=RedownOdometer.create({
-    paint,
+    paint,click:tickSound,
     settled:value=>{
       host.removeAttribute('data-rolling');
       host.removeAttribute('aria-busy');
@@ -81,7 +92,10 @@
     }
   };
   chrome.storage.onChanged.addListener((changes,area)=>{
-    if(area!=='local'||!changes.transferCounter)return;
+    if(area!=='local')return;
+    if(changes.popupOdometer)soundEnabled=changes.popupOdometer.newValue?.soundEnabled===true;
+    if(changes.providerCelebrationPreferences)effectsEnabled=changes.providerCelebrationPreferences.newValue?.effects!==false;
+    if(!changes.transferCounter)return;
     if(!ready)return;
     loadEpoch++;
     const changed=changes.transferCounter.newValue?.total;
@@ -97,13 +111,14 @@
     }
   });
   globalThis.addEventListener('pagehide',()=>{
-    roller.cancel();
+    roller.cancel();void audio?.close().catch(()=>{});
     // Preserve exactly the number that was visible at the moment of closing.
     saveVisible();
   });
   void (async()=>{
     try{
-      const {shelfOdometer}=await chrome.storage.local.get('shelfOdometer');
+      const {shelfOdometer,popupOdometer,providerCelebrationPreferences}=await chrome.storage.local.get(['shelfOdometer','popupOdometer','providerCelebrationPreferences']);
+      soundEnabled=popupOdometer?.soundEnabled===true;effectsEnabled=providerCelebrationPreferences?.effects!==false;
       if(shelfOdometer?.version===1&&valid(shelfOdometer.lastSeenTotal))lastSeen=shelfOdometer.lastSeenTotal;
     }catch{/* Use the first real count as the baseline if no checkpoint is readable. */}
     ready=true;

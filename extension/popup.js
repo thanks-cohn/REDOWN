@@ -87,7 +87,7 @@ function paintCount(total){
   host.title=login?'Open Cloudflare login':'Completed cloud saves, uploads, copies and moves. Includes retained history from earlier versions; older discarded history cannot be recovered. This device only.';
   displayedText=text;
 }
-let preferencesReady=false,seenTotal=null,shownTotal=null,activeTarget=null,soundEnabled=true,audio=null,preferenceQueue=Promise.resolve();
+let preferencesReady=false,seenTotal=null,shownTotal=null,activeTarget=null,soundEnabled=false,audio=null,preferenceQueue=Promise.resolve();
 const motionQuery=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reducedMotion=()=>motionQuery?.matches===true;
 function savePreferences(){
@@ -139,7 +139,7 @@ $('counter-sound').addEventListener('click',async()=>{
 async function loadPreferences(){
   try{
     const {popupOdometer:prefs}=await chrome.storage.local.get('popupOdometer');
-    if(prefs?.version===1){if(typeof prefs.lastSeenTotal==='string'&&/^(0|[1-9]\d*)$/.test(prefs.lastSeenTotal))seenTotal=prefs.lastSeenTotal;soundEnabled=prefs.soundEnabled!==false;}
+    if(prefs?.version===1){if(typeof prefs.lastSeenTotal==='string'&&/^(0|[1-9]\d*)$/.test(prefs.lastSeenTotal))seenTotal=prefs.lastSeenTotal;soundEnabled=prefs.soundEnabled===true;}
   }catch{/* With no trustworthy prior reading, start at the real current total. */}
   preferencesReady=true;paintSound();void prepareAudio();renderCount(lastTotal);
 }
@@ -153,6 +153,7 @@ async function refreshCount(){
 }
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
+  if(changes.popupOdometer){soundEnabled=changes.popupOdometer.newValue?.soundEnabled===true;paintSound();}
   if(changes.cloudflareAuth)void checkConnection();
   if(changes.transferCounter?.newValue){countEpoch++;try{renderCount(changes.transferCounter.newValue.total);}catch{void refreshCount();}}
 });

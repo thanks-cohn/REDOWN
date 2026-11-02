@@ -664,3 +664,51 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .beta-aesthetics-status{margin:2px 0 0;font-size:11px;color:var(--muted)}
 .beta-aesthetics-status:empty{display:none}
 @media(prefers-reduced-motion:reduce){.beta-aesthetics>summary::after{transition:none}}
+
+/* Confirmed receipt feedback. Cloudflare's quota badge keeps its existing location. */
+.overview .destinations-grid .destination-action-copy{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;width:100%}
+.overview .destinations-grid .destination-free-storage{justify-self:center;margin-inline:3px}
+.provider-feedback{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:0;max-width:100%;color:var(--accent);font:650 11px/1.35 "DM Sans",system-ui,sans-serif}
+.provider-feedback[hidden],.provider-plus[hidden]{display:none!important}
+.provider-save-count{font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.provider-success{font-size:8px;letter-spacing:.025em;white-space:nowrap}
+.provider-plus{pointer-events:none;position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%);color:#8dffbd;text-shadow:2px 2px #ffe568;font:700 21px/1 "Bitcount Grid Double Ink",ui-monospace,monospace}
+.provider-plus::before{content:"";position:absolute;inset:-4px;z-index:-1;border:1px solid #80ffda;background:linear-gradient(135deg,#165d4be0 50%,#50357ce0 50%);box-shadow:0 0 9px #76ffba,3px 3px 0 #ffe56880}
+.cloudflare-hero{position:relative}
+[data-save-celebration="true"]{animation:provider-save-glint 1.2s ease-out}
+[data-save-celebration="true"] .provider-plus{animation:provider-save-rise 1.2s ease-out both}
+:root[data-shelf-theme="neon"] .provider-feedback{font-family:"Bitcount Grid Double Ink",ui-monospace,monospace;flex-direction:column;gap:1px}
+:root[data-shelf-theme="neon"] .provider-success{color:#8dffbd;text-shadow:1px 1px 0 #ffe568;letter-spacing:.02em;font-size:10px}
+:root[data-shelf-theme="neon"] .destination-action-copy{position:relative;padding-bottom:13px}
+:root[data-shelf-theme="neon"] .destination-tile .provider-feedback{display:contents}
+:root[data-shelf-theme="neon"] .destination-tile .provider-save-count{justify-self:center;color:#8dffbd}
+:root[data-shelf-theme="neon"] .destination-tile .provider-success{position:absolute;right:0;bottom:0;width:max-content}
+:root[data-shelf-theme="neon"] #cloudflare .provider-feedback{order:3;flex-basis:100%}
+@keyframes provider-save-glint{0%,100%{outline:0 solid transparent}20%{outline:2px solid var(--destination-brand,var(--accent));box-shadow:0 0 13px color-mix(in srgb,var(--destination-brand,var(--accent)) 38%,transparent)}55%{outline:1px solid var(--accent)}}
+@keyframes provider-save-rise{0%{opacity:0;transform:translate(-50%,-20%) scale(.9)}20%{opacity:1}65%{opacity:1;filter:brightness(1.15)}100%{opacity:0;transform:translate(-50%,-150%) scale(1)}}
+@media(max-width:490px){.overview .destinations-grid .provider-feedback{flex-wrap:wrap;gap:0 4px}.overview .destinations-grid .destination-action-copy{gap:4px}.provider-success{font-size:8px}}
+@media(prefers-reduced-motion:reduce),(forced-colors:active){[data-save-celebration="true"],[data-save-celebration="true"] .provider-plus{animation:none!important}.provider-plus{display:none!important}.provider-success{text-shadow:none!important}}
+@font-face{font-family:"Bitcount Grid Double Ink";src:url("assets/fonts/BitcountGridDoubleInk.ttf") format("truetype");font-weight:100 900;font-style:normal;font-display:swap}
+:root[data-shelf-theme="neon"] .destination-action-copy{padding-bottom:0}
+:root[data-shelf-theme="neon"] .destination-tile .destination-word{grid-column:1;grid-row:1}
+:root[data-shelf-theme="neon"] .destination-tile .provider-save-count{grid-column:2;grid-row:1}
+:root[data-shelf-theme="neon"] .destination-tile .destination-free-storage{grid-column:3;grid-row:1}
+:root[data-shelf-theme="neon"] .destination-tile .provider-success{position:static;grid-column:3;grid-row:2;justify-self:center}
+.overview .destinations-grid .destination-tile{container-type:inline-size}
+@container(max-width:270px){
+  .overview .destinations-grid .destination-action{align-items:flex-start;gap:6px;padding-top:13px;padding-bottom:13px}
+  .overview .destinations-grid .destination-action-copy{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  .overview .destinations-grid .destination-word{flex:none;white-space:normal}
+  .overview .destinations-grid .provider-feedback{align-items:flex-start;justify-content:flex-start;flex-wrap:wrap;gap:2px 4px;width:100%}
+  .overview .destinations-grid .provider-save-count{overflow:visible}
+  .overview .destinations-grid .destination-free-storage{margin:0;align-self:flex-start}
+  :root[data-shelf-theme="neon"] .destination-tile .destination-word{order:0}
+  :root[data-shelf-theme="neon"] .destination-tile .provider-save-count{order:1}
+  :root[data-shelf-theme="neon"] .destination-tile .destination-free-storage{order:2}
+  :root[data-shelf-theme="neon"] .destination-tile .provider-success{order:3;align-self:flex-start}
+}
+:root[data-shelf-theme="neon"] #cloudflare .provider-feedback{display:contents}
+:root[data-shelf-theme="neon"] #cloudflare .provider-save-count{order:1;margin-left:auto;margin-right:6px}
+:root[data-shelf-theme="neon"] #cloudflare .free-storage-label{order:2}
+:root[data-shelf-theme="neon"] #cloudflare .provider-success{order:3;flex-basis:100%;text-align:right}
+.cloudflare-hero{--destination-brand:#ed8437}

@@ -35,7 +35,7 @@ test('count failure never invents a zero count or hides the disconnected LOGIN a
 });
 test('background accepts a discovered unsaved bucket only after read-only existence validation',async()=>{
  const bg=await readFile(new URL('../extension/background.js',import.meta.url),'utf8'),a=bg.indexOf('if (message?.type === "ingest")'),b=bg.indexOf('if (message?.type',a+10);let uploaded=0,response;
- const c=vm.createContext({message:{type:'ingest',prefix:'child/',sourceUrl:'https://fixture.invalid/file',destination:{accountId:'a',bucketName:'new'}},getProfiles:async()=>[],listBuckets:async()=>[{name:'new'}],cleanExplorerPrefix:x=>x,ingestCloudflareAtPrefix:async p=>{uploaded++;assert.equal(p.bucketName,'new');return 'stored';},recordTransfer:async()=>{},sendResponse:r=>response=r});
+ const c=vm.createContext({crypto:globalThis.crypto,message:{type:'ingest',prefix:'child/',sourceUrl:'https://fixture.invalid/file',destination:{accountId:'a',bucketName:'new'}},getProfiles:async()=>[],listBuckets:async()=>[{name:'new'}],cleanExplorerPrefix:x=>x,ingestCloudflareAtPrefix:async p=>{uploaded++;assert.equal(p.bucketName,'new');return 'stored';},recordTransfer:async()=>{},sendResponse:r=>response=r});
  await vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c);assert.equal(response.ok,true);assert.equal(uploaded,1);
  c.message.destination.bucketName='missing';await assert.rejects(vm.runInContext('(async()=>{'+bg.slice(a,b)+'})()',c),/no longer available/);assert.equal(uploaded,1);
 });
