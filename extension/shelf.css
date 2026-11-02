@@ -720,7 +720,10 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   z-index:6;
 }
 :root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-success{
-  font:400 clamp(20px,3.5vw,30px)/1.15 "Jersey 10 Charted",monospace;
+  /* Celebrate LARGE in the card; JS fit() scales only when space truly runs out. */
+  font:400 clamp(39px,5.8vw,55px)/1.05 "Jersey 10 Charted",monospace;
+  letter-spacing:.035em;
+  text-shadow:3px 3px 0 #ffeb34,-1px -1px 0 #102812;
 }
 /* Cloudflare is a different, wide card. Place its count in the existing
    button after Free 10 GB; the success effect covers that button, not a new row. */
@@ -751,7 +754,9 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   z-index:6;
 }
 :root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .provider-save-success{
-  font:400 clamp(23px,3.5vw,32px)/1.2 "Jersey 10 Charted",monospace;
+  font:400 clamp(44px,6.2vw,62px)/1.05 "Jersey 10 Charted",monospace;
+  letter-spacing:.035em;
+  text-shadow:3px 3px 0 #ffeb34,-1px -1px 0 #102812;
 }
 .overview .destinations-grid .destination-options>summary{
   top:50%;
