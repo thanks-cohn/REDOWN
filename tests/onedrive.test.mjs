@@ -1,0 +1,105 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {JSDOM} from 'jsdom';
+import {worker,config} from './helpers/background-worker.mjs';
+const read=p=>readFileSync(p,'utf8'),plain=x=>JSON.parse(JSON.stringify(x));
+const before=JSON.parse(read('docs/verification/onedrive/before.json'));
+const original=execFileSync('git',['show',before.commit+':extension/background.js'],{encoding:'utf8'});
+function menu(){const c=vm.createContext({});vm.runInContext(read('extension/onedrive-menu.js'),c);return c.RedownOneDriveMenu;}
+const oneState=phase=>({phase,rootReady:true,root:'/',accountId:'ms-account',tenantId:'tenant',driveId:'drive',checkedAt:Date.now()});
+test('protected modules retain checkpoint byte hashes',()=>{
+ for(const [p,h] of Object.entries(before.hashes))assert.equal(createHash('sha256').update(readFileSync(p)).digest('hex'),h,p);
+});
+test('OneDrive declaration cannot claim connected/root-ready while OAuth gate is unverified',()=>{
+ const m=menu();
+ for(const phase of ['disconnected','connecting','connected','reconnect','blocked']){
+  const fragment=m.fragment(oneState(phase),'redown');assert.equal(fragment.entries.length,2);assert.equal(fragment.entries[1].id,'provider:onedrive:connect');
+  assert.equal(fragment.entries[1].enabled,phase!=='connecting');
+  assert.deepEqual(plain(m.obsolete(new Set())),['provider:onedrive:connect']);
+ }
+ for(const id of ['provider:dropbox','provider:google-drive','v3:provider:cloudflare','provider:onedrivex',null,{}])assert.equal(m.owns(id),false);
+ assert.equal(m.owns('provider:onedrive:stale'),true);
+});
+test('invalid OneDrive fragments preserve original identity and exact plan',()=>{
+ const m=menu(),base=[{id:'redown'},{id:'provider:dropbox',parentId:'redown'},{id:'redown-manage',parentId:'redown'}];
+ const good=m.fragment({},'redown');
+ for(const fragment of [null,{}, {...good,providerId:'dropbox'}, {...good,entries:[]}, {...good,entries:[good.entries[0],{...good.entries[1],parentId:'redown'}]}, {...good,entries:[good.entries[0],{...good.entries[1],id:'provider:dropbox:connect'}]}, {...good,entries:[good.entries[0],{...good.entries[1],onclick:'evil'}]}, {...good,entries:[good.entries[0],{...good.entries[1],contexts:['all']}]}, {...good,entries:[good.entries[0],{...good.entries[1],title:''}]}]){
+  const result=m.compose(base,fragment,'redown');assert.equal(result.entries,base);assert.equal(result.error,'ONEDRIVE_MENU_FRAGMENT_INVALID');
+ }
+});
+test('actual shared registry across four presentations and all provider connection masks preserves prior routes',async()=>{
+ const m=menu();let cases=0;const evidence={scope:'Synthetic native registry and route replay, not installed Chrome or OAuth',baselineCommit:before.commit,plans:{},cases:[]};
+ const capture=value=>{const text=JSON.stringify(value),hash=createHash('sha256').update(text).digest('hex');evidence.plans[hash]=value;return hash;};
+ for(const mode of ['simple','nested','narrow','depth'])for(let mask=0;mask<16;mask++){
+  const local=config();local.rightClickMode=mode==='simple'?'simple':'nested';local.rightClickV3Presentation={style:mode==='simple'?'simple':'nested',nested:mode==='narrow'?'narrow':'level',depth:mode==='depth'?3:1};
+  if(!(mask&1))local.profiles=[];
+  local.googleDriveState={phase:mask&2?'connected':'disconnected',folderId:'folder'};
+  local['dropbox:state']={phase:mask&4?'connected':'disconnected',rootReady:true,root:'/',accountId:'dbid:fixture',connectionId:'fixture'};
+  local['onedrive:state']=oneState(mask&8?'connected':'disconnected');
+  const old=worker(structuredClone(local),{backgroundSource:original}),next=worker(structuredClone(local));
+  await old.ready();await next.ready();await old.rebuild();await next.rebuild();
+  const plan=w=>[...w.native].map(([id,e])=>({id,...e}));
+  assert.deepEqual(plan(next).filter(e=>!m.owns(e.id)),plan(old),`${mode}/${mask}`);
+  const ids=[...next.native.keys()],drop=ids.indexOf('provider:dropbox'),one=ids.indexOf('provider:onedrive');
+  assert.ok(one>drop);for(const id of ids.slice(drop+1,one))assert.ok(id.startsWith('provider:dropbox:'));
+  assert.ok(one<ids.indexOf('redown-manage'));
+  assert.equal(next.chrome.contextMenus.onClicked.listeners.length,1);
+  const routes=async w=>JSON.stringify(await vm.runInContext(`(async()=>{const profiles=await getProfiles();return Promise.all(${JSON.stringify([...old.native.keys()])}.map(async id=>[id,await resolveActiveRightClick(id,profiles)]));})()`,w.context));
+  const oldRoutes=await routes(old),nextRoutes=await routes(next);assert.equal(nextRoutes,oldRoutes);
+  evidence.cases.push({mode,providerConnectionMask:mask,baselinePlan:capture(plan(old)),candidatePlan:capture(plan(next)),baselineRoutes:capture(JSON.parse(oldRoutes)),candidateRoutes:capture(JSON.parse(nextRoutes)),preexistingEntriesIdentical:true});
+  for(const key of ['rightClickV3','rightClickV3Presentation','rightClickMode','profiles'])assert.deepEqual(next.local[key],old.local[key]);
+  assert.ok(!next.calls.some(c=>c[0]==='removeAll'));cases++;
+ }
+ assert.equal(cases,64);
+ if(process.env.REDOWN_ONEDRIVE_EVIDENCE)writeFileSync(process.env.REDOWN_ONEDRIVE_EVIDENCE,JSON.stringify(evidence,null,2)+'\n');
+});
+test('bad or throwing fragment keeps original shared native menu; error is provider-local',async()=>{
+ for(const expression of ['()=>{throw Error("bad")}', '()=>({providerId:"onedrive",entries:[{id:"provider:dropbox"}]})']){
+  const a=worker(config(),{backgroundSource:original}),b=worker(config());await a.ready();await b.ready();
+  vm.runInContext(`RedownOneDriveMenu.fragment=${expression}`,b.context);await a.rebuild();await b.rebuild();
+  assert.deepEqual([...b.native],[...a.native]);assert.equal(b.local['onedrive:menuError'].code,'ONEDRIVE_MENU_FRAGMENT_INVALID');assert.equal(b.local.rightClickMenuStatus.state,'registered');
+ }
+});
+test('exact existing dispatcher consumes OneDrive once, never routes stale IDs to prior providers',async()=>{
+ const w=worker();await w.ready();
+ vm.runInContext(`globalThis.dispatched=[];onedriveProvider.dispatch=async info=>dispatched.push(['onedrive',info.menuItemId]);dropboxProvider.dispatch=async info=>dispatched.push(['dropbox',info.menuItemId]);RedownGoogleDriveProvider.dispatch=async info=>dispatched.push(['google',info.menuItemId]);`,w.context);
+ const listener=w.chrome.contextMenus.onClicked.listeners[0];
+ for(const id of ['provider:onedrive','provider:onedrive:connect','provider:onedrive:stale','provider:dropbox','provider:google-drive:save-redown'])await listener({menuItemId:id},{});
+ assert.deepEqual(plain(w.context.dispatched),[['onedrive','provider:onedrive'],['onedrive','provider:onedrive:connect'],['onedrive','provider:onedrive:stale'],['dropbox','provider:dropbox'],['google','provider:google-drive:save-redown']]);
+});
+test('blocked OAuth, stale saved connection, concurrent rebuild and MV3 restart preserve other menus',async()=>{
+ const w=worker();await w.ready();await w.rebuild();
+ const other=w=>[...w.native].filter(([id])=>!menu().owns(id));const baseline=other(w);
+ for(const phase of ['connecting','connected','reconnect','blocked','disconnected']){
+  w.local['onedrive:state']=oneState(phase);await Promise.all([w.rebuild(),w.rebuild(),w.rebuild()]);assert.deepEqual(other(w),baseline);
+ }
+ const listener=w.chrome.contextMenus.onClicked.listeners[0];await listener({menuItemId:'provider:onedrive',srcUrl:'https://source.invalid/a.png'},{});
+ assert.equal(w.local['onedrive:transfer'].status,'blocked');assert.equal(w.local['onedrive:transfer'].code,'ONEDRIVE_OAUTH_NOT_VERIFIED');
+ assert.deepEqual(w.local.transferHistory,[{id:'preserved'}]);assert.ok(!w.calls.some(c=>['tab','window'].includes(c[0])));
+ const restarted=worker(structuredClone(w.local),{nativeEntries:[...w.native]});await restarted.ready();await restarted.rebuild();assert.deepEqual(other(restarted),baseline);
+});
+test('staged provider has no network/auth/transfer side effects or credential reads; trusted Shelf only',async()=>{
+ const w=worker();await w.ready();const p=vm.runInContext('onedriveProvider',w.context),beforeCalls=w.calls.length;
+ const sender={id:'test',url:'chrome-extension://test/shelf.html'};
+ for(const url of ['https://evil.invalid/shelf.html','chrome-extension://test/options.html','chrome-extension://test/shelf.html/evil'])assert.equal((await p.message({type:'onedriveConnect'},{id:'test',url})).ok,false);
+ assert.equal((await p.message({type:'onedriveConnect'},sender)).code,'ONEDRIVE_OAUTH_NOT_VERIFIED');
+ assert.equal((await p.message({type:'onedriveStatus'},sender)).ok,false);
+ await p.dispatch({menuItemId:'provider:onedrive:unknown'});assert.equal(w.local['onedrive:transfer'].code,'ONEDRIVE_STALE_MENU');
+ assert.equal(w.calls.length,beforeCalls);assert.deepEqual(w.local.transferHistory,[{id:'preserved'}]);
+ w.local['onedrive:auth']={token:'test'};await p.message({type:'onedriveDisconnect'},sender);assert.equal(w.local['onedrive:auth'],undefined);
+});
+test('Shelf order, accessible pending status, explicit connect only, prior provider controls unchanged',async()=>{
+ const html=read('extension/shelf.html'),dom=new JSDOM(html,{runScripts:'outside-only'}),d=dom.window.document;
+ const calls=[];dom.window.chrome={runtime:{sendMessage:async m=>{calls.push(m);return {ok:false,error:'OAuth verification pending.'};}}};
+ dom.window.eval(read('extension/shelf-onedrive.js'));
+ assert.equal(calls.length,0);assert.ok(html.indexOf('class="google-drive-control"')<html.indexOf('class="dropbox-control"'));assert.ok(html.indexOf('class="dropbox-control"')<html.indexOf('class="onedrive-control"'));
+ const b=d.getElementById('shelf-onedrive');assert.equal(b.type,'button');assert.equal(d.getElementById(b.getAttribute('aria-describedby')).getAttribute('role'),'status');
+ b.click();await new Promise(r=>setImmediate(r));assert.deepEqual(plain(calls),[{type:'onedriveConnect'}]);assert.match(d.getElementById('shelf-onedrive-status').textContent,/pending/);assert.equal(b.disabled,false);
+ const oldHtml=execFileSync('git',['show',before.commit+':extension/shelf.html'],{encoding:'utf8'}),oldDom=new JSDOM(oldHtml);
+ for(const selector of ['.google-drive-control','.dropbox-control'])assert.equal(d.querySelector(selector).outerHTML,oldDom.window.document.querySelector(selector).outerHTML);
+ dom.window.close();oldDom.window.close();
+});

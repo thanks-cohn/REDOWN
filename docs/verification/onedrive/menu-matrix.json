@@ -1,0 +1,6160 @@
+{
+  "scope": "Synthetic native registry and route replay, not installed Chrome or OAuth",
+  "baselineCommit": "db8916a46f6a1a04feca3489e6566582c8a86cbe",
+  "plans": {
+    "97f23d628c5bcf0701c2c823c9810d00f84ec1c995b253bc6f5aace632ce11da": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "ec170156101e4b88ece782fcb115274e8479949360882a6e1ffb28894e61d5ed": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "412c50b17282a3276548b83632665e6f8b871198088d598f362da70d9bd0fffd": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "9d9cdf64770879daf0acef2bd520bf20478649ad1a26e041d01c0b2b5f99603c": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "36a07b8a1147d09f25c869608b00c33bfa5cf8b9e236cabf587590a6dd3f925a": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "c7f9035033f8948c3f9784c3b3d8879d7a4c0871763c5bee15f5aa15fd96b40c": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "b6eb146a89dc6ba95b718c29eef538efde0fff5aa6ef8152e986abd0fc6751ed": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "57e81f41d4a4c959022982f6bb680efa963802c1c7c384fd9b5179bea402362a": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "35e095ebebd406caf3b7a348bdc940c0a207684e11195f424fb48e411efa5c3e": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "38e06ec35328f3ecb6356bee0982fbf725bd034801bc7fb57570a646c1b95df1": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "d26ba2b99d6b19f0b825b239bfcd7ed6085cea4098f5b79ef74bda38abacc433": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "0816e64c8105c2a39b7b9d2e8905b619ddb4f8d735dc699d92ba01bd19c1c48e": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "8052f0b36a5e528092d0b35b63fe1f42ff7bc467f0413ca62b755c8c85b35181": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "1089872e9932c4f5a817dc100fe394873b0961fbafeeb54184ccf615abd3d079": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "8eb05d0315a627f6d38077992ed7a28b8ae8444138cc9bcc89b3c68c8f40caca": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "adddaaae32e88b97cb76d52bb8ef5fe1a241bd2a49b60fad495e0f69ac7a5ca2": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "19a98b09394e7c789ee98dc711d143e5a5aa341df55b6fbc2d8192ac00114246": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "3451239f84b911f23dc8e3832bb308755d7b180b686f732194cb3dd665935be1": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "1d2a72c3326b7a51d2eda5b7c9f241a7d59bb43dd07e617b3adece7260cca6e5": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "2658353f676890c00c2f21afff68ee372569a565fefb3f639b59d3dec9bfbe49": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "1f7b1c0c69ba5138fda77fcd0db6a4b5702da09910ca5b84cc8a952a6c77aad2": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "d2dd540fdab3f269fbaac356a5282a26d7c26c866965a9cd87d80607edce7057": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "de032df501aa65a00dbc754624479c28734c30ca8d4242153bc857dc415e5e19": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "title": "My files",
+        "parentId": "v3:provider:cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "50a843672b959ac21d39bdabe0b71df80415582fe3e2967c360c2b1ebebe6d3d": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:more",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:more",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:more",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:more",
+        "parentId": "v3:provider:cloudflare",
+        "title": "More destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:more",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "7c793d948d5d4d86511c7a96c16751103c8ae4207c53ab9f11b424cda187dfdd": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "475da171ab8aeb51b063209f5d59eeefffaa7216ad30d214d6af891a3fb3c4a2": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "23512154eb0597943136c882cdb40b981d23e63198b62b2eaeaf2c66e6528233": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "a2a8371594ab2c2d10011faa5cf8425bb9cafb042d8ec43f9415684079294539": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "c91d4c97490609460beb9be240308eb82d54df4345c14f3a78d00002f1fa6ee4": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "901e3896c20c5ef944f3d3a09965cb82ffc4a1f9485c8ffe03759b85349f15ef": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "7d0c523400669a3620cca3c4450dd66541ef23f48be07a030410f7d46c548ee1": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "a59f376d94ed00ff1834316b4d115ce5339ca8aabbcf68f8e21e9671fca6d23d": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "6768d32b164cfb14b9fcf57919652e34cb2c6637f2e432a4fe5d1e0ab9d771db": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "d6e919e7bb765879bba028ca1b38fcc86431f82de525ce18fad315610d7956c8": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "8769bda2953d53ae3707a84e3707e96136d288275624173bd9a87a6a12f4a619": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox:connect",
+        "parentId": "provider:dropbox",
+        "title": "Log in to Dropbox…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "a9d808ff5f20a183d52ac88a8733f9bc9a2171dccf304ec30e9a1e26169d4c09": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "provider:dropbox:connect",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "422ff6df90e2d959f59d27e44681501d236a80cb69317b79067602fc332bebca": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "0faa5369676d088506583361d8a041147c4ec8bd865198893ee88c7c9c281f7c": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "f765ff7c2e8f0c802dd2a8585958894dc26db106a956a16b28658ce51c616b5d": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "93559890b8d771efb8f2b02accb84e7beae9894fa007e6c9a45ed8a9486d71ce": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "c4100030b9c680b69f3a0f8bf56c0f9976680c943411c576e82235df4bc5d165": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:connect",
+        "parentId": "provider:google-drive",
+        "title": "Log in to Google Drive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "efd79e1513be01c54a59ea4401624a65e1ac6e296317a6fddf0bf390999ab89a": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:connect",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "94c6aa2878c1f39ea7d25dae6f5adec8fb1e6f26afdb43f2b54218575a88f47c": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "a4e5e379f9e6d06fee5e485361d554e48581757e2c7db26d448941e16ac4006b": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare:setup",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "9640ec97ae8b5e8fca8b0099b8c97690fccfda3b818aeabc251d98321da578e2": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare:setup",
+        null
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ],
+    "da472dd38c4e6d7edd86c80da8752ca843eeaa950c36bbd464ad2fe557a24d77": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "74d0b1460fc13b14ecc4e575691925aa05f862f61fcdca59d33bbad539c3bc98": [
+      {
+        "id": "redown",
+        "title": "REDOWN",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:provider:cloudflare",
+        "parentId": "redown",
+        "title": "Cloudflare",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "parentId": "v3:provider:cloudflare",
+        "title": "bucket",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "v3:one",
+        "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        "title": "My files",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive",
+        "parentId": "redown",
+        "title": "Google Drive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:google-drive:save-redown",
+        "parentId": "provider:google-drive",
+        "title": "REDOWN",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:dropbox",
+        "parentId": "redown",
+        "title": "Dropbox",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive",
+        "parentId": "redown",
+        "title": "OneDrive",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "provider:onedrive:connect",
+        "parentId": "provider:onedrive",
+        "title": "Log in to OneDrive…",
+        "enabled": true,
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-mode-separator",
+        "parentId": "redown",
+        "type": "separator",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-go-home",
+        "parentId": "redown",
+        "title": "Go Home",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      },
+      {
+        "id": "redown-manage",
+        "parentId": "redown",
+        "title": "Manage destinations…",
+        "contexts": [
+          "link",
+          "image",
+          "video",
+          "audio",
+          "page"
+        ]
+      }
+    ],
+    "39a9bce2af30f915c354786387d2aefb394a7d08019bf0817ff4267209990637": [
+      [
+        "redown",
+        null
+      ],
+      [
+        "v3:provider:cloudflare",
+        null
+      ],
+      [
+        "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+        null
+      ],
+      [
+        "v3:one",
+        {
+          "profile": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "owner": {
+            "id": "p",
+            "type": "cloudflare-r2",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "workerUrl": "https://fixture.invalid",
+            "token": "synthetic",
+            "menuConfigVersion": 1,
+            "simplePrimaryEnabled": true
+          },
+          "prefix": "saved"
+        }
+      ],
+      [
+        "provider:google-drive",
+        null
+      ],
+      [
+        "provider:google-drive:save-redown",
+        null
+      ],
+      [
+        "provider:dropbox",
+        null
+      ],
+      [
+        "redown-mode-separator",
+        null
+      ],
+      [
+        "redown-go-home",
+        null
+      ],
+      [
+        "redown-manage",
+        null
+      ]
+    ]
+  },
+  "cases": [
+    {
+      "mode": "simple",
+      "providerConnectionMask": 0,
+      "baselinePlan": "97f23d628c5bcf0701c2c823c9810d00f84ec1c995b253bc6f5aace632ce11da",
+      "candidatePlan": "ec170156101e4b88ece782fcb115274e8479949360882a6e1ffb28894e61d5ed",
+      "baselineRoutes": "412c50b17282a3276548b83632665e6f8b871198088d598f362da70d9bd0fffd",
+      "candidateRoutes": "412c50b17282a3276548b83632665e6f8b871198088d598f362da70d9bd0fffd",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 1,
+      "baselinePlan": "9d9cdf64770879daf0acef2bd520bf20478649ad1a26e041d01c0b2b5f99603c",
+      "candidatePlan": "36a07b8a1147d09f25c869608b00c33bfa5cf8b9e236cabf587590a6dd3f925a",
+      "baselineRoutes": "c7f9035033f8948c3f9784c3b3d8879d7a4c0871763c5bee15f5aa15fd96b40c",
+      "candidateRoutes": "c7f9035033f8948c3f9784c3b3d8879d7a4c0871763c5bee15f5aa15fd96b40c",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 2,
+      "baselinePlan": "b6eb146a89dc6ba95b718c29eef538efde0fff5aa6ef8152e986abd0fc6751ed",
+      "candidatePlan": "57e81f41d4a4c959022982f6bb680efa963802c1c7c384fd9b5179bea402362a",
+      "baselineRoutes": "35e095ebebd406caf3b7a348bdc940c0a207684e11195f424fb48e411efa5c3e",
+      "candidateRoutes": "35e095ebebd406caf3b7a348bdc940c0a207684e11195f424fb48e411efa5c3e",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 3,
+      "baselinePlan": "38e06ec35328f3ecb6356bee0982fbf725bd034801bc7fb57570a646c1b95df1",
+      "candidatePlan": "d26ba2b99d6b19f0b825b239bfcd7ed6085cea4098f5b79ef74bda38abacc433",
+      "baselineRoutes": "0816e64c8105c2a39b7b9d2e8905b619ddb4f8d735dc699d92ba01bd19c1c48e",
+      "candidateRoutes": "0816e64c8105c2a39b7b9d2e8905b619ddb4f8d735dc699d92ba01bd19c1c48e",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 4,
+      "baselinePlan": "8052f0b36a5e528092d0b35b63fe1f42ff7bc467f0413ca62b755c8c85b35181",
+      "candidatePlan": "1089872e9932c4f5a817dc100fe394873b0961fbafeeb54184ccf615abd3d079",
+      "baselineRoutes": "8eb05d0315a627f6d38077992ed7a28b8ae8444138cc9bcc89b3c68c8f40caca",
+      "candidateRoutes": "8eb05d0315a627f6d38077992ed7a28b8ae8444138cc9bcc89b3c68c8f40caca",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 5,
+      "baselinePlan": "adddaaae32e88b97cb76d52bb8ef5fe1a241bd2a49b60fad495e0f69ac7a5ca2",
+      "candidatePlan": "19a98b09394e7c789ee98dc711d143e5a5aa341df55b6fbc2d8192ac00114246",
+      "baselineRoutes": "3451239f84b911f23dc8e3832bb308755d7b180b686f732194cb3dd665935be1",
+      "candidateRoutes": "3451239f84b911f23dc8e3832bb308755d7b180b686f732194cb3dd665935be1",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 6,
+      "baselinePlan": "1d2a72c3326b7a51d2eda5b7c9f241a7d59bb43dd07e617b3adece7260cca6e5",
+      "candidatePlan": "2658353f676890c00c2f21afff68ee372569a565fefb3f639b59d3dec9bfbe49",
+      "baselineRoutes": "1f7b1c0c69ba5138fda77fcd0db6a4b5702da09910ca5b84cc8a952a6c77aad2",
+      "candidateRoutes": "1f7b1c0c69ba5138fda77fcd0db6a4b5702da09910ca5b84cc8a952a6c77aad2",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 7,
+      "baselinePlan": "d2dd540fdab3f269fbaac356a5282a26d7c26c866965a9cd87d80607edce7057",
+      "candidatePlan": "de032df501aa65a00dbc754624479c28734c30ca8d4242153bc857dc415e5e19",
+      "baselineRoutes": "50a843672b959ac21d39bdabe0b71df80415582fe3e2967c360c2b1ebebe6d3d",
+      "candidateRoutes": "50a843672b959ac21d39bdabe0b71df80415582fe3e2967c360c2b1ebebe6d3d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 8,
+      "baselinePlan": "97f23d628c5bcf0701c2c823c9810d00f84ec1c995b253bc6f5aace632ce11da",
+      "candidatePlan": "ec170156101e4b88ece782fcb115274e8479949360882a6e1ffb28894e61d5ed",
+      "baselineRoutes": "412c50b17282a3276548b83632665e6f8b871198088d598f362da70d9bd0fffd",
+      "candidateRoutes": "412c50b17282a3276548b83632665e6f8b871198088d598f362da70d9bd0fffd",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 9,
+      "baselinePlan": "9d9cdf64770879daf0acef2bd520bf20478649ad1a26e041d01c0b2b5f99603c",
+      "candidatePlan": "36a07b8a1147d09f25c869608b00c33bfa5cf8b9e236cabf587590a6dd3f925a",
+      "baselineRoutes": "c7f9035033f8948c3f9784c3b3d8879d7a4c0871763c5bee15f5aa15fd96b40c",
+      "candidateRoutes": "c7f9035033f8948c3f9784c3b3d8879d7a4c0871763c5bee15f5aa15fd96b40c",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 10,
+      "baselinePlan": "b6eb146a89dc6ba95b718c29eef538efde0fff5aa6ef8152e986abd0fc6751ed",
+      "candidatePlan": "57e81f41d4a4c959022982f6bb680efa963802c1c7c384fd9b5179bea402362a",
+      "baselineRoutes": "35e095ebebd406caf3b7a348bdc940c0a207684e11195f424fb48e411efa5c3e",
+      "candidateRoutes": "35e095ebebd406caf3b7a348bdc940c0a207684e11195f424fb48e411efa5c3e",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 11,
+      "baselinePlan": "38e06ec35328f3ecb6356bee0982fbf725bd034801bc7fb57570a646c1b95df1",
+      "candidatePlan": "d26ba2b99d6b19f0b825b239bfcd7ed6085cea4098f5b79ef74bda38abacc433",
+      "baselineRoutes": "0816e64c8105c2a39b7b9d2e8905b619ddb4f8d735dc699d92ba01bd19c1c48e",
+      "candidateRoutes": "0816e64c8105c2a39b7b9d2e8905b619ddb4f8d735dc699d92ba01bd19c1c48e",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 12,
+      "baselinePlan": "8052f0b36a5e528092d0b35b63fe1f42ff7bc467f0413ca62b755c8c85b35181",
+      "candidatePlan": "1089872e9932c4f5a817dc100fe394873b0961fbafeeb54184ccf615abd3d079",
+      "baselineRoutes": "8eb05d0315a627f6d38077992ed7a28b8ae8444138cc9bcc89b3c68c8f40caca",
+      "candidateRoutes": "8eb05d0315a627f6d38077992ed7a28b8ae8444138cc9bcc89b3c68c8f40caca",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 13,
+      "baselinePlan": "adddaaae32e88b97cb76d52bb8ef5fe1a241bd2a49b60fad495e0f69ac7a5ca2",
+      "candidatePlan": "19a98b09394e7c789ee98dc711d143e5a5aa341df55b6fbc2d8192ac00114246",
+      "baselineRoutes": "3451239f84b911f23dc8e3832bb308755d7b180b686f732194cb3dd665935be1",
+      "candidateRoutes": "3451239f84b911f23dc8e3832bb308755d7b180b686f732194cb3dd665935be1",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 14,
+      "baselinePlan": "1d2a72c3326b7a51d2eda5b7c9f241a7d59bb43dd07e617b3adece7260cca6e5",
+      "candidatePlan": "2658353f676890c00c2f21afff68ee372569a565fefb3f639b59d3dec9bfbe49",
+      "baselineRoutes": "1f7b1c0c69ba5138fda77fcd0db6a4b5702da09910ca5b84cc8a952a6c77aad2",
+      "candidateRoutes": "1f7b1c0c69ba5138fda77fcd0db6a4b5702da09910ca5b84cc8a952a6c77aad2",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "simple",
+      "providerConnectionMask": 15,
+      "baselinePlan": "d2dd540fdab3f269fbaac356a5282a26d7c26c866965a9cd87d80607edce7057",
+      "candidatePlan": "de032df501aa65a00dbc754624479c28734c30ca8d4242153bc857dc415e5e19",
+      "baselineRoutes": "50a843672b959ac21d39bdabe0b71df80415582fe3e2967c360c2b1ebebe6d3d",
+      "candidateRoutes": "50a843672b959ac21d39bdabe0b71df80415582fe3e2967c360c2b1ebebe6d3d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 0,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 1,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 2,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 3,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 4,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 5,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 6,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 7,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 8,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 9,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 10,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 11,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 12,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 13,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 14,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "nested",
+      "providerConnectionMask": 15,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 0,
+      "baselinePlan": "7c793d948d5d4d86511c7a96c16751103c8ae4207c53ab9f11b424cda187dfdd",
+      "candidatePlan": "475da171ab8aeb51b063209f5d59eeefffaa7216ad30d214d6af891a3fb3c4a2",
+      "baselineRoutes": "23512154eb0597943136c882cdb40b981d23e63198b62b2eaeaf2c66e6528233",
+      "candidateRoutes": "23512154eb0597943136c882cdb40b981d23e63198b62b2eaeaf2c66e6528233",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 1,
+      "baselinePlan": "a2a8371594ab2c2d10011faa5cf8425bb9cafb042d8ec43f9415684079294539",
+      "candidatePlan": "c91d4c97490609460beb9be240308eb82d54df4345c14f3a78d00002f1fa6ee4",
+      "baselineRoutes": "901e3896c20c5ef944f3d3a09965cb82ffc4a1f9485c8ffe03759b85349f15ef",
+      "candidateRoutes": "901e3896c20c5ef944f3d3a09965cb82ffc4a1f9485c8ffe03759b85349f15ef",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 2,
+      "baselinePlan": "7d0c523400669a3620cca3c4450dd66541ef23f48be07a030410f7d46c548ee1",
+      "candidatePlan": "a59f376d94ed00ff1834316b4d115ce5339ca8aabbcf68f8e21e9671fca6d23d",
+      "baselineRoutes": "6768d32b164cfb14b9fcf57919652e34cb2c6637f2e432a4fe5d1e0ab9d771db",
+      "candidateRoutes": "6768d32b164cfb14b9fcf57919652e34cb2c6637f2e432a4fe5d1e0ab9d771db",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 3,
+      "baselinePlan": "d6e919e7bb765879bba028ca1b38fcc86431f82de525ce18fad315610d7956c8",
+      "candidatePlan": "8769bda2953d53ae3707a84e3707e96136d288275624173bd9a87a6a12f4a619",
+      "baselineRoutes": "a9d808ff5f20a183d52ac88a8733f9bc9a2171dccf304ec30e9a1e26169d4c09",
+      "candidateRoutes": "a9d808ff5f20a183d52ac88a8733f9bc9a2171dccf304ec30e9a1e26169d4c09",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 4,
+      "baselinePlan": "422ff6df90e2d959f59d27e44681501d236a80cb69317b79067602fc332bebca",
+      "candidatePlan": "0faa5369676d088506583361d8a041147c4ec8bd865198893ee88c7c9c281f7c",
+      "baselineRoutes": "f765ff7c2e8f0c802dd2a8585958894dc26db106a956a16b28658ce51c616b5d",
+      "candidateRoutes": "f765ff7c2e8f0c802dd2a8585958894dc26db106a956a16b28658ce51c616b5d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 5,
+      "baselinePlan": "93559890b8d771efb8f2b02accb84e7beae9894fa007e6c9a45ed8a9486d71ce",
+      "candidatePlan": "c4100030b9c680b69f3a0f8bf56c0f9976680c943411c576e82235df4bc5d165",
+      "baselineRoutes": "efd79e1513be01c54a59ea4401624a65e1ac6e296317a6fddf0bf390999ab89a",
+      "candidateRoutes": "efd79e1513be01c54a59ea4401624a65e1ac6e296317a6fddf0bf390999ab89a",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 6,
+      "baselinePlan": "94c6aa2878c1f39ea7d25dae6f5adec8fb1e6f26afdb43f2b54218575a88f47c",
+      "candidatePlan": "a4e5e379f9e6d06fee5e485361d554e48581757e2c7db26d448941e16ac4006b",
+      "baselineRoutes": "9640ec97ae8b5e8fca8b0099b8c97690fccfda3b818aeabc251d98321da578e2",
+      "candidateRoutes": "9640ec97ae8b5e8fca8b0099b8c97690fccfda3b818aeabc251d98321da578e2",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 7,
+      "baselinePlan": "da472dd38c4e6d7edd86c80da8752ca843eeaa950c36bbd464ad2fe557a24d77",
+      "candidatePlan": "74d0b1460fc13b14ecc4e575691925aa05f862f61fcdca59d33bbad539c3bc98",
+      "baselineRoutes": "39a9bce2af30f915c354786387d2aefb394a7d08019bf0817ff4267209990637",
+      "candidateRoutes": "39a9bce2af30f915c354786387d2aefb394a7d08019bf0817ff4267209990637",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 8,
+      "baselinePlan": "7c793d948d5d4d86511c7a96c16751103c8ae4207c53ab9f11b424cda187dfdd",
+      "candidatePlan": "475da171ab8aeb51b063209f5d59eeefffaa7216ad30d214d6af891a3fb3c4a2",
+      "baselineRoutes": "23512154eb0597943136c882cdb40b981d23e63198b62b2eaeaf2c66e6528233",
+      "candidateRoutes": "23512154eb0597943136c882cdb40b981d23e63198b62b2eaeaf2c66e6528233",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 9,
+      "baselinePlan": "a2a8371594ab2c2d10011faa5cf8425bb9cafb042d8ec43f9415684079294539",
+      "candidatePlan": "c91d4c97490609460beb9be240308eb82d54df4345c14f3a78d00002f1fa6ee4",
+      "baselineRoutes": "901e3896c20c5ef944f3d3a09965cb82ffc4a1f9485c8ffe03759b85349f15ef",
+      "candidateRoutes": "901e3896c20c5ef944f3d3a09965cb82ffc4a1f9485c8ffe03759b85349f15ef",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 10,
+      "baselinePlan": "7d0c523400669a3620cca3c4450dd66541ef23f48be07a030410f7d46c548ee1",
+      "candidatePlan": "a59f376d94ed00ff1834316b4d115ce5339ca8aabbcf68f8e21e9671fca6d23d",
+      "baselineRoutes": "6768d32b164cfb14b9fcf57919652e34cb2c6637f2e432a4fe5d1e0ab9d771db",
+      "candidateRoutes": "6768d32b164cfb14b9fcf57919652e34cb2c6637f2e432a4fe5d1e0ab9d771db",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 11,
+      "baselinePlan": "d6e919e7bb765879bba028ca1b38fcc86431f82de525ce18fad315610d7956c8",
+      "candidatePlan": "8769bda2953d53ae3707a84e3707e96136d288275624173bd9a87a6a12f4a619",
+      "baselineRoutes": "a9d808ff5f20a183d52ac88a8733f9bc9a2171dccf304ec30e9a1e26169d4c09",
+      "candidateRoutes": "a9d808ff5f20a183d52ac88a8733f9bc9a2171dccf304ec30e9a1e26169d4c09",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 12,
+      "baselinePlan": "422ff6df90e2d959f59d27e44681501d236a80cb69317b79067602fc332bebca",
+      "candidatePlan": "0faa5369676d088506583361d8a041147c4ec8bd865198893ee88c7c9c281f7c",
+      "baselineRoutes": "f765ff7c2e8f0c802dd2a8585958894dc26db106a956a16b28658ce51c616b5d",
+      "candidateRoutes": "f765ff7c2e8f0c802dd2a8585958894dc26db106a956a16b28658ce51c616b5d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 13,
+      "baselinePlan": "93559890b8d771efb8f2b02accb84e7beae9894fa007e6c9a45ed8a9486d71ce",
+      "candidatePlan": "c4100030b9c680b69f3a0f8bf56c0f9976680c943411c576e82235df4bc5d165",
+      "baselineRoutes": "efd79e1513be01c54a59ea4401624a65e1ac6e296317a6fddf0bf390999ab89a",
+      "candidateRoutes": "efd79e1513be01c54a59ea4401624a65e1ac6e296317a6fddf0bf390999ab89a",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 14,
+      "baselinePlan": "94c6aa2878c1f39ea7d25dae6f5adec8fb1e6f26afdb43f2b54218575a88f47c",
+      "candidatePlan": "a4e5e379f9e6d06fee5e485361d554e48581757e2c7db26d448941e16ac4006b",
+      "baselineRoutes": "9640ec97ae8b5e8fca8b0099b8c97690fccfda3b818aeabc251d98321da578e2",
+      "candidateRoutes": "9640ec97ae8b5e8fca8b0099b8c97690fccfda3b818aeabc251d98321da578e2",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "narrow",
+      "providerConnectionMask": 15,
+      "baselinePlan": "da472dd38c4e6d7edd86c80da8752ca843eeaa950c36bbd464ad2fe557a24d77",
+      "candidatePlan": "74d0b1460fc13b14ecc4e575691925aa05f862f61fcdca59d33bbad539c3bc98",
+      "baselineRoutes": "39a9bce2af30f915c354786387d2aefb394a7d08019bf0817ff4267209990637",
+      "candidateRoutes": "39a9bce2af30f915c354786387d2aefb394a7d08019bf0817ff4267209990637",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 0,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 1,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 2,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 3,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 4,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 5,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 6,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 7,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 8,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 9,
+      "baselinePlan": "a6da24f2931f0bd0ea3389afb836d319d02c363eaedcb8a447127faabbad4761",
+      "candidatePlan": "1a80f6e748e3717e29f42ad0c425672e6f475caf0ef412ed9fd79b91cf0d701f",
+      "baselineRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "candidateRoutes": "6aaa15ac85674f85f72e477dcbc2493ffb5a86c75d322d5266ca0e58cbb71c1f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 10,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 11,
+      "baselinePlan": "c387f0d74c2c790e845530330e99dad2929dfef7573f773efb3ecf6fc96fc5df",
+      "candidatePlan": "9806e91242e6a92669f58ea9acd14b60c591c11990071d0c4d55c9e88968eebb",
+      "baselineRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "candidateRoutes": "3b7d7a8d2ddd96c7a52ed6af26a73cd0ebd8cc98324da241b37405cc958f003f",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 12,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 13,
+      "baselinePlan": "a69da2e60bc9b7d9337859253e6eab775544f98b252f1dcad112cd417f140c5a",
+      "candidatePlan": "f39a80c038cde6e8ab08a38f425dec9c5f5418958dc7f6449a8a03f03ccd2c70",
+      "baselineRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "candidateRoutes": "3e31d86b68aec3b5c10fd6a72625552ed1ea17f35aae60db01a22e6985e56c9d",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 14,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    },
+    {
+      "mode": "depth",
+      "providerConnectionMask": 15,
+      "baselinePlan": "79905d256c58247825e783718ddba3cbc7df9b54fcad377edf320504ecf17310",
+      "candidatePlan": "036ccddf26d677aa867ea77eeda00879241fe51f375d45e70515cbdf94261374",
+      "baselineRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "candidateRoutes": "7b1fb390abb949056bf6866e97ffd6989f548f7028b550ca3f0835d1645639ee",
+      "preexistingEntriesIdentical": true
+    }
+  ]
+}

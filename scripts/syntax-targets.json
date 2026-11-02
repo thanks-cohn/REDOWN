@@ -89,5 +89,8 @@
   "extension/dropbox-provider.js",
   "extension/shelf-dropbox.js",
   "scripts/dropbox-visual.mjs",
-  "scripts/dropbox-preservation.mjs"
+  "scripts/dropbox-preservation.mjs",
+  "extension/onedrive-menu.js",
+  "extension/onedrive-provider.js",
+  "extension/shelf-onedrive.js"
 ]

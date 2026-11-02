@@ -1,0 +1,5 @@
+.onedrive-control { display:flex; flex-direction:column; align-items:flex-start; gap:.4rem; margin:.4rem 0 1rem; min-width:0; }
+.onedrive-button { display:inline-flex; align-items:center; gap:.7rem; padding:.6rem .85rem; border:1px solid currentColor; border-radius:.7rem; background:transparent; color:inherit; font:inherit; cursor:pointer; }
+.onedrive-button:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+.onedrive-button:disabled { opacity:.7; cursor:wait; }
+.onedrive-control small { font-size:.72rem; line-height:1.5; opacity:.78; overflow-wrap:anywhere; }
