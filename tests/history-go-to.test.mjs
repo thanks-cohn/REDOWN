@@ -238,3 +238,30 @@ test('a fresh GO TO clears stale errors and acknowledged success does not leave 
  assert.equal(status.textContent,'','a real completed navigation clears prior technical warnings');
  h.dom.window.close();
 });
+
+test('successful provider receipts GO TO the saved cloud item, never the source or hosting page',async()=>{
+  const samples=[
+    {destination:{provider:'google-drive',fileId:'file_123'},location:'https://drive.google.com/file/d/file_123/view'},
+    {destination:{provider:'onedrive',itemId:'opaque-item',driveId:'drive'},location:'https://tenant-my.sharepoint.com/personal/user/Documents/image.jpg?web=1'},
+    {destination:{provider:'dropbox',fileId:'id:file_1',name:'photo (2).png',path:'/photo (2).png'},location:'https://www.dropbox.com/home/photo%20(2).png'}
+  ];
+  for(const sample of samples){
+    const h=view(),record={ok:true,verified:true,sourceUrl:'https://original.invalid/private?a=secret',pageUrl:'https://original.invalid/secret-page',...sample};
+    assert.equal(h.nav.locator(record),null,'Cloud files must not become R2 Explorer targets');
+    assert.equal(h.nav.openable(record),true);
+    assert.equal(h.nav.cloudTarget(record),record.location);
+    h.nav.open(record);await settle();
+    assert.equal(h.calls.length,1);
+    assert.equal(h.calls[0][1].url,record.location);
+    assert.ok(!h.calls[0][1].url.includes('original.invalid'));
+    h.dom.window.close();
+  }
+});
+test('provider History GO TO refuses failed, unverified, forged and mismatched cloud locations',()=>{
+  const h=view(),goodCloud={ok:true,verified:true,destination:{provider:'google-drive',fileId:'safe_1'},location:'https://drive.google.com/file/d/safe_1/view'};
+  for(const patch of [{ok:false},{verified:false},{error:'blocked'},{location:'https://evil.invalid/file/d/safe_1/view'},{location:'https://drive.google.com/file/d/different/view'},{location:'https://drive.google.com/file/d/safe_1/view#redirect'}]){
+    assert.equal(h.nav.cloudTarget({...goodCloud,...patch}),null);
+  }
+  assert.equal(h.nav.cloudTarget({...goodCloud,destination:{provider:'dropbox',fileId:'id:foo',name:'file'}}),null);
+  h.dom.window.close();
+});
