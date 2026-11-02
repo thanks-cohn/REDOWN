@@ -49,3 +49,11 @@ test('Destinations gateway does not interrupt the original provider ordering',as
   assert.ok(d.querySelector('.onedrive-control').nextElementSibling.matches('h1.overview-title'));
   dom.window.close();
 });
+
+test('work OneDrive GO TO opens the Microsoft 365 OneDrive launcher',async()=>{
+  const h=await mount('onedrive',{'onedrive:state':{phase:'connected',rootReady:true,driveType:'business'}});
+  h.button.click();await tick();
+  assert.deepEqual(h.opened,[{url:'https://www.office.com/launch/onedrive'}]);
+  assert.ok(!h.messages.includes('onedriveConnect'));
+  h.dom.window.close();
+});
