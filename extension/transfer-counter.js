@@ -22,7 +22,20 @@
       }),
       record:entry=>serial(async()=>{
         const {counter,history}=await state(),now=new Date().toISOString();
-        const dropboxId=entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
+        // Future verified receipts only: never infer provider lifetime totals from
+        // the bounded legacy History window. IDs persist across worker restarts.
+        const provider=entry?.providerKind;
+        const confirmed=entry?.ok===true&&entry?.verified===true&&
+          ['cloudflare','google','dropbox','onedrive'].includes(provider)&&
+          typeof entry.deliveryId==='string'&&entry.deliveryId.startsWith(provider+':');
+        const storedProviders=confirmed?await storage.get('providerSaveReceipts'):{};
+        const providers=storedProviders.providerSaveReceipts||{version:1,startedAt:now,totals:{},ids:[]};
+        if(confirmed&&providers.ids.includes(entry.deliveryId))return;
+        const providerPatch=confirmed?{providerSaveReceipts:{...providers,
+          totals:{...providers.totals,[provider]:String(BigInt(providers.totals[provider]||'0')+1n)},
+          ids:[...providers.ids,entry.deliveryId],
+          latest:{id:entry.deliveryId,provider,at:Date.now()}}}:{};
+        const dropboxId=delivered(entry)&&entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
         const deliveredIds=dropboxId?(await storage.get('dropbox:deliveries'))['dropbox:deliveries']||[]:[];
         if(dropboxId&&deliveredIds.includes(dropboxId))return;
         const cleaned=entry?.ok&&entry?.sourceUrl?history.filter(item=>{
@@ -37,7 +50,7 @@
           console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
         }
         const next=[saved,...cleaned].slice(0,50);
-        await storage.set({transferHistory:next,transferCounter:increment(counter,delivered(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
+        await storage.set({...providerPatch,transferHistory:next,transferCounter:increment(counter,delivered(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
       })
     };
   }

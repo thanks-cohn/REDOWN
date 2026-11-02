@@ -1,0 +1,34 @@
+✔ T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer (64.921394ms)
+✔ T24 authenticated chooser preserves original object, consumes intent once and rejects stale routes (11.939894ms)
+✔ three alternatives exclude active palette; keyboard focus opens and Escape closes (83.984053ms)
+✔ each rendered word shares the flight collision epoch; persistence waits for offscreen exit and pause (539.288385ms)
+✔ lunar prelude has a shape-clipped shimmer and circumference trace before travel (25.939132ms)
+✔ repeated activation is bounded; resize finishes captured choice; explicit supersession cancels old commit (12.779033ms)
+✔ reduced motion and absent animation APIs use direct existing commit path (29.169039ms)
+✔ actual theme integration preserves independent Explorer settings and restores palette on storage failure (126.339543ms)
+✔ view changes finish safely, closing the panel never commits late, and touch reveals alternatives first (18.941801ms)
+✔ analytical gravity, apex velocity, rebound energy and exit remain valid across Shelf sizes (40.58831ms)
+✔ cancellation during flight and the post-exit pause cleans up and cannot persist (34.946005ms)
+✔ opening lift comes before a brief lateral impulse, then X momentum stays constant without midair steering (42.902556ms)
+✔ short Shelf preserves the falling-ball collision using visible Destinations when Future is below the viewport (175.015251ms)
+✔ when both word and heading are out of view, the Shelf navigation remains a springboard (172.889798ms)
+✔ all four cards hydrate counts without replay; exact classical choreography, duplicate suppression and restart from S (697.920795ms)
+✔ Neon flashes whole word and removes it; reduced motion is static and theme/navigation cancels (119.422689ms)
+✔ fresh unique arrival pulses retrigger, stale/future arrivals reject and cleanup is bounded (41.861777ms)
+✔ orb geometry remains intact and isolated arrival no longer needs page storage access (121.107341ms)
+✔ hidden arrival is bounded by freshness; reopening hydrates persistence without celebrating old receipts (141.41031ms)
+✔ new installations start at zero and retained history migrates exactly once (5.461066ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (15.318877ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (4.46695ms)
+✔ large counts preserve integer precision and invalid increments are rejected (2.370468ms)
+✔ recording a successful retry retains the previous history cleanup contract (1.11822ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (1.346729ms)
+✔ provider receipt counts require verified attribution, persist deduplication and never hydrate legacy counts (8.259429ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3564.731271

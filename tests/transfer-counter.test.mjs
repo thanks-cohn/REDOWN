@@ -21,3 +21,18 @@ test('failed persistence does not publish an in-memory increment; retry reads au
  const c=vm.createContext({crypto:webcrypto});vm.runInContext(code,c);let data={transferCounter:{version:1,total:'4'}},fail=true;
  const a=c.RedownTransferCounter.create({get:async()=>structuredClone(data),set:async patch=>{if(fail)throw Error('Storage unavailable');Object.assign(data,patch);}});await assert.rejects(a.add(1));fail=false;assert.equal((await a.read()).total,'4');
 });
+test('provider receipt counts require verified attribution, persist deduplication and never hydrate legacy counts',async()=>{
+ const h=fixture({transferHistory:[success()]}),a=h.create();await a.read();assert.equal(h.data.providerSaveReceipts,undefined);
+ for(const provider of ['cloudflare','google','dropbox','onedrive']){
+  const receipt={...success(),verified:true,providerKind:provider,deliveryId:provider+':stable'};
+  await a.record({...receipt,verified:false,deliveryId:provider+':unverified'});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
+  for(const status of ['cancelled','uncertain','blocked','active'])await a.record({...receipt,ok:undefined,verified:false,status});
+  await a.record({...receipt,ok:false});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
+  await a.record(receipt);const total=h.data.transferCounter.total;
+  await h.create().record(receipt);assert.equal(h.data.transferCounter.total,total);
+  assert.equal(h.data.providerSaveReceipts.totals[provider],'1');
+  await h.create().record({...receipt,deliveryId:provider+':second'});assert.equal(h.data.providerSaveReceipts.totals[provider],'2');
+ }
+ assert.equal(h.data.providerSaveReceipts.ids.length,8);
+ assert.deepEqual(Object.keys(h.data.providerSaveReceipts.latest).sort(),['at','id','provider']);
+});

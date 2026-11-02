@@ -869,6 +869,11 @@ function createToolbarFeedback(api, loadPixels = async size => {
 
 const toolbarFeedback=createToolbarFeedback(chrome.action);
 async function recordTransfer(entry) {
+  // The existing Google receipt identifies the verified unique created file.
+  // Attribute presentation here without changing the provider or upload contract.
+  if(entry?.provider==='Google Drive'&&entry.verified===true&&entry.ok===true&&
+     /^[\w-]+$/.test(entry.destination?.fileId||''))
+    entry={...entry,providerKind:'google',deliveryId:'google:'+entry.destination.fileId};
   if(entry?.ok===false)void toolbarFeedback("failure");
   else if(entry?.ok===true&&typeof entry.location==="string"&&/^(https?:\/\/|R2: )/.test(entry.location))void toolbarFeedback("success");
   return transferCounter.record(entry);
@@ -2759,25 +2764,27 @@ chrome.storage.onChanged.addListener((changes, area) => {
    No persistent page injection, tracking, or new host permissions. Chrome does
    not let page DOM paint across its sidebar chrome: the orb ends at the page's
    right edge and a separate Shelf impact pulse completes the illusion. */
-function launchSaveDroplet(info,tab){
+async function launchSaveDroplet(info,tab){
   if(!Number.isInteger(tab?.id))return;
   const sources={
     src:String(info.srcUrl||"").slice(0,2048),
     link:String(info.linkUrl||"").slice(0,2048)
   };
-  void chrome.scripting.executeScript({
+  const {shelfColorScheme}=await chrome.storage.local.get("shelfColorScheme").catch(()=>({}));
+  const event={id:crypto.randomUUID(),at:Date.now()};
+  const results=await chrome.scripting.executeScript({
     target:{tabId:tab.id},
     world:"ISOLATED",
-    args:[sources],
-    func:(clicked)=>{
-      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+    args:[sources,shelfColorScheme],
+    func:async(clicked,palette)=>{
+      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return {reduced:true};
       if(!document.documentElement||!document.body)return;
-      void chrome.storage.local.get('shelfColorScheme').then(data=>{
+      {
         const colors={
           porcelain:['#bda3f4','#6743a2'],midnight:['#c0e6ff','#82c4fc'],
           ocean:['#9cf4e6','#2ccfc9'],neon:['#ff9ddb','#81fff0']
         };
-        const theme=colors[data.shelfColorScheme]||colors.porcelain;
+        const theme=colors[palette]||colors.porcelain;
         let startX=Math.round(innerWidth*.56),startY=Math.round(innerHeight*.42);
         // Context-menu APIs omit cursor coordinates. Prefer the matching image
         // or link's visible center, never pretend to know an exact mouse point.
@@ -2815,7 +2822,7 @@ function launchSaveDroplet(info,tab){
           {offset:.94,opacity:.9,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(1.7,.4)'},
           {offset:1,opacity:0,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(.05)'}
         ],{duration:860,easing:'cubic-bezier(.25,.65,.35,1)',fill:'forwards'});
-        void motion.finished.then(()=>{
+        return motion.finished.then(()=>{
           orb.remove();
           const impact=document.createElement('span');
           impact.setAttribute('aria-hidden','true');
@@ -2826,11 +2833,13 @@ function launchSaveDroplet(info,tab){
             {opacity:.9,transform:'scale(.45)'},{opacity:0,transform:'scale(2.6)'}
           ],{duration:420,easing:'ease-out',fill:'forwards'});
           void ring.finished.finally(()=>impact.remove());
-          void chrome.storage.local.set({redownShelfImpact:Date.now()}).catch(()=>{});
+          return {arrived:true};
         }).catch(()=>orb.remove());
-      }).catch(()=>{});
+      }
     }
-  }).catch(()=>{/* Restricted tabs and browser pages deliberately skip the effect. */});
+  }).catch(()=>[]); // Restricted pages deliberately skip the effect.
+  if(results?.some(frame=>frame.result?.arrived||frame.result?.reduced))
+    await chrome.storage.local.set({redownShelfImpact:{...event,at:Date.now(),kind:results.some(frame=>frame.result?.arrived)?"arrival":"reduced-motion-dispatch"}}).catch(()=>{});
 }
 
 // Go Home is a navigation action, not a saved-object URL lookup.
@@ -2858,12 +2867,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId==='provider:onedrive:save-root')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
+    if(info.menuItemId==='provider:dropbox')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
     await dropboxProvider.dispatch(info);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId==='provider:google-drive:save-redown')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2891,7 +2903,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   return saveResolvedRightClick(info,tab,resolved,profiles);
 });
 async function saveResolvedRightClick(info,tab,resolved,profiles){
-  launchSaveDroplet(info,tab);
+  void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.
@@ -2926,7 +2938,7 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
   // Resolve from the active saved model at click time, never from a legacy
   // default or the previous native-menu snapshot.
   const {profile,owner,prefix}=resolved;
-  const receipt={};
+  const receipt={providerKind:"cloudflare",deliveryId:"cloudflare:"+crypto.randomUUID()};
   try{
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
