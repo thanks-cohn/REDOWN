@@ -13,9 +13,16 @@ function fixture(theme='porcelain',stored={},reduced=false){
  w.chrome={storage:{local:{get:async()=>stored},onChanged:{addListener:fn=>listeners.push(fn)}}};
  w.eval(code);
  const emit=(key,value)=>listeners.forEach(fn=>fn({[key]:{newValue:value}},'local'));
- const receipt=(provider,id)=>{if(provider==='dropbox')emit('dropbox:state',{phase:'connected',accountId:'dbid:a',connectionId:'c'});emit('providerSaveReceipts',{totals:{[provider]:'1'},latest:{provider,id:provider+':'+id,verified:true,accountId:'dbid:a',connectionId:'c',at:Date.now()}});};
+ const cloudflareLogin=()=>{w.document.getElementById('cf-state').dataset.state='connected';emit('cloudflareAuth',{accessToken:'live-token',sessionId:'session-one',expiresAt:Date.now()+60000});};
+ const receipt=(provider,id)=>{
+  if(provider==='cloudflare')cloudflareLogin();
+  if(provider==='dropbox')emit('dropbox:state',{phase:'connected',accountId:'dbid:a',connectionId:'c'});
+  emit('providerSaveReceipts',{totals:{[provider]:'1'},latest:{provider,id:provider+':'+id,
+   verified:true,accountId:'dbid:a',connectionId:'c',at:Date.now(),
+   ...(provider==='cloudflare'?{proof:'r2-head-v1',sessionId:'session-one'}:{})}});
+ };
  const advance=ms=>{const end=now+ms;while(true){const next=[...tasks].sort((a,b)=>a[1].at-b[1].at)[0];if(!next||next[1].at>end)break;now=next[1].at;tasks.delete(next[0]);next[1].fn();}now=end;};
- return {dom,w,emit,receipt,advance,text:()=>w.document.querySelector('.provider-save-success')?.textContent,visibility:()=>w.document.querySelector('.provider-save-success')?.style.visibility};
+ return {dom,w,emit,receipt,cloudflareLogin,advance,text:()=>w.document.querySelector('.provider-save-success')?.textContent,visibility:()=>w.document.querySelector('.provider-save-success')?.style.visibility};
 }
 test('all four cards hydrate counts without replay; exact classical choreography, duplicate suppression and restart from S',async()=>{
  for(const provider of ['cloudflare','google','dropbox','onedrive']){
@@ -95,8 +102,10 @@ test('end-to-end verified storage record increments each actual provider card an
  const context=vm.createContext({crypto:webcrypto});
  vm.runInContext(transferSource,context);
  const base=[
-  {providerKind:'cloudflare',deliveryId:'cloudflare:one',location:'R2: bucket/file',verified:true,ok:true,status:'completed',bytes:12},
-  {providerKind:'google',deliveryId:'google:one',location:'https://drive.google.com/file/d/test/view',verified:true,ok:true,status:'completed',bytes:12},
+  {providerKind:'cloudflare',deliveryId:'cloudflare:one',location:'R2: bucket/file',verified:true,ok:true,status:'completed',bytes:12,
+   destination:{accountId:'r2-account',bucketName:'bucket',key:'file'},
+   verification:{kind:'r2-head-v1',sessionId:'session-one',key:'file',bytes:12,etag:'etag-one'}},
+  {providerKind:'google',deliveryId:'google:one',location:'https://drive.google.com/file/d/one/view',verified:true,ok:true,status:'completed',bytes:12,destination:{provider:'google-drive',fileId:'one',name:'file.bin'}},
   {providerKind:'dropbox',deliveryId:'dropbox:one',location:'',verified:true,ok:true,status:'completed',bytes:12,
    destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',fileId:'id:file-1',
     revision:'rev1',contentHash:'a'.repeat(64),name:'file.bin',path:'/file.bin',bytes:12}},
@@ -105,6 +114,7 @@ test('end-to-end verified storage record increments each actual provider card an
  ];
  for(const entry of base){
   const h=fixture('neon');
+  if(entry.providerKind==='cloudflare')h.cloudflareLogin();
   if(entry.providerKind==='dropbox')h.emit('dropbox:state',{phase:'connected',accountId:'dbid:a',connectionId:'c'});
   const data={};
   const clone=value=>JSON.parse(JSON.stringify(value));
@@ -125,7 +135,9 @@ test('end-to-end verified storage record increments each actual provider card an
   await counter.record(entry);
   assert.equal(card.querySelector('.provider-save-count').textContent,'1','repeat must not increment');
   assert.equal(card.querySelector('.provider-save-success'),null,'repeat must not replay');
-  await counter.record({...entry,deliveryId:entry.providerKind+':two'});
+  const second={...entry,deliveryId:entry.providerKind+':two',
+   ...(entry.providerKind==='google'?{destination:{...entry.destination,fileId:'two'}}:{})};
+  await counter.record(second);
   assert.equal(card.querySelector('.provider-save-count').textContent,'2');
   assert.equal(card.querySelector('.provider-save-success')?.textContent,'SUCCESS!');
   h.dom.window.close();
