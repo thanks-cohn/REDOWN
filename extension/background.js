@@ -931,6 +931,7 @@ importScripts("dropbox-provider.js");
 const dropboxProvider=RedownDropboxProvider.create({record:recordTransfer});
 dropboxProvider.install();
 importScripts("onedrive-menu.js");
+importScripts("onedrive-oauth-diagnostic.js");
 importScripts("onedrive-provider.js");
 const onedriveProvider=RedownOneDriveProvider.create();
 importScripts("right-click-current.js");
