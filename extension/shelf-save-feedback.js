@@ -34,11 +34,15 @@
       // or independent presentation action is authorized to say SUCCESS!.
       const a=cloudflareAuth;
       if(receipt.proof!=='r2-head-v1'||typeof receipt.sessionId!=='string'||
-         !receipt.sessionId||!a?.accessToken||a.reconnectRequired===true||
+         !receipt.sessionId)return;
+      const connection=document.getElementById('cf-state')?.dataset.state;
+      if(!a||connection==='checking'){
+        pendingReceipt=receipt;return; // Wait for the *same* live session.
+      }
+      if(!a.accessToken||a.reconnectRequired===true||
          a.sessionId!==receipt.sessionId||
          Number.isFinite(a.expiresAt)&&a.expiresAt<=Date.now()||
-         document.getElementById('cf-state')?.dataset.state!=='connected')
-        return;
+         connection!=='connected')return;
     }
     // One worker may commit the proven Dropbox receipt before its connection
     // state change reaches this Shelf. Do not consume the celebration ID until
@@ -136,11 +140,16 @@
     if(area!=='local')return;
     if(changes.cloudflareAuth){
       cloudflareEpoch++;
+      const before=cloudflareAuth?.sessionId;
       cloudflareAuth=changes.cloudflareAuth.newValue;
-      // A confirmed save from another account/session must NOT finish flashing
-      // after logout or auth replacement.
-      cleanup('cloudflare');
-      if(pendingReceipt?.provider==='cloudflare')pendingReceipt=null;
+      // Preserve a verified animation across same-session token refresh, but
+      // never across logout, auth replacement or credential revocation.
+      if(!cloudflareAuth?.accessToken||cloudflareAuth.reconnectRequired||
+         before&&before!==cloudflareAuth.sessionId){
+        cleanup('cloudflare');
+        if(pendingReceipt?.provider==='cloudflare')pendingReceipt=null;
+      }
+      if(pendingReceipt?.provider==='cloudflare')celebrate(pendingReceipt);
     }
     if(changes['dropbox:state']){
       dropboxEpoch++;const next=changes['dropbox:state'].newValue;
@@ -157,7 +166,10 @@
   });
   const ticket=epoch,identityTicket=dropboxEpoch,cloudflareTicket=cloudflareEpoch;
   void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state','cloudflareAuth']).then(data=>{
-    if(cloudflareTicket===cloudflareEpoch)cloudflareAuth=data.cloudflareAuth;
+    if(cloudflareTicket===cloudflareEpoch){
+      cloudflareAuth=data.cloudflareAuth;
+      if(pendingReceipt?.provider==='cloudflare')celebrate(pendingReceipt);
+    }
     if(identityTicket===dropboxEpoch){dropboxState=data['dropbox:state'];if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);}
     if(ticket===epoch)paint(data.providerSaveReceipts);
     impact(data.redownShelfImpact);
@@ -174,6 +186,19 @@
     if(pendingReceipt&&visible())celebrate(pendingReceipt);
   });
   window.addEventListener('pagehide',reset);
+  // The Cloudflare API check may finish after a live remote receipt was
+  // committed. Only the verified event is replayed, with its original
+  // event timestamp/session; a UI state transition NEVER creates SUCCESS!.
+  const cfNode=document.getElementById('cf-state');
+  if(cfNode)new MutationObserver(()=>{
+    const state=cfNode.dataset.state;
+    if(state==='connected'&&pendingReceipt?.provider==='cloudflare')
+      celebrate(pendingReceipt);
+    else if(state==='disconnected'||state==='error'){
+      cleanup('cloudflare');
+      if(pendingReceipt?.provider==='cloudflare')pendingReceipt=null;
+    }
+  }).observe(cfNode,{attributes:true,attributeFilter:['data-state']});
   new MutationObserver(()=>{reset();fit();}).observe(root,{attributes:true,attributeFilter:['data-shelf-theme']});
   if(globalThis.ResizeObserver)new ResizeObserver(fit).observe(document.body);
 })();
