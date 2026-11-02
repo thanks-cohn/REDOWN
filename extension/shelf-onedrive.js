@@ -6,6 +6,7 @@
   if(!button||!status)return;
   let state={},transfer={},busy=false,uiError='';
   const origins=['https://login.microsoftonline.com/*','https://graph.microsoft.com/*'];
+  const saveOrigins=['https://*/*','http://*/*']; // Granted once, not during each right-click.
   function pendingUploadOrigin(){
     if(transfer.code!=='ONEDRIVE_UPLOAD_HOST_PERMISSION')return '';
     try{
@@ -19,7 +20,8 @@
     const connected=state.phase==='connected'&&state.rootReady===true;
     const connecting=busy||state.phase==='connecting';
     button.disabled=connecting;
-    button.textContent=connecting?'Connecting to OneDrive…':connected?'OneDrive connected':
+    button.textContent=connecting?'Connecting to OneDrive…':connected?
+      transfer.code==='ONEDRIVE_SITE_PERMISSION_REQUIRED'?'Enable OneDrive saves':'OneDrive connected':
       state.phase==='reconnect'?'Reconnect OneDrive':'Connect OneDrive';
     open.hidden=!connected;disconnect.hidden=!connected&&state.phase!=='reconnect';
     cancel.hidden=!['active','queued'].includes(transfer.status);
@@ -40,15 +42,19 @@
   const send=type=>chrome.runtime.sendMessage({type});
   button.addEventListener('click',async()=>{
     if(busy)return;
-    if(state.phase==='connected'){void send('onedriveStatus').catch(()=>{});return;}
+    const alreadyConnected=state.phase==='connected'&&state.rootReady===true;
     busy=true;uiError='';paint();
     try{
-      // Permission request is initiated directly from the Shelf user gesture.
-      if(!chrome.permissions?.request||!await chrome.permissions.request({origins})){
-        uiError='Chrome did not grant Microsoft sign-in and Graph access.';return;
+      // One Chrome approval covers public HTTP(S) file sources and the HTTPS
+      // destinations returned by Microsoft Graph. A connected user who upgraded
+      // REDOWN can grant it here without signing into Microsoft again.
+      if(!chrome.permissions?.request||!await chrome.permissions.request({
+        origins:[...origins,...saveOrigins]
+      })){
+        uiError='Allow website access once in Chrome to save web files to OneDrive.';return;
       }
-      const r=await send('onedriveConnect');
-      if(!r?.ok)uiError=r?.error||'OneDrive login could not complete.';
+      const r=await send(alreadyConnected?'onedriveStatus':'onedriveConnect');
+      if(!r?.ok)uiError=r?.error||'OneDrive setup could not complete.';
     }catch{uiError='OneDrive sign-in could not finish. Reopen the Shelf and try again.';}
     finally{busy=false;paint();}
   });
