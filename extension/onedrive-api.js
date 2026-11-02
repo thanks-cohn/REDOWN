@@ -33,8 +33,7 @@
       throw fail('ONEDRIVE_BROWSER_SOURCE_UNSUPPORTED',
         'This item uses a browser-only or internal URL. Choose an ordinary HTTP(S) file link. REDOWN does not send source links to Microsoft.');
     }
-    if(!publicHostname(url.hostname)||url.username||url.password||
-       (url.port&&url.port!=='80'&&url.port!=='443'))
+    if(!publicHostname(url.hostname)||url.username||url.password)
       throw fail('ONEDRIVE_SOURCE_UNSAFE',
         'This URL is private, local, or contains credentials. REDOWN will not send it to OneDrive.');
     url.hash='';
