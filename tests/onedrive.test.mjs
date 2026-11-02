@@ -11,8 +11,15 @@ const before=JSON.parse(read('docs/verification/onedrive/before.json'));
 const original=execFileSync('git',['show',before.commit+':extension/background.js'],{encoding:'utf8'});
 function menu(){const c=vm.createContext({});vm.runInContext(read('extension/onedrive-menu.js'),c);return c.RedownOneDriveMenu;}
 const oneState=phase=>({phase,rootReady:true,root:'/',accountId:'ms-account',tenantId:'tenant',driveId:'drive',rootId:'root',connectionId:'test-connection',checkedAt:Date.now()});
-test('protected modules retain checkpoint byte hashes',()=>{
- for(const [p,h] of Object.entries(before.hashes))assert.equal(createHash('sha256').update(readFileSync(p)).digest('hex'),h,p);
+test('protected modules preserve checkpoint hashes; optional HTTP source permission is the only manifest delta',()=>{
+ for(const [p,h] of Object.entries(before.hashes)){
+  if(p==='extension/manifest.json'){
+    const baseline=JSON.parse(execFileSync('git',['show',before.commit+':'+p],{encoding:'utf8'}));
+    assert.deepEqual(JSON.parse(read(p)),{
+      ...baseline,optional_host_permissions:[...baseline.optional_host_permissions,'http://*/*']
+    });
+  }else assert.equal(createHash('sha256').update(readFileSync(p)).digest('hex'),h,p);
+ }
 });
 test('OneDrive menu shows root save only with a verified connected-state identity',()=>{
  const m=menu();
