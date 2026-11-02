@@ -6,8 +6,11 @@
   const visible=()=>document.visibilityState!=='hidden'&&!document.getElementById('clouds-view')?.hidden;
   const runs=new Map(),seen=new Set();
   let dropboxState,dropboxEpoch=0;
-  let pulseTimer,pendingImpact,impactId,impactAt=0,epoch=0;
-  const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<3000;
+  let pulseTimer,pendingImpact,pendingReceipt,impactId,impactAt=0,epoch=0;
+  // A verified upload's storage notification may reach an inactive Shelf just
+  // before Chrome reveals it again. Allow a brief live-event handoff, NEVER
+  // replay a receipt merely because it was read during startup hydration.
+  const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<20000;
   function impact(value){
     const at=typeof value==='number'?value:value?.at,id=value?.id||at;
     if(!fresh(at)||id===impactId||at<impactAt)return;
@@ -23,12 +26,20 @@
   }
   function celebrate(receipt){
     if(receipt?.verified!==true||!receipt.id?.startsWith(receipt.provider+':')||seen.has(receipt.id)||!cards.has(receipt.provider))return;
-    seen.add(receipt.id);
-    if(receipt.provider==='dropbox'&&!(dropboxState?.phase==='connected'&&dropboxState.accountId===receipt.accountId&&dropboxState.connectionId===receipt.connectionId))return;
-    if(!fresh(receipt.at)||!visible())return;
+    if(!fresh(receipt.at))return;
+    // One worker may commit the proven Dropbox receipt before its connection
+    // state change reaches this Shelf. Do not consume the celebration ID until
+    // its original account/connection identity is validated.
+    if(receipt.provider==='dropbox'&&!(dropboxState?.phase==='connected'&&dropboxState.accountId===receipt.accountId&&dropboxState.connectionId===receipt.connectionId)){
+      if(!dropboxState)pendingReceipt=receipt;
+      return;
+    }
+    if(!visible()){pendingReceipt=receipt;return;}
     const provider=receipt.provider,card=cards.get(provider);
     const stage=card.querySelector('.provider-save-readout');
     if(!stage)return;
+    seen.add(receipt.id);
+    if(pendingReceipt?.id===receipt.id)pendingReceipt=null;
     cleanup(provider);
     const node=document.createElement('span');node.className='provider-save-success';node.setAttribute('aria-hidden','true');
     stage.append(node);
@@ -58,7 +69,16 @@
       for(const count of card.querySelectorAll('.provider-save-count,.provider-save-success')){
         count.style.fontSize='';
         const parentStyle=getComputedStyle(count.parentElement);
-        const available=count.classList.contains('provider-save-count')?Math.min(40,count.parentElement.clientWidth*.25):count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
+        const style=getComputedStyle(count);
+        const isNumber=count.classList.contains('provider-save-count');
+        const neonNumber=isNumber&&root.dataset.shelfTheme==='neon';
+        // The neon number owns a real square bezel. Measure that BEZEL, not its
+        // parent button, then scale the digits as counts grow (1, 10, 100...).
+        // Do not make a one-digit number tiny just because a card is narrow.
+        const available=neonNumber?
+          Math.max(1,count.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2):
+          isNumber?Math.max(1,count.clientWidth||40):
+          count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
         if(available&&count.scrollWidth>available){
           const size=parseFloat(getComputedStyle(count).fontSize);
           count.style.fontSize=Math.max(1,size*available/count.scrollWidth*.96)+'px';
@@ -95,6 +115,7 @@
       dropboxEpoch++;const next=changes['dropbox:state'].newValue;
       if(next?.phase!=='connected'||next?.connectionId!==dropboxState?.connectionId)cleanup('dropbox');
       dropboxState=next;
+      if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);
     }
     if(changes.redownShelfImpact)impact(changes.redownShelfImpact.newValue);
     if(changes.providerSaveReceipts){
@@ -105,14 +126,22 @@
   });
   const ticket=epoch,identityTicket=dropboxEpoch;
   void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state']).then(data=>{
-    if(identityTicket===dropboxEpoch)dropboxState=data['dropbox:state'];
+    if(identityTicket===dropboxEpoch){dropboxState=data['dropbox:state'];if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);}
     if(ticket===epoch)paint(data.providerSaveReceipts);
     impact(data.redownShelfImpact);
   }).catch(()=>{});
   const reset=()=>{for(const provider of runs.keys())cleanup(provider);clearTimeout(pulseTimer);root.removeAttribute('data-save-impact');};
-  document.addEventListener('visibilitychange',()=>{if(!visible())reset();else if(pendingImpact)impact(pendingImpact);});
+  document.addEventListener('visibilitychange',()=>{
+    if(!visible()){reset();return;}
+    if(pendingImpact)impact(pendingImpact);
+    if(pendingReceipt)celebrate(pendingReceipt);
+  });
   globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.addEventListener?.('change',reset);
-  window.addEventListener('hashchange',reset);window.addEventListener('pagehide',reset);
+  window.addEventListener('hashchange',()=>{
+    reset();
+    if(pendingReceipt&&visible())celebrate(pendingReceipt);
+  });
+  window.addEventListener('pagehide',reset);
   new MutationObserver(()=>{reset();fit();}).observe(root,{attributes:true,attributeFilter:['data-shelf-theme']});
   if(globalThis.ResizeObserver)new ResizeObserver(fit).observe(document.body);
 })();
