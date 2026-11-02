@@ -149,3 +149,125 @@ test('truncated source never sends a final upload chunk or claims success',async
     token:'token',driveId:'drive',rootId:'root'}),e=>e.code==='ONEDRIVE_SOURCE_TRUNCATED');
   assert.equal(uploads.length,0);
 });
+
+
+test('opaque Graph-provided host requires account-bound approval, never the source-site grant alone',async()=>{
+  const f=fixture();
+  const source='https://cdn.example.org/file.bin?private=source-query';
+  const opaque='https://edge-upload.public-cloud.net/new/session?uploadToken=SECRET';
+  const chunks=[];
+  const transfer=async(url,init={})=>{
+    if(url===source)return {ok:true,status:200,
+      headers:{get:key=>key==='content-length'?'3':null},
+      body:new ReadableStream({start(controller){controller.enqueue(new Uint8Array([7,8,9]));controller.close();}})};
+    if(url.endsWith('/createUploadSession'))return {ok:true,status:200,
+      json:async()=>({uploadUrl:opaque})};
+    if(url===opaque){chunks.push(init);return {ok:true,status:201,json:async()=>({id:'uploaded-item'})};}
+    if(url.includes('me/drive/items/uploaded-item?'))return {ok:true,status:200,
+      json:async()=>({id:'uploaded-item',name:'file.bin',size:3,
+        parentReference:{id:'root',driveId:'drive'},webUrl:'https://onedrive.live.com/?id=uploaded-item',file:{}})};
+    throw Error('Unexpected URL '+url);
+  };
+  const context=vm.createContext({chrome:f.chrome,fetch:transfer,URL,URLSearchParams,
+    TextEncoder,Uint8Array,ReadableStream,AbortSignal,AbortController,Date,setTimeout,clearTimeout,console});
+  load(context,'onedrive-api.js');
+  const api=context.RedownOneDriveAPI.create();
+  const identity={token:'synthetic-graph-token',driveId:'drive',rootId:'root',connectionId:'account-1'};
+  // Chrome may already permit this host as a *source* site. That is not consent to upload there.
+  const denied=await api.upload({kind:'url',url:source,name:'file.bin'},identity).catch(e=>e);
+  assert.equal(denied.code,'ONEDRIVE_UPLOAD_HOST_PERMISSION');
+  assert.equal(denied.uploadOrigin,'https://edge-upload.public-cloud.net');
+  assert.equal(JSON.stringify(denied).includes('uploadToken'),false);
+  assert.equal(chunks.length,0);
+  f.local['onedrive:trustedUploadOrigins']={
+    connectionId:'different-account',origins:['https://edge-upload.public-cloud.net']};
+  const wrongAccount=await api.upload({kind:'url',url:source,name:'file.bin'},identity).catch(e=>e);
+  assert.equal(wrongAccount.code,'ONEDRIVE_UPLOAD_HOST_PERMISSION');
+  f.local['onedrive:trustedUploadOrigins']={
+    connectionId:'account-1',origins:['https://edge-upload.public-cloud.net']};
+  const receipt=await api.upload({kind:'url',url:source,name:'file.bin'},identity);
+  assert.equal(receipt.itemId,'uploaded-item');
+  assert.equal(chunks.length,1);
+  assert.equal(chunks[0].headers.Authorization,undefined);
+  assert.equal(chunks[0].referrerPolicy,'no-referrer');
+  assert.equal(JSON.stringify(chunks[0]).includes(source),false);
+});
+test('source link provenance stays in REDOWN; Graph gets filename and bytes only',async()=>{
+  const f=fixture();
+  const snapSource='http://cdn.example.org/picture.png?sourceTracking=PRIVATE';
+  load(f.context,'onedrive-api.js');
+  const snap=f.context.RedownOneDriveAPI.sourceSnapshot({
+    srcUrl:snapSource,pageUrl:'https://origin.example.org/private-page?secret=yes',
+    frameUrl:'https://frame.example.org/view?password=no'
+  });
+  assert.equal(snap.url,snapSource); // Private to REDOWN's worker.
+  assert.equal(snap.sourceUrl,'http://cdn.example.org/picture.png');
+  assert.equal(snap.pageUrl,'https://origin.example.org/private-page');
+  assert.equal(snap.frameUrl,'https://frame.example.org/view');
+  const all=[];
+  const fetch=async(url,init={})=>{
+    all.push({url,init});
+    if(url===snapSource)return {status:200,ok:true,headers:{get:k=>k==='content-length'?'2':null},
+      body:new ReadableStream({start(c){c.enqueue(new Uint8Array([3,4]));c.close();}})};
+    if(url.endsWith('/createUploadSession'))return {status:200,ok:true,
+      json:async()=>({uploadUrl:'https://sn3302.up.1drv.com/up/SIGNED-TOKEN'})};
+    if(url==='https://sn3302.up.1drv.com/up/SIGNED-TOKEN')
+      return {status:201,ok:true,json:async()=>({id:'item'})};
+    if(url.includes('me/drive/items/item?'))return {status:200,ok:true,json:async()=>({
+      id:'item',name:'picture.png',size:2,parentReference:{id:'root',driveId:'drive'},file:{}})};
+    throw Error('Unexpected URL');
+  };
+  const context=vm.createContext({chrome:f.chrome,fetch,URL,URLSearchParams,TextEncoder,Uint8Array,
+    ReadableStream,AbortSignal,AbortController,Date,console,setTimeout,clearTimeout});
+  load(context,'onedrive-api.js');
+  const item=await context.RedownOneDriveAPI.create().upload(snap,{
+    token:'test',driveId:'drive',rootId:'root',connectionId:'conn'});
+  assert.equal(item.bytes,2);
+  const outgoing=all.filter(x=>x.url!==snapSource);
+  assert.ok(outgoing.every(x=>!JSON.stringify(x).includes('cdn.example.org')));
+  assert.ok(outgoing.every(x=>!JSON.stringify(x).includes('origin.example.org')));
+  assert.ok(outgoing.every(x=>!JSON.stringify(x).includes('frame.example.org')));
+  assert.ok(outgoing.every(x=>x.init.referrerPolicy==='no-referrer'));
+});
+test('inline data sources are decoded within Chrome and never serialized as origin or Graph metadata',async()=>{
+  const f=fixture();load(f.context,'onedrive-api.js');
+  const uri='data:text/plain;base64,SGVsbG8gUkVET1dO';
+  const snap=f.context.RedownOneDriveAPI.sourceSnapshot({
+    srcUrl:uri,pageUrl:'https://example.org/inline?source=private'});
+  assert.equal(snap.kind,'inline-data');
+  assert.equal(snap.name,'inline.txt');
+  assert.equal(snap.sourceUrl,'');
+  assert.equal(snap.srcUrl,'');
+  assert.equal(snap.pageUrl,'https://example.org/inline');
+  const calls=[];
+  const fetch=async(url,init={})=>{
+    calls.push({url,init});
+    if(url===uri)return new Response(new TextEncoder().encode('Hello REDOWN'));
+    if(url.endsWith('/createUploadSession'))return {status:200,ok:true,
+      json:async()=>({uploadUrl:'https://sn3302.up.1drv.com/up/inline'})};
+    if(url==='https://sn3302.up.1drv.com/up/inline')return {status:201,ok:true,
+      json:async()=>({id:'inline-item'})};
+    if(url.includes('me/drive/items/inline-item?'))return {status:200,ok:true,
+      json:async()=>({id:'inline-item',name:'inline.txt',size:12,
+        parentReference:{id:'root',driveId:'drive'},file:{}})};
+    throw Error('Unexpected URL '+url);
+  };
+  const c=vm.createContext({chrome:f.chrome,fetch,URL,URLSearchParams,Response,TextEncoder,
+    Uint8Array,ReadableStream,AbortSignal,AbortController,Date,console,setTimeout,clearTimeout});
+  load(c,'onedrive-api.js');
+  const receipt=await c.RedownOneDriveAPI.create().upload(snap,{
+    token:'graph',driveId:'drive',rootId:'root',connectionId:'conn'});
+  assert.equal(receipt.bytes,12);
+  assert.ok(calls.filter(x=>x.url!==uri).every(x=>!JSON.stringify(x).includes('data:')));
+});
+test('Graph destination URL rejects private, insecure and credential-bearing addresses without exposing tokens',()=>{
+  const f=fixture();load(f.context,'onedrive-api.js');
+  const api=f.context.RedownOneDriveAPI;
+  for(const value of ['http://upload.example.org/file','https://127.0.0.1/up',
+    'https://localhost/up','https://host.invalid/up','https://user:password@valid-domain.net/up',
+    'https://valid-domain.net/up#fragment','https://[::1]/up']){
+    assert.throws(()=>api.validUploadURL(value));
+  }
+  assert.equal(api.validUploadURL('https://new-graph-origin.public-cloud.net/up?token=private').hostname,
+    'new-graph-origin.public-cloud.net');
+});
