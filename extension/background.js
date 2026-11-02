@@ -2815,6 +2815,20 @@ async function launchSaveDroplet(info,tab){
     'shelfColorScheme','cloudflareAuth','googleDriveState','dropbox:state','dropbox:auth','onedrive:state','onedrive:auth'
   ]).catch(()=>({}));
   if(!RedownSaveDropletGate.permitted(info.menuItemId,session))return;
+  if(RedownSaveDropletGate.providerFor(info.menuItemId)==='cloudflare'){
+    // An old cached token is NOT proof of a presently authenticated account.
+    // Use the exact Cloudflare account check that the Shelf's "Connected"
+    // status already uses, before any on-page animation or impact signal.
+    // This is only a visual gate; it must not mutate the save workflow.
+    try {
+      const accounts=await listCloudflareAccounts();
+      if(!Array.isArray(accounts))return;
+      const latest=(await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
+      if(!latest?.sessionId||latest.sessionId!==session.cloudflareAuth?.sessionId||
+         !RedownSaveDropletGate.permitted(info.menuItemId,{cloudflareAuth:latest}))
+        return;
+    } catch { return; } // Offline, expired, denied: no misleading ball.
+  }
   const {shelfColorScheme}=session;
   const event={id:crypto.randomUUID(),at:Date.now()};
   const results=await chrome.scripting.executeScript({
