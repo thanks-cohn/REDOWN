@@ -65,7 +65,18 @@ test('PKCE S256 offline login, exact app, user root, trusted storage and memory-
  const f=fixture();const s=await f.auth.connect();assert.equal(s.root,'/');assert.equal(s.rootReady,true);assert.equal(s.accountId,'dbid:account-a');assert.ok(f.events.every(e=>e==='TRUSTED_CONTEXTS'));assert.equal(f.session['dropbox:oauth'],undefined);assert.doesNotMatch(JSON.stringify(f.store),/PRIVATE_ACCESS|verifier/);assert.equal(f.store['dropbox:auth'].refreshToken,'PRIVATE_REFRESH');
  await f.auth.ready();assert.equal(f.tokenCount,1);await f.auth.disconnect();assert.equal(f.store['dropbox:auth'],undefined);assert.equal(f.store['dropbox:state'].phase,'disconnected');
 });
-for(const options of [{badId:true},{badRedirect:true},{denied:true},{wrongState:true},{wrongRedirect:true},{expired:true},{duplicateState:true},{tokenError:true},{scopeDenied:true},{team:true},{badRoot:true},{rootDenied:true}])test('OAuth fail-closed '+JSON.stringify(options),async()=>{const f=fixture(options);await assert.rejects(f.auth.connect());assert.notEqual(f.store['dropbox:state']?.phase,'connected');assert.equal(f.store['dropbox:auth'],undefined);assert.equal(f.session['dropbox:oauth'],undefined);});
+for(const options of [{badId:true},{badRedirect:true},{denied:true},{wrongState:true},{wrongRedirect:true},{expired:true},{duplicateState:true},{tokenError:true},{scopeDenied:true},{rootDenied:true}])test('OAuth fail-closed '+JSON.stringify(options),async()=>{const f=fixture(options);await assert.rejects(f.auth.connect());assert.notEqual(f.store['dropbox:state']?.phase,'connected');assert.equal(f.store['dropbox:auth'],undefined);assert.equal(f.session['dropbox:oauth'],undefined);});
+test('legitimate Dropbox team-space and distinct home namespace verify exact authorized root',async()=>{
+ for(const variant of [{team:true},{badRoot:true},{team:true,badRoot:true}]){
+  const f=fixture(variant);
+  const connected=await f.auth.connect();
+  assert.equal(connected.rootReady,true);
+  assert.equal(connected.namespace,'123');
+  assert.equal(connected.root,'/');
+  assert.ok(f.calls.some(c=>c.url?.endsWith('/files/list_folder')&&JSON.parse(c.o.headers['Dropbox-API-Path-Root'])?.root==='123'));
+ }
+});
+
 test('refresh after worker restart is noninteractive, verifies original account; revocation and account switch fail closed',async()=>{
  const f=fixture();const j=await job(f);const fresh=f.c.RedownDropboxAuth.create({chrome:f.chrome,fetch:async(...args)=>{const fn=f.c.fetch;return fn(...args);},crypto:webcrypto});await fresh.ready(j);assert.equal(f.tokenCount,2);assert.equal(f.calls.filter(c=>c.oauth).length,1);
  f.setAccount('dbid:other');const other=f.c.RedownDropboxAuth.create({chrome:f.chrome,fetch:f.c.fetch,crypto:webcrypto});await assert.rejects(other.ready(j));assert.equal(f.store['dropbox:state'].phase,'reconnect');
