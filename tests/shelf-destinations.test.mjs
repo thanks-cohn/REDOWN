@@ -57,3 +57,40 @@ test('work OneDrive GO TO opens the Microsoft 365 OneDrive launcher',async()=>{
   assert.ok(!h.messages.includes('onedriveConnect'));
   h.dom.window.close();
 });
+
+test('equal minimalist cloud tiles show only an icon and a short action',async()=>{
+ const dom=new JSDOM(await read('extension/shelf.html'));
+ const doc=dom.window.document,tiles=[...doc.querySelectorAll('.destinations-grid .destination-tile')];
+ assert.equal(tiles.length,3);
+ assert.deepEqual(tiles.map(t=>t.querySelector('.destination-action').getAttribute('aria-label')),
+   ['Log in to Google Drive','Checking Dropbox','Log in to OneDrive']);
+ for(const tile of tiles){
+   assert.ok(tile.querySelector('.destination-icon'));
+   assert.ok(tile.querySelector('.destination-word'));
+   assert.ok(tile.querySelector('.destination-options > summary'));
+   assert.ok(tile.querySelector('.destination-options-menu [role="status"]'));
+   assert.equal(tile.querySelector('.destination-action').querySelectorAll('small').length,0);
+ }
+ assert.equal(doc.querySelector('.destinations-banner'),null);
+ assert.equal(doc.getElementById('shelf-onedrive-diagnostic'),null);
+ const overview=doc.querySelector('.overview');
+ assert.ok(overview.querySelector('.destinations-grid').compareDocumentPosition(
+   overview.querySelector('.overview-title')) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+ const css=await read('extension/shelf.css');
+ assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ dom.window.close();
+});
+test('disconnected cloud tiles show LOGIN rather than opening a provider website',async()=>{
+ const cases=[
+  ['google-drive',{googleDriveState:{phase:'disconnected'}}],
+  ['dropbox',{'dropbox:state':{phase:'disconnected'}}],
+  ['onedrive',{'onedrive:state':{phase:'disconnected'}}]
+ ];
+ for(const [provider,override] of cases){
+   const h=await mount(provider,override);
+   assert.equal(h.button.textContent.trim(),'LOGIN');
+   assert.equal(h.opened.length,0);
+   h.dom.window.close();
+ }
+});
