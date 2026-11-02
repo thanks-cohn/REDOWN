@@ -2063,8 +2063,18 @@ async function verifyCloudflareReceipt(profile,sourceUrl,receipt){
   if(!object||object.key!==key||object.size!==receipt.bytes||!object.etag||
      object.customMetadata?.sourceUrl!==sourceUrl)
     throw Error('Cloudflare save completion unconfirmed. Inspect the bucket before retrying.');
+  // A remote HEAD is the sole authority for a Cloudflare SUCCESS receipt.
+  // Bind it to the same live REDOWN OAuth session. A cached connection,
+  // completed POST, URL, animation timer or right-click dispatch is not proof.
+  const {cloudflareAuth}=await chrome.storage.local.get('cloudflareAuth');
+  if(!cloudflareAuth?.accessToken||cloudflareAuth.reconnectRequired===true||
+     !cloudflareAuth.sessionId||
+     Number.isFinite(cloudflareAuth.expiresAt)&&cloudflareAuth.expiresAt<=Date.now())
+    throw Error('Cloudflare login is required to confirm this save. Check the bucket before retrying.');
   receipt.providerKind='cloudflare';
   receipt.deliveryId ||= 'cloudflare:'+crypto.randomUUID();
+  receipt.verification={kind:'r2-head-v1',key,bytes:receipt.bytes,etag:object.etag,
+    sessionId:cloudflareAuth.sessionId};
   receipt.verified=true;
   return receipt;
 }
