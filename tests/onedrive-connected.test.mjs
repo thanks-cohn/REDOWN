@@ -228,7 +228,7 @@ test('right-click saves never invoke Chrome permission APIs on any source hostna
   assert.equal(requests.length,0);
 });
 test('connected Shelf GO TO opens home without prompts or restarting Microsoft login',async()=>{
-  const dom=new JSDOM('<button id="shelf-onedrive"></button>'+
+  const dom=new JSDOM('<button id="shelf-onedrive"><span id="shelf-onedrive-label"></span><small>Free 5 GB</small></button>'+
     '<small id="shelf-onedrive-status"></small><a id="shelf-onedrive-open"></a>'+
     '<button id="shelf-onedrive-disconnect"></button><button id="shelf-onedrive-cancel"></button>',
     {runScripts:'outside-only'});
