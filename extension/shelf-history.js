@@ -160,55 +160,67 @@
     }catch{return null;}
   }
   function addProvenance(parent,record,info){
-    const details=create('div','','history-entry-provenance');
-    const addLink=(caption,raw)=>{
-      const value=text(raw);if(!value)return;
-      const line=create('div','','history-entry-url');
-      line.append(create('span',caption,'history-entry-url-label'));
-      const href=safeWebUrl(value);
-      if(href){
-        const link=create('a',value,'history-entry-link');
-        link.href=href;link.target='_blank';link.rel='noopener noreferrer';
-        link.title=value;line.append(link);
-      }else line.append(create('span',value,'history-entry-url-text'));
-      details.append(line);
+    // History is an inspectable data record. GO TO handles navigation.
+    // Never turn saved/source addresses into competing action hyperlinks.
+    const content=create('div','','history-entry-provenance');
+    if(record.ok!==false)content.append(create('small',info.status,'history-entry-outcome'));
+    if(info.detail)content.append(create('small',info.detail,'history-entry-provider'));
+
+    // Explicit public URL, or exact verified provider-owned navigation URL
+    // when one is available. A derived Dropbox website location is NOT a
+    // public sharing link; it may require signing into the matching account.
+    const verified=info.state==='success';
+    const d=record.destination||{};
+    const navigation=globalThis.RedownHistoryNavigation;
+    const publicUrl=verified&&info.isCloudflare?safeWebUrl(d.publicUrl):null;
+    const cloudUrl=verified?navigation?.cloudTarget?.(record):null;
+    const dropboxRoute=verified?navigation?.savedDropboxTarget?.(record):null;
+    const rows=[],seen=new Set();
+    const add=(caption,raw)=>{
+      const value=text(raw);if(!value||seen.has(value))return;
+      seen.add(value);rows.push([caption,value]);
     };
-    addLink('Source URL',record.sourceUrl);
-    // Chrome supplies the page the user actually right-clicked. A direct
-    // URL or typed input has no independently known parent; do not infer one.
-    if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
-    if(record.ok!==false)details.append(create('small',info.status,'history-entry-outcome'));
-    if(info.detail){
-      const footer=create('small',info.detail,'history-entry-provider');
-      // Link only to a verified provider-owned destination, never the original
-      // source/page URL. Dropbox has no file URL unless it was explicitly
-      // stored and approved by cloudTarget().
-      const providerUrl=globalThis.RedownHistoryNavigation?.cloudTarget?.(record);
-      const publicR2=info.isCloudflare&&info.state==='success'?safeWebUrl(record.destination?.publicUrl):null;
-      const href=providerUrl||(publicR2&&new URL(publicR2).protocol==='https:'?publicR2:null);
-      if(href){
-        const link=create('a',info.isCloudflare?'File URL':'Open saved file','history-entry-link history-destination-link');
-        link.href=href;link.target='_blank';link.rel='noopener noreferrer';
-        link.title=href;
-        footer.append(' · ',link);
-      }else if(!info.isCloudflare&&info.state==='success'){
-        footer.append(' · No direct file link available');
+    if(publicUrl)add('Public file URL',publicUrl);
+    if(cloudUrl)add('Saved file URL',cloudUrl);
+    if(dropboxRoute)add('Dropbox location (sign-in may be required)',dropboxRoute);
+    // A Worker-returned URL may refer to an inaccessible private object.
+    // Preserve it as historical DATA, never claim that it is public.
+    if(/^https?:\/\//i.test(text(record.location)))
+      add('Recorded location (availability unverified)',record.location);
+    add('Source URL',record.sourceUrl);
+    add('Hosting page',record.pageUrl);
+    add('Media URL',record.srcUrl);
+    add('Frame URL',record.frameUrl);
+    add('Link URL',record.linkUrl);
+    if(rows.length){
+      const disclosure=create('details','','history-url-disclosure');
+      const summary=create('summary','URLs · '+rows.length,'history-url-summary');
+      summary.setAttribute('aria-label','Show full saved-file and source URLs');
+      disclosure.append(summary);
+      const values=create('div','','history-url-values');
+      for(const [caption,value] of rows){
+        const line=create('div','','history-entry-url');
+        line.append(create('span',caption,'history-entry-url-label'));
+        const display=create('code',value,'history-entry-url-text');
+        display.title=value;
+        line.append(display);values.append(line);
       }
-      details.append(footer);
+      disclosure.append(values);content.append(disclosure);
     }
     if(record.error){
       const technical=create('details','','history-technical-details');
-      const summary=create('summary','Error details');
-      technical.append(summary,create('small',text(record.error),'history-error'));
-      details.append(technical);
+      technical.append(create('summary','Error details'),create('small',text(record.error),'history-error'));
+      content.append(technical);
     }
-    if(record.providerKind==='dropbox'&&record.destination?.fileId){
-      const d=record.destination,receipt=create('details','','history-technical-details');
+    if(record.providerKind==='dropbox'&&d.fileId){
+      const receipt=create('details','','history-technical-details');
       receipt.append(create('summary','Dropbox receipt'));
-      for(const [label,value] of [['Account',d.accountId],['Namespace',d.namespace],['Root',d.root],['Path',d.path],['File ID',d.fileId],['Revision',d.revision]])if(value)receipt.append(create('div',label+': '+value));
-      receipt.append(create('small','The Dropbox website may use a different signed-in account.'));details.append(receipt);
+      for(const [label,value] of [['Account',d.accountId],['Namespace',d.namespace],['Root',d.root],['Path',d.path],['File ID',d.fileId],['Revision',d.revision]])
+        if(value)receipt.append(create('div',label+': '+value));
+      receipt.append(create('small','The Dropbox website may use a different signed-in account.'));
+      content.append(receipt);
     }
-    if(details.childElementCount)parent.append(details);
+    if(content.childElementCount)parent.append(content);
   }
   function dayRows(container,day){
     const list=create('ol','','history-transfers');
@@ -237,8 +249,10 @@
         const summary=create('summary');
         summary.append(header);
         disclosure.append(summary);
-        addProvenance(disclosure,record,info);
         body.append(disclosure);
+        // Location and expandable full URLs stay immediately beneath the
+        // transfer even when an unusually long filename is collapsed.
+        addProvenance(body,record,info);
       }else{
         body.append(header);
         addProvenance(body,record,info);
