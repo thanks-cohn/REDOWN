@@ -28,7 +28,13 @@
       const a=await rpcWith(t,'users/get_current_account',null);
       if(!/^dbid:[\w-]+$/.test(a.account_id||'')||expected&&a.account_id!==expected)throw fail('Dropbox account changed. Reconnect before saving.');
       const root=a.root_info;
-      if(root?.['.tag']!=='user'||!/^\d+$/.test(root.root_namespace_id||'')||root.root_namespace_id!==root.home_namespace_id)throw fail('This Dropbox namespace is restricted or ambiguous. A Full Dropbox user root is required.');
+      // Dropbox's documented team-space accounts legitimately have distinct
+      // root_namespace_id and home_namespace_id. That is not evidence of a
+      // restricted token. Verify the EXACT root with an authenticated API call.
+      if(!['user','team'].includes(root?.['.tag'])||!/^\d+$/.test(root.root_namespace_id||'')||!/^\d+$/.test(root.home_namespace_id||''))
+        throw fail('Dropbox did not return a valid authorized root. Reconnect Dropbox.');
+      // A restricted App Folder grant will fail this exact-root readback.
+      // Do not fall back to a different namespace or silently widen access.
       await rpcWith(t,'files/list_folder',{path:'',limit:1},root.root_namespace_id);
       return {provider:'dropbox',accountId:a.account_id,namespace:root.root_namespace_id,root:'/',rootReady:true};
     }
