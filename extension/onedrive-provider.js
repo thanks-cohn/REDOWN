@@ -64,27 +64,11 @@
         await setTransfer({status:'blocked',code:'ONEDRIVE_STALE_MENU',
           error:'Outdated OneDrive menu action. Reopen REDOWN after the menu refreshes.'});return;
       }
-      // Only initial connection may open Chrome's website-access dialog.
-      // Saved destinations never ask for additional host permission.
-      if(info.menuItemId==='provider:onedrive:connect'){
-        let permission;
-        try{
-          permission=chrome.permissions.request({origins:[
-            ...RedownOneDriveAuth.ORIGINS,...RedownOneDriveAPI.SAVE_ORIGINS
-          ]});
-        }catch(e){await setTransfer(problem(e));return;}
-        try{
-          if(!await permission)throw RedownOneDriveAPI.fail('ONEDRIVE_PERMISSION_DENIED',
-            'Allow OneDrive website access during setup to enable one-click saves.');
-          await auth.connect();
-        }catch(e){await setTransfer(problem(e));}
-        return;
-      }
+      // Permission is declared by Chrome's extension manifest. There are no
+      // OneDrive-specific request() calls or additional host approval dialogs.
       try{
+        if(info.menuItemId==='provider:onedrive:connect'){await auth.connect();return;}
         const source=RedownOneDriveAPI.sourceSnapshot(info);
-        if(!await chrome.permissions.contains({origins:RedownOneDriveAPI.SAVE_ORIGINS}))
-          throw RedownOneDriveAPI.fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
-            'Open REDOWN Shelf and enable OneDrive website access once. No new Microsoft login is needed.');
         const identity=await auth.ready(null,true);
         await begin(source,identity);
       }catch(e){await setTransfer(problem(e));}
