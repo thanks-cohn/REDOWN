@@ -101,7 +101,23 @@ test('changed/range-inaccessible source cannot resume, interrupted finish is nev
 });
 test('source snapshot chooses clicked media/link before page, preserves context and rejects unsafe URLs',()=>{
  const a=context().RedownDropboxAPI;const s=a.sourceSnapshot({srcUrl:'https://source.invalid/a.png',linkUrl:'https://source.invalid/link',pageUrl:'https://source.invalid/page',frameUrl:'https://source.invalid/frame'});assert.equal(s.url,'https://source.invalid/a.png');assert.equal(s.pageUrl,'https://source.invalid/page');assert.equal(s.frameUrl,'https://source.invalid/frame');
- for(const u of ['blob:https://x.invalid/1','file:///1','http://x.invalid/1','https://user:pass@x.invalid/1','https://127.0.0.1/1','https://172.17.0.1/1','https://localhost/','https://[::1]/'])assert.throws(()=>a.sourceURL(u));
+ for(const u of ['http://x.invalid/photo.jpg','http://localhost/image.png','https://127.0.0.1/1','https://172.17.0.1/1','https://[::1]/','http://camera.local/photo.png'])assert.equal(a.sourceURL(u).href,u);
+ for(const u of ['blob:https://x.invalid/1','file:///1','data:image/png;base64,AAAA','ftp://x.invalid/p.png','https://user:pass@x.invalid/1'])assert.throws(()=>a.sourceURL(u),e=>e.message.startsWith('REDOWN '));
+
+});
+test('HTTP source bytes stream to Dropbox without exposing the source URL or its query',async()=>{
+ const f=fixture(),j=await job(f);
+ j.source.url='http://source.invalid/photo.png?redown_private_provenance=owner-only';
+ const receipt=await f.api.upload(j,async()=>{},new AbortController().signal);
+ assert.equal(receipt.bytes,f.source.length);
+ assert.ok(f.calls.some(c=>c.url===j.source.url));
+ const providerCalls=f.calls.filter(c=>c.url&&new URL(c.url).hostname.endsWith('.dropboxapi.com'));
+ assert.ok(providerCalls.some(c=>c.url.endsWith('upload_session/finish')));
+ for(const c of providerCalls){
+  assert.doesNotMatch(c.url,/redown_private_provenance|source\\.invalid/);
+  assert.doesNotMatch(JSON.stringify(c.o),/redown_private_provenance|source\\.invalid/);
+  assert.equal(c.o.referrerPolicy,'no-referrer');
+ }
 });
 test('connected native saves, repeated clicks and multi-chunk transfer use no visible UI; exact job receipts',async()=>{
  const f=fixture({source:new Uint8Array(4*1024*1024+1)});await f.auth.connect();
