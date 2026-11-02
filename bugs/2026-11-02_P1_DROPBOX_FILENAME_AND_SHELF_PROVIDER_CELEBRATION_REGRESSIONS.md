@@ -47,21 +47,21 @@
 - **Flash/blink the dual-color word** briefly with a punchy, classic SNES-inspired timing, then remove it cleanly so the card returns to its ordinary resting state. **Do not use the non-Neon letter-by-letter entrance** for this theme unless the owner later explicitly chooses that.
 - Place the temporary treatment **inside the NEON provider card**, following the previously requested space under FREE GB where it fits, without displacing GO TO, the growing prominent numeral, other status/controls or creating a persistent row.
 
-### Every other theme — progressive letter-by-letter entrance, then ONE flash, then disappear
+### Every other theme — letter-by-letter entrance, TWO quick flashes, THIRD appearance holds briefly, then disappears
 
 - On a new verified successful save, reveal `SUCCESS!` **one character at a time**, as an intentional, polished short typographic animation. No text should appear as a permanent static label.
-- Once all letters have appeared, **flash the completed word once**, then have it fade/vanish/clear cleanly. Do not start with the NEON all-at-once dual-color blink; this is a **different animation sequence**.
+- Once the letters have fully assembled, **flash the completed word visibly ON/OFF twice**. On the **third appearance**, let the complete word **STICK / HOLD** noticeably longer, then fade or snap away cleanly until **no SUCCESS! text remains**. This is an arcade/16-bit RPG victory-notification rhythm, not a permanently displayed status or a single generic toast. Do not start with the NEON all-at-once dual-color blink; this is a **different animation sequence**.
 - Style the text, letter cadence, entrance and exit harmoniously with each existing non-Neon theme (e.g. Porcelain and Midnight). Use the appropriate theme palette and visual personality, not forced NEON money-green/yellow on every theme. Earlier guidance suggested the region between GO TO and FREE GB for non-Neon cards when space permits; verify actual layout, not assumed CSS geometry.
 
 ### Shared correctness and accessibility
 
 - Trigger only from a **new verified completed transfer receipt** for that specific cloud provider/card. Never celebrate login/connect, attempted/failed/cancelled/uncertain saves, replayed events, historical count hydration or merely re-opening Shelf.
 - All themes must automatically clear the SUCCESS! element/state at the end of their sequence; no stale text after reopen/re-render. The numeric count stays visible and persists independently.
-- Repeated legitimate saves must be handled cleanly without stacked overlapping messages; use a bounded retrigger/queue policy that does not invent saves or keep SUCCESS! permanently showing.
+- **Every separate newly verified save must retrigger the theme's complete celebration from the beginning** (including the first letter in non-Neon themes), even if an earlier SUCCESS! sequence recently finished. For multiple rapid valid saves, use a safe bounded retrigger/queue policy so distinct completions are acknowledged, without overlapping messages, replaying duplicate receipts, inventing saves or leaving a permanent SUCCESS!.
 - Honor reduced motion and seizure-safety considerations: where flashing or staggered animation is disabled, show a brief static accessible confirmation then remove it, without obscuring verified status or generating unnecessary screen-reader spam.
 - Confirm actual display and motion with short **installed-Chrome video captures**, not screenshots of a single frame alone. Obtain owner approval for the money-green/yellow pairing, exact offset treatment and the non-Neon letter sequence.
 
-**Test matrix:** For NEON, full-word dual-color flash and disappearance, plus large-to-fit count shrink. For each other theme, characters appear sequentially, complete word flashes **exactly once**, then disappears. Repeat for Cloudflare, Google Drive, Dropbox and OneDrive on new verified successful saves; failure/uncertain outcome; multiple saves; reopening Shelf; theme switching; small widths; reduced motion; and persistence of the independent counter.
+**Test matrix:** For NEON, full-word dual-color flash and disappearance, plus large-to-fit count shrink. For each other theme, characters appear sequentially, the completed word flashes **two times**, a **third appearance holds for a deliberate beat**, then disappears. The next separate verified save starts the whole sequence again; the permanent saved-file count stays behind. Repeat for Cloudflare, Google Drive, Dropbox and OneDrive on new verified successful saves; failure/uncertain outcome; multiple saves; reopening Shelf; theme switching; small widths; reduced motion; and persistence of the independent counter.
 
 ## Delivery and non-regression requirements
 
