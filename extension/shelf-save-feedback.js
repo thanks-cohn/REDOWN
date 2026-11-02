@@ -27,13 +27,15 @@
     if(receipt.provider==='dropbox'&&!(dropboxState?.phase==='connected'&&dropboxState.accountId===receipt.accountId&&dropboxState.connectionId===receipt.connectionId))return;
     if(!fresh(receipt.at)||!visible())return;
     const provider=receipt.provider,card=cards.get(provider);
+    const stage=card.querySelector('.provider-save-readout');
+    if(!stage)return;
     cleanup(provider);
     const node=document.createElement('span');node.className='provider-save-success';node.setAttribute('aria-hidden','true');
-    card.querySelector('.provider-save-readout').append(node);
+    stage.append(node);
     const run={node,timers:[]};runs.set(provider,run);
     const schedule=(ms,fn)=>run.timers.push(setTimeout(()=>{fn();fit();},ms));
     const word='SUCCESS!',neon=root.dataset.shelfTheme==='neon';
-    card.querySelector('.provider-save-announcement').textContent=`${provider==='google'?'Google Drive':provider}: save verified.`;
+    stage.querySelector('.provider-save-announcement').textContent=`${provider==='google'?'Google Drive':provider}: save verified.`;
     if(reduced()){node.textContent=word;fit();schedule(1600,()=>cleanup(provider));return;}
     if(neon){
       node.textContent=word;
@@ -68,7 +70,9 @@
     for(const [provider,card] of cards){
       const value=state?.totals?.[provider]||'0';
       if(!/^(0|[1-9]\d*)$/.test(value))continue;
-      card.querySelector('.provider-save-count').textContent=value;
+      const counter=card.querySelector('.provider-save-count');
+      if(!counter)continue; // Provider-specific markup must never block other successes.
+      counter.textContent=value;
       card.querySelector('.provider-save-readout').title=state?.startedAt?
         'Verified saves recorded since '+new Date(state.startedAt).toLocaleDateString()+'. Earlier saves are not included.':
         'Verified saves from this update onward. Earlier saves are not included.';
@@ -80,7 +84,10 @@
     const count=document.createElement('span');count.className='provider-save-count';count.textContent='0';
     const announcement=document.createElement('span');announcement.className='provider-save-announcement';announcement.setAttribute('role','status');
     readout.append(announcement);card.append(readout);
-    card.querySelector('.destination-action-copy')?.append(count);
+    // Three small tiles use an inline count after Free GB. Cloudflare uses its
+    // existing wide action button, never a detached counter row.
+    const counterHost=card.querySelector('.destination-action-copy')||card.querySelector('#cloudflare');
+    (counterHost||readout).append(count);
   }
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
@@ -90,7 +97,11 @@
       dropboxState=next;
     }
     if(changes.redownShelfImpact)impact(changes.redownShelfImpact.newValue);
-    if(changes.providerSaveReceipts){epoch++;const state=changes.providerSaveReceipts.newValue;paint(state);celebrate(state?.latest);}
+    if(changes.providerSaveReceipts){
+      epoch++;const state=changes.providerSaveReceipts.newValue;
+      paint(state);
+      celebrate(state?.latest);
+    }
   });
   const ticket=epoch,identityTicket=dropboxEpoch;
   void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state']).then(data=>{
