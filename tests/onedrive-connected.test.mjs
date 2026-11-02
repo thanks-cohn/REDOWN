@@ -75,9 +75,13 @@ test('provider account drift aborts instead of marking a stale connection ready'
 test('OneDrive source filter rejects local/private links and filename path injection',async()=>{
   const f=fixture();load(f.context,'onedrive-api.js');
   const api=f.context.RedownOneDriveAPI;
-  for(const source of ['http://example.com/x','https://localhost/a','https://127.0.0.1/a',
+  for(const source of ['https://localhost/a','https://127.0.0.1/a',
     'https://192.168.1.4/a','https://metadata.internal/a','https://[::1]/a'])
     assert.throws(()=>api.sourceURL(source));
+  assert.equal(api.sourceURL('http://example.com/file.jpg').protocol,'http:');
+  assert.equal(api.sourceURL('https://cdn.example.com:8443/file.jpg').port,'8443');
+  assert.equal(api.sourceSnapshot({linkUrl:'http://cdn.example.org/file.txt?secret=1'}).sourceUrl,
+    'http://cdn.example.org/file.txt');
   assert.equal(api.fileName('a/../evil?.jpg'),'a_.._evil_.jpg');
   assert.equal(api.sourceSnapshot({srcUrl:'https://cdn.example.org/picture.png?token=secret'}).sourceUrl,
     'https://cdn.example.org/picture.png');
