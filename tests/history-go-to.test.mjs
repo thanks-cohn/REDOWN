@@ -82,7 +82,9 @@ async function navigationHarness(overrides={}){
    items:[],selected:new Set(),render:()=>{selectedRows.push([...context.selected]);rows.splice(0,rows.length,...context.items.map(i=>({dataset:{key:i.key},scrollIntoView(){this.scrolled=true;},focus(){this.focused=true;}})));},
    $:()=>({value:'',querySelectorAll:()=>rows}),showPreview:async i=>previews.push(i.key),previewType:k=>k.endsWith('.webp')?'image/webp':null,...overrides};
  vm.createContext(context);vm.runInContext(source.slice(start,end),context);
- return {c:context,messages,selectedRows,previews,rows,go:(key='photos/example (2).webp',token=key)=>context.useHistoryNavigation({token,windowId:7,locator:{provider:'cloudflare-r2',accountId:'a',bucketName:'bucket',key,prefix:'photos/',filename:key.split('/').at(-1)}})};
+ // This fixture exercises navigation in an existing Explorer tab. Fresh
+ // tabs intentionally defer scrolling until the side preview has settled.
+ return {c:context,messages,selectedRows,previews,rows,go:(key='photos/example (2).webp',token=key)=>context.useHistoryNavigation({token,windowId:7,tabId:8,locator:{provider:'cloudflare-r2',accountId:'a',bucketName:'bucket',key,prefix:'photos/',filename:key.split('/').at(-1)}})};
 }
 test('real Explorer integration selects, scrolls, focuses and invokes the existing preview',async()=>{
  const h=await navigationHarness();await h.go();assert.deepEqual(h.previews,['photos/example (2).webp']);assert.equal(h.rows[0].scrolled,true);assert.equal(h.rows[0].focused,true);assert.deepEqual([...h.c.selected],['photos/example (2).webp']);assert.match(h.messages.at(-1),/Saved file selected/);
