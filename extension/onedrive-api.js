@@ -13,6 +13,8 @@
     'https://*.onedrive.com/*','https://*.sharepoint-df.com/*',
     'https://*.my.microsoftpersonalcontent.com/*'
   ];
+  // Granted once from OneDrive setup, never requested by a save click.
+  const SAVE_ORIGINS=['https://*/*','http://*/*'];
   const fail=(code,message,status='blocked')=>Object.assign(Error(message),{code,status});
   // URLs are fetched exclusively by REDOWN. Source URLs are never passed to Graph.
   function publicHostname(host){
@@ -51,6 +53,85 @@
       name=(name||'Web file')+ext;
     }
     return name;
+  }
+
+  const MIME_EXTENSIONS={
+    'image/png':'.png','image/jpeg':'.jpg','image/gif':'.gif',
+    'image/webp':'.webp','image/avif':'.avif','image/heic':'.heic',
+    'image/heif':'.heif','image/svg+xml':'.svg','image/bmp':'.bmp',
+    'image/tiff':'.tif','image/x-icon':'.ico',
+    'application/pdf':'.pdf','application/zip':'.zip',
+    'application/x-zip-compressed':'.zip','application/x-cbz':'.cbz',
+    'application/vnd.comicbook+zip':'.cbz',
+    'application/x-7z-compressed':'.7z','application/vnd.rar':'.rar',
+    'application/x-rar-compressed':'.rar','application/gzip':'.gz',
+    'application/x-tar':'.tar','application/json':'.json',
+    'application/epub+zip':'.epub',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.docx',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'.xlsx',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation':'.pptx',
+    'application/msword':'.doc','application/vnd.ms-excel':'.xls',
+    'application/vnd.ms-powerpoint':'.ppt',
+    'text/plain':'.txt','text/html':'.html','text/css':'.css',
+    'text/csv':'.csv','text/javascript':'.js',
+    'application/javascript':'.js',
+    'audio/mpeg':'.mp3','audio/wav':'.wav','audio/x-wav':'.wav',
+    'audio/ogg':'.ogg','audio/flac':'.flac',
+    'video/mp4':'.mp4','video/webm':'.webm','video/quicktime':'.mov'
+  };
+  function dispositionName(header){
+    const value=String(header||'');
+    const extended=/(?:^|;)\s*filename\*\s*=\s*(?:"([^"]*)"|([^;]*))/i.exec(value);
+    if(extended){
+      const raw=(extended[1]??extended[2]).trim();
+      const utf8=/^utf-8''(.*)$/i.exec(raw);
+      if(utf8)try{return decodeURIComponent(utf8[1]);}catch{}
+    }
+    const plain=/(?:^|;)\s*filename\s*=\s*(?:"((?:\\.|[^"\\])*)"|([^;]*))/i.exec(value);
+    return plain?(plain[1]??plain[2]).replace(/\\(.)/g,'$1').trim():'';
+  }
+  function magicExtension(bytes){
+    if(!bytes||bytes.length<3)return '';
+    const has=(...a)=>bytes.length>=a.length&&a.every((b,i)=>bytes[i]===b);
+    const ascii=(offset,count)=>bytes.length>=offset+count?
+      String.fromCharCode(...bytes.subarray(offset,offset+count)):'';
+    if(has(0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a))return '.png';
+    if(has(0xff,0xd8,0xff))return '.jpg';
+    if(ascii(0,6)==='GIF87a'||ascii(0,6)==='GIF89a')return '.gif';
+    if(ascii(0,4)==='RIFF'&&ascii(8,4)==='WEBP')return '.webp';
+    if(ascii(0,5)==='%PDF-')return '.pdf';
+    if(ascii(0,4)==='PK\x03\x04'||ascii(0,4)==='PK\x05\x06')return '.zip';
+    if(has(0x1f,0x8b,0x08))return '.gz';
+    if(has(0x37,0x7a,0xbc,0xaf,0x27,0x1c))return '.7z';
+    if(ascii(0,7)==='Rar!\x1a\x07\x00'||ascii(0,7)==='Rar!\x1a\x07\x01')return '.rar';
+    if(ascii(0,4)==='OggS')return '.ogg';
+    if(ascii(0,4)==='fLaC')return '.flac';
+    if(ascii(0,3)==='ID3')return '.mp3';
+    if(ascii(0,4)==='RIFF'&&ascii(8,4)==='WAVE')return '.wav';
+    if(ascii(0,4)==='RIFF'&&ascii(8,4)==='AVI ')return '.avi';
+    if(ascii(0,4)==='BM')return '.bmp';
+    if(ascii(4,4)==='ftyp'){
+      const brand=ascii(8,4);
+      if(brand==='avif'||brand==='avis')return '.avif';
+      if(['heic','heix','hevc','hevx','mif1'].includes(brand))return '.heic';
+      if(['isom','iso2','mp41','mp42','M4V ','M4A '].includes(brand))return '.mp4';
+    }
+    return '';
+  }
+  function uploadFileName(original,headers,firstBytes){
+    const supplied=fileName(original);
+    // Preserve a real extension from the URL and never invent one over it.
+    if(/\.[\p{L}\p{N}]{1,16}$/u.test(supplied))return supplied;
+    const headerName=dispositionName(headers?.get?.('content-disposition'));
+    const preferred=headerName?fileName(headerName):supplied;
+    if(/\.[\p{L}\p{N}]{1,16}$/u.test(preferred))return preferred;
+    const mime=String(headers?.get?.('content-type')||'').split(';')[0].trim().toLowerCase();
+    // Trust a specific declared media type before generic ZIP magic, so EPUB,
+    // Office documents and comic archives do not become ordinary .zip files.
+    const specific=MIME_EXTENSIONS[mime]||'';
+    const magic=magicExtension(firstBytes);
+    const ext=specific&&specific!=='.zip'?specific:magic||specific||'.bin';
+    return fileName(preferred+ext);
   }
   function sourceSnapshot(info){
     const picked=info.srcUrl||info.linkUrl||info.pageUrl||'';
@@ -120,6 +201,7 @@
     }
     async function upload(source,identity,onProgress=async()=>{},signal){
       let reader=null,session=null,phase='source',sent=0,finalAttempt=false;
+      let sourceHeaders=null;
       const abortSource=()=>{void reader?.cancel().catch(()=>{});};
       let total=null;
       const token=identity.token;
@@ -129,6 +211,7 @@
           if(typeof source.url!=='string'||!source.url.toLowerCase().startsWith('data:'))
             throw fail('ONEDRIVE_INLINE_INVALID','Inline source is invalid.');
           const response=await request(source.url,{method:'GET',signal},60000);
+          sourceHeaders=response.headers;
           if(!response.ok)throw fail('ONEDRIVE_INLINE_INVALID','Chrome could not read this inline data.');
           // A data: URL is itself already materialized by Chrome. Blob supplies
           // the exact byte count required by Graph; no disk download occurs.
@@ -140,6 +223,7 @@
         }else{
           const u=sourceURL(source.url);
           const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000);
+          sourceHeaders=response.headers;
           if(!response.ok||!response.body)
             throw fail('ONEDRIVE_SOURCE_HTTP','Chrome could not fetch the source (HTTP '+response.status+').','blocked');
           total=Number(response.headers.get('content-length'));
@@ -151,25 +235,27 @@
         }
         signal?.addEventListener('abort',abortSource,{once:true});
         if(signal?.aborted)abortSource();
+        // Inspect only the first streamed bytes and re-use them in the first
+        // upload chunk. No second fetch, temporary file or full-file buffer.
+        let first=await reader.read();
+        while(!first.done&&!first.value?.length)first=await reader.read();
+        if(first.done)throw fail('ONEDRIVE_SOURCE_TRUNCATED','The source contains no readable file bytes.','interrupted');
+        let remainder=first.value,at=0,done=false;
+        const name=uploadFileName(source.name,sourceHeaders,remainder);
         phase='session';await onProgress({phase,sent,total});
-        const name=fileName(source.name);
         const path='me/drive/items/'+encodeURIComponent(identity.rootId)+':/'+encodeURIComponent(name)+':/createUploadSession';
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
         const uploadUrl=validUploadURL(session?.uploadUrl);
-        const granted=await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']});
-        const approved=(await chrome.storage.local.get('onedrive:trustedUploadOrigins'))['onedrive:trustedUploadOrigins'];
-        const ownerApproved=approved?.connectionId===identity.connectionId&&
-          Array.isArray(approved?.origins)&&approved.origins.includes(uploadUrl.origin);
-        // A source-site permission must never double as consent to upload
-        // bytes to that same host if a Graph response is compromised.
-        if(!granted||(!knownUploadHost(uploadUrl.hostname)&&!ownerApproved)){
-          const error=fail('ONEDRIVE_UPLOAD_HOST_PERMISSION',
-            'Confirm the HTTPS upload destination in REDOWN Shelf, then right-click the file again.');
-          error.uploadOrigin=uploadUrl.origin; // Origin only; no opaque query token.
-          throw error;
-        }
-        let remainder=null,at=0,done=false;
+        // A Graph-authenticated session authorizes an opaque upload endpoint,
+        // but only after the user granted one-time broad website access during
+        // OneDrive setup. No arbitrary host consent prompt on future saves.
+        if(!await chrome.permissions.contains({origins:SAVE_ORIGINS}))
+          throw fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
+            'Open REDOWN Shelf and enable OneDrive website access once to save files.');
+        if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']}))
+          throw fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
+            'OneDrive upload access was revoked. Open REDOWN Shelf to enable it again.');
         phase='uploading';await onProgress({phase,sent,total});
         while(sent<total){
           if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
@@ -236,6 +322,6 @@
     }
     return {upload,graph};
   }
-  globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,validUploadURL,
-    knownUploadHost,UPLOAD_ORIGINS,CHUNK,fail};
+  globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,uploadFileName,validUploadURL,
+    knownUploadHost,UPLOAD_ORIGINS,SAVE_ORIGINS,CHUNK,fail};
 })();
