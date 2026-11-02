@@ -43,10 +43,10 @@ for(const [provider,url,connectMessage] of [
 test('Destinations gateway does not interrupt the original provider ordering',async()=>{
   const dom=new JSDOM(await read('extension/shelf.html'));
   const d=dom.window.document;
-  assert.ok(d.querySelector('.destinations-banner'));
+  assert.ok(d.querySelector('.destinations-heading svg textPath'));assert.equal(d.querySelectorAll('.destinations-grid .destination-tile').length,3);
   assert.ok(d.querySelector('.google-drive-control').nextElementSibling.matches('.dropbox-control'));
   assert.ok(d.querySelector('.dropbox-control').nextElementSibling.matches('.onedrive-control'));
-  assert.ok(d.querySelector('.onedrive-control').nextElementSibling.matches('h1.overview-title'));
+  assert.ok(d.querySelector('.onedrive-control').parentElement.matches('.destinations-grid'));assert.ok(d.querySelector('.destinations-grid').nextElementSibling.matches('.eyebrow'));
   dom.window.close();
 });
 
