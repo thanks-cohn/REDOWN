@@ -75,5 +75,29 @@ test('R2-Ask preview is non-mutating and offers an external R2 setup link',()=>{
   assert.match(link.href,/dash\.cloudflare\.com/);
   assert.equal(d.getElementById('r2-ask-dialog').open,false);
   assert.match(d.getElementById('r2-ask-description').textContent,/R2 and enjoy the REDOWN ecosystem/i);
-  assert.doesNotMatch(handlers,/chrome\.runtime|cfCreateBucket|cfSetupRedownQuick|cfProvision|fetch\(|send\(/);
+  assert.doesNotMatch(handlers.slice(0,handlers.indexOf('const oneDriveTest=')),/chrome\.runtime|cfCreateBucket|cfSetupRedownQuick|cfProvision|fetch\(|send\(/);
+});
+
+test('OneDrive Test stays in the Debug dropdown and runs only on explicit click',async()=>{
+  const h=harness(),d=h.document,button=d.getElementById('debug-onedrive-test'),messages=[];
+  h.context.chrome={runtime:{sendMessage:async request=>{
+    messages.push(request.type);return {ok:true,code:'DIAGNOSTIC_OK',message:'Read-only check passed.'};
+  }}};
+  assert.equal(button.closest('#settings-disclosure')!==null,true);
+  assert.equal(button.closest('[data-debug-detail]').hidden,true);
+  button.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.deepEqual(messages,[],'not accessible before Debug Mode');
+  h.context.debugModeEnabled=true;
+  vm.runInContext('applyDebugMode()',h.context);
+  assert.equal(button.closest('[data-debug-detail]').hidden,false);
+  assert.deepEqual(messages,[],'turning on Debug does not start Microsoft login');
+  button.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.deepEqual(messages,['onedriveDiagnostic']);
+  assert.match(d.getElementById('debug-onedrive-test-status').textContent,/Passed:/);
+  h.context.debugModeEnabled=false;
+  vm.runInContext('applyDebugMode()',h.context);
+  button.click();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(messages.length,1,'diagnostic stays inert after Debug Mode is disabled');
+  assert.equal(d.getElementById('shelf-onedrive-diagnostic'),null);
+  h.dom.window.close();
 });
