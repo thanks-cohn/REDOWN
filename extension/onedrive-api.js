@@ -235,13 +235,26 @@
         }
         signal?.addEventListener('abort',abortSource,{once:true});
         if(signal?.aborted)abortSource();
-        // Inspect only the first streamed bytes and re-use them in the first
-        // upload chunk. No second fetch, temporary file or full-file buffer.
-        let first=await reader.read();
-        while(!first.done&&!first.value?.length)first=await reader.read();
-        if(first.done)throw fail('ONEDRIVE_SOURCE_TRUNCATED','The source contains no readable file bytes.','interrupted');
-        let remainder=first.value,at=0,done=false;
-        const name=uploadFileName(source.name,sourceHeaders,remainder);
+        // Accumulate at most 16 signature bytes even when a response arrives
+        // in tiny stream chunks; preserve the original chunks for upload.
+        // No second fetch, disk write or whole-file buffering is introduced.
+        const prefixes=[];let sampled=0;
+        while(sampled<Math.min(total,16)){
+          const part=await reader.read();
+          if(part.done)break;
+          if(!part.value?.length)continue;
+          prefixes.push(part.value);sampled+=part.value.length;
+        }
+        if(!prefixes.length)throw fail('ONEDRIVE_SOURCE_TRUNCATED',
+          'The source contains no readable file bytes.','interrupted');
+        const signature=new Uint8Array(Math.min(sampled,16));let copied=0;
+        for(const part of prefixes){
+          const count=Math.min(part.length,signature.length-copied);
+          signature.set(part.subarray(0,count),copied);copied+=count;
+          if(copied===signature.length)break;
+        }
+        let remainder=prefixes.shift(),at=0,done=false;
+        const name=uploadFileName(source.name,sourceHeaders,signature);
         phase='session';await onProgress({phase,sent,total});
         const path='me/drive/items/'+encodeURIComponent(identity.rootId)+':/'+encodeURIComponent(name)+':/createUploadSession';
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -263,6 +276,7 @@
           let used=0;
           while(used<wanted){
             if(!remainder||at>=remainder.length){
+              if(prefixes.length){remainder=prefixes.shift();at=0;continue;}
               const part=await reader.read();
               if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
               if(part.done){done=true;break;}
@@ -277,7 +291,7 @@
           if(last){
             // Before final PUT, inspect the stream for bytes beyond Content-Length.
             // No replay is safe after a final commit attempt.
-            if(remainder&&at<remainder.length)
+            if((remainder&&at<remainder.length)||prefixes.length)
               throw fail('ONEDRIVE_SOURCE_LENGTH_MISMATCH','Source contained more bytes than advertised.','interrupted');
             const extra=await reader.read();
             if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
