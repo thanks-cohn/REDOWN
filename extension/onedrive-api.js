@@ -75,6 +75,7 @@
     }
     async function upload(source,identity,onProgress=async()=>{},signal){
       let reader=null,session=null,phase='source',sent=0,finalAttempt=false;
+      const abortSource=()=>{void reader?.cancel().catch(()=>{});};
       let total=null;
       const token=identity.token;
       if(!token||!identity.driveId||!identity.rootId)throw fail('ONEDRIVE_NOT_CONNECTED','Reconnect OneDrive before saving.');
@@ -89,6 +90,8 @@
         if(response.headers.get('content-encoding')&&!['identity',''].includes(response.headers.get('content-encoding').toLowerCase()))
           throw fail('ONEDRIVE_SOURCE_ENCODING','The source uses content encoding that prevents a reliable byte-counted upload.');
         reader=response.body.getReader();
+        signal?.addEventListener('abort',abortSource,{once:true});
+        if(signal?.aborted)abortSource();
         phase='session';await onProgress({phase,sent,total});
         const name=fileName(source.name);
         const path='me/drive/items/'+encodeURIComponent(identity.rootId)+':/'+encodeURIComponent(name)+':/createUploadSession';
@@ -106,6 +109,7 @@
           while(used<wanted){
             if(!remainder||at>=remainder.length){
               const part=await reader.read();
+              if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
               if(part.done){done=true;break;}
               remainder=part.value;at=0;
               if(!remainder?.length)continue;
@@ -121,6 +125,7 @@
             if(remainder&&at<remainder.length)
               throw fail('ONEDRIVE_SOURCE_LENGTH_MISMATCH','Source contained more bytes than advertised.','interrupted');
             const extra=await reader.read();
+            if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
             if(!extra.done)
               throw fail('ONEDRIVE_SOURCE_LENGTH_MISMATCH','Source exceeded its advertised size.','interrupted');
           }
@@ -158,7 +163,7 @@
           throw fail('ONEDRIVE_COMMIT_UNCERTAIN','Final OneDrive commit may have succeeded. Check your drive before retrying.','uncertain');
         if(e.code)throw e;
         throw fail('ONEDRIVE_TRANSFER_INTERRUPTED','OneDrive upload was interrupted. Check the drive before retrying.','interrupted');
-      }finally{await reader?.cancel().catch(()=>{});}
+      }finally{signal?.removeEventListener('abort',abortSource);await reader?.cancel().catch(()=>{});}
     }
     return {upload,graph};
   }
