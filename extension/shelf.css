@@ -1092,3 +1092,22 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   background:transparent;
 }
 #history-timeline .history-entry-provider{font-weight:600}
+
+
+/* Rechecked R2 object/bucket addresses appear inside the existing text-only
+   History URL drawer, never as competing GO TO hyperlinks. */
+#history-timeline .history-live-bucket-urls{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+#history-timeline .history-live-url-status{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+#history-timeline .history-live-bucket-urls .history-entry-url-text{
+  color:var(--text);
+}
