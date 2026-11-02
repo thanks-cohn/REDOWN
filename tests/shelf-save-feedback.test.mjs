@@ -204,3 +204,34 @@ test('Cloudflare SUCCESS is an authenticated verifier event, never a loginless t
  assert.equal(card.querySelector('.provider-save-success'),null,'no HEAD proof cannot celebrate');
  h.dom.window.close();
 });
+
+test('Cloudflare action matches sibling card anatomy and SUCCESS covers the entire action shell',async()=>{
+ const h=fixture('neon'),d=h.w.document;
+ const action=d.getElementById('cloudflare');
+ const shell=action.parentElement;
+ const card=d.querySelector('.cloudflare-hero[data-provider="cloudflare"]');
+ const count=action.querySelector('.provider-save-count');
+ const free=action.querySelector('.free-storage-label');
+ assert.equal(shell.classList.contains('cloudflare-action-shell'),true);
+ assert.equal(shell.closest('.cloudflare-hero'),card);
+ assert.equal(count.parentElement,action,'permanent number remains on action, not in a detached readout');
+ assert.equal(count.nextElementSibling,free,'number and free badge remain visible in same row');
+ assert.equal(shell.querySelector('.provider-save-readout')?.parentElement,shell,
+   'success overlay stage is exactly the action wrapper, not the whole hero');
+ const css=await readFile('extension/shelf.css','utf8');
+ assert.match(css,/#clouds-view \.cloudflare-hero \.cloudflare-action-shell \.provider-save-success\{[^}]*inset:0;[^}]*width:100%;[^}]*height:100%/s);
+ assert.doesNotMatch(css,/\.cloudflare-hero \.provider-save-success\{\s*inset:auto 18px 18px 18px/);
+ // There must be no success overlay simply because the card renders.
+ assert.equal(shell.querySelector('.provider-save-success'),null);
+ h.cloudflareLogin();
+ h.receipt('cloudflare','one');
+ const success=shell.querySelector('.provider-save-success');
+ assert.ok(success,'verified receipt creates a full action overlay');
+ assert.equal(success.parentElement,shell.querySelector('.provider-save-readout'));
+ assert.equal(success.textContent,'SUCCESS!');
+ assert.equal(action.querySelector('.provider-save-count').textContent,'1');
+ h.advance(1040);
+ assert.equal(shell.querySelector('.provider-save-success'),null);
+ assert.equal(count.parentElement,action);
+ h.dom.window.close();
+});
