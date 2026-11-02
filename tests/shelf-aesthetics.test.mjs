@@ -127,7 +127,6 @@ test('other Shelf windows can update Beta Aesthetics without a reload',async()=>
   const h=fixture();
   await settle();
   const changes={shelfDestinationDisplay:{newValue:'slant'},shelfDestinationArrow:{newValue:true}};
-  for(const listener of h.w.chrome.storage.onChanged ? [] : [])listener();
   // Dispatch through the same storage notification route used by other REDOWN pages.
   const listeners=[];
   // A new minimal instance verifies the external-change contract via the registered hook.
