@@ -110,3 +110,30 @@ test('P0 PKCE failure cannot leave Dropbox forever connecting',async()=>{
   await assert.rejects(auth.connect());
   assert.equal(data['dropbox:state'].phase,'reconnect');
 });
+
+test('P0 Shelf RETRY visibly explains authorization failure in the provider card',async()=>{
+  const dom=new JSDOM(`<div class="destination-tile">
+    <button id="shelf-dropbox"><span class="destination-action-copy"><span id="shelf-dropbox-label"></span></span></button>
+    <a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
+    <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
+    </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
+  dom.window.chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'reconnect',error:'Dropbox root could not be verified.'},'dropbox:transfer':{}}),onChanged:{addListener:()=>{}}}},runtime:{sendMessage:async msg=>({ok:msg.type!=='dropboxConnect',error:'Dropbox root could not be verified.'})}};
+  dom.window.eval(await read('shelf-dropbox.js'));
+  await Promise.resolve();await Promise.resolve();
+  const button=dom.window.document.getElementById('shelf-dropbox');
+  const error=dom.window.document.querySelector('.dropbox-inline-login-error');
+  assert.equal(button.disabled,false);
+  assert.equal(dom.window.document.getElementById('shelf-dropbox-label').textContent,'RETRY');
+  assert.equal(error.hidden,false);
+  assert.match(error.textContent,/root could not be verified/);
+  dom.window.close();
+});
+
+test('Neon SUCCESS is bigger and never alters verified-only receipt handling',async()=>{
+  const css=await read('shelf.css'),feedback=await read('shelf-save-feedback.js');
+  assert.match(css,/clamp\(39px,5\.8vw,55px\)/);
+  assert.match(css,/clamp\(44px,6\.2vw,62px\)/);
+  assert.match(feedback,/receipt\?\.verified!==true/);
+  assert.match(feedback,/money-flash/);
+  assert.match(feedback,/word\.slice\(0,i\)/);
+});
