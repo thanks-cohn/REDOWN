@@ -47,7 +47,7 @@ test('history footer displays provider plus actual saved path, no duplicate buck
  assert.equal(footers.length,5);
  assert.ok(footers.some(s=>s.includes('Cloudflare R2 · hp-mini/memes/img.jpg')));
  assert.ok(footers.some(s=>s.includes('Dropbox · art/pic.png')));
- assert.ok(footers.some(s=>s.includes('OneDrive · OneDrive/file.docx')));
+ assert.ok(footers.some(s=>s.includes('OneDrive · /file.docx')));
  assert.ok(footers.some(s=>s.includes('Google Drive · My Drive/image.webp')));
  assert.ok(footers.some(s=>s.includes('Google Drive · Folder ID abc_123/found.jpg')));
  assert.ok(footers.every(s=>!s.includes('hp-mini · hp-mini')&&!s.includes('example.invalid/source')));
