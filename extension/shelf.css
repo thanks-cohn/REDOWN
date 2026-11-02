@@ -851,3 +851,42 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
     height:44px;min-height:44px;padding-inline:7px;
   }
 }
+
+
+/* Theme-aware REDOWN signature, styled below the product wordmark. */
+.brand small{
+  display:block;
+  max-width:100%;
+  font-family:"Palatino Linotype","Book Antiqua","Iowan Old Style",Georgia,serif;
+  font-size:12px;
+  font-style:italic;
+  font-weight:500;
+  line-height:1.32;
+  letter-spacing:.016em;
+  color:var(--muted);
+  text-shadow:0 1px rgba(255,255,255,.2);
+  text-wrap:balance;
+}
+:root[data-shelf-theme="porcelain"] .brand small{
+  color:#70518b;
+  font-family:"Palatino Linotype","Iowan Old Style",Georgia,serif;
+}
+:root[data-shelf-theme="midnight"] .brand small{
+  color:#ced9e8;
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  text-shadow:0 1px 3px #03050a66;
+}
+:root[data-shelf-theme="ocean"] .brand small{
+  color:#bceee9;
+  font-family:"Palatino Linotype",Georgia,serif;
+  text-shadow:0 1px 4px #032c306e;
+}
+:root[data-shelf-theme="neon"] .brand small{
+  color:#f5bde9;
+  font-family:"DM Sans",system-ui,sans-serif;
+  font-style:italic;
+  font-weight:650;
+  font-size:12.5px;
+  letter-spacing:.023em;
+  text-shadow:0 0 7px #ef3cbd72;
+}
