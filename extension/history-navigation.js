@@ -21,7 +21,10 @@
       /pending|cancel|uncertain|incomplete|failed|started|accepted/i.test([record.status,record.state].filter(Boolean).join(' ')))return null;
     const d=record.destination||{};
     const provider=String(d.provider||record.providerKind||'').toLowerCase();
-    let u;try{u=new URL(record.location);}catch{return null;}
+    const knownUrl=record.location||
+      (provider==='google-drive'&&/^[A-Za-z0-9_-]+$/.test(d.fileId||'')?
+        'https://drive.google.com/file/d/'+d.fileId+'/view':provider==='onedrive'?d.webUrl:'');
+    let u;try{u=new URL(knownUrl);}catch{return null;}
     if(u.protocol!=='https:'||u.username||u.password||u.hash)return null;
     if(provider==='google-drive'){
       if(!/^[A-Za-z0-9_-]+$/.test(d.fileId||'')||u.hostname!=='drive.google.com'||
@@ -43,7 +46,52 @@
     }
     return null;
   }
-  const openable=record=>!!(locator(record)||cloudTarget(record));
+  // Historical pre-verifier R2 receipts were stored as an exact "R2: bucket/key"
+  // location plus a profileId, before destination.accountId/bucket/key existed.
+  // The button must not disappear merely because the receipt format evolved.
+  // At click time we resolve the original exact profileId from local storage,
+  // then Explorer independently checks the exact object against R2.
+  function legacyR2(record){
+    if(record?.ok!==true||record.verified===false||record.uncertain===true||record.error||
+      /pending|cancel|uncertain|incomplete|failed|started|accepted/i.test(
+        [record.status,record.state].filter(Boolean).join(' '))||
+      record.destination||typeof record.profileId!=='string'||!record.profileId||
+      record.providerKind&&!['cloudflare','cloudflare-r2'].includes(record.providerKind)||
+      record.provider&&!['cloudflare','cloudflare-r2','Cloudflare R2'].includes(record.provider))return null;
+    const match=/^R2: ([a-z0-9][a-z0-9.-]{0,62})\/(.+)$/.exec(record.location||'');
+    if(!match)return null;
+    const [,bucketName,key]=match;
+    if(key.endsWith('/')||/[\\\x00-\x1f]/.test(key)||
+       key.split('/').some(part=>!part||part==='.'||part==='..'))return null;
+    return {profileId:record.profileId,bucketName,key};
+  }
+  function savedDropboxTarget(record){
+    if(record?.ok!==true||record.verified!==true||record.status!=='completed'||
+       record.uncertain===true||record.error||record.location)return null;
+    const d=record.destination||{};
+    if((d.provider||record.providerKind)!=='dropbox'||d.proofVersion!==1||
+       !/^dbid:[A-Za-z0-9_-]+$/.test(d.accountId||'')||
+       typeof d.connectionId!=='string'||!d.connectionId||
+       !/^\d+$/.test(d.namespace||'')||d.root!=='/'||
+       !/^id:[A-Za-z0-9_-]+$/.test(d.fileId||'')||
+       typeof d.name!=='string'||!d.name||d.name.includes('/')||
+       d.name==='.'||d.name==='..'||d.path!=='/'+d.name||
+       typeof d.revision!=='string'||!d.revision||
+       !/^[a-f0-9]{64}$/.test(d.contentHash||'')||
+       !Number.isSafeInteger(d.bytes)||d.bytes<0)return null;
+    // Navigation route derived ONLY from verified Dropbox root path metadata.
+    // This is not a saved public/file-sharing URL. Website login may differ.
+    return 'https://www.dropbox.com/home/'+encodeURIComponent(d.name);
+  }
+  const verifiedOneDriveWithoutLink=record=>{
+    const d=record?.destination||{};
+    return record?.ok===true&&record.verified===true&&record.status==='completed'&&
+      !record.error&&!record.uncertain&&!record.location&&!d.webUrl&&
+      (d.provider||record.providerKind)==='onedrive'&&
+      !!d.accountId&&!!d.driveId&&!!d.rootId&&!!d.itemId;
+  };
+  const openable=record=>!!(locator(record)||cloudTarget(record)||legacyR2(record)||
+    savedDropboxTarget(record)||verifiedOneDriveWithoutLink(record));
   function valid(intent){return intent?.locator&&locator({ok:true,verified:true,destination:intent.locator})&&typeof intent.token==='string'&&Number.isFinite(intent.issuedAt)&&Date.now()-intent.issuedAt<lifetime&&intent.issuedAt<=Date.now()+1000;}
   let mode='tab',openingEpoch=0;
   const normalized=value=>value==='side'||value==='split'?'split':'tab';
@@ -154,7 +202,7 @@
     tabLane=operation;return operation;
   }
   function open(record){
-    const external=cloudTarget(record);
+    const external=cloudTarget(record)||savedDropboxTarget(record);
     if(external){
       const ticket=++openingEpoch;report('');
       void chrome.tabs.create({url:external,active:true}).catch(()=>{
@@ -162,11 +210,32 @@
       });
       return;
     }
-    const target=locator(record);if(!target)return;
+    const target=locator(record),historical=target?null:legacyR2(record);
+    if(!target&&!historical){
+      if(verifiedOneDriveWithoutLink(record))
+        report('OneDrive verified this file but returned no direct file link. Open your OneDrive account and locate '+(record.filename||record.destination?.itemId||'the saved file')+'.');
+      return;
+    }
     const ticket=++openingEpoch;
     report(''); // A new GO TO owns the status; do not carry a prior attempt's diagnostic.
-    const fallback=()=>{if(ticket!==openingEpoch)return;report('');void tab(target,ticket).catch(e=>{if(ticket===openingEpoch)report('Could not open Explorer: '+e.message);});};
-    void preference.then(()=>tab(target,ticket,mode)).catch(e=>{
+    const resolved=historical?chrome.storage.local.get('profiles').then(data=>{
+      const matches=(Array.isArray(data.profiles)?data.profiles:[]).filter(p=>
+        p.id===historical.profileId&&p.type==='cloudflare-r2'&&
+        p.bucketName===historical.bucketName&&typeof p.accountId==='string'&&p.accountId);
+      if(matches.length!==1)throw Error('Original Cloudflare bucket/profile is no longer configured. Restore that exact destination before using GO TO.');
+      const p=matches[0],prefix=historical.key.slice(0,historical.key.lastIndexOf('/')+1);
+      const checked=locator({ok:true,verified:true,destination:{
+        accountId:p.accountId,bucketName:p.bucketName,key:historical.key,prefix}});
+      if(!checked)throw Error('Historical R2 destination is invalid.');
+      return checked;
+    }):Promise.resolve(target);
+    const fallback=async()=>{if(ticket!==openingEpoch)return;report('');
+      try{const dest=await resolved;if(ticket===openingEpoch)await tab(dest,ticket);}
+      catch(e){if(ticket===openingEpoch)report('Could not open Explorer: '+e.message);}
+    };
+    void Promise.all([preference,resolved]).then(([,dest])=>{
+      if(ticket===openingEpoch)return tab(dest,ticket,mode);
+    }).catch(e=>{
       if(ticket===openingEpoch)report('Could not open Explorer: '+e.message,mode==='split'?fallback:undefined);
     });
   }
@@ -185,7 +254,7 @@
     chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));
     return {tab:ownTab,windowId:win.id};
   }
-  globalThis.RedownHistoryNavigation={locator,cloudTarget,openable,valid,open,preference,receive};
+  globalThis.RedownHistoryNavigation={locator,cloudTarget,legacyR2,savedDropboxTarget,openable,valid,open,preference,receive};
   const select=document.getElementById('history-go-to-mode');
   if(select){void preference.then(()=>{select.value=mode;});select.onchange=async()=>{try{await chrome.storage.local.set({historyGoToMode:normalized(select.value)});}catch(e){report('Could not save navigation preference: '+e.message);}};}
 })();
