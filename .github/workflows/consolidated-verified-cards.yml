@@ -1,0 +1,19 @@
+name: CONSOLIDATED verified-card receipt and animation contract
+on:
+  push:
+    branches: [CONSOLIDATED]
+  workflow_dispatch:
+jobs:
+  verified-cards:
+    name: Receipt to Shelf cards (Node 24)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify receipt, count, animation and menu contracts
+        run: node --test tests/transfer-counter.test.mjs tests/shelf-save-feedback.test.mjs tests/consolidated-flat-providers.test.mjs
