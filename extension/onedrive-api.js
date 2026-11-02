@@ -6,15 +6,13 @@
   'use strict';
   const GRAPH='https://graph.microsoft.com/v1.0/';
   const CHUNK=16*320*1024; // 5 MiB; every nonfinal fragment is a multiple of 320 KiB.
-  // Known Microsoft upload locations are requested in the initial click gesture.
-  // Graph's uploadUrl remains opaque: new hosts require their own Chrome grant.
+  // Recognition aids only; host access is a browser-level extension permission.
+  // Graph's uploadUrl remains opaque and is never persisted.
   const UPLOAD_ORIGINS=[
     'https://*.1drv.com/*','https://*.sharepoint.com/*',
     'https://*.onedrive.com/*','https://*.sharepoint-df.com/*',
     'https://*.my.microsoftpersonalcontent.com/*'
   ];
-  // Granted once from OneDrive setup, never requested by a save click.
-  const SAVE_ORIGINS=['https://*/*','http://*/*'];
   const fail=(code,message,status='blocked')=>Object.assign(Error(message),{code,status});
   // URLs are fetched exclusively by REDOWN. Source URLs are never passed to Graph.
   function publicHostname(host){
@@ -171,8 +169,7 @@
     }
     // Treat Graph's authenticated upload-session response as the destination
     // authority, not a hard-coded hostname list. Never attach Graph bearer to PUT.
-    // A newly encountered HTTPS origin additionally requires a Chrome permission
-    // the owner grants in the Shelf. Never persist the opaque upload URL.
+    // Extension host access is declared in the manifest. Never persist this URL.
     if(u.protocol!=='https:'||u.username||u.password||u.hash||
        !publicHostname(u.hostname)||u.port&&u.port!=='443')
       throw fail('ONEDRIVE_UPLOAD_URL_UNTRUSTED','Graph supplied an unsafe upload destination.');
@@ -261,15 +258,9 @@
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
         const uploadUrl=validUploadURL(session?.uploadUrl);
-        // A Graph-authenticated session authorizes an opaque upload endpoint,
-        // but only after the user granted one-time broad website access during
-        // OneDrive setup. No arbitrary host consent prompt on future saves.
-        if(!await chrome.permissions.contains({origins:SAVE_ORIGINS}))
-          throw fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
-            'Open REDOWN Shelf and enable OneDrive website access once to save files.');
-        if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']}))
-          throw fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
-            'OneDrive upload access was revoked. Open REDOWN Shelf to enable it again.');
+        // Graph supplies the opaque HTTPS upload destination for this session.
+        // Neither its hostname nor the source hostname triggers a Chrome prompt.
+        // The manifest declares browser-level network access at install/update.
         phase='uploading';await onProgress({phase,sent,total});
         while(sent<total){
           if(signal?.aborted)throw fail('ONEDRIVE_CANCELLED','OneDrive transfer cancelled.','cancelled');
@@ -338,5 +329,5 @@
     return {upload,graph};
   }
   globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,uploadFileName,validUploadURL,
-    knownUploadHost,UPLOAD_ORIGINS,SAVE_ORIGINS,CHUNK,fail};
+    knownUploadHost,UPLOAD_ORIGINS,CHUNK,fail};
 })();
