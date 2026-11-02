@@ -1,16 +1,16 @@
 (() => {
   'use strict';
   const el=id=>document.getElementById('shelf-onedrive'+id);
-  const button=el(''),status=el('-status'),open=el('-open'),disconnect=el('-disconnect'),
-    cancel=el('-cancel'),diagnostic=el('-diagnostic');
+  const button=el(''),label=el('-label')||button,status=el('-status'),open=el('-open'),disconnect=el('-disconnect'),
+    cancel=el('-cancel');
   if(!button||!status)return;
   let state={},transfer={},busy=false,uiError='';
   function paint(){
     const connected=state.phase==='connected'&&state.rootReady===true;
     const connecting=busy||state.phase==='connecting';
     button.disabled=connecting;
-    button.textContent=connecting?'Connecting to OneDrive…':connected?'GO TO OneDrive':
-      state.phase==='reconnect'?'Reconnect OneDrive':'Connect OneDrive';
+    button.setAttribute('aria-label',connecting?'Connecting to OneDrive':connected?'Go to OneDrive':'Log in to OneDrive');button.closest('.destination-tile')?.setAttribute('data-connected',String(connected));
+    label.textContent=connecting?'···':connected?'GO TO':'LOGIN';
     open.hidden=!connected;disconnect.hidden=!connected&&state.phase!=='reconnect';
     cancel.hidden=!['active','queued'].includes(transfer.status);
     const size=transfer.total&&transfer.bytes!=null?
@@ -38,17 +38,6 @@
   });
   disconnect?.addEventListener('click',()=>void send('onedriveDisconnect').catch(()=>{}));
   cancel?.addEventListener('click',()=>void send('onedriveCancel').catch(()=>{}));
-  diagnostic?.addEventListener('click',async()=>{
-    diagnostic.disabled=true;uiError='Requesting permission for Microsoft test…';paint();
-    try{
-      uiError='Checking the Microsoft sign-in connection…';paint();
-      const r=await send('onedriveDiagnostic');
-      uiError=(r?.ok?'Verified: ':'Not verified: ')+(r?.message||'OneDrive diagnostic did not return a result.')+
-        (r?.aadsts?' ['+r.aadsts+']':'')+(r?.httpStatus?' (HTTP '+r.httpStatus+')':'')+
-        (r?.code?' ['+r.code+']':'');
-    }catch{uiError='OneDrive sign-in diagnostic could not finish.';}
-    finally{diagnostic.disabled=false;paint();}
-  });
   chrome.storage.local.get(['onedrive:state','onedrive:transfer']).then(s=>{
     state=s['onedrive:state']||{};transfer=s['onedrive:transfer']||{};paint();
   }).catch(()=>{uiError='OneDrive state is unavailable.';paint();});
