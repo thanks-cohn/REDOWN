@@ -1,40 +1,124 @@
-/* Fail-closed staging adapter: the request's real-Chrome OAuth gate is blocked.
- * No authentication assumptions, tokens, transfer pages or uploads are enabled.
- * Replace this gate only after recorded real Chrome code redemption and root proof.
- */
+/* OneDrive-only background adapter. V3 and the shared native registry stay unchanged. */
 (() => {
   'use strict';
-  const CODE='ONEDRIVE_OAUTH_NOT_VERIFIED';
-  const error='OneDrive is unavailable: Microsoft OAuth token exchange has not been verified in the registered Chrome extension. See the OneDrive implementation report.';
-  function create({chrome=globalThis.chrome,diagnostic=globalThis.RedownOneDriveOAuthDiagnostic?.create()}={}){
-    const seen=new WeakSet();
-    async function blocked(){
-      await chrome.storage.local.set({'onedrive:state':{phase:'blocked',code:CODE,error},'onedrive:transfer':{status:'blocked',code:CODE,error}});
-      return {ok:false,code:CODE,error};
+  const terminal=new Set(['completed','failed','blocked','cancelled','uncertain','interrupted']);
+  const result=(code,error,status='blocked')=>({ok:false,code,error,status});
+  function create({chrome=globalThis.chrome,auth=RedownOneDriveAuth.create(),
+    api=RedownOneDriveAPI.create(),record=async()=>{}}={}){
+    const seen=new WeakSet();let busy=false,running=null,controller=null,active=null,epoch=0;
+    const get=async key=>(await chrome.storage.local.get(key))[key];
+    const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':s});
+    const problem=e=>({code:e?.code||'ONEDRIVE_FAILED',error:e?.code?e.message:'OneDrive operation failed.',
+      status:terminal.has(e?.status)?e.status:'failed'});
+    async function saveRecord(job){
+      const ok=job.status==='completed',item=job.item||{},src=job.source||{};
+      try{await record({provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
+        profileName:'OneDrive root',deliveryId:'onedrive:'+job.id,transferId:job.id,filename:item.name||job.name,
+        status:job.status,ok:ok?true:['failed','blocked'].includes(job.status)?false:undefined,
+        verified:ok,sourceUrl:src.sourceUrl,pageUrl:src.pageUrl,srcUrl:src.srcUrl,
+        frameUrl:src.frameUrl,linkUrl:src.linkUrl,location:ok?item.webUrl||'':'',
+        destination:{provider:'onedrive',accountId:job.accountId,driveId:job.driveId,rootId:job.rootId,
+          itemId:item.itemId||'',root:'/'},bytes:ok?item.bytes:job.bytes||0,
+        transport:'browser-mediated',error:ok?undefined:job.error});}catch{}
+    }
+    async function begin(source,identity){
+      if(busy){await setTransfer({status:'blocked',code:'ONEDRIVE_BUSY',error:'Another OneDrive save is in progress.'});return;}
+      busy=true;const ticket=epoch,job={id:crypto.randomUUID(),name:source.name,source,
+        accountId:identity.accountId,driveId:identity.driveId,rootId:identity.rootId,
+        status:'active',phase:'source',bytes:0,total:null};
+      active=job;controller=new AbortController();
+      await setTransfer({status:'active',phase:'source',name:job.name,bytes:0,total:null});
+      running=(async()=>{
+        try{
+          job.item=await api.upload(source,identity,async p=>{
+            job.phase=p.phase;job.bytes=p.sent;job.total=p.total;
+            await setTransfer({status:'active',phase:p.phase,name:job.name,bytes:p.sent,total:p.total});
+          },controller.signal);
+          if(ticket!==epoch)throw RedownOneDriveAPI.fail('ONEDRIVE_INTERRUPTED','OneDrive was disconnected.','uncertain');
+          job.status='completed';job.bytes=job.item.bytes;
+          await setTransfer({status:'completed',name:job.item.name,bytes:job.item.bytes,total:job.item.bytes,
+            itemId:job.item.itemId,webUrl:job.item.webUrl||''});
+        }catch(e){
+          const p=problem(e);
+          if(ticket!==epoch&&['committing','verifying'].includes(job.phase)){
+            p.code='ONEDRIVE_COMMIT_UNCERTAIN';p.status='uncertain';
+            p.error='Final OneDrive commit may have succeeded. Check OneDrive before retrying.';
+          }
+          job.status=p.status;job.code=p.code;job.error=p.error;
+          await setTransfer({status:job.status,code:job.code,error:job.error,name:job.name,
+            bytes:job.bytes,total:job.total});
+        }finally{
+          await saveRecord(job);
+          if(active===job)active=null;
+          controller=null;busy=false;
+        }
+      })().finally(()=>{running=null;});
     }
     async function dispatch(info){
-      if(!RedownOneDriveMenu.owns(info?.menuItemId)||seen.has(info))return;
+      if(!info||typeof info!=='object'||!RedownOneDriveMenu.owns(info.menuItemId)||seen.has(info))return;
       seen.add(info);
-      // Unknown/stale IDs are consumed here, never forwarded to V3 or a provider.
-      if(!['provider:onedrive','provider:onedrive:connect'].includes(info.menuItemId)){
-        await chrome.storage.local.set({'onedrive:transfer':{status:'blocked',code:'ONEDRIVE_STALE_MENU',error:'This OneDrive action is no longer available. Reopen the menu.'}});return;
+      if(!['provider:onedrive:connect','provider:onedrive:save-root'].includes(info.menuItemId)){
+        await setTransfer({status:'blocked',code:'ONEDRIVE_STALE_MENU',
+          error:'Outdated OneDrive menu action. Reopen REDOWN after the menu refreshes.'});return;
       }
-      return blocked();
+      let source=null,permissions;
+      try{
+        const origins=[...RedownOneDriveAuth.ORIGINS,...RedownOneDriveAPI.UPLOAD_ORIGINS];
+        if(info.menuItemId==='provider:onedrive:save-root'){
+          source=RedownOneDriveAPI.sourceSnapshot(info);
+          origins.push(RedownOneDriveAPI.sourceURL(source.url).origin+'/*');
+        }
+        // Chrome native-click user gesture: request permission before awaiting storage.
+        permissions=chrome.permissions.request({origins:[...new Set(origins)]});
+      }catch(e){await setTransfer({...problem(e),status:'blocked'});return;}
+      try{
+        if(!await permissions)throw RedownOneDriveAPI.fail('ONEDRIVE_PERMISSION_DENIED','Chrome did not grant file-source and OneDrive access.');
+        if(info.menuItemId==='provider:onedrive:connect'){await auth.connect();return;}
+        const identity=await auth.ready(null,true);
+        await begin(source,identity);
+      }catch(e){await setTransfer(problem(e));}
     }
     const ownsMessage=m=>['onedriveConnect','onedriveDisconnect','onedriveStatus','onedriveCancel','onedriveDiagnostic'].includes(m?.type);
     async function message(m,sender){
-      if(sender?.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))return {ok:false,code:'ONEDRIVE_UNTRUSTED_SENDER'};
-      // An explicit Shelf-only test. Never promotes state to connected or enables saves.
-      if(m.type==='onedriveDiagnostic')return diagnostic?.run()||{ok:false,code:'ONEDRIVE_DIAGNOSTIC_UNAVAILABLE'};
-      if(m.type==='onedriveDisconnect'){
-        await chrome.storage.local.remove(['onedrive:auth','onedrive:state','onedrive:transfer']);
-        await chrome.storage.session?.remove('onedrive:oauth');return {ok:true};
-      }
-      if(m.type==='onedriveCancel')return {ok:true}; // No queue is enabled.
-      if(['onedriveConnect','onedriveStatus'].includes(m.type))return blocked();
-      return {ok:false,code:'ONEDRIVE_UNKNOWN_MESSAGE'};
+      if(sender?.id!==chrome.runtime.id||sender.url?.split(/[?#]/)[0]!==chrome.runtime.getURL('shelf.html'))
+        return result('ONEDRIVE_UNTRUSTED_SENDER','Only REDOWN Shelf can manage OneDrive.');
+      if(m.type==='onedriveDiagnostic')
+        return globalThis.RedownOneDriveOAuthDiagnostic?.create().run()||
+          result('ONEDRIVE_DIAGNOSTIC_UNAVAILABLE','Microsoft diagnostic is unavailable.');
+      try{
+        if(m.type==='onedriveConnect'){
+          if(busy)return result('ONEDRIVE_BUSY','Finish the current OneDrive save first.');
+          const state=await auth.connect();return {ok:true,phase:state.phase,rootReady:state.rootReady};
+        }
+        if(m.type==='onedriveStatus'){
+          const a=await get('onedrive:auth'),s=await get('onedrive:state');
+          if(a){
+            try{const v=await auth.ready(null,true);return {ok:true,phase:v.phase,rootReady:true};}
+            catch(e){return result(e.code||'ONEDRIVE_RECONNECT','Reconnect OneDrive to verify your account.');}
+          }
+          if(['connected','connecting','blocked'].includes(s?.phase))
+            await chrome.storage.local.set({'onedrive:state':{phase:'disconnected'}});
+          return {ok:true,phase:'disconnected'};
+        }
+        if(m.type==='onedriveCancel'){controller?.abort();return {ok:true};}
+        if(m.type==='onedriveDisconnect'){
+          epoch++;controller?.abort();
+          await running?.catch(()=>{});await auth.disconnect();return {ok:true};
+        }
+      }catch(e){return result(e.code||'ONEDRIVE_CONNECT_FAILED',e?.code?e.message:'OneDrive could not connect.');}
+      return result('ONEDRIVE_UNKNOWN_MESSAGE','Unknown OneDrive action.');
     }
-    return {dispatch,ownsMessage,message};
+    function install(){
+      const recover=async()=>{
+        const s=await get('onedrive:transfer');
+        if(s?.status==='active')
+          await setTransfer({...s,status:'uncertain',code:'ONEDRIVE_WORKER_INTERRUPTED',
+            error:'Chrome restarted during a OneDrive save. Check the root before retrying.'});
+      };
+      chrome.runtime.onStartup.addListener(()=>void recover().catch(()=>{}));
+      void recover().catch(()=>{});
+    }
+    return {dispatch,ownsMessage,message,install};
   }
-  globalThis.RedownOneDriveProvider={create,CODE,error};
+  globalThis.RedownOneDriveProvider={create};
 })();
