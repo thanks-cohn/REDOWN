@@ -91,9 +91,9 @@
         reader=response.body.getReader();
         phase='session';await onProgress({phase,sent,total});
         const name=fileName(source.name);
-        const path='me/drive/root:/'+encodeURIComponent(name)+':/createUploadSession';
+        const path='me/drive/items/'+encodeURIComponent(identity.rootId)+':/'+encodeURIComponent(name)+':/createUploadSession';
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name},fileSize:total}),signal});
+          body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
         const uploadUrl=validUploadURL(session?.uploadUrl);
         if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']}))
           throw fail('ONEDRIVE_UPLOAD_HOST_PERMISSION','The Microsoft upload endpoint is not authorized in Chrome. Enable OneDrive upload-host access in the Shelf.');
