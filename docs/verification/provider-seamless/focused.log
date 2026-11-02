@@ -1,0 +1,249 @@
+✔ PKCE S256 offline login, exact app, user root, trusted storage and memory-only access token (32.884942ms)
+✔ OAuth fail-closed {"badId":true} (1.732715ms)
+✔ OAuth fail-closed {"badRedirect":true} (0.766047ms)
+✔ OAuth fail-closed {"denied":true} (1.878686ms)
+✔ OAuth fail-closed {"wrongState":true} (1.487986ms)
+✔ OAuth fail-closed {"wrongRedirect":true} (3.570919ms)
+✔ OAuth fail-closed {"expired":true} (2.230306ms)
+✔ OAuth fail-closed {"duplicateState":true} (1.710852ms)
+✔ OAuth fail-closed {"tokenError":true} (2.319962ms)
+✔ OAuth fail-closed {"scopeDenied":true} (2.866257ms)
+✔ OAuth fail-closed {"team":true} (2.147512ms)
+✔ OAuth fail-closed {"badRoot":true} (2.294162ms)
+✔ OAuth fail-closed {"rootDenied":true} (2.131858ms)
+✔ refresh after worker restart is noninteractive, verifies original account; revocation and account switch fail closed (2.881579ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 0 (6.064553ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 19 (4.662508ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 4194323 (15.918666ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 34603009 (102.004659ms)
+✔ unknown length uses bounded sessions; Unicode names and dangerous filenames are sanitized (11.491644ms)
+✔ transport fault never reports success {"appendHttp":401} (3.556197ms)
+✔ transport fault never reports success {"appendHttp":403} (2.385981ms)
+✔ transport fault never reports success {"appendHttp":409} (2.218138ms)
+✔ transport fault never reports success {"appendHttp":429} (2.672824ms)
+✔ transport fault never reports success {"appendHttp":500} (3.055742ms)
+✔ transport fault never reports success {"finishHttp":500} (2.68299ms)
+✔ transport fault never reports success {"lostFinish":true} (3.304167ms)
+✔ transport fault never reports success {"badReceipt":true} (3.407513ms)
+✔ transport fault never reports success {"sourceError":true} (1.84856ms)
+✔ transport fault never reports success {"html":true} (2.401886ms)
+✔ lost append before checkpoint resumes against server correct_offset without duplication (27.380425ms)
+✔ worker restart resumes exact byte range and safely handles checkpoint at EOF (24.027214ms)
+✔ changed/range-inaccessible source cannot resume, interrupted finish is never replayed (17.023333ms)
+✔ source snapshot chooses clicked media/link before page, preserves context and rejects unsafe URLs (1.201684ms)
+✔ HTTP source bytes stream to Dropbox without exposing the source URL or its query (5.330295ms)
+✔ connected native saves, repeated clicks and multi-chunk transfer use no visible UI; exact job receipts (14.523229ms)
+✔ login via native action resumes exactly one pending click; Shelf login alone creates no job (6.223453ms)
+✔ unknown native IDs and untrusted Shelf messages fail closed; denied source consent cannot save (0.83498ms)
+✔ crashed OAuth and commit jobs are interrupted/uncertain on wake, with no duplicate commits (3.698793ms)
+✔ queue bound preserves existing jobs and reports a clear retry condition (2.263967ms)
+✔ shared composer preserves every V3/Google plan and route, Dropbox leaf ordering and invalid fragment rejection (60.352961ms)
+✔ actual single native writer reconciles transitions/restart/lost IDs and retains management last (62.941166ms)
+✔ actual native dispatcher isolates all Dropbox IDs before V3 resolver or navigation (2.439642ms)
+✔ Shelf Google then Dropbox then original headline; semantic controls and polite status (118.773493ms)
+✖ protected bytes unchanged except explicitly authorized shared composer hook (4.917461ms)
+✔ history and counter deduplicate Dropbox receipt atomically without changing other provider semantics (4.199288ms)
+✔ cancellation, root/account pinning and stale connection jobs never become successful (2.534685ms)
+✔ oversized declared length blocks before uploading; no application-specific file size cap (2.939766ms)
+✔ verified receipt checkpoint survives restart and replays metadata proof only (5.222253ms)
+✔ worker crash after history write reuses delivery identity and never increments counter twice (12.238622ms)
+✔ actual native writer recovers partial Dropbox API failure and corrupt/missing native ID caches (28.18504ms)
+✔ Dropbox finish FileMetadata does not require a union discriminator (3.923051ms)
+✔ cancel and disconnect stop queued work without cross-account uploads (3.314833ms)
+✔ explicit 429 backoff is bounded and can recover; readback retries do not replay finish (3.595226ms)
+✔ retired Dropbox connect row is inert and reconnect uses the sole native row (8.541727ms)
+✔ flat native rows across all state combinations preserve Cloudflare projection and settings (660.389881ms)
+✔ upgrade retires every old child with missing or persisted ID cache, removal failure and restart (135.517191ms)
+✔ Google direct action queues background save/connect; busy and retired IDs create no jobs (56.826517ms)
+✔ OneDrive direct state routing preserves exact source and revalidation; obsolete actions never connect or save (2.808429ms)
+✔ protected engine/support/editor hashes and every baseline projection/resolve remain identical (20.414376ms)
+✔ single root, deterministic siblings, namespace/parent/capacity/cycle rejection; provider states never alter Cloudflare (37.203736ms)
+✔ actual Google click early return never resolves Cloudflare or invokes R2/dashboard even for unknown IDs (2.459792ms)
+✔ authorized scoped OAuth, serialized folder creation, reconnect reuse, worker/page restart and account isolation (24.107004ms)
+✔ ambiguous folder create reconciles preallocated ID without another creation (1.57004ms)
+✔ OAuth failure is recoverable and never connected {"denied":true} (0.303898ms)
+✔ OAuth failure is recoverable and never connected {"badClient":true} (0.180032ms)
+✔ OAuth failure is recoverable and never connected {"badId":true} (0.16544ms)
+✔ OAuth failure is recoverable and never connected {"revoked":true} (0.270498ms)
+✔ OAuth failure is recoverable and never connected {"http":401} (0.359663ms)
+✔ OAuth failure is recoverable and never connected {"http":403} (0.519705ms)
+✔ OAuth failure is recoverable and never connected {"http":429} (0.738435ms)
+✔ OAuth failure is recoverable and never connected {"http":500} (0.431561ms)
+✔ PNG actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (16.360633ms)
+✔ PDF actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (54.314518ms)
+✔ chunked actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (18.613943ms)
+✔ truthful upload failure {"interrupt":true} (4.255903ms)
+✔ truthful upload failure {"badReceipt":true} (7.205545ms)
+✔ truthful upload failure {"sourceError":true} (0.815441ms)
+✔ truthful upload failure {"size":33554433} (0.80154ms)
+✔ truthful upload failure {"permission":false} (0.632795ms)
+✔ abort never produces success and URL restrictions reject unsafe sources (7.47997ms)
+✔ Shelf connection control exact flow placement, keyboard native button and theme-neutral layout (194.8826ms)
+✔ actual shared native writer mode/provider races, restart, stale cache, partial API failure and recovery preserve root/manage and targets (102.931202ms)
+✔ mid-upload HTTP 401 never reports success or replays a file create (3.780086ms)
+✔ mid-upload HTTP 403 never reports success or replays a file create (4.198066ms)
+✔ mid-upload HTTP 429 never reports success or replays a file create (5.520321ms)
+✔ mid-upload HTTP 500 never reports success or replays a file create (6.543897ms)
+✔ unknown-length overflow and HTML fail before any Drive upload (86.944815ms)
+✔ cross-page folder creation uses an extension-origin Web Lock (2.242244ms)
+✔ Google external receipt gate rejects page-supplied success and never credits untrusted pages (5.905784ms)
+✔ ordinary Google save route has no transfer tab or page-sized buffer; durable worker owns receipt creation (4.702127ms)
+✔ multi-account active Depth inventory keeps exact native entries, order and per-prefix actions across every Google state (49.46702ms)
+✖ unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit (2.86251ms)
+✔ OneDrive menu shows root save only with a verified connected-state identity (5.470236ms)
+✔ invalid OneDrive fragments preserve original identity and exact plan (0.928291ms)
+✔ actual shared registry across four presentations and all provider connection masks preserves prior routes (2493.182817ms)
+✔ bad or throwing fragment keeps original shared native menu; error is provider-local (68.995954ms)
+✔ exact existing dispatcher consumes OneDrive once, never routes stale IDs to prior providers (6.627904ms)
+✔ stale menus, concurrent rebuild and MV3 restart preserve other providers (90.528675ms)
+✔ OneDrive connection controls stay Shelf-only and stale actions never save (42.12241ms)
+✔ Shelf shows controlled login, diagnostic and root actions without altering other provider markup (188.471312ms)
+✔ OneDrive Test from Dashboard is gated by Debug Mode and trusted sender (7.489335ms)
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'create')]
+    at reportException (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+    at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) TypeError: Cannot read properties of undefined (reading 'create')
+    at HTMLButtonElement.eval (eval at open (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:11:21), <anonymous>:49:73)
+    at HTMLButtonElement.callTheUserObjectsOperation (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (197.228194ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (75.172397ms)
+✔ failed or canceled login stays red and retryable without resetting the total (29.613358ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (78.987104ms)
+✔ late count response cannot overwrite a newer storage count (18.183687ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (51.959698ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (47.435815ms)
+✔ background accepts a discovered unsaved bucket only after read-only existence validation (3.915229ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (79.295038ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (22.662225ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (61.391289ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (17.3189ms)
+✔ unavailable audio never prevents reaching or saving the verified total (21.71202ms)
+✔ background ingest honors explicit root/deep prefixes and preserves the legacy category route (43.208927ms)
+✔ legacy Worker cannot silently normalize an exact destination before capability verification (4.849159ms)
+✔ filename precedence and sanitization 猫 photo.png (6.071834ms)
+✔ filename precedence and sanitization a;b.pdf (0.652294ms)
+✔ filename precedence and sanitization good.pdf (0.492133ms)
+✔ filename precedence and sanitization Visible cat.png (0.202065ms)
+✔ filename precedence and sanitization 猫.jpg (1.366903ms)
+✔ filename precedence and sanitization unsafe.pdf (0.324229ms)
+✔ filename precedence and sanitization download.pdf (0.359873ms)
+✔ filename precedence and sanitization download (0.286282ms)
+✔ filename precedence and sanitization Web file (0.225611ms)
+✔ filename precedence and sanitization Web file (0.858796ms)
+✔ filename precedence and sanitization a_b.png (0.351821ms)
+✔ Dropbox provider transport, commit, proof and numeric collision implementation are byte-preserved (43.600958ms)
+✔ Drive bounded streaming and provider-only metadata {} (38.865561ms)
+✔ Drive bounded streaming and provider-only metadata {"size":37748745} (150.569047ms)
+✔ Drive bounded streaming and provider-only metadata {"size":2147483665} (4420.538522ms)
+✔ Drive bounded streaming and provider-only metadata {"size":5242880,"unknown":true} (28.959341ms)
+✔ worker restart probes acknowledged offset and resumes source with strong ETag (15.968063ms)
+✔ lost final acknowledgement reconciles preallocated file ID without another create or source fetch (2.443027ms)
+✔ Drive failure never yields a completion {"permission":false} (0.402227ms)
+✔ Drive failure never yields a completion {"html":true} (0.478372ms)
+✔ Drive failure never yields a completion {"badReceipt":true} (8.8777ms)
+✔ Drive failure never yields a completion {"badEndpoint":true} (1.223818ms)
+✔ Drive failure never yields a completion {"http":401} (3.073049ms)
+✔ Drive failure never yields a completion {"http":403} (14.451934ms)
+✔ Drive failure never yields a completion {"http":429} (1.657411ms)
+✔ Drive failure never yields a completion {"denied":true} (0.190948ms)
+✔ unsafe source resume is rejected {"changed":true} (6.057944ms)
+✔ unsafe source resume is rejected {"noEtag":true} (5.573964ms)
+✔ Google account change blocks before source or upload; permission scope stays drive.file (0.477ms)
+✔ provider counters survive pruning, restart, duplicate replay and huge totals; failures do not celebrate (89.98579ms)
+✔ provider migration uses only retained proven receipts and leaves existing global count intact (0.39099ms)
+✔ all provider counts are atomic with History; failed storage cannot consume a receipt (0.359553ms)
+✔ Shelf restored receipts stay silent; live success, reduced effects, layout and independent defaults (192.531603ms)
+✔ Google direct saves are queued with no tabs; concurrent clicks, stale IDs and duplicate callback recovery (4.045457ms)
+✔ Google pending jobs recover, failures never produce success, and external receipts are rejected (0.941582ms)
+✔ Dropbox captures only an already-visible matching download name, without forwarding extra provider metadata (19.776351ms)
+✔ archive migration deduplicates receipt identities and retries unavailable archive without resetting totals (29.161687ms)
+✔ Google same-name saves get distinct durable file IDs without overwriting another file (4.403697ms)
+✔ pre-cancelled Google saves never fetch source or produce a receipt (0.617272ms)
+✔ new installations start at zero and retained history migrates exactly once (16.833619ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (21.646262ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (5.079367ms)
+✔ large counts preserve integer precision and invalid increments are rejected (1.228925ms)
+✔ recording a successful retry retains the previous history cleanup contract (1.153341ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (0.92775ms)
+ℹ tests 161
+ℹ suites 0
+ℹ pass 158
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14310.173315
+
+✖ failing tests:
+
+test at tests/dropbox.test.mjs:167:1
+✖ protected bytes unchanged except explicitly authorized shared composer hook (4.917461ms)
+  AssertionError [ERR_ASSERTION]: extension/shelf-google-drive.js
+  + actual - expected
+  
+  + 'fb62a1123aaa2a0692b0e882121298969b7c52c9f5f37bffb073fbc4b9453629'
+  - '1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/dropbox.test.mjs:169:105)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'fb62a1123aaa2a0692b0e882121298969b7c52c9f5f37bffb073fbc4b9453629',
+    expected: '1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/onedrive.test.mjs:14:1
+✖ unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit (2.86251ms)
+  AssertionError [ERR_ASSERTION]: extension/LICENSE
+  + actual - expected
+  
+  + '90ceb54a77c948da9664b871f3351bbcf3e0795e3249e865399df4d0c6c86c9f'
+  - '51e03f922a331f23ae7fd7a8cb0671e56bf15223bcd48d40b5118e8ae9e29b78'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/onedrive.test.mjs:33:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '90ceb54a77c948da9664b871f3351bbcf3e0795e3249e865399df4d0c6c86c9f',
+    expected: '51e03f922a331f23ae7fd7a8cb0671e56bf15223bcd48d40b5118e8ae9e29b78',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/popup-destinations.test.mjs:14:1
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (197.228194ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:264)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

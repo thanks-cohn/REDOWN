@@ -1,0 +1,48 @@
+✔ filename precedence and sanitization 猫 photo.png (4.078046ms)
+✔ filename precedence and sanitization a;b.pdf (0.591673ms)
+✔ filename precedence and sanitization good.pdf (0.396459ms)
+✔ filename precedence and sanitization Visible cat.png (0.267464ms)
+✔ filename precedence and sanitization 猫.jpg (0.92102ms)
+✔ filename precedence and sanitization unsafe.pdf (0.402969ms)
+✔ filename precedence and sanitization download.pdf (0.182615ms)
+✔ filename precedence and sanitization download (0.210718ms)
+✔ filename precedence and sanitization Web file (0.211118ms)
+✔ filename precedence and sanitization Web file (0.322076ms)
+✔ filename precedence and sanitization a_b.png (0.243678ms)
+✔ Dropbox provider transport, commit, proof and numeric collision implementation are byte-preserved (28.974465ms)
+✔ Drive bounded streaming and provider-only metadata {} (8.510787ms)
+✔ Drive bounded streaming and provider-only metadata {"size":37748745} (52.469801ms)
+✔ Drive bounded streaming and provider-only metadata {"size":2147483665} (1635.163783ms)
+✔ Drive bounded streaming and provider-only metadata {"size":5242880,"unknown":true} (9.673542ms)
+✔ worker restart probes acknowledged offset and resumes source with strong ETag (18.965438ms)
+✔ lost final acknowledgement reconciles preallocated file ID without another create or source fetch (1.90123ms)
+✔ Drive failure never yields a completion {"permission":false} (0.287494ms)
+✔ Drive failure never yields a completion {"html":true} (0.37773ms)
+✔ Drive failure never yields a completion {"badReceipt":true} (1.172971ms)
+✔ Drive failure never yields a completion {"badEndpoint":true} (0.688039ms)
+✔ Drive failure never yields a completion {"http":401} (1.246952ms)
+✔ Drive failure never yields a completion {"http":403} (1.24506ms)
+✔ Drive failure never yields a completion {"http":429} (1.756271ms)
+✔ Drive failure never yields a completion {"denied":true} (0.186171ms)
+✔ unsafe source resume is rejected {"changed":true} (17.020091ms)
+✔ unsafe source resume is rejected {"noEtag":true} (4.119849ms)
+✔ Google account change blocks before source or upload; permission scope stays drive.file (0.322937ms)
+✔ provider counters survive pruning, restart, duplicate replay and huge totals; failures do not celebrate (65.546795ms)
+✔ provider migration uses only retained proven receipts and leaves existing global count intact (0.752697ms)
+✔ all provider counts are atomic with History; failed storage cannot consume a receipt (0.522229ms)
+✔ Shelf restored receipts stay silent; live success, reduced effects, layout and independent defaults (145.268636ms)
+✔ Google direct saves are queued with no tabs; concurrent clicks, stale IDs and duplicate callback recovery (4.235904ms)
+✔ Google pending jobs recover, failures never produce success, and external receipts are rejected (1.0599ms)
+REDOWN archive unavailable; recent transfer retained: archive.append is not a function
+✔ Dropbox captures only an already-visible matching download name, without forwarding extra provider metadata (16.041313ms)
+✔ archive migration deduplicates receipt identities and retries unavailable archive without resetting totals (1.564402ms)
+✔ Google same-name saves get distinct durable file IDs without overwriting another file (5.129608ms)
+✔ pre-cancelled Google saves never fetch source or produce a receipt (0.226292ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2378.9484
