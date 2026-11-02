@@ -611,3 +611,35 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .overview>.eyebrow{margin:0 0 13px;font-size:10px}
 @media(max-width:399px){.overview .destinations-grid{grid-template-columns:1fr;gap:8px}.overview .destinations-grid .destination-tile{min-height:56px}.overview .destinations-grid .destination-action{min-height:55px;gap:13px;padding-left:15px}.overview .destinations-grid .destination-options-menu{right:0}}
 @media(prefers-reduced-motion:reduce){.overview .destinations-grid .destination-tile,.overview .destinations-grid .destination-icon,.overview .destinations-grid .destination-word,.overview .destinations-compass{transition:none!important}.overview .destinations-grid .destination-tile:is(:hover,:focus-within),.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-icon,.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-word,.overview:has(.destinations-grid :is(:hover,:focus-visible)) .destinations-compass{transform:none!important}}
+
+
+/* Professional Shelf default. The original curved sign remains opt-in under Beta Aesthetics. */
+.overview .destinations-heading{min-height:62px;margin-bottom:12px;padding:2px 4px}
+.overview .destinations-heading-copy{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.overview .destinations-heading .destinations-title{width:auto;height:auto;margin:0;font:760 clamp(17px,5vw,22px)/1.2 "DM Sans",system-ui,sans-serif;letter-spacing:-.025em;color:var(--text)}
+.overview .destinations-straight-title{display:block}
+.overview .destinations-subtitle{margin:3px 0 0;font:550 12px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.045em;color:var(--muted)}
+.overview .destinations-title .destinations-slant-title{display:none}
+.overview .destinations-compass{display:none}
+:root[data-destination-display="slant"] .overview .destinations-heading{min-height:58px;margin-bottom:7px;padding:0 5px}
+:root[data-destination-display="slant"] .overview .destinations-title{width:220px;height:55px;line-height:1}
+:root[data-destination-display="slant"] .overview .destinations-straight-title,
+:root[data-destination-display="slant"] .overview .destinations-subtitle{display:none}
+:root[data-destination-display="slant"] .overview .destinations-title .destinations-slant-title{display:block;width:220px;height:55px;overflow:visible}
+:root[data-destination-display="slant"][data-destination-arrow="true"] .overview .destinations-compass{display:grid}
+.beta-aesthetics{margin:13px 0 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 2px 8px rgba(var(--shadow-rgb),.05)}
+.beta-aesthetics>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;list-style:none;cursor:pointer;font:760 12px/1.4 "DM Sans",system-ui,sans-serif;letter-spacing:.03em}
+.beta-aesthetics>summary::-webkit-details-marker{display:none}
+.beta-aesthetics>summary::after{content:"⌄";color:var(--muted);font-size:19px;font-weight:500;transition:transform .2s}
+.beta-aesthetics[open]>summary::after{transform:rotate(180deg)}
+.beta-aesthetics>summary:hover{color:var(--accent)}
+.beta-aesthetics-controls{padding:0 14px 13px}
+.beta-aesthetics-row{display:flex;align-items:center;justify-content:space-between;gap:13px;min-height:59px;padding:10px 0;cursor:pointer}
+.beta-aesthetics-row+.beta-aesthetics-row{border-top:1px solid var(--line)}
+.beta-aesthetics-row>span{flex:1;min-width:0}
+.beta-aesthetics-row strong{display:block;font:700 12px/1.4 "DM Sans",system-ui,sans-serif}
+.beta-aesthetics-row small{display:block;margin-top:3px;color:var(--muted);font:400 11px/1.5 "DM Sans",system-ui,sans-serif}
+.beta-aesthetics-row input{width:18px;height:18px;flex:none;accent-color:var(--accent)}
+.beta-aesthetics-status{margin:2px 0 0;font-size:11px;color:var(--muted)}
+.beta-aesthetics-status:empty{display:none}
+@media(prefers-reduced-motion:reduce){.beta-aesthetics>summary::after{transition:none}}
