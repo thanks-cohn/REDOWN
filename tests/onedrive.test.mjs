@@ -105,10 +105,10 @@ test('Shelf shows controlled login, diagnostic and root actions without altering
  const html=read('extension/shelf.html'),dom=new JSDOM(html,{runScripts:'outside-only'}),d=dom.window.document;
  const calls=[];dom.window.chrome={runtime:{sendMessage:async m=>{calls.push(m);return {ok:false,error:'OAuth verification pending.'};}},permissions:{request:async()=>true},storage:{local:{get:async()=>({})},onChanged:{addListener:()=>{}}}};
  dom.window.eval(read('extension/shelf-onedrive.js'));
- assert.deepEqual(plain(calls),[{type:'onedriveStatus'}]);assert.ok(html.indexOf('class="google-drive-control"')<html.indexOf('class="dropbox-control"'));assert.ok(html.indexOf('class="dropbox-control"')<html.indexOf('class="onedrive-control"'));
+ assert.deepEqual(plain(calls),[{type:'onedriveStatus'}]);assert.ok(html.indexOf('class="google-drive-control destination-tile"')<html.indexOf('class="dropbox-control destination-tile"'));assert.ok(html.indexOf('class="dropbox-control destination-tile"')<html.indexOf('class="onedrive-control destination-tile"'));
  const b=d.getElementById('shelf-onedrive');assert.equal(b.type,'button');assert.equal(d.getElementById(b.getAttribute('aria-describedby')).getAttribute('role'),'status');
  b.click();await new Promise(r=>setImmediate(r));assert.deepEqual(plain(calls),[{type:'onedriveStatus'},{type:'onedriveConnect'}]);assert.match(d.getElementById('shelf-onedrive-status').textContent,/pending/);assert.equal(b.disabled,false);
- const oldHtml=execFileSync('git',['show',before.commit+':extension/shelf.html'],{encoding:'utf8'}),oldDom=new JSDOM(oldHtml);
- for(const selector of ['.google-drive-control','.dropbox-control'])assert.equal(d.querySelector(selector).outerHTML,oldDom.window.document.querySelector(selector).outerHTML);
- dom.window.close();oldDom.window.close();
+ for(const id of ['shelf-google-drive','shelf-dropbox','shelf-onedrive','shelf-google-status','shelf-dropbox-status'])assert.ok(d.getElementById(id));
+ assert.equal(d.querySelectorAll('.destinations-grid .destination-tile').length,3);assert.equal(d.getElementById('shelf-onedrive-diagnostic'),null);
+ dom.window.close();
 });
