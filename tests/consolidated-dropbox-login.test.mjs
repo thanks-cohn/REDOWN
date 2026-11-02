@@ -83,7 +83,7 @@ test('P0 Shelf LOGIN does not remain disabled in a stale connecting state',async
     <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
     </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
   const sent=[];
-  const chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'connecting'},'dropbox:transfer':{}}}),
+  const chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'connecting'},'dropbox:transfer':{}}),
     onChanged:{addListener:()=>{}}}},runtime:{sendMessage:async msg=>{sent.push(msg.type);return {ok:true};}}};
   dom.window.chrome=chrome;
   dom.window.eval(await read('shelf-dropbox.js'));
