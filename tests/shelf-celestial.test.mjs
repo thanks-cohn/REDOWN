@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
 const source=await readFile(new URL('../extension/shelf-celestial.js',import.meta.url),'utf8');
-function fixture({reduced=false,unsupported=false,width=390,height=780,targetTop=200}={}){
- const dom=new JSDOM('<button id="moon">Moon</button><section id="clouds-view"><span data-celestial-target>Future</span></section><section id="history-view"><span data-celestial-target>PERSONAL</span></section><section id="settings-view"><span data-celestial-target>HOME</span></section>',{url:'https://fixture.test',runScripts:'outside-only',pretendToBeVisual:true});
+function fixture({reduced=false,unsupported=false,width=390,height=780,targetTop=200,fallbackTop=260}={}){
+ const dom=new JSDOM('<button id="moon">Moon</button><a id="nav-clouds">REMOTE CLOUD</a><section id="clouds-view"><h2 class="destinations-title">DESTINATIONS</h2><span data-celestial-target>Future</span></section><section id="history-view"><span data-celestial-target>PERSONAL</span></section><section id="settings-view"><span data-celestial-target>HOME</span></section>',{url:'https://fixture.test',runScripts:'outside-only',pretendToBeVisual:true});
  const w=dom.window,events=[],animations=[];Object.defineProperty(w.document,'timeline',{value:{currentTime:1234}});let palette='midnight';Object.defineProperty(w,'innerWidth',{value:width});Object.defineProperty(w,'innerHeight',{value:height});
- w.HTMLElement.prototype.getBoundingClientRect=function(){return this.hasAttribute('data-celestial-target')?{left:50,top:targetTop,width:80,height:30}:{left:250,top:20,width:30,height:30};};
+ w.HTMLElement.prototype.getBoundingClientRect=function(){return this.hasAttribute('data-celestial-target')?{left:50,top:targetTop,width:80,height:30} :this.classList.contains('destinations-title')?{left:50,top:fallbackTop,width:190,height:35}:this.id==='nav-clouds'?{left:35,top:145,width:92,height:22}:{left:250,top:20,width:30,height:30};};
  if(!unsupported)w.Element.prototype.animate=function(frames,options){let resolve,reject;const finished=new Promise((a,b)=>{resolve=a;reject=b;});const item={node:this,frames,options,finished,playState:'running',cancelled:false,cancel(){this.cancelled=true;reject(Error('cancelled'));},resolve};animations.push(item);return item;};
  w.eval(source);const toggle=w.document.getElementById('moon');
  const director=w.RedownCelestial({toggle,current:()=>palette,commit:async value=>{palette=value;events.push(value);director.refresh();},reducedMotion:()=>reduced});
@@ -118,5 +118,28 @@ test('opening lift comes before a brief lateral impulse, then X momentum stays c
    assert.ok(Math.abs(mid-atImpact)<1e-7, 'horizontal speed must not brake before impact');
    assert.ok(Math.abs(m.at(m.impact).x-x)<1e-7, 'title collision still lands exactly');
   }
+ }finally{h.dom.window.close();}
+});
+
+test('short Shelf preserves the falling-ball collision using visible Destinations when Future is below the viewport',async()=>{
+ const h=fixture({height:480,targetTop:680,fallbackTop:295});try{
+  const task=h.director.select('neon',h.w.document.querySelector('[data-palette="neon"]'),false);
+  assert.equal(h.animations.length,1);
+  h.animations[0].resolve();await tick();
+  const flight=h.animations[1],collision=h.animations[2];
+  assert.equal(collision.node.className,'destinations-title');
+  assert.ok(flight.options.duration>1000,'real gravity flight, not an immediate theme flip');
+  assert.equal(h.events.length,0,'do not commit the theme until the ball lands and exits');
+  flight.resolve();await tick();assert.equal(h.events.length,0);
+  await task;assert.deepEqual(h.events,['neon']);
+  assert.equal(h.w.document.querySelector('.celestial-overlay'),null);
+ }finally{h.dom.window.close();}
+});
+test('when both word and heading are out of view, the Shelf navigation remains a springboard',async()=>{
+ const h=fixture({height:380,targetTop:780,fallbackTop:460});try{
+  const task=h.director.select('ocean',h.w.document.querySelector('[data-palette="ocean"]'),false);
+  h.animations[0].resolve();await tick();
+  assert.equal(h.animations[2].node.id,'nav-clouds');
+  h.animations[1].resolve();await task;assert.deepEqual(h.events,['ocean']);
  }finally{h.dom.window.close();}
 });
