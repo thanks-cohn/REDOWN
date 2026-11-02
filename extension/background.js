@@ -907,6 +907,7 @@ async function cfJson(path, options = {}) {
 }
 importScripts("history-archive.js");
 importScripts("brand-icon.js");
+importScripts("save-droplet-auth.js");
 importScripts("transfer-counter.js");
 importScripts("save-droplet-gate.js");
 importScripts("daily-save-badge.js");
@@ -2786,8 +2787,14 @@ chrome.storage.onChanged.addListener((changes, area) => {
    No persistent page injection, tracking, or new host permissions. Chrome does
    not let page DOM paint across its sidebar chrome: the orb ends at the page's
    right edge and a separate Shelf impact pulse completes the illusion. */
-async function launchSaveDroplet(info,tab){
+async function launchSaveDroplet(info,tab,provider='cloudflare'){
   if(!Number.isInteger(tab?.id))return;
+  // The dispatch effect is not a success receipt, but even a dispatch ball
+  // is misleading if the destination is not signed in. Deny by default.
+  const authKeys=RedownSaveDropletAuth.keys(provider);
+  if(!authKeys.length)return;
+  const credentials=await chrome.storage.local.get(authKeys);
+  if(!RedownSaveDropletAuth.connected(provider,credentials))return;
   const sources={
     src:String(info.srcUrl||"").slice(0,2048),
     link:String(info.linkUrl||"").slice(0,2048)
@@ -2896,15 +2903,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:onedrive')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
+    if(info.menuItemId==='provider:onedrive')void launchSaveDroplet(info,tab,'onedrive').catch(()=>{});
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:dropbox')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
+    if(info.menuItemId==='provider:dropbox')void launchSaveDroplet(info,tab,'dropbox').catch(()=>{});
     await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:google-drive')void globalThis.launchSaveDroplet?.(info,tab)?.catch(()=>{});
+    if(info.menuItemId==='provider:google-drive')void launchSaveDroplet(info,tab,'google').catch(()=>{});
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2932,7 +2939,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   return saveResolvedRightClick(info,tab,resolved,profiles);
 });
 async function saveResolvedRightClick(info,tab,resolved,profiles){
-  void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
+  void Promise.resolve(launchSaveDroplet(info,tab,'cloudflare')).catch(()=>{});
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.
