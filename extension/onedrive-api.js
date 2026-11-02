@@ -78,6 +78,11 @@
     return {kind:'url',url:url.href,name,sourceUrl:safe(url.href),pageUrl:safe(info.pageUrl),
       srcUrl:safe(info.srcUrl),frameUrl:safe(info.frameUrl),linkUrl:safe(info.linkUrl)};
   }
+  function knownUploadHost(host){
+    const allowed=['.1drv.com','.sharepoint.com','.onedrive.com','.sharepoint-df.com',
+      '.my.microsoftpersonalcontent.com','.blob.core.windows.net'];
+    return allowed.some(suffix=>String(host||'').toLowerCase().endsWith(suffix));
+  }
   function validUploadURL(value){
     let u;
     try{u=new URL(value);}catch{
@@ -153,12 +158,16 @@
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
         const uploadUrl=validUploadURL(session?.uploadUrl);
-        if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']})){
+        const granted=await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']});
+        const approved=(await chrome.storage.local.get('onedrive:trustedUploadOrigins'))['onedrive:trustedUploadOrigins'];
+        const ownerApproved=approved?.connectionId===identity.connectionId&&
+          Array.isArray(approved?.origins)&&approved.origins.includes(uploadUrl.origin);
+        // A source-site permission must never double as consent to upload
+        // bytes to that same host if a Graph response is compromised.
+        if(!granted||(!knownUploadHost(uploadUrl.hostname)&&!ownerApproved)){
           const error=fail('ONEDRIVE_UPLOAD_HOST_PERMISSION',
-            'Chrome needs your permission for this Graph-provided upload destination. Allow the host in REDOWN Shelf, then right-click the file again.');
-          // Only the origin is made available for the user's grant. Never expose
-          // or store the session URL, whose path/query may contain a token.
-          error.uploadOrigin=uploadUrl.origin;
+            'Confirm the HTTPS upload destination in REDOWN Shelf, then right-click the file again.');
+          error.uploadOrigin=uploadUrl.origin; // Origin only; no opaque query token.
           throw error;
         }
         let remainder=null,at=0,done=false;
@@ -228,5 +237,6 @@
     }
     return {upload,graph};
   }
-  globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,validUploadURL,UPLOAD_ORIGINS,CHUNK,fail};
+  globalThis.RedownOneDriveAPI={create,sourceURL,sourceSnapshot,fileName,validUploadURL,
+    knownUploadHost,UPLOAD_ORIGINS,CHUNK,fail};
 })();
