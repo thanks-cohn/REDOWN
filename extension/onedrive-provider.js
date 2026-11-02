@@ -69,7 +69,8 @@
         const origins=[...RedownOneDriveAuth.ORIGINS,...RedownOneDriveAPI.UPLOAD_ORIGINS];
         if(info.menuItemId==='provider:onedrive:save-root'){
           source=RedownOneDriveAPI.sourceSnapshot(info);
-          origins.push(RedownOneDriveAPI.sourceURL(source.url).origin+'/*');
+          if(source.kind!=='inline-data')
+            origins.push(RedownOneDriveAPI.sourceURL(source.url).origin+'/*');
         }
         // Chrome native-click user gesture: request permission before awaiting storage.
         permissions=chrome.permissions.request({origins:[...new Set(origins)]});
