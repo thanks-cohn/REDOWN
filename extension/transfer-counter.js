@@ -1,6 +1,6 @@
 /* Local lifetime delivery count. No URLs, names or credentials in counter state. */
 (() => {
-  function create(storage, locks, archive) {
+  function create(storage, locks, archive, clock=()=>new Date()) {
     let queue=Promise.resolve();
     const serial=task=>{
       const run=()=>locks?.request?locks.request('redown-transfer-history',task):task();
@@ -28,8 +28,27 @@
     const counted=entry=>entry?.providerKind==='dropbox'?entry.ok===true&&dropboxProof(entry):
       delivered(entry)||onedriveProof(entry);
     function increment(counter,amount){return {...counter,total:String(BigInt(counter.total)+BigInt(amount))};}
+    // Local calendar dates, not an arbitrary rolling 24h window. The service
+    // worker's local timezone is the user's Chrome system timezone.
+    const localDay=when=>{
+      const d=when instanceof Date?when:new Date(when);
+      return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+    };
+    const validDaily=(v,day)=>v?.version===1&&v.day===day&&
+      typeof v.total==='string'&&/^(0|[1-9]\\d*)$/.test(v.total);
+    const freshDaily=day=>({version:1,day,total:'0'});
+    async function dailyState(){
+      const today=localDay(clock());
+      const stored=(await storage.get('redownDailyVerified')).redownDailyVerified;
+      return {daily:validDaily(stored,today)?stored:freshDaily(today),reset:!validDaily(stored,today)};
+    }
     return {
       read:()=>serial(async()=>{const {counter}=await state();await storage.set({transferCounter:counter});return counter;}),
+      readDaily:()=>serial(async()=>{
+        const {daily,reset}=await dailyState();
+        if(reset)await storage.set({redownDailyVerified:daily});
+        return daily;
+      }),
       add:amount=>serial(async()=>{
         if(!Number.isSafeInteger(amount)||amount<0)throw Error('Invalid completed-file count');
         const {counter}=await state(),next=increment(counter,amount);await storage.set({transferCounter:next});return next;
@@ -51,6 +70,12 @@
           totals:{...providers.totals,[provider]:String(BigInt(providers.totals[provider]||'0')+1n)},
           ids:[...providers.ids,entry.deliveryId],
           latest:{id:entry.deliveryId,provider,at:Date.now(),verified:true,accountId:entry.destination?.accountId,connectionId:entry.destination?.connectionId}}}:{};
+        // This badge is a calendar-day count of VERIFIED new cloud files, not
+        // attempted clicks, local browser downloads, or the lifetime odometer.
+        // Commit the daily increment atomically alongside the provider receipt.
+        // Never infer historical days from the bounded 50-row History.
+        const day=confirmed?(await dailyState()).daily:null;
+        const dailyPatch=confirmed?{redownDailyVerified:{...day,total:String(BigInt(day.total)+1n)}}:{};
         const dropboxId=counted(entry)&&entry?.providerKind==='dropbox'&&/^dropbox:[\w-]+$/.test(entry.deliveryId||'')?entry.deliveryId:null;
         const deliveredIds=dropboxId?(await storage.get('dropbox:deliveries'))['dropbox:deliveries']||[]:[];
         if(dropboxId&&deliveredIds.includes(dropboxId))return;
@@ -66,7 +91,7 @@
           console.warn('REDOWN archive unavailable; recent transfer retained:',error?.message||String(error));
         }
         const next=[saved,...cleaned].slice(0,50);
-        await storage.set({...providerPatch,transferHistory:next,transferCounter:increment(counter,counted(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
+        await storage.set({...providerPatch,...dailyPatch,transferHistory:next,transferCounter:increment(counter,counted(entry)?1:0),...(dropboxId?{['dropbox:deliveries']:[...deliveredIds,dropboxId].slice(-128)}:{})});
       })
     };
   }
