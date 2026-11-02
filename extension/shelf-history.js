@@ -53,7 +53,7 @@
     if(delivered&&provider==='Dropbox')
       path=join(destination.path); // Authenticated Dropbox metadata path_display.
     if(delivered&&provider==='OneDrive'&&destination.root==='/'&&file)
-      path=join('OneDrive',file); // The OneDrive API writes to verified root.
+      path='/'+file; // The OneDrive API writes to its verified root.
     if(delivered&&provider==='Google Drive'&&file){
       const knownPath=text(destination.path)||text(destination.folderPath);
       if(knownPath)path=join(knownPath,file);
