@@ -357,3 +357,30 @@ test('Google Drive GO TO can use verified file ID with missing URL; OneDrive sho
  assert.match(h.w.document.getElementById('history-navigation-status').textContent,/returned no direct file link/);
  h.dom.window.close();
 });
+
+
+test('GO TO recovers old Cloudflare Worker asset URL only from exact configured bucket/profile',async()=>{
+ const profile={id:'historic-r2',type:'cloudflare-r2',accountId:'actual-account',
+   bucketName:'photo-archive',workerUrl:'https://r2-worker.example.invalid',
+   publicBaseUrl:'https://r2-worker.example.invalid/assets'};
+ const saved={id:'old-public-url',ok:true,at:good.at,profileId:'historic-r2',
+   location:'https://r2-worker.example.invalid/assets/photos/kept%20copy.webp',
+   sourceUrl:'https://unrelated-source.invalid/path'};
+ const h=view({transferHistory:[saved],profiles:[profile]});
+ h.w.eval(read('extension/shelf-history.js'));
+ await h.w.RedownShelfHistory.open();
+ assert.ok(h.w.document.querySelector('.history-go-to'),'historical exact Worker URL must keep GO TO');
+ assert.equal(h.nav.legacyAssetKey(saved.location,profile),'photos/kept copy.webp');
+ h.w.document.querySelector('.history-go-to').click();
+ await settle();
+ assert.equal(h.calls.length,1);
+ assert.equal(h.calls[0][0],'tab');
+ assert.ok(!h.calls[0][1].url.includes('unrelated-source.invalid'));
+ const changed={...saved,location:'https://r2-worker.example.invalid.evil.invalid/assets/photos/kept%20copy.webp'};
+ assert.equal(h.nav.legacyAssetKey(changed.location,profile),null);
+ assert.equal(h.nav.legacyAssetKey('https://r2-worker.example.invalid/assets/../different.webp',profile),null,
+   'URLs with normalized path outside the exact saved prefix must be refused');
+ assert.equal(h.nav.legacyAssetKey('https://r2-worker.example.invalid/assets/photos/%2Fescape.webp',profile),null);
+ assert.equal(h.nav.legacyAssetKey('https://other.invalid/assets/photos/kept%20copy.webp',profile),null);
+ h.dom.window.close();
+});
