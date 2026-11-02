@@ -220,7 +220,7 @@
         const note=create('small','','history-live-url-status');
         note.setAttribute('role','status');
         live.append(note);values.prepend(live);
-        let serial=0;
+        let serial=0,opened=false;
         const currentUrl=(base,key)=>{
           try{
             const url=new URL(base);
@@ -268,8 +268,10 @@
           }
         };
         disclosure.addEventListener('toggle',()=>{
-          if(disclosure.open)void refresh();
-          else serial++;
+          if(disclosure.open){
+            if(opened)return; // Native/coalesced toggle events cannot double-fetch.
+            opened=true;void refresh();
+          }else{opened=false;serial++;}
         });
       }
     }
