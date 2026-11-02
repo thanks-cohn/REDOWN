@@ -34,12 +34,39 @@
     let name=text(record.filename)||text(destination.key).split('/').pop();
     if(!name&&location.startsWith('R2: '))name=location.split('/').pop();
     if(!name)try{name=decodeURIComponent(new URL(text(record.sourceUrl)).pathname.split('/').pop());}catch{}
-    const delivered=record.ok===true&&/^(https?:\/\/|R2: )/.test(location);
+    const providerKind=text(record.providerKind).toLowerCase()||
+      text(destination.provider).toLowerCase()||
+      text(record.provider).toLowerCase();
+    const isCloudflare=providerKind.includes('cloudflare')||
+      (!!destination.bucketName&&!['google','onedrive','dropbox'].some(p=>providerKind.includes(p)));
+    const provider=isCloudflare?'Cloudflare R2':providerKind.includes('google')?'Google Drive':
+      providerKind.includes('onedrive')?'OneDrive':providerKind.includes('dropbox')?'Dropbox':
+      text(record.provider)||text(record.profileName)||'Cloud provider';
+    const bucket=text(destination.bucketName),key=text(destination.key).split('/').filter(Boolean).join('/');
+    const delivered=record.ok===true&&record.verified===true&&record.status==='completed';
+    const file=text(destination.name)||text(record.filename);
+    const join=(...parts)=>parts.filter(Boolean).map(part=>text(part).split('/').filter(Boolean).join('/')).filter(Boolean).join('/');
+    // Only include an actual remote destination, never the original page URL.
+    let path='';
+    if(delivered&&isCloudflare&&bucket)
+      path=join(bucket,key.startsWith(bucket+'/')?key.slice(bucket.length+1):key);
+    if(delivered&&provider==='Dropbox')
+      path=join(destination.path); // Authenticated Dropbox metadata path_display.
+    if(delivered&&provider==='OneDrive'&&destination.root==='/'&&file)
+      path='/'+file; // The OneDrive API writes to its verified root.
+    if(delivered&&provider==='Google Drive'&&file){
+      const knownPath=text(destination.path)||text(destination.folderPath);
+      if(knownPath)path=join(knownPath,file);
+      else if(!destination.folderId)path=join('My Drive',file);
+      else path=join('Folder ID '+text(destination.folderId),file);
+    }
     return {
       name:name||text(record.sourceUrl)||'Transfer',
-      status:record.ok===false?'Failed':delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
+      status:record.ok===false?(text(record.status)||'Failed'):delivered?'Successful (verified)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
       state:record.ok===false?'failed':delivered?'success':'unknown',
-      detail:[text(record.provider)||(destination.bucketName||location.startsWith('R2: ')?'Cloudflare R2':''),text(record.profileName),text(destination.bucketName)].filter(Boolean).join(' · ')
+      provider,
+      detail:path?provider+' · '+path:provider,
+      isCloudflare
     };
   }
   const startDay=date=>new Date(date.getFullYear(),date.getMonth(),date.getDate());
@@ -151,12 +178,35 @@
     // URL or typed input has no independently known parent; do not infer one.
     if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
     if(record.ok!==false)details.append(create('small',info.status,'history-entry-outcome'));
-    if(info.detail)details.append(create('small',info.detail,'history-entry-provider'));
-    if(record.ok===false&&record.error){
+    if(info.detail){
+      const footer=create('small',info.detail,'history-entry-provider');
+      // Link only to a verified provider-owned destination, never the original
+      // source/page URL. Dropbox has no file URL unless it was explicitly
+      // stored and approved by cloudTarget().
+      const providerUrl=globalThis.RedownHistoryNavigation?.cloudTarget?.(record);
+      const publicR2=info.isCloudflare&&info.state==='success'?safeWebUrl(record.destination?.publicUrl):null;
+      const href=providerUrl||(publicR2&&new URL(publicR2).protocol==='https:'?publicR2:null);
+      if(href){
+        const link=create('a',info.isCloudflare?'File URL':'Open saved file','history-entry-link history-destination-link');
+        link.href=href;link.target='_blank';link.rel='noopener noreferrer';
+        link.title=href;
+        footer.append(' · ',link);
+      }else if(!info.isCloudflare&&info.state==='success'){
+        footer.append(' · No direct file link available');
+      }
+      details.append(footer);
+    }
+    if(record.error){
       const technical=create('details','','history-technical-details');
       const summary=create('summary','Error details');
       technical.append(summary,create('small',text(record.error),'history-error'));
       details.append(technical);
+    }
+    if(record.providerKind==='dropbox'&&record.destination?.fileId){
+      const d=record.destination,receipt=create('details','','history-technical-details');
+      receipt.append(create('summary','Dropbox receipt'));
+      for(const [label,value] of [['Account',d.accountId],['Namespace',d.namespace],['Root',d.root],['Path',d.path],['File ID',d.fileId],['Revision',d.revision]])if(value)receipt.append(create('div',label+': '+value));
+      receipt.append(create('small','The Dropbox website may use a different signed-in account.'));details.append(receipt);
     }
     if(details.childElementCount)parent.append(details);
   }

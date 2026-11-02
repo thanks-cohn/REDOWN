@@ -861,7 +861,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
     finally {
       if(ticket===generation){
         try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
-        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your cloud companion"}); } catch {}
+        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your Cloud Companion"}); } catch {}
       }
     }
   };
@@ -869,9 +869,17 @@ function createToolbarFeedback(api, loadPixels = async size => {
 
 const toolbarFeedback=createToolbarFeedback(chrome.action);
 async function recordTransfer(entry) {
+  // The existing Google receipt identifies the verified unique created file.
+  // Attribute presentation here without changing the provider or upload contract.
+  if(entry?.provider==='Google Drive'&&entry.verified===true&&entry.ok===true&&
+     /^[\w-]+$/.test(entry.destination?.fileId||''))
+    entry={...entry,providerKind:'google',deliveryId:'google:'+entry.destination.fileId};
+  // Do not flash green from a URL, POST acknowledgement or decorative timer.
+  // The counter commits a *new*, provider-verifier-backed receipt first.
+  const outcome=await transferCounter.record(entry);
   if(entry?.ok===false)void toolbarFeedback("failure");
-  else if(entry?.ok===true&&typeof entry.location==="string"&&/^(https?:\/\/|R2: )/.test(entry.location))void toolbarFeedback("success");
-  return transferCounter.record(entry);
+  else if(outcome?.newVerified===true)void toolbarFeedback("success");
+  return outcome;
 }
 async function notify(title, message) {
   try {
@@ -903,8 +911,12 @@ async function cfJson(path, options = {}) {
 importScripts("history-archive.js");
 importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
+importScripts("save-droplet-gate.js");
+importScripts("daily-save-badge.js");
 const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
+// One authoritative durable daily badge, separate from the lifetime odometer.
+RedownDailySaveBadge.create({chrome,readDaily:()=>transferCounter.readDaily()}).install();
 void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
   toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
   toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
@@ -922,6 +934,7 @@ importScripts("nested-locations.js");
 importScripts("destination-config.js");
 importScripts("right-click-v3.js");
 importScripts("google-drive-menu.js");
+importScripts("google-drive-stream.js");
 importScripts("google-drive-provider.js");
 RedownGoogleDriveProvider.install(recordTransfer);
 importScripts("dropbox-auth.js");
@@ -2038,8 +2051,38 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
   if(!key||actualFolder!==folder)throw new Error("Destination verification failed: Worker returned a different folder. The file may have been written; check storage before retrying.");
   // V3 verifies this existing Worker receipt without changing transport or URL return values.
   if(receipt)receipt.bytes=body.bytes;
-  if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
+  if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key,
+    // Explicit Worker-returned public URL only. The fallback URL can be
+    // unreachable for a private R2 bucket and must not be advertised as public.
+    ...(typeof body.publicUrl==='string'&&/^https:\/\//i.test(body.publicUrl)?{publicUrl:body.publicUrl}:{})};
   return body.publicUrl || publicAssetUrl(prepared, key);
+}
+// All Cloudflare R2 save entrypoints share the same remote read-back. A
+// successful Worker POST alone is NOT evidence for the permanent card count.
+// No speculative success animation, even when the destination URL exists.
+async function verifyCloudflareReceipt(profile,sourceUrl,receipt){
+  const key=receipt?.destination?.key;
+  if(typeof key!=='string'||!key||!Number.isSafeInteger(receipt.bytes)||receipt.bytes<0)
+    throw Error('Cloudflare save receipt is incomplete. Inspect the bucket before retrying.');
+  const result=await callBucketWorker(profile,{action:'headObject',key},false);
+  const object=result?.object;
+  if(!object||object.key!==key||object.size!==receipt.bytes||!object.etag||
+     object.customMetadata?.sourceUrl!==sourceUrl)
+    throw Error('Cloudflare save completion unconfirmed. Inspect the bucket before retrying.');
+  // A remote HEAD is the sole authority for a Cloudflare SUCCESS receipt.
+  // Bind it to the same live REDOWN OAuth session. A cached connection,
+  // completed POST, URL, animation timer or right-click dispatch is not proof.
+  const {cloudflareAuth}=await chrome.storage.local.get('cloudflareAuth');
+  if(!cloudflareAuth?.accessToken||cloudflareAuth.reconnectRequired===true||
+     !cloudflareAuth.sessionId||
+     Number.isFinite(cloudflareAuth.expiresAt)&&cloudflareAuth.expiresAt<=Date.now())
+    throw Error('Cloudflare login is required to confirm this save. Check the bucket before retrying.');
+  receipt.providerKind='cloudflare';
+  receipt.deliveryId ||= 'cloudflare:'+crypto.randomUUID();
+  receipt.verification={kind:'r2-head-v1',key,bytes:receipt.bytes,etag:object.etag,
+    sessionId:cloudflareAuth.sessionId};
+  receipt.verified=true;
+  return receipt;
 }
 async function ingestCloudflare(profile, sourceUrl, category, filename, receipt = null) {
   const folder = profile.folders?.[category] || category;
@@ -2359,7 +2402,7 @@ async function resolveActiveRightClick(id,profiles){
 // Hash credentials as part of the input, never expose or log their values.
 async function menuApplicationKey(){
   const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);
-  const value=JSON.stringify(['v3',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
+  const value=JSON.stringify(['v3-consolidated-flat-providers-1',s.rightClickMode||'simple',s.rightClickV3||RedownRightClickV3.empty(),RedownRightClickV3.presentation(s.rightClickV3Presentation),s.rightClickV3LevelScopes||RedownRightClickV3.emptyScopes(),s.rightClickActivatedBuckets||null,s.rightClickV3Inventory||null,s.profiles||[]]);
   const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;
   const providerRevision=globalThis.RedownGoogleDriveMenu?.revision(google)||'';
   const dropbox=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];
@@ -2759,25 +2802,48 @@ chrome.storage.onChanged.addListener((changes, area) => {
    No persistent page injection, tracking, or new host permissions. Chrome does
    not let page DOM paint across its sidebar chrome: the orb ends at the page's
    right edge and a separate Shelf impact pulse completes the illusion. */
-function launchSaveDroplet(info,tab){
+async function launchSaveDroplet(info,tab){
   if(!Number.isInteger(tab?.id))return;
   const sources={
     src:String(info.srcUrl||"").slice(0,2048),
     link:String(info.linkUrl||"").slice(0,2048)
   };
-  void chrome.scripting.executeScript({
+  // Prevent the visual save orb/ball when the selected cloud is logged out.
+  // The button remains free to start its usual provider login; visual feedback
+  // here is an authenticated ATTEMPT, never a substitute for verified SUCCESS.
+  const session=await chrome.storage.local.get([
+    'shelfColorScheme','cloudflareAuth','googleDriveState','dropbox:state','dropbox:auth','onedrive:state','onedrive:auth'
+  ]).catch(()=>({}));
+  if(!RedownSaveDropletGate.permitted(info.menuItemId,session))return;
+  if(RedownSaveDropletGate.providerFor(info.menuItemId)==='cloudflare'){
+    // An old cached token is NOT proof of a presently authenticated account.
+    // Use the exact Cloudflare account check that the Shelf's "Connected"
+    // status already uses, before any on-page animation or impact signal.
+    // This is only a visual gate; it must not mutate the save workflow.
+    try {
+      const accounts=await listCloudflareAccounts();
+      if(!Array.isArray(accounts))return;
+      const latest=(await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
+      if(!latest?.sessionId||latest.sessionId!==session.cloudflareAuth?.sessionId||
+         !RedownSaveDropletGate.permitted(info.menuItemId,{cloudflareAuth:latest}))
+        return;
+    } catch { return; } // Offline, expired, denied: no misleading ball.
+  }
+  const {shelfColorScheme}=session;
+  const event={id:crypto.randomUUID(),at:Date.now()};
+  const results=await chrome.scripting.executeScript({
     target:{tabId:tab.id},
     world:"ISOLATED",
-    args:[sources],
-    func:(clicked)=>{
-      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
+    args:[sources,shelfColorScheme],
+    func:async(clicked,palette)=>{
+      if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return {reduced:true};
       if(!document.documentElement||!document.body)return;
-      void chrome.storage.local.get('shelfColorScheme').then(data=>{
+      {
         const colors={
           porcelain:['#bda3f4','#6743a2'],midnight:['#c0e6ff','#82c4fc'],
           ocean:['#9cf4e6','#2ccfc9'],neon:['#ff9ddb','#81fff0']
         };
-        const theme=colors[data.shelfColorScheme]||colors.porcelain;
+        const theme=colors[palette]||colors.porcelain;
         let startX=Math.round(innerWidth*.56),startY=Math.round(innerHeight*.42);
         // Context-menu APIs omit cursor coordinates. Prefer the matching image
         // or link's visible center, never pretend to know an exact mouse point.
@@ -2815,7 +2881,7 @@ function launchSaveDroplet(info,tab){
           {offset:.94,opacity:.9,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(1.7,.4)'},
           {offset:1,opacity:0,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(.05)'}
         ],{duration:860,easing:'cubic-bezier(.25,.65,.35,1)',fill:'forwards'});
-        void motion.finished.then(()=>{
+        return motion.finished.then(()=>{
           orb.remove();
           const impact=document.createElement('span');
           impact.setAttribute('aria-hidden','true');
@@ -2826,11 +2892,13 @@ function launchSaveDroplet(info,tab){
             {opacity:.9,transform:'scale(.45)'},{opacity:0,transform:'scale(2.6)'}
           ],{duration:420,easing:'ease-out',fill:'forwards'});
           void ring.finished.finally(()=>impact.remove());
-          void chrome.storage.local.set({redownShelfImpact:Date.now()}).catch(()=>{});
+          return {arrived:true};
         }).catch(()=>orb.remove());
-      }).catch(()=>{});
+      }
     }
-  }).catch(()=>{/* Restricted tabs and browser pages deliberately skip the effect. */});
+  }).catch(()=>[]); // Restricted pages deliberately skip the effect.
+  if(results?.some(frame=>frame.result?.arrived||frame.result?.reduced))
+    await chrome.storage.local.set({redownShelfImpact:{...event,at:Date.now(),kind:results.some(frame=>frame.result?.arrived)?"arrival":"reduced-motion-dispatch"}}).catch(()=>{});
 }
 
 // Go Home is a navigation action, not a saved-object URL lookup.
@@ -2858,12 +2926,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId==='provider:onedrive')void launchSaveDroplet(info,tab).catch(()=>{});
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
-    await dropboxProvider.dispatch(info);return;
+    if(info.menuItemId==='provider:dropbox')void launchSaveDroplet(info,tab).catch(()=>{});
+    await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
+    if(info.menuItemId==='provider:google-drive')void launchSaveDroplet(info,tab).catch(()=>{});
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2891,7 +2962,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   return saveResolvedRightClick(info,tab,resolved,profiles);
 });
 async function saveResolvedRightClick(info,tab,resolved,profiles){
-  launchSaveDroplet(info,tab);
+  void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.
@@ -2926,18 +2997,13 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
   // Resolve from the active saved model at click time, never from a legacy
   // default or the previous native-menu snapshot.
   const {profile,owner,prefix}=resolved;
-  const receipt={};
+  const receipt={providerKind:"cloudflare",deliveryId:"cloudflare:"+crypto.randomUUID()};
   try{
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
     const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt,v3);
-    if(v3){
-      const result=await callBucketWorker(profile,{action:'headObject',key:receipt.destination?.key},false);
-      const object=result.object;
-      if(!object||object.key!==receipt.destination?.key||!Number.isSafeInteger(receipt.bytes)||object.size!==receipt.bytes||!object.etag||object.customMetadata?.sourceUrl!==sourceUrl)throw Error('Save completion unconfirmed. Inspect the destination before retrying.');
-      receipt.verified=true;
-    }
-    await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
+    await verifyCloudflareReceipt(profile,sourceUrl,receipt);
+    await recordTransfer({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
     const message=error?.message||String(error);
@@ -3049,7 +3115,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
             ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,receipt,message.betaNoProvision===true)
             : await ingest(profile, sourceUrl, category, message.filename || undefined, receipt);
-          await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
+          if(profile.type==='cloudflare-r2')await verifyCloudflareReceipt(profile,sourceUrl,receipt);
+          await recordTransfer({ ok:true, status:'completed',sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
           return sendResponse({ ok:true, location });
         } catch (error) {
           const errorMessage = error?.message || String(error);

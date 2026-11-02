@@ -28,7 +28,13 @@
       const a=await rpcWith(t,'users/get_current_account',null);
       if(!/^dbid:[\w-]+$/.test(a.account_id||'')||expected&&a.account_id!==expected)throw fail('Dropbox account changed. Reconnect before saving.');
       const root=a.root_info;
-      if(root?.['.tag']!=='user'||!/^\d+$/.test(root.root_namespace_id||'')||root.root_namespace_id!==root.home_namespace_id)throw fail('This Dropbox namespace is restricted or ambiguous. A Full Dropbox user root is required.');
+      // Dropbox's documented team-space accounts legitimately have distinct
+      // root_namespace_id and home_namespace_id. That is not evidence of a
+      // restricted token. Verify the EXACT root with an authenticated API call.
+      if(!['user','team'].includes(root?.['.tag'])||!/^\d+$/.test(root.root_namespace_id||'')||!/^\d+$/.test(root.home_namespace_id||''))
+        throw fail('Dropbox did not return a valid authorized root. Reconnect Dropbox.');
+      // A restricted App Folder grant will fail this exact-root readback.
+      // Do not fall back to a different namespace or silently widen access.
       await rpcWith(t,'files/list_folder',{path:'',limit:1},root.root_namespace_id);
       return {provider:'dropbox',accountId:a.account_id,namespace:root.root_namespace_id,root:'/',rootReady:true};
     }
@@ -36,11 +42,19 @@
       if(connection)return connection;
       connection=(async()=>{
         const ticket=epoch;let uri;try{await secure();uri=redirect();}catch(e){await state({phase:'reconnect',error:e.status?e.message:'Dropbox secure storage is unavailable.'});throw e;}await state({phase:'connecting'});
-        const verifier=random(),nonce=random(),challenge=b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
-        const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});
         try{
+          // Include PKCE creation/session writes in the protected region so an
+          // early failure cannot strand the Shelf in an unclickable state.
+          const verifier=random(),nonce=random(),challenge=b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
+          const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});
           const u=new URL('https://www.dropbox.com/oauth2/authorize');u.search=new URLSearchParams({client_id:APP_KEY,response_type:'code',redirect_uri:uri,code_challenge:challenge,code_challenge_method:'S256',state:nonce,token_access_type:'offline',scope:SCOPES.join(' ')});
-          let response;try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}catch{throw fail('Dropbox login was cancelled.');}
+          if(typeof chrome.identity.launchWebAuthFlow!=='function')throw fail('Chrome cannot open Dropbox authorization in this extension. Reload REDOWN and retry.');
+          let response;
+          try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}
+          catch(e){
+            const cancelled=/cancel|denied|closed|user rejected/i.test(String(e?.message||''));
+            throw fail(cancelled?'Dropbox login was cancelled.':'Chrome could not open Dropbox sign-in. Verify this extension’s registered ID and OAuth redirect, then retry.',cancelled?'cancelled':'blocked');
+          }
           const saved=(await chrome.storage.session.get('dropbox:oauth'))['dropbox:oauth'];
           await chrome.storage.session.remove('dropbox:oauth'); // consume before token exchange; no replay
           const result=new URL(response);
@@ -58,12 +72,12 @@
     let refreshing;
     async function ready(expected,force=false){
       await secure();const a=await get('dropbox:auth');
-      if(!a||expected&&(a.accountId!==expected.accountId||a.connectionId!==expected.connectionId))throw fail('Reconnect the original Dropbox account before saving.');
+      if(!a||expected&&(a.accountId!==expected.accountId||a.connectionId!==expected.connectionId||expected.namespace&&a.namespace!==expected.namespace)){await state({phase:'reconnect',error:'Reconnect the original Dropbox account before saving.'});throw fail('Reconnect the original Dropbox account before saving.');}
       if(!access||access.accountId!==a.accountId||access.until<now()+60000){
-        if(!refreshing)refreshing=(async()=>{const ticket=epoch;try{const t=await token({grant_type:'refresh_token',refresh_token:a.refreshToken});const verified=await verify(t.access_token,a.accountId);if(verified.namespace!==a.namespace)throw fail('Dropbox root changed. Reconnect Dropbox.');if(ticket!==epoch)throw fail('Dropbox disconnected.');access={value:t.access_token,until:now()+t.expires_in*1000,accountId:a.accountId};}catch(e){access=null;await state({phase:'reconnect',error:'Reconnect Dropbox to verify your account.'});throw e;}})().finally(()=>{refreshing=null;});
+        if(!refreshing)refreshing=(async()=>{const ticket=epoch;try{const t=await token({grant_type:'refresh_token',refresh_token:a.refreshToken});const verified=await verify(t.access_token,a.accountId);if(verified.namespace!==a.namespace)throw fail('Dropbox root changed. Reconnect Dropbox.');if(ticket!==epoch)throw fail('Dropbox disconnected.');access={value:t.access_token,until:now()+t.expires_in*1000,accountId:a.accountId};}catch(e){access=null;await state({phase:'reconnect',error:e.status?e.message:'Reconnect Dropbox to verify your account.'});throw e;}})().finally(()=>{refreshing=null;});
         await refreshing;
       }
-      if(force){try{const v=await verify(access.value,a.accountId);if(v.namespace!==a.namespace)throw fail('Dropbox root changed.');}catch(e){access=null;await state({phase:'reconnect',error:'Reconnect Dropbox to verify your account.'});throw e;}}
+      if(force){try{const v=await verify(access.value,a.accountId);if(v.namespace!==a.namespace)throw fail('Dropbox root changed.');}catch(e){access=null;await state({phase:'reconnect',error:e.status?e.message:'Reconnect Dropbox to verify your account.'});throw e;}}
       const current=await get('dropbox:auth');if(current?.connectionId!==a.connectionId)throw fail('Dropbox connection changed.');
       const s={provider:'dropbox',accountId:a.accountId,namespace:a.namespace,root:'/',rootReady:true,connectionId:a.connectionId,phase:'connected',checkedAt:now()};const old=await get('dropbox:state');if(force||old?.phase!=='connected'||old?.connectionId!==s.connectionId)await state(s);
       return {...s,token:access.value};

@@ -58,3 +58,8 @@ This is a first-class data-recovery/visibility incident as well as an authentica
 - [REDOWN bug inventory](../README.md).
 
 **Classification:** Documentation of owner-reported and source-confirmed issues only. No production code change, OAuth reconfiguration, external Dropbox read, file recovery, upload, deployment, test execution, or proof of fix was performed.
+
+
+## 2 November implementation follow-up — live incident remains OPEN
+
+Local receipt/counter integrity hardening, exact readback checks, attempt History, stale-auth status repair, safe known-ID reconciliation and verified-only theme choreography are implemented on the working branch. See [actual implementation and verification report](../../docs/DROPBOX_VERIFIED_SAVE_REPORT_2026-11-02.md). No installed Chrome or authenticated Dropbox proof was obtained; the installed phantom-save cause, historical false-count assessment and team/root-home selection remain unresolved. Prior observations above are retained. No historical counts or owner records were rewritten.

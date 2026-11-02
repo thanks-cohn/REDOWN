@@ -78,7 +78,9 @@ async function refreshConnection() {
     $('cf-state').dataset.state=state; $('cf-state').textContent=label;
     updateConnectionSummary();
     $('cloudflare').disabled=state==='checking';
-    $('cloudflare-label').textContent=state==='connected'?'Manage Cloudflare ↗':'LOGIN!';
+    $('cloudflare').dataset.connected=String(state==='connected');
+    $('cloudflare').setAttribute('aria-label',state==='connected'?'Manage Cloudflare':'Log in to Cloudflare');
+    $('cloudflare-label').textContent=state==='connected'?'Manage':'LOGIN!';
   };
   if(!cloudflareAuth?.accessToken){paint('disconnected','Not connected','Connect Cloudflare to bring TRUE REMOTE to your Shelf.');return;}
   paint('checking','Checking','Saved sign-in found. Checking account access…');
@@ -90,23 +92,12 @@ async function refreshConnection() {
   } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
   finally {clearTimeout(timer);}
 }
-let saveImpactTimer=null;
-function pulseSaveImpact(){
-  if(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
-  const root=document.documentElement;
-  root.removeAttribute('data-save-impact');
-  void root.offsetWidth; // Allow consecutive saves to retrigger the small impact.
-  root.dataset.saveImpact='true';
-  clearTimeout(saveImpactTimer);
-  saveImpactTimer=setTimeout(()=>root.removeAttribute('data-save-impact'),850);
-}
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==='session'&&changes.shelfOpenIntent){
     void useShelfOpenIntent(changes.shelfOpenIntent.newValue).catch(()=>{});
     return;
   }
   if(area!=='local')return;
-  if(changes.redownShelfImpact && Date.now()-Number(changes.redownShelfImpact.newValue)<3000) pulseSaveImpact();
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
 });

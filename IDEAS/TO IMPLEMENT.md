@@ -137,3 +137,29 @@ The current History GO TO can open a new REDOWN tab for each different file. **T
 - Free baseline always includes the essential file operations.
 - Premium is genuinely useful at one directory per eligible feature; Elite removes directory counts, not safety or technical limits.
 - Explicit proof status: planned versus implemented versus locally tested versus installed/browser/provider verified.
+
+
+## The Unseen Odometer — deferred visual progress and a ~10-second return reveal (November 2, 2026)
+
+**Idea:** The REDOWN Shelf's lifetime odometer should advance *visually* only when somebody can actually see it. If the user saves 2,000 verified files while the Shelf remains closed for weeks, reopening it produces an exciting, accelerating, approximately 10-second odometer catch-up, a powerful moment of discovering how much has been accomplished.
+
+**Design distinction:** Always update the real, durable verified lifetime count, History, provider counters and daily toolbar badge at the time of each verified cloud save. Only delay the visible odometer animation. Persist a separate last-seen/last-shown odometer checkpoint, calculate the actual missed delta on visibility, then move the display through an efficient adaptive animation to precisely the authoritative count. Never replay thousands of artificial SUCCESS! events, balls, History entries or counter increments. No fictional achievements.
+
+**Experience:** The larger the legitimate unseen backlog, the more dramatic the spin, potentially with a gentle-to-rapid mechanical crescendo and one satisfying final number landing. Preserve per-theme identity, mute preferences and reduced-motion behavior. For a backlog of 2,000, aim for a visually legible ~10-second sequence rather than 2,000 DOM timers. Small deltas can animate proportionately faster. Keep the odometer cumulative and monotonic across themes and days; the daily toolbar badge still resets separately at local midnight.
+
+**Robustness:** Preserve a checkpoint of the number actually displayed. A closed/hidden Shelf must not consume the reveal. If closed midway, resume later without losing progress; if new verified saves occur during the animation, retarget to the true total; multiple Shelf windows must not race or rewind the last-visible checkpoint. No implementation or runtime behavior change is authorized by this idea entry.
+
+**Proof of concept:** Verify 2,000 confirmed saves accumulate with the Shelf closed while the visible checkpoint remains unchanged; then reveal the true total in roughly 10 seconds, with accurate continuation after interruption, correct daily and per-provider accounting, no fictitious success animations, and accessible reduced-motion behavior.
+
+**Tracking:** [November 2 NEED_TO_DO](../NEED_TO_DO/11022026.md) — *The Unseen Odometer*.
+
+
+### Special-effects velocity and the millionth save
+
+**Future odometer enhancement, not implemented:** React to the **rate of verified saves within a set time window**. Higher actual save velocity may unlock progressively more dramatic, theme-specific mechanical, light, electricity and sound effects. Exact thresholds and rolling windows remain design choices. The effect should reflect real receipts, never the number of frames or digit transitions in a catch-up animation.
+
+**The million milestone sequence:** As the visible odometer reaches **999,999**, it shudders in anticipation. When the real verified lifetime count crosses to **1,000,000**, an **additional leftmost digit tile** appears, shines/glows, clicks into **1**, and the existing six tiles become **000000**. The expanded display then cycles through the theme palette/available colors in a celebratory flourish before smoothly returning to its original selected theme. Keep the count permanent at 1,000,000 and continue from there; palette cycling is a temporary visual effect, not a theme-setting change.
+
+**Unseen Shelf integration:** If the last shown count was below one million and authentic verified saves crossed the threshold while the Shelf was closed, the delayed ~10-second catch-up can reveal the million-digit emergence once upon return. Persist milestone-played/presentation state to avoid repetitive celebration across reloads and simultaneous Shelf instances. Respect reduced motion/mute and avoid forced long animation for accessibility. Daily badge and all provider/history data remain promptly and correctly updated independent of the effect.
+
+**To design/test later:** rate windows/tiers, triggering mechanics, sound and color choreography per theme, long-count digit growth, 999,999 → 1,000,000 and interruption behavior, high-velocity load, provider proof integration, and once-only milestone replay. **IDEA ONLY; no implementation or change to verified-save accounting is implied.**

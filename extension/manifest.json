@@ -40,7 +40,7 @@
     "service_worker": "service-worker.js"
   },
   "action": {
-    "default_title": "REDOWN — Your cloud companion",
+    "default_title": "REDOWN — Your Cloud Companion",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

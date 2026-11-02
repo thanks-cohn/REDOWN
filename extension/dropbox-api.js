@@ -19,9 +19,34 @@
     if(new TextEncoder().encode(name).length>240){name=name.slice(0,name.length-ext.length);while(new TextEncoder().encode(name+ext).length>240)name=Array.from(name).slice(0,-1).join('');name+=ext;}
     return name;
   }
+  function selectFilename(response,source={}){
+    const cd=response.headers.get('Content-Disposition')||'';
+    let name='';
+    const extended=/(?:^|;)\s*filename\*\s*=\s*(?:"([^"]*)"|([^;]*))/i.exec(cd);
+    if(extended){
+      const value=(extended[1]||extended[2]||'').trim();
+      const match=/^UTF-8'[^']*'(.*)$/i.exec(value);
+      if(match)try{name=decodeURIComponent(match[1]);}catch{/* Try the plain filename. */}
+    }
+    if(!name){const plain=/(?:^|;)\s*filename\s*=\s*(?:"((?:\\.|[^"\r\n])*)"|([^;\r\n]*))/i.exec(cd);name=(plain?.[1]?.replace(/\\(.)/g,'$1')||plain?.[2]||'').trim();}
+    if(!name)name=source.downloadFilename||'';
+    if(!name)try{
+      const u=sourceURL(response.url||source.url);
+      name=decodeURIComponent(u.pathname.split('/').pop()||'');
+    }catch{/* Keep existing safe fallback. */}
+    // A header containing a path contributes only its last filename component.
+    name=String(name).split(/[\\/]/).pop();
+    if(!name||/^\.+$/.test(name))return filename();
+    // Never replace a genuine extension on MIME disagreement. Extensionless
+    // real names gain only a small known MIME suffix; unknown MIME stays intact.
+    const types={'image/jpeg':'jpg','image/png':'png','image/gif':'gif','image/webp':'webp','image/avif':'avif','application/pdf':'pdf','video/mp4':'mp4','audio/mpeg':'mp3','application/zip':'zip'};
+    const ext=types[(response.headers.get('Content-Type')||'').split(';')[0].trim().toLowerCase()];
+    if(ext&&!/\.[^ .]+$/.test(name))name+='.'+ext;
+    return filename(name);
+  }
   function sourceSnapshot(info){
     const url=sourceURL(info.srcUrl||info.linkUrl||info.pageUrl||'').href;
-    return {url,sourceUrl:url,pageUrl:info.pageUrl||'',frameUrl:info.frameUrl||'',linkUrl:info.linkUrl||'',mediaType:info.mediaType||''};
+    return {url,sourceUrl:url,pageUrl:info.pageUrl||'',frameUrl:info.frameUrl||'',linkUrl:info.linkUrl||'',mediaType:info.mediaType||'',...(info.downloadFilename?{downloadFilename:String(info.downloadFilename)}:{})};
   }
   function create({auth,fetch=globalThis.fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=Date.now}={}){
     async function call(path,body,identity,signal,{binary=false,arg,retry=false}={}){
@@ -47,13 +72,18 @@
     }
     async function proof(receipt,job,signal){
       if(!receipt||receipt['.tag']&&receipt['.tag']!=='file'||!/^id:[\w-]+$/.test(receipt.id||'')||!Number.isSafeInteger(receipt.size)||receipt.size!==job.offset||!receipt.rev||!receipt.name||receipt.path_display!=='/'+receipt.name||!receipt.path_lower||receipt.path_lower.slice(1).includes('/'))throw fail('Dropbox receipt could not be verified. Check Dropbox.','uncertain');
-      const m=await call('files/get_metadata',{path:receipt.id},job,signal,{retry:true});
-      if(m?.id!==receipt.id||m.rev!==receipt.rev||m.size!==receipt.size||m.path_lower!==receipt.path_lower||m.name!==receipt.name||m.content_hash!==receipt.content_hash)throw fail('Dropbox metadata did not confirm the save. Check Dropbox.','uncertain');
-      return {fileId:m.id,path:m.path_display,name:m.name,revision:m.rev,bytes:m.size,contentHash:m.content_hash,accountId:job.accountId,connectionId:job.connectionId,root:'/'};
+      const ext=/\.[^.]+$/.exec(job.name||'')?.[0]||'';
+      if(ext&&!receipt.name.endsWith(ext))throw fail('Dropbox returned a different file extension. Check Dropbox.','uncertain');
+      if(!/^[a-f0-9]{64}$/.test(receipt.content_hash||''))throw fail('Dropbox receipt is incomplete. Check Dropbox.','uncertain');
+      let m;try{m=await call('files/get_metadata',{path:receipt.id},job,signal,{retry:true});}catch{throw fail('Dropbox commit needs metadata confirmation. Check Dropbox before retrying.','uncertain');}
+      if(m?.id!==receipt.id||m.rev!==receipt.rev||m.size!==receipt.size||m.path_lower!==receipt.path_lower||m.name!==receipt.name||m.path_display!==receipt.path_display||m['.tag']!=='file'||m.content_hash!==receipt.content_hash)throw fail('Dropbox metadata did not confirm the save. Check Dropbox.','uncertain');
+      return {proofVersion:1,namespace:job.namespace,fileId:m.id,path:m.path_display,name:m.name,revision:m.rev,bytes:m.size,contentHash:m.content_hash,accountId:job.accountId,connectionId:job.connectionId,root:'/'};
     }
     async function upload(job,checkpoint,signal){
       if(!Number.isSafeInteger(job.offset)||job.offset<0||job.offset>MAX)throw fail('Dropbox upload checkpoint is invalid. Retry as a new save.');
-      await auth.ready(job);
+      const identity=await auth.ready(job);
+      if(job.namespace&&job.namespace!==identity.namespace)throw fail('Dropbox destination root changed. Reconnect before saving.');
+      job.namespace=identity.namespace;await checkpoint(job);
       if(signal?.aborted)throw fail('Dropbox save cancelled.','cancelled');
       if(job.phase==='committing')throw fail('The previous Dropbox commit was interrupted. Check Dropbox before saving again.','uncertain');
       if(job.receipt)return proof(job.receipt,job,signal);
@@ -78,11 +108,7 @@
           if(response.status!==200)throw fail('Unexpected partial source response.');
           if(job.session&&(response.headers.get('ETag')!==job.etag||length!==job.total))throw fail('Source changed during upload recovery.','interrupted');
           job.total=length;job.etag=response.headers.get('ETag');
-          let name;const cd=response.headers.get('Content-Disposition')||'';
-          try{name=decodeURIComponent(/filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1]||'');}catch{}
-          if(!name)name=/filename="([^"\r\n]+)"/i.exec(cd)?.[1];
-          if(!name)try{name=decodeURIComponent(u.pathname.split('/').pop());}catch{}
-          job.name=filename(name);await checkpoint(job);
+          job.name=selectFilename(response,job.source);await checkpoint(job);
         }
         if(!job.session){
           const s=await call('files/upload_session/start',new Uint8Array(),job,signal,{binary:true,arg:{close:false}});
@@ -111,6 +137,7 @@
         }
         if(used)await append();
         if(job.total!==null&&job.offset!==job.total)throw fail('Source length changed during transfer.','interrupted');
+        await auth.ready(job,true);
         job.phase='committing';await checkpoint(job); // Never replay finish after a worker crash.
         const receipt=await call('files/upload_session/finish',new Uint8Array(),job,signal,{binary:true,arg:{cursor:{session_id:job.session,offset:job.offset},commit:{path:'/'+job.name,mode:'add',autorename:true,mute:true,strict_conflict:false}}});
         job.receipt=receipt;job.phase='verifying';await checkpoint(job);
@@ -122,5 +149,5 @@
     }
     return {upload,proof,call};
   }
-  globalThis.RedownDropboxAPI={create,sourceURL,sourceSnapshot,filename,CHUNK,MAX};
+  globalThis.RedownDropboxAPI={create,sourceURL,sourceSnapshot,filename,selectFilename,CHUNK,MAX};
 })();

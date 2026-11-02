@@ -1,0 +1,140 @@
+✔ professional default has straight Right2Click heading, no slant, and no compass arrow (123.847632ms)
+✔ Slant Display Theme and its optional arrow persist independently, returning to straight leaves arrow hidden (67.780999ms)
+✔ three-dot options open on hover, allow travel to popup, and close after leaving popup (488.013701ms)
+✔ desktop clicking the dots cannot immediately close a popup that hover opened (25.692642ms)
+✔ keyboard can focus, operate and Escape out; touch keeps native summary activation (54.595581ms)
+✔ other Shelf windows can update Beta Aesthetics without a reload (57.430366ms)
+✔ hover popup remains in front while open and has no gap at the trigger boundary (21.822731ms)
+✔ leaving a hover popup closes it even when a menu action retained focus (264.074444ms)
+✔ every destination action carries its own accurate bordered free-tier storage badge (22.058986ms)
+✔ three alternatives exclude active palette; keyboard focus opens and Escape closes (82.734708ms)
+✔ each rendered word shares the flight collision epoch; persistence waits for offscreen exit and pause (510.084304ms)
+✔ lunar prelude has a shape-clipped shimmer and circumference trace before travel (28.464204ms)
+✔ repeated activation is bounded; resize finishes captured choice; explicit supersession cancels old commit (15.826552ms)
+✔ reduced motion and absent animation APIs use direct existing commit path (23.989712ms)
+✔ actual theme integration preserves independent Explorer settings and restores palette on storage failure (61.153351ms)
+✔ view changes finish safely, closing the panel never commits late, and touch reveals alternatives first (13.553047ms)
+✔ analytical gravity, apex velocity, rebound energy and exit remain valid across Shelf sizes (30.566786ms)
+✔ cancellation during flight and the post-exit pause cleans up and cannot persist (20.484605ms)
+✔ opening lift comes before a brief lateral impulse, then X momentum stays constant without midair steering (28.618773ms)
+✔ short Shelf preserves the falling-ball collision using visible Destinations when Future is below the viewport (170.541745ms)
+✔ when both word and heading are out of view, the Shelf navigation remains a springboard (166.265627ms)
+✔ google-drive connected Shelf acts as GO TO without OAuth (169.846486ms)
+✔ dropbox connected Shelf acts as GO TO without OAuth (42.742084ms)
+✔ onedrive connected Shelf acts as GO TO without OAuth (25.775405ms)
+✔ Destinations gateway does not interrupt the original provider ordering (25.723378ms)
+✔ work OneDrive GO TO opens the Microsoft 365 OneDrive launcher (34.458756ms)
+✖ equal minimalist cloud tiles show only an icon and a short action (24.909683ms)
+✔ disconnected cloud tiles show LOGIN rather than opening a provider website (83.826805ms)
+✔ Shelf defaults to Shelf and preserves explicitly selected native Popup across reopening (326.774819ms)
+✖ provider order, pending integrations, verified account state and actual history remain honest (62.765867ms)
+✔ History opens Today by default and preserves clickable source and hosting-page URLs (99.520431ms)
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (1.036624ms)
+✔ toolbar configuration preserves explicit popup and defaults unknown modes to Shelf (80.360781ms)
+✔ Shelf and compact popup Home controls use a clear small house icon instead of a diagonal launch arrow (45.027281ms)
+✔ Shelf reassurance appears immediately beneath navigation; Cloud Storage is title-cased (38.051713ms)
+✔ unverified Cloudflare retains card-level status but no duplicate warning in the introduction (54.931628ms)
+✔ new installations start at zero and retained history migrates exactly once (4.394383ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (11.752102ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (3.044405ms)
+✔ large counts preserve integer precision and invalid increments are rejected (1.288958ms)
+✔ recording a successful retry retains the previous history cleanup contract (1.573228ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (1.002404ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 39
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4948.101786
+
+✖ failing tests:
+
+test at tests/shelf-destinations.test.mjs:61:1
+✖ equal minimalist cloud tiles show only an icon and a short action (24.909683ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/shelf-destinations.test.mjs:72:11)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:21:1
+✖ provider order, pending integrations, verified account state and actual history remain honest (62.765867ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  -   'Google Drive',
+  -   'Dropbox',
+  -   'Microsoft OneDrive',
+      'Cloudflare R2'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/shelf.test.mjs:23:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'Cloudflare R2' ],
+    expected: [ 'Google Drive', 'Dropbox', 'Microsoft OneDrive', 'Cloudflare R2' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/shelf.test.mjs:54:1
+✖ Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape (1.036624ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /href="shelf.html#settings"/. Input:
+  
+  '<!doctype html>\n' +
+    '<html lang="en">\n' +
+    '<head>\n' +
+    '  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+    '  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n' +
+    '  <style>\n' +
+    '    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n' +
+    '    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n' +
+    '    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n' +
+    '    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n' +
+    '    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n' +
+    '    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n' +
+    '    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard svg{display:block;flex:none;filter:drop-shadow(0 1px 2px #2d14453b)}\n' +
+    '    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n' +
+    '    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n' +
+    '    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n' +
+    '    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n' +
+    '  </style>\n' +
+    '</head>\n' +
+    '<body><main class="shell"><section id="recovery" hidden><p>REDOWN opened in recovery mode because the Shelf could not open.</p><button id="retry-shelf" type="button">Retry Shelf</button><button id="support-report" type="button">Export support report</button><p id="recovery-status" role="status"></p></section>\n' +
+    '  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n' +
+    '  <button id="dashboard" class="dashboard" type="button" title="Open REDOWN Home">Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3.5 10.2 11.1 3.7a1.4 1.4 0 0 1 1.8 0l7.6 6.5V19a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8.8Z"/><path d="M9.2 21v-5.5a2.8 2.8 0 0 1 5.6 0V21"/><path d="M17 12.5h1.5v1.5H17z"/></svg></button>\n' +
+    '  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n' +
+    '  <p class="hint">Your files. Your destinations. All in one place.</p>\n' +
+    '  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n' +
+    '  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n' +
+    '</main><script src="toolbar-appearance.js"></script><script src="popup-recovery.js"></script><script src="odometer.js"></script><script src="popup.js"></script></body>\n' +
+    '</html>\n'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/shelf.test.mjs:55:275)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n  <title>REDOWN</title><link rel="icon" href="icons/icon32.png">\n  <style>\n    @font-face{font-family:DM Sans;src:url("fonts/dm-sans-latin-variable.woff") format("woff");font-weight:100 1000;font-display:swap}\n    :root{color-scheme:dark;--text:#f5effb;--muted:#b6a9c5;--good:#7ce3b2;--bad:#ff9aa9}*{box-sizing:border-box}\n    body{margin:0;width:320px;background:radial-gradient(ellipse at 100% 0%,#30204488,transparent 65%),#0d0b15;color:var(--text);font:13px/1.45 "DM Sans",system-ui,sans-serif}\n    .shell{padding:20px}header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:9px}.brand img{width:34px;height:34px;border-radius:11px}.wordmark{font-weight:850;letter-spacing:.14em;font-size:14px}.tag{font-size:10px;color:var(--muted)}\n    button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #d0aafa;outline-offset:4px}\n    .connection{display:flex;align-items:center;gap:6px;border:1px solid #59405466;border-radius:20px;background:#ffffff03;padding:7px 9px;color:var(--bad);font-size:9px;font-weight:700;letter-spacing:.06em}.connection .light{width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 8px #ff8b9b33}.connection[data-state="connected"]{color:var(--good)}.connection[data-state="connected"] .light{background:var(--good);box-shadow:0 0 8px #7ce3b233}.connection[data-state="checking"]{color:#d4bee9}.connection[data-state="checking"] .light{background:#d4bee9;animation:breathe 1.2s ease-in-out infinite}.connection:disabled{cursor:default}@keyframes breathe{50%{opacity:.35;transform:scale(.75)}}\n    .dashboard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;border:1px solid #d6b7ff33;border-radius:12px;background:linear-gradient(110deg,#8053cd,#a674e5);box-shadow:0 5px 20px #7942ba22;color:#fff;font-weight:750;text-align:left;transition:filter .15s}.dashboard:hover{filter:brightness(1.08)}.dashboard svg{display:block;flex:none;filter:drop-shadow(0 1px 2px #2d14453b)}\n    .settings-link{display:block;margin:9px auto 0;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#d4bee9;font-size:12px;font-weight:650;letter-spacing:.035em;line-height:1.4;transition:color .15s}\n    .settings-link:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}\n    .hint{font-size:11px;color:var(--muted);margin:10px 1px 0}.counter-panel{margin-top:24px;padding-top:18px;border-top:1px solid #bca1d41c;text-align:center}.counter-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sound{padding:2px 4px;border:0;border-radius:4px;background:transparent;color:var(--muted);font-size:10px}.sound:hover{color:var(--text)}.counter-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:0}\n    .odometer{width:100%;cursor:default;display:flex;justify-content:center;gap:4px;padding:9px;border:1px solid #493652;border-radius:11px;background:#09070e;box-shadow:inset 0 2px 7px #0008,0 1px #ffffff05;overflow:hidden}.odometer[data-login]{cursor:pointer}.odometer[data-login]:hover{border-color:#bc8dc5}.wheel{position:relative;flex:1;max-width:38px;height:1.35em;overflow:hidden;border-radius:4px;background:linear-gradient(#292032,#17111f 49%,#302337 50%,#201727);box-shadow:inset 0 1px #ffffff0a;font:600 clamp(12px,calc(190px / var(--digits,6)),29px)/1.35 "DM Sans",system-ui,sans-serif;color:#f6e8ff;font-variant-numeric:tabular-nums}.wheel::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #0007;pointer-events:none}.odometer[data-rolling] .reel{transition:transform .1s linear}.reel{display:block;transform:translateY(calc(var(--digit,0) * -1.35em));transition:transform .65s cubic-bezier(.2,.75,.2,1)}.reel span{display:block;height:1.35em}.counter-note{font-size:10px;color:#ba9ed0;margin:9px 0 0}.status{font-size:11px;color:var(--muted);margin:12px 0 0;overflow-wrap:anywhere}.status:empty{display:none}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){.reel,.dashboard{transition:none}.connection[data-state="checking"] .light{animation:none}}\n  </style>\n</head>\n<body><main class="shell"><section id="recovery" hidden><p>REDOWN opened in recovery mode because the Shelf could not open.</p><button id="retry-shelf" type="button">Retry Shelf</button><button id="support-report" type="button">Export support report</button><p id="recovery-status" role="status"></p></section>\n  <header><div class="brand"><img src="icon.svg" alt=""><div><div class="wordmark">REDOWN</div><div class="tag">Your cloud companion ✦</div></div></div><button id="connection" class="connection" type="button" data-state="checking" aria-label="Checking Cloudflare connection" title="Checking Cloudflare connection"><span class="light" aria-hidden="true"></span></button></header>\n  <button id="dashboard" class="dashboard" type="button" title="Open REDOWN Home">Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3.5 10.2 11.1 3.7a1.4 1.4 0 0 1 1.8 0l7.6 6.5V19a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8.8Z"/><path d="M9.2 21v-5.5a2.8 2.8 0 0 1 5.6 0V21"/><path d="M17 12.5h1.5v1.5H17z"/></svg></button>\n  <button id="shelf-settings" class="settings-link" type="button" title="Open Shelf Settings">Settings</button>\n  <p class="hint">Your files. Your destinations. All in one place.</p>\n  <section class="counter-panel" aria-label="Delivery counter"><div class="counter-heading"><div class="counter-label">Files delivered</div><button id="counter-sound" class="sound" type="button" disabled aria-pressed="true" title="Mute counter sound">Sound on ♪</button></div><button id="odometer" class="odometer" type="button" aria-label="Checking Cloudflare connection" disabled></button><p id="counter-note" class="counter-note">Warming up…</p></section>\n  <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>\n</main><script src="toolbar-appearance.js"></script><script src="popup-recovery.js"></script><script src="odometer.js"></script><script src="popup.js"></script></body>\n</html>\n',
+    expected: /href="shelf.html#settings"/,
+    operator: 'match',
+    diff: 'simple'
+  }

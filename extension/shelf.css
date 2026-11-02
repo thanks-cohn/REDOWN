@@ -388,29 +388,6 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   border-color:#9ff9eb;color:#9ff9eb;background:#140d2b}
 
 
-/* Cosmetic impact only. A page-originating droplet cannot physically draw
-   through Chrome's side-panel frame; this lightweight glow meets it at the
-   Shelf's inner edge without interfering with the existing theme transition. */
-.shell::before{
-  content:"";position:fixed;z-index:9;left:0;top:29vh;width:124px;height:124px;
-  border-radius:50%;pointer-events:none;opacity:0;
-  background:radial-gradient(circle at 0% 50%,rgba(var(--accent-rgb),.65) 0%,
-    rgba(var(--accent-rgb),.20) 34%,transparent 72%);
-  transform:translate(-50%,-50%) scale(.1);
-}
-:root[data-save-impact="true"] .shell::before{
-  animation:shelf-save-droplet-impact .78s cubic-bezier(.17,.8,.28,1) both;
-}
-@keyframes shelf-save-droplet-impact{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}
-  16%{opacity:.95;transform:translate(-45%,-50%) scale(.46)}
-  52%{opacity:.7;transform:translate(-40%,-50%) scale(1)}
-  100%{opacity:0;transform:translate(-30%,-50%) scale(1.65)}
-}
-@media(prefers-reduced-motion:reduce){
-  :root[data-save-impact="true"] .shell::before{animation:none!important}
-}
-
 /* Minimal, paginated personal chronology. No nested cards and no visual logs. */
 #history-view .history-heading{
   display:flex;flex-direction:column;align-items:center;text-align:center;
@@ -664,3 +641,405 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .beta-aesthetics-status{margin:2px 0 0;font-size:11px;color:var(--muted)}
 .beta-aesthetics-status:empty{display:none}
 @media(prefers-reduced-motion:reduce){.beta-aesthetics>summary::after{transition:none}}
+
+/* Measured provider counts, distinct from the global historical odometer. */
+.provider-save-readout{position:relative;min-width:0;max-width:100%;padding:9px 10px;text-align:center;color:var(--text)}
+.overview .destinations-grid .destination-tile{flex-wrap:wrap}
+.destination-tile .provider-save-readout{flex:0 0 100%;border-top:1px solid var(--line)}
+.provider-save-count{display:block;width:max-content;max-width:none;margin:auto;font:italic 28px/1.15 "Iowan Old Style","Palatino Linotype","Book Antiqua",P052,Georgia,serif;font-variant-numeric:tabular-nums}
+.provider-save-caption{display:block;font:400 9px/1.4 "DM Sans",system-ui,sans-serif;color:var(--muted)}
+.provider-save-success{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;background:var(--panel,var(--bg));padding:5px 8px 2px;color:#84364e;font:italic 400 26px/1.3 "Times New Roman",Times,serif;letter-spacing:.02em;white-space:nowrap;font-synthesis:none}
+:root[data-shelf-theme="midnight"] .provider-save-success{color:#edf1f7;text-shadow:0 1px 6px #9c445b35}
+:root[data-shelf-theme="ocean"] .provider-save-success{color:#a7efde}
+:root[data-shelf-theme="neon"] .provider-save-success{font:400 30px/1.25 "Jersey 10 Charted",monospace;letter-spacing:.02em;color:#39ed79;text-shadow:2px 2px 0 #ffeb34}
+:root[data-shelf-theme="neon"] .provider-save-success.money-flash{color:#8fff00;text-shadow:2px 2px 0 #00a641,-1px -1px 0 #eaffb4}
+:root[data-shelf-theme="neon"] .provider-save-count{font:400 52px/1.05 "Jersey 10 Charted",monospace;color:#b3ffe0;text-shadow:2px 2px 0 #385f71}
+.provider-save-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Keep the existing options target alongside its action as the readout grows. */
+.overview .destinations-grid .destination-options>summary{top:32px}
+@media(max-width:399px){.overview .destinations-grid .destination-options>summary{top:28px}}
+
+/* CONSOLIDATED: Inline counts, real in-card SUCCESS! overlays, no extra rows. */
+.overview .destinations-grid .destination-tile{
+  position:relative;
+  flex-wrap:nowrap;
+  min-height:64px;
+}
+.overview .destinations-grid .destination-action-copy{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  column-gap:8px;
+  row-gap:4px;
+  padding-right:13px;
+}
+.overview .destinations-grid .provider-save-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  min-width:12px;
+  max-width:40px;
+  margin:0 2px 0 auto;
+  color:var(--text);
+  font:italic 600 15px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;
+  font-variant-numeric:tabular-nums;
+}
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{
+  font:400 18px/1 "Jersey 10 Charted",monospace;
+  color:#b3ffe0;
+  text-shadow:1px 1px 0 #385f71;
+}
+/* The overlay is invisible until a provider-confirmed receipt creates SUCCESS!.
+   It must not occupy space, block the button or create a fourth counter row. */
+.overview .destinations-grid .destination-tile .provider-save-readout,
+#clouds-view .cloudflare-hero .provider-save-readout{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:block;
+  width:auto;
+  max-width:none;
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+  pointer-events:none;
+}
+.overview .destinations-grid .destination-tile .provider-save-success{
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:3px 28px 3px 4px;
+  border-radius:12px;
+  background:color-mix(in srgb,var(--surface) 95%,transparent);
+  font-size:clamp(18px,3.2vw,26px);
+  z-index:6;
+}
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-success{
+  /* Celebrate LARGE in the card; JS fit() scales only when space truly runs out. */
+  font:400 clamp(39px,5.8vw,55px)/1.05 "Jersey 10 Charted",monospace;
+  letter-spacing:.035em;
+  text-shadow:3px 3px 0 #ffeb34,-1px -1px 0 #102812;
+}
+/* Cloudflare is a different, wide card. Place its count in the existing
+   button after Free 10 GB; the success effect covers that button, not a new row. */
+#cloudflare .provider-save-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:14px;
+  max-width:50px;
+  margin-left:auto;
+  font:italic 600 16px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;
+  font-variant-numeric:tabular-nums;
+}
+:root[data-shelf-theme="neon"] #cloudflare .provider-save-count{
+  font:400 21px/1 "Jersey 10 Charted",monospace;
+  color:#b3ffe0;
+  text-shadow:1px 1px 0 #385f71;
+}
+/* Cloudflare has the same action-row / full-surface verified SUCCESS!
+   treatment as the three smaller provider tiles. The shell wraps the *actual*
+   button bounds so the overlay never drifts as the card or number resizes. */
+#clouds-view .cloudflare-hero{position:relative}
+#clouds-view .cloudflare-hero .cloudflare-action-shell{
+  position:relative;
+  width:100%;
+  min-width:0;
+  margin-top:4px;
+  isolation:isolate;
+  border-radius:10px;
+}
+#clouds-view .cloudflare-hero #cloudflare.card-action{
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  column-gap:clamp(5px,2vw,11px);
+  width:100%;
+  min-height:64px;
+  margin:0;
+  padding:9px 12px;
+  flex-wrap:nowrap;
+}
+#cloudflare .cloudflare-action-verb{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
+  min-width:0;
+  white-space:nowrap;
+}
+#cloudflare .cloudflare-manage-icon{
+  display:none;
+  width:16px;
+  height:16px;
+  flex:none;
+  color:var(--accent);
+}
+#cloudflare[data-connected="true"] .cloudflare-manage-icon{display:block}
+#cloudflare .provider-save-count{
+  grid-column:2;
+  margin:0;
+}
+#cloudflare .free-storage-label{
+  grid-column:3;
+  margin:0;
+  white-space:nowrap;
+}
+#clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-readout{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  border:0;
+  pointer-events:none;
+}
+#clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-success{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 10px;
+  border:1px solid var(--accent);
+  border-radius:10px;
+  background:color-mix(in srgb,var(--surface) 97%,transparent);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--accent) 28%,transparent);
+  font-size:clamp(20px,3.2vw,27px);
+  z-index:6;
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .cloudflare-action-shell{
+  border-radius:5px;
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-success{
+  border-radius:5px;
+  background:color-mix(in srgb,var(--surface) 97%,#11071f);
+  border-color:#9ff9eb;
+}
+@media(max-width:340px){
+  #clouds-view .cloudflare-hero #cloudflare.card-action{
+    column-gap:5px;
+    padding:8px 6px;
+  }
+  #cloudflare .cloudflare-action-verb{gap:4px}
+  #cloudflare .cloudflare-manage-icon{width:14px;height:14px}
+  #cloudflare .free-storage-label{font-size:9px;padding-inline:4px}
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .provider-save-success{
+  font:400 clamp(44px,6.2vw,62px)/1.05 "Jersey 10 Charted",monospace;
+  letter-spacing:.035em;
+  text-shadow:3px 3px 0 #ffeb34,-1px -1px 0 #102812;
+}
+.overview .destinations-grid .destination-options>summary{
+  top:50%;
+  transform:translateY(-50%);
+}
+@media(max-width:640px){
+  /* A narrow Shelf cannot fit icon, GO TO, Free 15 GB, count and menu into
+     3 tiny columns. Three elegantly spaced provider rows keep everything visible. */
+  .overview .destinations-grid{
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+  .overview .destinations-grid .destination-action{
+    min-height:57px;
+    padding:9px 34px 9px 12px;
+    gap:12px;
+  }
+  .overview .destinations-grid .destination-action-copy{
+    flex-wrap:nowrap;
+    column-gap:11px;
+  }
+  .overview .destinations-grid .destination-free-storage{margin-left:auto}
+  .overview .destinations-grid .provider-save-count{margin-left:10px;margin-right:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  /* Accessible, static SUCCESS! is still shown for a verified save. */
+  .overview .destinations-grid .provider-save-success,
+  #clouds-view .cloudflare-hero .provider-save-success{transition:none!important}
+}
+
+/* P0 Dropbox: show real sign-in failures inside the card, not as an
+   invisible ellipsis-only message or a permanent extra counter row. */
+.overview .destinations-grid .destination-tile[data-provider="dropbox"][data-login-error="true"]{
+  min-height:88px;
+}
+.overview .destinations-grid .destination-tile[data-provider="dropbox"][data-login-error="true"] .destination-action-copy{
+  flex-wrap:wrap;
+}
+.overview .destinations-grid .dropbox-inline-login-error:not([hidden]){
+  display:block;
+  order:10;
+  flex:0 0 100%;
+  max-width:100%;
+  margin-top:4px;
+  font:600 10px/1.3 "DM Sans",system-ui,sans-serif;
+  letter-spacing:0;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  color:var(--accent);
+}
+.overview .destinations-grid .dropbox-inline-login-error[hidden]{display:none!important}
+
+
+/* Neon count bezel: the pink belongs ONLY to the number, never the tile.
+   Ample left/right ink, nearly square at short counts, safely grows/shrinks. */
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count,
+:root[data-shelf-theme="neon"] #cloudflare .provider-save-count{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 48px;
+  width:48px;
+  min-width:48px;
+  max-width:48px;
+  height:46px;
+  min-height:46px;
+  margin:0 5px 0 auto;
+  padding:4px 9px;
+  border:2px solid #ff9bd9;
+  border-radius:5px;
+  background:linear-gradient(155deg,#ff8bd4 0%,#ff3d9e 48%,#df1f83 100%);
+  color:#200726;
+  font:400 30px/1 "Jersey 10 Charted",monospace;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+  text-shadow:1px 1px 0 #ffd6eb;
+  box-shadow:inset 0 2px rgba(255,255,255,.55),inset 0 -3px rgba(65,0,60,.23),0 0 0 1px #6e174a,0 0 10px rgba(255,53,160,.35);
+}
+:root[data-shelf-theme="neon"] #cloudflare .provider-save-count{
+  margin-left:auto;
+}
+@media(max-width:640px){
+  :root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{
+    margin-left:12px;
+    margin-right:4px;
+  }
+}
+@media(max-width:340px){
+  :root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{
+    flex-basis:44px;width:44px;min-width:44px;max-width:44px;
+    height:44px;min-height:44px;padding-inline:7px;
+  }
+}
+
+
+/* Theme-aware REDOWN signature, styled below the product wordmark. */
+.brand small{
+  display:block;
+  max-width:100%;
+  font-family:"Palatino Linotype","Book Antiqua","Iowan Old Style",Georgia,serif;
+  font-size:12px;
+  font-style:italic;
+  font-weight:500;
+  line-height:1.32;
+  letter-spacing:.016em;
+  color:var(--muted);
+  text-shadow:0 1px rgba(255,255,255,.2);
+  text-wrap:balance;
+}
+:root[data-shelf-theme="porcelain"] .brand small{
+  color:#70518b;
+  font-family:"Palatino Linotype","Iowan Old Style",Georgia,serif;
+}
+:root[data-shelf-theme="midnight"] .brand small{
+  color:#ced9e8;
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  text-shadow:0 1px 3px #03050a66;
+}
+:root[data-shelf-theme="ocean"] .brand small{
+  color:#bceee9;
+  font-family:"Palatino Linotype",Georgia,serif;
+  text-shadow:0 1px 4px #032c306e;
+}
+:root[data-shelf-theme="neon"] .brand small{
+  color:#f5bde9;
+  font-family:"DM Sans",system-ui,sans-serif;
+  font-style:italic;
+  font-weight:650;
+  font-size:12.5px;
+  letter-spacing:.023em;
+  text-shadow:0 0 7px #ef3cbd72;
+}
+
+
+/* Precious, legible instrument dials for the three classical Shelf themes.
+   The badge belongs to the numeral, not the card, and never impersonates
+   the transient verifier-driven SUCCESS! overlay. Neon keeps its pink bezel. */
+:root:not([data-shelf-theme="neon"]) .overview .destinations-grid .provider-save-count,
+:root:not([data-shelf-theme="neon"]) #cloudflare .provider-save-count{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 43px;
+  width:43px;
+  min-width:43px;
+  max-width:43px;
+  height:33px;
+  min-height:33px;
+  padding:4px 6px;
+  margin:0 4px 0 auto;
+  border:1px solid #bbacd5;
+  border-radius:8px;
+  color:#563778;
+  font:italic 700 22px/1 "Palatino Linotype","Iowan Old Style",Georgia,serif;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.025em;
+  background:linear-gradient(155deg,#fffefa,#f3e8fd 55%,#e9dafa);
+  box-shadow:inset 0 1px 0 #ffffffea,inset 0 -2px 4px #8254a21c,0 2px 5px #39254a1b;
+  text-shadow:0 1px 0 #ffffffa8;
+}
+:root[data-shelf-theme="midnight"] .overview .destinations-grid .provider-save-count,
+:root[data-shelf-theme="midnight"] #cloudflare .provider-save-count{
+  color:#f1f6ff;
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  border-color:#8498b2;
+  background:linear-gradient(155deg,#455367,#263544 53%,#151e2a);
+  box-shadow:inset 0 1px 0 #dceaff55,inset 0 -2px 3px #0007,0 2px 8px #0007;
+  text-shadow:0 1px 4px #0008;
+}
+:root[data-shelf-theme="ocean"] .overview .destinations-grid .provider-save-count,
+:root[data-shelf-theme="ocean"] #cloudflare .provider-save-count{
+  color:#ecfffc;
+  font-family:"Palatino Linotype",Georgia,serif;
+  border-color:#72bfc2;
+  background:linear-gradient(155deg,#367e87,#16616e 48%,#093744);
+  box-shadow:inset 0 1px 0 #dcffff70,inset 0 -2px 4px #002f3980,0 2px 7px #0019239c;
+  text-shadow:0 1px 3px #001a2b;
+}
+@media(max-width:340px){
+  :root:not([data-shelf-theme="neon"]) .overview .destinations-grid .provider-save-count{
+    flex-basis:39px;width:39px;min-width:39px;max-width:39px;
+    padding-inline:4px;
+  }
+}
+
+/* History destination: one provider, one true path, optional file link. */
+.history-entry-provider{
+  display:block;
+  max-width:100%;
+  line-height:1.6;
+  font-size:10.5px;
+  color:var(--muted);
+  overflow-wrap:anywhere;
+}
+.history-entry-provider .history-destination-link{
+  display:inline;
+  font-size:inherit;
+  line-height:inherit;
+  font-weight:650;
+  vertical-align:baseline;
+}

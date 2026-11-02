@@ -1,0 +1,167 @@
+✔ PKCE S256 offline login, exact app, user root, trusted storage and memory-only access token (87.458715ms)
+✔ OAuth fail-closed {"badId":true} (2.074619ms)
+✔ OAuth fail-closed {"badRedirect":true} (1.420011ms)
+✔ OAuth fail-closed {"denied":true} (3.235897ms)
+✔ OAuth fail-closed {"wrongState":true} (4.162497ms)
+✔ OAuth fail-closed {"wrongRedirect":true} (9.524454ms)
+✔ OAuth fail-closed {"expired":true} (7.324741ms)
+✔ OAuth fail-closed {"duplicateState":true} (2.422623ms)
+✔ OAuth fail-closed {"tokenError":true} (2.462253ms)
+✔ OAuth fail-closed {"scopeDenied":true} (3.739893ms)
+✔ OAuth fail-closed {"team":true} (2.538395ms)
+✔ OAuth fail-closed {"badRoot":true} (5.717568ms)
+✔ OAuth fail-closed {"rootDenied":true} (4.500257ms)
+✔ refresh after worker restart is noninteractive, verifies original account; revocation and account switch fail closed (55.020329ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 0 (43.219437ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 19 (42.647349ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 4194323 (51.186153ms)
+✔ verified bounded session upload KEEP BOTH, root and actual bytes size 34603009 (1851.667678ms)
+✔ unknown length uses bounded sessions; Unicode names and dangerous filenames are sanitized (7.007478ms)
+✔ transport fault never reports success {"appendHttp":401} (4.669468ms)
+✔ transport fault never reports success {"appendHttp":403} (11.854777ms)
+✔ transport fault never reports success {"appendHttp":409} (9.808431ms)
+✔ transport fault never reports success {"appendHttp":429} (17.248225ms)
+✔ transport fault never reports success {"appendHttp":500} (4.196468ms)
+✔ transport fault never reports success {"finishHttp":500} (3.319301ms)
+✔ transport fault never reports success {"lostFinish":true} (36.394849ms)
+✔ transport fault never reports success {"badReceipt":true} (3.842204ms)
+✔ transport fault never reports success {"sourceError":true} (8.30085ms)
+✔ transport fault never reports success {"html":true} (2.774895ms)
+✔ lost append before checkpoint resumes against server correct_offset without duplication (18.108518ms)
+✔ worker restart resumes exact byte range and safely handles checkpoint at EOF (43.758264ms)
+✔ changed/range-inaccessible source cannot resume, interrupted finish is never replayed (50.297772ms)
+✔ source snapshot chooses clicked media/link before page, preserves context and rejects unsafe URLs (1.747856ms)
+✔ HTTP source bytes stream to Dropbox without exposing the source URL or its query (17.327694ms)
+✔ connected native saves, repeated clicks and multi-chunk transfer use no visible UI; exact job receipts (17.972308ms)
+✔ login via native action resumes exactly one pending click; Shelf login alone creates no job (34.707579ms)
+✔ unknown native IDs and untrusted Shelf messages fail closed; denied source consent cannot save (1.457817ms)
+✔ crashed OAuth and commit jobs are interrupted/uncertain on wake, with no duplicate commits (3.36569ms)
+✔ queue bound preserves existing jobs and reports a clear retry condition (2.753823ms)
+✔ shared composer preserves every V3/Google plan and route, Dropbox leaf ordering and invalid fragment rejection (100.515165ms)
+✔ actual single native writer reconciles transitions/restart/lost IDs and retains management last (249.812852ms)
+✔ actual native dispatcher isolates all Dropbox IDs before V3 resolver or navigation (3.405899ms)
+✔ Shelf Google then Dropbox then original headline; semantic controls and polite status (338.144947ms)
+✖ protected bytes unchanged except explicitly authorized shared composer hook (10.492871ms)
+✔ history and counter deduplicate Dropbox receipt atomically without changing other provider semantics (8.114835ms)
+✔ cancellation, root/account pinning and stale connection jobs never become successful (5.755424ms)
+✔ oversized declared length blocks before uploading; no application-specific file size cap (3.379339ms)
+✔ verified receipt checkpoint survives restart and replays metadata proof only (5.677509ms)
+✔ worker crash after history write reuses delivery identity and never increments counter twice (9.26729ms)
+✔ actual native writer recovers partial Dropbox API failure and corrupt/missing native ID caches (21.240401ms)
+✔ Dropbox finish FileMetadata does not require a union discriminator (7.392476ms)
+✔ cancel and disconnect stop queued work without cross-account uploads (31.826392ms)
+✔ explicit 429 backoff is bounded and can recover; readback retries do not replay finish (6.950733ms)
+✔ fresh install initializes V3; reload and restored legacy preference cannot reactivate Legacy (82.946754ms)
+✔ migration preserves custom labels, disabled entries, ordering and incompatible originals for recovery (13.338559ms)
+✔ actual dispatcher activates all accounts once, ignores Explorer selection, deduplicates and acknowledges roots (50.987108ms)
+✔ partial bucket failure retains usable successes and Retry Failed Buckets prepares only failed buckets (42.942191ms)
+✔ account permission failure is partial and a retry discovers newly available buckets (29.908696ms)
+✔ native registration failure never reports Activated and Retry reuses prepared buckets (44.519138ms)
+✔ unverified Worker, foreign sender and missing login cannot authorize activation (17.619996ms)
+✔ concurrent clicks share the operation and do not duplicate provider provisioning (20.373535ms)
+✔ saved jobs resume pending buckets after restart; interrupted discovery truthfully requires retry (68.301942ms)
+✔ real paginated account and bucket discovery handles both pages and rejects repeated cursors (2.640652ms)
+✔ Simple retains roots; Narrow only configured paths; Depth only participating roots (45.809414ms)
+✔ two native root clicks use distinct save destinations and verify the existing transfer completion path (63.050643ms)
+✔ actual activation button highlights global prerequisite after login, invokes background and clears glow only after verified completion (216.81533ms)
+✔ signed-out activation is disabled; pending requests disable duplicate clicks; failed activation remains retryable (182.180636ms)
+✔ guidance has one prerequisite owner, moving green border, visible focus and static reduced-motion treatment (0.765186ms)
+✔ new bucket preparation uses existing private Explorer Worker configuration and activation invokes no public visibility API (1.698892ms)
+✔ private activation never inherits the historical implicit public-assets default (0.232756ms)
+✔ global Activate Buckets refreshes the V3 Setup tree and bucket dropdown without page reload (121.070034ms)
+✔ storage change refresh preserves search, expanded tree, scroll and unfinished Add Destination form (182.159535ms)
+✔ protected engine/support/editor hashes and every baseline projection/resolve remain identical (28.506988ms)
+✔ single root, deterministic siblings, namespace/parent/capacity/cycle rejection; provider states never alter Cloudflare (25.451833ms)
+✔ actual Google click early return never resolves Cloudflare or invokes R2/dashboard even for unknown IDs (2.687832ms)
+✔ authorized scoped OAuth, serialized folder creation, reconnect reuse, worker/page restart and account isolation (29.424365ms)
+✔ ambiguous folder create reconciles preallocated ID without another creation (2.027541ms)
+✔ OAuth failure is recoverable and never connected {"denied":true} (0.305434ms)
+✔ OAuth failure is recoverable and never connected {"badClient":true} (0.287557ms)
+✔ OAuth failure is recoverable and never connected {"badId":true} (0.257552ms)
+✔ OAuth failure is recoverable and never connected {"revoked":true} (0.39017ms)
+✔ OAuth failure is recoverable and never connected {"http":401} (0.529486ms)
+✔ OAuth failure is recoverable and never connected {"http":403} (0.50471ms)
+✔ OAuth failure is recoverable and never connected {"http":429} (0.385913ms)
+✔ OAuth failure is recoverable and never connected {"http":500} (0.327987ms)
+✔ PNG actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (41.097061ms)
+✔ PDF actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (33.142778ms)
+✔ chunked actual browser-client bytes, chunk alignment and verified receipt KEEP BOTH (38.960068ms)
+✔ truthful upload failure {"interrupt":true} (6.385573ms)
+✔ truthful upload failure {"badReceipt":true} (41.03557ms)
+✔ truthful upload failure {"sourceError":true} (3.116368ms)
+✔ truthful upload failure {"size":33554433} (5.223768ms)
+✔ truthful upload failure {"permission":false} (2.012609ms)
+✔ abort never produces success and URL restrictions reject unsafe sources (37.760765ms)
+✔ Shelf connection control exact flow placement, keyboard native button and theme-neutral layout (310.555629ms)
+✔ actual shared native writer mode/provider races, restart, stale cache, partial API failure and recovery preserve root/manage and targets (160.196745ms)
+✔ mid-upload HTTP 401 never reports success or replays a file create (4.462497ms)
+✔ mid-upload HTTP 403 never reports success or replays a file create (5.193523ms)
+✔ mid-upload HTTP 429 never reports success or replays a file create (74.391564ms)
+✔ mid-upload HTTP 500 never reports success or replays a file create (14.203168ms)
+✔ unknown-length overflow and HTML fail before any Drive upload (130.358554ms)
+✔ cross-page folder creation uses an extension-origin Web Lock (2.773319ms)
+✔ provider receipt gate rejects untrusted pages and malformed success; history retains provider and verified file identity (75.89692ms)
+✔ repeated saves reuse the owned tab with a fresh job; active transfer is never replaced (6.963831ms)
+✔ multi-account active Depth inventory keeps exact native entries, order and per-prefix actions across every Google state (83.823762ms)
+✖ unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit (19.369004ms)
+✔ OneDrive menu shows root save only with a verified connected-state identity (2.694782ms)
+✔ invalid OneDrive fragments preserve original identity and exact plan (4.4039ms)
+✔ actual shared registry across four presentations and all provider connection masks preserves prior routes (3226.697747ms)
+✔ bad or throwing fragment keeps original shared native menu; error is provider-local (42.450702ms)
+✔ exact existing dispatcher consumes OneDrive once, never routes stale IDs to prior providers (10.039988ms)
+✔ stale menus, concurrent rebuild and MV3 restart preserve other providers (86.188089ms)
+✔ OneDrive connection controls stay Shelf-only and stale actions never save (9.161578ms)
+✔ Shelf shows controlled login, diagnostic and root actions without altering other provider markup (216.707052ms)
+✔ OneDrive Test from Dashboard is gated by Debug Mode and trusted sender (17.173355ms)
+✔ T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer (76.138716ms)
+✔ T24 authenticated chooser preserves original object, consumes intent once and rejects stale routes (24.638102ms)
+ℹ tests 117
+ℹ suites 0
+ℹ pass 115
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12625.947878
+
+✖ failing tests:
+
+test at tests/dropbox.test.mjs:167:1
+✖ protected bytes unchanged except explicitly authorized shared composer hook (10.492871ms)
+  AssertionError [ERR_ASSERTION]: extension/shelf-google-drive.js
+  + actual - expected
+  
+  + '2001ee4766ce9bd06e841c1f70c8a14f54e7dd25ab7d0f3c1a517be30f8626e0'
+  - '1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/dropbox.test.mjs:168:175)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '2001ee4766ce9bd06e841c1f70c8a14f54e7dd25ab7d0f3c1a517be30f8626e0',
+    expected: '1c71adf9a8f2a8b5b9329f0c4c0bd305284372957249db83998856c0734d76bc',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/onedrive.test.mjs:14:1
+✖ unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit (19.369004ms)
+  AssertionError [ERR_ASSERTION]: extension/popup.html
+  + actual - expected
+  
+  + 'd24e820a07ccdb3931bd994796764cd79f2725c05679969ca08ff456210b6fff'
+  - 'ef0a244c2436060e4873ec4b0d08f7649e9802e6a55805d96e9226da29f67f3a'
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/onedrive.test.mjs:30:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'd24e820a07ccdb3931bd994796764cd79f2725c05679969ca08ff456210b6fff',
+    expected: 'ef0a244c2436060e4873ec4b0d08f7649e9802e6a55805d96e9226da29f67f3a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

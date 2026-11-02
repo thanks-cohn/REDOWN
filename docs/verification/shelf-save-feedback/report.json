@@ -1,0 +1,1951 @@
+{
+  "scope": "Local Chromium mock storage only; no authenticated providers",
+  "cases": [
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 18.1662,
+          "width": 236.046875,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 18.1662,
+          "width": 236.046875,
+          "available": 266
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 290
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 19.9385,
+          "width": 258.984375,
+          "available": 290
+        },
+        {
+          "font": 18.0185,
+          "width": 234,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 290
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 25.7221,
+          "width": 259.03125,
+          "available": 290
+        },
+        {
+          "font": 25.7221,
+          "width": 259.03125,
+          "available": 290
+        },
+        {
+          "font": 25.7221,
+          "width": 259.03125,
+          "available": 290
+        },
+        {
+          "font": 23.2452,
+          "width": 234.015625,
+          "available": 264
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 20.8985,
+          "width": 271.375,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 20.8985,
+          "width": 271.375,
+          "available": 303
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 345
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 24,
+          "width": 312,
+          "available": 345
+        },
+        {
+          "font": 20.7508,
+          "width": 269.765625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 345
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 30.9618,
+          "width": 311.75,
+          "available": 345
+        },
+        {
+          "font": 30.9618,
+          "width": 311.75,
+          "available": 345
+        },
+        {
+          "font": 30.9618,
+          "width": 311.75,
+          "available": 345
+        },
+        {
+          "font": 26.7701,
+          "width": 269.578125,
+          "available": 301
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "porcelain",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 364.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "midnight",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 364.015625,
+          "available": 388
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 14.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 28.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 42.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 70.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "ocean",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 8.56615,
+          "width": 111.109375,
+          "available": 136
+        },
+        {
+          "font": 28,
+          "width": 364.015625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "0",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 19.5,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "1",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 11.15625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "10",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 30.65625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "999",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 66.859375,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "10000",
+      "sizes": [
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 136
+        },
+        {
+          "font": 52,
+          "width": 89.15625,
+          "available": 386
+        }
+      ]
+    },
+    {
+      "width": 480,
+      "theme": "neon",
+      "value": "90071992547409931234567890",
+      "sizes": [
+        {
+          "font": 11.051,
+          "width": 111.265625,
+          "available": 136
+        },
+        {
+          "font": 11.051,
+          "width": 111.265625,
+          "available": 136
+        },
+        {
+          "font": 11.051,
+          "width": 111.265625,
+          "available": 136
+        },
+        {
+          "font": 34.8678,
+          "width": 351.09375,
+          "available": 386
+        }
+      ]
+    }
+  ],
+  "reducedMotion": "PASS",
+  "cleanup": "PASS"
+}
