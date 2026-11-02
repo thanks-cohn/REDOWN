@@ -742,16 +742,99 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   color:#b3ffe0;
   text-shadow:1px 1px 0 #385f71;
 }
+/* Cloudflare has the same action-row / full-surface verified SUCCESS!
+   treatment as the three smaller provider tiles. The shell wraps the *actual*
+   button bounds so the overlay never drifts as the card or number resizes. */
 #clouds-view .cloudflare-hero{position:relative}
-#clouds-view .cloudflare-hero .provider-save-success{
-  inset:auto 18px 18px 18px;
-  height:43px;
-  border-radius:9px;
+#clouds-view .cloudflare-hero .cloudflare-action-shell{
+  position:relative;
+  width:100%;
+  min-width:0;
+  margin-top:4px;
+  isolation:isolate;
+  border-radius:10px;
+}
+#clouds-view .cloudflare-hero #cloudflare.card-action{
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  column-gap:clamp(5px,2vw,11px);
+  width:100%;
+  min-height:64px;
+  margin:0;
+  padding:9px 12px;
+  flex-wrap:nowrap;
+}
+#cloudflare .cloudflare-action-verb{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
+  min-width:0;
+  white-space:nowrap;
+}
+#cloudflare .cloudflare-manage-icon{
+  display:none;
+  width:16px;
+  height:16px;
+  flex:none;
+  color:var(--accent);
+}
+#cloudflare[data-connected="true"] .cloudflare-manage-icon{display:block}
+#cloudflare .provider-save-count{
+  grid-column:2;
+  margin:0;
+}
+#cloudflare .free-storage-label{
+  grid-column:3;
+  margin:0;
+  white-space:nowrap;
+}
+#clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-readout{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  border:0;
+  pointer-events:none;
+}
+#clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-success{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:5px 10px;
+  border:1px solid var(--accent);
+  border-radius:10px;
+  background:color-mix(in srgb,var(--surface) 97%,transparent);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--accent) 28%,transparent);
   font-size:clamp(20px,3.2vw,27px);
   z-index:6;
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .cloudflare-action-shell{
+  border-radius:5px;
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .cloudflare-action-shell .provider-save-success{
+  border-radius:5px;
+  background:color-mix(in srgb,var(--surface) 97%,#11071f);
+  border-color:#9ff9eb;
+}
+@media(max-width:340px){
+  #clouds-view .cloudflare-hero #cloudflare.card-action{
+    column-gap:5px;
+    padding:8px 6px;
+  }
+  #cloudflare .cloudflare-action-verb{gap:4px}
+  #cloudflare .cloudflare-manage-icon{width:14px;height:14px}
+  #cloudflare .free-storage-label{font-size:9px;padding-inline:4px}
 }
 :root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .provider-save-success{
   font:400 clamp(44px,6.2vw,62px)/1.05 "Jersey 10 Charted",monospace;
