@@ -1,3 +1,9 @@
+## P0 — Logged-out save balls and daily verified toolbar badge (2026-11-02)
+
+**SOURCE REPAIRED, REAL-CHROME TEST OPEN.** A right-click save ball previously launched without checking whether Cloudflare (or another destination) was signed in. It is now gated before page injection by the selected provider's existing authenticated session. A daily `chrome.action` badge displays the number of verified cloud saves today and resets at local midnight, independent of the lifetime odometer. **30/30 targeted Node checks passed.** See [full P0 report](CRITICAL/2026-11-02_P0_UNAUTHENTICATED_SAVE_BALLS_AND_DAILY_TOOLBAR_BADGE.md).
+
+---
+
 ## P0 — Verified cloud saves do not increment provider card numbers or play SUCCESS! (2026-11-02)
 
 **Status: SOURCE REPAIRS COMMITTED, INSTALLED-CHROME ACCEPTANCE STILL OPEN.** Owner reports missing cloud-card number increments and transient success animations. Repairs unify remote Cloudflare readback, recognize verified OneDrive items without optional web links, preserve OneDrive receipts across local History persistence errors, and fix the Shelf's hidden/connection-state event handoff. Neon counters now have a square hot-pink bezel and large readable digits, and the phrase below REDOWN is italic and theme-aware. [Critical report](CRITICAL/2026-11-02_P0_VERIFIED_SAVES_NOT_UPDATING_CARDS.md). The separate P0 Dropbox login problem remains open.
