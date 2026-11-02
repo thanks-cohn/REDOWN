@@ -42,7 +42,7 @@ function fixture(){
     throw Error('Unexpected fetch '+url);
   };
   const context=vm.createContext({chrome,fetch,crypto:webcrypto,URL,URLSearchParams,TextEncoder,
-    TextDecoder,Uint8Array,AbortSignal,Date,console,btoa,setTimeout,clearTimeout});
+    TextDecoder,Uint8Array,AbortSignal,AbortController,Date,console,btoa,setTimeout,clearTimeout});
   load(context,'onedrive-auth.js');
   return {context,local,session,calls,permissions,chrome,fetch,get callbackCount(){return callbackCount;},
     get tokenCount(){return tokenCount;}};
@@ -109,7 +109,7 @@ test('root session uses Keep Both, sequential 320 KiB aligned parts and verified
     throw Error('Unexpected transfer '+url);
   };
   const context=vm.createContext({chrome:f.chrome,fetch:transfer,URL,URLSearchParams,TextEncoder,
-    Uint8Array,AbortSignal,Date,ReadableStream,console,setTimeout,clearTimeout});
+    Uint8Array,AbortSignal,AbortController,Date,ReadableStream,console,setTimeout,clearTimeout});
   load(context,'onedrive-api.js');
   const api=context.RedownOneDriveAPI.create();
   const checkpoints=[];
@@ -138,7 +138,7 @@ test('truncated source never sends a final upload chunk or claims success',async
     throw Error('No chunk should be sent');
   };
   const context=vm.createContext({chrome:f.chrome,fetch,URL,URLSearchParams,TextEncoder,
-    Uint8Array,ReadableStream,AbortSignal,Date,setTimeout,clearTimeout,console});
+    Uint8Array,ReadableStream,AbortSignal,AbortController,Date,setTimeout,clearTimeout,console});
   load(context,'onedrive-api.js');
   const api=context.RedownOneDriveAPI.create();
   await assert.rejects(api.upload({url:'https://cdn.example.org/a',name:'a'},{
