@@ -25,25 +25,43 @@
 
 **Test:** Capture before/after visual recordings of each provider, with successful, failed, uncertain and resumed/deduplicated cases; verify listener wiring, animation DOM/CSS and lifecycle, both when Shelf is open and when it opens after a completed save.
 
-## BUG-2026-11-02-C — NEON provider-card counter appears as an ugly bare number
+## BUG-2026-11-02-C — NEON provider-card counter is aesthetically bare and starts too small
 
-**Owner report:** Each provider's NEON theme card currently shows a lone number without cohesive visual styling, making the card look unfinished.
-
-**Required behavior:** Keep a **persistent, truthful cumulative count of confirmed saves** for each supported provider card, but redesign how the number is framed/positioned/typographically displayed in NEON so it looks intentionally integrated into the arcade/SNES-inspired theme, not like a stranded integer. Use complementary original pixel/retro-futuristic art direction, refined spacing/contrast/outline/shadow treatment and maintain readability within the card. Other themes need their own aesthetically harmonious typography rather than inheriting an inappropriate Neon-only effect. **Count continues increasing; digits must not be clipped as the value grows.** Allow text to scale or layout to adapt for very large counts, without arbitrary resetting or fake saves.
-
-**Tests:** 0, 1, 9, 10, 99, 999, 10,000 and much larger values; all providers, narrow Shelf widths, Neon/Porcelain/Midnight, reduced motion/zoom, persistent reload and deduplicated receipt counts. Owner should visually approve final appearance instead of counting DOM presence as visual acceptance.
-
-## BUG-2026-11-02-D — SUCCESS! is incorrectly treated as a permanent label instead of temporary SNES-like save flash
-
-**Owner correction:** The green **SUCCESS!** with bright yellow shadow/offset/double-impression is a **short, flashing, SNES-era celebration** that appears **when a file has been saved**, then **disappears**. It must NOT remain permanently on the card. A persistent provider save counter and a transient `SUCCESS!` announcement are two different UI elements with different lifetimes.
+**Owner report and latest explicit correction (2026-11-02):** Each provider's NEON theme card currently shows a lonely, unattractive number. The per-provider saved-file count should be **BIG from the start**, not a tiny counter that is merely allowed to grow.
 
 **Required behavior:**
-- When a verified transfer first completes, briefly flash the green `SUCCESS!` text with an original yellow drop-shadow/doubled-offset treatment reminiscent of classic console-game success feedback. Use a short, legible animation (a few beats) and a clean automatic exit, returning the card to its ordinary resting state.
-- Keep the label **inside the relevant provider card**, without replacing GO TO, FREE GB, provider status or the durable number. Earlier owner layout direction: Neon can place its temporary text beneath FREE GB; other card themes can use the region between GO TO and FREE GB if this fits without collision. Final placement should be checked in actual screenshots rather than interpreted as a permanent extra row.
-- If the owner has not selected the precise yellow shadow variant, show small alternative treatments for visual approval. Do not lock in a generic unstyled text label or permanent glowing success badge.
-- No flash for login, authentication, network start, progress, failed/cancelled/uncertain writes, retry without a newly verified commit, merely viewing History, or restoring prior counts. Preserve truthful UI status and a non-flashing reduced-motion alternative; avoid repetitive screen-reader announcements.
+- Keep a **permanent, truthful, cumulative count of confirmed saves** for each applicable provider card, distinct from any temporary save celebration. Do not invent, reset, cap or double-count successes.
+- In **NEON specifically**, start with a large, prominent, beautifully composed numeric readout that fits the available card space at low counts. **As the count gains more digits, progressively reduce the font size only as needed to fit**, preserving a visually generous size for as long as possible. Do not start small, and do not shrink simply because a new save occurs if the text still fits. Use responsive measurement/fit rules or tested thresholds; avoid clipping, overflow or abrupt unrelated layout jumps.
+- Style the number as an intentional NEON arcade/SNES-era feature with attractive complementary typography, framing, accent treatment and spacing, rather than a bare integer. Non-Neon themes receive their own complementary visual typography, not the forced NEON numeral treatment.
+- Keep actual count values and provider identity intact across browser restarts, theme switches, narrow widths, large counts, zoom and re-rendering. A counter change must not fake a new SUCCESS! event.
 
-**Test:** Verify newly completed saves for each provider; multiple back-to-back saves; opening/closing Shelf during transfer; repeated receipts; verified completion while Shelf is closed; narrow/theme/zoom layouts; correct removal after animation; persistent counter remains; no stale SUCCESS! on reopening.
+**Tests:** Verify NEON numbers at 0, 1, 9, 10, 99, 999, 10,000, 1,000,000 and larger values. The first digit(s) must be deliberately **large**; later digits trigger only necessary fit-down scaling. Compare low-count and high-count real screenshots across each provider, available Shelf width and relevant zoom values. Owner must approve the aesthetic from actual renders, not DOM assertions.
+
+## BUG-2026-11-02-D — Theme-dependent SUCCESS! choreography: NEON money-green flashing vs. letter-by-letter other themes
+
+**Latest owner-approved correction (2026-11-02), superseding any earlier single generic SUCCESS! animation:** `SUCCESS!` is **never permanent**. It appears **only when the relevant provider successfully saves the file**, performs a distinct entrance/flash for the active theme, then **disappears completely**. The permanent per-provider numeric counter is a separate component.
+
+### NEON theme — dual-color money-green SUCCESS!
+
+- Present the entire `SUCCESS!` word as a deliberate **two-color composition**, with vivid **money green** as the primary letters and a bright **yellow** offset/double-impression shadow or complementary layer. Both colors must visibly participate in the flash. The green is a money-green arcade celebration, not a dull generic success badge or plain text.
+- **Flash/blink the dual-color word** briefly with a punchy, classic SNES-inspired timing, then remove it cleanly so the card returns to its ordinary resting state. **Do not use the non-Neon letter-by-letter entrance** for this theme unless the owner later explicitly chooses that.
+- Place the temporary treatment **inside the NEON provider card**, following the previously requested space under FREE GB where it fits, without displacing GO TO, the growing prominent numeral, other status/controls or creating a persistent row.
+
+### Every other theme — progressive letter-by-letter entrance, then ONE flash, then disappear
+
+- On a new verified successful save, reveal `SUCCESS!` **one character at a time**, as an intentional, polished short typographic animation. No text should appear as a permanent static label.
+- Once all letters have appeared, **flash the completed word once**, then have it fade/vanish/clear cleanly. Do not start with the NEON all-at-once dual-color blink; this is a **different animation sequence**.
+- Style the text, letter cadence, entrance and exit harmoniously with each existing non-Neon theme (e.g. Porcelain and Midnight). Use the appropriate theme palette and visual personality, not forced NEON money-green/yellow on every theme. Earlier guidance suggested the region between GO TO and FREE GB for non-Neon cards when space permits; verify actual layout, not assumed CSS geometry.
+
+### Shared correctness and accessibility
+
+- Trigger only from a **new verified completed transfer receipt** for that specific cloud provider/card. Never celebrate login/connect, attempted/failed/cancelled/uncertain saves, replayed events, historical count hydration or merely re-opening Shelf.
+- All themes must automatically clear the SUCCESS! element/state at the end of their sequence; no stale text after reopen/re-render. The numeric count stays visible and persists independently.
+- Repeated legitimate saves must be handled cleanly without stacked overlapping messages; use a bounded retrigger/queue policy that does not invent saves or keep SUCCESS! permanently showing.
+- Honor reduced motion and seizure-safety considerations: where flashing or staggered animation is disabled, show a brief static accessible confirmation then remove it, without obscuring verified status or generating unnecessary screen-reader spam.
+- Confirm actual display and motion with short **installed-Chrome video captures**, not screenshots of a single frame alone. Obtain owner approval for the money-green/yellow pairing, exact offset treatment and the non-Neon letter sequence.
+
+**Test matrix:** For NEON, full-word dual-color flash and disappearance, plus large-to-fit count shrink. For each other theme, characters appear sequentially, complete word flashes **exactly once**, then disappears. Repeat for Cloudflare, Google Drive, Dropbox and OneDrive on new verified successful saves; failure/uncertain outcome; multiple saves; reopening Shelf; theme switching; small widths; reduced motion; and persistence of the independent counter.
 
 ## Delivery and non-regression requirements
 
