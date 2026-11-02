@@ -41,7 +41,7 @@ test('professional default has straight Right2Click heading, no slant, and no co
   assert.equal(h.arrow.checked,false);
   assert.equal(h.arrowRow.hidden,true);
   assert.equal(h.d.querySelector('.destinations-straight-title').textContent,'Right2Click, Anywhere.');
-  assert.equal(h.d.querySelector('.destinations-subtitle').textContent,'Your Clouds. Right Here.');
+  assert.equal(h.d.querySelector('.destinations-subtitle').textContent,'Your Passions. Right Here.');
   assert.equal(h.d.querySelectorAll('.destinations-grid .destination-tile').length,3);
   assert.ok(h.d.querySelector('#beta-aesthetics > summary'));
   assert.equal(h.d.querySelector('#beta-aesthetics > summary').textContent.trim(),'Beta Aesthetics');
@@ -164,4 +164,24 @@ test('leaving a hover popup closes it even when a menu action retained focus',as
   await delay(240);
   assert.equal(details.open,false);
   h.dom.window.close();
+});
+
+test('every destination action carries its own accurate bordered free-tier storage badge',()=>{
+  const dom=new JSDOM(html),d=dom.window.document;
+  const expected=[['google','Free 15 GB','Gmail'],['dropbox','Free 2 GB','Dropbox Basic'],['onedrive','Free 5 GB','Microsoft']];
+  for(const [provider,caption,explanation] of expected){
+    const card=d.querySelector('.destination-tile[data-provider="'+provider+'"]');
+    assert.ok(card,provider+' destination exists');
+    const button=card.querySelector('.destination-action');
+    const text=button.querySelector('.destination-word');
+    const badge=button.querySelector('.destination-free-storage.free-storage-label');
+    assert.ok(badge,provider+' shows free plan badge inside the same action');
+    assert.equal(badge.textContent,caption);
+    assert.ok(button.contains(text)&&button.contains(badge));
+    assert.ok(text.compareDocumentPosition(badge)&dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+    assert.ok(badge.title.includes(explanation),'disclose limits and shared plans');
+  }
+  assert.match(css,/destination-action-copy\{display:flex;align-items:center;align-content:center;flex-wrap:wrap/);
+  assert.match(css,/destination-free-storage\{display:inline-flex;.*border:1px solid var\(--accent\)/);
+  dom.window.close();
 });
