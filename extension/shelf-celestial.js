@@ -121,11 +121,21 @@
           } else await animate(object,[{opacity:.65,scale:'.8'},{opacity:1,scale:'1'}],{duration:110});
           if(controller.signal.aborted)throw Error('Interrupted');
           const view=document.querySelector(location.hash==='#history'?'#history-view':location.hash==='#settings'?'#settings-view':'#clouds-view');
-          const target=view?.querySelector('[data-celestial-target]');
-          const bounds=target?.getBoundingClientRect();
+          // The new cloud cards can push "Future" below a short Shelf viewport.
+          // Keep the original landing word when visible; otherwise use a visible
+          // Destinations heading rather than aborting the whole ball animation.
           const sx=start.left+start.width/2,sy=start.top+start.height/2;
-          const canHit=bounds&&bounds.width>0&&bounds.height>0&&bounds.top>30&&sy>14&&bounds.top<innerHeight;
-          if(!canHit)throw Error('No visible springboard');
+          const candidates=[view?.querySelector('[data-celestial-target]')];
+          if(view?.id==='clouds-view')candidates.push(
+            view.querySelector('.destinations-title'),document.getElementById('nav-clouds'));
+          const visibleBounds=node=>{
+            const rect=node?.getBoundingClientRect();
+            return rect&&rect.width>0&&rect.height>0&&rect.top>30&&
+              rect.top+rect.height<innerHeight-12&&sy>14?rect:null;
+          };
+          let target,bounds;
+          for(const node of candidates){const rect=visibleBounds(node);if(rect){target=node;bounds=rect;break;}}
+          if(!bounds)throw Error('No visible springboard');
           const x=bounds.left+bounds.width/2,hitY=bounds.top-12;
           const model=flightModel({sx,sy,x,hitY,height:innerHeight,width:innerWidth});
           const streak=document.createElement('div');streak.className='celestial-streak';
