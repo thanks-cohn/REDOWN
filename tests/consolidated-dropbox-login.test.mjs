@@ -83,8 +83,8 @@ test('P0 Shelf LOGIN does not remain disabled in a stale connecting state',async
     <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
     </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
   const sent=[];
-  const chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'connecting'},'dropbox:transfer':{}}),
-    onChanged:{addListener:()=>{}}}},runtime:{sendMessage:async msg=>{sent.push(msg.type);return {ok:true};}}};
+  const chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'connecting'},'dropbox:transfer':{}})},
+    onChanged:{addListener:()=>{}}},runtime:{sendMessage:async msg=>{sent.push(msg.type);return {ok:true};}}};
   dom.window.chrome=chrome;
   dom.window.eval(await read('shelf-dropbox.js'));
   await Promise.resolve();await Promise.resolve();
@@ -117,7 +117,7 @@ test('P0 Shelf RETRY visibly explains authorization failure in the provider card
     <a id="shelf-dropbox-open"></a><button id="shelf-dropbox-disconnect"></button>
     <button id="shelf-dropbox-cancel"></button><small id="shelf-dropbox-status"></small>
     </div>`,{url:'https://example.invalid/',runScripts:'outside-only'});
-  dom.window.chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'reconnect',error:'Dropbox root could not be verified.'},'dropbox:transfer':{}}),onChanged:{addListener:()=>{}}}},runtime:{sendMessage:async msg=>({ok:msg.type!=='dropboxConnect',error:'Dropbox root could not be verified.'})}};
+  dom.window.chrome={storage:{local:{get:async()=>({'dropbox:state':{phase:'reconnect',error:'Dropbox root could not be verified.'},'dropbox:transfer':{}})},onChanged:{addListener:()=>{}}},runtime:{sendMessage:async msg=>({ok:msg.type!=='dropboxConnect',error:'Dropbox root could not be verified.'})}};
   dom.window.eval(await read('shelf-dropbox.js'));
   await Promise.resolve();await Promise.resolve();
   const button=dom.window.document.getElementById('shelf-dropbox');
