@@ -943,3 +943,20 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
     padding-inline:4px;
   }
 }
+
+/* History destination: one provider, one true path, optional file link. */
+.history-entry-provider{
+  display:block;
+  max-width:100%;
+  line-height:1.6;
+  font-size:10.5px;
+  color:var(--muted);
+  overflow-wrap:anywhere;
+}
+.history-entry-provider .history-destination-link{
+  display:inline;
+  font-size:inherit;
+  line-height:inherit;
+  font-weight:650;
+  vertical-align:baseline;
+}
