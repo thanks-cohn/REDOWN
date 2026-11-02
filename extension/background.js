@@ -908,6 +908,7 @@ async function cfJson(path, options = {}) {
 importScripts("history-archive.js");
 importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
+importScripts("save-droplet-gate.js");
 const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
 void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
@@ -2788,7 +2789,14 @@ async function launchSaveDroplet(info,tab){
     src:String(info.srcUrl||"").slice(0,2048),
     link:String(info.linkUrl||"").slice(0,2048)
   };
-  const {shelfColorScheme}=await chrome.storage.local.get("shelfColorScheme").catch(()=>({}));
+  // Prevent the visual save orb/ball when the selected cloud is logged out.
+  // The button remains free to start its usual provider login; visual feedback
+  // here is an authenticated ATTEMPT, never a substitute for verified SUCCESS.
+  const session=await chrome.storage.local.get([
+    'shelfColorScheme','cloudflareAuth','googleDriveState','dropbox:state','onedrive:state'
+  ]).catch(()=>({}));
+  if(!RedownSaveDropletGate.permitted(info.menuItemId,session))return;
+  const {shelfColorScheme}=session;
   const event={id:crypto.randomUUID(),at:Date.now()};
   const results=await chrome.scripting.executeScript({
     target:{tabId:tab.id},
