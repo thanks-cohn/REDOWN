@@ -660,12 +660,124 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .overview .destinations-grid .destination-options>summary{top:32px}
 @media(max-width:399px){.overview .destinations-grid .destination-options>summary{top:28px}}
 
-/* CONSOLIDATED: balanced SNES-like provider totals, preserving the verified SUCCESS overlay. */
-.overview .destinations-grid .destination-tile{position:relative;flex-wrap:nowrap;min-height:62px}
-.overview .destinations-grid .destination-action-copy{gap:7px;flex-wrap:nowrap;padding-right:16px;justify-content:space-between}
-.overview .destinations-grid .provider-save-count{display:inline-flex;align-items:center;justify-content:center;margin:0 4px;flex:none;min-width:10px;max-width:40px;font:italic 600 13px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;font-variant-numeric:tabular-nums;color:var(--text)}
-:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{font:400 16px/1 "Jersey 10 Charted",monospace;color:#b3ffe0;text-shadow:1px 1px 0 #385f71}
-.overview .destinations-grid .destination-tile .provider-save-readout{position:absolute;inset:0;max-width:none;padding:0;border:0;pointer-events:none;flex:none}
-.overview .destinations-grid .provider-save-success{inset:auto 4px 2px 4px;height:27px;min-width:0;padding:0;font-size:clamp(13px,4vw,20px);border-radius:6px;z-index:2}
-.overview .destinations-grid .destination-options>summary{top:50%;transform:translateY(-50%)}
-@media(max-width:399px){.overview .destinations-grid .destination-action-copy{gap:5px}.overview .destinations-grid .provider-save-count{margin:0 2px}.overview .destinations-grid .destination-options>summary{top:50%;transform:translateY(-50%)}}
+/* CONSOLIDATED: Inline counts, real in-card SUCCESS! overlays, no extra rows. */
+.overview .destinations-grid .destination-tile{
+  position:relative;
+  flex-wrap:nowrap;
+  min-height:64px;
+}
+.overview .destinations-grid .destination-action-copy{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  column-gap:8px;
+  row-gap:4px;
+  padding-right:13px;
+}
+.overview .destinations-grid .provider-save-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  min-width:12px;
+  max-width:40px;
+  margin:0 2px 0 auto;
+  color:var(--text);
+  font:italic 600 15px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;
+  font-variant-numeric:tabular-nums;
+}
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{
+  font:400 18px/1 "Jersey 10 Charted",monospace;
+  color:#b3ffe0;
+  text-shadow:1px 1px 0 #385f71;
+}
+/* The overlay is invisible until a provider-confirmed receipt creates SUCCESS!.
+   It must not occupy space, block the button or create a fourth counter row. */
+.overview .destinations-grid .destination-tile .provider-save-readout,
+#clouds-view .cloudflare-hero .provider-save-readout{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  display:block;
+  width:auto;
+  max-width:none;
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0;
+  pointer-events:none;
+}
+.overview .destinations-grid .destination-tile .provider-save-success{
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:3px 28px 3px 4px;
+  border-radius:12px;
+  background:color-mix(in srgb,var(--surface) 95%,transparent);
+  font-size:clamp(18px,3.2vw,26px);
+  z-index:6;
+}
+:root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-success{
+  font:400 clamp(20px,3.5vw,30px)/1.15 "Jersey 10 Charted",monospace;
+}
+/* Cloudflare is a different, wide card. Place its count in the existing
+   button after Free 10 GB; the success effect covers that button, not a new row. */
+#cloudflare .provider-save-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:14px;
+  max-width:50px;
+  margin-left:auto;
+  font:italic 600 16px/1.1 "Iowan Old Style","Palatino Linotype",Georgia,serif;
+  font-variant-numeric:tabular-nums;
+}
+:root[data-shelf-theme="neon"] #cloudflare .provider-save-count{
+  font:400 21px/1 "Jersey 10 Charted",monospace;
+  color:#b3ffe0;
+  text-shadow:1px 1px 0 #385f71;
+}
+#clouds-view .cloudflare-hero{position:relative}
+#clouds-view .cloudflare-hero .provider-save-success{
+  inset:auto 18px 18px 18px;
+  height:43px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(20px,3.2vw,27px);
+  z-index:6;
+}
+:root[data-shelf-theme="neon"] #clouds-view .cloudflare-hero .provider-save-success{
+  font:400 clamp(23px,3.5vw,32px)/1.2 "Jersey 10 Charted",monospace;
+}
+.overview .destinations-grid .destination-options>summary{
+  top:50%;
+  transform:translateY(-50%);
+}
+@media(max-width:640px){
+  /* A narrow Shelf cannot fit icon, GO TO, Free 15 GB, count and menu into
+     3 tiny columns. Three elegantly spaced provider rows keep everything visible. */
+  .overview .destinations-grid{
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+  .overview .destinations-grid .destination-action{
+    min-height:57px;
+    padding:9px 34px 9px 12px;
+    gap:12px;
+  }
+  .overview .destinations-grid .destination-action-copy{
+    flex-wrap:nowrap;
+    column-gap:11px;
+  }
+  .overview .destinations-grid .destination-free-storage{margin-left:auto}
+  .overview .destinations-grid .provider-save-count{margin-left:10px;margin-right:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  /* Accessible, static SUCCESS! is still shown for a verified save. */
+  .overview .destinations-grid .provider-save-success,
+  #clouds-view .cloudflare-hero .provider-save-success{transition:none!important}
+}
