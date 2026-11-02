@@ -504,6 +504,7 @@ dialog.r2-ask-dialog::backdrop{background:#050911cb;backdrop-filter:blur(6px)}
           <label class="toggle"><input id="notifications-enabled" type="checkbox" aria-describedby="notifications-description"> Desktop notifications</label><p id="notifications-description" class="mode-hint">Optional transfer updates. Off by default.</p>
           <label class="toggle"><input id="beta-mode-enabled" type="checkbox" aria-describedby="beta-mode-description"> Beta Mode</label><p id="beta-mode-description" class="mode-hint">Explore experimental REDOWN features.</p>
           <label class="toggle"><input id="debug-mode-enabled" type="checkbox" aria-describedby="debug-mode-description"> Debug Mode</label><p id="debug-mode-description" class="mode-hint">Show advanced diagnostics and troubleshooting tools.</p>
+          <div class="onedrive-test-debug" data-debug-detail hidden><button id="debug-onedrive-test" class="ghost" type="button" aria-describedby="debug-onedrive-test-description">OneDrive Test</button><p id="debug-onedrive-test-description" class="mode-hint">Run a separate Microsoft sign-in diagnostic. No files are uploaded or account settings changed.</p><p id="debug-onedrive-test-status" class="mode-hint" role="status" aria-live="polite"></p></div>
         </div>
       </details>
     </div>
