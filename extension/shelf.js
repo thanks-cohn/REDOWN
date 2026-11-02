@@ -8,7 +8,7 @@ function updateConnectionSummary(){
     : state==='checking'
       ? 'Checking Cloudflare connection…'
       : state==='error'
-        ? 'Cloudflare needs attention. Check your sign-in.'
+        ? '' // Keep verification issues on the Cloudflare card, not in the Shelf welcome copy.
         : 'Connect Cloudflare to make R2 your cloud home.';
 }
 document.addEventListener('redown:provider-connection',updateConnectionSummary);
