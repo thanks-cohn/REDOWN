@@ -41,11 +41,20 @@ test('orb geometry remains intact and isolated arrival no longer needs page stor
  const source=await readFile('extension/background.js','utf8');
  const launch=source.slice(source.indexOf('async function launchSaveDroplet'),source.indexOf('// Go Home is a navigation'));
  const writes=[];let injections=0;
- const context=vm.createContext({crypto:webcrypto,Date,chrome:{storage:{local:{get:async()=>({shelfColorScheme:'ocean'}),set:async p=>writes.push(p)}},scripting:{executeScript:async options=>{
+ const session={shelfColorScheme:'ocean',cloudflareAuth:{accessToken:'test-logged-in',expiresAt:Date.now()+60000}};
+ const context=vm.createContext({crypto:webcrypto,Date,chrome:{storage:{local:{get:async()=>session,set:async p=>writes.push(p)}},scripting:{executeScript:async options=>{
   injections++;const page=new JSDOM('<body></body>',{runScripts:'outside-only'});const w=page.window;
   w.matchMedia=()=>({matches:false});w.Element.prototype.animate=()=>({finished:Promise.resolve()});
   const fn=w.eval('('+options.func.toString()+')');const result=await fn(...options.args);page.window.close();return [{result}];
- }}}});vm.runInContext(launch,context);await context.launchSaveDroplet({}, {id:1});
+ }}}});
+ vm.runInContext(await readFile('extension/save-droplet-gate.js','utf8'),context);
+ vm.runInContext(launch,context);
+ session.cloudflareAuth=null;
+ await context.launchSaveDroplet({menuItemId:'v3:folder'}, {id:1});
+ assert.equal(injections,0,'logged-out click never shows balls');
+ assert.equal(writes.length,0,'logged-out click never announces an arrival');
+ session.cloudflareAuth={accessToken:'test-logged-in',expiresAt:Date.now()+60000};
+ await context.launchSaveDroplet({menuItemId:'v3:folder'}, {id:1});
  assert.equal(injections,1);assert.equal(writes[0].redownShelfImpact.kind,'arrival');assert.ok(writes[0].redownShelfImpact.id);
  context.chrome.scripting.executeScript=async()=>{throw Error('Restricted page');};
  await context.launchSaveDroplet({}, {id:1});assert.equal(writes.length,1);
