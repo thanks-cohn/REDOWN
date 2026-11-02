@@ -909,8 +909,11 @@ importScripts("history-archive.js");
 importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
 importScripts("save-droplet-gate.js");
+importScripts("daily-save-badge.js");
 const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
+// One authoritative durable daily badge, separate from the lifetime odometer.
+RedownDailySaveBadge.create({chrome,readDaily:()=>transferCounter.readDaily()}).install();
 void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
   toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
   toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
