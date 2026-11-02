@@ -112,3 +112,19 @@ test('Shelf shows controlled login, diagnostic and root actions without altering
  assert.equal(d.querySelectorAll('.destinations-grid .destination-tile').length,3);assert.equal(d.getElementById('shelf-onedrive-diagnostic'),null);
  dom.window.close();
 });
+
+test('OneDrive Test from Dashboard is gated by Debug Mode and trusted sender',async()=>{
+ const w=worker();
+ await w.ready();
+ const p=vm.runInContext('onedriveProvider',w.context);
+ const sender={id:'test',url:'chrome-extension://test/options.html'};
+ const blocked=await p.message({type:'onedriveDiagnostic'},sender);
+ assert.equal(blocked.code,'ONEDRIVE_DEBUG_DISABLED');
+ assert.equal((await p.message({type:'onedriveConnect'},sender)).code,'ONEDRIVE_UNTRUSTED_SENDER');
+ w.local.debugModeEnabled=true;
+ vm.runInContext('globalThis.RedownOneDriveOAuthDiagnostic={create:()=>({run:async()=>({ok:true,code:"ONEDRIVE_DIAGNOSTIC_TEST"})})}',w.context);
+ const allowed=await p.message({type:'onedriveDiagnostic'},sender);
+ assert.equal(allowed.code,'ONEDRIVE_DIAGNOSTIC_TEST');
+ assert.equal((await p.message({type:'onedriveDiagnostic'},{id:'foreign',url:sender.url})).code,'ONEDRIVE_UNTRUSTED_SENDER');
+ assert.equal((await p.message({type:'onedriveDiagnostic'},{id:'test',url:'https://untrusted.invalid/options.html'})).code,'ONEDRIVE_UNTRUSTED_SENDER');
+});
