@@ -24,7 +24,7 @@
     let u;try{u=new URL(record.location);}catch{return null;}
     if(u.protocol!=='https:'||u.username||u.password||u.hash)return null;
     if(provider==='google-drive'){
-      if(!/^[\\w-]+$/.test(d.fileId||'')||u.hostname!=='drive.google.com'||
+      if(!/^[A-Za-z0-9_-]+$/.test(d.fileId||'')||u.hostname!=='drive.google.com'||
         u.pathname!=='/file/d/'+d.fileId+'/view'||u.search)return null;
       return u.href;
     }
@@ -35,7 +35,7 @@
       return u.href;
     }
     if(provider==='dropbox'){
-      if(!/^id:[\\w-]+$/.test(d.fileId||'')||u.hostname!=='www.dropbox.com'||
+      if(!/^id:[A-Za-z0-9_-]+$/.test(d.fileId||'')||u.hostname!=='www.dropbox.com'||
         !u.pathname.startsWith('/home/')||u.search)return null;
       try{if(decodeURIComponent(u.pathname.slice('/home/'.length))!==d.name)return null;}
       catch{return null;}
