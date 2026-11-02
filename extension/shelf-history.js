@@ -184,7 +184,7 @@
       // source/page URL. Dropbox has no file URL unless it was explicitly
       // stored and approved by cloudTarget().
       const providerUrl=globalThis.RedownHistoryNavigation?.cloudTarget?.(record);
-      const publicR2=info.isCloudflare&&info.state==='success'?safeWebUrl(record.location):null;
+      const publicR2=info.isCloudflare&&info.state==='success'?safeWebUrl(record.destination?.publicUrl):null;
       const href=providerUrl||(publicR2&&new URL(publicR2).protocol==='https:'?publicR2:null);
       if(href){
         const link=create('a',info.isCloudflare?'File URL':'Open saved file','history-entry-link history-destination-link');
