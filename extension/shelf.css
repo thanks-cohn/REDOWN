@@ -573,3 +573,14 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .explorer-navigation-size-row:hover{border-color:var(--accent)}
 .explorer-navigation-size-row input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 :root[data-shelf-theme="neon"] .explorer-navigation-size-row{border-radius:6px}
+
+/* Destinations gateway: a small departure sign, not a replacement for the Shelf. */
+.destinations-banner{display:flex;align-items:center;gap:12px;margin:12px 0 14px;padding:10px 14px;min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(124deg,rgba(var(--accent-rgb),.14),var(--surface) 72%);overflow:hidden}
+.destinations-compass{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:var(--subtle);color:var(--accent);font-size:22px;font-weight:750;transform:rotate(-9deg);transition:transform .2s ease}
+.destinations-banner:hover .destinations-compass{transform:rotate(0deg) translate(2px,-2px)}
+.destinations-title{display:flex;flex-direction:column;min-width:0}
+.destinations-title strong{font-size:.83rem;letter-spacing:.18em;font-weight:850;line-height:1.45}
+.destinations-title small{font-size:.71rem;color:var(--muted);line-height:1.5}
+.destinations-diagonal{margin-left:auto;color:var(--accent);opacity:.4;letter-spacing:.24em;transform:skewX(-14deg);user-select:none}
+@media (max-width:360px){.destinations-banner{padding:9px 11px;gap:9px}.destinations-diagonal{display:none}}
+@media (prefers-reduced-motion:reduce){.destinations-compass{transition:none}}
