@@ -47,7 +47,6 @@ test('orb geometry remains intact and isolated arrival no longer needs page stor
   w.matchMedia=()=>({matches:false});w.Element.prototype.animate=()=>({finished:Promise.resolve()});
   const fn=w.eval('('+options.func.toString()+')');const result=await fn(...options.args);page.window.close();return [{result}];
  }}}});
- vm.runInContext(await readFile('extension/save-droplet-auth.js','utf8'),context);
  vm.runInContext(await readFile('extension/save-droplet-gate.js','utf8'),context);
  vm.runInContext(launch,context);
  session.cloudflareAuth=null;
