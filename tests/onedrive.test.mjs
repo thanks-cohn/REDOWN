@@ -15,6 +15,9 @@ test('unmodified protected modules retain checkpoint hashes; authorized Shelf ch
  // The historical OneDrive checkpoint predates the separately authorized Dropbox source fix, Shelf revisions and animation repair.
  // Keep all untouched V3, Cloudflare and provider modules locked to their original hashes.
  const authorized=new Set(['extension/dropbox-api.js','extension/history-navigation.js',
+   // November 1 flat-provider directive; V3/transfer engines remain hash-locked.
+   'extension/google-drive-menu.js','extension/google-drive-provider.js',
+   'extension/dropbox-menu.js','extension/dropbox-provider.js',
    'extension/options.html','extension/options.js','extension/shelf-dropbox.js',
    'extension/shelf-google-drive.js','extension/shelf-history.js',
    'extension/shelf.css','extension/shelf.html','extension/shelf-celestial.js','extension/shelf.js']);
@@ -33,8 +36,9 @@ test('unmodified protected modules retain checkpoint hashes; authorized Shelf ch
 test('OneDrive menu shows root save only with a verified connected-state identity',()=>{
  const m=menu();
  for(const phase of ['disconnected','connecting','connected','reconnect','blocked']){
-  const fragment=m.fragment(oneState(phase),'redown');assert.equal(fragment.entries.length,2);assert.equal(fragment.entries[1].id,phase==='connected'?'provider:onedrive:save-root':'provider:onedrive:connect');
-  assert.equal(fragment.entries[1].enabled,phase!=='connecting');
+  const fragment=m.fragment(oneState(phase),'redown');assert.equal(fragment.entries.length,1);assert.equal(fragment.entries[0].id,'provider:onedrive');
+  assert.equal(fragment.entries[0].parentId,'redown');
+  assert.equal(fragment.entries[0].enabled,phase!=='connecting');
   assert.deepEqual(plain(m.obsolete(new Set())),['provider:onedrive:connect','provider:onedrive:save-root']);
  }
  for(const id of ['provider:dropbox','provider:google-drive','v3:provider:cloudflare','provider:onedrivex',null,{}])assert.equal(m.owns(id),false);

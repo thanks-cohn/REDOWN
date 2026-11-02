@@ -60,14 +60,16 @@
     async function dispatch(info){
       if(!info||typeof info!=='object'||!RedownOneDriveMenu.owns(info.menuItemId)||seen.has(info))return;
       seen.add(info);
-      if(!['provider:onedrive:connect','provider:onedrive:save-root'].includes(info.menuItemId)){
+      if(info.menuItemId!=='provider:onedrive'){
         await setTransfer({status:'blocked',code:'ONEDRIVE_STALE_MENU',
           error:'Outdated OneDrive menu action. Reopen REDOWN after the menu refreshes.'});return;
       }
       // Permission is declared by Chrome's extension manifest. There are no
       // OneDrive-specific request() calls or additional host approval dialogs.
       try{
-        if(info.menuItemId==='provider:onedrive:connect'){await auth.connect();return;}
+        const state=await get('onedrive:state');
+        if(state?.phase==='connecting')return;
+        if(state?.phase!=='connected'){await auth.connect();return;}
         const source=RedownOneDriveAPI.sourceSnapshot(info);
         const identity=await auth.ready(null,true);
         await begin(source,identity);

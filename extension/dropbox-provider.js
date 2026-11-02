@@ -41,7 +41,7 @@
       });
     }
     async function dispatch(info){
-      if(!['provider:dropbox','provider:dropbox:connect'].includes(info.menuItemId)||seenClicks.has(info))return;seenClicks.add(info);
+      if(info.menuItemId!=='provider:dropbox'||seenClicks.has(info))return;seenClicks.add(info);
       let source,permission;
       try{
         source=RedownDropboxAPI.sourceSnapshot(info);
@@ -54,7 +54,7 @@
         if(info.menuItemId==='provider:dropbox'&&s?.phase==='connected'){
           const job=await enqueue(source,{accountId:s.accountId,connectionId:s.connectionId});if(job)void wake();return;
         }
-        if(info.menuItemId==='provider:dropbox')throw RedownDropboxAuth.fail('Dropbox is no longer connected. Use Reconnect Dropbox.');
+        if(s?.phase==='connecting')return;
         if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}
         const old=await get('dropbox:auth'),job=await enqueue(source,{},'awaiting-auth');if(!job)return;pendingAuth.add(job.id);
         try{
