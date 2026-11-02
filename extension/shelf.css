@@ -574,13 +574,39 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .explorer-navigation-size-row input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 :root[data-shelf-theme="neon"] .explorer-navigation-size-row{border-radius:6px}
 
-/* Destinations gateway: a small departure sign, not a replacement for the Shelf. */
-.destinations-banner{display:flex;align-items:center;gap:12px;margin:12px 0 14px;padding:10px 14px;min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(124deg,rgba(var(--accent-rgb),.14),var(--surface) 72%);overflow:hidden}
-.destinations-compass{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:var(--subtle);color:var(--accent);font-size:22px;font-weight:750;transform:rotate(-9deg);transition:transform .2s ease}
-.destinations-banner:hover .destinations-compass{transform:rotate(0deg) translate(2px,-2px)}
-.destinations-title{display:flex;flex-direction:column;min-width:0}
-.destinations-title strong{font-size:.83rem;letter-spacing:.18em;font-weight:850;line-height:1.45}
-.destinations-title small{font-size:.71rem;color:var(--muted);line-height:1.5}
-.destinations-diagonal{margin-left:auto;color:var(--accent);opacity:.4;letter-spacing:.24em;transform:skewX(-14deg);user-select:none}
-@media (max-width:360px){.destinations-banner{padding:9px 11px;gap:9px}.destinations-diagonal{display:none}}
-@media (prefers-reduced-motion:reduce){.destinations-compass{transition:none}}
+
+/* DESTINATIONS: a small vintage journey motif, not a second hero card.
+   Provider buttons retain their original IDs, handlers and keyboard semantics. */
+.overview .destinations-heading{display:flex;align-items:center;gap:6px;min-height:58px;margin:0 0 7px;padding:0 5px;position:relative}
+.overview .destinations-title{margin:0;flex:none;width:220px;height:55px;line-height:1}
+.overview .destinations-title svg{display:block;width:220px;height:55px;overflow:visible}
+.overview .destinations-title text{fill:var(--text);font:800 14px "DM Sans",system-ui,sans-serif;letter-spacing:.19em}
+.destination-heading-accessible{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.overview .destinations-compass{display:grid;place-items:center;width:32px;height:32px;flex:none;margin-left:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--accent);font:760 24px/1 "DM Sans",system-ui,sans-serif;box-shadow:0 3px 9px rgba(var(--shadow-rgb),.1);transform:rotate(-11deg);transition:transform .32s cubic-bezier(.2,.85,.25,1),box-shadow .25s,border-color .25s}
+.overview:has(.destinations-grid :is(:hover,:focus-visible)) .destinations-compass,.overview .destinations-compass:hover{transform:translate(2px,-3px) rotate(1deg);border-color:var(--accent);box-shadow:0 7px 14px rgba(var(--shadow-rgb),.17)}
+.overview .destinations-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch;margin:0 0 23px}
+.overview .destinations-grid .destination-tile{--destination-brand:var(--accent);position:relative;isolation:isolate;display:flex;flex-direction:row;align-items:stretch;margin:0;padding:0;min-width:0;max-width:none;min-height:66px;gap:0;border:1px solid var(--line);border-radius:13px;background:linear-gradient(147deg,rgba(var(--accent-rgb),.045),transparent 64%),var(--surface);box-shadow:0 2px 8px rgba(var(--shadow-rgb),.055),inset 0 1px rgba(255,255,255,.08);transition:transform .24s cubic-bezier(.2,.8,.24,1),border-color .24s,box-shadow .24s,background .24s}
+.overview .destinations-grid .destination-tile[data-provider="google"]{--destination-brand:#4285f4}
+.overview .destinations-grid .destination-tile[data-provider="dropbox"]{--destination-brand:#0061ff}
+.overview .destinations-grid .destination-tile[data-provider="onedrive"]{--destination-brand:#1685da}
+.overview .destinations-grid .destination-tile[data-connected="true"]{border-color:color-mix(in srgb,var(--destination-brand) 40%,var(--line))}
+.overview .destinations-grid .destination-tile:is(:hover,:focus-within){z-index:3;transform:translateY(-3px);border-color:color-mix(in srgb,var(--destination-brand) 58%,var(--line));box-shadow:0 9px 19px rgba(var(--shadow-rgb),.16),inset 0 1px rgba(255,255,255,.08)}
+.overview .destinations-grid .destination-action{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex:1;width:100%;min-width:0;min-height:64px;margin:0;padding:11px 29px 11px 11px;border:0;border-radius:12px;background:transparent;box-shadow:none;color:var(--text);font:790 11px/1.2 "DM Sans",system-ui,sans-serif;letter-spacing:.045em;white-space:nowrap;text-align:left;transition:background .2s}
+.overview .destinations-grid .destination-action:is(:hover,:focus-visible){background:transparent;box-shadow:none}
+.overview .destinations-grid .destination-action:disabled{opacity:.66}
+.overview .destinations-grid .destination-icon{display:block;width:26px;height:26px;min-width:26px;flex:none;object-fit:contain;color:var(--destination-brand);transition:transform .3s cubic-bezier(.2,.8,.25,1),filter .3s}
+.overview .destinations-grid .destination-word{display:block;min-width:0;transition:transform .28s cubic-bezier(.2,.8,.25,1);letter-spacing:.07em}
+.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-icon{transform:translateY(-2px) rotate(-5deg) scale(1.06);filter:drop-shadow(0 3px 2px rgba(var(--shadow-rgb),.15))}
+.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-word{transform:translateX(2px)}
+.overview .destinations-grid .destination-options{position:static;flex:none}
+.overview .destinations-grid .destination-options>summary{position:absolute;right:3px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:26px;height:33px;list-style:none;cursor:pointer;font:800 19px/1 "DM Sans",system-ui,sans-serif;letter-spacing:0;color:var(--muted);border-radius:7px;transition:color .2s,background .2s}
+.overview .destinations-grid .destination-options>summary::-webkit-details-marker{display:none}
+.overview .destinations-grid .destination-options>summary:is(:hover,:focus-visible),.overview .destinations-grid .destination-options[open]>summary{color:var(--accent);background:var(--subtle)}
+.overview .destinations-grid .destination-options-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:9;display:flex;flex-direction:column;align-items:flex-start;gap:9px;width:max-content;min-width:180px;max-width:min(270px,calc(100vw - 32px));padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:0 14px 30px rgba(var(--shadow-rgb),.22)}
+.overview .destinations-grid .destination-options-menu a,.overview .destinations-grid .destination-options-menu button{display:block;min-height:26px;padding:3px 0;border:0;background:transparent;color:var(--text);font:650 12px/1.45 "DM Sans",system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.overview .destinations-grid .destination-options-menu a:hover,.overview .destinations-grid .destination-options-menu button:hover{text-decoration:underline}
+.overview .destinations-grid .destination-options-menu small{display:block;margin:0;max-width:100%;font:400 11px/1.45 "DM Sans",system-ui,sans-serif;color:var(--muted);overflow-wrap:anywhere}
+.overview .destinations-grid .destination-options-menu [hidden]{display:none!important}
+.overview>.eyebrow{margin:0 0 13px;font-size:10px}
+@media(max-width:399px){.overview .destinations-grid{grid-template-columns:1fr;gap:8px}.overview .destinations-grid .destination-tile{min-height:56px}.overview .destinations-grid .destination-action{min-height:55px;gap:13px;padding-left:15px}.overview .destinations-grid .destination-options-menu{right:0}}
+@media(prefers-reduced-motion:reduce){.overview .destinations-grid .destination-tile,.overview .destinations-grid .destination-icon,.overview .destinations-grid .destination-word,.overview .destinations-compass{transition:none!important}.overview .destinations-grid .destination-tile:is(:hover,:focus-within),.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-icon,.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-word,.overview:has(.destinations-grid :is(:hover,:focus-visible)) .destinations-compass{transform:none!important}}
