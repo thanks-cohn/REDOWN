@@ -6,18 +6,39 @@
   'use strict';
   const GRAPH='https://graph.microsoft.com/v1.0/';
   const CHUNK=16*320*1024; // 5 MiB; every nonfinal fragment is a multiple of 320 KiB.
-  const UPLOAD_ORIGINS=['https://*.1drv.com/*','https://*.sharepoint.com/*'];
+  // Known Microsoft upload locations are requested in the initial click gesture.
+  // Graph's uploadUrl remains opaque: new hosts require their own Chrome grant.
+  const UPLOAD_ORIGINS=[
+    'https://*.1drv.com/*','https://*.sharepoint.com/*',
+    'https://*.onedrive.com/*','https://*.sharepoint-df.com/*',
+    'https://*.my.microsoftpersonalcontent.com/*'
+  ];
   const fail=(code,message,status='blocked')=>Object.assign(Error(message),{code,status});
+  // URLs are fetched exclusively by REDOWN. Source URLs are never passed to Graph.
+  function publicHostname(host){
+    host=String(host||'').toLowerCase().replace(/\.$/,'');
+    if(!host||!host.includes('.')||host.startsWith('[')||/^\d+(?:\.\d+){3}$/.test(host)||
+      host==='localhost'||['.localhost','.local','.internal','.test','.invalid','.example','.onion'].some(s=>host.endsWith(s)))
+      return false;
+    // Explicit private/reserved IPv4 DNS-literal protection, including leading-zero formats.
+    if(/^[0-9.]+$/.test(host)||host==='0.0.0.0')return false;
+    return true;
+  }
   function sourceURL(value){
     let url;
-    try{url=new URL(value);}catch{throw fail('ONEDRIVE_SOURCE_INVALID','Right-click a supported public HTTPS file or link.');}
-    const host=url.hostname.toLowerCase();
-    if(url.protocol!=='https:'||url.username||url.password||!host.includes('.')||host.startsWith('[')||
-      host==='localhost'||host.endsWith('.localhost')||host.endsWith('.local')||host.endsWith('.internal')||
-      host.endsWith('.test')||host.endsWith('.invalid')||host.endsWith('.example')||
-      /^(?:0|10|127|169\.254|192\.168|172\.(?:1[6-9]|2\d|3[01]))\./.test(host))
-      throw fail('ONEDRIVE_SOURCE_UNSAFE','OneDrive right-click save accepts public HTTPS files only.');
-    url.hash='';return url;
+    try{url=new URL(value);}catch{
+      throw fail('ONEDRIVE_SOURCE_INVALID','REDOWN could not read this browser link as a URL.');
+    }
+    if(!['http:','https:'].includes(url.protocol)){
+      throw fail('ONEDRIVE_BROWSER_SOURCE_UNSUPPORTED',
+        'This item uses a browser-only or internal URL. Choose an ordinary HTTP(S) file link. REDOWN does not send source links to Microsoft.');
+    }
+    if(!publicHostname(url.hostname)||url.username||url.password||
+       (url.port&&url.port!=='80'&&url.port!=='443'))
+      throw fail('ONEDRIVE_SOURCE_UNSAFE',
+        'This URL is private, local, or contains credentials. REDOWN will not send it to OneDrive.');
+    url.hash='';
+    return url;
   }
   function fileName(value){
     let raw=String(value||'Web file');
@@ -44,11 +65,16 @@
   }
   function validUploadURL(value){
     let u;
-    try{u=new URL(value);}catch{throw fail('ONEDRIVE_UPLOAD_URL_INVALID','Microsoft supplied an invalid upload session URL.');}
-    const host=u.hostname.toLowerCase();
+    try{u=new URL(value);}catch{
+      throw fail('ONEDRIVE_UPLOAD_URL_INVALID','Graph did not supply a valid upload session URL.');
+    }
+    // Treat Graph's authenticated upload-session response as the destination
+    // authority, not a hard-coded hostname list. Never attach Graph bearer to PUT.
+    // A newly encountered HTTPS origin additionally requires a Chrome permission
+    // the owner grants in the Shelf. Never persist the opaque upload URL.
     if(u.protocol!=='https:'||u.username||u.password||u.hash||
-      !(host.endsWith('.1drv.com')||host.endsWith('.sharepoint.com')))
-      throw fail('ONEDRIVE_UPLOAD_URL_UNTRUSTED','Microsoft returned an upload host outside approved OneDrive endpoints.');
+       !publicHostname(u.hostname)||u.port&&u.port!=='443')
+      throw fail('ONEDRIVE_UPLOAD_URL_UNTRUSTED','Graph supplied an unsafe upload destination.');
     return u;
   }
   function create({chrome=globalThis.chrome,fetch=globalThis.fetch}={}){
