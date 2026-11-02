@@ -100,9 +100,11 @@ test('three-dot options open on hover, allow travel to popup, and close after le
 test('desktop clicking the dots cannot immediately close a popup that hover opened',async()=>{
   const h=fixture();
   const first=h.menus[0],dots=first.querySelector('summary');
+  dots.click();
+  assert.equal(first.open,false,'desktop click alone does not open the hover menu');
   dots.dispatchEvent(evt(h,'mouseenter'));
   dots.click();
-  assert.equal(first.open,true);
+  assert.equal(first.open,true,'clicking while hovered never toggles the popup closed');
   h.dom.window.close();
 });
 
