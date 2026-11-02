@@ -54,14 +54,29 @@
     return name;
   }
   function sourceSnapshot(info){
-    const url=sourceURL(info.srcUrl||info.linkUrl||info.pageUrl||'');
-    const name=fileName(url.pathname.split('/').pop()||'Web file');
+    const picked=info.srcUrl||info.linkUrl||info.pageUrl||'';
     const safe=value=>{
       try{const u=sourceURL(value);u.search='';return u.href;}
       catch{return '';}
     };
-    return {url:url.href,name,sourceUrl:safe(url.href),pageUrl:safe(info.pageUrl),srcUrl:safe(info.srcUrl),
-      frameUrl:safe(info.frameUrl),linkUrl:safe(info.linkUrl)};
+    // Inline data URLs are already held by Chrome. They never contain a
+    // network source to disclose. Handle their decoded bytes on-device.
+    if(typeof picked==='string'&&picked.toLowerCase().startsWith('data:')){
+      const comma=picked.indexOf(',');
+      if(comma<5)throw fail('ONEDRIVE_INLINE_INVALID','Chrome returned a malformed inline data URL.');
+      const mime=picked.slice(5,comma).split(';')[0].toLowerCase();
+      const ext=({
+        'image/png':'.png','image/jpeg':'.jpg','image/gif':'.gif','image/webp':'.webp',
+        'image/svg+xml':'.svg','image/avif':'.avif','application/pdf':'.pdf',
+        'text/plain':'.txt','text/html':'.html','audio/mpeg':'.mp3','video/mp4':'.mp4'
+      })[mime]||'.bin';
+      return {kind:'inline-data',url:picked,name:fileName('inline'+ext),sourceUrl:'',
+        pageUrl:safe(info.pageUrl),srcUrl:'',frameUrl:safe(info.frameUrl),linkUrl:''};
+    }
+    const url=sourceURL(picked);
+    const name=fileName(url.pathname.split('/').pop()||'Web file');
+    return {kind:'url',url:url.href,name,sourceUrl:safe(url.href),pageUrl:safe(info.pageUrl),
+      srcUrl:safe(info.srcUrl),frameUrl:safe(info.frameUrl),linkUrl:safe(info.linkUrl)};
   }
   function validUploadURL(value){
     let u;
@@ -106,16 +121,30 @@
       const token=identity.token;
       if(!token||!identity.driveId||!identity.rootId)throw fail('ONEDRIVE_NOT_CONNECTED','Reconnect OneDrive before saving.');
       try{
-        const u=sourceURL(source.url);
-        const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000);
-        if(!response.ok||!response.body)
-          throw fail('ONEDRIVE_SOURCE_HTTP','The source could not be downloaded (HTTP '+response.status+').','blocked');
-        total=Number(response.headers.get('content-length'));
-        if(!Number.isSafeInteger(total)||total<=0||!response.headers.get('content-length'))
-          throw fail('ONEDRIVE_SOURCE_LENGTH_UNKNOWN','This source does not disclose its total size. A verified OneDrive upload session requires a known byte count.');
-        if(response.headers.get('content-encoding')&&!['identity',''].includes(response.headers.get('content-encoding').toLowerCase()))
-          throw fail('ONEDRIVE_SOURCE_ENCODING','The source uses content encoding that prevents a reliable byte-counted upload.');
-        reader=response.body.getReader();
+        if(source.kind==='inline-data'){
+          if(typeof source.url!=='string'||!source.url.toLowerCase().startsWith('data:'))
+            throw fail('ONEDRIVE_INLINE_INVALID','Inline source is invalid.');
+          const response=await request(source.url,{method:'GET',signal},60000);
+          if(!response.ok)throw fail('ONEDRIVE_INLINE_INVALID','Chrome could not read this inline data.');
+          // A data: URL is itself already materialized by Chrome. Blob supplies
+          // the exact byte count required by Graph; no disk download occurs.
+          const blob=await response.blob();
+          total=blob.size;
+          if(!Number.isSafeInteger(total)||total<=0)
+            throw fail('ONEDRIVE_INLINE_EMPTY','This inline data has no bytes to save.');
+          reader=blob.stream().getReader();
+        }else{
+          const u=sourceURL(source.url);
+          const response=await request(u.href,{method:'GET',signal,headers:{Accept:'*/*'}},60000);
+          if(!response.ok||!response.body)
+            throw fail('ONEDRIVE_SOURCE_HTTP','Chrome could not fetch the source (HTTP '+response.status+').','blocked');
+          total=Number(response.headers.get('content-length'));
+          if(!Number.isSafeInteger(total)||total<=0||!response.headers.get('content-length'))
+            throw fail('ONEDRIVE_SOURCE_LENGTH_UNKNOWN','Source size is not known; OneDrive upload sessions need an exact byte count.');
+          if(response.headers.get('content-encoding')&&!['identity',''].includes(response.headers.get('content-encoding').toLowerCase()))
+            throw fail('ONEDRIVE_SOURCE_ENCODING','Source compression prevents a reliable byte-counted upload.');
+          reader=response.body.getReader();
+        }
         signal?.addEventListener('abort',abortSource,{once:true});
         if(signal?.aborted)abortSource();
         phase='session';await onProgress({phase,sent,total});
