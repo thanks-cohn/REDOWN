@@ -34,3 +34,15 @@
 6. Verify all four providers and flat Cloudflare-only-nested native menu remain intact; collect real installed-Chrome evidence and record PASS/FAIL/NOT_TESTED.
 
 **Rollback:** Keep previous V3/flat branches and the CONSOLIDATED pre-repair commits. Avoid blanket resets, revoking existing account tokens, deleting queues or rewriting historical success counts.
+
+## November 2 follow-up: RETRY appears but no visible popup
+
+**Owner retest:** after prior fixes, the Shelf says **RETRY**, yet no Dropbox login window is visible. Do not count that as fixed or proven.
+
+Additional root-cause evidence: official Dropbox documentation confirms a legitimate `root_info['.tag']='team'` and a different `root_namespace_id` versus `home_namespace_id` on team-space accounts. The former REDOWN `verify()` rejected both before accepting the login, even if OAuth had already returned a code. Chrome may hide the `launchWebAuthFlow` web view when a provider immediately redirects, so a silent/brief auth flow followed by root rejection can look like no popup. The shipped manifest's public key was checked and derives the expected `mkadkgpekmkknfbniacdlmgikihjjepf` ID; the actual installed Chrome extension ID still needs checking.
+
+**New source change:** `dropbox-auth.js` accepts documented `user` and `team` root types with valid numeric namespace IDs and requires actual authenticated `files/list_folder` readback of the exact `root_namespace_id`. No unrelated namespace fallback, new OAuth permission, or silently widened root authority. `shelf-dropbox.js` visibly shows the sanitized authorization error within the Dropbox card when RETRY is displayed; it no longer hides the reason exclusively in its ellipsis settings. Authentic authentication failures, invalid extension ID/redirect, restrictive app-folder tokens and unavailable root readbacks remain fail-closed.
+
+**NEW acceptance requirement:** owner must actually see a working Dropbox login or verify a silently completed browser identity flow that results in a connected root and a real save. A RETRY label or mocked test is never sufficient. Where a popup truly fails to launch, capture the text now displayed inside the card and Chrome extension service-worker errors. Avoid publishing a claim of full OAuth repair before installed-Chrome evidence.
+
+**Style follow-up:** Neon theme SUCCESS! was enlarged to card-first 39–55px and Cloudflare 44–62px, shrinking only when the measured available text width demands it. This is temporary SUCCESS!, not the counter number. Keep the verified-only animation gate.
