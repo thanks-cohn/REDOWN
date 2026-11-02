@@ -2051,7 +2051,10 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
   if(!key||actualFolder!==folder)throw new Error("Destination verification failed: Worker returned a different folder. The file may have been written; check storage before retrying.");
   // V3 verifies this existing Worker receipt without changing transport or URL return values.
   if(receipt)receipt.bytes=body.bytes;
-  if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
+  if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key,
+    // Explicit Worker-returned public URL only. The fallback URL can be
+    // unreachable for a private R2 bucket and must not be advertised as public.
+    ...(typeof body.publicUrl==='string'&&/^https:\/\//i.test(body.publicUrl)?{publicUrl:body.publicUrl}:{})};
   return body.publicUrl || publicAssetUrl(prepared, key);
 }
 // All Cloudflare R2 save entrypoints share the same remote read-back. A
