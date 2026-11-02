@@ -3,3 +3,5 @@
 .onedrive-button:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
 .onedrive-button:disabled { opacity:.7; cursor:wait; }
 .onedrive-control small { font-size:.72rem; line-height:1.5; opacity:.78; overflow-wrap:anywhere; }
+
+.onedrive-diagnostic-button { border-style:dashed; font-size:.8rem; opacity:.94; }
