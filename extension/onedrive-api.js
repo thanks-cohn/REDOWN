@@ -124,8 +124,14 @@
         session=await graph(token,path,{method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({item:{'@microsoft.graph.conflictBehavior':'rename',name}}),signal});
         const uploadUrl=validUploadURL(session?.uploadUrl);
-        if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']}))
-          throw fail('ONEDRIVE_UPLOAD_HOST_PERMISSION','The Microsoft upload endpoint is not authorized in Chrome. Enable OneDrive upload-host access in the Shelf.');
+        if(!await chrome.permissions.contains({origins:[uploadUrl.origin+'/*']})){
+          const error=fail('ONEDRIVE_UPLOAD_HOST_PERMISSION',
+            'Chrome needs your permission for this Graph-provided upload destination. Allow the host in REDOWN Shelf, then right-click the file again.');
+          // Only the origin is made available for the user's grant. Never expose
+          // or store the session URL, whose path/query may contain a token.
+          error.uploadOrigin=uploadUrl.origin;
+          throw error;
+        }
         let remainder=null,at=0,done=false;
         phase='uploading';await onProgress({phase,sent,total});
         while(sent<total){
