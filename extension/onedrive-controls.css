@@ -5,3 +5,8 @@
 .onedrive-control small { font-size:.72rem; line-height:1.5; opacity:.78; overflow-wrap:anywhere; }
 
 .onedrive-diagnostic-button { border-style:dashed; font-size:.8rem; opacity:.94; }
+.onedrive-actions { display:flex; flex-wrap:wrap; gap:.7rem; font-size:.75rem; }
+.onedrive-actions a { color:inherit; }
+.onedrive-actions button { border:0; background:transparent; padding:0; color:inherit; text-decoration:underline; font:inherit; cursor:pointer; }
+.onedrive-control [hidden] { display:none; }
+.onedrive-actions :focus-visible { outline:2px solid currentColor; outline-offset:3px; }
