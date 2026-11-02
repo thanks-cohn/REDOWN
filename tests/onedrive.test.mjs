@@ -12,12 +12,12 @@ const original=execFileSync('git',['show',before.commit+':extension/background.j
 function menu(){const c=vm.createContext({});vm.runInContext(read('extension/onedrive-menu.js'),c);return c.RedownOneDriveMenu;}
 const oneState=phase=>({phase,rootReady:true,root:'/',accountId:'ms-account',tenantId:'tenant',driveId:'drive',rootId:'root',connectionId:'test-connection',checkedAt:Date.now()});
 test('unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit',()=>{
- // The historical OneDrive checkpoint predates the separately authorized Dropbox source fix and Shelf revisions.
+ // The historical OneDrive checkpoint predates the separately authorized Dropbox source fix, Shelf revisions and animation repair.
  // Keep all untouched V3, Cloudflare and provider modules locked to their original hashes.
  const authorized=new Set(['extension/dropbox-api.js','extension/history-navigation.js',
    'extension/options.html','extension/options.js','extension/shelf-dropbox.js',
    'extension/shelf-google-drive.js','extension/shelf-history.js',
-   'extension/shelf.css','extension/shelf.html']);
+   'extension/shelf.css','extension/shelf.html','extension/shelf-celestial.js']);
  for(const [p,h] of Object.entries(before.hashes)){
   if(p==='extension/manifest.json'){
     const baseline=JSON.parse(execFileSync('git',['show',before.commit+':'+p],{encoding:'utf8'}));
