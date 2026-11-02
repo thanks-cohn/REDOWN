@@ -202,57 +202,52 @@ test('truncated source never sends a final upload chunk or claims success',async
 });
 
 
-test('right-click saves reuse the initial Chrome website grant without prompting on every URL',async()=>{
-  const local={},calls=[],requests=[];
+test('right-click saves never invoke Chrome permission APIs on any source hostname',async()=>{
+  const local={},requests=[];
   const chrome={permissions:{
-    contains:async value=>{calls.push(value);return true;},
-    request:async value=>{requests.push(value);throw Error('Unexpected permission request on save');}
+    contains:async()=>{throw Error('No host permission checks belong in a save');},
+    request:async value=>{requests.push(value);throw Error('Permission dialog on save');}
   },storage:{local:{set:async data=>Object.assign(local,data)}}};
   const context=vm.createContext({chrome,crypto:{randomUUID:()=> 'job-1'},AbortController,console,
     RedownOneDriveMenu:{owns:id=>id.startsWith('provider:onedrive:')},
     RedownOneDriveAuth:{create:()=>({ready:async()=>({
       token:'token',accountId:'acct',rootId:'root',driveId:'drive',connectionId:'conn'})})},
     RedownOneDriveAPI:{
-      SAVE_ORIGINS:['https://*/*','http://*/*'],
       sourceSnapshot:info=>({url:info.srcUrl,name:'different.png'}),
       create:()=>({upload:async()=>({itemId:'uploaded',name:'different.png',
         bytes:3,webUrl:'https://onedrive.live.com/item'})})
     }});
   load(context,'onedrive-provider.js');
   const provider=vm.runInContext('RedownOneDriveProvider.create()',context);
-  await provider.dispatch({menuItemId:'provider:onedrive:save-root',
-    srcUrl:'https://cdn-one.example.org/different.png'});
-  await new Promise(r=>setImmediate(r));
-  assert.equal(local['onedrive:transfer'].status,'completed');
+  for(const host of ['cdn-one.example.org','another-site.example.net']){
+    await provider.dispatch({menuItemId:'provider:onedrive:save-root',
+      srcUrl:'https://'+host+'/different.png'});
+    await new Promise(r=>setImmediate(r));
+    assert.equal(local['onedrive:transfer'].status,'completed');
+  }
   assert.equal(requests.length,0);
-  assert.equal(calls.length,1);
-  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])),{origins:['https://*/*','http://*/*']});
 });
-
-test('connected Shelf grants website access once without restarting Microsoft login',async()=>{
+test('connected Shelf checks status without prompts or restarting Microsoft login',async()=>{
   const dom=new JSDOM('<button id="shelf-onedrive"></button>'+
     '<small id="shelf-onedrive-status"></small><a id="shelf-onedrive-open"></a>'+
     '<button id="shelf-onedrive-disconnect"></button><button id="shelf-onedrive-cancel"></button>',
     {runScripts:'outside-only'});
   const state={'onedrive:state':{phase:'connected',rootReady:true},'onedrive:transfer':{}};
-  const requests=[],messages=[];
+  const messages=[];
   dom.window.chrome={
     runtime:{sendMessage:async message=>{messages.push(message.type);return {ok:true,phase:'connected'};}},
-    permissions:{request:async details=>{requests.push(details.origins);return true;}},
+    permissions:{request:async()=>{throw Error('No permission requests in Shelf');}},
     storage:{local:{get:async()=>state},onChanged:{addListener:()=>{}}}
   };
   dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
   await new Promise(r=>setImmediate(r));
   dom.window.document.getElementById('shelf-onedrive').click();
   await new Promise(r=>setImmediate(r));
-  assert.equal(requests.length,1);
-  assert.ok(requests[0].includes('https://*/*'));
-  assert.ok(requests[0].includes('http://*/*'));
   assert.ok(messages.includes('onedriveStatus'));
   assert.ok(!messages.includes('onedriveConnect'));
   dom.window.close();
 });
-test('Graph upload host uses one-time site grant, never a per-host confirmation or source URL',async()=>{
+test('Graph upload host requires no permission API and never receives the source URL',async()=>{
   const f=fixture();
   const source='https://cdn.example.org/file.bin?private=source-query';
   const opaque='https://edge-upload.public-cloud.net/new/session?uploadToken=SECRET';
@@ -274,11 +269,8 @@ test('Graph upload host uses one-time site grant, never a per-host confirmation 
   load(context,'onedrive-api.js');
   const api=context.RedownOneDriveAPI.create();
   const identity={token:'synthetic-graph-token',driveId:'drive',rootId:'root',connectionId:'account-1'};
-  f.chrome.permissions.contains=async()=>false;
-  const denied=await api.upload({kind:'url',url:source,name:'file.bin'},identity).catch(e=>e);
-  assert.equal(denied.code,'ONEDRIVE_SITE_PERMISSION_REQUIRED');
-  assert.equal(chunks.length,0);
-  f.chrome.permissions.contains=async()=>true;
+  f.chrome.permissions.contains=async()=>{throw Error('Unexpected permission check');};
+  f.chrome.permissions.request=async()=>{throw Error('Unexpected permission dialog');};
   const receipt=await api.upload({kind:'url',url:source,name:'file.bin'},identity);
   assert.equal(receipt.itemId,'uploaded-item');
   assert.equal(chunks.length,1);
@@ -368,45 +360,25 @@ test('Graph destination URL rejects private, insecure and credential-bearing add
 });
 
 
-test('Shelf grants only an exact upload origin and never persists opaque session tokens',async()=>{
+test('Shelf exposes no upload-host permission button or trusted-origin persistence',async()=>{
+  const markup=readFileSync('extension/shelf.html','utf8');
+  assert.equal(markup.includes('shelf-onedrive-allow-upload-host'),false);
   const dom=new JSDOM('<button id="shelf-onedrive"></button>'+
     '<small id="shelf-onedrive-status"></small>'+
     '<a id="shelf-onedrive-open" hidden></a>'+
     '<button id="shelf-onedrive-disconnect" hidden></button>'+
-    '<button id="shelf-onedrive-cancel" hidden></button>'+
-    '<button id="shelf-onedrive-allow-upload-host" hidden></button>'+
-    '<button id="shelf-onedrive-diagnostic"></button>',{runScripts:'outside-only'});
-  const local={
-    'onedrive:state':{phase:'connected',rootReady:true,connectionId:'connection-1'},
-    'onedrive:transfer':{status:'blocked',code:'ONEDRIVE_UPLOAD_HOST_PERMISSION',
-      uploadOrigin:'https://new-graph-origin.public-cloud.net',
-      error:'Approve this destination in Shelf.'}
-  },listeners=[],requests=[];
-  const chrome={
-    runtime:{sendMessage:async()=>({ok:true})},
-    permissions:{request:async detail=>{requests.push(detail);return true;}},
-    storage:{local:{
-      get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(k=>[k,local[k]])),
-      set:async changes=>{
-        const previous=Object.fromEntries(Object.keys(changes).map(k=>[k,{newValue:changes[k],oldValue:local[k]}]));
-        Object.assign(local,changes);
-        for(const listener of listeners)listener(previous,'local');
-      }
-    },onChanged:{addListener:fn=>listeners.push(fn)}}
+    '<button id="shelf-onedrive-cancel" hidden></button>',{runScripts:'outside-only'});
+  const local={'onedrive:state':{phase:'connected',rootReady:true},
+    'onedrive:transfer':{status:'completed',name:'image.png',bytes:24,total:24}};
+  const calls=[];
+  dom.window.chrome={
+    runtime:{sendMessage:async m=>{calls.push(m.type);return {ok:true};}},
+    permissions:{request:async()=>{throw Error('No permission requests in Shelf');}},
+    storage:{local:{get:async()=>local},onChanged:{addListener:()=>{}}}
   };
-  dom.window.chrome=chrome;
   dom.window.eval(readFileSync('extension/shelf-onedrive.js','utf8'));
   await new Promise(r=>setImmediate(r));
-  const button=dom.window.document.getElementById('shelf-onedrive-allow-upload-host');
-  assert.equal(button.hidden,false);
-  assert.match(button.textContent,/new-graph-origin.public-cloud.net/);
-  button.click();
-  await new Promise(r=>setImmediate(r));
-  assert.deepEqual(JSON.parse(JSON.stringify(requests)),[{origins:['https://new-graph-origin.public-cloud.net/*']}]);
-  assert.equal(local['onedrive:trustedUploadOrigins'].connectionId,'connection-1');
-  assert.deepEqual(JSON.parse(JSON.stringify(local['onedrive:trustedUploadOrigins'].origins)),['https://new-graph-origin.public-cloud.net']);
-  assert.equal(local['onedrive:transfer'].code,'ONEDRIVE_UPLOAD_HOST_READY');
-  assert.equal(JSON.stringify(local).includes('uploadToken'),false);
-  assert.equal(button.hidden,true);
+  assert.match(dom.window.document.getElementById('shelf-onedrive-status').textContent,/Saved image.png/);
+  assert.deepEqual(calls,['onedriveStatus']);
   dom.window.close();
 });
