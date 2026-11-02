@@ -1043,3 +1043,52 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   font-weight:650;
   vertical-align:baseline;
 }
+
+
+/* History GO TO is the sole navigation action. URLs are inspectable, collapsed
+   full-text data beneath the provider/path, with no hyperlinks or open action. */
+#history-timeline .history-url-disclosure{
+  margin:3px 0 0;
+  min-width:0;
+  max-width:100%;
+  border:1px solid color-mix(in srgb,var(--line) 80%,transparent);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--surface) 90%,transparent);
+}
+#history-timeline .history-url-disclosure>summary{
+  display:list-item;
+  list-style:disclosure-closed inside;
+  cursor:pointer;
+  font:600 10px/1.5 system-ui,sans-serif;
+  color:var(--muted);
+  padding:5px 9px;
+  user-select:none;
+}
+#history-timeline .history-url-disclosure[open]>summary{list-style-type:disclosure-open}
+#history-timeline .history-url-disclosure>summary:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+#history-timeline .history-url-disclosure>summary:hover{transform:none;color:var(--accent)}
+#history-timeline .history-url-values{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  padding:4px 9px 10px;
+  min-width:0;
+  max-width:100%;
+}
+#history-timeline .history-url-values .history-entry-url-text{
+  display:block;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:10px;
+  line-height:1.55;
+  color:var(--text);
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  user-select:text;
+  max-width:100%;
+  background:transparent;
+}
+#history-timeline .history-entry-provider{font-weight:600}
