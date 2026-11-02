@@ -122,3 +122,60 @@ test('History URL drawer preserves full source, page, src, frame and link URLs a
  assert.equal(disclosure.querySelector('.history-entry-url-text')?.textContent,record.destination.publicUrl);
  h.dom.window.close();
 });
+
+
+test('History URL drawer refreshes newly added Cloudflare bucket domains for the same verified image',async()=>{
+ const record={...base,id:'saved-image-1',providerKind:'cloudflare',filename:'image.webp',
+  destination:{accountId:'account-1',bucketName:'my-art',key:'gallery/my image.webp',
+   publicUrl:'https://original.example.invalid/gallery/my%20image.webp'}};
+ const h=fixture([record]);let known=[
+  {label:'Cloudflare R2',base:'https://pub-aaa111.r2.dev/',state:'configured'},
+  {label:'Inactive custom domain',base:'https://disabled.example.invalid/',state:'needs-setup'}
+ ];
+ const calls=[];
+ h.w.chrome.runtime={sendMessage:async message=>{
+  calls.push(message);
+  if(message.type==='cfObjectProperties')return {ok:true,object:{key:record.destination.key}};
+  if(message.type==='cfPublicAddresses')return {ok:true,addresses:known,errors:[]};
+  throw Error('unexpected request');
+ }};
+ await h.w.RedownShelfHistory.open();
+ const drawer=h.w.document.querySelector('.history-url-disclosure');
+ assert.ok(drawer);
+ const values=()=>[...drawer.querySelectorAll('.history-entry-url-text')].map(node=>node.textContent);
+ const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(calls.length,0,'no cloud API requests when viewing History without opening a URL drawer');
+ drawer.open=true;drawer.dispatchEvent(new h.w.Event('toggle'));await tick();
+ assert.ok(values().includes('https://pub-aaa111.r2.dev/gallery/my%20image.webp'));
+ assert.ok(!values().some(s=>s.includes('disabled.example.invalid')));
+ assert.ok(values().includes(record.destination.publicUrl),'original public URL remains unchanged');
+ known=[{label:'New custom domain',base:'https://new.example.invalid/',state:'configured'}];
+ drawer.open=false;drawer.dispatchEvent(new h.w.Event('toggle'));await tick();
+ drawer.open=true;drawer.dispatchEvent(new h.w.Event('toggle'));await tick();
+ assert.ok(values().includes('https://new.example.invalid/gallery/my%20image.webp'),
+  'newly configured bucket address must be shown for the existing file');
+ assert.ok(!values().some(s=>s.includes('pub-aaa111.r2.dev')),
+  'no longer configured derived URLs must disappear rather than stay falsely current');
+ assert.ok(values().includes(record.destination.publicUrl),'historical receipt remains immutable');
+ assert.equal(drawer.querySelectorAll('a').length,0,'GO TO remains the only file navigation action');
+ assert.equal(calls.filter(x=>x.type==='cfObjectProperties').length,2,
+  'each drawer opening checks exact current object, not all historical objects');
+ assert.equal(calls.filter(x=>x.type==='cfPublicAddresses').length,2);
+ h.dom.window.close();
+});
+
+test('History never invents a new public link for a missing image or unavailable Cloudflare account',async()=>{
+ const record={...base,id:'saved-private-image',providerKind:'cloudflare',filename:'missing.png',
+  destination:{accountId:'one',bucketName:'private',key:'missing.png'}};
+ const h=fixture([record]);
+ h.w.chrome.runtime={sendMessage:async message=>message.type==='cfObjectProperties'
+  ?{ok:false,error:'file no longer exists'}
+  :{ok:true,addresses:[{label:'Cloudflare R2',base:'https://public.example.invalid/',state:'configured'}]}};
+ await h.w.RedownShelfHistory.open();
+ const drawer=h.w.document.querySelector('.history-url-disclosure');
+ drawer.open=true;drawer.dispatchEvent(new h.w.Event('toggle'));
+ await new Promise(resolve=>setTimeout(resolve,0));
+ assert.match(drawer.textContent,/Original History URLs are unchanged/);
+ assert.equal(drawer.querySelectorAll('.history-live-bucket-urls .history-entry-url-text').length,0);
+ h.dom.window.close();
+});
