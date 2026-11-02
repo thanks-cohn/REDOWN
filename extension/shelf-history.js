@@ -34,12 +34,27 @@
     let name=text(record.filename)||text(destination.key).split('/').pop();
     if(!name&&location.startsWith('R2: '))name=location.split('/').pop();
     if(!name)try{name=decodeURIComponent(new URL(text(record.sourceUrl)).pathname.split('/').pop());}catch{}
-    const delivered=record.ok===true&&(record.providerKind==='dropbox'&&record.destination?.proofVersion===1?record.verified===true:/^(https?:\/\/|R2: )/.test(location));
+    const providerKind=text(record.providerKind).toLowerCase()||
+      text(destination.provider).toLowerCase()||
+      text(record.provider).toLowerCase();
+    const isCloudflare=providerKind.includes('cloudflare')||
+      (!!destination.bucketName&&!['google','onedrive','dropbox'].some(p=>providerKind.includes(p)));
+    const provider=isCloudflare?'Cloudflare R2':providerKind.includes('google')?'Google Drive':
+      providerKind.includes('onedrive')?'OneDrive':providerKind.includes('dropbox')?'Dropbox':
+      text(record.provider)||text(record.profileName)||'Cloud provider';
+    const bucket=text(destination.bucketName),key=text(destination.key).replace(/^\/+/, '');
+    // A bucket is named exactly once, even if a legacy object key or profile
+    // name already embeds it. Source/profile metadata is not destination text.
+    const path=bucket?(key?bucket+'/'+(key.startsWith(bucket+'/')?key.slice(bucket.length+1):key):bucket):
+      (key||text(destination.path)||text(record.filename));
+    const delivered=record.ok===true&&record.verified===true&&record.status==='completed';
     return {
       name:name||text(record.sourceUrl)||'Transfer',
-      status:record.ok===false?(text(record.status)||'Failed'):delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
+      status:record.ok===false?(text(record.status)||'Failed'):delivered?'Successful (verified)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
       state:record.ok===false?'failed':delivered?'success':'unknown',
-      detail:[text(record.provider)||(destination.bucketName||location.startsWith('R2: ')?'Cloudflare R2':''),text(record.profileName),text(destination.bucketName)].filter(Boolean).join(' · ')
+      provider,
+      detail:isCloudflare&&path?provider+' · '+path:provider,
+      isCloudflare
     };
   }
   const startDay=date=>new Date(date.getFullYear(),date.getMonth(),date.getDate());
@@ -151,7 +166,24 @@
     // URL or typed input has no independently known parent; do not infer one.
     if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
     if(record.ok!==false)details.append(create('small',info.status,'history-entry-outcome'));
-    if(info.detail)details.append(create('small',info.detail,'history-entry-provider'));
+    if(info.detail){
+      const footer=create('small',info.detail,'history-entry-provider');
+      // Link only to a verified provider-owned destination, never the original
+      // source/page URL. Dropbox has no file URL unless it was explicitly
+      // stored and approved by cloudTarget().
+      const providerUrl=globalThis.RedownHistoryNavigation?.cloudTarget?.(record);
+      const publicR2=info.isCloudflare&&info.state==='success'?safeWebUrl(record.location):null;
+      const href=providerUrl||(publicR2&&new URL(publicR2).protocol==='https:'?publicR2:null);
+      if(href){
+        const link=create('a',info.isCloudflare?'File URL':'Open saved file','history-entry-link history-destination-link');
+        link.href=href;link.target='_blank';link.rel='noopener noreferrer';
+        link.title=href;
+        footer.append(' · ',link);
+      }else if(!info.isCloudflare&&info.state==='success'){
+        footer.append(' · No direct file link available');
+      }
+      details.append(footer);
+    }
     if(record.error){
       const technical=create('details','','history-technical-details');
       const summary=create('summary','Error details');
