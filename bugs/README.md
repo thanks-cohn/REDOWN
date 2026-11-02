@@ -1,3 +1,9 @@
+## P0 — Verified cloud saves do not increment provider card numbers or play SUCCESS! (2026-11-02)
+
+**Status: SOURCE REPAIRS COMMITTED, INSTALLED-CHROME ACCEPTANCE STILL OPEN.** Owner reports missing cloud-card number increments and transient success animations. Repairs unify remote Cloudflare readback, recognize verified OneDrive items without optional web links, preserve OneDrive receipts across local History persistence errors, and fix the Shelf's hidden/connection-state event handoff. Neon counters now have a square hot-pink bezel and large readable digits, and the phrase below REDOWN is italic and theme-aware. [Critical report](CRITICAL/2026-11-02_P0_VERIFIED_SAVES_NOT_UPDATING_CARDS.md). The separate P0 Dropbox login problem remains open.
+
+---
+
 ## P0 — Dropbox login will not open from native menu or Shelf (2026-11-02)
 
 **Status: SOURCE-LEVEL REPAIR ON CONSOLIDATED; NOT VERIFIED IN INSTALLED CHROME.** Owner reports neither the flat `REDOWN → Dropbox` action nor the Shelf's LOGIN button opens Dropbox authorization. Found persisted `connecting` state disabling both entry points, a native early return, and an OAuth setup failure path that could strand the state. Repair commits keep the actions retryable, revalidate stale account state and report launch failures without weakening exact root/commit proof. **Real Chrome login, source permission, Dropbox root verification and upload remain required acceptance.** [Detailed P0 incident and testing requirements](CRITICAL/2026-11-02_P0_DROPBOX_LOGIN_WINDOW_NOT_OPENING_CONSOLIDATED.md). Earlier namespace rejection/missing files remains a separate open P0.
