@@ -10,16 +10,16 @@ const read=p=>readFileSync(p,'utf8'),plain=x=>JSON.parse(JSON.stringify(x));
 const before=JSON.parse(read('docs/verification/onedrive/before.json'));
 const original=execFileSync('git',['show',before.commit+':extension/background.js'],{encoding:'utf8'});
 function menu(){const c=vm.createContext({});vm.runInContext(read('extension/onedrive-menu.js'),c);return c.RedownOneDriveMenu;}
-const oneState=phase=>({phase,rootReady:true,root:'/',accountId:'ms-account',tenantId:'tenant',driveId:'drive',checkedAt:Date.now()});
+const oneState=phase=>({phase,rootReady:true,root:'/',accountId:'ms-account',tenantId:'tenant',driveId:'drive',rootId:'root',connectionId:'test-connection',checkedAt:Date.now()});
 test('protected modules retain checkpoint byte hashes',()=>{
  for(const [p,h] of Object.entries(before.hashes))assert.equal(createHash('sha256').update(readFileSync(p)).digest('hex'),h,p);
 });
-test('OneDrive declaration cannot claim connected/root-ready while OAuth gate is unverified',()=>{
+test('OneDrive menu shows root save only with a verified connected-state identity',()=>{
  const m=menu();
  for(const phase of ['disconnected','connecting','connected','reconnect','blocked']){
-  const fragment=m.fragment(oneState(phase),'redown');assert.equal(fragment.entries.length,2);assert.equal(fragment.entries[1].id,'provider:onedrive:connect');
+  const fragment=m.fragment(oneState(phase),'redown');assert.equal(fragment.entries.length,2);assert.equal(fragment.entries[1].id,phase==='connected'?'provider:onedrive:save-root':'provider:onedrive:connect');
   assert.equal(fragment.entries[1].enabled,phase!=='connecting');
-  assert.deepEqual(plain(m.obsolete(new Set())),['provider:onedrive:connect']);
+  assert.deepEqual(plain(m.obsolete(new Set())),['provider:onedrive:connect','provider:onedrive:save-root']);
  }
  for(const id of ['provider:dropbox','provider:google-drive','v3:provider:cloudflare','provider:onedrivex',null,{}])assert.equal(m.owns(id),false);
  assert.equal(m.owns('provider:onedrive:stale'),true);
@@ -71,34 +71,34 @@ test('exact existing dispatcher consumes OneDrive once, never routes stale IDs t
  for(const id of ['provider:onedrive','provider:onedrive:connect','provider:onedrive:stale','provider:dropbox','provider:google-drive:save-redown'])await listener({menuItemId:id},{});
  assert.deepEqual(plain(w.context.dispatched),[['onedrive','provider:onedrive'],['onedrive','provider:onedrive:connect'],['onedrive','provider:onedrive:stale'],['dropbox','provider:dropbox'],['google','provider:google-drive:save-redown']]);
 });
-test('blocked OAuth, stale saved connection, concurrent rebuild and MV3 restart preserve other menus',async()=>{
+test('stale menus, concurrent rebuild and MV3 restart preserve other providers',async()=>{
  const w=worker();await w.ready();await w.rebuild();
  const other=w=>[...w.native].filter(([id])=>!menu().owns(id));const baseline=other(w);
  for(const phase of ['connecting','connected','reconnect','blocked','disconnected']){
   w.local['onedrive:state']=oneState(phase);await Promise.all([w.rebuild(),w.rebuild(),w.rebuild()]);assert.deepEqual(other(w),baseline);
  }
- const listener=w.chrome.contextMenus.onClicked.listeners[0];await listener({menuItemId:'provider:onedrive',srcUrl:'https://source.invalid/a.png'},{});
- assert.equal(w.local['onedrive:transfer'].status,'blocked');assert.equal(w.local['onedrive:transfer'].code,'ONEDRIVE_OAUTH_NOT_VERIFIED');
+ const listener=w.chrome.contextMenus.onClicked.listeners[0];await listener({menuItemId:'provider:onedrive:stale',srcUrl:'https://example.org/a.png'},{});
+ assert.equal(w.local['onedrive:transfer'].status,'blocked');assert.equal(w.local['onedrive:transfer'].code,'ONEDRIVE_STALE_MENU');
  assert.deepEqual(w.local.transferHistory,[{id:'preserved'}]);assert.ok(!w.calls.some(c=>['tab','window'].includes(c[0])));
  const restarted=worker(structuredClone(w.local),{nativeEntries:[...w.native]});await restarted.ready();await restarted.rebuild();assert.deepEqual(other(restarted),baseline);
 });
-test('staged provider has no network/auth/transfer side effects or credential reads; trusted Shelf only',async()=>{
+test('OneDrive connection controls stay Shelf-only and stale actions never save',async()=>{
  const w=worker();await w.ready();const p=vm.runInContext('onedriveProvider',w.context),beforeCalls=w.calls.length;
  const sender={id:'test',url:'chrome-extension://test/shelf.html'};
  for(const url of ['https://evil.invalid/shelf.html','chrome-extension://test/options.html','chrome-extension://test/shelf.html/evil'])assert.equal((await p.message({type:'onedriveConnect'},{id:'test',url})).ok,false);
- assert.equal((await p.message({type:'onedriveConnect'},sender)).code,'ONEDRIVE_OAUTH_NOT_VERIFIED');
- assert.equal((await p.message({type:'onedriveStatus'},sender)).ok,false);
+ assert.equal((await p.message({type:'onedriveConnect'},sender)).ok,false);
+ assert.equal((await p.message({type:'onedriveStatus'},sender)).ok,true);
  await p.dispatch({menuItemId:'provider:onedrive:unknown'});assert.equal(w.local['onedrive:transfer'].code,'ONEDRIVE_STALE_MENU');
  assert.equal(w.calls.length,beforeCalls);assert.deepEqual(w.local.transferHistory,[{id:'preserved'}]);
  w.local['onedrive:auth']={token:'test'};await p.message({type:'onedriveDisconnect'},sender);assert.equal(w.local['onedrive:auth'],undefined);
 });
-test('Shelf order, accessible pending status, explicit connect only, prior provider controls unchanged',async()=>{
+test('Shelf shows controlled login, diagnostic and root actions without altering other provider markup',async()=>{
  const html=read('extension/shelf.html'),dom=new JSDOM(html,{runScripts:'outside-only'}),d=dom.window.document;
- const calls=[];dom.window.chrome={runtime:{sendMessage:async m=>{calls.push(m);return {ok:false,error:'OAuth verification pending.'};}}};
+ const calls=[];dom.window.chrome={runtime:{sendMessage:async m=>{calls.push(m);return {ok:false,error:'OAuth verification pending.'};}},permissions:{request:async()=>true},storage:{local:{get:async()=>({})},onChanged:{addListener:()=>{}}}};
  dom.window.eval(read('extension/shelf-onedrive.js'));
- assert.equal(calls.length,0);assert.ok(html.indexOf('class="google-drive-control"')<html.indexOf('class="dropbox-control"'));assert.ok(html.indexOf('class="dropbox-control"')<html.indexOf('class="onedrive-control"'));
+ assert.deepEqual(plain(calls),[{type:'onedriveStatus'}]);assert.ok(html.indexOf('class="google-drive-control"')<html.indexOf('class="dropbox-control"'));assert.ok(html.indexOf('class="dropbox-control"')<html.indexOf('class="onedrive-control"'));
  const b=d.getElementById('shelf-onedrive');assert.equal(b.type,'button');assert.equal(d.getElementById(b.getAttribute('aria-describedby')).getAttribute('role'),'status');
- b.click();await new Promise(r=>setImmediate(r));assert.deepEqual(plain(calls),[{type:'onedriveConnect'}]);assert.match(d.getElementById('shelf-onedrive-status').textContent,/pending/);assert.equal(b.disabled,false);
+ b.click();await new Promise(r=>setImmediate(r));assert.deepEqual(plain(calls),[{type:'onedriveStatus'},{type:'onedriveConnect'}]);assert.match(d.getElementById('shelf-onedrive-status').textContent,/pending/);assert.equal(b.disabled,false);
  const oldHtml=execFileSync('git',['show',before.commit+':extension/shelf.html'],{encoding:'utf8'}),oldDom=new JSDOM(oldHtml);
  for(const selector of ['.google-drive-control','.dropbox-control'])assert.equal(d.querySelector(selector).outerHTML,oldDom.window.document.querySelector(selector).outerHTML);
  dom.window.close();oldDom.window.close();
