@@ -35,7 +35,7 @@ for(const [provider,url,connectMessage] of [
     const h=await mount(provider);
     assert.match(h.button.textContent,/GO TO/);
     h.button.click();await tick();
-    assert.deepEqual(h.opened,[{url}]);
+    assert.deepEqual(JSON.parse(JSON.stringify(h.opened)),[{url}]);
     assert.ok(!h.messages.includes(connectMessage));
     h.dom.window.close();
   });
@@ -53,7 +53,7 @@ test('Destinations gateway does not interrupt the original provider ordering',as
 test('work OneDrive GO TO opens the Microsoft 365 OneDrive launcher',async()=>{
   const h=await mount('onedrive',{'onedrive:state':{phase:'connected',rootReady:true,driveType:'business'}});
   h.button.click();await tick();
-  assert.deepEqual(h.opened,[{url:'https://www.office.com/launch/onedrive'}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(h.opened)),[{url:'https://www.office.com/launch/onedrive'}]);
   assert.ok(!h.messages.includes('onedriveConnect'));
   h.dom.window.close();
 });
