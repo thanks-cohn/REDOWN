@@ -2047,6 +2047,23 @@ async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, re
   if(receipt)receipt.destination={accountId:profile.accountId,accountName:profile.accountName||"",bucketName:profile.bucketName,prefix:folder,key};
   return body.publicUrl || publicAssetUrl(prepared, key);
 }
+// All Cloudflare R2 save entrypoints share the same remote read-back. A
+// successful Worker POST alone is NOT evidence for the permanent card count.
+// No speculative success animation, even when the destination URL exists.
+async function verifyCloudflareReceipt(profile,sourceUrl,receipt){
+  const key=receipt?.destination?.key;
+  if(typeof key!=='string'||!key||!Number.isSafeInteger(receipt.bytes)||receipt.bytes<0)
+    throw Error('Cloudflare save receipt is incomplete. Inspect the bucket before retrying.');
+  const result=await callBucketWorker(profile,{action:'headObject',key},false);
+  const object=result?.object;
+  if(!object||object.key!==key||object.size!==receipt.bytes||!object.etag||
+     object.customMetadata?.sourceUrl!==sourceUrl)
+    throw Error('Cloudflare save completion unconfirmed. Inspect the bucket before retrying.');
+  receipt.providerKind='cloudflare';
+  receipt.deliveryId ||= 'cloudflare:'+crypto.randomUUID();
+  receipt.verified=true;
+  return receipt;
+}
 async function ingestCloudflare(profile, sourceUrl, category, filename, receipt = null) {
   const folder = profile.folders?.[category] || category;
   return ingestCloudflareAtPrefix(profile, sourceUrl, folder, filename, receipt);
@@ -2944,13 +2961,8 @@ async function saveResolvedRightClick(info,tab,resolved,profiles){
     const v3=String(info.menuItemId).startsWith('v3:');
     if(v3&&!/^https:\/\//i.test(sourceUrl))throw Error('REDOWN accepts public HTTPS source URLs.');
     const location=await ingestCloudflareAtPrefix(profile,sourceUrl,prefix,basenameFromUrl(sourceUrl),receipt,v3);
-    if(v3){
-      const result=await callBucketWorker(profile,{action:'headObject',key:receipt.destination?.key},false);
-      const object=result.object;
-      if(!object||object.key!==receipt.destination?.key||!Number.isSafeInteger(receipt.bytes)||object.size!==receipt.bytes||!object.etag||object.customMetadata?.sourceUrl!==sourceUrl)throw Error('Save completion unconfirmed. Inspect the destination before retrying.');
-      receipt.verified=true;
-    }
-    await recordTransfer({pageUrl,ok:true,sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
+    await verifyCloudflareReceipt(profile,sourceUrl,receipt);
+    await recordTransfer({pageUrl,ok:true,status:'completed',sourceUrl,profileId:owner.id,profileName:owner.name,category:"files",location,...receipt});
     await notify("REDOWN complete",location);
   }catch(error){
     const message=error?.message||String(error);
@@ -3062,7 +3074,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           const location = profile.type==="cloudflare-r2"&&Object.hasOwn(message,"prefix")
             ? await ingestCloudflareAtPrefix(profile,sourceUrl,cleanExplorerPrefix(message.prefix),message.filename||undefined,receipt,message.betaNoProvision===true)
             : await ingest(profile, sourceUrl, category, message.filename || undefined, receipt);
-          await recordTransfer({ ok:true, sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
+          if(profile.type==='cloudflare-r2')await verifyCloudflareReceipt(profile,sourceUrl,receipt);
+          await recordTransfer({ ok:true, status:'completed',sourceUrl, profileId:profile.id, profileName:profile.name, category, location, ...receipt });
           return sendResponse({ ok:true, location });
         } catch (error) {
           const errorMessage = error?.message || String(error);
