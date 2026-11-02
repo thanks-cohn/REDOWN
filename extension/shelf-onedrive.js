@@ -26,7 +26,7 @@
   button.addEventListener('click',async()=>{
     if(busy)return;
     const alreadyConnected=state.phase==='connected'&&state.rootReady===true;
-    if(alreadyConnected){try{await chrome.tabs.create({url:'https://onedrive.live.com/'});}catch{uiError='Could not open OneDrive. Try again.';paint();}return;}
+    if(alreadyConnected){try{const url=state.driveType==='business'||state.driveType==='documentLibrary'?'https://www.office.com/launch/onedrive':'https://onedrive.live.com/';await chrome.tabs.create({url});}catch{uiError='Could not open OneDrive. Try again.';paint();}return;}
     busy=true;uiError='';paint();
     try{
       // Chrome host access is an extension-level install/update permission.
