@@ -39,3 +39,8 @@
 - [November 2 daily NEED_TO_DO](../../NEED_TO_DO/11022026.md).
 - [November 2 scoped P0 Codex request](../../NEED_TO_DO/CODEX/CODEX_REQUEST_P0_DROPBOX_FALSE_SUCCESS_AND_VERIFIED_SAVE_ANIMATIONS_2026-11-02.md).
 - [Existing Dropbox reconnect incident](2026-11-01_P0_DROPBOX_RECONNECT_NAMESPACE_REJECTION_AND_MISSING_SAVED_FILES.md).
+
+
+## 2 November implementation follow-up — live incident remains OPEN
+
+Local receipt/counter integrity hardening, exact readback checks, attempt History, stale-auth status repair, safe known-ID reconciliation and verified-only theme choreography are implemented on the working branch. See [actual implementation and verification report](../../docs/DROPBOX_VERIFIED_SAVE_REPORT_2026-11-02.md). No installed Chrome or authenticated Dropbox proof was obtained; the installed phantom-save cause, historical false-count assessment and team/root-home selection remain unresolved. Prior observations above are retained. No historical counts or owner records were rewritten.

@@ -35,9 +35,9 @@
       return u.href;
     }
     if(provider==='dropbox'){
-      if(!/^id:[A-Za-z0-9_-]+$/.test(d.fileId||'')||u.hostname!=='www.dropbox.com'||
+      if(d.proofVersion!==1||!/^\d+$/.test(d.namespace||'')||!d.accountId||!d.connectionId||d.root!=='/'||d.path!=='/'+d.name||!/^id:[A-Za-z0-9_-]+$/.test(d.fileId||'')||u.hostname!=='www.dropbox.com'||
         !u.pathname.startsWith('/home/')||u.search)return null;
-      try{if(decodeURIComponent(u.pathname.slice('/home/'.length))!==d.name)return null;}
+      try{if(decodeURIComponent(u.pathname.slice('/home'.length))!==d.path)return null;}
       catch{return null;}
       return u.href;
     }

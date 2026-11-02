@@ -24,7 +24,7 @@ test('failed persistence does not publish an in-memory increment; retry reads au
 test('provider receipt counts require verified attribution, persist deduplication and never hydrate legacy counts',async()=>{
  const h=fixture({transferHistory:[success()]}),a=h.create();await a.read();assert.equal(h.data.providerSaveReceipts,undefined);
  for(const provider of ['cloudflare','google','dropbox','onedrive']){
-  const receipt={...success(),verified:true,providerKind:provider,deliveryId:provider+':stable'};
+  const receipt={...success(),verified:true,providerKind:provider,deliveryId:provider+':stable',status:'completed',destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',fileId:'id:a',revision:'r',contentHash:'a'.repeat(64),path:'/a.pdf',name:'a.pdf',bytes:1}};
   await a.record({...receipt,verified:false,deliveryId:provider+':unverified'});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
   for(const status of ['cancelled','uncertain','blocked','active'])await a.record({...receipt,ok:undefined,verified:false,status});
   await a.record({...receipt,ok:false});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
@@ -34,5 +34,12 @@ test('provider receipt counts require verified attribution, persist deduplicatio
   await h.create().record({...receipt,deliveryId:provider+':second'});assert.equal(h.data.providerSaveReceipts.totals[provider],'2');
  }
  assert.equal(h.data.providerSaveReceipts.ids.length,8);
- assert.deepEqual(Object.keys(h.data.providerSaveReceipts.latest).sort(),['at','id','provider']);
+ assert.deepEqual(Object.keys(h.data.providerSaveReceipts.latest).sort(),['accountId','at','connectionId','id','provider','verified']);
+});
+
+test('weak Dropbox success cannot count or erase failed attempts and preserves existing lifetime totals',async()=>{
+ const old={ok:false,providerKind:'dropbox',sourceUrl:'https://fixture.invalid/source',at:new Date().toISOString(),error:'denied'};
+ const h=fixture({transferCounter:{version:1,total:'900'},transferHistory:[old]}),a=h.create();
+ await a.record({...success(),providerKind:'dropbox',deliveryId:'dropbox:weak',verified:true,status:'completed'});
+ assert.equal(h.data.transferCounter.total,'900');assert.equal(h.data.providerSaveReceipts,undefined);assert.equal(h.data.transferHistory.length,2);assert.equal(h.data.transferHistory[0].status,'uncertain');assert.equal(h.data.transferHistory[0].location,'');assert.deepEqual(h.data.transferHistory[1],old);
 });

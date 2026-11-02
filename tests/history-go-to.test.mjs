@@ -243,7 +243,7 @@ test('successful provider receipts GO TO the saved cloud item, never the source 
   const samples=[
     {destination:{provider:'google-drive',fileId:'file_123'},location:'https://drive.google.com/file/d/file_123/view'},
     {destination:{provider:'onedrive',itemId:'opaque-item',driveId:'drive'},location:'https://tenant-my.sharepoint.com/personal/user/Documents/image.jpg?web=1'},
-    {destination:{provider:'dropbox',fileId:'id:file_1',name:'photo (2).png',path:'/photo (2).png'},location:'https://www.dropbox.com/home/photo%20(2).png'}
+    {destination:{provider:'dropbox',proofVersion:1,namespace:'123',accountId:'dbid:a',connectionId:'c',root:'/',fileId:'id:file_1',name:'photo (2).png',path:'/photo (2).png'},location:'https://www.dropbox.com/home/photo%20(2).png'}
   ];
   for(const sample of samples){
     const h=view(),record={ok:true,verified:true,sourceUrl:'https://original.invalid/private?a=secret',pageUrl:'https://original.invalid/secret-page',...sample};

@@ -40,7 +40,7 @@
         const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});
         try{
           const u=new URL('https://www.dropbox.com/oauth2/authorize');u.search=new URLSearchParams({client_id:APP_KEY,response_type:'code',redirect_uri:uri,code_challenge:challenge,code_challenge_method:'S256',state:nonce,token_access_type:'offline',scope:SCOPES.join(' ')});
-          let response;try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}catch{throw fail('Dropbox login was cancelled.');}
+          let response;try{response=await chrome.identity.launchWebAuthFlow({url:u.href,interactive:true});}catch{throw fail('Dropbox login was cancelled.','cancelled');}
           const saved=(await chrome.storage.session.get('dropbox:oauth'))['dropbox:oauth'];
           await chrome.storage.session.remove('dropbox:oauth'); // consume before token exchange; no replay
           const result=new URL(response);
@@ -58,12 +58,12 @@
     let refreshing;
     async function ready(expected,force=false){
       await secure();const a=await get('dropbox:auth');
-      if(!a||expected&&(a.accountId!==expected.accountId||a.connectionId!==expected.connectionId))throw fail('Reconnect the original Dropbox account before saving.');
+      if(!a||expected&&(a.accountId!==expected.accountId||a.connectionId!==expected.connectionId||expected.namespace&&a.namespace!==expected.namespace)){await state({phase:'reconnect',error:'Reconnect the original Dropbox account before saving.'});throw fail('Reconnect the original Dropbox account before saving.');}
       if(!access||access.accountId!==a.accountId||access.until<now()+60000){
-        if(!refreshing)refreshing=(async()=>{const ticket=epoch;try{const t=await token({grant_type:'refresh_token',refresh_token:a.refreshToken});const verified=await verify(t.access_token,a.accountId);if(verified.namespace!==a.namespace)throw fail('Dropbox root changed. Reconnect Dropbox.');if(ticket!==epoch)throw fail('Dropbox disconnected.');access={value:t.access_token,until:now()+t.expires_in*1000,accountId:a.accountId};}catch(e){access=null;await state({phase:'reconnect',error:'Reconnect Dropbox to verify your account.'});throw e;}})().finally(()=>{refreshing=null;});
+        if(!refreshing)refreshing=(async()=>{const ticket=epoch;try{const t=await token({grant_type:'refresh_token',refresh_token:a.refreshToken});const verified=await verify(t.access_token,a.accountId);if(verified.namespace!==a.namespace)throw fail('Dropbox root changed. Reconnect Dropbox.');if(ticket!==epoch)throw fail('Dropbox disconnected.');access={value:t.access_token,until:now()+t.expires_in*1000,accountId:a.accountId};}catch(e){access=null;await state({phase:'reconnect',error:e.status?e.message:'Reconnect Dropbox to verify your account.'});throw e;}})().finally(()=>{refreshing=null;});
         await refreshing;
       }
-      if(force){try{const v=await verify(access.value,a.accountId);if(v.namespace!==a.namespace)throw fail('Dropbox root changed.');}catch(e){access=null;await state({phase:'reconnect',error:'Reconnect Dropbox to verify your account.'});throw e;}}
+      if(force){try{const v=await verify(access.value,a.accountId);if(v.namespace!==a.namespace)throw fail('Dropbox root changed.');}catch(e){access=null;await state({phase:'reconnect',error:e.status?e.message:'Reconnect Dropbox to verify your account.'});throw e;}}
       const current=await get('dropbox:auth');if(current?.connectionId!==a.connectionId)throw fail('Dropbox connection changed.');
       const s={provider:'dropbox',accountId:a.accountId,namespace:a.namespace,root:'/',rootReady:true,connectionId:a.connectionId,phase:'connected',checkedAt:now()};const old=await get('dropbox:state');if(force||old?.phase!=='connected'||old?.connectionId!==s.connectionId)await state(s);
       return {...s,token:access.value};

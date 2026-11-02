@@ -34,10 +34,10 @@
     let name=text(record.filename)||text(destination.key).split('/').pop();
     if(!name&&location.startsWith('R2: '))name=location.split('/').pop();
     if(!name)try{name=decodeURIComponent(new URL(text(record.sourceUrl)).pathname.split('/').pop());}catch{}
-    const delivered=record.ok===true&&/^(https?:\/\/|R2: )/.test(location);
+    const delivered=record.ok===true&&(record.providerKind==='dropbox'&&record.destination?.proofVersion===1?record.verified===true:/^(https?:\/\/|R2: )/.test(location));
     return {
       name:name||text(record.sourceUrl)||'Transfer',
-      status:record.ok===false?'Failed':delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
+      status:record.ok===false?(text(record.status)||'Failed'):delivered?'Successful (recorded)':record.ok===true?'Accepted · completion unverified':text(record.status)||'Outcome not recorded',
       state:record.ok===false?'failed':delivered?'success':'unknown',
       detail:[text(record.provider)||(destination.bucketName||location.startsWith('R2: ')?'Cloudflare R2':''),text(record.profileName),text(destination.bucketName)].filter(Boolean).join(' · ')
     };
@@ -152,11 +152,17 @@
     if(record.pageUrl&&record.pageUrl!==record.sourceUrl)addLink('Hosting page',record.pageUrl);
     if(record.ok!==false)details.append(create('small',info.status,'history-entry-outcome'));
     if(info.detail)details.append(create('small',info.detail,'history-entry-provider'));
-    if(record.ok===false&&record.error){
+    if(record.error){
       const technical=create('details','','history-technical-details');
       const summary=create('summary','Error details');
       technical.append(summary,create('small',text(record.error),'history-error'));
       details.append(technical);
+    }
+    if(record.providerKind==='dropbox'&&record.destination?.fileId){
+      const d=record.destination,receipt=create('details','','history-technical-details');
+      receipt.append(create('summary','Dropbox receipt'));
+      for(const [label,value] of [['Account',d.accountId],['Namespace',d.namespace],['Root',d.root],['Path',d.path],['File ID',d.fileId],['Revision',d.revision]])if(value)receipt.append(create('div',label+': '+value));
+      receipt.append(create('small','The Dropbox website may use a different signed-in account.'));details.append(receipt);
     }
     if(details.childElementCount)parent.append(details);
   }

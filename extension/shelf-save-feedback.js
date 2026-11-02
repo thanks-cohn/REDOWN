@@ -5,6 +5,7 @@
   const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const visible=()=>document.visibilityState!=='hidden'&&!document.getElementById('clouds-view')?.hidden;
   const runs=new Map(),seen=new Set();
+  let dropboxState,dropboxEpoch=0;
   let pulseTimer,pendingImpact,impactId,impactAt=0,epoch=0;
   const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<3000;
   function impact(value){
@@ -21,8 +22,9 @@
     run.timers.forEach(clearTimeout);run.node.remove();runs.delete(provider);
   }
   function celebrate(receipt){
-    if(!receipt||seen.has(receipt.id)||!cards.has(receipt.provider))return;
+    if(receipt?.verified!==true||!receipt.id?.startsWith(receipt.provider+':')||seen.has(receipt.id)||!cards.has(receipt.provider))return;
     seen.add(receipt.id);
+    if(receipt.provider==='dropbox'&&!(dropboxState?.phase==='connected'&&dropboxState.accountId===receipt.accountId&&dropboxState.connectionId===receipt.connectionId))return;
     if(!fresh(receipt.at)||!visible())return;
     const provider=receipt.provider,card=cards.get(provider);
     cleanup(provider);
@@ -35,18 +37,17 @@
     if(reduced()){node.textContent=word;fit();schedule(1600,()=>cleanup(provider));return;}
     if(neon){
       node.textContent=word;
-      // Whole word, dual ink on every visible frame; no third held appearance.
-      schedule(180,()=>node.style.visibility='hidden');
-      schedule(330,()=>node.style.visibility='visible');
-      schedule(540,()=>cleanup(provider));
+      // Whole word alternates the established ink with bright money green.
+      for(let i=1;i<=5;i++)schedule(i*160,()=>node.classList.toggle('money-flash',i%2===1));
+      schedule(1040,()=>cleanup(provider));
     }else{
       node.textContent='S';
-      for(let i=2;i<=word.length;i++)schedule((i-1)*75,()=>node.textContent=word.slice(0,i));
-      schedule(750,()=>node.style.visibility='hidden');
-      schedule(920,()=>node.style.visibility='visible');
-      schedule(1110,()=>node.style.visibility='hidden');
-      schedule(1280,()=>node.style.visibility='visible');
-      schedule(2200,()=>cleanup(provider));
+      for(let i=2;i<=word.length;i++)schedule((i-1)*150,()=>node.textContent=word.slice(0,i));
+      schedule(1250,()=>node.style.visibility='hidden');
+      schedule(1420,()=>node.style.visibility='visible');
+      schedule(1610,()=>node.style.visibility='hidden');
+      schedule(1780,()=>node.style.visibility='visible');
+      schedule(3000,()=>cleanup(provider));
     }
     fit();
   }
@@ -83,16 +84,23 @@
   }
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
+    if(changes['dropbox:state']){
+      dropboxEpoch++;const next=changes['dropbox:state'].newValue;
+      if(next?.phase!=='connected'||next?.connectionId!==dropboxState?.connectionId)cleanup('dropbox');
+      dropboxState=next;
+    }
     if(changes.redownShelfImpact)impact(changes.redownShelfImpact.newValue);
     if(changes.providerSaveReceipts){epoch++;const state=changes.providerSaveReceipts.newValue;paint(state);celebrate(state?.latest);}
   });
-  const ticket=epoch;
-  void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact']).then(data=>{
+  const ticket=epoch,identityTicket=dropboxEpoch;
+  void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state']).then(data=>{
+    if(identityTicket===dropboxEpoch)dropboxState=data['dropbox:state'];
     if(ticket===epoch)paint(data.providerSaveReceipts);
     impact(data.redownShelfImpact);
   }).catch(()=>{});
   const reset=()=>{for(const provider of runs.keys())cleanup(provider);clearTimeout(pulseTimer);root.removeAttribute('data-save-impact');};
   document.addEventListener('visibilitychange',()=>{if(!visible())reset();else if(pendingImpact)impact(pendingImpact);});
+  globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.addEventListener?.('change',reset);
   window.addEventListener('hashchange',reset);window.addEventListener('pagehide',reset);
   new MutationObserver(()=>{reset();fit();}).observe(root,{attributes:true,attributeFilter:['data-shelf-theme']});
   if(globalThis.ResizeObserver)new ResizeObserver(fit).observe(document.body);

@@ -47,13 +47,18 @@
     }
     async function proof(receipt,job,signal){
       if(!receipt||receipt['.tag']&&receipt['.tag']!=='file'||!/^id:[\w-]+$/.test(receipt.id||'')||!Number.isSafeInteger(receipt.size)||receipt.size!==job.offset||!receipt.rev||!receipt.name||receipt.path_display!=='/'+receipt.name||!receipt.path_lower||receipt.path_lower.slice(1).includes('/'))throw fail('Dropbox receipt could not be verified. Check Dropbox.','uncertain');
-      const m=await call('files/get_metadata',{path:receipt.id},job,signal,{retry:true});
-      if(m?.id!==receipt.id||m.rev!==receipt.rev||m.size!==receipt.size||m.path_lower!==receipt.path_lower||m.name!==receipt.name||m.content_hash!==receipt.content_hash)throw fail('Dropbox metadata did not confirm the save. Check Dropbox.','uncertain');
-      return {fileId:m.id,path:m.path_display,name:m.name,revision:m.rev,bytes:m.size,contentHash:m.content_hash,accountId:job.accountId,connectionId:job.connectionId,root:'/'};
+      const ext=/\.[^.]+$/.exec(job.name||'')?.[0]||'';
+      if(ext&&!receipt.name.endsWith(ext))throw fail('Dropbox returned a different file extension. Check Dropbox.','uncertain');
+      if(!/^[a-f0-9]{64}$/.test(receipt.content_hash||''))throw fail('Dropbox receipt is incomplete. Check Dropbox.','uncertain');
+      let m;try{m=await call('files/get_metadata',{path:receipt.id},job,signal,{retry:true});}catch{throw fail('Dropbox commit needs metadata confirmation. Check Dropbox before retrying.','uncertain');}
+      if(m?.id!==receipt.id||m.rev!==receipt.rev||m.size!==receipt.size||m.path_lower!==receipt.path_lower||m.name!==receipt.name||m.path_display!==receipt.path_display||m['.tag']!=='file'||m.content_hash!==receipt.content_hash)throw fail('Dropbox metadata did not confirm the save. Check Dropbox.','uncertain');
+      return {proofVersion:1,namespace:job.namespace,fileId:m.id,path:m.path_display,name:m.name,revision:m.rev,bytes:m.size,contentHash:m.content_hash,accountId:job.accountId,connectionId:job.connectionId,root:'/'};
     }
     async function upload(job,checkpoint,signal){
       if(!Number.isSafeInteger(job.offset)||job.offset<0||job.offset>MAX)throw fail('Dropbox upload checkpoint is invalid. Retry as a new save.');
-      await auth.ready(job);
+      const identity=await auth.ready(job);
+      if(job.namespace&&job.namespace!==identity.namespace)throw fail('Dropbox destination root changed. Reconnect before saving.');
+      job.namespace=identity.namespace;await checkpoint(job);
       if(signal?.aborted)throw fail('Dropbox save cancelled.','cancelled');
       if(job.phase==='committing')throw fail('The previous Dropbox commit was interrupted. Check Dropbox before saving again.','uncertain');
       if(job.receipt)return proof(job.receipt,job,signal);
@@ -111,6 +116,7 @@
         }
         if(used)await append();
         if(job.total!==null&&job.offset!==job.total)throw fail('Source length changed during transfer.','interrupted');
+        await auth.ready(job,true);
         job.phase='committing';await checkpoint(job); // Never replay finish after a worker crash.
         const receipt=await call('files/upload_session/finish',new Uint8Array(),job,signal,{binary:true,arg:{cursor:{session_id:job.session,offset:job.offset},commit:{path:'/'+job.name,mode:'add',autorename:true,mute:true,strict_conflict:false}}});
         job.receipt=receipt;job.phase='verifying';await checkpoint(job);

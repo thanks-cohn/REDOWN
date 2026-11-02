@@ -49,10 +49,10 @@ function fixture(options={}){
   if(u.pathname.endsWith('upload_session/finish')){
    assert.equal(arg.cursor.offset,offset);assert.equal(arg.commit.mode,'add');assert.equal(arg.commit.autorename,true);assert.ok(!arg.commit.path.slice(1).includes('/'));
    if(options.finishHttp)return json({},options.finishHttp);
-   file={'.tag':'file',id:'id:file-'+(calls.filter(c=>c.url?.endsWith('upload_session/finish')).length),name:arg.commit.path.slice(1),path_display:arg.commit.path,path_lower:arg.commit.path.toLowerCase(),size:offset,rev:'revision',content_hash:'hash'};
+   file={'.tag':'file',id:'id:file-'+(calls.filter(c=>c.url?.endsWith('upload_session/finish')).length),name:arg.commit.path.slice(1),path_display:arg.commit.path,path_lower:arg.commit.path.toLowerCase(),size:offset,rev:'revision',content_hash:'a'.repeat(64)};
    if(options.untagged)delete file['.tag'];if(options.lostFinish)throw Error('lost');return json(file);
   }
-  if(u.pathname.endsWith('get_metadata'))return json({...file,...(options.badReceipt?{size:999}:{})});
+  if(u.pathname.endsWith('get_metadata'))return json({'.tag':'file',...file,...(options.badReceipt?{size:999}:{})});
   throw Error('Unexpected request '+url);
  };
  const c=context({chrome,fetch});const auth=c.RedownDropboxAuth.create({chrome,fetch,crypto:webcrypto,now:()=>now});
@@ -123,7 +123,7 @@ test('connected native saves, repeated clicks and multi-chunk transfer use no vi
  const f=fixture({source:new Uint8Array(4*1024*1024+1)});await f.auth.connect();
  const click={menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/file.pdf',pageUrl:'https://source.invalid/page'};
  await f.provider.dispatch(click);await f.provider.pump();await f.provider.dispatch(click);await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,1);
- await f.provider.dispatch({...click});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,2);assert.notEqual(f.records[0].deliveryId,f.records[1].deliveryId);assert.equal(f.records[0].pageUrl,click.pageUrl);assert.doesNotMatch(JSON.stringify(f.records),/PRIVATE_/);
+ await f.provider.dispatch({...click});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,2);assert.notEqual(...f.records.filter(r=>r.ok).map(r=>r.deliveryId));assert.equal(f.records.find(r=>r.ok).pageUrl,click.pageUrl);assert.doesNotMatch(JSON.stringify(f.records),/PRIVATE_/);
 });
 test('login via native action resumes exactly one pending click; Shelf login alone creates no job',async()=>{
  const f=fixture();await f.provider.dispatch({menuItemId:'provider:dropbox:connect',linkUrl:'https://source.invalid/file'});await f.provider.pump();assert.equal(f.records.filter(r=>r.ok).length,1);assert.equal(f.calls.filter(c=>c.oauth).length,1);
@@ -134,7 +134,7 @@ test('unknown native IDs and untrusted Shelf messages fail closed; denied source
  assert.equal((await f.provider.message({type:'dropboxConnect'},{id:'other',url:'https://evil.invalid'})).ok,false);
 });
 test('crashed OAuth and commit jobs are interrupted/uncertain on wake, with no duplicate commits',async()=>{
- const f=fixture();const j=await job(f);f.store['dropbox:jobs']=[{...j,id:'pending',status:'awaiting-auth'},{...j,id:'commit',status:'active',phase:'committing'}];await f.provider.pump();assert.deepEqual(f.records.map(r=>r.status.split(' · ')[0]),['interrupted','uncertain']);assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,0);await f.provider.pump();assert.equal(f.records.length,2);
+ const f=fixture();const j=await job(f);f.store['dropbox:jobs']=[{...j,id:'pending',status:'awaiting-auth'},{...j,id:'commit',status:'active',phase:'committing'}];await f.provider.pump();assert.deepEqual(f.records.filter(r=>!['active','queued'].includes(r.status)).map(r=>r.status),['interrupted','uncertain']);assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,0);await f.provider.pump();assert.equal(f.records.filter(r=>!['active','queued'].includes(r.status)).length,2);
 });
 test('queue bound preserves existing jobs and reports a clear retry condition',async()=>{
  const f=fixture();const j=await job(f);f.store['dropbox:jobs']=Array.from({length:8},(_,i)=>({...j,id:String(i),status:'queued'}));await f.provider.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/new'});assert.equal(f.store['dropbox:jobs'].length,8);assert.match(f.store['dropbox:transfer'].error,/queue is full/);
@@ -169,7 +169,7 @@ test('protected bytes unchanged except explicitly authorized shared composer hoo
  for(const n of ['dropbox-auth','dropbox-api','dropbox-menu','dropbox-provider'])assert.doesNotMatch(sources[n],/chrome\.(tabs|windows|downloads|contextMenus)\.|create_folder|workers\.dev|client_secret/);
 });
 test('history and counter deduplicate Dropbox receipt atomically without changing other provider semantics',async()=>{
- const f=fixture(),c=context({chrome:f.chrome});vm.runInContext(await read('extension/transfer-counter.js'),c);const counter=c.RedownTransferCounter.create(f.chrome.storage.local);const r={providerKind:'dropbox',deliveryId:'dropbox:job-one',ok:true,location:'https://www.dropbox.com/home/file'};await counter.record(r);await counter.record(r);assert.equal(f.store.transferCounter.total,'1');assert.equal(f.store.transferHistory.length,1);await counter.record({...r,deliveryId:'dropbox:job-two'});assert.equal(f.store.transferCounter.total,'2');await counter.record({ok:true,location:'https://other.invalid/file'});await counter.record({ok:true,location:'https://other.invalid/file'});assert.equal(f.store.transferCounter.total,'4');
+ const f=fixture(),c=context({chrome:f.chrome});vm.runInContext(await read('extension/transfer-counter.js'),c);const counter=c.RedownTransferCounter.create(f.chrome.storage.local);const j=await job(f),destination=await f.api.upload(j,async()=>{},new AbortController().signal);const r={providerKind:'dropbox',deliveryId:'dropbox:job-one',status:'completed',verified:true,destination,ok:true,location:'https://www.dropbox.com/home/file'};await counter.record(r);await counter.record(r);assert.equal(f.store.transferCounter.total,'1');assert.equal(f.store.transferHistory.length,1);await counter.record({...r,deliveryId:'dropbox:job-two'});assert.equal(f.store.transferCounter.total,'2');await counter.record({ok:true,location:'https://other.invalid/file'});await counter.record({ok:true,location:'https://other.invalid/file'});assert.equal(f.store.transferCounter.total,'4');
 });
 test('cancellation, root/account pinning and stale connection jobs never become successful',async()=>{
  const f=fixture();const j=await job(f);const controller=new AbortController();controller.abort();await assert.rejects(f.api.upload(j,async()=>{},controller.signal),e=>['cancelled','blocked'].includes(e.status));assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,0);
@@ -183,7 +183,7 @@ test('verified receipt checkpoint survives restart and replays metadata proof on
 });
 test('worker crash after history write reuses delivery identity and never increments counter twice',async()=>{
  const f=fixture(),j=await job(f),c=context({chrome:f.chrome});vm.runInContext(await read('extension/transfer-counter.js'),c);const counter=c.RedownTransferCounter.create(f.chrome.storage.local);const result=await f.api.upload(j,async()=>{},new AbortController().signal);f.store['dropbox:jobs']=[{...j,status:'completed',result,reported:false}];
- await counter.record({providerKind:'dropbox',deliveryId:'dropbox:'+j.id,ok:true,location:'https://www.dropbox.com/home/file'});
+ await counter.record({providerKind:'dropbox',deliveryId:'dropbox:'+j.id,status:'completed',verified:true,destination:result,ok:true,location:'https://www.dropbox.com/home/file'});
  const p=f.c.RedownDropboxProvider.create({chrome:f.chrome,auth:f.auth,api:f.api,record:r=>counter.record(r)});await p.pump();assert.equal(f.store.transferCounter.total,'1');assert.equal(f.store.transferHistory.length,1);
 });
 test('actual native writer recovers partial Dropbox API failure and corrupt/missing native ID caches',async()=>{
@@ -197,4 +197,45 @@ test('cancel and disconnect stop queued work without cross-account uploads',asyn
 });
 test('explicit 429 backoff is bounded and can recover; readback retries do not replay finish',async()=>{
  const f=fixture(),j=await job(f);let append=0,metadata=0,sleeps=0;const api=f.c.RedownDropboxAPI.create({auth:f.auth,sleep:async()=>sleeps++,fetch:async(u,o)=>{if(u.endsWith('append_v2')&&append++===0)return json({},429,{'Retry-After':'1'});if(u.endsWith('get_metadata')&&metadata++===0)return json({},503);return f.c.fetch(u,o);}});assert.equal((await api.upload(j,async()=>{},new AbortController().signal)).bytes,f.source.length);assert.equal(sleeps,2);assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,1);
+});
+
+test('stale logged-out native leaf records a blocked attempt, never a successful receipt',async()=>{
+ const f=fixture();await f.provider.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/a.pdf',pageUrl:'https://source.invalid/page'});
+ assert.equal(f.records.length,1);assert.equal(f.records[0].status,'blocked');assert.equal(f.records[0].ok,false);assert.equal(f.records[0].verified,false);assert.equal(f.records[0].location,'');assert.equal(f.calls.length,0);
+});
+test('unproven persisted completed job becomes uncertain, without replaying a commit',async()=>{
+ const f=fixture(),j=await job(f);f.store['dropbox:jobs']=[{...j,status:'completed',result:{name:'phantom.pdf'},reported:false}];await f.provider.pump();
+ assert.equal(f.records[0].status,'uncertain');assert.equal(f.records[0].verified,false);assert.equal(f.records[0].location,'');assert.ok(!f.calls.some(c=>c.url?.endsWith('finish')));
+});
+for(const change of [{content_hash:undefined},{path_display:'/other.png'},{id:'id:other'},{rev:'changed'},{'.tag':'deleted'}])test('exact readback mismatch cannot become successful '+JSON.stringify(change),async()=>{
+ const f=fixture(),j=await job(f);const api=f.c.RedownDropboxAPI.create({auth:f.auth,fetch:async(u,o)=>{const r=await f.c.fetch(u,o);return u.endsWith('get_metadata')?json({...await r.json(),...change}):r;}});
+ await assert.rejects(api.upload(j,async()=>{},new AbortController().signal),e=>e.status==='uncertain');assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,1);
+});
+test('readback denial remains uncertain; explicit reconciliation uses ID and never repeats finish',async()=>{
+ const f=fixture(),j=await job(f);let unavailable=true;
+ const api=f.c.RedownDropboxAPI.create({auth:f.auth,fetch:async(u,o)=>unavailable&&u.endsWith('get_metadata')?json({},403):f.c.fetch(u,o)});
+ f.store['dropbox:jobs']=[{...j,status:'queued'}];const p=f.c.RedownDropboxProvider.create({chrome:f.chrome,auth:f.auth,api,record:async r=>f.records.push(plain(r))});await p.pump();
+ assert.equal(f.records.at(-1).status,'uncertain');assert.equal(f.records.filter(r=>r.ok).length,0);const commits=f.calls.filter(c=>c.url?.endsWith('finish')).length;
+ unavailable=false;await p.message({type:'dropboxStatus'},{id:f.chrome.runtime.id,url:f.chrome.runtime.getURL('shelf.html')});
+ assert.equal(f.records.filter(r=>r.ok).length,1);assert.equal(f.records.at(-1).destination.namespace,'123');assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,commits);
+});
+test('account swap before commit is blocked, namespace snapshot cannot be silently changed',async()=>{
+ const f=fixture(),j=await job(f);const api=f.c.RedownDropboxAPI.create({auth:f.auth,fetch:async(u,o)=>{const r=await f.c.fetch(u,o);if(u.endsWith('append_v2'))f.setAccount('dbid:other');return r;}});
+ await assert.rejects(api.upload(j,async()=>{},new AbortController().signal));assert.equal(f.calls.filter(c=>c.url?.endsWith('finish')).length,0);
+ f.setAccount('dbid:account-a');const next=await job(f);next.namespace='456';await assert.rejects(f.api.upload(next,async()=>{},new AbortController().signal));
+});
+test('provider attempts, final receipt, archive and both counters share a stable exactly-once boundary',async()=>{
+ const f=fixture();await f.auth.connect();vm.runInContext(await read('extension/transfer-counter.js'),f.c);const archived=new Map();const counter=f.c.RedownTransferCounter.create(f.chrome.storage.local,undefined,{append:async r=>archived.set(r.id,plain(r))});
+ const p=f.c.RedownDropboxProvider.create({chrome:f.chrome,auth:f.auth,api:f.api,record:r=>counter.record(r)});
+ await p.dispatch({menuItemId:'provider:dropbox',linkUrl:'https://source.invalid/a.png',pageUrl:'https://source.invalid/page'});await p.pump();
+ const h=f.store.transferHistory;assert.deepEqual(h.map(r=>r.status),['completed','active','queued']);assert.equal(new Set(h.map(r=>r.transferId)).size,1);assert.equal(f.store.transferCounter.total,'1');assert.equal(f.store.providerSaveReceipts.totals.dropbox,'1');
+ const done=h[0];await counter.record(done);const revived=f.c.RedownDropboxProvider.create({chrome:f.chrome,auth:f.auth,api:f.api,record:r=>counter.record(r)});await revived.pump();
+ assert.equal(f.store.transferCounter.total,'1');assert.equal(archived.size,3);assert.equal(f.store.transferHistory.length,3);assert.equal(done.destination.path,'/a.png');assert.equal(done.pageUrl,'https://source.invalid/page');
+});
+
+test('status refresh invalidates a stale connected menu/card projection with no auth',async()=>{
+ const f=fixture();f.store['dropbox:state']={phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'old'};
+ const r=await f.provider.message({type:'dropboxStatus'},{id:f.chrome.runtime.id,url:f.chrome.runtime.getURL('shelf.html')});
+ assert.equal(r.ok,true);assert.equal(f.store['dropbox:state'].phase,'reconnect');assert.equal(f.records.filter(r=>r.ok).length,0);
+ const menu=f.c.RedownDropboxMenu.fragment(f.store['dropbox:state'],'redown');assert.equal(menu.entries[1].id,'provider:dropbox:connect');
 });

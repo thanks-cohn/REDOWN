@@ -86,3 +86,8 @@ ACTUAL CLOUD SAVE COMMIT IS INDEPENDENTLY VERIFIED:
 **Deliverable:** focused working implementation on the required branch; tests, changed-file inventory and justification, evidence screenshots/recordings, PASS/FAIL/NOT_TESTED matrix, correct git commit/push on working branch and concise operator acceptance steps. If real provider acceptance isn't available, state `NOT_TESTED`, not PASS.
 
 **Explicitly excluded:** new archive-download features, mascot image creation and broader desktop/cloud Explorer roadmap. This work is only save-impact pulse restoration, themed SUCCESS! confirmation and persistent card counter presentation.
+
+
+## 2 November verified-success follow-up
+
+The later P0 choreography is implemented with a verified terminal-event gate. The dispatch impact and original falling-ball code remain unchanged. See [actual results and remaining live gates](../../docs/DROPBOX_VERIFIED_SAVE_REPORT_2026-11-02.md).
