@@ -114,8 +114,8 @@ test('HTTP source bytes stream to Dropbox without exposing the source URL or its
  const providerCalls=f.calls.filter(c=>c.url&&new URL(c.url).hostname.endsWith('.dropboxapi.com'));
  assert.ok(providerCalls.some(c=>c.url.endsWith('upload_session/finish')));
  for(const c of providerCalls){
-  assert.doesNotMatch(c.url,/redown_private_provenance|source\\.invalid/);
-  assert.doesNotMatch(JSON.stringify(c.o),/redown_private_provenance|source\\.invalid/);
+  assert.doesNotMatch(c.url,/redown_private_provenance|source\.invalid/);
+  assert.doesNotMatch(JSON.stringify(c.o),/redown_private_provenance|source\.invalid/);
   assert.equal(c.o.referrerPolicy,'no-referrer');
  }
 });
