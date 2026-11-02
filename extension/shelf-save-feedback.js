@@ -5,7 +5,7 @@
   const reduced=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const visible=()=>document.visibilityState!=='hidden'&&!document.getElementById('clouds-view')?.hidden;
   const runs=new Map(),seen=new Set();
-  let dropboxState,dropboxEpoch=0;
+  let dropboxState,dropboxEpoch=0,cloudflareAuth,cloudflareEpoch=0;
   let pulseTimer,pendingImpact,pendingReceipt,impactId,impactAt=0,epoch=0;
   // A verified upload's storage notification may reach an inactive Shelf just
   // before Chrome reveals it again. Allow a brief live-event handoff, NEVER
@@ -28,6 +28,18 @@
   function celebrate(receipt){
     if(receipt?.verified!==true||!receipt.id?.startsWith(receipt.provider+':')||seen.has(receipt.id)||!cards.has(receipt.provider))return;
     if(!freshReceipt(receipt.at))return;
+    if(receipt.provider==='cloudflare'){
+      // This must be BOTH the actual verified HEAD receipt AND the current
+      // authenticated Cloudflare session. No timer, URL, logout, stale replay
+      // or independent presentation action is authorized to say SUCCESS!.
+      const a=cloudflareAuth;
+      if(receipt.proof!=='r2-head-v1'||typeof receipt.sessionId!=='string'||
+         !receipt.sessionId||!a?.accessToken||a.reconnectRequired===true||
+         a.sessionId!==receipt.sessionId||
+         Number.isFinite(a.expiresAt)&&a.expiresAt<=Date.now()||
+         document.getElementById('cf-state')?.dataset.state!=='connected')
+        return;
+    }
     // One worker may commit the proven Dropbox receipt before its connection
     // state change reaches this Shelf. Do not consume the celebration ID until
     // its original account/connection identity is validated.
@@ -76,14 +88,13 @@
         // The neon number owns a real square bezel. Measure that BEZEL, not its
         // parent button, then scale the digits as counts grow (1, 10, 100...).
         // Do not make a one-digit number tiny just because a card is narrow.
-        const available=neonNumber?
-          Math.max(1,count.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2):
-          isNumber?Math.max(1,count.clientWidth||40):
+        const available=isNumber?
+          Math.max(1,(count.clientWidth||40)-parseFloat(style.paddingLeft||'0')-parseFloat(style.paddingRight||'0')-2):
           count.parentElement.clientWidth-parseFloat(parentStyle.paddingLeft)-parseFloat(parentStyle.paddingRight);
         let required=count.scrollWidth;
-        if(neonNumber){
-          // scrollWidth includes the bezel's hot-pink padding; measure actual
-          // digit glyphs so single-digit counts stay BIG, not shrunken at 0.
+        if(isNumber){
+          // scrollWidth includes the bezel/polished dial padding; measure
+          // actual digit glyphs so short numbers stay full-size. Float-safe.
           const range=document.createRange();
           range.selectNodeContents(count);
           required=typeof range.getBoundingClientRect==='function'?
@@ -123,6 +134,14 @@
   }
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
+    if(changes.cloudflareAuth){
+      cloudflareEpoch++;
+      cloudflareAuth=changes.cloudflareAuth.newValue;
+      // A confirmed save from another account/session must NOT finish flashing
+      // after logout or auth replacement.
+      cleanup('cloudflare');
+      if(pendingReceipt?.provider==='cloudflare')pendingReceipt=null;
+    }
     if(changes['dropbox:state']){
       dropboxEpoch++;const next=changes['dropbox:state'].newValue;
       if(next?.phase!=='connected'||next?.connectionId!==dropboxState?.connectionId)cleanup('dropbox');
@@ -136,8 +155,9 @@
       celebrate(state?.latest);
     }
   });
-  const ticket=epoch,identityTicket=dropboxEpoch;
-  void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state']).then(data=>{
+  const ticket=epoch,identityTicket=dropboxEpoch,cloudflareTicket=cloudflareEpoch;
+  void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state','cloudflareAuth']).then(data=>{
+    if(cloudflareTicket===cloudflareEpoch)cloudflareAuth=data.cloudflareAuth;
     if(identityTicket===dropboxEpoch){dropboxState=data['dropbox:state'];if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);}
     if(ticket===epoch)paint(data.providerSaveReceipts);
     impact(data.redownShelfImpact);
