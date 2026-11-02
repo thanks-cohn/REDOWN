@@ -75,3 +75,21 @@ test('Shelf and compact popup Home controls use a clear small house icon instead
   assert.doesNotMatch(popupHome.textContent,/↗/);
  }finally{shelfDom.window.close();popupDom.window.close();}
 });
+
+test('Shelf reassurance appears immediately beneath navigation; Cloud Storage is title-cased',()=>{
+ const doc=new JSDOM(html).window.document;
+ const nav=doc.querySelector('nav[aria-label="Shelf"]'),clouds=doc.querySelector('#clouds-view');
+ assert.equal(nav.nextElementSibling.tagName,'MAIN');
+ assert.equal(clouds.firstElementChild.className,'shelf-assurance');
+ assert.equal(clouds.firstElementChild.textContent.replace(/\s+/g,' ').trim(),'YOUR FILES · YOUR CLOUDS · YOUR CONTROL');
+ assert.equal(doc.querySelector('#cloudflare-heading').textContent,'Your Cloud Storage');
+});
+test('unverified Cloudflare retains card-level status but no duplicate warning in the introduction',async()=>{
+ const h=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});
+ try{
+   assert.equal(h.doc.querySelector('#cf-state').dataset.state,'error');
+   assert.match(h.doc.querySelector('#cf-state').textContent,/Check sign-in/);
+   assert.ok(!h.doc.getElementById('connection-summary').textContent.includes('Cloudflare needs attention'));
+   assert.equal(h.doc.getElementById('connection-summary').textContent,'');
+ }finally{h.dom.window.close();}
+});
