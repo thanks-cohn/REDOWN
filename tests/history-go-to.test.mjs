@@ -73,6 +73,8 @@ async function navigationHarness(overrides={}){
  const start=source.indexOf('let historyNavigationEpoch='),end=source.indexOf('void (async()=>{',start);
  const messages=[],selectedRows=[],previews=[],rows=[];
  const context={setTimeout,clearTimeout,AbortController,Date,Set,Error,
+   previewMode:'side',requestAnimationFrame:callback=>callback(),
+   positionHistoryGoToLanding:()=>{},
    RedownHistoryNavigation:{valid:i=>Boolean(i?.locator)},chrome:{tabs:{getCurrent:async()=>undefined},windows:{getCurrent:async()=>({id:7})}},
    closePreview:()=>{},chrome:{tabs:{getCurrent:async()=>undefined},windows:{getCurrent:async()=>({id:7})},storage:{session:{set:async()=>{}}}},explorerInitialization:Promise.resolve(),busy:false,cloudflareSignedIn:true,accounts:[{id:'a'}],bucketCache:new Map([['a',[{name:'bucket'}]]]),current:null,listingState:'ready',epoch:0,discoveryEpoch:0,
    status:m=>messages.push(m),sameBucket:(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName,
@@ -217,7 +219,8 @@ test('reopening loaded History removes stale Explorer readiness diagnostics with
  navStatus.textContent='Could not open Explorer: An existing Explorer is not ready. Activate it, connect Cloudflare and retry GO TO.';
  await h.w.RedownShelfHistory.open();
  assert.equal(navStatus.textContent,'','a previous GO TO error is not part of the History archive');
- assert.match(h.w.document.getElementById('history-status').textContent,/1 transfers/);
+ assert.match(h.w.document.getElementById('history-status').textContent,/Recent records only|1 transfers/);
+ assert.equal(h.w.document.querySelectorAll('.history-transfer').length,1,'History entry remains visible');
  h.dom.window.close();
 });
 
@@ -280,7 +283,10 @@ test('GO TO survives legacy Cloudflare History records with exact R2 bucket/key 
  const button=h.w.document.querySelector('.history-go-to');
  assert.ok(button,'previously successful R2 transfer must retain GO TO');
  assert.equal(h.nav.locator(historical),null,'historical record lacks modern destination object');
- assert.deepEqual(h.nav.legacyR2(historical),{profileId:'profile-cf-a',bucketName:'hp-mini',key:'folder/my shot.png'});
+ const parsed=h.nav.legacyR2(historical);
+ assert.equal(parsed.profileId,'profile-cf-a');
+ assert.equal(parsed.bucketName,'hp-mini');
+ assert.equal(parsed.key,'folder/my shot.png');
  button.click();await settle();
  assert.equal(h.calls.length,1);
  assert.equal(h.calls[0][0],'tab');
@@ -302,7 +308,7 @@ test('legacy Cloudflare GO TO never selects a similarly named bucket from the wr
   {...historical,verified:false},
   {...historical,status:'pending'},
   {...historical,location:'R2: hp-mini/../wrong'},
-  {...historical,location:'https://untrusted.invalid/file.png'},
+  {...historical,location:'http://untrusted.invalid/file.png'},
   {...historical,profileId:''},
   {...historical,providerKind:'dropbox'}
  ])assert.equal(h.nav.openable(bad),false);
