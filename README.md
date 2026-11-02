@@ -17,7 +17,9 @@ REDOWN is a browser extension for organizing and transferring files to Cloudflar
 - **Browse and manage:** Explore your configured R2 locations from the extension.
 - **Upload from your computer:** Select local files and transfer them to R2 with retry handling for temporary failures.
 
-## Get started
+## Owner and Authorized-Tester Setup Only
+
+The setup instructions below are for REDOWN's rights holders and people they have expressly authorized in writing. They are not an invitation or permission for the general public to install, run, copy, or modify REDOWN.
 
 1. [Download the repository ZIP](https://github.com/thanks-cohn/REDOWN/archive/refs/heads/main.zip) and extract it.
 2. Open `chrome://extensions` in Chrome (or your browser's extensions page).
@@ -31,4 +33,4 @@ For remote transfers, REDOWN uses a Cloudflare Worker to send data to R2 without
 
 ## License
 
-REDOWN's original materials are provided under the [REDOWN Proprietary Source License 2.0](LICENSE). Reuse requires prior written permission, subject to applicable law and existing third-party rights.
+**Publicly visible, not publicly licensed.** REDOWN's original materials are reserved under the [REDOWN Proprietary Source License 2.1](LICENSE). No permission is granted to install, run, copy, modify, redistribute, or commercially or noncommercially use the source without prior written authorization, except where an existing grant, separate third-party license, GitHub terms, or applicable law provides otherwise. The public repository does not make REDOWN open source.
