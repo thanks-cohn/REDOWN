@@ -52,7 +52,7 @@ test('V3 verified celebrations and energy balls remain installed',()=>{
   assert.match(script,/word\.slice\(0,i\)/);
   assert.match(script,/receipt\?\.verified!==true/);
   assert.doesNotMatch(script,/Verified · from this update/);
-  assert.match(script,/destination-action-copy'\)\?\.append\(count\)/);
+  assert.match(script,/const counterHost=card\.querySelector\('\.destination-action-copy'\)\|\|card\.querySelector\('#cloudflare'\)/);
 });
 
 test('Google direct background save and Dropbox proof guard survive integration',()=>{
