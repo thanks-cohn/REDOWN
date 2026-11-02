@@ -602,12 +602,23 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .overview .destinations-grid .destination-options>summary{position:absolute;right:3px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:26px;height:33px;list-style:none;cursor:pointer;font:800 19px/1 "DM Sans",system-ui,sans-serif;letter-spacing:0;color:var(--muted);border-radius:7px;transition:color .2s,background .2s}
 .overview .destinations-grid .destination-options>summary::-webkit-details-marker{display:none}
 .overview .destinations-grid .destination-options>summary:is(:hover,:focus-visible),.overview .destinations-grid .destination-options[open]>summary{color:var(--accent);background:var(--subtle)}
+/* Keep an open dropdown above ALL neighboring cards and the True Remote section.
+   Its edge meets the trigger card: there is no pointer gap that collapses the popup. */
+.overview .destinations-grid .destination-tile:has(.destination-options[open]){z-index:30;transform:translateY(-3px);border-color:color-mix(in srgb,var(--destination-brand) 58%,var(--line));box-shadow:0 9px 19px rgba(var(--shadow-rgb),.16),inset 0 1px rgba(255,255,255,.08)}
 .overview .destinations-grid .destination-options:not([open]) .destination-options-menu{display:none!important}
-.overview .destinations-grid .destination-options-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:9;display:flex;flex-direction:column;align-items:flex-start;gap:9px;width:max-content;min-width:180px;max-width:min(270px,calc(100vw - 32px));padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:0 14px 30px rgba(var(--shadow-rgb),.22)}
+.overview .destinations-grid .destination-options-menu{position:absolute;right:0;top:calc(100% - 1px);z-index:9;display:flex;flex-direction:column;align-items:flex-start;gap:9px;width:max-content;min-width:180px;max-width:min(270px,calc(100vw - 32px));padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:0 14px 30px rgba(var(--shadow-rgb),.22)}
 .overview .destinations-grid .destination-options-menu a,.overview .destinations-grid .destination-options-menu button{display:block;min-height:26px;padding:3px 0;border:0;background:transparent;color:var(--text);font:650 12px/1.45 "DM Sans",system-ui,sans-serif;text-decoration:none;cursor:pointer}
 .overview .destinations-grid .destination-options-menu a:hover,.overview .destinations-grid .destination-options-menu button:hover{text-decoration:underline}
 .overview .destinations-grid .destination-options-menu small{display:block;margin:0;max-width:100%;font:400 11px/1.45 "DM Sans",system-ui,sans-serif;color:var(--muted);overflow-wrap:anywhere}
 .overview .destinations-grid .destination-options-menu [hidden]{display:none!important}
+/* The Shelf promise sits directly under its navigation divider, not inside a card. */
+#clouds-view>.shelf-assurance{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:0;margin:15px 2px 0;padding:0 2px;color:var(--accent);font:780 10px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.135em;text-transform:uppercase}
+#clouds-view>.shelf-assurance span{padding:0 .65em;opacity:.56}
+#clouds-view>.shelf-assurance strong{font-weight:780}
+#clouds-view>.shelf-assurance+.overview{padding-top:15px}
+#connection-summary:empty{display:none}
+@media(max-width:399px){#clouds-view>.shelf-assurance{font-size:9px;letter-spacing:.06em}#clouds-view>.shelf-assurance span{padding:0 .45em}}
+
 .overview>.eyebrow{margin:0 0 13px;font-size:10px}
 @media(max-width:399px){.overview .destinations-grid{grid-template-columns:1fr;gap:8px}.overview .destinations-grid .destination-tile{min-height:56px}.overview .destinations-grid .destination-action{min-height:55px;gap:13px;padding-left:15px}.overview .destinations-grid .destination-options-menu{right:0}}
 @media(prefers-reduced-motion:reduce){.overview .destinations-grid .destination-tile,.overview .destinations-grid .destination-icon,.overview .destinations-grid .destination-word,.overview .destinations-compass{transition:none!important}.overview .destinations-grid .destination-tile:is(:hover,:focus-within),.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-icon,.overview .destinations-grid .destination-tile:is(:hover,:focus-within) .destination-word,.overview:has(.destinations-grid :is(:hover,:focus-visible)) .destinations-compass{transform:none!important}}
