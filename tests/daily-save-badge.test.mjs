@@ -125,7 +125,19 @@ test('No orbs without verified provider login state; expired Cloudflare token is
  assert.equal(permitted('provider:google-drive',{googleDriveState:{phase:'connecting'}},now),false);
  assert.equal(permitted('provider:google-drive',{googleDriveState:{phase:'connected',accountId:'g'}},now),true);
  assert.equal(permitted('provider:dropbox',{'dropbox:state':{phase:'connected',rootReady:false,accountId:'dbid:a',connectionId:'c'}},now),false);
- assert.equal(permitted('provider:dropbox',{'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'}},now),true);
+ assert.equal(permitted('provider:dropbox',{'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'}},now),false,'stale connected state without refresh grant must not animate');
+ assert.equal(permitted('provider:dropbox',{
+  'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'},
+  'dropbox:auth':{accountId:'dbid:a',connectionId:'c',refreshToken:'refresh-grant'}
+ },now),true);
+ assert.equal(permitted('provider:dropbox',{
+  'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'},
+  'dropbox:auth':{accountId:'dbid:someone-else',connectionId:'c',refreshToken:'refresh-grant'}
+ },now),false,'account mismatch must not animate');
  assert.equal(permitted('provider:onedrive',{'onedrive:state':{phase:'disconnected'}},now),false);
- assert.equal(permitted('provider:onedrive',{'onedrive:state':{phase:'connected',rootReady:true,accountId:'a',driveId:'drive'}},now),true);
+ assert.equal(permitted('provider:onedrive',{'onedrive:state':{phase:'connected',rootReady:true,accountId:'a',driveId:'drive'}},now),false,'missing original grant must not animate');
+ assert.equal(permitted('provider:onedrive',{
+  'onedrive:state':{phase:'connected',rootReady:true,accountId:'a',driveId:'drive',connectionId:'conn'},
+  'onedrive:auth':{accountId:'a',driveId:'drive',connectionId:'conn',refreshToken:'refresh-grant'}
+ },now),true);
 });
