@@ -265,3 +265,95 @@ test('provider History GO TO refuses failed, unverified, forged and mismatched c
   assert.equal(h.nav.cloudTarget({...goodCloud,destination:{provider:'dropbox',fileId:'id:foo',name:'file'}}),null);
   h.dom.window.close();
 });
+
+
+test('GO TO survives legacy Cloudflare History records with exact R2 bucket/key and original profile',async()=>{
+ const historical={id:'old-r2',ok:true,at:good.at,profileId:'profile-cf-a',
+   filename:'my shot.png',sourceUrl:'https://host.invalid/never-open-this',
+   location:'R2: hp-mini/folder/my shot.png'};
+ const h=view({transferHistory:[historical],profiles:[
+  {id:'profile-cf-a',type:'cloudflare-r2',accountId:'owner-account',bucketName:'hp-mini'},
+  {id:'profile-cf-b',type:'cloudflare-r2',accountId:'wrong-account',bucketName:'hp-mini'}
+ ]});
+ h.w.eval(read('extension/shelf-history.js'));
+ await h.w.RedownShelfHistory.open();
+ const button=h.w.document.querySelector('.history-go-to');
+ assert.ok(button,'previously successful R2 transfer must retain GO TO');
+ assert.equal(h.nav.locator(historical),null,'historical record lacks modern destination object');
+ assert.deepEqual(h.nav.legacyR2(historical),{profileId:'profile-cf-a',bucketName:'hp-mini',key:'folder/my shot.png'});
+ button.click();await settle();
+ assert.equal(h.calls.length,1);
+ assert.equal(h.calls[0][0],'tab');
+ assert.ok(!h.calls[0][1].url.includes('host.invalid'),'never navigate to old source page');
+ assert.ok(!h.calls[0][1].url.includes('my shot.png'),'opaque handoff protects destination details');
+ h.dom.window.close();
+});
+
+test('legacy Cloudflare GO TO never selects a similarly named bucket from the wrong account',async()=>{
+ const historical={id:'old-r2',ok:true,at:good.at,profileId:'deleted-original',
+   location:'R2: hp-mini/folder/file.png'};
+ const h=view({profiles:[{id:'other',type:'cloudflare-r2',accountId:'wrong',bucketName:'hp-mini'}]});
+ assert.equal(h.nav.openable(historical),true,'button stays available for recovery');
+ h.nav.open(historical);await settle();
+ assert.equal(h.calls.length,0);
+ assert.match(h.w.document.getElementById('history-navigation-status').textContent,/Original Cloudflare bucket\/profile is no longer configured/);
+ for(const bad of [
+  {...historical,ok:false},
+  {...historical,verified:false},
+  {...historical,status:'pending'},
+  {...historical,location:'R2: hp-mini/../wrong'},
+  {...historical,location:'https://untrusted.invalid/file.png'},
+  {...historical,profileId:''},
+  {...historical,providerKind:'dropbox'}
+ ])assert.equal(h.nav.openable(bad),false);
+ h.dom.window.close();
+});
+
+test('verified Dropbox History without a returned public URL preserves GO TO via exact root file path',async()=>{
+ const record={id:'db-root',ok:true,verified:true,status:'completed',at:good.at,
+  providerKind:'dropbox',filename:'my (2) pic.png',location:'',
+  sourceUrl:'https://original.invalid/secret',
+  destination:{provider:'dropbox',proofVersion:1,accountId:'dbid:owner',connectionId:'connection',
+   namespace:'123',root:'/',fileId:'id:secret',name:'my (2) pic.png',path:'/my (2) pic.png',
+   revision:'r1',contentHash:'a'.repeat(64),bytes:123}};
+ const h=view({transferHistory:[record]});
+ h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
+ assert.ok(h.w.document.querySelector('.history-go-to'),'verified Dropbox saved-file path qualifies');
+ const url='https://www.dropbox.com/home/my%20(2)%20pic.png';
+ assert.equal(h.nav.savedDropboxTarget(record),url);
+ h.w.document.querySelector('.history-go-to').click();await settle();
+ assert.equal(h.calls[0][1].url,url);
+ assert.ok(!h.calls[0][1].url.includes('original.invalid'));
+ for(const patch of [
+  {ok:false},{verified:false},{status:'uncertain'},{location:'https://untrusted.invalid/whatever'},
+  {destination:{...record.destination,path:'/someone-else.png'}},
+  {destination:{...record.destination,accountId:'another-account'}},
+  {destination:{...record.destination,contentHash:''}}
+ ])assert.equal(h.nav.savedDropboxTarget({...record,...patch}),null);
+ h.dom.window.close();
+});
+
+test('Google Drive GO TO can use verified file ID with missing URL; OneDrive shows honest no-URL recovery',async()=>{
+ const records=[
+  {id:'google',ok:true,verified:true,status:'completed',at:good.at,providerKind:'google',
+   destination:{provider:'google-drive',fileId:'google_FILE_1'},location:''},
+  {id:'onedrive',ok:true,verified:true,status:'completed',at:good.at,providerKind:'onedrive',
+   filename:'one.docx',destination:{provider:'onedrive',accountId:'owner',
+    driveId:'drive',rootId:'root',itemId:'exact-item'},location:''}
+ ];
+ const h=view({transferHistory:records});
+ h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
+ const buttons=[...h.w.document.querySelectorAll('.history-go-to')];
+ assert.equal(buttons.length,2,'both completed verified providers keep GO TO');
+ assert.equal(h.nav.cloudTarget(records[0]),'https://drive.google.com/file/d/google_FILE_1/view');
+ const google=buttons.find(b=>b.getAttribute('aria-label').includes('google_FILE_1')||
+  b.closest('.history-transfer')?.textContent.includes('Google Drive'));
+ assert.ok(google);
+ google.click();await settle();
+ assert.equal(h.calls.length,1);
+ assert.equal(h.calls[0][1].url,'https://drive.google.com/file/d/google_FILE_1/view');
+ const one=buttons.find(b=>b!==google);one.click();await settle();
+ assert.equal(h.calls.length,1,'missing OneDrive direct URL cannot falsely open an arbitrary webpage');
+ assert.match(h.w.document.getElementById('history-navigation-status').textContent,/returned no direct file link/);
+ h.dom.window.close();
+});
