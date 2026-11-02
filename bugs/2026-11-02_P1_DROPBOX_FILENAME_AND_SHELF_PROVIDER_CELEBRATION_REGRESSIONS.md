@@ -1,4 +1,4 @@
-# OPEN BUGS — Dropbox original filename, multi-provider ball animation, Neon card numbering, and transient SUCCESS!
+# OPEN BUGS — Dropbox filename, all-provider save-impact pulse, NEON count and theme-specific SUCCESS!
 
 **Reported by owner:** 2026-11-02  
 **Repository / working branch:** `thanks-cohn/REDOWN` / `codex/v3-parity-first-reconstruction`  
@@ -45,11 +45,11 @@
 
 ### Permanent resting / idle card contract (ALL themes, when no file is being saved)
 
-- **No idle SUCCESS!, no flickering word and no active ball animation.** The rest state is a composed, polished provider card, not an endless completion party. The little-ball element is absent, settled or discreetly invisible until a real event triggers it.
+- **No idle SUCCESS!, no flickering word and no active save-impact pulse.** The rest state is a composed, polished provider card, not an endless completion party. The working falling orb is an independent source-page action animation; the Shelf-edge impact glow is inactive at rest and should activate only on a real eligible dispatch/arrival.
 - **Every card retains its provider identity** (logo/name and connected/disconnected/reconnect status as truthful), ordinary user controls such as GO TO when valid, and the existing FREE GB/free-tier information where shown. Do not fabricate live quota from a provider's advertised free-tier allowance. Idle state must not misleadingly imply a file is saving.
 - The **per-provider confirmed-save count is persistent** and stays visible after celebration ends. In **NEON** it is an intentionally **LARGE** number from the first digit, framed in glossy arcade/SNES-like complementary styling and automatically reduced **only when extra digits actually require more room**; do not leave a lonely bare numeral. In **Porcelain**, use refined, clear red/white-aligned typography; in **Midnight**, dark premium contrast with restrained red highlights. No forced NEON money-green/yellow labels in other themes.
-- Normal in-progress saving may show accurate activity/progress feedback, but it must be visually distinct from an already-confirmed SUCCESS! celebration. On failure/uncertainty, display real status without a success ball/flash.
-- After an animation completes, **return exactly to the ordinary idle layout**: no reserved permanent SUCCESS! row, flashing leftover, overlay, or stuck ball. The durable number is the only success-display element that necessarily remains.
+- Normal in-progress saving may show accurate activity/progress feedback, but it must be visually distinct from an already-confirmed SUCCESS! celebration. On failure/uncertainty, display real status without a SUCCESS! flash.
+- After an animation completes, **return exactly to the ordinary idle layout**: no reserved permanent SUCCESS! row, flashing leftover, overlay, or stuck impact pulse. The durable number is the only success-display element that necessarily remains.
 
 ### NEON theme — dual-color money-green SUCCESS!
 
@@ -61,7 +61,7 @@
 
 - On a new verified successful save, reveal `SUCCESS!` **one character at a time**, as an intentional, polished short typographic animation. No text should appear as a permanent static label.
 - Once the letters have fully assembled, **flash the completed word visibly ON/OFF twice**. On the **third appearance**, let the complete word **STICK / HOLD** noticeably longer, then fade or snap away cleanly until **no SUCCESS! text remains**. This is an arcade/16-bit RPG victory-notification rhythm, not a permanently displayed status or a single generic toast. Do not start with the NEON all-at-once dual-color blink; this is a **different animation sequence**.
-- Style the text, letter cadence, entrance and exit harmoniously with each existing non-Neon theme (e.g. Porcelain and Midnight). Use the appropriate theme palette and visual personality, not forced NEON money-green/yellow on every theme. Earlier guidance suggested the region between GO TO and FREE GB for non-Neon cards when space permits; verify actual layout, not assumed CSS geometry.
+- **Professional Italian/Roman-inspired italic typography (OWNER LATEST):** Use an elegant, refined, legible **italic serif** with a classical Roman/book-lettering feeling, like polished print typography rather than an arcade font or exaggerated swash script. Porcelain: graceful warm/red or ink treatment; Midnight: sophisticated pale/chrome with restrained red accents; Ocean: coordinated teal/sea-ink treatment. Propose real-rendered font comparisons for owner visual approval. Keep it readable with sensible letterspacing, weight, italic overhang room, and no arbitrary provider-brand recoloring. Use properly licensed bundled or system font fallbacks; do not ship unlicensed font files. Style the letter cadence, entrance and exit harmoniously with each non-Neon palette; never apply NEON money-green/yellow styling to the other themes. Earlier guidance suggested the region between GO TO and FREE GB for non-Neon cards when space permits; verify actual layout, not assumed CSS geometry.
 
 ### Shared correctness and accessibility
 
@@ -77,8 +77,8 @@
 
 ## Delivery and non-regression requirements
 
-1. Audit the **actual most recent Codex changes**, existing Shelf provider-card templates, save notification/ball animation dispatch, counter persistence, Dropbox filename resolution and provider upload requests. Record exact source files, baseline/screenshots and root-cause findings. Do not claim that a prior Codex pass proved these UX requirements.
-2. Keep filename correctness, permanent save counting, temporary celebration, and ball flourish as **four independently tested concerns**; implement shared presentation hooks where appropriate instead of duplicating inconsistent per-provider behavior. Respect provider-specific source-fetch constraints and leave provider credentials/remote-upload semantics isolated.
+1. Audit the **actual most recent Codex changes**, existing Shelf provider-card templates, save notification/impact-pulse dispatch (while preserving working falling ball), counter persistence, Dropbox filename resolution and provider upload requests. Record exact source files, baseline/screenshots and root-cause findings. Do not claim that a prior Codex pass proved these UX requirements.
+2. Keep filename correctness, permanent save counting, temporary celebration, and missing Shelf save-impact pulse as **four independently tested concerns**; implement shared presentation hooks where appropriate instead of duplicating inconsistent per-provider behavior. Respect provider-specific source-fetch constraints and leave provider credentials/remote-upload semantics isolated.
 3. Run targeted unit/integration tests and **real installed Chrome plus genuine provider tests**. Publish visual proof for Neon card art and timed SUCCESS! flash. Record PASS / FAIL / NOT_TESTED honestly.
 4. Preserve the protected V3 native menu engine, Cloudflare TRUE REMOTE route, Google/Dropbox/OneDrive authorization, private REDOWN-owned provenance, History receipts, Keep Both behavior and user destinations. Do not use this UX report to reset remote files or introduce unrelated provider changes.
 
