@@ -166,3 +166,31 @@ test('failed, pending and unverified provider records neither increment nor cele
  assert.equal(data.providerSaveReceipts,undefined);
  h.dom.window.close();
 });
+
+
+test('Cloudflare SUCCESS is an authenticated verifier event, never a loginless timer',async()=>{
+ const h=fixture('neon'),card=h.w.document.querySelector('[data-provider="cloudflare"]');
+ const receipt=id=>({provider:'cloudflare',id:'cloudflare:'+id,verified:true,
+   proof:'r2-head-v1',sessionId:'session-one',at:Date.now()});
+ // A fresh-looking notification without an active login is NOT proof that the
+ // currently rendered Shelf may claim a save.
+ h.emit('providerSaveReceipts',{totals:{cloudflare:'1'},latest:receipt('first')});
+ assert.equal(card.querySelector('.provider-save-success'),null);
+ h.advance(3500);assert.equal(card.querySelector('.provider-save-success'),null,
+   'timer alone may not create SUCCESS!');
+ // Only the original receipt, and only once the same live OAuth session is
+ // confirmed, may activate the presentation sequence.
+ h.cloudflareLogin();
+ assert.equal(card.querySelector('.provider-save-success')?.textContent,'SUCCESS!');
+ h.emit('cloudflareAuth',null);
+ assert.equal(card.querySelector('.provider-save-success'),null,'logout immediately cancels SUCCESS!');
+ h.emit('providerSaveReceipts',{totals:{cloudflare:'2'},latest:receipt('second')});
+ assert.equal(card.querySelector('.provider-save-success'),null,'logout cannot celebrate');
+ h.w.document.getElementById('cf-state').dataset.state='connected';
+ h.emit('cloudflareAuth',{accessToken:'another-session',sessionId:'session-two',expiresAt:Date.now()+60000});
+ assert.equal(card.querySelector('.provider-save-success'),null,'wrong OAuth session cannot celebrate');
+ h.emit('providerSaveReceipts',{totals:{cloudflare:'3'},latest:{
+   ...receipt('unproven'),proof:undefined,sessionId:'session-two'}});
+ assert.equal(card.querySelector('.provider-save-success'),null,'no HEAD proof cannot celebrate');
+ h.dom.window.close();
+});
