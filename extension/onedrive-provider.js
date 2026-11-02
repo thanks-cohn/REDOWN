@@ -64,20 +64,27 @@
         await setTransfer({status:'blocked',code:'ONEDRIVE_STALE_MENU',
           error:'Outdated OneDrive menu action. Reopen REDOWN after the menu refreshes.'});return;
       }
-      let source=null,permissions;
+      // Only initial connection may open Chrome's website-access dialog.
+      // Saved destinations never ask for additional host permission.
+      if(info.menuItemId==='provider:onedrive:connect'){
+        let permission;
+        try{
+          permission=chrome.permissions.request({origins:[
+            ...RedownOneDriveAuth.ORIGINS,...RedownOneDriveAPI.SAVE_ORIGINS
+          ]});
+        }catch(e){await setTransfer(problem(e));return;}
+        try{
+          if(!await permission)throw RedownOneDriveAPI.fail('ONEDRIVE_PERMISSION_DENIED',
+            'Allow OneDrive website access during setup to enable one-click saves.');
+          await auth.connect();
+        }catch(e){await setTransfer(problem(e));}
+        return;
+      }
       try{
-        const origins=[...RedownOneDriveAuth.ORIGINS,...RedownOneDriveAPI.UPLOAD_ORIGINS];
-        if(info.menuItemId==='provider:onedrive:save-root'){
-          source=RedownOneDriveAPI.sourceSnapshot(info);
-          if(source.kind!=='inline-data')
-            origins.push(RedownOneDriveAPI.sourceURL(source.url).origin+'/*');
-        }
-        // Chrome native-click user gesture: request permission before awaiting storage.
-        permissions=chrome.permissions.request({origins:[...new Set(origins)]});
-      }catch(e){await setTransfer({...problem(e),status:'blocked'});return;}
-      try{
-        if(!await permissions)throw RedownOneDriveAPI.fail('ONEDRIVE_PERMISSION_DENIED','Chrome did not grant file-source and OneDrive access.');
-        if(info.menuItemId==='provider:onedrive:connect'){await auth.connect();return;}
+        const source=RedownOneDriveAPI.sourceSnapshot(info);
+        if(!await chrome.permissions.contains({origins:RedownOneDriveAPI.SAVE_ORIGINS}))
+          throw RedownOneDriveAPI.fail('ONEDRIVE_SITE_PERMISSION_REQUIRED',
+            'Open REDOWN Shelf and enable OneDrive website access once. No new Microsoft login is needed.');
         const identity=await auth.ready(null,true);
         await begin(source,identity);
       }catch(e){await setTransfer(problem(e));}
