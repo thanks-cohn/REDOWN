@@ -79,3 +79,69 @@ test('all non-Neon themes type each character, retain third hold, hide and repea
 test('Dropbox disconnect or account switch removes an in-flight celebration',()=>{
  const h=fixture();h.receipt('dropbox','one');assert.equal(h.text(),'S');h.emit('dropbox:state',{phase:'reconnect'});assert.equal(h.text(),undefined);h.advance(4000);assert.equal(h.text(),undefined);h.dom.window.close();
 });
+
+
+test('end-to-end verified storage record increments each actual provider card and animates once',async()=>{
+ const transferSource=await readFile('extension/transfer-counter.js','utf8');
+ const context=vm.createContext({crypto:webcrypto});
+ vm.runInContext(transferSource,context);
+ const base=[
+  {providerKind:'cloudflare',deliveryId:'cloudflare:one',location:'R2: bucket/file',verified:true,ok:true,status:'completed',bytes:12},
+  {providerKind:'google',deliveryId:'google:one',location:'https://drive.google.com/file/d/test/view',verified:true,ok:true,status:'completed',bytes:12},
+  {providerKind:'dropbox',deliveryId:'dropbox:one',location:'',verified:true,ok:true,status:'completed',bytes:12,
+   destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',fileId:'id:file-1',
+    revision:'rev1',contentHash:'a'.repeat(64),name:'file.bin',path:'/file.bin',bytes:12}},
+  {providerKind:'onedrive',deliveryId:'onedrive:one',location:'',verified:true,ok:true,status:'completed',bytes:12,
+   destination:{accountId:'user',driveId:'drive',rootId:'root',itemId:'item-1'}}
+ ];
+ for(const entry of base){
+  const h=fixture('neon');
+  if(entry.providerKind==='dropbox')h.emit('dropbox:state',{phase:'connected',accountId:'dbid:a',connectionId:'c'});
+  const data={};
+  const clone=value=>JSON.parse(JSON.stringify(value));
+  const storage={
+   get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).filter(k=>k in data).map(k=>[k,clone(data[k])])),
+   set:async patch=>{Object.assign(data,clone(patch));for(const [key,value] of Object.entries(patch))h.emit(key,clone(value));}
+  };
+  const counter=context.RedownTransferCounter.create(storage);
+  const card=h.w.document.querySelector('[data-provider="'+entry.providerKind+'"]');
+  assert.ok(card,'missing card '+entry.providerKind);
+  assert.equal(card.querySelector('.provider-save-count')?.textContent,'0');
+  await counter.record(entry);
+  assert.equal(data.providerSaveReceipts.totals[entry.providerKind],'1');
+  assert.equal(card.querySelector('.provider-save-count').textContent,'1');
+  assert.equal(card.querySelector('.provider-save-success')?.textContent,'SUCCESS!');
+  h.advance(1040);
+  assert.equal(card.querySelector('.provider-save-success'),null);
+  await counter.record(entry);
+  assert.equal(card.querySelector('.provider-save-count').textContent,'1','repeat must not increment');
+  assert.equal(card.querySelector('.provider-save-success'),null,'repeat must not replay');
+  await counter.record({...entry,deliveryId:entry.providerKind+':two'});
+  assert.equal(card.querySelector('.provider-save-count').textContent,'2');
+  assert.equal(card.querySelector('.provider-save-success')?.textContent,'SUCCESS!');
+  h.dom.window.close();
+ }
+});
+
+test('failed, pending and unverified provider records neither increment nor celebrate',async()=>{
+ const transferSource=await readFile('extension/transfer-counter.js','utf8');
+ const context=vm.createContext({crypto:webcrypto});vm.runInContext(transferSource,context);
+ const h=fixture('porcelain'),data={};
+ const storage={
+  get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).filter(k=>k in data).map(k=>[k,data[k]])),
+  set:async patch=>{Object.assign(data,patch);for(const [key,value] of Object.entries(patch))h.emit(key,value);}
+ };
+ const counter=context.RedownTransferCounter.create(storage);
+ for(const entry of [
+   {providerKind:'google',deliveryId:'google:failed',ok:false,verified:false,status:'failed',location:''},
+   {providerKind:'onedrive',deliveryId:'onedrive:queued',ok:true,verified:false,status:'queued',location:''},
+   {providerKind:'dropbox',deliveryId:'dropbox:weak',ok:true,verified:true,status:'completed',location:'',
+    destination:{accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',fileId:'id:one'}}
+ ]){
+  await counter.record(entry);
+  assert.equal(h.w.document.querySelector('[data-provider="'+entry.providerKind+'"] .provider-save-count').textContent,'0');
+  assert.equal(h.w.document.querySelector('.provider-save-success'),null);
+ }
+ assert.equal(data.providerSaveReceipts,undefined);
+ h.dom.window.close();
+});
