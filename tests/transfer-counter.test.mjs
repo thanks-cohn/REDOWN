@@ -2,6 +2,20 @@ import test from 'node:test';import assert from 'node:assert/strict';import {rea
 const code=await readFile(new URL('../extension/transfer-counter.js',import.meta.url),'utf8');
 function fixture(data={}){const c=vm.createContext({crypto:webcrypto});vm.runInContext(code,c);const storage={get:async()=>structuredClone(data),set:async patch=>Object.assign(data,structuredClone(patch))};return {data,create:()=>c.RedownTransferCounter.create(storage)};}
 const success=()=>({ok:true,sourceUrl:'https://fixture.invalid/source',location:'https://fixture.invalid/destination'});
+function verified(provider,id='stable'){
+ const entry={...success(),verified:true,status:'completed',providerKind:provider,
+   deliveryId:provider+':'+id,bytes:1};
+ if(provider==='cloudflare')return {...entry,
+   destination:{accountId:'r2-account',bucketName:'saved',key:'files/'+id+'.pdf'},
+   verification:{kind:'r2-head-v1',sessionId:'live-login',key:'files/'+id+'.pdf',bytes:1,etag:'etag-'+id}};
+ if(provider==='google')return {...entry,destination:{provider:'google-drive',fileId:id,name:id+'.pdf'}};
+ if(provider==='dropbox')return {...entry,location:'',
+   destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',
+   fileId:'id:'+id,revision:'rev-'+id,contentHash:'a'.repeat(64),path:'/a.pdf',name:'a.pdf',bytes:1}};
+ if(provider==='onedrive')return {...entry,location:'',
+   destination:{provider:'onedrive',accountId:'account',driveId:'drive',rootId:'root',itemId:id}};
+ throw Error('Unexpected provider');
+}
 test('new installations start at zero and retained history migrates exactly once',async()=>{
  const h=fixture({transferHistory:[success(),{ok:false},{ok:true,location:'owner/repo → queued'}]}),a=h.create();assert.equal((await a.read()).total,'1');await a.add(1);assert.equal((await h.create().read()).total,'2');assert.equal((await fixture().create().read()).total,'0');
 });
@@ -24,14 +38,14 @@ test('failed persistence does not publish an in-memory increment; retry reads au
 test('provider receipt counts require verified attribution, persist deduplication and never hydrate legacy counts',async()=>{
  const h=fixture({transferHistory:[success()]}),a=h.create();await a.read();assert.equal(h.data.providerSaveReceipts,undefined);
  for(const provider of ['cloudflare','google','dropbox','onedrive']){
-  const receipt={...success(),verified:true,providerKind:provider,deliveryId:provider+':stable',status:'completed',destination:{proofVersion:1,accountId:'dbid:a',connectionId:'c',namespace:'123',root:'/',fileId:'id:a',revision:'r',contentHash:'a'.repeat(64),path:'/a.pdf',name:'a.pdf',bytes:1}};
+  const receipt=verified(provider,'stable');
   await a.record({...receipt,verified:false,deliveryId:provider+':unverified'});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
   for(const status of ['cancelled','uncertain','blocked','active'])await a.record({...receipt,ok:undefined,verified:false,status});
   await a.record({...receipt,ok:false});assert.equal(h.data.providerSaveReceipts?.totals[provider],undefined);
   await a.record(receipt);const total=h.data.transferCounter.total;
   await h.create().record(receipt);assert.equal(h.data.transferCounter.total,total);
   assert.equal(h.data.providerSaveReceipts.totals[provider],'1');
-  await h.create().record({...receipt,deliveryId:provider+':second'});assert.equal(h.data.providerSaveReceipts.totals[provider],'2');
+  await h.create().record(verified(provider,'second'));assert.equal(h.data.providerSaveReceipts.totals[provider],'2');
  }
  assert.equal(h.data.providerSaveReceipts.ids.length,8);
  assert.deepEqual(Object.keys(h.data.providerSaveReceipts.latest).sort(),['accountId','at','connectionId','id','provider','verified']);
