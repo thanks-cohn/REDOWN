@@ -102,7 +102,11 @@
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
     if(changes['onedrive:state']){state=changes['onedrive:state'].newValue||{};uiError='';}
-    if(changes['onedrive:transfer'])transfer=changes['onedrive:transfer'].newValue||{};
+    if(changes['onedrive:transfer']){
+      transfer=changes['onedrive:transfer'].newValue||{};
+      // Real save/host-permission events supersede an old diagnostic message.
+      uiError='';
+    }
     paint();
   });
   // Shelf only checks an existing session; no interactive login on display.
