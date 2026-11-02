@@ -49,8 +49,11 @@
       entry?.providerKind==='google'?googleProof(entry):
       entry?.providerKind==='dropbox'?dropboxProof(entry):
       entry?.providerKind==='onedrive'?onedriveProof(entry):false;
-    const counted=entry=>entry?.providerKind==='dropbox'?entry.ok===true&&dropboxProof(entry):
-      delivered(entry)||onedriveProof(entry);
+    // Provider-attributed saves can advance the lifetime odometer only through
+    // the SAME verifier that authorizes the card and daily toolbar badge.
+    // Legacy un-attributed History keeps its historical compatibility rule.
+    const counted=entry=>['cloudflare','google','dropbox','onedrive'].includes(entry?.providerKind)?
+      providerProof(entry):delivered(entry);
     function increment(counter,amount){return {...counter,total:String(BigInt(counter.total)+BigInt(amount))};}
     // Local calendar dates, not an arbitrary rolling 24h window. The service
     // worker's local timezone is the user's Chrome system timezone.
