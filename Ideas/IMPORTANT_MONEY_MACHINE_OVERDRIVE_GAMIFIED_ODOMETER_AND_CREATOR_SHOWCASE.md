@@ -148,3 +148,16 @@ Possible audience categories: productivity tutorial channels, software-utility r
 **IDEA ONLY.** This document captures a desired experience and is **not** evidence of a working feature or authorization to modify runtime files. Before any implementation, inspect the current odometer, mascot, save-success provenance, extension UI lifecycle, audio/browser constraints and existing design standards. Design, review, implement and test in a separate requested work phase.
 
 **One-sentence product promise:** "Every save is satisfying. Every streak is exciting. Every extraordinary burst becomes a performance."
+
+
+## 10. Cloud Wars: friend challenge, $5 on-camera joke, and real sponsorship (owner idea, 2026-11-01)
+
+**IDEA ONLY, not an existing capability or approved spend.** Sponsor a popular YouTuber to compete with friends using REDOWN across distinct supported clouds over 48 hours. Each participant tries to reach a shared, real **1,000,000 verified saves** milestone and unlock the special odometer/mascot animation. Show separate per-provider progress, honest projections of time until free capacity is consumed, current and projected storage use, and when real charges begin. Use authorized sample websites or files, avoid unsolicited high-volume traffic to third parties, and respect provider API/rate limits and plan terms.
+
+**The owner's proposed comedy ending:** Once the challenge finishes, the REDOWN developer makes a surprise cameo, looks at the results, says **"Not bad..."**, ceremoniously hands the creator **$5**, then jokes that after a hypothetical **$4.50** cloud bill, **"You get to keep the fifty cents."** This is a *skit/punchline*, not the actual compensation or a promise that the bill will be exactly $4.50. Tailor the joke to the actual results and make the distinction clear.
+
+**Actual proposed creator compensation:** Approximately **$10,000 for the sponsored video**, subject to negotiation, contract and budget approval. Never represent the $5 prop payment as the creator's real fee. Disclose the paid sponsorship clearly to viewers.
+
+For credibility, distinguish monthly plan quotas from paid usage (R2's 10 GB-month free storage is not a hard cap), distinguish estimated costs from actual billed charges, and show Class A/B request charges and other relevant services, not storage alone. Maintain privacy of file paths, account identifiers and tokens. Count only receipt-verified successful saves, with accurate per-person and cumulative counts. Avoid claiming a live feature or proven million-save capacity before testing.
+
+**Production hook:** Make the cost counter, the cloud comparison, the odometer celebration, and the deadpan $5/50-cent ending the shareable moment. The full competition is an optional future marketing idea; do not change runtime behavior just by recording it.
