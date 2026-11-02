@@ -620,12 +620,14 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .overview .destinations-straight-title{display:block}
 .overview .destinations-subtitle{margin:3px 0 0;font:550 12px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.045em;color:var(--muted)}
 .overview .destinations-title .destinations-slant-title{display:none}
+.overview .destinations-title .destination-heading-accessible{display:none}
 .overview .destinations-compass{display:none}
 :root[data-destination-display="slant"] .overview .destinations-heading{min-height:58px;margin-bottom:7px;padding:0 5px}
 :root[data-destination-display="slant"] .overview .destinations-title{width:220px;height:55px;line-height:1}
 :root[data-destination-display="slant"] .overview .destinations-straight-title,
 :root[data-destination-display="slant"] .overview .destinations-subtitle{display:none}
 :root[data-destination-display="slant"] .overview .destinations-title .destinations-slant-title{display:block;width:220px;height:55px;overflow:visible}
+:root[data-destination-display="slant"] .overview .destinations-title .destination-heading-accessible{display:block}
 :root[data-destination-display="slant"][data-destination-arrow="true"] .overview .destinations-compass{display:grid}
 .beta-aesthetics{margin:13px 0 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 2px 8px rgba(var(--shadow-rgb),.05)}
 .beta-aesthetics>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;list-style:none;cursor:pointer;font:760 12px/1.4 "DM Sans",system-ui,sans-serif;letter-spacing:.03em}
