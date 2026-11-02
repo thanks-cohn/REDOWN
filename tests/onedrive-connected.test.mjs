@@ -78,7 +78,7 @@ test('OneDrive source filter rejects local/private links and filename path injec
   for(const source of ['http://example.com/x','https://localhost/a','https://127.0.0.1/a',
     'https://192.168.1.4/a','https://metadata.internal/a','https://[::1]/a'])
     assert.throws(()=>api.sourceURL(source));
-  assert.equal(api.fileName('a/../evil?.jpg'),'evil_.jpg'.replace('evil_', 'a_.._evil_')==='x'?'x':api.fileName('a/../evil?.jpg')); // deterministic sanitization
+  assert.equal(api.fileName('a/../evil?.jpg'),'a_.._evil_.jpg');
   assert.equal(api.sourceSnapshot({srcUrl:'https://cdn.example.org/picture.png?token=secret'}).sourceUrl,
     'https://cdn.example.org/picture.png');
 });
@@ -126,15 +126,22 @@ test('root session uses Keep Both, sequential 320 KiB aligned parts and verified
   assert.ok(uploads.every(x=>!('Authorization' in x.init.headers)));
   assert.equal(proof.length,1);assert.equal(checkpoints.at(-1).phase,'verifying');
 });
-test('unverified and truncated byte counts cannot become verified history receipts',async()=>{
-  const f=fixture();
-  const context=vm.createContext({chrome:f.chrome,fetch:async(url)=>({
-    status:200,ok:true,headers:{get:k=>k==='content-length'?'99':null},
-    body:new ReadableStream({start(c){c.enqueue(new Uint8Array(2));c.close();}})}),
-    URL,URLSearchParams,TextEncoder,Uint8Array,ReadableStream,AbortSignal,Date,
-    setTimeout,clearTimeout,console});
+test('truncated source never sends a final upload chunk or claims success',async()=>{
+  const f=fixture(),uploads=[];
+  const fetch=async(url)=>{
+    if(url==='https://cdn.example.org/a')
+      return {status:200,ok:true,headers:{get:k=>k==='content-length'?'99':null},
+        body:new ReadableStream({start(c){c.enqueue(new Uint8Array(2));c.close();}})};
+    if(url.endsWith('/createUploadSession'))
+      return {status:200,ok:true,json:async()=>({uploadUrl:'https://sn3302.up.1drv.com/up/test'})};
+    uploads.push(url);
+    throw Error('No chunk should be sent');
+  };
+  const context=vm.createContext({chrome:f.chrome,fetch,URL,URLSearchParams,TextEncoder,
+    Uint8Array,ReadableStream,AbortSignal,Date,setTimeout,clearTimeout,console});
   load(context,'onedrive-api.js');
   const api=context.RedownOneDriveAPI.create();
   await assert.rejects(api.upload({url:'https://cdn.example.org/a',name:'a'},{
-    token:'token',driveId:'drive',rootId:'root'}),e=>e.code==='ONEDRIVE_SOURCE_TRUNCATED'||e.code==='ONEDRIVE_GRAPH_INVALID');
+    token:'token',driveId:'drive',rootId:'root'}),e=>e.code==='ONEDRIVE_SOURCE_TRUNCATED');
+  assert.equal(uploads.length,0);
 });
