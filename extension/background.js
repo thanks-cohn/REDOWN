@@ -861,7 +861,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
     finally {
       if(ticket===generation){
         try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
-        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your cloud companion"}); } catch {}
+        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your Cloud Companion"}); } catch {}
       }
     }
   };
