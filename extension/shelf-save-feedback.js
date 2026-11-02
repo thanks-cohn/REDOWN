@@ -130,11 +130,19 @@
     const readout=document.createElement('div');readout.className='provider-save-readout';
     const count=document.createElement('span');count.className='provider-save-count';count.textContent='0';
     const announcement=document.createElement('span');announcement.className='provider-save-announcement';announcement.setAttribute('role','status');
-    readout.append(announcement);card.append(readout);
-    // Three small tiles use an inline count after Free GB. Cloudflare uses its
-    // existing wide action button, never a detached counter row.
+    readout.append(announcement);
+    const cloudflare=card.dataset.provider==='cloudflare';
+    // The overlay belongs to the exact VISUAL action surface: for Cloudflare,
+    // this dedicated wrapper shares the button's real bounds at any width.
+    // Other providers retain their existing in-card overlay host.
+    const stageHost=cloudflare?card.querySelector('.cloudflare-action-shell'):card;
+    (stageHost||card).append(readout);
     const counterHost=card.querySelector('.destination-action-copy')||card.querySelector('#cloudflare');
-    (counterHost||readout).append(count);
+    if(cloudflare&&counterHost){
+      const free=counterHost.querySelector('.free-storage-label');
+      if(free)counterHost.insertBefore(count,free);
+      else counterHost.append(count);
+    }else (counterHost||readout).append(count);
   }
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
