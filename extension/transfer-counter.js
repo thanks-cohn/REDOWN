@@ -31,7 +31,7 @@
       const v=entry?.verification,d=entry?.destination;
       return entry?.providerKind==='cloudflare'&&entry?.ok===true&&
         entry?.verified===true&&entry?.status==='completed'&&
-        /^cloudflare:[\\w-]+$/.test(entry.deliveryId||'')&&
+        /^cloudflare:[\w-]+$/.test(entry.deliveryId||'')&&
         v?.kind==='r2-head-v1'&&typeof v.sessionId==='string'&&!!v.sessionId&&
         typeof d?.accountId==='string'&&!!d.accountId&&
         typeof d.bucketName==='string'&&!!d.bucketName&&
@@ -41,9 +41,9 @@
     };
     const googleProof=entry=>entry?.providerKind==='google'&&
       entry?.ok===true&&entry?.verified===true&&entry?.status==='completed'&&
-      /^google:[\\w-]+$/.test(entry.deliveryId||'')&&
+      /^google:[\w-]+$/.test(entry.deliveryId||'')&&
       typeof entry.destination?.fileId==='string'&&
-      /^[\\w-]+$/.test(entry.destination.fileId)&&
+      /^[\w-]+$/.test(entry.destination.fileId)&&
       entry.deliveryId==='google:'+entry.destination.fileId;
     const providerProof=entry=>entry?.providerKind==='cloudflare'?cloudflareProof(entry):
       entry?.providerKind==='google'?googleProof(entry):
