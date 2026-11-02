@@ -92,6 +92,8 @@
   "scripts/dropbox-preservation.mjs",
   "extension/onedrive-menu.js",
   "extension/onedrive-oauth-diagnostic.js",
+  "extension/onedrive-api.js",
+  "extension/onedrive-auth.js",
   "extension/onedrive-provider.js",
   "extension/shelf-onedrive.js"
 ]
