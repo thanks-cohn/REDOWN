@@ -57,3 +57,25 @@ test('weak Dropbox success cannot count or erase failed attempts and preserves e
  await a.record({...success(),providerKind:'dropbox',deliveryId:'dropbox:weak',verified:true,status:'completed'});
  assert.equal(h.data.transferCounter.total,'900');assert.equal(h.data.providerSaveReceipts,undefined);assert.equal(h.data.transferHistory.length,2);assert.equal(h.data.transferHistory[0].status,'uncertain');assert.equal(h.data.transferHistory[0].location,'');assert.deepEqual(h.data.transferHistory[1],old);
 });
+
+
+test('no provider can count a failed or pending upload merely because a valid proof object exists',async()=>{
+ const h=fixture(),a=h.create();
+ for(const provider of ['cloudflare','google','dropbox','onedrive']){
+  const good=verified(provider,provider+'-good');
+  for(const changed of [
+   {...good,ok:false},
+   {...good,status:'failed'},
+   {...good,status:'pending'},
+   {...good,verified:false}
+  ])await a.record(changed);
+  assert.equal(h.data.providerSaveReceipts?.totals?.[provider],undefined);
+  await a.record(good);
+  assert.equal(h.data.providerSaveReceipts.totals[provider],'1');
+  const n=h.data.transferCounter.total;
+  await a.record({...good,deliveryId:provider+':different-but-failed',ok:false});
+  assert.equal(h.data.transferCounter.total,n);
+  assert.equal(h.data.providerSaveReceipts.totals[provider],'1');
+ }
+ assert.equal(h.data.redownDailyVerified.total,'4');
+});
