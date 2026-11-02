@@ -47,6 +47,11 @@ const receipt=(provider,id)=>({
   providerKind:provider,deliveryId:provider+':'+id,
   ok:true,verified:true,status:'completed',bytes:18,
   location:provider==='dropbox'||provider==='onedrive'?'':'R2: bucket/file',
+  ...(provider==='cloudflare'?{
+    destination:{accountId:'r2-owner',bucketName:'bucket',key:'objects/'+id+'.png'},
+    verification:{kind:'r2-head-v1',sessionId:'live-session',key:'objects/'+id+'.png',bytes:18,etag:'etag-value'}
+  }:{}),
+  ...(provider==='google'?{destination:{provider:'google-drive',fileId:id,name:id+'.png'}}:{}),
   ...(provider==='dropbox'?{destination:{
     proofVersion:1,accountId:'dbid:one',connectionId:'current',namespace:'123',root:'/',
     fileId:'id:'+id,revision:'rev',contentHash:'a'.repeat(64),name:id+'.png',path:'/'+id+'.png',bytes:18
