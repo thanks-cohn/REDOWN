@@ -23,15 +23,20 @@
       return state?.phase==='connected'&&typeof state.accountId==='string'&&!!state.accountId;
     }
     if(provider==='dropbox'){
-      const state=data?.['dropbox:state'];
+      const state=data?.['dropbox:state'],auth=data?.['dropbox:auth'];
       return state?.phase==='connected'&&state.rootReady===true&&
         typeof state.accountId==='string'&&!!state.accountId&&
-        typeof state.connectionId==='string'&&!!state.connectionId;
+        typeof state.connectionId==='string'&&!!state.connectionId&&
+        typeof auth?.refreshToken==='string'&&!!auth.refreshToken&&
+        auth.accountId===state.accountId&&auth.connectionId===state.connectionId;
     }
-    const state=data?.['onedrive:state'];
+    const state=data?.['onedrive:state'],auth=data?.['onedrive:auth'];
     return state?.phase==='connected'&&state.rootReady===true&&
       typeof state.accountId==='string'&&!!state.accountId&&
-      typeof state.driveId==='string'&&!!state.driveId;
+      typeof state.driveId==='string'&&!!state.driveId&&
+      typeof auth?.refreshToken==='string'&&!!auth.refreshToken&&
+      auth.accountId===state.accountId&&auth.connectionId===state.connectionId&&
+      auth.driveId===state.driveId;
   }
   globalThis.RedownSaveDropletGate={permitted,providerFor};
 })();
