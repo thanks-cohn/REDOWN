@@ -13,16 +13,38 @@
       ...(e?.code==='ONEDRIVE_UPLOAD_HOST_PERMISSION'&&
          typeof e.uploadOrigin==='string'&&e.uploadOrigin.startsWith('https://')?
         {uploadOrigin:e.uploadOrigin}:{})});
+    const pendingReceiptKey='onedrive:verifiedReceiptPendingHistory';
+    async function replayVerifiedReceipt(){
+      const pending=await get(pendingReceiptKey);
+      if(!pending)return;
+      // Never upload again here. Reconcile only this specific proven remote item
+      // with its existing stable delivery ID. Counter record() is idempotent.
+      await record(pending);
+      await chrome.storage.local.remove(pendingReceiptKey);
+    }
     async function saveRecord(job){
       const ok=job.status==='completed',item=job.item||{},src=job.source||{};
-      try{await record({provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
+      const entry={provider:'OneDrive',providerKind:'onedrive',profileId:'onedrive:'+job.accountId,
         profileName:'OneDrive root',deliveryId:'onedrive:'+job.id,transferId:job.id,filename:item.name||job.name,
         status:job.status,ok:ok?true:['failed','blocked'].includes(job.status)?false:undefined,
         verified:ok,sourceUrl:src.sourceUrl,pageUrl:src.pageUrl,srcUrl:src.srcUrl,
         frameUrl:src.frameUrl,linkUrl:src.linkUrl,location:ok?item.webUrl||'':'',
         destination:{provider:'onedrive',accountId:job.accountId,driveId:job.driveId,rootId:job.rootId,
           itemId:item.itemId||'',root:'/'},bytes:ok?item.bytes:job.bytes||0,
-        transport:'browser-mediated',error:ok?undefined:job.error});}catch{}
+        transport:'browser-mediated',error:ok?undefined:job.error};
+      if(ok)await chrome.storage.local.set({[pendingReceiptKey]:entry});
+      try{
+        await record(entry);
+        if(ok)await chrome.storage.local.remove(pendingReceiptKey);
+      }catch(error){
+        // A genuine Graph-proven save may have succeeded while the local
+        // History/counter failed. Retain its receipt, expose the accounting
+        // issue and allow the worker to reconcile without a second upload.
+        console.warn('OneDrive receipt persistence needs retry:',String(error?.message||'storage error'));
+        await setTransfer({status:ok?'completed':'uncertain',
+          error:ok?'OneDrive saved the file, but REDOWN History is synchronizing.':job.error||'Transfer receipt unavailable.',
+          ...(ok?{itemId:item.itemId,webUrl:item.webUrl||''}:{})}).catch(()=>{});
+      }
     }
     async function begin(source,identity){
       if(busy){await setTransfer({status:'blocked',code:'ONEDRIVE_BUSY',error:'Another OneDrive save is in progress.'});return;}
@@ -122,6 +144,7 @@
       };
       chrome.runtime.onStartup.addListener(()=>void recover().catch(()=>{}));
       void recover().catch(()=>{});
+      void replayVerifiedReceipt().catch(()=>{});
     }
     return {dispatch,ownsMessage,message,install};
   }
