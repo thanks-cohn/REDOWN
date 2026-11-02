@@ -17,13 +17,15 @@
 
 **Retest matrix:** direct images, linked files, ambiguous URLs, names with and without extensions, redirect/content-disposition cases where accessible, UTF-8/unusual names, URLs ending in numeric IDs, duplicate names, explicit conflict suffix, reconnect/restart, actual Dropbox root listing and independent metadata/read-back. Confirm no unexpected upload metadata. Preserve existing Dropbox namespace/reconnect/missing-files P0 evidence; do not blind-retry uncertain prior transfers.
 
-## BUG-2026-11-02-B — Little ball save animation is not shared by the other cloud providers
+## BUG-2026-11-02-B — P1 REGRESSION: Little-ball save animation no longer triggers for ANY cloud provider
 
-**Owner report:** The small ball animation/flourish present in part of REDOWN was not carried across to the other cloud-provider save cards.
+**LATEST OWNER REPORT (2026-11-02, supersedes the earlier partial-rollout observation):** **NONE of the cloud providers trigger the little ball effect anymore.** This includes the existing provider where the effect used to work. Treat this as an **all-provider missing celebration regression**, not merely missing animation parity in Dropbox/Google/OneDrive. **Status: OPEN; owner-reported in installed Chrome; root cause and live success-event acceptance not yet confirmed.**
 
-**Required behavior:** The same recognizable little-ball save/arrival animation family should be available in **all applicable provider cards** (Cloudflare R2, Google Drive, Dropbox and OneDrive, when connected and supported), themed consistently but without erasing each card's identity. Trigger only on a **new, genuinely verified successful save**. A reconnect, login, attempted/failed/cancelled/uncertain transfer, duplicate event, History rerender, Shelf reopening or refreshed count must not produce a false celebration. Preserve independent provider event identity, no duplicated flashes, accessibility/reduced-motion and mute settings. The flourish must not block upload or file navigation.
+**Required behavior:** Restore a single recognizable, playful **little-ball save/arrival animation** on the correct provider card for **every genuinely verified successful cloud save** across Cloudflare R2, Google Drive, Dropbox and OneDrive (and future authorized providers). The animation is part of REDOWN's signature ritual, not a perpetual idle ornament. It appears **only in response to a newly verified completion**, visually cooperates with the separate theme-specific SUCCESS! celebration and retracts/settles fully afterward. Each provider keeps its visual identity.
 
-**Test:** Capture before/after visual recordings of each provider, with successful, failed, uncertain and resumed/deduplicated cases; verify listener wiring, animation DOM/CSS and lifecycle, both when Shelf is open and when it opens after a completed save.
+**Audit / investigate first:** Track the last Codex changes and identify whether a shared verified-save event/receipt contract, provider-specific dispatch, listener registration, CSS animation class/state, keyframe definition, animation-end reset, reduced-motion gating, race/DOM replacement, Shelf visibility or theme switching removed the ball trigger. Do **not** assume the animation code was deleted or a save completed just because a counter/label changed. Capture actual event-to-DOM lifecycle and the regression commit if reproducible.
+
+**Acceptance:** Real successful saves to each provider visibly trigger ball animation, including when Shelf is already open and when a new completion is delivered to a live Shelf. Nothing triggers on pending/failed/cancelled/uncertain transfers, OAuth login, replayed receipts, old History, count hydration or re-opening Shelf. For completed saves while Shelf was closed, decide explicitly whether to show a one-time deferred celebration on reopen; **never fake a new live success**. Repeated separate saves may restart the ball when truly new receipts arrive. Provide before/after screen recordings, regression tests, reduced-motion behavior and PASS/FAIL/NOT_TESTED per provider. Do not alter verified-save truth or upload authority merely to force an animation.
 
 ## BUG-2026-11-02-C — NEON provider-card counter is aesthetically bare and starts too small
 
@@ -40,6 +42,14 @@
 ## BUG-2026-11-02-D — Theme-dependent SUCCESS! choreography: NEON money-green flashing vs. letter-by-letter other themes
 
 **Latest owner-approved correction (2026-11-02), superseding any earlier single generic SUCCESS! animation:** `SUCCESS!` is **never permanent**. It appears **only when the relevant provider successfully saves the file**, performs a distinct entrance/flash for the active theme, then **disappears completely**. The permanent per-provider numeric counter is a separate component.
+
+### Permanent resting / idle card contract (ALL themes, when no file is being saved)
+
+- **No idle SUCCESS!, no flickering word and no active ball animation.** The rest state is a composed, polished provider card, not an endless completion party. The little-ball element is absent, settled or discreetly invisible until a real event triggers it.
+- **Every card retains its provider identity** (logo/name and connected/disconnected/reconnect status as truthful), ordinary user controls such as GO TO when valid, and the existing FREE GB/free-tier information where shown. Do not fabricate live quota from a provider's advertised free-tier allowance. Idle state must not misleadingly imply a file is saving.
+- The **per-provider confirmed-save count is persistent** and stays visible after celebration ends. In **NEON** it is an intentionally **LARGE** number from the first digit, framed in glossy arcade/SNES-like complementary styling and automatically reduced **only when extra digits actually require more room**; do not leave a lonely bare numeral. In **Porcelain**, use refined, clear red/white-aligned typography; in **Midnight**, dark premium contrast with restrained red highlights. No forced NEON money-green/yellow labels in other themes.
+- Normal in-progress saving may show accurate activity/progress feedback, but it must be visually distinct from an already-confirmed SUCCESS! celebration. On failure/uncertainty, display real status without a success ball/flash.
+- After an animation completes, **return exactly to the ordinary idle layout**: no reserved permanent SUCCESS! row, flashing leftover, overlay, or stuck ball. The durable number is the only success-display element that necessarily remains.
 
 ### NEON theme — dual-color money-green SUCCESS!
 
@@ -60,6 +70,8 @@
 - **Every separate newly verified save must retrigger the theme's complete celebration from the beginning** (including the first letter in non-Neon themes), even if an earlier SUCCESS! sequence recently finished. For multiple rapid valid saves, use a safe bounded retrigger/queue policy so distinct completions are acknowledged, without overlapping messages, replaying duplicate receipts, inventing saves or leaving a permanent SUCCESS!.
 - Honor reduced motion and seizure-safety considerations: where flashing or staggered animation is disabled, show a brief static accessible confirmation then remove it, without obscuring verified status or generating unnecessary screen-reader spam.
 - Confirm actual display and motion with short **installed-Chrome video captures**, not screenshots of a single frame alone. Obtain owner approval for the money-green/yellow pairing, exact offset treatment and the non-Neon letter sequence.
+
+**Timing clarification:** The **letter-by-letter → two flashes → third held appearance → disappear** choreography applies **ONLY to non-NEON themes**. Do NOT silently impose this sequence on NEON; NEON uses its own full-word dual-color money-green/yellow flashing exit. An additional independently verified save repeats the relevant theme's full animation; otherwise the default idle card with its persistent number stays visible.
 
 **Test matrix:** For NEON, full-word dual-color flash and disappearance, plus large-to-fit count shrink. For each other theme, characters appear sequentially, the completed word flashes **two times**, a **third appearance holds for a deliberate beat**, then disappears. The next separate verified save starts the whole sequence again; the permanent saved-file count stays behind. Repeat for Cloudflare, Google Drive, Dropbox and OneDrive on new verified successful saves; failure/uncertain outcome; multiple saves; reopening Shelf; theme switching; small widths; reduced motion; and persistence of the independent counter.
 
