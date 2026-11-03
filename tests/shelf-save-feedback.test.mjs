@@ -82,7 +82,7 @@ test('Dropbox disconnect or account switch removes an in-flight celebration',()=
 
 test('Neon provider-save numerals use clean tabular DM Sans, not patterned charted type',async()=>{
   const css=await readFile('extension/shelf.css','utf8');
-  const rule=css.match(/:root\\[data-shelf-theme="neon"\\] \\.provider-save-count\\{([^}]*)\\}/)?.[1];
+  const rule=css.match(/:root\[data-shelf-theme="neon"\] \.provider-save-count\{([^}]*)\}/)?.[1];
   assert.ok(rule,'Neon counter rule exists');
   assert.match(rule,/"DM Sans"/);
   assert.match(rule,/font-variant-numeric:tabular-nums/);
