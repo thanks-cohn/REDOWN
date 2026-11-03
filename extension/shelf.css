@@ -653,7 +653,7 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 :root[data-shelf-theme="ocean"] .provider-save-success{color:#a7efde}
 :root[data-shelf-theme="neon"] .provider-save-success{font:400 30px/1.25 "Jersey 10 Charted",monospace;letter-spacing:.02em;color:#39ed79;text-shadow:2px 2px 0 #ffeb34}
 :root[data-shelf-theme="neon"] .provider-save-success.money-flash{color:#8fff00;text-shadow:2px 2px 0 #00a641,-1px -1px 0 #eaffb4}
-:root[data-shelf-theme="neon"] .provider-save-count{font:400 52px/1.05 "Jersey 10 Charted",monospace;color:#b3ffe0;text-shadow:2px 2px 0 #385f71}
+:root[data-shelf-theme="neon"] .provider-save-count{font:800 36px/1.05 "DM Sans",system-ui,sans-serif;color:#b3ffe0;text-shadow:2px 2px 0 #385f71}
 .provider-save-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 /* Keep the existing options target alongside its action as the readout grows. */
@@ -688,7 +688,7 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   font-variant-numeric:tabular-nums;
 }
 :root[data-shelf-theme="neon"] .overview .destinations-grid .provider-save-count{
-  font:400 18px/1 "Jersey 10 Charted",monospace;
+  font:800 18px/1 "DM Sans",system-ui,sans-serif;
   color:#b3ffe0;
   text-shadow:1px 1px 0 #385f71;
 }
@@ -738,7 +738,7 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   font-variant-numeric:tabular-nums;
 }
 :root[data-shelf-theme="neon"] #cloudflare .provider-save-count{
-  font:400 21px/1 "Jersey 10 Charted",monospace;
+  font:800 21px/1 "DM Sans",system-ui,sans-serif;
   color:#b3ffe0;
   text-shadow:1px 1px 0 #385f71;
 }
@@ -913,9 +913,9 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
   border-radius:5px;
   background:linear-gradient(155deg,#ff8bd4 0%,#ff3d9e 48%,#df1f83 100%);
   color:#200726;
-  font:400 30px/1 "Jersey 10 Charted",monospace;
+  font:800 26px/1.05 "DM Sans",system-ui,sans-serif;
   font-variant-numeric:tabular-nums;
-  letter-spacing:0;
+  letter-spacing:-.035em;
   text-shadow:1px 1px 0 #ffd6eb;
   box-shadow:inset 0 2px rgba(255,255,255,.55),inset 0 -3px rgba(65,0,60,.23),0 0 0 1px #6e174a,0 0 10px rgba(255,53,160,.35);
 }

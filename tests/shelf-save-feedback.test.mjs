@@ -235,3 +235,12 @@ test('Cloudflare action matches sibling card anatomy and SUCCESS covers the enti
  assert.equal(count.parentElement,action);
  h.dom.window.close();
 });
+
+test('Neon provider-count badges use plain tabular numerals in every provider',async()=>{
+  const css=await readFile('extension/shelf.css','utf8');
+  const bezel=css.slice(css.indexOf('/* Neon count bezel:'),css.indexOf('/* Theme-aware REDOWN signature'));
+  assert.ok(bezel.includes('font:800 26px/1.05 "DM Sans"'),'pink counter uses clean DM Sans');
+  assert.match(bezel,/font-variant-numeric:tabular-nums/);
+  assert.doesNotMatch(bezel,/Jersey 10 Charted|Bitcount Prop Double Ink/);
+  assert.match(css,/:root\[data-shelf-theme="neon"\] #cloudflare \.provider-save-count/);
+});

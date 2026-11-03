@@ -32,7 +32,15 @@ function change(h,input,checked){
 }
 const evt=(h,type)=>new h.w.MouseEvent(type,{bubbles:false,cancelable:true});
 
-test('professional default has straight Right2Click heading, no slant, and no compass arrow',async()=>{
+test('Shelf hero and connected promise use Click2Cloud / Direct2Cloud branding',async()=>{
+  const shelfJS=await readFile(new URL('../extension/shelf.js',import.meta.url),'utf8');
+  assert.match(html,/Click2Cloud, Anywhere\./);
+  assert.match(shelfJS,/Download Direct2Cloud! Nothing Downloads Directly!/);
+  assert.doesNotMatch(html,/Right2Click, Anywhere\./);
+  assert.doesNotMatch(shelfJS,/Direct-2-Cloud/);
+});
+
+test('professional default has straight Click2Cloud heading, no slant, and no compass arrow',async()=>{
   const h=fixture();
   await settle();
   assert.equal(h.d.documentElement.dataset.destinationDisplay,'straight');
@@ -40,7 +48,7 @@ test('professional default has straight Right2Click heading, no slant, and no co
   assert.equal(h.slant.checked,false);
   assert.equal(h.arrow.checked,false);
   assert.equal(h.arrowRow.hidden,true);
-  assert.equal(h.d.querySelector('.destinations-straight-title').textContent,'Right2Click, Anywhere.');
+  assert.equal(h.d.querySelector('.destinations-straight-title').textContent,'Click2Cloud, Anywhere.');
   assert.equal(h.d.querySelector('.destinations-subtitle').textContent,'Your Passions. Right Here.');
   assert.equal(h.d.querySelectorAll('.destinations-grid .destination-tile').length,3);
   assert.ok(h.d.querySelector('#beta-aesthetics > summary'));
