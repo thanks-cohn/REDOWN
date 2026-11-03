@@ -38,3 +38,20 @@
 - [ ] Document intended behavior versus observed source, browser and live-cloud verification separately. Mark each task complete only with evidence.
 
 **Owner's product goal:** Start with a working one-right-click destination; teach sophistication through playful, obvious interaction instead of exposing configuration complexity. The sample branch is a guide only—never an instruction to manufacture folders.
+
+## P1 — Real right-click saves from Dashboard / Explorer images
+
+**New owner direction (November 3):** REDOWN's Dashboard should not be a place where the user loses the ability to save to their connected clouds. The same right-click principle should work on eligible **real images** in REDOWN's own Dashboard/Explorer, including copying an existing cloud object to another connected cloud.
+
+- [ ] On an actual image or file inside Dashboard/Explorer, offer a functional **REDOWN → Cloudflare / Google Drive / Dropbox / OneDrive / other supported clouds** destination menu. Only show available actionable routes when authenticated and authorized, with clear connection/setup actions otherwise.
+- [ ] Preserve the **flat native-style leaf** behavior for Google Drive, Dropbox, and OneDrive; Cloudflare alone may display nested V3 destinations as configured. Additional S3 providers must remain independent provider destinations.
+- [ ] Resolve the **actual source object and original bytes** (not a compressed preview/thumbnail), exact intended destination and filename. Preserve existing conflict policy (KEEP BOTH by default). Distinguish copy-to-cloud from moving or deleting the original; do not silently remove or alter the source.
+- [ ] Reuse the real production routing, auth, transfer and provider-confirmation paths where appropriate, rather than creating an unrelated Dashboard upload engine. Sending to another cloud must not require local disk staging when the supported source can be fetched/streamed in the browser.
+- [ ] Respect provider privacy minimization: upload only bytes, filename/extension and genuinely required provider metadata; **never send original page/source/link URLs or browsing provenance to destination providers**.
+- [ ] Success animation, saved counters and History confirmation only after a provider-confirmed upload. Pending, failure, permission and ambiguous outcomes must be distinguishable and retryable.
+- [ ] Treat the Dashboard as a **design/testing laboratory**: iterate on one shared canonical menu definition/projection and actionable route IDs in Dashboard first, then register the Chrome-native-compatible structure through V3 after testing. The in-Dashboard menu may be styled; Chrome's native menu has platform constraints and cannot replicate arbitrary visuals.
+- [ ] **Crucial safety boundary:** The Quick Tour's sample image still produces only a **faux illustrative menu** that never transfers anything, even if it visually includes cloud providers. Real Dashboard/Explorer images may invoke real saves. Ensure a strict source/surface distinction in code and tests.
+- [ ] Acceptance: right-click an eligible real Explorer image, choose another authorized cloud, verify the **original object** arrives under the intended destination, no private source provenance leaks, the source remains intact, and truthful History/counter results appear. Independently verify that repeating Quick Tour leaves all real provider, folder, menu, object, and History state unchanged.
+
+**Status:** Open proposal; this is not evidence of implementation or live cross-cloud verification.
+
