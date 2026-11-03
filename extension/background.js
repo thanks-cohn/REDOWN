@@ -804,10 +804,37 @@ async function setProfiles(profiles,menuProfileId=null) {
 // Toolbar status flashes tint the shared icon, then restore its live palette.
 // No extra PNG source and no separate R design.
 let toolbarBrandPalette='porcelain',toolbarBrandBackground='original',toolbarBrandGeneration=0;
+let toolbarFailureDotPending=false,toolbarFailureDotRevision=0;
+// Render the failure lamp into the native action icon, never destination cards
+// or web pages. Each size keeps the dot inset from the lower-left rim.
+function drawToolbarFailureDot(images,{pulse=false,shift=0,theme=toolbarBrandPalette}={}){
+  const neon=theme==='neon',color=neon?[31,203,255]:[252,48,65];
+  const hot=neon?[214,250,255]:[255,218,220],out={};
+  for(const [key,base] of Object.entries(images)){
+    const size=Number(key),pixels=new Uint8ClampedArray(base.data);
+    const cx=size*(.225+shift),cy=size*.775;
+    const core=size*(pulse?.133:.096),outer=core*(pulse?2.85:2.4);
+    for(let y=Math.max(0,Math.floor(cy-outer));y<Math.min(size,Math.ceil(cy+outer));y++){
+      for(let x=Math.max(0,Math.floor(cx-outer));x<Math.min(size,Math.ceil(cx+outer));x++){
+        const dist=Math.hypot(x+.5-cx,y+.5-cy);
+        if(dist>=outer)continue;
+        const inside=dist<=core;
+        const glow=inside?.95:Math.pow(Math.max(0,(outer-dist)/(outer-core)),2)*(pulse?.64:.46);
+        const mix=inside&&dist<core*.43?hot:color,i=(y*size+x)*4;
+        for(let c=0;c<3;c++)pixels[i+c]=Math.round(pixels[i+c]*(1-glow)+mix[c]*glow);
+        pixels[i+3]=Math.max(pixels[i+3],Math.round(255*glow));
+      }
+    }
+    out[size]=new ImageData(pixels,size,size);
+  }
+  return out;
+}
+
 async function paintToolbarBrand(){
   const generation=++toolbarBrandGeneration;
   try{
-    const imageData=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
+    const iconPixels=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
+    const imageData=iconPixels&&toolbarFailureDotPending?drawToolbarFailureDot(iconPixels):iconPixels;
     if(generation===toolbarBrandGeneration&&imageData)await chrome.action.setIcon({imageData});
   }catch(error){console.warn('REDOWN toolbar icon fallback:',error?.message||String(error));}
 }
@@ -816,16 +843,34 @@ function createToolbarFeedback(api, loadPixels = async size => {
   return globalThis.RedownBrandIcon.imageData(toolbarBrandPalette,toolbarBrandBackground,[size])[size];
 }, pause = ms => new Promise(resolve=>setTimeout(resolve,ms))) {
   let generation=0,pixelsPromise,pixelsTheme='';
-  const sizes=[16,32,48], colors={success:[45,205,144],failure:[239,82,107]};
+  const sizes=[16,32,48], colors={success:[45,205,144]};
   return async state => {
-    if(!api?.setIcon || !colors[state])return;
+    if(!api?.setIcon || !['success','failure','clear'].includes(state))return;
     const ticket=++generation;
+    if(state==='clear'){
+      try{await globalThis.redownRestoreToolbarIcon?.();}catch{}
+      return;
+    }
     try {
       const key=toolbarBrandPalette+':'+toolbarBrandBackground;
       if(key!==pixelsTheme){pixelsTheme=key;pixelsPromise=null;}
       pixelsPromise ||= Promise.all(sizes.map(async size=>[size,await loadPixels(size)])).then(Object.fromEntries).catch(error=>{pixelsPromise=null;throw error;});
       const original=await pixelsPromise;
       if(ticket!==generation)return;
+      if(state==='failure'){
+        // Exactly two small laser pulses with a tiny horizontal wobble, then
+        // a steady inset indicator. The native Chrome button itself cannot shake.
+        const frames=[[true,150,-.025],[false,170,0],[true,150,.025],[false,0,0]];
+        if(globalThis.RedownToolbarAppearance?.feedbackTitle)
+          await RedownToolbarAppearance.feedbackTitle('REDOWN · Save failed — open History');
+        else await api.setTitle?.({title:'REDOWN · Save failed — open History'});
+        for(const [pulse,hold,shift] of frames){
+          if(ticket!==generation)return;
+          await api.setIcon({imageData:drawToolbarFailureDot(original,{pulse,shift,theme:toolbarBrandPalette})});
+          if(hold)await pause(hold);
+        }
+        return;
+      }
       const color=colors[state], images={};
       for(const size of sizes){
         const base=original[size].data, data=new Uint8ClampedArray(base);
@@ -877,7 +922,14 @@ async function recordTransfer(entry) {
   // Do not flash green from a URL, POST acknowledgement or decorative timer.
   // The counter commits a *new*, provider-verifier-backed receipt first.
   const outcome=await transferCounter.record(entry);
-  if(entry?.ok===false)void toolbarFeedback("failure");
+  if(entry?.ok===false){
+    // The red/Neon-blue lamp means a real failed save awaits History review.
+    // Never raise it for queued/uncertain work or from a merely unverified URL.
+    toolbarFailureDotPending=true;
+    ++toolbarFailureDotRevision;
+    void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});
+    void toolbarFeedback('failure');
+  }
   else if(outcome?.newVerified===true)void toolbarFeedback("success");
   return outcome;
 }
@@ -917,16 +969,28 @@ const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
 // One authoritative durable daily badge, separate from the lifetime odometer.
 RedownDailySaveBadge.create({chrome,readDaily:()=>transferCounter.readDaily()}).install();
-void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
+const toolbarFailureReadRevision=toolbarFailureDotRevision;
+void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode','redownFailureDot']).then(data=>{
   toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
   toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
+  if(toolbarFailureReadRevision===toolbarFailureDotRevision)
+    toolbarFailureDotPending=data.redownFailureDot?.pending===true;
   return paintToolbarBrand();
 }).catch(()=>void paintToolbarBrand());
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
   if(changes.shelfColorScheme)toolbarBrandPalette=RedownBrandIcon.normalize(changes.shelfColorScheme.newValue);
   if(changes.shelfIconBackgroundMode)toolbarBrandBackground=changes.shelfIconBackgroundMode.newValue==='theme'?'theme':'original';
-  if(changes.shelfColorScheme||changes.shelfIconBackgroundMode)void paintToolbarBrand();
+  if(changes.redownFailureDot){
+    const next=changes.redownFailureDot.newValue?.pending===true;
+    if(next!==toolbarFailureDotPending){
+      toolbarFailureDotPending=next;
+      ++toolbarFailureDotRevision;
+      if(!next){void toolbarFeedback('clear');return;}
+    }
+  }
+  if(changes.shelfColorScheme||changes.shelfIconBackgroundMode||changes.redownFailureDot)
+    void paintToolbarBrand();
 });
 importScripts("cloudflare-auth.js");
 importScripts("cloudflare-api.js");

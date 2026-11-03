@@ -19,7 +19,15 @@ function route() {
     if(name===view)$('nav-'+name).setAttribute('aria-current','page');
     else $('nav-'+name).removeAttribute('aria-current');
   }
-  if(view==='history')void globalThis.RedownShelfHistory?.open();
+  const reviewStart=Date.now();
+  if(view==='history')void Promise.resolve(globalThis.RedownShelfHistory?.open()).then(async()=>{
+    // Opening the actual History view acknowledges previously signaled failures.
+    // A newer failure arriving during the read must retain its indicator.
+    const {redownFailureDot}=await chrome.storage.local.get('redownFailureDot');
+    if(!redownFailureDot?.pending || !Number.isFinite(redownFailureDot.at))return;
+    if(location.hash.slice(1)==='history'&&redownFailureDot.at<=reviewStart)
+      await chrome.storage.local.remove('redownFailureDot');
+  }).catch(()=>{});
 }
 window.addEventListener('hashchange',route); route();
 // One-time History/Settings navigation, scoped to the requesting browser window.
