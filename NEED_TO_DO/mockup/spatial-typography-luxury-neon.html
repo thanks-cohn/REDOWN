@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REDOWN — Spatial Typography / Luxury Neon (Concept Mockup)</title>
+<style>
+/*
+ * REDOWN mockup — design study only, not an extension implementation.
+ * Completely scoped to .redown-spatial; no global runtime CSS.
+ * No frameworks, scripts, external font requests, or animation dependencies.
+ */
+:root { color-scheme: dark; }
+body { margin: 0; min-height:100vh; display:grid; place-items:center; padding:24px 10px;
+ background: radial-gradient(ellipse at 50% 24%,#342435 0%,#16131b 58%,#0b0b0f 100%);
+ color:#f7eaf1; font-family:Inter,"Segoe UI",ui-sans-serif,system-ui,sans-serif; }
+* { box-sizing:border-box; }
+.redown-spatial { width:min(360px,100%); background:radial-gradient(ellipse at 80% 5%,#38263988,transparent 43%),linear-gradient(165deg,#1d1821,#111016 64%,#1a131e);
+ border:1px solid #8c718355; border-radius:16px; overflow:hidden;
+ box-shadow:0 25px 65px #0008,inset 0 1px #f4d4e428; }
+.redown-spatial .upper { padding:22px 19px 0; }
+.redown-spatial .masthead { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:5px; }
+.redown-spatial .micro { font-size:8px; line-height:1.65; letter-spacing:1px; color:#b3a1ad; }
+.redown-spatial .masthead .micro:last-child { text-align:right; }
+.redown-spatial .brand { font-size:15px; font-weight:680; letter-spacing:3px; color:#faeaf3; }
+.redown-spatial .brand:after { content:""; display:block; width:28px; height:1px; background:#edbbd9; margin:8px auto 0; box-shadow:0 0 10px #f0a5cf; }
+.redown-spatial .nav { margin-top:25px; display:flex; justify-content:space-between; font-size:9px; letter-spacing:1.5px; color:#847786; border-bottom:1px solid #90768b50; padding-bottom:13px; }
+.redown-spatial .nav strong { color:#ffe3f2; font-weight:600; }
+.redown-spatial .hero { height:218px; position:relative; overflow:hidden; }
+.redown-spatial .hero:before { content:""; width:170px; height:170px; border:1px solid #ad849d24; border-radius:50%; position:absolute; right:-30px; top:18px; pointer-events:none; }
+.redown-spatial .hero:after { content:""; width:98px; height:98px; border:1px solid #ad849d22; border-radius:50%; position:absolute; right:5px; top:54px; pointer-events:none; }
+.redown-spatial .eyebrow { position:absolute; top:20px; right:19px; font-size:8px; letter-spacing:1.7px; color:#baa9b6; }
+.redown-spatial .h1 { position:absolute; top:54px; left:18px; font:normal 35px/1 Georgia,"Times New Roman",serif; letter-spacing:-1.8px; }
+.redown-spatial .h2 { position:absolute; top:94px; right:18px; font:italic 39px/1 Georgia,"Times New Roman",serif; letter-spacing:-1.5px; color:#e6b5d5; text-shadow:0 0 25px #dc7eb82b; }
+.redown-spatial .note-left { position:absolute; bottom:30px; left:19px; font:italic 12px Georgia,serif; color:#b9a7b6; }
+.redown-spatial .note-right { position:absolute; bottom:30px; right:20px; font-size:9px; letter-spacing:1.1px; color:#e4b5d0; text-align:right; }
+.redown-spatial .hero-line { position:absolute; left:20px; right:20px; bottom:18px; height:1px; background:linear-gradient(90deg,#a77d9950,transparent,#a77d9950); }
+.redown-spatial .collection { position:relative; padding:20px 13px 0 37px; }
+.redown-spatial .vertical { writing-mode:vertical-rl; transform:rotate(180deg); position:absolute; top:50px; left:12px; color:#bba3b2; font-size:8px; letter-spacing:2.6px; }
+.redown-spatial .collection-cap { font-size:8px; letter-spacing:1.45px; color:#b9a0b1; text-align:right; margin-bottom:14px; padding-right:5px; }
+.redown-spatial .cards { display:flex; flex-direction:column; gap:10px; }
+.redown-spatial .card { min-height:97px; position:relative; border:1px solid #8d71825d; border-radius:9px; background:linear-gradient(120deg,#29212c,#1a1720 64%,#201822); box-shadow:inset 0 1px #ffffff12,0 4px 13px #0002; }
+.redown-spatial .card:before { content:""; position:absolute; left:15px; top:0; width:44px; height:1px; background:#e2abc96c; }
+.redown-spatial .logo { position:absolute; top:16px; left:13px; width:25px; height:24px; display:grid; place-items:center; }
+.redown-spatial .cloudname { position:absolute; top:16px; left:46px; font-size:12px; font-weight:600; }
+.redown-spatial .cloudstate { position:absolute; top:35px; left:46px; font-size:9px; color:#a397a7; }
+.redown-spatial .count { position:absolute; right:15px; top:6px; text-align:center; }
+.redown-spatial .number { font:normal 31px/1.1 Georgia,serif; letter-spacing:-1px; color:#f4d5e7; font-variant-numeric:lining-nums tabular-nums; }
+.redown-spatial .saves { font-size:7px; letter-spacing:1.65px; color:#ad8fa2; margin-top:2px; }
+.redown-spatial .rule { position:absolute; top:65px; left:13px; right:13px; height:1px; background:#b896ad24; }
+.redown-spatial .action { position:absolute; bottom:10px; left:14px; color:#f1cfe3; font-size:9px; font-weight:650; letter-spacing:1.1px; }
+.redown-spatial .action span { margin-left:5px; color:#d9a4c2; }
+.redown-spatial .storage { position:absolute; bottom:11px; right:39px; color:#9a8f9e; font-size:9px; white-space:nowrap; }
+.redown-spatial .storage b { color:#e3cddc; font-weight:650; margin-left:4px; }
+.redown-spatial .dots { position:absolute; right:12px; bottom:8px; color:#bda6b7; font-size:17px; line-height:1; }
+.redown-spatial .lower { height:180px; position:relative; margin-top:27px; border-top:1px solid #86667b48; overflow:hidden; }
+.redown-spatial .index { position:absolute; right:20px; top:19px; font-size:8px; letter-spacing:2px; color:#b79aaa; }
+.redown-spatial .future { position:absolute; top:38px; left:18px; font:normal 29px Georgia,serif; letter-spacing:-.8px; }
+.redown-spatial .isnow { position:absolute; top:74px; right:19px; font:italic 38px Georgia,serif; letter-spacing:-1.5px; color:#f1c2df; }
+.redown-spatial .subline { position:absolute; bottom:23px; left:20px; font-size:9px; letter-spacing:1.6px; color:#ae96a6; }
+.redown-spatial .decoration { position:absolute; left:19px; bottom:47px; width:60px; height:1px; background:#ab859a; }
+.redown-spatial .footer { display:flex; align-items:center; justify-content:space-between; gap:7px; padding:14px 18px 17px; border-top:1px solid #836d7f3c; font-size:9px; color:#aba0ae; }
+.redown-spatial .led { display:inline-block; width:5px; height:5px; border-radius:50%; background:#e3b8d2; box-shadow:0 0 9px #e6a1d0; margin-right:7px; }
+.redown-spatial .footer .edition { font-size:8px; letter-spacing:1.3px; color:#847586; white-space:nowrap; }
+@media (max-width:350px) {
+ .redown-spatial .h1 { font-size:31px; }
+ .redown-spatial .h2 { font-size:34px; }
+ .redown-spatial .collection { padding-left:31px; }
+ .redown-spatial .vertical { left:9px; }
+ .redown-spatial .cloudname { font-size:11px; }
+ .redown-spatial .number { font-size:27px; }
+}
+</style>
+</head>
+<body>
+<!-- Spatial Luxury Neon: conceptual Shelf visual; illustrative provider statuses, storage tiers, and counters. -->
+<main class="redown-spatial" aria-label="REDOWN luxury spatial typography mockup">
+ <header class="upper">
+  <div class="masthead">
+   <div class="micro">YOUR SPACE<br>YOUR CONTROL</div>
+   <div class="brand">REDOWN</div>
+   <div class="micro">YOUR CLOUD<br>COMPANION</div>
+  </div>
+  <nav class="nav" aria-label="Mock navigation"><strong>REMOTES</strong><span>HISTORY</span><span>SETTINGS</span></nav>
+ </header>
+ <section class="hero" aria-label="Click2Cloud hero">
+  <div class="eyebrow">PRIVATE BY DESIGN / 01</div>
+  <div class="h1">Click2Cloud,</div>
+  <div class="h2">anywhere.</div>
+  <div class="note-left">Your Passions.</div><div class="note-right">RIGHT HERE.</div>
+  <div class="hero-line"></div>
+ </section>
+ <section class="collection" aria-label="Illustrative cloud collection">
+  <div class="vertical">YOUR CLOUD COLLECTION</div>
+  <div class="collection-cap">THREE DESTINATIONS · ONE SPACE</div>
+  <div class="cards">
+   <article class="card" aria-label="Google Drive visual example">
+    <div class="logo"><svg width="25" height="25" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 3h9l11 18h-9z" fill="#f9b52b"/><path d="M11 3h9L9 23H0z" fill="#31a969"/><path d="M9 23h22l-5 7H4z" fill="#4285f4"/></svg></div>
+    <div class="cloudname">Google Drive</div><div class="cloudstate">Connected</div>
+    <div class="count"><div class="number">14</div><div class="saves">SAVES</div></div>
+    <div class="rule"></div><div class="action">GO TO <span>↗</span></div>
+    <div class="storage">FREE <b>15 GB</b></div><div class="dots">···</div>
+   </article>
+   <article class="card" aria-label="Dropbox visual example">
+    <div class="logo"><svg width="25" height="25" viewBox="0 0 32 32" fill="#429afa" aria-hidden="true"><path d="m9 2 7 5-7 5-7-5zm14 0 7 5-7 5-7-5zM9 14l7 5-7 5-7-5zm14 0 7 5-7 5-7-5zM16 22l7 5-7 5-7-5zm-7 5 7-5-7-5z"/></svg></div>
+    <div class="cloudname">Dropbox</div><div class="cloudstate">Not connected</div>
+    <div class="count"><div class="number">4</div><div class="saves">SAVES</div></div>
+    <div class="rule"></div><div class="action">LOGIN <span>↗</span></div>
+    <div class="storage">FREE <b>2 GB</b></div><div class="dots">···</div>
+   </article>
+   <article class="card" aria-label="OneDrive visual example">
+    <div class="logo"><svg width="27" height="25" viewBox="0 0 32 28" aria-hidden="true"><path d="M10 25H5C-2 25-1 14 6 13c1-8 12-11 17-3 10-1 13 15 2 15Z" fill="#2789e9"/><path d="M8 25h17c8 0 8-10 1-12-4-1-8 1-10 4-4-3-11 1-8 8" fill="#49b4ff"/></svg></div>
+    <div class="cloudname">OneDrive</div><div class="cloudstate">Connected</div>
+    <div class="count"><div class="number">17</div><div class="saves">SAVES</div></div>
+    <div class="rule"></div><div class="action">GO TO <span>↗</span></div>
+    <div class="storage">FREE <b>5 GB</b></div><div class="dots">···</div>
+   </article>
+  </div>
+ </section>
+ <section class="lower" aria-label="Spatial closing statement">
+  <div class="index">YOUR SPACE / TRUE REMOTE</div>
+  <div class="future">The future</div><div class="isnow">is now.</div>
+  <div class="decoration"></div><div class="subline">TRUE REMOTE IS HERE.</div>
+ </section>
+ <footer class="footer"><span><i class="led"></i>Checking Cloudflare connection…</span><span class="edition">REDOWN / NEON</span></footer>
+</main>
+</body>
+</html>
