@@ -7,9 +7,9 @@ This small Worker exists **only** so Cloudflare Workers Builds can deploy to the
 - GitHub repo: `thanks-cohn/REDOWN`
 - Recommended branch: `codex/v3-parity-first-reconstruction` for lab work, not `main`.
 - Cloudflare Worker: `click2cloud-v3p1-r2-lab` only.
-- Repository root directory: `/`.
-- Build command: `npm ci --no-audit --no-fund && npm run check`.
-- Deploy command: `npx wrangler deploy --config cloudflare/click2cloud-v3p1-r2-lab/wrangler.toml`.
+- Root directory: `cloudflare/click2cloud-v3p1-r2-lab` (so Cloudflare detects this Worker's own name, not the unrelated repo-root Worker).
+- Build command: `node --check src/index.js`.
+- Deploy command: `npx wrangler deploy` (Wrangler resolves the `wrangler.toml` in this directory).
 - No preview deployments or unrelated branch triggers until explicitly verified.
 - Do not use `npm run deploy`: root `wrangler.toml` belongs to `remote-asset-ingest`.
 - Prefer path-specific build triggers. This file alone **does not** enable Cloudflare automatic deployment.
