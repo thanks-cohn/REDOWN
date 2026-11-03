@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "00_START_HERE.md",
-      "sha256": "53cc620039e512423b8b552ab24ba39601680a5d7d96b5102d7ba441655cee45"
+      "sha256": "c662d2367882b25ab949e567366c171e76af18463fe86be6465b9199e76dc95a"
     },
     {
       "path": "01_SOURCE_CENSUS_AND_BOUNDARIES.md",
@@ -39,7 +39,7 @@
     },
     {
       "path": "09_CURRENT_VS_VISION_GAP_LEDGER.md",
-      "sha256": "a7f3b9aee44c39d840538b3c6904f60afa9346bbc694ff067982643ebd347f48"
+      "sha256": "847da163efc475c643e7b3c67e68f848a076a6598bc33f9a34b813b5114e80b5"
     },
     {
       "path": "10_V3PLUS1_BLUEPRINT_FOR_NEXT_CODEX_REQUEST.md",
@@ -47,15 +47,19 @@
     },
     {
       "path": "11_OWNER_DECISION_REGISTER.md",
-      "sha256": "cd814dad734ae4f47d3f3f337d17e612d7e8297689139496b362fe6ef02f8039"
+      "sha256": "d53506bf8a95589d80ffc115a98aa1c5fb271d15acb1c45135c388e9912783dd"
     },
     {
       "path": "12_NEXT_REQUEST_INPUT_CHECKLIST.md",
-      "sha256": "41e19b15f91995d28a83739a24a91246509a0d28cc005fda93120185a3a9fdc5"
+      "sha256": "584ed409505a15e719450e143d610a165d44381ef49470de4a2ae06765c89d5c"
+    },
+    {
+      "path": "13_CONCURRENT_OWNER_VISION_ADDENDUM.md",
+      "sha256": "e4319a6828daf0f502408885c1badf32b81f0a287a9ac759acb281928e538ca1"
     },
     {
       "path": "evidence/COMMANDS.md",
-      "sha256": "d642265f4b4cd2d5bd7a1b93619d0ab08988aec7c8243f07900df2a3045de0aa"
+      "sha256": "225c635132e7e68694bf9c06c2b0041f092d183f97711645023c9a1c05de47db"
     },
     {
       "path": "evidence/FAILURES.md",
@@ -98,6 +102,10 @@
       "sha256": "47cd3428e9f1f8a113f2c9a7d69d3999f4850fd38f9cf7e11cc33cbee64ad9f5"
     },
     {
+      "path": "evidence/concurrent-branch.json",
+      "sha256": "6d65541b702f01523f01f30c0ac7670feae001bed00f7c23a8f4eee2c4e7eb47"
+    },
+    {
       "path": "evidence/diagnostics-getReleaseReadiness.log",
       "sha256": "15c2575f56e1aa09fb247c8aa0adbdfe2c5206debd1ee662dfef3bb151eff989"
     },
@@ -115,7 +123,7 @@
     },
     {
       "path": "evidence/document-validation.json",
-      "sha256": "ee25490fa5130c26452c1554eccd8f61934e5f88d7b605e23c8ae262f364a73e"
+      "sha256": "30dc1c5b7894357767b6e8aac623c3eb10765caf6d60b88a752b5300f058f513"
     },
     {
       "path": "evidence/failure-ledger.json",

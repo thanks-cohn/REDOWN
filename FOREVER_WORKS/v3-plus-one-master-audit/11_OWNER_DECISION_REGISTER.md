@@ -22,3 +22,5 @@ No recommendation in this register is recorded as owner-approved. The master req
 | next engineering scope | broad future vision could invite rewrite | stages 1–2 only, then separate contracts/extraction request | accept evidence per stage; optional alternate branches/Explorer deferred |
 
 IF a recommendation changes routing or stored meaning, THEN explicit owner acceptance belongs in the later request. IF a historical document disagrees with source, THEN preserve the contradiction rather than invent approval. IF a question is only a routine implementation detail within an approved contract, THEN future engineers can decide it with tests. ELSE record the remaining choice and its migration consequence here.
+
+Late documentation input adds decisions about three-row horizontal navigator geometry, draft-only Save/Apply versus autosave, per-ancestor presentation labels, known/resolved virtual-prefix policy and the Yes-Simple/No-Narrow save flow. See [concurrent addendum](13_CONCURRENT_OWNER_VISION_ADDENDUM.md). They remain proposals for review; no runtime edit was made.
