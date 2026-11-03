@@ -10,13 +10,13 @@ const waitFor=async predicate=>{for(let i=0;i<300;i++){if(predicate())return;awa
 const record=(i=0)=>({id:String(i),filename:i+'.png',sourceUrl:'https://source.invalid/'+i+'.png',ok:true,status:'completed',verified:true,at:new Date().toISOString(),providerKind:'cloudflare',destination:{accountId:'a',bucketName:'private',key:'photos/'+i+'.png'}});
 function view(){
  const dom=new JSDOM(read('shelf.html'),{url:'https://extension.invalid/shelf.html#history',runScripts:'outside-only',pretendToBeVisual:true});
- const w=dom.window;w.AbortSignal=AbortSignal;w.AbortController=AbortController;
+ const w=dom.window;const close=w.close.bind(w);w.close=()=>{w.dispatchEvent(new w.Event('pagehide'));close();};w.AbortSignal=AbortSignal;w.AbortController=AbortController;
  w.HTMLImageElement.prototype.decode=async()=>{};
  w.URL.revokeObjectURL=()=>{};
  for(const p of ['history-image-source.js','history-image-placeholder.js','history-quick-glance.js'])w.eval(read(p));
  return {dom,w,d:w.document};
 }
-test('Today reads every local record across archive pages, keeps older pages and gate defaults off',async()=>{
+test('Today reads every local record across archive pages, keeps older pages and Free gallery defaults to ten',async()=>{
  const h=view(),all=Array.from({length:235},(_,i)=>record(i));
  const old=Array.from({length:61},(_,i)=>({...record(235+i),at:'2025-01-01T12:00:00Z'}));
  const context=vm.createContext({indexedDB,IDBKeyRange});vm.runInContext(read('history-archive.js'),context);
@@ -28,7 +28,7 @@ test('Today reads every local record across archive pages, keeps older pages and
  assert.equal(h.d.querySelectorAll('.history-transfer').length,235);
  assert.equal(h.d.querySelector('.history-day').open,true);
  assert.equal(h.d.querySelector('.history-year').open,true);
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);
+ assert.equal(h.d.querySelectorAll('.history-image-slot').length,10);
  assert.equal(h.d.querySelector('#history-page-label').textContent,'1 / 3');
  h.d.querySelector('#history-next').click();await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 3');
  assert.equal(h.d.querySelectorAll('.history-transfer').length,40);assert.equal(reads.at(-1)[0],235);
@@ -36,14 +36,14 @@ test('Today reads every local record across archive pages, keeps older pages and
  h.dom.window.close();
 });
 function pipeline({count=100,resolve,placeholder,decode}={}){
- const h=view(),observers=[],calls=[],revoked=[];let active=0,maxActive=0;
+ const h=view(),observers=[],calls=[],revoked=[],states=[];let active=0,maxActive=0;
  class Observer{constructor(cb,options){this.cb=cb;this.options=options;this.nodes=[];observers.push(this);}observe(n){this.nodes.push(n);}disconnect(){this.stopped=true;}emit(indices){this.cb(this.nodes.map((target,i)=>({target,isIntersecting:indices.includes(i)})));}}
  const root=h.d.querySelector('#history-view');root.hidden=false;
  if(decode)h.w.HTMLImageElement.prototype.decode=decode;
  const source={resolve:async(r,signal,consume)=>{calls.push(r.id);active++;maxActive=Math.max(maxActive,active);try{return resolve?await resolve(r,signal,consume):{image:await consume(new Blob(['png'],{type:'image/png'})),origin:'cloud'};}finally{active--;}}};
  const session=h.w.RedownHistoryQuickGlance.create({root,source,IntersectionObserver:Observer,placeholder,decodeImage:async()=> 'blob:'+Math.random(),revoke:u=>revoked.push(u)});
- for(let i=0;i<count;i++){const row=h.d.createElement('div');root.append(row);session.attach(row,record(i));}
- session.start();return {...h,session,calls,revoked,observers,max:()=>maxActive,root};
+ for(let i=0;i<count;i++){const row=h.d.createElement('div');root.append(row);session.attach(row,record(i),{onState:state=>states.push({index:i,...state})});}
+ session.start();return {...h,session,calls,revoked,observers,states,max:()=>maxActive,root};
 }
 test('initial ten, three concurrent, batches on approach, bounded retained images, cleanup and interchangeable logo',async()=>{
  const h=pipeline({count:1000,placeholder:{render:d=>{const logo=d.createElement('span');logo.className='static-logo';return logo;}}});
@@ -60,7 +60,7 @@ test('initial ten, three concurrent, batches on approach, bounded retained image
 test('disposing cancels outstanding requests and discards late responses without wrong-row paint',async()=>{
  const pending=[];const h=pipeline({resolve:(r,signal)=>new Promise(resolve=>pending.push({signal,resolve}))});
  assert.equal(h.calls.length,3);h.session.dispose();assert.ok(pending.every(p=>p.signal.aborted));
- pending.forEach(p=>p.resolve({image:'blob:late',origin:'cloud'}));await tick();assert.equal(h.root.querySelectorAll('.history-image-slot img').length,0);assert.equal(h.root.querySelectorAll('.history-image-origin').length,0);assert.equal(h.revoked.length,3);assert.equal(h.calls.length,3);h.dom.window.close();
+ pending.forEach(p=>p.resolve({image:'blob:late',origin:'cloud'}));await tick();assert.equal(h.root.querySelectorAll('.history-image-slot img').length,0);assert.equal(h.root.querySelectorAll('.history-image-origin').length,0);assert.equal(h.revoked.length,3);assert.ok(h.states.every(s=>!s.origin));assert.equal(h.calls.length,3);h.dom.window.close();
 });
 test('definitive failure stops animation, keeps square and records, and never retries on observer churn',async()=>{
  const h=pipeline({count:12,resolve:async()=>null});await tick();
@@ -121,7 +121,7 @@ test('Premium gate enables Today previews once; revocation preserves records',as
  assert.equal(h.d.querySelectorAll('.history-transfer').length,70);assert.equal(h.d.querySelectorAll('.history-image-slot').length,70);assert.equal(calls.length,10);
  h.d.documentElement.dataset.shelfTheme='neon';await tick();assert.equal(calls.length,10);
  enabled=false;listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');await tick();
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
+ assert.equal(h.d.querySelectorAll('.history-image-slot').length,10);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
  enabled=true;listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
  await waitFor(()=>h.d.querySelectorAll('.history-image-slot').length===70);
  const beforeReconnect=calls.length;
@@ -166,7 +166,7 @@ test('old Dropbox receipts cannot change the newly connected account state; fail
 test('late decode from an evicted slot cannot cancel or fail its replacement request',async()=>{
  const decodes=[];
  const h=pipeline({count:100,decode:function(){return new Promise((resolve,reject)=>decodes.push({resolve,reject,image:this}));}});
- await tick();assert.equal(decodes.length,3);assert.equal(h.root.querySelector('.history-image-origin'),null);
+ await tick();assert.equal(decodes.length,3);assert.equal(h.root.querySelector('.history-image-origin'),null);assert.ok(h.states.every(s=>!s.origin));
  h.observers[0].emit([50]);decodes[1].resolve();await tick();assert.equal(decodes.length,4);
  h.observers[0].emit([0]);decodes[2].resolve();await tick();assert.equal(decodes.length,5);
  // Entry zero has a fresh request now, while its original decode is pending.
@@ -174,8 +174,8 @@ test('late decode from an evicted slot cannot cancel or fail its replacement req
  decodes[4].resolve();await tick();
  assert.equal(h.observers[0].nodes[0].dataset.state,'ready');
  assert.equal(h.observers[0].nodes[0].querySelector('img'),decodes[4].image);
- assert.equal(h.observers[0].nodes[0].querySelector('.history-image-origin').dataset.origin,'cloud');
- h.session.dispose();decodes.forEach(d=>d.resolve());await tick();h.dom.window.close();
+ assert.equal(h.observers[0].nodes[0].querySelector('.history-image-origin'),null);assert.equal(h.states.filter(s=>s.index===0).at(-1).origin,'cloud');
+ h.session.dispose();assert.ok(h.states.slice(-100).every(s=>!s.origin));decodes.forEach(d=>d.resolve());await tick();h.dom.window.close();
 });
 
 test('verified public R2 receipt is cloud and Google preview is cloud',async()=>{
@@ -207,9 +207,10 @@ test('source dots appear independently of successful and failed transfer status'
  assert.ok(rows.some(row=>row.dataset.state==='success'||row.dataset.state==='verified'));
  for(const row of rows){
   assert.ok(row.querySelector('.history-dot'));
-  const origin=row.querySelector('.history-image-origin');
-  assert.equal(origin.dataset.origin,'source');
-  assert.equal(origin.getAttribute('aria-label'),'Preview from original source');
+  assert.equal(row.querySelectorAll('.history-dot').length,1);
+  assert.equal(row.querySelector('.history-image-origin'),null);
+  assert.equal(row.dataset.previewOrigin,'source');
+  assert.match(row.querySelector('.history-dot').getAttribute('aria-label'),/Transfer: .*Preview from original source/);
  }
  h.dom.window.close();
 });
@@ -234,14 +235,14 @@ test('enabling Premium on an older page keeps the page and open date, loading on
    if(!group.open&&group.querySelector('.history-transfer'))group.querySelector('summary').click();
   }
   await tick();
-  assert.equal(calls.length,0);
+  const beforePremium=calls.length;
   enabled=true;
   listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
-  await waitFor(()=>h.d.querySelector('.history-image-origin'));
+  await waitFor(()=>h.d.querySelector('[data-preview-origin=cloud]'));
   assert.equal(h.d.querySelector('#history-page-label').textContent,'2 / 2');
   assert.equal(h.d.querySelector('.history-day').open,true);
-  assert.equal(h.d.querySelector('.history-image-origin').dataset.origin,'cloud');
-  assert.deepEqual(calls,[old.id]);
+  assert.equal(h.d.querySelector('.history-transfer').dataset.previewOrigin,'cloud');
+  assert.deepEqual(calls.slice(beforePremium),[old.id]);
   h.d.querySelector('#history-view').hidden=true;
   enabled=false;
   listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');
@@ -251,5 +252,84 @@ test('enabling Premium on an older page keeps the page and open date, loading on
   assert.equal(h.d.querySelector('.history-day').open,true);
   assert.equal(h.d.querySelector('.history-image-slot'),null);
 
+ }finally{h.dom.window.close();}
+});
+
+test('Free policy counts newest total Today records with stable ties and validated single quota',()=>{
+ const h=view();h.d.querySelector('#history-timeline').remove();h.w.eval(read('shelf-history.js'));
+ const api=h.w.RedownShelfHistory,now=new Date(),all=Array.from({length:25},(_,i)=>({...record(i),at:new Date(now.getTime()-i*1000).toISOString(),filename:i%2?'file.pdf':'image.png',ok:i%3===0?false:true}));
+ const old={...record(30),at:new Date(now.getFullYear()-1,0,1).toISOString()};
+ // Pin the records to local noon so the test also works just after midnight.
+ all.forEach((r,i)=>r.at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,25-i).toISOString());
+ for(const n of [0,5,10,20,100]){
+  const selected=api.galleryRecords([...all].reverse().concat(old),false,n,now);
+  assert.deepEqual([...selected].map(r=>r.id),all.slice(0,n).map(r=>r.id));
+ }
+ for(const n of [undefined,null,-1,2.5,'5',NaN,Infinity])assert.equal(api.galleryLimit(n),10);
+ assert.equal(api.galleryRecords([old,...all],true,0,now).size,26);
+ const ties=[record(41),record(42)];ties[1].at=ties[0].at;
+ assert.equal([...api.galleryRecords(ties,false,1)][0],ties[0]);h.dom.window.close();
+});
+
+async function galleryView(records,{premium=true,resolve=async()=>({image:'blob:decoded',origin:'cloud'})}={}){
+ const h=view(),listeners=[];h.d.querySelector('#history-view').hidden=false;
+ h.w.IntersectionObserver=class{observe(){}disconnect(){}};
+ h.w.RedownHistoryImageSource.shared=()=>({resolve});
+ h.w.RedownHistoryNavigation={openable:r=>r.ok===true,open:r=>h.opened=r.id,cloudTarget:()=>null};
+ h.w.chrome={storage:{local:{get:async()=>({transferHistory:records,quickGlancePremiumEnabled:premium})},onChanged:{addListener:f=>listeners.push(f)}},runtime:{sendMessage:async message=>{
+  h.messages.push(message);return message.type==='cfObjectProperties'?{ok:true,object:{key:records[0].destination.key}}:{ok:true,addresses:[{state:'configured',label:'Custom',base:'https://cdn.invalid/'}]};
+ }}};
+ h.messages=[];h.listeners=listeners;h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();await tick();return h;
+}
+test('rendered gallery success order, minimal header, short/long More, genuine navigation and independent refreshed URLs',async()=>{
+ const saved={...record(),pageUrl:'https://page.invalid/view',srcUrl:'https://media.invalid/image',frameUrl:'https://frame.invalid/',linkUrl:'https://link.invalid/',location:'https://recorded.invalid/file'};
+ const h=await galleryView([saved,{...record(1),filename:'long-'.repeat(100)+'.png'},{...record(2),sourceUrl:''}]);
+ try{
+  const rows=h.d.querySelectorAll('.history-transfer');
+  for(const row of rows){
+   assert.equal(row.querySelectorAll('.history-dot').length,1);assert.equal(row.querySelector('.history-image-origin'),null);
+   const body=row.querySelector('.history-transfer-body');
+   assert.deepEqual([...body.children].map(n=>n.className),['history-entry-head','history-image-slot','history-more','history-url-disclosure history-urls']);
+   const head=body.firstElementChild;assert.deepEqual([...head.children].map(n=>n.tagName),['STRONG','TIME']);
+   assert.ok(!head.querySelector('button,details,small'));assert.equal(row.querySelector('.history-more').open,false);
+   assert.match(row.querySelector('.history-more').textContent,/Successful \(verified\).*Cloudflare R2/s);
+   assert.match(row.querySelector('.history-more').textContent,/accountId: a/);
+   assert.equal(row.dataset.previewOrigin,'cloud');assert.match(row.querySelector('.history-dot').getAttribute('aria-label'),/Successful \(verified\).*your cloud/);
+  }
+  assert.match(rows[2].querySelector('.history-urls').textContent,/URLs · 0.*No recorded URLs/s);
+  rows[0].querySelector('.history-go-to').click();assert.equal(h.opened,saved.id);
+  const urls=rows[0].querySelector('.history-urls');
+  for(const key of ['sourceUrl','pageUrl','srcUrl','frameUrl','linkUrl','location'])assert.ok(urls.textContent.includes(saved[key]));
+  assert.equal(urls.querySelector('a'),null);urls.open=true;await waitFor(()=>h.messages.length===2);
+  assert.equal(h.messages.length,2);assert.match(urls.textContent,/https:\/\/cdn.invalid\/photos\/0.png/);
+  urls.dispatchEvent(new h.w.Event('toggle'));await tick();assert.equal(h.messages.length,2);
+  h.w.dispatchEvent(new h.w.Event('pagehide'));assert.equal(rows[0].dataset.previewOrigin,undefined);
+ }finally{h.dom.window.close();}
+});
+test('failed gallery recovery, exhausted image collapse state, pending truth and unsafe URLs',async()=>{
+ const failed={...record(1),ok:false,status:'failed',verified:false,error:'Full recorded failure diagnostics'};
+ const h=await galleryView([failed,{...record(2),ok:false,status:'failed'},{...record(3),ok:undefined,status:'pending',verified:false},{...record(4),ok:false,sourceUrl:'https://user:secret@unsafe.invalid/img.png',pageUrl:'https://parent.invalid/page'}],{resolve:async r=>r.id==='2'?null:{image:'blob:decoded',origin:'source'}});
+ try{
+  const rows=h.d.querySelectorAll('.history-transfer');const row=rows[0];
+  assert.equal(row.dataset.state,'failed');assert.equal(row.dataset.previewOrigin,'source');
+  assert.equal(row.querySelector('.history-entry-head strong').textContent,'1.png');
+  const recovery=row.querySelector('.history-recovery-link');assert.equal(recovery.href,failed.sourceUrl);assert.equal(recovery.referrerPolicy,'no-referrer');
+  assert.equal(row.querySelector('.history-urls'),null);const more=row.querySelector('.history-more');
+  more.open=true;await waitFor(()=>recovery.hidden);assert.equal(recovery.hidden,true);
+  assert.ok(more.textContent.includes(failed.sourceUrl));assert.ok(more.textContent.includes(failed.error));assert.match(more.textContent,/bucketName: private/);
+  more.open=false;await waitFor(()=>!recovery.hidden);assert.equal(recovery.hidden,false);
+  assert.equal(rows[1].querySelector('.history-image-slot').dataset.state,'failed');assert.equal(rows[1].dataset.previewOrigin,undefined);
+  assert.ok(rows[1].querySelector('.history-recovery-link'));assert.equal(rows[2].dataset.state,'unknown');
+  assert.match(rows[2].querySelector('.history-dot').getAttribute('aria-label'),/pending.*original source/);
+  assert.equal(rows[3].querySelector('.history-recovery-link').href,'https://parent.invalid/page');
+ }finally{h.dom.window.close();}
+});
+test('mixed Free DOM preserves all Today records and Classic outside total-record quota',async()=>{
+ const all=Array.from({length:15},(_,i)=>({...record(i),filename:i<5?'file.pdf':i+'.png',sourceUrl:i<5?'https://source.invalid/file.pdf':record(i).sourceUrl,destination:{...record(i).destination,key:i<5?'file.pdf':i+'.png'}}));
+ all.forEach(r=>r.at=all[0].at);
+ const h=await galleryView(all,{premium:false,resolve:async()=>null});
+ try{
+  assert.equal(h.d.querySelectorAll('.history-transfer').length,15);assert.equal(h.d.querySelectorAll('.history-gallery').length,10);
+  assert.equal(h.d.querySelectorAll('.history-image-slot').length,5);assert.equal(h.d.querySelectorAll('.history-transfer:not(.history-gallery) .history-more').length,0);
  }finally{h.dom.window.close();}
 });

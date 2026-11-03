@@ -1,0 +1,192 @@
+{
+  "photographicReview": true,
+  "keyboardDisclosure": true,
+  "scope": "Local HTTP mock in ordinary Chromium, not installed extension/provider proof",
+  "browser": "Chrome/154.0.8037.57",
+  "initialPreviewJobs": 10,
+  "geometryUnchanged": true,
+  "portraitAspectRatio": 2,
+  "reducedMotion": true,
+  "themes": [
+    "porcelain",
+    "midnight",
+    "ocean",
+    "neon"
+  ],
+  "bounded": {
+    "requests": 30,
+    "images": 20,
+    "rows": 120
+  },
+  "cleanup": true,
+  "visual": [
+    {
+      "theme": "porcelain",
+      "geometry": [
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(22, 132, 71)",
+          "titleColor": "rgb(38, 33, 51)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(105, 99, 119)",
+          "titleColor": "rgb(38, 33, 51)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(37, 99, 189)",
+          "titleColor": "rgb(38, 33, 51)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(37, 99, 189)",
+          "titleColor": "rgb(38, 33, 51)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(105, 99, 119)",
+          "titleColor": "rgb(38, 33, 51)"
+        }
+      ],
+      "narrow": true,
+      "zoom200": true
+    },
+    {
+      "theme": "midnight",
+      "geometry": [
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(99, 216, 151)",
+          "titleColor": "rgb(241, 245, 250)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(180, 193, 207)",
+          "titleColor": "rgb(241, 245, 250)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(241, 245, 250)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(241, 245, 250)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(180, 193, 207)",
+          "titleColor": "rgb(241, 245, 250)"
+        }
+      ],
+      "narrow": true,
+      "zoom200": true
+    },
+    {
+      "theme": "ocean",
+      "geometry": [
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(99, 216, 151)",
+          "titleColor": "rgb(243, 250, 247)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(183, 214, 215)",
+          "titleColor": "rgb(243, 250, 247)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(243, 250, 247)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(243, 250, 247)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(183, 214, 215)",
+          "titleColor": "rgb(243, 250, 247)"
+        }
+      ],
+      "narrow": true,
+      "zoom200": true
+    },
+    {
+      "theme": "neon",
+      "geometry": [
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(99, 216, 151)",
+          "titleColor": "rgb(255, 249, 230)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(215, 206, 231)",
+          "titleColor": "rgb(255, 249, 230)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(255, 249, 230)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(121, 180, 255)",
+          "titleColor": "rgb(255, 249, 230)"
+        },
+        {
+          "oneDot": true,
+          "noOverlay": true,
+          "fits": true,
+          "dotColor": "rgb(215, 206, 231)",
+          "titleColor": "rgb(255, 249, 230)"
+        }
+      ],
+      "narrow": true,
+      "zoom200": true
+    }
+  ]
+}

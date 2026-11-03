@@ -1,11 +1,20 @@
 /* One minimal History view. Recent days and weeks lead, older dates fold
    into months > numbered weeks > days. Each page is read from the on-device
    archive; legacy transferHistory stays the compatibility source, not a
-   second timeline. Preview bytes are a separate bounded Premium session. */
+   second timeline. Preview bytes use a separate bounded presentation session. */
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
   const PAGE_SIZE=40,RECENT_WEEKS=3;
+  // Presentation quota, independent of thumbnail work admission (BATCH).
+  const FREE_GALLERY_ENTRY_LIMIT=10;
+  const galleryLimit=value=>Number.isSafeInteger(value)&&value>=0?value:FREE_GALLERY_ENTRY_LIMIT;
+  function galleryRecords(records,premium,limit=FREE_GALLERY_ENTRY_LIMIT,now=new Date()){
+    const ordered=sortedEntries(records).map(item=>item.record);
+    const start=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+    const end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
+    return new Set(premium?ordered:ordered.filter(r=>Date.parse(r.at)>=start&&Date.parse(r.at)<end).slice(0,galleryLimit(limit)));
+  }
   const text=v=>typeof v==='string'?v:'';
   const sortedEntries=records=>(Array.isArray(records)?records:[])
     .filter(r=>r&&typeof r==='object')
@@ -119,7 +128,7 @@
     return years;
   }
 
-  globalThis.RedownShelfHistory={group,describe,organize,open};
+  globalThis.RedownShelfHistory={group,describe,organize,open,galleryRecords,galleryLimit,FREE_GALLERY_ENTRY_LIMIT};
   if(!$('history-timeline'))return;
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
@@ -161,11 +170,11 @@
       return ['https:','http:'].includes(url.protocol)&&!url.username&&!url.password?url.href:null;
     }catch{return null;}
   }
-  function addProvenance(parent,record,info){
+  function addProvenance(parent,record,info,{gallery=false,more=null}={}){
     // History is an inspectable data record. GO TO handles navigation.
-    // Never turn saved/source addresses into competing action hyperlinks.
+    // Successful URL records stay copyable data; failed gallery recovery is explicit.
     const content=create('div','','history-entry-provenance');
-    if(record.ok!==false)content.append(create('small',info.status,'history-entry-outcome'));
+    if(gallery||record.ok!==false)content.append(create('small',info.status,'history-entry-outcome'));
     if(info.detail)content.append(create('small',info.detail,'history-entry-provider'));
 
     // Explicit public URL, or exact verified provider-owned navigation URL
@@ -194,20 +203,26 @@
     add('Media URL',record.srcUrl);
     add('Frame URL',record.frameUrl);
     add('Link URL',record.linkUrl);
-    if(rows.length){
-      const disclosure=create('details','','history-url-disclosure');
+    if(rows.length||(gallery&&info.state==='success')){
+      const disclosure=create('details','','history-url-disclosure'+(gallery?' history-urls':''));
       const summary=create('summary','URLs · '+rows.length,'history-url-summary');
+      if(gallery){const chevron=create('span','⌄','history-chevron');chevron.setAttribute('aria-hidden','true');summary.append(chevron);}
       summary.setAttribute('aria-label','Show full saved-file and source URLs');
       disclosure.append(summary);
       const values=create('div','','history-url-values');
+      if(!rows.length)values.append(create('small','No recorded URLs.'));
       for(const [caption,value] of rows){
         const line=create('div','','history-entry-url');
         line.append(create('span',caption,'history-entry-url-label'));
-        const display=create('code',value,'history-entry-url-text');
+        const recovery=gallery&&info.state==='failed'&&['Source URL','Hosting page'].includes(caption)&&safeWebUrl(value);
+        const display=create(recovery?'a':'code',value,'history-entry-url-text');
+        if(recovery){display.href=recovery;display.target='_blank';display.rel='noopener noreferrer';display.referrerPolicy='no-referrer';}
         display.title=value;
         line.append(display);values.append(line);
       }
-      disclosure.append(values);content.append(disclosure);
+      disclosure.append(values);
+      if(gallery&&info.state==='success')parent.append(disclosure);
+      else if(gallery){content.append(values);}else content.append(disclosure);
       // Public addresses can be enabled or changed long after the original
       // save. Refresh only when the user opens THIS item's URL drawer.
       // Historical provenance remains immutable and fully visible offline.
@@ -277,7 +292,8 @@
         });
       }
     }
-    if(record.error){
+    if(record.error&&gallery)content.append(create('small','Error: '+text(record.error),'history-error'));
+    if(record.error&&!gallery){
       const technical=create('details','','history-technical-details');
       technical.append(create('summary','Error details'),create('small',text(record.error),'history-error'));
       content.append(technical);
@@ -290,31 +306,68 @@
       receipt.append(create('small','The Dropbox website may use a different signed-in account.'));
       content.append(receipt);
     }
-    if(content.childElementCount)parent.append(content);
+    if(gallery){
+      content.prepend(create('div',info.name));
+      for(const [label,value] of Object.entries(record.destination||{})){
+        if(value!==null&&value!==undefined)content.append(create('small',label+': '+String(value)));
+      }
+      if(record.status)content.append(create('small','Transfer status: '+record.status));
+      more.append(content);
+    }else if(content.childElementCount)parent.append(content);
   }
   function dayRows(container,day){
     const list=create('ol','','history-transfers');
+    const gallerySet=galleryRecords(pageItems,quickGlanceEnabled);
     for(const item of day.items){
       const info=describe(item.record),record=item.record;
       const row=create('li','','history-transfer');row.dataset.state=info.state;
       const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
       const body=create('div','','history-transfer-body');
+      const gallery=gallerySet.has(record)&&!!globalThis.RedownHistoryQuickGlance;
+      if(gallery)row.classList.add('history-gallery');
       const error=record.ok===false;
-      const title=error?'Error: '+(text(record.sourceUrl)||'Source unavailable'):info.name;
+      const title=gallery?info.name:error?'Error: '+(text(record.sourceUrl)||'Source unavailable'):info.name;
       const src=text(record.sourceUrl),parentUrl=text(record.pageUrl);
       const isLong=title.length>66||src.length>90||parentUrl.length>90||text(record.error).length>125;
       const header=create('div','','history-entry-head');
-      header.append(create('strong',isLong&&title.length>66?title.slice(0,62)+'…':title));
+      const name=create('strong',gallery?title:isLong&&title.length>66?title.slice(0,62)+'…':title);name.title=title;header.append(name);
       const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'');
       if(day.date&&Number.isFinite(item.ms))time.dateTime=new Date(item.ms).toISOString();
       header.append(time);
+      let go;
       if(globalThis.RedownHistoryNavigation?.openable(record)){
-        const go=create('button','GO TO','history-go-to');go.type='button';
+        go=create('button','GO TO','history-go-to');go.type='button';
         go.setAttribute('aria-label','Go to saved file '+info.name);
         go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};
-        header.append(go);
+        if(!gallery)header.append(go);
       }
-      if(isLong){
+      if(gallery){
+        body.append(header);
+        dot.removeAttribute('aria-hidden');dot.setAttribute('role','img');
+        const onState=({state,origin})=>{
+          if(origin==='cloud'||origin==='source')row.dataset.previewOrigin=origin;
+          else delete row.dataset.previewOrigin;
+          const label='Transfer: '+info.status+(origin==='cloud'?' · Preview from your cloud':origin==='source'?' · Preview from original source':' · Preview '+state);
+          dot.title=label;dot.setAttribute('aria-label',label);
+        };
+        onState({state:'idle'});
+        quickGlance?.attach(body,record,{onState});
+        const more=create('details','','history-more'),summary=create('summary','More');
+        const chevron=create('span','⌄','history-chevron');chevron.setAttribute('aria-hidden','true');summary.append(chevron);more.append(summary);
+        if(go)more.append(go);
+        if(info.state!=='success'){
+          const source=safeWebUrl(record.sourceUrl)||safeWebUrl(record.pageUrl);
+          if(source){
+            const recovery=create('a','','history-recovery-link');recovery.href=source;
+            recovery.target='_blank';recovery.rel='noopener noreferrer';recovery.referrerPolicy='no-referrer';
+            const url=new URL(source);const label=url.hostname+url.pathname;recovery.textContent=label.length>76?label.slice(0,73)+'…':label;recovery.title=source;
+            body.append(recovery);
+            const sync=()=>{recovery.hidden=more.open;};more.addEventListener('toggle',sync);
+          }
+        }
+        body.append(more);
+        addProvenance(body,record,info,{gallery:true,more});
+      }else if(isLong){
         const disclosure=create('details','','history-entry-details');
         const summary=create('summary');
         summary.append(header);
@@ -327,7 +380,6 @@
         body.append(header);
         addProvenance(body,record,info);
       }
-      quickGlance?.attach(body,record);
       row.append(dot,body);list.append(row);
     }
     container.append(list);
@@ -344,7 +396,7 @@
   }
   function render(){
     quickGlance?.dispose();
-    quickGlance=quickGlanceEnabled?globalThis.RedownHistoryQuickGlance?.create({root:$('history-view')}):null;
+    quickGlance=globalThis.RedownHistoryQuickGlance?.create({root:$('history-view')});
     const timeline=$('history-timeline'),years=organize(pageItems),fragment=document.createDocumentFragment();
     const firstYear=years.keys().next().value;
     if(!loaded||(!openGroups.get('root')&&!openGroups.has('root-chosen'))){
@@ -392,6 +444,7 @@
     return items.filter(r=>Date.parse(r.at)>=start&&Date.parse(r.at)<end);
   };
   async function refresh({exposeToday=false}={}){
+    quickGlance?.dispose();quickGlance=null;
     const ticket=++requestId;
     $('history-retry').hidden=true;
     if(!loaded)$('history-status').textContent='Opening History…';
@@ -399,7 +452,7 @@
       if(!loaded||dirty){
         const stored=await chrome.storage.local.get(['transferHistory','quickGlancePremiumEnabled']);
         if(ticket!==requestId)return;
-        legacy=Array.isArray(stored.transferHistory)?stored.transferHistory:[];
+        legacy=sortedEntries(stored.transferHistory).map(item=>item.record);
         quickGlanceEnabled=stored.quickGlancePremiumEnabled===true;
       }
       if(archive){
@@ -486,10 +539,10 @@
     });
     const membership=changes.quickGlancePremiumEnabled;
     if(membership&&loaded&&$('history-view').hidden)resumeAfterMembershipChange=true;
-    if(previewConnectionChanged||(membership&&membership.newValue!==true))stopPreviews();
+    if(previewConnectionChanged||membership)stopPreviews();
     if(changes.transferHistory){
       legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
-    }else if(!membership&&!(previewConnectionChanged&&quickGlanceEnabled))return;
+    }else if(!membership&&!previewConnectionChanged)return;
     dirty=true;
     if(!$('history-view').hidden)void refresh();
   });

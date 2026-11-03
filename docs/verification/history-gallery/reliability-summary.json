@@ -1,0 +1,33 @@
+{
+  "state": "failed",
+  "finishedAt": "2026-11-03T17:51:40.737Z",
+  "source": "7c880bd6bc5908cf538daeba707093f748648a9777bcfa96ebf5054ed2db5cca",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed"
+    },
+    {
+      "id": "architecture",
+      "state": "failed"
+    },
+    {
+      "id": "api-registry",
+      "state": "passed"
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed"
+    }
+  ],
+  "regression": {
+    "passed": 957,
+    "failed": 111,
+    "recordedKnown": 6,
+    "recordedNew": 105,
+    "incomplete": true,
+    "additionalFailuresVersusUntouchedMain": []
+  },
+  "release": "blocked"
+}
