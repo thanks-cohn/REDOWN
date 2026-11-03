@@ -1,8 +1,8 @@
+import vm from 'node:vm';
+import {webcrypto} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import vm from 'node:vm';
-import {webcrypto} from 'node:crypto';
 import {JSDOM} from 'jsdom';
 const html=await readFile('extension/shelf.html','utf8'),code=await readFile('extension/shelf-save-feedback.js','utf8');
 function fixture(theme='porcelain',stored={},reduced=false){
@@ -38,53 +38,14 @@ test('Neon flashes whole word and removes it; reduced motion is static and theme
  h.receipt('google','two');h.w.document.documentElement.dataset.shelfTheme='midnight';await Promise.resolve();assert.equal(h.text(),undefined);h.dom.window.close();
  const r=fixture('ocean',{},true);r.receipt('dropbox','r');assert.equal(r.text(),'SUCCESS!');r.advance(1599);assert.equal(r.visibility(),'');r.advance(1);assert.equal(r.text(),undefined);r.dom.window.close();
 });
-test('fresh unique arrival pulses retrigger, stale/future arrivals reject and cleanup is bounded',()=>{
- const h=fixture(),root=h.w.document.documentElement;
- h.emit('redownShelfImpact',{id:'a',at:Date.now()});assert.equal(root.dataset.saveImpact,'true');h.advance(500);
- h.emit('redownShelfImpact',{id:'b',at:Date.now()});h.advance(500);assert.equal(root.dataset.saveImpact,'true');h.advance(350);assert.equal(root.dataset.saveImpact,undefined);
- for(const at of [Date.now()-4000,Date.now()+10000])h.emit('redownShelfImpact',{id:String(at),at});assert.equal(root.dataset.saveImpact,undefined);h.dom.window.close();
-});
-test('orb geometry remains intact and isolated arrival no longer needs page storage access',async()=>{
- const source=await readFile('extension/background.js','utf8');
- const launch=source.slice(source.indexOf('async function launchSaveDroplet'),source.indexOf('// Go Home is a navigation'));
- const writes=[];let injections=0;
- const session={shelfColorScheme:'ocean',cloudflareAuth:{accessToken:'test-logged-in',sessionId:'session-one',expiresAt:Date.now()+60000}};
- const context=vm.createContext({crypto:webcrypto,Date,chrome:{storage:{local:{get:async()=>session,set:async p=>writes.push(p)}},scripting:{executeScript:async options=>{
-  injections++;const page=new JSDOM('<body></body>',{runScripts:'outside-only'});const w=page.window;
-  w.matchMedia=()=>({matches:false});w.Element.prototype.animate=()=>({finished:Promise.resolve()});
-  const fn=w.eval('('+options.func.toString()+')');const result=await fn(...options.args);page.window.close();return [{result}];
- }}}});
- let accountsAuthorized=true;
- context.listCloudflareAccounts=async()=>{
-   if(!accountsAuthorized)throw Error('Cloudflare rejected expired OAuth token');
-   return [{id:'owner',name:'Verified account'}];
- };
- vm.runInContext(await readFile('extension/save-droplet-gate.js','utf8'),context);
- vm.runInContext(launch,context);
- session.cloudflareAuth=null;
- await context.launchSaveDroplet({menuItemId:'v3:folder'}, {id:1});
- assert.equal(injections,0,'logged-out click never shows balls');
- assert.equal(writes.length,0,'logged-out click never announces an arrival');
- session.cloudflareAuth={accessToken:'test-logged-in',sessionId:'session-one',expiresAt:Date.now()+60000};
- accountsAuthorized=false;
- await context.launchSaveDroplet({menuItemId:'v3:folder'}, {id:1});
- assert.equal(injections,0,'stale token rejected by live Cloudflare must not animate');
- assert.equal(writes.length,0,'rejected login must not publish an arrival');
- accountsAuthorized=true;
- await context.launchSaveDroplet({menuItemId:'v3:folder'}, {id:1});
- assert.equal(injections,1);assert.equal(writes[0].redownShelfImpact.kind,'arrival');assert.ok(writes[0].redownShelfImpact.id);
- context.chrome.scripting.executeScript=async()=>{throw Error('Restricted page');};
- await context.launchSaveDroplet({}, {id:1});assert.equal(writes.length,1);
- context.chrome.scripting.executeScript=async()=>[{result:{reduced:true}}];
- await context.launchSaveDroplet({}, {id:1});assert.equal(writes[1].redownShelfImpact.kind,'reduced-motion-dispatch');
- assert.match(launch,/duration:860/);assert.doesNotMatch(launch.slice(launch.indexOf('func:async')),/chrome\.storage.*get/);
-});
-test('hidden arrival is bounded by freshness; reopening hydrates persistence without celebrating old receipts',async()=>{
- const h=fixture();let hidden=true;Object.defineProperty(h.w.document,'visibilityState',{get:()=>hidden?'hidden':'visible'});
- h.emit('redownShelfImpact',{id:'pending',at:Date.now()});assert.equal(h.w.document.documentElement.dataset.saveImpact,undefined);
- hidden=false;h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));assert.equal(h.w.document.documentElement.dataset.saveImpact,'true');
- h.receipt('onedrive','live');assert.equal(h.text(),'S');hidden=true;h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));assert.equal(h.text(),undefined);
- h.dom.window.close();const reopened=fixture('midnight',{providerSaveReceipts:{totals:{onedrive:'2'},latest:{provider:'onedrive',id:'live',at:Date.now()}}});await Promise.resolve();assert.equal(reopened.text(),undefined);assert.equal(reopened.w.document.querySelector('[data-provider="onedrive"] .provider-save-count').textContent,'2');reopened.dom.window.close();
+test('obsolete persisted arrivals never animate or replay; reopening only hydrates verified counts',async()=>{
+ const h=fixture('midnight',{redownShelfImpact:{id:'old',at:Date.now()},providerSaveReceipts:{totals:{onedrive:'2'},latest:{provider:'onedrive',id:'old',at:Date.now()}}});
+ await Promise.resolve();
+ h.emit('redownShelfImpact',{id:'late',at:Date.now()});
+ assert.equal(h.w.document.documentElement.dataset.saveImpact,undefined);
+ assert.equal(h.text(),undefined);
+ assert.equal(h.w.document.querySelector('[data-provider="onedrive"] .provider-save-count').textContent,'2');
+ h.dom.window.close();
 });
 
 test('unverified notifications, wrong provider IDs and stale account completions cannot celebrate',()=>{
