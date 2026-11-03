@@ -1,7 +1,7 @@
 /* One minimal History view. Recent days and weeks lead, older dates fold
    into months > numbered weeks > days. Each page is read from the on-device
    archive; legacy transferHistory stays the compatibility source, not a
-   second timeline. No provider calls, no unbounded DOM rendering. */
+   second timeline. Preview bytes are a separate bounded Premium session. */
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
@@ -123,6 +123,7 @@
   if(!$('history-timeline'))return;
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
+  let quickGlance=null,quickGlanceEnabled=false,firstPageSize=PAGE_SIZE;
   let legacy=[],pageItems=[],fallback=false,legacyImported=false;
   const openGroups=new Map([['root',null]]);
   const create=(tag,value='',className='')=>{
@@ -325,6 +326,7 @@
         body.append(header);
         addProvenance(body,record,info);
       }
+      if(day.date&&dateKey(day.date)===dateKey(new Date()))quickGlance?.attach(body,record);
       row.append(dot,body);list.append(row);
     }
     container.append(list);
@@ -340,6 +342,8 @@
     parent.append(section('week',week.label,key,yearKey,week.days,drawDays));
   }
   function render(){
+    quickGlance?.dispose();
+    quickGlance=quickGlanceEnabled?globalThis.RedownHistoryQuickGlance?.create({root:$('history-view')}):null;
     const timeline=$('history-timeline'),years=organize(pageItems),fragment=document.createDocumentFragment();
     const firstYear=years.keys().next().value;
     if(!loaded||(!openGroups.get('root')&&!openGroups.has('root-chosen'))){
@@ -369,7 +373,8 @@
       }));
     }
     timeline.replaceChildren(fragment);
-    const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+    quickGlance?.start();
+    const pages=pageCount();
     $('history-status').textContent=fallback?'Recent records only · archive unavailable':
       total?total+' transfers':'No transfers yet';
     $('history-pagination').hidden=pages<=1;
@@ -378,15 +383,23 @@
     $('history-next').disabled=pageIndex>=pages-1;
     loaded=true;
   }
-  async function refresh(){
+  const pageCount=()=>1+Math.ceil(Math.max(0,total-firstPageSize)/PAGE_SIZE);
+  const offset=()=>pageIndex===0?0:firstPageSize+(pageIndex-1)*PAGE_SIZE;
+  const todayItems=items=>{
+    const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+    const end=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
+    return items.filter(r=>Date.parse(r.at)>=start&&Date.parse(r.at)<end);
+  };
+  async function refresh({exposeToday=false}={}){
     const ticket=++requestId;
     $('history-retry').hidden=true;
     if(!loaded)$('history-status').textContent='Opening History…';
     try{
       if(!loaded||dirty){
-        const stored=await chrome.storage.local.get('transferHistory');
+        const stored=await chrome.storage.local.get(['transferHistory','quickGlancePremiumEnabled']);
         if(ticket!==requestId)return;
         legacy=Array.isArray(stored.transferHistory)?stored.transferHistory:[];
+        quickGlanceEnabled=stored.quickGlancePremiumEnabled===true;
       }
       if(archive){
         try{
@@ -395,17 +408,21 @@
             if(ticket!==requestId)return;
             legacyImported=true;
           }
-          const page=await archive.page(pageIndex*PAGE_SIZE,PAGE_SIZE);
+          const today=archive.today?await archive.today():[];
+          if(ticket!==requestId)return;
+          firstPageSize=Math.max(PAGE_SIZE,today.length);
+          const page=await archive.page(offset(),PAGE_SIZE);
+          if(pageIndex===0&&today.length>=PAGE_SIZE)page.items=today;
           if(ticket!==requestId)return;
           total=page.total;pageItems=page.items;fallback=false;
           // When the archive shrinks after a reset, recover valid page bounds.
-          if(pageIndex>0&&!pageItems.length&&total>0){pageIndex=Math.ceil(total/PAGE_SIZE)-1;return refresh();}
+          if(pageIndex>0&&!pageItems.length&&total>0){pageIndex=pageCount()-1;return refresh();}
         }catch(error){
           console.warn('REDOWN history archive unavailable:',error?.message||String(error));
-          fallback=true;total=legacy.length;pageItems=legacy.slice(pageIndex*PAGE_SIZE,(pageIndex+1)*PAGE_SIZE);
+          fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));
         }
-      }else{fallback=true;total=legacy.length;pageItems=legacy.slice(pageIndex*PAGE_SIZE,(pageIndex+1)*PAGE_SIZE);}
-      dirty=false;render();
+      }else{fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));}
+      dirty=false;if(exposeToday&&pageIndex===0)expandToday();render();
     }catch{
       if(ticket!==requestId)return;
       $('history-status').textContent='History could not be loaded';
@@ -429,11 +446,12 @@
     $('history-navigation-status').replaceChildren();
     // Every time History is opened, expose today's transfers immediately
     // instead of requiring the user to expand Year then Today manually.
-    if(!loaded||dirty)await refresh();
+    if(pageIndex!==0){pageIndex=0;dirty=true;}
+    if(!loaded||dirty){await refresh({exposeToday:true});return;}
     if(loaded&&expandToday())render();
   }
   async function pageTo(next){
-    const max=Math.max(0,Math.ceil(total/PAGE_SIZE)-1);
+    const max=pageCount()-1;
     if(next<0||next>max||next===pageIndex)return;
     pageIndex=next;
     // Reveal the first year represented on the new page, not a stale year
@@ -443,11 +461,23 @@
     await refresh();
     $('history-timeline').scrollIntoView?.({behavior:'auto',block:'start'});
   }
+  const stopPreviews=()=>{quickGlance?.dispose();quickGlance=null;};
+  globalThis.addEventListener('pagehide',stopPreviews);
+  globalThis.addEventListener('hashchange',()=>{if(location.hash!=='#history')stopPreviews();});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)stopPreviews();else if(!$('history-view').hidden&&loaded)render();
+  });
   $('history-prev').addEventListener('click',()=>void pageTo(pageIndex-1));
   $('history-next').addEventListener('click',()=>void pageTo(pageIndex+1));
   $('history-retry').addEventListener('click',()=>void refresh());
   chrome.storage.onChanged.addListener((changes,area)=>{
-    if(area!=='local'||!changes.transferHistory)return;
+    if(area!=='local')return;
+    const disconnected=['cloudflareAuth','dropbox:auth','onedrive:auth'].some(k=>changes[k]&&
+      (!changes[k].newValue||changes[k].oldValue?.accountId!==changes[k].newValue?.accountId||
+       changes[k].oldValue?.connectionId!==changes[k].newValue?.connectionId))||
+      changes.googleDriveState&&changes.googleDriveState.newValue?.phase!=='connected';
+    if(disconnected){quickGlance?.dispose();quickGlance=null;}
+    if(!changes.transferHistory&&!changes.quickGlancePremiumEnabled)return;
     dirty=true;legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
     if(!$('history-view').hidden)void refresh();
   });

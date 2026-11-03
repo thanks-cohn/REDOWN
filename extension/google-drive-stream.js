@@ -21,9 +21,10 @@
       return r;
     }
     async function json(path,options){const r=await http(path,options);if(!r.ok)throw fail('Google request failed (HTTP '+r.status+').',r.status>=500?'interrupted':'failed');return r.json();}
-    async function identity(interactive=false){
+    async function identity(interactive=false,signal){
       await authorize(interactive);
-      const about=await json('about?fields=user(permissionId)');
+      signal?.throwIfAborted();
+      const about=await json('about?fields=user(permissionId)',{signal});
       const accountId=about.user?.permissionId;if(!/^[\w-]+$/.test(accountId||''))throw fail('Google account could not be verified.');
       return accountId;
     }
@@ -111,7 +112,17 @@
         if(e.status)throw e;throw fail('Source or Google connection interrupted.','interrupted');
       }finally{clearTimeout(timer);controller.abort();signal?.removeEventListener('abort',abort);await reader?.cancel().catch(()=>{});}
     }
-    return {connect,upload,proof};
+    async function preview(destination,signal){
+      if(await identity(false,signal)!==destination.accountId)throw fail('Google account changed.');
+      const file=await json('files/'+encodeURIComponent(destination.fileId)+'?fields=id,thumbnailLink,trashed',{signal});
+      if(file.id!==destination.fileId||file.trashed||!file.thumbnailLink)throw fail('Thumbnail unavailable.');
+      const url=new URL(file.thumbnailLink);
+      if(url.protocol!=='https:'||url.username||url.password||
+        !(url.hostname==='googleusercontent.com'||url.hostname.endsWith('.googleusercontent.com')))throw fail('Thumbnail unavailable.');
+      // Provider-issued short-lived URL only, with no token forwarded to its host.
+      return fetch(url.href,{signal,credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',cache:'no-store'});
+    }
+    return {connect,upload,proof,preview};
   }
   globalThis.RedownGoogleDriveStream={create,sourceURL,CHUNK,MAX,SCOPE};
 })();

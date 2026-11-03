@@ -95,5 +95,11 @@
   "extension/onedrive-api.js",
   "extension/onedrive-auth.js",
   "extension/onedrive-provider.js",
-  "extension/shelf-onedrive.js"
+  "extension/shelf-onedrive.js",
+  "extension/history-archive.js",
+  "extension/history-image-source.js",
+  "extension/history-image-placeholder.js",
+  "extension/history-quick-glance.js",
+  "extension/google-drive-stream.js",
+  "scripts/history-quick-glance-preview.mjs"
 ]

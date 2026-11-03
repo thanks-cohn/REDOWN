@@ -65,6 +65,20 @@
         tx.onabort=()=>reject(tx.error||Error('History archive read aborted.'));
       });
     }
+    // Read all local metadata for Today only; preview bytes remain lazy.
+    async function today(now=new Date()){
+      const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+      const end=new Date(start);end.setDate(end.getDate()+1);
+      const db=await open();
+      return new Promise((resolve,reject)=>{
+        const tx=db.transaction(STORE,'readonly'),items=[];
+        const range=IDBKeyRange.bound([start.getTime()],[end.getTime()],false,true);
+        const request=tx.objectStore(STORE).index('timeline').openCursor(range,'prev');
+        request.onsuccess=()=>{const cursor=request.result;if(!cursor)return;items.push(cursor.value.entry);cursor.continue();};
+        tx.oncomplete=()=>resolve(items);
+        tx.onerror=tx.onabort=()=>reject(tx.error||Error('History day read failed.'));
+      });
+    }
     function migrateLegacy(entries){
       const seen=new Map();
       return (Array.isArray(entries)?entries:[]).filter(e=>e&&typeof e==='object').map(entry=>{
@@ -78,7 +92,7 @@
         return {...entry,id:'legacy-'+(hash>>>0).toString(36)+'-'+count};
       });
     }
-    return {append:entry=>write([entry]),importLegacy:entries=>write(migrateLegacy(entries)),page};
+    return {append:entry=>write([entry]),importLegacy:entries=>write(migrateLegacy(entries)),page,today};
   }
   globalThis.RedownHistoryArchive={create};
 })();

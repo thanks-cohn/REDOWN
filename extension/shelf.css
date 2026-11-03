@@ -1144,3 +1144,17 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 @media(prefers-reduced-motion:reduce){
   .shelf-failure-laser.pulse::before{animation:none}
 }
+
+/* Premium Quick Glance: fixed content box in the existing stacked row. */
+.history-image-slot{position:relative;flex:none;width:min(100%,240px);aspect-ratio:1/1;align-self:center;margin:10px auto;overflow:hidden;contain:layout paint;color:var(--accent);background:var(--subtle);border-radius:8px}
+.history-image-slot>img,.history-image-placeholder{position:absolute;inset:0;width:100%;height:100%}
+.history-image-slot>img{object-fit:contain;opacity:0;animation:history-image-appear .18s ease forwards}
+.history-image-placeholder{display:grid;place-items:center;transition:opacity .18s ease}
+.history-image-placeholder i{position:absolute;width:57%;height:35%;border:1px solid currentColor;border-radius:50%;opacity:.35;transform:rotate(calc(var(--curve)*60deg));animation:history-image-orbit 9s linear infinite;animation-delay:calc(var(--curve)*-1.5s);animation-play-state:paused}
+.history-image-slot[data-visible="true"][data-state="loading"] .history-image-placeholder i{animation-play-state:running}
+.history-image-slot[data-state="ready"] .history-image-placeholder{opacity:0}
+.history-image-slot[data-state="failed"]{background:transparent}
+.history-image-slot[data-state="failed"] .history-image-placeholder{display:none}
+@keyframes history-image-orbit{to{transform:rotate(calc(var(--curve)*60deg + 360deg))}}
+@keyframes history-image-appear{to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.history-image-placeholder i,.history-image-slot>img{animation:none!important}.history-image-slot>img{opacity:1}.history-image-placeholder{transition:none}}
