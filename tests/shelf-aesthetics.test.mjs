@@ -34,9 +34,9 @@ const evt=(h,type)=>new h.w.MouseEvent(type,{bubbles:false,cancelable:true});
 
 test('Shelf presentation spells Click2Cloud and Direct2Cloud consistently',async()=>{
   const shelfJS=await readFile(new URL('../extension/shelf.js',import.meta.url),'utf8');
-  assert.match(html,/Click2Cloud, Anywhere\\./);
+  assert.match(html,/Click2Cloud, Anywhere\./);
   assert.match(shelfJS,/Download Direct2Cloud! Nothing Downloads Directly!/);
-  assert.doesNotMatch(html,/Right2Click, Anywhere\\./);
+  assert.doesNotMatch(html,/Right2Click, Anywhere\./);
   assert.doesNotMatch(shelfJS,/Direct-2-Cloud/);
 });
 
