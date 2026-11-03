@@ -1,3 +1,15 @@
+## P2 — Onboarding tour omits the Activate Buckets button (2026-11-03)
+
+**Status:** OPEN — owner-reported tour omission; not independently reproduced in installed Chrome. **Priority:** P2 onboarding / discoverability. No implementation or fix claimed.
+
+**Observed:** The REDOWN guided tour does not mention the **Activate Buckets** button. New users can miss a key Cloudflare R2 setup action despite seeing the button elsewhere in the UI.
+
+**Expected:** The existing onboarding tour must explicitly introduce **Activate Buckets** by its exact visible name, point to its current location (near the relevant bucket/Explorer controls), and explain in plain language what activating buckets enables and when the user should press it. Make the tour guidance accurate for already-activated versus not-yet-activated setups; do not misleadingly ask users to repeat an unnecessary action. Preserve the current first-run onboarding flow and do not introduce a competing setup engine.
+
+**Acceptance:** In an installed Chrome fresh-user walkthrough, the tour visibly highlights or clearly locates **Activate Buckets** and communicates its purpose before users are expected to use bucket destinations. Verify the instruction is legible and theme-compatible, and that existing connected users are not incorrectly told activation is still required.
+
+---
+
 ## P0 — Cloudflare falsely appears connected after Activate Buckets (2026-11-02)
 
 **OPEN, code investigated, live root cause not proven.** The user reports that both Shelf Cloudflare Manage and Explorer can appear connected after initial sign-in, yet after Activate Buckets/returning to Manage REDOWN asks for another Cloudflare login. The Shelf separately checks `cfAccounts`; Explorer's `paintLogout()` initially trusts the presence of a stored token. Cloudflare API reads may refresh/mark the grant as requiring reconnect. Activation can surface a more stringent real account/bucket/Worker check, but does not explicitly log out in the traced path. The state disparity is real in code; exact live trigger requires redacted event tracing. Preserve one OAuth authority, never silently assume “logged in”, never erase valid credentials on transient network failure. **[Full forensic P0 and acceptance plan](CRITICAL/2026-11-02_P0_CLOUDFLARE_FALSE_CONNECTED_AFTER_ACTIVATE_BUCKETS.md).**
