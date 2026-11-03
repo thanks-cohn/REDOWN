@@ -12,6 +12,7 @@ function view(){
  const dom=new JSDOM(read('shelf.html'),{url:'https://extension.invalid/shelf.html#history',runScripts:'outside-only',pretendToBeVisual:true});
  const w=dom.window;w.AbortSignal=AbortSignal;w.AbortController=AbortController;
  w.HTMLImageElement.prototype.decode=async()=>{};
+ w.URL.revokeObjectURL=()=>{};
  for(const p of ['history-image-source.js','history-image-placeholder.js','history-quick-glance.js'])w.eval(read(p));
  return {dom,w,d:w.document};
 }
@@ -211,4 +212,44 @@ test('source dots appear independently of successful and failed transfer status'
   assert.equal(origin.getAttribute('aria-label'),'Preview from original source');
  }
  h.dom.window.close();
+});
+
+test('enabling Premium on an older page keeps the page and open date, loading only its previews',async()=>{
+ const h=view(),listeners=[],calls=[];
+ try{
+  h.d.querySelector('#history-view').hidden=false;
+  const today=Array.from({length:41},(_,i)=>record(i));
+  const old={...record(41),at:'2024-05-14T12:00:00Z'};
+  let enabled=false;
+  h.w.chrome={storage:{local:{get:async()=>({transferHistory:[...today,old],quickGlancePremiumEnabled:enabled})},onChanged:{addListener:f=>listeners.push(f)}}};
+  h.w.RedownHistoryImageSource.shared=()=>({resolve:async row=>{
+   calls.push(row.id);
+   return {image:'blob:older-preview',origin:'cloud'};
+  }});
+  h.w.eval(read('shelf-history.js'));
+  await h.w.RedownShelfHistory.open();
+  h.d.querySelector('#history-next').click();
+  await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 2');
+  for(const group of h.d.querySelectorAll('#history-timeline details')){
+   if(!group.open&&group.querySelector('.history-transfer'))group.querySelector('summary').click();
+  }
+  await tick();
+  assert.equal(calls.length,0);
+  enabled=true;
+  listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
+  await waitFor(()=>h.d.querySelector('.history-image-origin'));
+  assert.equal(h.d.querySelector('#history-page-label').textContent,'2 / 2');
+  assert.equal(h.d.querySelector('.history-day').open,true);
+  assert.equal(h.d.querySelector('.history-image-origin').dataset.origin,'cloud');
+  assert.deepEqual(calls,[old.id]);
+  h.d.querySelector('#history-view').hidden=true;
+  enabled=false;
+  listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');
+  h.d.querySelector('#history-view').hidden=false;
+  await h.w.RedownShelfHistory.open();
+  assert.equal(h.d.querySelector('#history-page-label').textContent,'2 / 2');
+  assert.equal(h.d.querySelector('.history-day').open,true);
+  assert.equal(h.d.querySelector('.history-image-slot'),null);
+
+ }finally{h.dom.window.close();}
 });
