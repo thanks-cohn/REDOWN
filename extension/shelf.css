@@ -1111,3 +1111,36 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 #history-timeline .history-live-bucket-urls .history-entry-url-text{
   color:var(--text);
 }
+
+/* The failure laser belongs to the Shelf viewport, never the Chrome toolbar. */
+.shelf-failure-laser{
+  --shelf-failure-color:#fc3041;
+  position:fixed;
+  left:4px;
+  bottom:4px;
+  z-index:150;
+  display:grid;
+  place-items:center;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:transparent;
+  text-decoration:none;
+}
+.shelf-failure-laser::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--shelf-failure-color);
+  box-shadow:0 0 4px var(--shelf-failure-color),0 0 9px color-mix(in srgb,var(--shelf-failure-color) 62%,transparent);
+}
+:root[data-shelf-theme="neon"] .shelf-failure-laser{--shelf-failure-color:#1fcbff}
+.shelf-failure-laser.pulse::before{animation:shelf-failure-laser-pulse .64s ease-out 1}
+@keyframes shelf-failure-laser-pulse{
+  0%,36%,72%,100%{transform:scale(1)}
+  17%,53%{transform:scale(1.65);box-shadow:0 0 7px var(--shelf-failure-color),0 0 16px var(--shelf-failure-color)}
+}
+@media(prefers-reduced-motion:reduce){
+  .shelf-failure-laser.pulse::before{animation:none}
+}
