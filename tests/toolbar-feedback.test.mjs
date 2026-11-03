@@ -52,6 +52,7 @@ test('failure pulses exactly twice, finishes steady in lower-left, and does not 
   assert.ok(bright[0]>rest[0],'first pulse is brighter red');
   assert.ok(bright[0]>bright[1]&&bright[0]>bright[2]);
   assert.ok(pixel(h.frames.at(-1),32,7,25)[0]>100,'red indicator persists');
+  assert.match(h.titles.at(-1),/Save failed/,'accessible title stays meaningful');
   assert.deepEqual(pixel(h.frames.at(-1),32,30,2),[100,150,200,255],
     'distant corners retain the regular brand image');
 });
@@ -69,6 +70,7 @@ test('an unacknowledged failure survives a later verified success, and clear sto
   h.context.toolbarFailureDotPending=false;
   await h.feedback('clear');
   assert.deepEqual(pixel(h.frames.at(-1),32,7,25),[100,150,200,255]);
+  assert.equal(h.titles.at(-1),'REDOWN — Your Cloud Companion');
 });
 test('a newer signal cancels an older flash without clearing the persistent state',async()=>{
   const waiting=[],h=fixture({},()=>new Promise(resolve=>waiting.push(resolve)));

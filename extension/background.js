@@ -809,7 +809,7 @@ let toolbarFailureDotPending=false,toolbarFailureDotRevision=0;
 // or web pages. Each size keeps the dot inset from the lower-left rim.
 function drawToolbarFailureDot(images,{pulse=false,shift=0,theme=toolbarBrandPalette}={}){
   const neon=theme==='neon',color=neon?[31,203,255]:[252,48,65];
-  const hot=neon?[214,250,255]:[255,218,220],out={};
+  const hot=neon?[105,224,255]:[255,143,151],out={};
   for(const [key,base] of Object.entries(images)){
     const size=Number(key),pixels=new Uint8ClampedArray(base.data);
     const cx=size*(.225+shift),cy=size*.775;
@@ -835,7 +835,11 @@ async function paintToolbarBrand(){
   try{
     const iconPixels=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
     const imageData=iconPixels&&toolbarFailureDotPending?drawToolbarFailureDot(iconPixels):iconPixels;
-    if(generation===toolbarBrandGeneration&&imageData)await chrome.action.setIcon({imageData});
+    if(generation===toolbarBrandGeneration&&imageData){
+      await chrome.action.setIcon({imageData});
+      if(generation===toolbarBrandGeneration)await chrome.action.setTitle?.({title:
+        toolbarFailureDotPending?'REDOWN · Save failed — open History':'REDOWN — Your Cloud Companion'});
+    }
   }catch(error){console.warn('REDOWN toolbar icon fallback:',error?.message||String(error));}
 }
 globalThis.redownRestoreToolbarIcon=paintToolbarBrand;
@@ -848,7 +852,12 @@ function createToolbarFeedback(api, loadPixels = async size => {
     if(!api?.setIcon || !['success','failure','clear'].includes(state))return;
     const ticket=++generation;
     if(state==='clear'){
-      try{await globalThis.redownRestoreToolbarIcon?.();}catch{}
+      try{
+        await globalThis.redownRestoreToolbarIcon?.();
+        if(globalThis.RedownToolbarAppearance?.feedbackTitle)
+          await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);
+        else await api.setTitle?.({title:'REDOWN — Your Cloud Companion'});
+      }catch{}
       return;
     }
     try {
@@ -906,7 +915,12 @@ function createToolbarFeedback(api, loadPixels = async size => {
     finally {
       if(ticket===generation){
         try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
-        if(ticket===generation)try { if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(RedownToolbarAppearance.title);else await api.setTitle?.({title:"REDOWN — Your Cloud Companion"}); } catch {}
+        if(ticket===generation)try {
+          const title=toolbarFailureDotPending?'REDOWN · Save failed — open History':
+            (globalThis.RedownToolbarAppearance?.title||'REDOWN — Your Cloud Companion');
+          if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(title);
+          else await api.setTitle?.({title});
+        } catch {}
       }
     }
   };
