@@ -28,6 +28,31 @@ As bucket URL configurations change after a save, REDOWN should refresh current 
 
 > **Premium: Every available URL. One place. No Cloudflare dashboard required.**
 
+### Premium flagship feature: History → Export All (no digging required)
+
+**One click. Your entire REDOWN history, ready for code.**
+
+A Premium member can open the **main History page** and immediately click a clearly visible **Export** button beside the **History** heading. They do **not** have to enter **By Website**, search, open a website, expand a file, or select records first. This is the default **Export All** action. It includes the user's **entire available REDOWN saved-history archive across every date, cloud provider and source website**, not just the first visible page, current filter, today's entries, a single website or current Shelf window.
+
+The export is an intentionally **developer-friendly, machine-readable, versioned JSON archive** that programmers, web developers and automated workflows can consume directly: every retained save receipt, known original website, file name, saved bucket/key or cloud path, verification and transfer status, historical public file URL, verified newly-added/current domain URLs, and recorded original source/page/src/frame/link fields. Each URL carries its **role, provenance and availability/verification status**. Keep unknown values explicit and do not invent fields.
+
+**Two complementary Premium actions, same schema:**
+
+| Entry point | Scope | User action |
+|---|---|---|
+| **History → Export** | **ALL retained REDOWN History records, across ALL websites and providers** | One click from the History landing page, no additional navigation or selection |
+| **History → By Website → [website name] → Export** | Only the records associated with that one selected website | Search/open a website, then click the Export control next to its name |
+
+An **Export All** download is independent of any active website search or date filter. Do not inadvertently change it into a filtered export. If an optional filtered export is later added, label it separately and require the user to select that scope explicitly.
+
+**Developer contract:** Include `schemaVersion`, export timestamp, scope (`"all"` or `"website"`), exact count of included records, pagination/completeness indication, provider and website grouping fields, and arrays of URLs associated with each saved record. A deterministic ordering and stable IDs permit parsing, deduplication, backups and migration. Support sufficiently large archives via bounded reads/streaming, and **fail visibly instead of silently exporting a truncated file**. Optional CSV or compressed JSON may be added later, but JSON must preserve nested URL collections and exact relationship data.
+
+**Meaning of “whole thing”:** The complete **retained History metadata and URL/provenance archive**, including additional website/domain URLs actually associated with saved files. It does **not** automatically download the original cloud file bytes or unrelated browsing history, and does not expose OAuth tokens, Cloudflare Worker credentials, private signing secrets or API keys. Export takes place only at the user's explicit action, locally as a user-controlled file, with an authoritative Premium entitlement check. Existing History data is not lost on a later subscription downgrade.
+
+> **Developer-ready Premium: Open History. Click Export. Your entire save archive, organized and ready to automate.**
+
+**Status: PRODUCT DESIGN ONLY, not built or entitlement-gated.** A one-click full archive export is a separate premium feature from the per-website Export action below.
+
 ### Premium flagship feature: History → By Website → Export
 
 **Turn a pile of saved files into a searchable, exportable website archive.**
@@ -57,6 +82,7 @@ For each website, **Export** produces a structured, machine-readable dataset of 
 | **History** entry | **Filename + GO TO button only** for a successful, navigable file | Filename + GO TO + provider/saved location + expandable full URL data and provenance |
 | History's URL drawer | **Not available** | Available, closed by default, showing selectable/copyable full strings, **not hyperlinks** |
 | History **By Website** navigation | Not included; free History stays filename + GO TO only | Browse saved records grouped by their original website, search website names/domains and open each website's collection |
+| **History → Export All** (main page) | Not included | **One-click export of the entire REDOWN History archive** as developer-ready JSON, without searching or opening any website; all dates, providers and recorded URLs |
 | Website-level **Export** | Not included | **Export next to website name**, including all recorded files, associated URLs, saved destinations, and later added/updated URL data, in a programmatically usable format |
 | Additional bucket/domain URLs | Not listed as a collection | Show all *actually configured/eligible* URLs of the exact saved object, including newly added addresses after read-only refresh |
 | Visit Cloudflare dashboard to inspect URLs | Free tier provides only the single public URL through REDOWN; richer URL inspection is premium | No Cloudflare dashboard visit needed for ordinary REDOWN-supported URL discovery |
@@ -84,6 +110,9 @@ For each website, **Export** produces a structured, machine-readable dataset of 
 - [ ] Ensure private source/history provenance is still kept in the existing durable REDOWN archive for both tiers, with premium visibility controlled by entitlement, not a destructive migration.
 - [ ] Reconcile current on-demand History URL refresh with the entitlement gate, avoiding unauthorized repeated provider calls. Don't weaken the original object-verification or OAuth checks.
 - [ ] Introduce tests for Free→Premium→Free transitions, expired entitlement, multi-window/sidebar states, offline account, private bucket, no-public-URL, newly added/revoked domains, deep/nested file keys, failures/uncertain receipts, accessible keyboard GO TO and URL drawer, and exact provider/session identity.
+- [ ] Add a prominent **Premium-only Export** action beside the main **History** heading, with the literal scope **All History**, never just the currently displayed page or search results. Clicking should download a complete, inspectable versioned JSON of *all retained History metadata* with no intermediate website selection. Gate at the data/export layer, not just CSS.
+- [ ] Define and test a shared export schema usable by developers/web developers/programmers: `schemaVersion`, `exportedAt`, `scope`, `recordCount`, `complete`, stable record IDs, timestamps, source-site grouping, saved provider/path, delivery verification state, structured URL arrays with roles and originally recorded vs newly configured/live address status. Never export credentials, raw OAuth details or unrelated browsing.
+- [ ] Ensure **Export All ignores current UI date/website filters and pagination**, supports large archived datasets safely and signals an incomplete/error state instead of returning silently partial data. Website-level export uses the **same schema** but scopes to the selected website only. File bytes are not included by default; full metadata and associations are.
 - [ ] Build a **Premium-only By Website view** alongside existing chronological History, grouping by actual recorded hosting/source domains; preserve chronological view and Free filename + GO TO.
 - [ ] Add a responsive website-name/domain search field. Opening a website displays only its correctly attributed saved records, with normal individual **GO TO** controls and premium URL drawers.
 - [ ] Place **Export** directly beside the opened website name. Produce versioned machine-readable **JSON** containing full authorized REDOWN metadata and all available associated URL entries, including added/current bucket domains with timestamp and source labels. Consider CSV and a documented schema after JSON.
@@ -104,10 +133,11 @@ For each website, **Export** produces a structured, machine-readable dataset of 
 **Product demonstration sequence, only after the Premium workflow ships:**
 
 1. **Show Free first:** right-click a file → **Get URL** → one genuine public Cloudflare file URL, fast and useful. Briefly acknowledge that technically capable users can obtain more addresses using Cloudflare's own tools.
-2. **Reveal Premium:** open REDOWN History → **By Website**. Enter part of a website's name in the search field. Its saved collection appears instantly.
-3. **Open the website collection:** show its name prominently, the list of verified saved files, existing **GO TO** buttons, saved cloud destinations and rich URL details.
-4. **Demonstrate the differentiator:** add or enable a *real* permitted custom/public bucket address, recheck it, and show the newly available URL associated with an older saved image without visiting the Cloudflare dashboard to manually gather all addresses.
-5. **Click Export beside the website name:** open the resulting JSON file in a code editor and display the organized records and complete available URL arrays, beyond a single public URL. Avoid exposing actual sensitive identifiers or credentials in the video; use a sanitized test library.
-6. **Close on the promise:** “Free gives you your public URL. Premium turns your saves into a searchable, exportable archive, organized by website.”
+2. **Show the one-click developer shortcut first:** open the **main History page** and click its visible **Export** action. Open the entire History JSON in a code editor; point out that **every retained website, file receipt and recorded URL** is included, not merely today's or visible entries.
+3. **Then demonstrate the finer control:** choose **By Website**. Type part of a website's name in the search field to find its saved collection.
+4. **Open the website collection:** show its name prominently, the list of verified saved files, existing **GO TO** buttons, saved cloud destinations and rich URL details.
+5. **Demonstrate the differentiator:** add or enable a *real* permitted custom/public bucket address, recheck it, and show the newly available URL associated with an older saved image without visiting the Cloudflare dashboard to manually gather all addresses.
+6. **Click Export beside the website name:** open the resulting JSON file in a code editor and display the organized records and complete available URL arrays, beyond a single public URL. Avoid exposing actual sensitive identifiers or credentials in the video; use a sanitized test library.
+7. **Close on the promise:** “Free gives you your public URL. Premium puts your entire archive one click away, searchable by website and ready for developers.”
 
 **Marketing truthfulness:** The YouTube video should show a real working implementation or clearly identify a concept preview, never misrepresent screenshots or mock export data as a released service. The benefit is convenience, organization and legitimate data access, not exclusive ownership of publicly available Cloudflare URLs.
