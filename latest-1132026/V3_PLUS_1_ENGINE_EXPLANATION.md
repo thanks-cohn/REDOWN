@@ -111,3 +111,52 @@ Separately, the real first-run bootstrap may provision or reuse **only the autho
 - No completion, Chrome integration, test pass, or deployed UX is claimed by this document.
 
 The endpoint is a person who has already saved with one right-click and can understand additional options by trying a harmless example rather than reading a manual.
+
+## 8. Real Dashboard image menus: the working twin of the teaching surface
+
+**Further owner direction — November 3, 2026:** The Dashboard should preserve REDOWN's central right-click value. A user who is browsing a genuine image or object in REDOWN Explorer should be able to right-click it and choose another connected cloud, not return to an outside webpage just to save or copy it.
+
+This creates three deliberately different surfaces:
+
+| Surface | Right-click result | Data side effect |
+| --- | --- | --- |
+| **Quick Tour practice picture in Right-click Setup** | Faux Dashboard menu showing Simple/Narrow/Depth and example providers | **None**: no real saves, directory reads, Chrome registrations, or config updates |
+| **Real Dashboard / Explorer image or file** | Working REDOWN in-page context menu with supported Cloudflare, Google Drive, Dropbox, OneDrive and other authorized targets | Real, user-initiated save/copy after exact source, destination, permission and transfer checks |
+| **Eligible image on an ordinary website** | Registered Chrome-native REDOWN context menu | Real, user-initiated browser-to-cloud save using the production right-click system |
+
+### Product behavior
+
+A real Explorer image may already live in Cloudflare R2, Google Drive, Dropbox or OneDrive. A right-click on that item should offer authorized destination providers. Selecting a provider means **copy/save the original object** to the chosen destination—not move/delete it, not save a rendered thumbnail, and not create an unintended local download.
+
+The intended provider structure remains **REDOWN → Cloudflare (V3 nesting only when configured), Google Drive, Dropbox, OneDrive**, with each non-Cloudflare provider remaining a flat leaf. Additional supported S3 providers have their own independent destinations; they are not nested underneath Cloudflare.
+
+The in-Dashboard working menu can be visually polished, but only structure, labels, verified targets and routing semantics that Chrome permits should be translated into the native Chrome context-menu registration. Chrome owns the native menu's layout, opening mechanics and supported features. Do not treat a visual Dashboard preview as proof that native Chrome registration or transfer succeeds.
+
+### One production model, multiple projections
+
+Use the existing V3 configuration and canonical provider/destination IDs for real routes. A pure menu-plan/projection layer can feed:
+
+1. **Dashboard's real working menu**, rendered in HTML/CSS and dispatched through production transfer actions.
+2. **Chrome's native context-menu entries**, registered by the single V3 engine in a platform-compatible form.
+3. **Quick Tour faux menu**, derived from **canned fixture state only**, without any real action handlers.
+
+Avoid two competing configuration authorities or a parallel upload engine. **The tour's inert menu is not the Dashboard's working menu.** Never let tour click handlers accidentally call the real dispatcher; never give real-image handlers mock target IDs.
+
+### Source identity, privacy, and confirmation
+
+- Resolve the precise source file identity and original bytes, not preview URLs or thumbnails. When cross-cloud capability permits, fetch/stream via the extension's supported mechanism without local disk staging. Handle unavailable source bytes and authentication failures explicitly.
+- Preserve the source object. Match the applicable filename, destination, conflict policy (default KEEP BOTH), and provider-specific required fields without inventing cloud-native folder parity.
+- Keep browsing/source URLs and page/link/frame provenance out of destination-provider requests. A receiving provider should get the file bytes, filename/extension and only the minimum required protocol metadata. Internal REDOWN History can retain legitimate origin details according to product rules without transmitting them to receiving providers.
+- Distinguish requested, in-progress, confirmed, failed and uncertain outcomes; trigger SUCCESS, counters and successful History only after provider-confirmed completion.
+- A newly designed Dashboard menu is a **prototype** until the actual native Chrome structure and dispatch path independently pass tests.
+
+### Acceptance
+
+- Right-click a real REDOWN Explorer image and select a different authorized cloud; prove the **original bytes** arrive at the exact target while the source remains unchanged.
+- Show equivalent eligible destination identities and real route semantics in the Dashboard working menu and Chrome-native menu, allowing platform-specific rendering differences.
+- Demonstrate failed/unauthorized transfers never generate false-success effects.
+- Right-click the Quick Tour picture before and after actual transfers: only a faux illustration appears; not a single actual folder, object, configuration, menu registration, counter or History entry changes because of the tour.
+- Switching away from Right-click Setup dismisses the tour, but does **not** disable functional right-clicks elsewhere in the Dashboard/Explorer.
+
+**Engineering principle:** build and refine the *behavior* in an in-app context first, then project the proven structure into Chrome's native menu; never imply a simulated visual interaction is proof of a completed upload.
+
