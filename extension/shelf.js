@@ -100,12 +100,42 @@ async function refreshConnection() {
   } catch {paint('error','Check sign-in','Saved sign-in could not be verified. Reconnect Cloudflare or check your account access.');}
   finally {clearTimeout(timer);}
 }
+// Keep the tiny failure laser fixed at the Shelf's bottom-left edge.
+// Stored failure receipts remain authoritative until History is reviewed.
+const failureLaser=$('shelf-failure-laser');
+let failureLaserRevision=0,lastFailureLaserAt=null;
+function paintShelfFailureLaser(state,animate=false){
+  if(!failureLaser)return;
+  const pending=state?.pending===true;
+  const at=Number.isFinite(state?.at)?state.at:null;
+  failureLaser.hidden=!pending;
+  if(!pending){
+    failureLaser.classList.remove('pulse');
+    lastFailureLaserAt=null;
+    return;
+  }
+  if(animate&&at!==lastFailureLaserAt){
+    failureLaser.classList.remove('pulse');
+    void failureLaser.offsetWidth; // Restart two brief pulses after each new failed save.
+    failureLaser.classList.add('pulse');
+  }
+  lastFailureLaserAt=at;
+}
+const initialFailureLaserRevision=failureLaserRevision;
+void chrome.storage.local.get('redownFailureDot').then(data=>{
+  if(failureLaserRevision===initialFailureLaserRevision)
+    paintShelfFailureLaser(data.redownFailureDot);
+}).catch(()=>{});
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area==='session'&&changes.shelfOpenIntent){
     void useShelfOpenIntent(changes.shelfOpenIntent.newValue).catch(()=>{});
     return;
   }
   if(area!=='local')return;
+  if(changes.redownFailureDot){
+    ++failureLaserRevision;
+    paintShelfFailureLaser(changes.redownFailureDot.newValue,true);
+  }
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
 });
