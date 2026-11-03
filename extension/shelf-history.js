@@ -472,13 +472,18 @@
   $('history-retry').addEventListener('click',()=>void refresh());
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
-    const disconnected=['cloudflareAuth','dropbox:auth','onedrive:auth'].some(k=>changes[k]&&
-      (!changes[k].newValue||changes[k].oldValue?.accountId!==changes[k].newValue?.accountId||
-       changes[k].oldValue?.connectionId!==changes[k].newValue?.connectionId))||
-      changes.googleDriveState&&changes.googleDriveState.newValue?.phase!=='connected';
-    if(disconnected){quickGlance?.dispose();quickGlance=null;}
-    if(!changes.transferHistory&&!changes.quickGlancePremiumEnabled)return;
-    dirty=true;legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
+    const previewConnectionChanged=['cloudflareAuth','dropbox:auth','onedrive:auth','googleDriveState'].some(key=>{
+      const change=changes[key];
+      return change&&(Boolean(change.oldValue)!==Boolean(change.newValue)||
+        ['accountId','connectionId','phase','namespace','driveId','rootId']
+          .some(field=>change.oldValue?.[field]!==change.newValue?.[field]));
+    });
+    const membership=changes.quickGlancePremiumEnabled;
+    if(previewConnectionChanged||(membership&&membership.newValue!==true))stopPreviews();
+    if(changes.transferHistory){
+      legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
+    }else if(!membership&&!(previewConnectionChanged&&quickGlanceEnabled))return;
+    dirty=true;
     if(!$('history-view').hidden)void refresh();
   });
 })();

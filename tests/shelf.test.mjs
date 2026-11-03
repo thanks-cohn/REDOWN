@@ -93,3 +93,21 @@ test('unverified Cloudflare retains card-level status but no duplicate warning i
    assert.equal(h.doc.getElementById('connection-summary').textContent,'');
  }finally{h.dom.window.close();}
 });
+
+test('Membership uses the existing Quick Glance flag and restores both modes on reopen',async()=>{
+ const data={quickGlancePremiumEnabled:true,transferHistory:[{id:'keep'}]};
+ const selected=(h,value)=>h.doc.querySelector(`[name="shelf-membership"][value="${value}"]`);
+ const original=await shelf(data);
+ try{
+  assert.equal(selected(original,'premium').checked,true);
+  for(const [value,enabled] of [['free',false],['premium',true]]){
+   selected(original,value).click();
+   await settle();
+   assert.equal(data.quickGlancePremiumEnabled,enabled);
+   const reopened=await shelf(data);
+   assert.equal(selected(reopened,value).checked,true);
+   reopened.dom.window.close();
+  }
+  assert.deepEqual(data.transferHistory,[{id:'keep'}]);
+ }finally{original.dom.window.close();}
+});

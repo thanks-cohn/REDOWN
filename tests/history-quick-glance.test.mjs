@@ -39,7 +39,7 @@ function pipeline({count=100,resolve,placeholder,decode}={}){
  class Observer{constructor(cb,options){this.cb=cb;this.options=options;this.nodes=[];observers.push(this);}observe(n){this.nodes.push(n);}disconnect(){this.stopped=true;}emit(indices){this.cb(this.nodes.map((target,i)=>({target,isIntersecting:indices.includes(i)})));}}
  const root=h.d.querySelector('#history-view');root.hidden=false;
  if(decode)h.w.HTMLImageElement.prototype.decode=decode;
- const source={resolve:async(r,signal,consume)=>{calls.push(r.id);active++;maxActive=Math.max(maxActive,active);try{return resolve?await resolve(r,signal,consume):await consume(new Blob(['png'],{type:'image/png'}));}finally{active--;}}};
+ const source={resolve:async(r,signal,consume)=>{calls.push(r.id);active++;maxActive=Math.max(maxActive,active);try{return resolve?await resolve(r,signal,consume):{image:await consume(new Blob(['png'],{type:'image/png'})),origin:'cloud'};}finally{active--;}}};
  const session=h.w.RedownHistoryQuickGlance.create({root,source,IntersectionObserver:Observer,placeholder,decodeImage:async()=> 'blob:'+Math.random(),revoke:u=>revoked.push(u)});
  for(let i=0;i<count;i++){const row=h.d.createElement('div');root.append(row);session.attach(row,record(i));}
  session.start();return {...h,session,calls,revoked,observers,max:()=>maxActive,root};
@@ -59,7 +59,7 @@ test('initial ten, three concurrent, batches on approach, bounded retained image
 test('disposing cancels outstanding requests and discards late responses without wrong-row paint',async()=>{
  const pending=[];const h=pipeline({resolve:(r,signal)=>new Promise(resolve=>pending.push({signal,resolve}))});
  assert.equal(h.calls.length,3);h.session.dispose();assert.ok(pending.every(p=>p.signal.aborted));
- pending.forEach(p=>p.resolve('blob:late'));await tick();assert.equal(h.root.querySelectorAll('.history-image-slot img').length,0);assert.equal(h.revoked.length,3);assert.equal(h.calls.length,3);h.dom.window.close();
+ pending.forEach(p=>p.resolve({image:'blob:late',origin:'cloud'}));await tick();assert.equal(h.root.querySelectorAll('.history-image-slot img').length,0);assert.equal(h.root.querySelectorAll('.history-image-origin').length,0);assert.equal(h.revoked.length,3);assert.equal(h.calls.length,3);h.dom.window.close();
 });
 test('definitive failure stops animation, keeps square and records, and never retries on observer churn',async()=>{
  const h=pipeline({count:12,resolve:async()=>null});await tick();
@@ -77,9 +77,10 @@ test('cloud-first private R2 GET uses exact key, no public URL or provenance; de
  const calls=[],r=record();r.pageUrl='https://private-page.invalid';const before=JSON.stringify(r);
  const {source}=resolver({cloudflare:{request:async(path,options)=>{calls.push(['cloud',path,options]);return image();}},fetch:async(url,options)=>{calls.push(['source',url,options]);return image();}});
  const signal=new AbortController().signal;
- assert.ok(await source.resolve(r,signal));assert.equal(calls.length,1);assert.match(calls[0][1],/private\/objects\/photos\/0.png$/);
+ assert.equal((await source.resolve(r,signal)).origin,'cloud');assert.equal(calls.length,1);assert.match(calls[0][1],/private\/objects\/photos\/0.png$/);
  assert.ok(!JSON.stringify(calls).includes(r.sourceUrl));assert.ok(!JSON.stringify(calls).includes(r.pageUrl));
- let decodes=0;assert.equal(await source.resolve(r,signal,()=>{if(!decodes++)throw Error('bad cloud bytes');return 'decoded';}),'decoded');
+ let decodes=0;const preview=await source.resolve(r,signal,()=>{if(!decodes++)throw Error('bad cloud bytes');return 'decoded';});
+ assert.equal(preview.image,'decoded');assert.equal(preview.origin,'source');
  assert.equal(calls.at(-1)[0],'source');assert.equal(calls.at(-1)[2].credentials,'omit');assert.equal(calls.at(-1)[2].referrerPolicy,'no-referrer');assert.equal(JSON.stringify(r),before);
 });
 test('unsupported/disconnected cloud falls back once, both failures yield no image, MIME and byte limits apply',async()=>{
@@ -95,9 +96,9 @@ test('Dropbox thumbnail uses recorded file ID and namespace with current scope, 
   onedrive:{ready:async d=>{assert.equal(d.driveId,'drive');return {token:'secret'};}},chrome:{storage:{local:{get:async()=>({'dropbox:auth':{accountId:'a',connectionId:'c',namespace:'123'},'onedrive:auth':{accountId:'a',driveId:'drive',rootId:'root',connectionId:'current'}})}}},
   fetch:async(url,options)=>{calls.push([url,options]);return url.includes('graph.microsoft')?Response.json({url:'https://thumb.provider.invalid/image'}):image();}});
  const signal=new AbortController().signal;
- assert.ok(await source.resolve({...record(),providerKind:'dropbox',destination:{accountId:'a',connectionId:'c',namespace:'123',fileId:'id:exact'}},signal));
+ assert.equal((await source.resolve({...record(),providerKind:'dropbox',destination:{accountId:'a',connectionId:'c',namespace:'123',fileId:'id:exact'}},signal)).origin,'cloud');
  assert.match(calls[0][1].headers['Dropbox-API-Arg'],/id:exact/);assert.ok(!JSON.stringify(calls).includes('source.invalid'));
- assert.ok(await source.resolve({...record(),providerKind:'onedrive',destination:{accountId:'a',driveId:'drive',rootId:'root',itemId:'item'}},signal));
+ assert.equal((await source.resolve({...record(),providerKind:'onedrive',destination:{accountId:'a',driveId:'drive',rootId:'root',itemId:'item'}},signal)).origin,'cloud');
  assert.match(calls[1][0],/thumbnails\/0\/medium$/);assert.equal(calls[2][1].headers,undefined);
 });
 test('stable square, contained aspect ratio, theme primitives, paused offscreen and reduced motion stylesheet contract',()=>{
@@ -120,6 +121,13 @@ test('Premium gate enables Today previews once; revocation preserves records',as
  h.d.documentElement.dataset.shelfTheme='neon';await tick();assert.equal(calls.length,10);
  enabled=false;listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');await tick();
  assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
+ enabled=true;listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
+ await waitFor(()=>h.d.querySelectorAll('.history-image-slot').length===70);
+ const beforeReconnect=calls.length;
+ listeners[0]({googleDriveState:{oldValue:{phase:'disconnected'},newValue:{phase:'connected',accountId:'a'}}},'local');
+ await waitFor(()=>calls.length>beforeReconnect);
+ assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
+
  h.dom.window.close();
 });
 test('Google preview reuses noninteractive drive.file auth and checks account; thumbnail URL gets no token',async()=>{
@@ -157,7 +165,7 @@ test('old Dropbox receipts cannot change the newly connected account state; fail
 test('late decode from an evicted slot cannot cancel or fail its replacement request',async()=>{
  const decodes=[];
  const h=pipeline({count:100,decode:function(){return new Promise((resolve,reject)=>decodes.push({resolve,reject,image:this}));}});
- await tick();assert.equal(decodes.length,3);
+ await tick();assert.equal(decodes.length,3);assert.equal(h.root.querySelector('.history-image-origin'),null);
  h.observers[0].emit([50]);decodes[1].resolve();await tick();assert.equal(decodes.length,4);
  h.observers[0].emit([0]);decodes[2].resolve();await tick();assert.equal(decodes.length,5);
  // Entry zero has a fresh request now, while its original decode is pending.
@@ -165,5 +173,42 @@ test('late decode from an evicted slot cannot cancel or fail its replacement req
  decodes[4].resolve();await tick();
  assert.equal(h.observers[0].nodes[0].dataset.state,'ready');
  assert.equal(h.observers[0].nodes[0].querySelector('img'),decodes[4].image);
+ assert.equal(h.observers[0].nodes[0].querySelector('.history-image-origin').dataset.origin,'cloud');
  h.session.dispose();decodes.forEach(d=>d.resolve());await tick();h.dom.window.close();
+});
+
+test('verified public R2 receipt is cloud and Google preview is cloud',async()=>{
+ const calls=[];
+ const {source}=resolver({
+  cloudflare:{request:async()=>{throw Error('signed out');}},
+  google:{preview:async d=>{assert.equal(d.fileId,'file');return image();}},
+  chrome:{storage:{local:{get:async()=>({googleDriveState:{phase:'connected',accountId:'a'}})}}},
+  fetch:async(url,options)=>{calls.push(url);assert.equal(options.referrerPolicy,'no-referrer');return image();}
+ });
+ const signal=new AbortController().signal,r=record();
+ r.destination.publicUrl='https://bucket.invalid/photos/0.png';
+ assert.equal((await source.resolve(r,signal)).origin,'cloud');
+ assert.deepEqual(calls,[r.destination.publicUrl]);
+ assert.equal((await source.resolve({...r,providerKind:'google-drive',destination:{accountId:'a',fileId:'file'}},signal)).origin,'cloud');
+});
+
+test('source dots appear independently of successful and failed transfer status',async()=>{
+ const h=view();
+ const saved=record(),failed={...record(1),ok:false,verified:false,status:'failed'};
+ h.d.querySelector('#history-view').hidden=false;
+ h.w.RedownHistoryImageSource.shared=()=>({resolve:async()=>({image:'blob:preview',origin:'source'})});
+ h.w.chrome={storage:{local:{get:async()=>({transferHistory:[saved,failed],quickGlancePremiumEnabled:true})},onChanged:{addListener(){}}}};
+ h.w.eval(read('shelf-history.js'));
+ await h.w.RedownShelfHistory.open();await tick();
+ const rows=[...h.d.querySelectorAll('.history-transfer')];
+ assert.equal(rows.length,2);
+ assert.ok(rows.some(row=>row.dataset.state==='failed'));
+ assert.ok(rows.some(row=>row.dataset.state==='success'||row.dataset.state==='verified'));
+ for(const row of rows){
+  assert.ok(row.querySelector('.history-dot'));
+  const origin=row.querySelector('.history-image-origin');
+  assert.equal(origin.dataset.origin,'source');
+  assert.equal(origin.getAttribute('aria-label'),'Preview from original source');
+ }
+ h.dom.window.close();
 });

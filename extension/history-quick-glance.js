@@ -23,6 +23,7 @@
       entry.controller?.abort();entry.controller=null;
       if(entry.url){revoke(entry.url);entry.url=null;}
       entry.image?.remove();entry.image=null;
+      entry.originDot?.remove();entry.originDot=null;
       if(entry.state!=='failed')entry.state='idle';
       entry.slot.dataset.state=entry.state;
     }
@@ -44,8 +45,9 @@
         running++;entry.state='loading';entry.slot.dataset.state='loading';
         const controller=new AbortController();entry.controller=controller;
         const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(20000)]);
-        void source.resolve(entry.record,signal,blob=>decodeImage(blob,signal)).then(url=>{
-          if(disposed||controller.signal.aborted||!desired.has(i)||!visible()){
+        void source.resolve(entry.record,signal,blob=>decodeImage(blob,signal)).then(result=>{
+          const url=result?.image;
+          if(disposed||entry.controller!==controller||controller.signal.aborted||!desired.has(i)||!visible()){
             if(url)revoke(url);return;
           }
           if(!url){entry.state='failed';entry.slot.dataset.state='failed';return;}
@@ -56,7 +58,14 @@
           return image.decode().then(()=>{
             if(entry.controller!==controller)return;
             if(disposed||controller.signal.aborted||!desired.has(i)||!visible())return release(entry);
-            entry.slot.append(image);entry.state='ready';entry.slot.dataset.state='ready';
+            const dot=document.createElement('span');
+            dot.className='history-image-origin';
+            dot.dataset.origin=result.origin;
+            dot.title=result.origin==='cloud'?'Preview from your cloud':'Preview from original source';
+            dot.setAttribute('role','img');
+            dot.setAttribute('aria-label',dot.title);
+            entry.originDot=dot;
+            entry.slot.append(image,dot);entry.state='ready';entry.slot.dataset.state='ready';
           }).catch(()=>{if(entry.controller!==controller)return;release(entry);entry.state='failed';entry.slot.dataset.state='failed';});
         }).catch(()=>{
           if(!controller.signal.aborted){entry.state='failed';entry.slot.dataset.state='failed';}

@@ -76,10 +76,21 @@
     }
     async function resolve(record,signal,consume=async blob=>blob){
       // Decode failure is also a cloud failure, so it still reaches source fallback.
-      for(const read of [()=>cloud(record,signal),()=>{
+      const d=record.destination||{};
+      const kind=String(record.providerKind||d.provider||record.provider||'').toLowerCase();
+      const publicUrl=record.ok===true&&record.verified===true&&kind.includes('cloudflare')&&
+        d.bucketName&&d.key&&sourceURL(d.publicUrl);
+      const attempts=[['cloud',()=>cloud(record,signal)]];
+      if(publicUrl&&publicUrl.startsWith('https:'))attempts.push(['cloud',()=>request(publicUrl,signal)]);
+      attempts.push(['source',()=>{
         const url=sourceURL(record.sourceUrl);if(!url)throw Error('No image source');return request(url,signal);
-      }]){
-        try{signal.throwIfAborted();return await consume(await imageBlob(await readWithAbort(read,signal),signal));}
+      }]);
+      for(const [origin,read] of attempts){
+        try{
+          signal.throwIfAborted();
+          const image=await consume(await imageBlob(await readWithAbort(read,signal),signal));
+          return {image,origin};
+        }
         catch{signal.throwIfAborted();}
       }
       return null;
