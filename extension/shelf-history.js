@@ -124,6 +124,7 @@
   const archive=globalThis.RedownHistoryArchive?.create();
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
   let quickGlance=null,quickGlanceEnabled=false,firstPageSize=PAGE_SIZE;
+  let resumeAfterMembershipChange=false;
   let legacy=[],pageItems=[],fallback=false,legacyImported=false;
   const openGroups=new Map([['root',null]]);
   const create=(tag,value='',className='')=>{
@@ -326,7 +327,7 @@
         body.append(header);
         addProvenance(body,record,info);
       }
-      if(day.date&&dateKey(day.date)===dateKey(new Date()))quickGlance?.attach(body,record);
+      quickGlance?.attach(body,record);
       row.append(dot,body);list.append(row);
     }
     container.append(list);
@@ -446,6 +447,11 @@
     $('history-navigation-status').replaceChildren();
     // Every time History is opened, expose today's transfers immediately
     // instead of requiring the user to expand Year then Today manually.
+    if(resumeAfterMembershipChange){
+      resumeAfterMembershipChange=false;
+      await refresh();
+      return;
+    }
     if(pageIndex!==0){pageIndex=0;dirty=true;}
     if(!loaded||dirty){await refresh({exposeToday:true});return;}
     if(loaded&&expandToday())render();
@@ -472,13 +478,19 @@
   $('history-retry').addEventListener('click',()=>void refresh());
   chrome.storage.onChanged.addListener((changes,area)=>{
     if(area!=='local')return;
-    const disconnected=['cloudflareAuth','dropbox:auth','onedrive:auth'].some(k=>changes[k]&&
-      (!changes[k].newValue||changes[k].oldValue?.accountId!==changes[k].newValue?.accountId||
-       changes[k].oldValue?.connectionId!==changes[k].newValue?.connectionId))||
-      changes.googleDriveState&&changes.googleDriveState.newValue?.phase!=='connected';
-    if(disconnected){quickGlance?.dispose();quickGlance=null;}
-    if(!changes.transferHistory&&!changes.quickGlancePremiumEnabled)return;
-    dirty=true;legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
+    const previewConnectionChanged=['cloudflareAuth','dropbox:auth','onedrive:auth','googleDriveState'].some(key=>{
+      const change=changes[key];
+      return change&&(Boolean(change.oldValue)!==Boolean(change.newValue)||
+        ['accountId','connectionId','phase','namespace','driveId','rootId']
+          .some(field=>change.oldValue?.[field]!==change.newValue?.[field]));
+    });
+    const membership=changes.quickGlancePremiumEnabled;
+    if(membership&&loaded&&$('history-view').hidden)resumeAfterMembershipChange=true;
+    if(previewConnectionChanged||(membership&&membership.newValue!==true))stopPreviews();
+    if(changes.transferHistory){
+      legacyImported=false;pageIndex=0;openGroups.delete('root-chosen');
+    }else if(!membership&&!(previewConnectionChanged&&quickGlanceEnabled))return;
+    dirty=true;
     if(!$('history-view').hidden)void refresh();
   });
 })();

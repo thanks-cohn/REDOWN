@@ -77,6 +77,31 @@ for (const input of modes) input.addEventListener('change',async()=>{
   } catch { status('Could not save your opening preference. Please try again.'); }
   finally { await refreshPreference().catch(()=>{}); for (const item of modes) item.disabled=false; }
 });
+// Temporary local control. History owns the feature gate used by a future entitlement.
+const membershipModes=[...document.querySelectorAll('input[name="shelf-membership"]')];
+let membershipRevision=0;
+function paintMembership(enabled) {
+  for (const input of membershipModes) input.checked=input.value===(enabled===true?'premium':'free');
+}
+async function refreshMembership() {
+  const revision=++membershipRevision;
+  const {quickGlancePremiumEnabled}=await chrome.storage.local.get('quickGlancePremiumEnabled');
+  if(revision===membershipRevision)paintMembership(quickGlancePremiumEnabled);
+}
+for (const input of membershipModes) input.addEventListener('change',async()=>{
+  for (const mode of membershipModes) mode.disabled=true;
+  try {
+    await chrome.storage.local.set({quickGlancePremiumEnabled:input.value==='premium'});
+  } catch {
+    status('Could not save your membership preference.');
+  } finally {
+    await refreshMembership().catch(()=>status('Membership preference unavailable.'));
+    for (const mode of membershipModes) mode.disabled=false;
+  }
+});
+if(membershipModes.length)void refreshMembership().then(()=>{
+  for (const mode of membershipModes) mode.disabled=false;
+}).catch(()=>status('Membership preference unavailable.'));
 let connectionEpoch=0;
 async function refreshConnection() {
   const epoch=++connectionEpoch;
@@ -135,6 +160,10 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   if(changes.redownFailureDot){
     ++failureLaserRevision;
     paintShelfFailureLaser(changes.redownFailureDot.newValue,true);
+  }
+  if(changes.quickGlancePremiumEnabled){
+    ++membershipRevision;
+    paintMembership(changes.quickGlancePremiumEnabled.newValue);
   }
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
