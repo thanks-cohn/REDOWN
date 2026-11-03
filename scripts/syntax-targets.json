@@ -101,5 +101,10 @@
   "extension/history-image-placeholder.js",
   "extension/history-quick-glance.js",
   "extension/google-drive-stream.js",
-  "scripts/history-quick-glance-preview.mjs"
+  "scripts/history-quick-glance-preview.mjs",
+  "extension/click-feedback.js",
+  "extension/click-origin.js",
+  "extension/shelf-click-feedback.js",
+  "extension/shelf-save-feedback.js",
+  "scripts/click-feedback-preview.mjs"
 ]

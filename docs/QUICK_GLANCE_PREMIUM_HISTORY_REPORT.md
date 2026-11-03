@@ -116,3 +116,13 @@ and expiring-source behavior, native GO TO and scrolling very long real days sti
 need installed/browser/provider acceptance. Local mocks establish the read order
 and absence of public-access mutation; they cannot certify private R2 retrieval in
 an owner's account. Entitlement integration remains open as described above.
+
+## Main integration follow-up
+
+At the owner's explicit push-to-main request, merged remote main `303a20b` into
+`e57d30a`. Resolved Shelf script-list and syntax-target conflicts by preserving
+both sets of additions, including main's Pulse Destination setting and
+`shelf-click-feedback.js`. Post-merge Quick Glance, click-feedback and Shelf-save
+fixtures: **30 pass, 0 fail**. Syntax and the local Chromium Quick Glance fixture
+pass. The full-suite counts above describe the implementation before this merge;
+the full suite was not rerun for the integration. Installed/provider gaps remain.

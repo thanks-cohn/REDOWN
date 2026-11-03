@@ -6,21 +6,11 @@
   const visible=()=>document.visibilityState!=='hidden'&&!document.getElementById('clouds-view')?.hidden;
   const runs=new Map(),seen=new Set();
   let dropboxState,dropboxEpoch=0,cloudflareAuth,cloudflareEpoch=0;
-  let pulseTimer,pendingImpact,pendingReceipt,impactId,impactAt=0,epoch=0;
+  let pendingReceipt,epoch=0;
   // A verified upload's storage notification may reach an inactive Shelf just
   // before Chrome reveals it again. Allow a brief live-event handoff, NEVER
   // replay a receipt merely because it was read during startup hydration.
-  const fresh=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<3000;
   const freshReceipt=at=>Number.isFinite(at)&&Date.now()-at>=0&&Date.now()-at<20000;
-  function impact(value){
-    const at=typeof value==='number'?value:value?.at,id=value?.id||at;
-    if(!fresh(at)||id===impactId||at<impactAt)return;
-    if(!visible()){pendingImpact=value;return;}
-    impactId=id;impactAt=at;pendingImpact=null;
-    root.removeAttribute('data-save-impact');void root.offsetWidth;
-    root.dataset.saveImpact='true';clearTimeout(pulseTimer);
-    pulseTimer=setTimeout(()=>root.removeAttribute('data-save-impact'),850);
-  }
   function cleanup(provider){
     const run=runs.get(provider);if(!run)return;
     run.timers.forEach(clearTimeout);run.node.remove();runs.delete(provider);
@@ -165,7 +155,6 @@
       dropboxState=next;
       if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);
     }
-    if(changes.redownShelfImpact)impact(changes.redownShelfImpact.newValue);
     if(changes.providerSaveReceipts){
       epoch++;const state=changes.providerSaveReceipts.newValue;
       paint(state);
@@ -173,19 +162,17 @@
     }
   });
   const ticket=epoch,identityTicket=dropboxEpoch,cloudflareTicket=cloudflareEpoch;
-  void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state','cloudflareAuth']).then(data=>{
+  void chrome.storage.local.get(['providerSaveReceipts','dropbox:state','cloudflareAuth']).then(data=>{
     if(cloudflareTicket===cloudflareEpoch){
       cloudflareAuth=data.cloudflareAuth;
       if(pendingReceipt?.provider==='cloudflare')celebrate(pendingReceipt);
     }
     if(identityTicket===dropboxEpoch){dropboxState=data['dropbox:state'];if(pendingReceipt?.provider==='dropbox')celebrate(pendingReceipt);}
     if(ticket===epoch)paint(data.providerSaveReceipts);
-    impact(data.redownShelfImpact);
   }).catch(()=>{});
-  const reset=()=>{for(const provider of runs.keys())cleanup(provider);clearTimeout(pulseTimer);root.removeAttribute('data-save-impact');};
+  const reset=()=>{for(const provider of runs.keys())cleanup(provider);};
   document.addEventListener('visibilitychange',()=>{
     if(!visible()){reset();return;}
-    if(pendingImpact)impact(pendingImpact);
     if(pendingReceipt)celebrate(pendingReceipt);
   });
   globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.addEventListener?.('change',reset);
