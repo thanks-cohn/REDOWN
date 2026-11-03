@@ -88,3 +88,17 @@ test('cosmetic API failures never reject transfers',async()=>{
   await assert.doesNotReject(()=>h.feedback('failure'));
   await assert.doesNotReject(()=>h.feedback('success'));
 });
+
+const shelfHtml=await readFile(new URL('../extension/shelf.html',import.meta.url),'utf8');
+const shelfCss=await readFile(new URL('../extension/shelf.css',import.meta.url),'utf8');
+const shelfJs=await readFile(new URL('../extension/shelf.js',import.meta.url),'utf8');
+
+test('Shelf bottom-left laser is the only persistent failure lamp and opens History',()=>{
+  assert.match(shelfHtml,/id="shelf-failure-laser"[^>]*href="#history"/);
+  assert.match(shelfCss,/\.shelf-failure-laser\{[\s\S]*?position:fixed;[\s\S]*?left:4px;[\s\S]*?bottom:4px;/);
+  assert.match(shelfCss,/:root\[data-shelf-theme="neon"\] \.shelf-failure-laser\{--shelf-failure-color:#1fcbff\}/);
+  assert.match(shelfCss,/@media\(prefers-reduced-motion:reduce\)/);
+  assert.match(shelfJs,/chrome\.storage\.local\.get\('redownFailureDot'\)/);
+  assert.match(shelfJs,/paintShelfFailureLaser\(changes\.redownFailureDot\.newValue,true\)/);
+  assert.match(shelfJs,/if\(location\.hash\.slice\(1\)==='history'&&redownFailureDot\.at<=reviewStart\)/);
+});
