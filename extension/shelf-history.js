@@ -1,7 +1,7 @@
 /* One minimal History view. Recent days and weeks lead, older dates fold
    into months > numbered weeks > days. Each page is read from the on-device
    archive; legacy transferHistory stays the compatibility source, not a
-   second timeline. Preview bytes are a separate bounded Premium session. */
+   second timeline. Preview bytes are a separate bounded gallery session. */
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
@@ -125,6 +125,7 @@
   let pageIndex=0,total=0,loaded=false,dirty=false,requestId=0;
   let quickGlance=null,quickGlanceEnabled=false,firstPageSize=PAGE_SIZE;
   let resumeAfterMembershipChange=false;
+  let galleryRecords=new Set(),todayRecords=[];
   let legacy=[],pageItems=[],fallback=false,legacyImported=false;
   const openGroups=new Map([['root',null]]);
   const create=(tag,value='',className='')=>{
@@ -292,10 +293,71 @@
     }
     if(content.childElementCount)parent.append(content);
   }
+  function galleryRow(item,day,info){
+    const record=item.record,failed=record.ok===false;
+    const row=create('li','','history-transfer history-gallery-entry'+(failed?' history-gallery-failure':''));
+    row.dataset.state=info.state;
+    const dot=create('span','','history-dot');
+    dot.setAttribute('role','img');dot.setAttribute('aria-label',failed?'Failed save':info.status);
+    const body=create('div','','history-transfer-body');
+    const header=create('div','','history-gallery-header');
+    if(failed)header.append(dot);
+    else {dot.hidden=true;header.append(create('span',info.provider,'history-gallery-provider'));row.append(dot);}
+    const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'Date unavailable');
+    if(Number.isFinite(item.ms))time.dateTime=new Date(item.ms).toISOString();
+    header.append(time);
+    if(!failed&&globalThis.RedownHistoryNavigation?.openable(record)){
+      const go=create('button','GO TO','history-go-to');go.type='button';
+      go.setAttribute('aria-label','Go to saved file '+info.name);
+      go.onclick=()=>globalThis.RedownHistoryNavigation.open(record);header.append(go);
+    }
+    const more=create('details','','history-gallery-more');
+    const summary=create('summary','More');more.append(summary);
+    const diagnostics=create('div','','history-gallery-diagnostics');
+    diagnostics.append(create('small',info.status));
+    const provenance=create('div');addProvenance(provenance,record,info);
+    const urls=provenance.querySelector('.history-url-disclosure');
+    if(urls)urls.remove();
+    if(failed)for(const technical of provenance.querySelectorAll('.history-technical-details')){
+      technical.querySelector('summary')?.remove();technical.replaceWith(...technical.childNodes);
+    }
+    diagnostics.append(provenance);
+    for(const [label,value] of [['Filename',info.name],['Provider',info.provider],['Status',record.status],['Error code',record.errorCode],['Explanation',record.errorMessage],['Diagnostics',record.diagnostics],['Attempted destination',record.destination]]){
+      if(value!==undefined&&value!==null&&value!=='')diagnostics.append(create('div',label+': '+(typeof value==='object'?JSON.stringify(value):value)));
+    }
+    more.append(diagnostics);
+    body.append(header);
+    const caption=create('div','','history-gallery-caption');
+    if(!failed)caption.append(create('span',info.name));
+    quickGlance?.attach(body,record,{originContainer:caption});
+    body.append(caption);
+    if(failed){
+      // One recovery action only. Exact safe recorded source, or labeled parent fallback.
+      const source=safeWebUrl(record.sourceUrl);
+      const href=source||safeWebUrl(record.pageUrl);
+      if(href){
+        const url=new URL(href),link=create('a',(source?'':'Parent page · ')+url.hostname+url.pathname,'history-gallery-recovery');
+        link.href=href;link.target='_blank';link.rel='noopener noreferrer';link.title=href;
+        body.append(link);
+        more.addEventListener('toggle',()=>{link.hidden=more.open;});
+      }
+      body.append(more);
+      // Details content follows the photo; CSS places the sole trigger in the header.
+      if(urls){
+        const values=urls.querySelector('.history-url-values');
+        if(values)diagnostics.append(values);
+      }
+    }else{
+      body.append(more);
+      if(urls)body.append(urls);
+    }
+    row.append(body);return row;
+  }
   function dayRows(container,day){
     const list=create('ol','','history-transfers');
     for(const item of day.items){
       const info=describe(item.record),record=item.record;
+      if(galleryRecords.has(record)){list.append(galleryRow(item,day,info));continue;}
       const row=create('li','','history-transfer');row.dataset.state=info.state;
       const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
       const body=create('div','','history-transfer-body');
@@ -327,7 +389,7 @@
         body.append(header);
         addProvenance(body,record,info);
       }
-      quickGlance?.attach(body,record);
+
       row.append(dot,body);list.append(row);
     }
     container.append(list);
@@ -343,8 +405,13 @@
     parent.append(section('week',week.label,key,yearKey,week.days,drawDays));
   }
   function render(){
+    const scrollY=globalThis.scrollY;
     quickGlance?.dispose();
-    quickGlance=quickGlanceEnabled?globalThis.RedownHistoryQuickGlance?.create({root:$('history-view')}):null;
+    const policy=globalThis.RedownHistoryGalleryPolicy.resolveHistoryGalleryPolicy({premiumEnabled:quickGlanceEnabled});
+    const selected=globalThis.RedownHistoryGalleryPolicy.select(todayRecords.length?todayRecords:pageItems,policy);
+    const selectedIds=new Set([...selected].map(record=>record.id).filter(Boolean));
+    galleryRecords=new Set(pageItems.filter(record=>policy.premium||selected.has(record)||(record.id&&selectedIds.has(record.id))));
+    quickGlance=globalThis.RedownHistoryQuickGlance?.create({root:$('history-view')});
     const timeline=$('history-timeline'),years=organize(pageItems),fragment=document.createDocumentFragment();
     const firstYear=years.keys().next().value;
     if(!loaded||(!openGroups.get('root')&&!openGroups.has('root-chosen'))){
@@ -375,6 +442,7 @@
     }
     timeline.replaceChildren(fragment);
     quickGlance?.start();
+    if(scrollY)globalThis.scrollTo?.(0,scrollY);
     const pages=pageCount();
     $('history-status').textContent=fallback?'Recent records only · archive unavailable':
       total?total+' transfers':'No transfers yet';
@@ -411,6 +479,7 @@
           }
           const today=archive.today?await archive.today():[];
           if(ticket!==requestId)return;
+          todayRecords=today;
           firstPageSize=Math.max(PAGE_SIZE,today.length);
           const page=await archive.page(offset(),PAGE_SIZE);
           if(pageIndex===0&&today.length>=PAGE_SIZE)page.items=today;
@@ -420,9 +489,9 @@
           if(pageIndex>0&&!pageItems.length&&total>0){pageIndex=pageCount()-1;return refresh();}
         }catch(error){
           console.warn('REDOWN history archive unavailable:',error?.message||String(error));
-          fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));
+          todayRecords=todayItems(legacy);legacy=sortedEntries(legacy).map(item=>item.record);fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));
         }
-      }else{fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));}
+      }else{todayRecords=todayItems(legacy);legacy=sortedEntries(legacy).map(item=>item.record);fallback=true;total=legacy.length;firstPageSize=Math.max(PAGE_SIZE,todayItems(legacy).length);pageItems=legacy.slice(offset(),offset()+(pageIndex===0?firstPageSize:PAGE_SIZE));}
       dirty=false;if(exposeToday&&pageIndex===0)expandToday();render();
     }catch{
       if(ticket!==requestId)return;
@@ -467,6 +536,12 @@
     await refresh();
     $('history-timeline').scrollIntoView?.({behavior:'auto',block:'start'});
   }
+  let localDay=dateKey(new Date());
+  const rollover=setInterval(()=>{
+    const next=dateKey(new Date());
+    if(next!==localDay){localDay=next;dirty=true;if(!$('history-view').hidden)void refresh({exposeToday:true});}
+  },30000);
+  globalThis.addEventListener('pagehide',()=>clearInterval(rollover));
   const stopPreviews=()=>{quickGlance?.dispose();quickGlance=null;};
   globalThis.addEventListener('pagehide',stopPreviews);
   globalThis.addEventListener('hashchange',()=>{if(location.hash!=='#history')stopPreviews();});

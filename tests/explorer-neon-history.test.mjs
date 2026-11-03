@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 const read=p=>readFileSync('extension/'+p,'utf8');
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 async function entrance(values={shelfColorScheme:'neon'},{reduced=false,support=true,fail=false,pending=false}={}){
@@ -64,7 +68,7 @@ test('white treatment changes no geometry; shared sweep and outline ring use the
 async function archive(records=[],hash='#history',failure=false){
   const dom=new JSDOM(read('shelf.html'),{url:'https://extension.test/shelf.html'+hash,runScripts:'outside-only'}),w=dom.window,listeners=[];let gets=0;
   w.chrome={storage:{local:{async get(){gets++;if(failure)throw Error();return {transferHistory:records}},async set(){}},onChanged:{addListener:fn=>listeners.push(fn)}},runtime:{getURL:p=>p},tabs:{async create(){}}};
-  w.eval(read('shelf-history.js'));w.eval(read('shelf.js'));await settle();
+  w.eval(read('history-gallery-policy.js'));w.eval(read('shelf-history.js'));w.eval(read('shelf.js'));await settle();
   return {dom,w,doc:w.document,listeners,get gets(){return gets},retry(){failure=false}};
 }
 test('real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes',async()=>{

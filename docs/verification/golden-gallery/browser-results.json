@@ -1,0 +1,59 @@
+{
+  "scope": "Ordinary Chromium HTTP mock, not installed extension or live provider verification",
+  "browser": "Chrome/154.0.8037.57",
+  "width": 360,
+  "results": [
+    {
+      "theme": "porcelain",
+      "details": {
+        "height": 275.5,
+        "top": 319.71875,
+        "imageBottom": 304.71875
+      },
+      "narrow": {
+        "pageOverflow": false,
+        "galleryOverflow": false
+      },
+      "overflow": false
+    },
+    {
+      "theme": "midnight",
+      "details": {
+        "height": 275.5,
+        "top": 319.71875,
+        "imageBottom": 304.71875
+      },
+      "narrow": {
+        "pageOverflow": false,
+        "galleryOverflow": false
+      },
+      "overflow": false
+    },
+    {
+      "theme": "ocean",
+      "details": {
+        "height": 275.5,
+        "top": 319.71875,
+        "imageBottom": 304.71875
+      },
+      "narrow": {
+        "pageOverflow": false,
+        "galleryOverflow": false
+      },
+      "overflow": false
+    },
+    {
+      "theme": "neon",
+      "details": {
+        "height": 275.5,
+        "top": 320.34375,
+        "imageBottom": 305.34375
+      },
+      "narrow": {
+        "pageOverflow": true,
+        "galleryOverflow": false
+      },
+      "overflow": false
+    }
+  ]
+}

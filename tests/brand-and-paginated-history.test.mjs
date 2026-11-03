@@ -2,7 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 
 const file=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 test('Shelf, Explorer, and toolbar use the same R path and Midnight is red on black',()=>{
@@ -63,7 +67,7 @@ test('History displays only one page at once and exposes older month, numbered-w
     const archive={async importLegacy(){},async page(offset,size){return {items:data.slice(offset,offset+size),total:data.length}}};
     w.RedownHistoryArchive={create:()=>archive};
     w.chrome={storage:{local:{async get(){return{transferHistory:data.slice(0,50)}}},onChanged:{addListener(){}}}};
-    w.eval(file('extension/shelf-history.js'));
+    w.eval(file('extension/history-gallery-policy.js'));w.eval(file('extension/shelf-history.js'));
     await w.RedownShelfHistory.open();
     assert.equal(d.getElementById('history-page-label').textContent,'1 / 3');
     assert.equal(d.querySelectorAll('.history-transfer').length,40);

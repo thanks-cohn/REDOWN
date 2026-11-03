@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 // Local mock only: never installs the extension or connects a provider.
 const base=process.cwd(),out=join(base,'work/quick-glance');
 await mkdir(out,{recursive:true});
-const scripts=await Promise.all(['history-image-source.js','history-image-placeholder.js','history-quick-glance.js','shelf-history.js'].map(p=>readFile('extension/'+p,'utf8')));
+const scripts=await Promise.all(['history-image-source.js','history-image-placeholder.js','history-quick-glance.js','history-gallery-policy.js','shelf-history.js'].map(p=>readFile('extension/'+p,'utf8')));
 const html=await readFile('extension/shelf.html','utf8');
 // A tiny synthetic 80×160 two-color PNG verifies retained aspect ratio.
 const portrait=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAFAAAACgCAIAAAAU4XzjAAAA0klEQVR4nO3PQQ2AQBDAwFWFHiTxxtt5QQZJd5IK6Mz1nlXN7wfAwMDAwMDAawKuB1wPuB5wPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcD7gecD3gesD1gOsB1wOuB1wPuB5wPeB6wPWA6wHXA64HXA+43pz7WRVwPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcD7gecD3gesD1gOsB1wOuB1wPuB5wPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcbx34A6bG7wtxdq1ZAAAAAElFTkSuQmCC','base64');

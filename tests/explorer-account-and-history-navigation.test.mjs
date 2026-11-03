@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 
 const source=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
@@ -47,7 +51,7 @@ test('History opens year, recent week, month, numbered week, then day; transfers
     }};
     w.RedownHistoryArchive={create:()=>archive};
     w.chrome={storage:{local:{async get(){return {transferHistory:entries}}},onChanged:{addListener(fn){listener=fn}}}};
-    w.eval(source('extension/shelf-history.js'));
+    w.eval(source('extension/history-gallery-policy.js'));w.eval(source('extension/shelf-history.js'));
     await w.RedownShelfHistory.open();
     const timeline=d.getElementById('history-timeline');
     let years=[...timeline.querySelectorAll('.history-year')];

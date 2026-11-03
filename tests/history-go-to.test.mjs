@@ -1,7 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 import {resolveHistoryTarget} from '../extension/beta/history-target.mjs';
 import {createR2Adapter} from '../extension/beta/r2-adapter.mjs';
 import {createFileApi} from '../extension/beta/file-api.mjs';
@@ -44,7 +48,7 @@ test('expired, future, malformed and reloaded handoffs fail closed',async()=>{
 test('History success action is visible, keyboard accessible and does not toggle disclosure; failed DOM is byte identical',async()=>{
  const fail={...good,id:'failed',ok:false,error:'Provider denied access',sourceUrl:'https://source.invalid/'+('long/'.repeat(24))+'file.webp'};
  const rows=[good,fail,{...good,id:'pending',status:'pending'},{id:'old',ok:true,location:'R2: bucket/old',at:good.at}];
- async function render(withNavigation){const h=view({transferHistory:rows});await h.nav.preference;if(!withNavigation)delete h.w.RedownHistoryNavigation;h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();return h;}
+ async function render(withNavigation){const h=view({transferHistory:rows});await h.nav.preference;if(!withNavigation)delete h.w.RedownHistoryNavigation;h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();return h;}
  const before=await render(false),after=await render(true),doc=after.w.document;
  assert.equal(doc.querySelector('[data-state=failed]').outerHTML,before.w.document.querySelector('[data-state=failed]').outerHTML);
  assert.equal(doc.querySelectorAll('.history-go-to').length,1);const go=doc.querySelector('.history-go-to');assert.equal(go.tagName,'BUTTON');assert.ok(go.getAttribute('aria-label'));assert.ok(!go.hidden);assert.equal(doc.querySelector('[data-state=failed] .history-go-to'),null);
@@ -216,7 +220,7 @@ test('GO TO production code has no Shelf redirect or side-panel navigation path'
 
 test('reopening loaded History removes stale Explorer readiness diagnostics without hiding transfers',async()=>{
  const h=view({transferHistory:[good]});await h.nav.preference;
- h.w.eval(read('extension/shelf-history.js'));
+ h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));
  const navStatus=h.w.document.getElementById('history-navigation-status');
  navStatus.textContent='Could not open Explorer: An existing Explorer is not ready. Activate it, connect Cloudflare and retry GO TO.';
  await h.w.RedownShelfHistory.open();
@@ -280,7 +284,7 @@ test('GO TO survives legacy Cloudflare History records with exact R2 bucket/key 
   {id:'profile-cf-a',type:'cloudflare-r2',accountId:'owner-account',bucketName:'hp-mini'},
   {id:'profile-cf-b',type:'cloudflare-r2',accountId:'wrong-account',bucketName:'hp-mini'}
  ]});
- h.w.eval(read('extension/shelf-history.js'));
+ h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));
  await h.w.RedownShelfHistory.open();
  const button=h.w.document.querySelector('.history-go-to');
  assert.ok(button,'previously successful R2 transfer must retain GO TO');
@@ -325,7 +329,7 @@ test('verified Dropbox History without a returned public URL preserves GO TO via
    namespace:'123',root:'/',fileId:'id:secret',name:'my (2) pic.png',path:'/my (2) pic.png',
    revision:'r1',contentHash:'a'.repeat(64),bytes:123}};
  const h=view({transferHistory:[record]});
- h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
+ h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
  assert.ok(h.w.document.querySelector('.history-go-to'),'verified Dropbox saved-file path qualifies');
  const url='https://www.dropbox.com/home/my%20(2)%20pic.png';
  assert.equal(h.nav.savedDropboxTarget(record),url);
@@ -350,7 +354,7 @@ test('Google Drive GO TO can use verified file ID with missing URL; OneDrive sho
     driveId:'drive',rootId:'root',itemId:'exact-item'},location:''}
  ];
  const h=view({transferHistory:records});
- h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
+ h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));await h.w.RedownShelfHistory.open();
  const buttons=[...h.w.document.querySelectorAll('.history-go-to')];
  assert.equal(buttons.length,2,'both completed verified providers keep GO TO');
  assert.equal(h.nav.cloudTarget(records[0]),'https://drive.google.com/file/d/google_FILE_1/view');
@@ -375,7 +379,7 @@ test('GO TO recovers old Cloudflare Worker asset URL only from exact configured 
    location:'https://r2-worker.example.invalid/assets/photos/kept%20copy.webp',
    sourceUrl:'https://unrelated-source.invalid/path'};
  const h=view({transferHistory:[saved],profiles:[profile]});
- h.w.eval(read('extension/shelf-history.js'));
+ h.w.eval(read('extension/history-gallery-policy.js'));h.w.eval(read('extension/shelf-history.js'));
  await h.w.RedownShelfHistory.open();
  assert.ok(h.w.document.querySelector('.history-go-to'),'historical exact Worker URL must keep GO TO');
  assert.equal(h.nav.legacyAssetKey(saved.location,profile),'photos/kept copy.webp');

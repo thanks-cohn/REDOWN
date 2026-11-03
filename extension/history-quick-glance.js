@@ -65,7 +65,7 @@
             dot.setAttribute('role','img');
             dot.setAttribute('aria-label',dot.title);
             entry.originDot=dot;
-            entry.slot.append(image,dot);entry.state='ready';entry.slot.dataset.state='ready';
+            entry.slot.append(image);entry.originContainer.append(dot);entry.state='ready';entry.slot.dataset.state='ready';
           }).catch(()=>{if(entry.controller!==controller)return;release(entry);entry.state='failed';entry.slot.dataset.state='failed';});
         }).catch(()=>{
           if(!controller.signal.aborted){entry.state='failed';entry.slot.dataset.state='failed';}
@@ -75,13 +75,14 @@
         });
       }
     }
-    function attach(body,record){
+    function attach(body,record,{originContainer=body}={}){
       if(!RedownHistoryImageSource.eligible(record))return;
       const slot=document.createElement('div');slot.className='history-image-slot';
       slot.dataset.state='idle';slot.dataset.visible='false';slot.setAttribute('aria-label','Image preview');
       const loading=placeholder.render(document);loading.classList.add('history-image-placeholder');
       slot.append(loading);body.append(slot);
-      const entry={record,slot,index:entries.length,state:'idle'};entries.push(entry);
+      if(record.ok===false)slot.classList.add('history-image-recovery');
+      const entry={record,slot,originContainer,index:entries.length,state:'idle'};entries.push(entry);
     }
     let observer,animationObserver;
     const reconcile=()=>{

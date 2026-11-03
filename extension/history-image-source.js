@@ -80,7 +80,7 @@
       const kind=String(record.providerKind||d.provider||record.provider||'').toLowerCase();
       const publicUrl=record.ok===true&&record.verified===true&&kind.includes('cloudflare')&&
         d.bucketName&&d.key&&sourceURL(d.publicUrl);
-      const attempts=[['cloud',()=>cloud(record,signal)]];
+      const attempts=record.ok===true?[['cloud',()=>cloud(record,signal)]]:[];
       if(publicUrl&&publicUrl.startsWith('https:'))attempts.push(['cloud',()=>request(publicUrl,signal)]);
       attempts.push(['source',()=>{
         const url=sourceURL(record.sourceUrl);if(!url)throw Error('No image source');return request(url,signal);
