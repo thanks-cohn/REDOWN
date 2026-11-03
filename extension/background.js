@@ -804,41 +804,14 @@ async function setProfiles(profiles,menuProfileId=null) {
 // Toolbar status flashes tint the shared icon, then restore its live palette.
 // No extra PNG source and no separate R design.
 let toolbarBrandPalette='porcelain',toolbarBrandBackground='original',toolbarBrandGeneration=0;
-let toolbarFailureDotPending=false,toolbarFailureDotRevision=0;
-// Render the failure lamp into the native action icon, never destination cards
-// or web pages. Each size keeps the dot inset from the lower-left rim.
-function drawToolbarFailureDot(images,{pulse=false,shift=0,theme=toolbarBrandPalette}={}){
-  const neon=theme==='neon',color=neon?[31,203,255]:[252,48,65];
-  const hot=neon?[105,224,255]:[255,143,151],out={};
-  for(const [key,base] of Object.entries(images)){
-    const size=Number(key),pixels=new Uint8ClampedArray(base.data);
-    const cx=size*(.225+shift),cy=size*.775;
-    const core=size*(pulse?.133:.096),outer=core*(pulse?2.85:2.4);
-    for(let y=Math.max(0,Math.floor(cy-outer));y<Math.min(size,Math.ceil(cy+outer));y++){
-      for(let x=Math.max(0,Math.floor(cx-outer));x<Math.min(size,Math.ceil(cx+outer));x++){
-        const dist=Math.hypot(x+.5-cx,y+.5-cy);
-        if(dist>=outer)continue;
-        const inside=dist<=core;
-        const glow=inside?.95:Math.pow(Math.max(0,(outer-dist)/(outer-core)),2)*(pulse?.64:.46);
-        const mix=inside&&dist<core*.43?hot:color,i=(y*size+x)*4;
-        for(let c=0;c<3;c++)pixels[i+c]=Math.round(pixels[i+c]*(1-glow)+mix[c]*glow);
-        pixels[i+3]=Math.max(pixels[i+3],Math.round(255*glow));
-      }
-    }
-    out[size]=new ImageData(pixels,size,size);
-  }
-  return out;
-}
-
 async function paintToolbarBrand(){
   const generation=++toolbarBrandGeneration;
   try{
-    const iconPixels=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
-    const imageData=iconPixels&&toolbarFailureDotPending?drawToolbarFailureDot(iconPixels):iconPixels;
+    const imageData=globalThis.RedownBrandIcon?.imageData(toolbarBrandPalette,toolbarBrandBackground);
     if(generation===toolbarBrandGeneration&&imageData){
       await chrome.action.setIcon({imageData});
       if(generation===toolbarBrandGeneration)await chrome.action.setTitle?.({title:
-        toolbarFailureDotPending?'REDOWN · Save failed — open History':'REDOWN — Your Cloud Companion'});
+        globalThis.RedownToolbarAppearance?.title||'REDOWN — Your Cloud Companion'});
     }
   }catch(error){console.warn('REDOWN toolbar icon fallback:',error?.message||String(error));}
 }
@@ -849,7 +822,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
   let generation=0,pixelsPromise,pixelsTheme='';
   const sizes=[16,32,48], colors={success:[45,205,144]};
   return async state => {
-    if(!api?.setIcon || !['success','failure','clear'].includes(state))return;
+    if(!api?.setIcon || !['success','clear'].includes(state))return;
     const ticket=++generation;
     if(state==='clear'){
       try{
@@ -866,20 +839,6 @@ function createToolbarFeedback(api, loadPixels = async size => {
       pixelsPromise ||= Promise.all(sizes.map(async size=>[size,await loadPixels(size)])).then(Object.fromEntries).catch(error=>{pixelsPromise=null;throw error;});
       const original=await pixelsPromise;
       if(ticket!==generation)return;
-      if(state==='failure'){
-        // Exactly two small laser pulses with a tiny horizontal wobble, then
-        // a steady inset indicator. The native Chrome button itself cannot shake.
-        const frames=[[true,150,-.025],[false,170,0],[true,150,.025],[false,0,0]];
-        if(globalThis.RedownToolbarAppearance?.feedbackTitle)
-          await RedownToolbarAppearance.feedbackTitle('REDOWN · Save failed — open History');
-        else await api.setTitle?.({title:'REDOWN · Save failed — open History'});
-        for(const [pulse,hold,shift] of frames){
-          if(ticket!==generation)return;
-          await api.setIcon({imageData:drawToolbarFailureDot(original,{pulse,shift,theme:toolbarBrandPalette})});
-          if(hold)await pause(hold);
-        }
-        return;
-      }
       const color=colors[state], images={};
       for(const size of sizes){
         const base=original[size].data, data=new Uint8ClampedArray(base);
@@ -889,7 +848,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
         }
         images[size]=new ImageData(data,size,size);
       }
-      const feedbackTitle=state==="success"?"REDOWN · Transfer complete":"REDOWN · Transfer failed — check Dashboard";
+      const feedbackTitle="REDOWN · Transfer complete";
       if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(feedbackTitle);else await api.setTitle?.({title:feedbackTitle});
       // A short, two-hit status flash without switching to mismatched PNG artwork.
       for(const [tinted,hold] of [[true,120],[false,160],[true,120]]){
@@ -916,8 +875,7 @@ function createToolbarFeedback(api, loadPixels = async size => {
       if(ticket===generation){
         try { await globalThis.redownRestoreToolbarIcon?.(); } catch {}
         if(ticket===generation)try {
-          const title=toolbarFailureDotPending?'REDOWN · Save failed — open History':
-            (globalThis.RedownToolbarAppearance?.title||'REDOWN — Your Cloud Companion');
+          const title=globalThis.RedownToolbarAppearance?.title||'REDOWN — Your Cloud Companion';
           if(globalThis.RedownToolbarAppearance?.feedbackTitle)await RedownToolbarAppearance.feedbackTitle(title);
           else await api.setTitle?.({title});
         } catch {}
@@ -937,12 +895,9 @@ async function recordTransfer(entry) {
   // The counter commits a *new*, provider-verifier-backed receipt first.
   const outcome=await transferCounter.record(entry);
   if(entry?.ok===false){
-    // The red/Neon-blue lamp means a real failed save awaits History review.
-    // Never raise it for queued/uncertain work or from a merely unverified URL.
-    toolbarFailureDotPending=true;
-    ++toolbarFailureDotRevision;
+    // Store a definitive failed save for the Shelf and History to display.
+    // The native Chrome toolbar icon remains untouched by this indicator.
     void chrome.storage.local.set({redownFailureDot:{pending:true,at:Date.now()}}).catch(()=>{});
-    void toolbarFeedback('failure');
   }
   else if(outcome?.newVerified===true)void toolbarFeedback("success");
   return outcome;
@@ -983,27 +938,16 @@ const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
 // One authoritative durable daily badge, separate from the lifetime odometer.
 RedownDailySaveBadge.create({chrome,readDaily:()=>transferCounter.readDaily()}).install();
-const toolbarFailureReadRevision=toolbarFailureDotRevision;
-void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode','redownFailureDot']).then(data=>{
+void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{
   toolbarBrandPalette=RedownBrandIcon.normalize(data.shelfColorScheme);
   toolbarBrandBackground=data.shelfIconBackgroundMode==='theme'?'theme':'original';
-  if(toolbarFailureReadRevision===toolbarFailureDotRevision)
-    toolbarFailureDotPending=data.redownFailureDot?.pending===true;
   return paintToolbarBrand();
 }).catch(()=>void paintToolbarBrand());
 chrome.storage.onChanged.addListener((changes,area)=>{
   if(area!=='local')return;
   if(changes.shelfColorScheme)toolbarBrandPalette=RedownBrandIcon.normalize(changes.shelfColorScheme.newValue);
   if(changes.shelfIconBackgroundMode)toolbarBrandBackground=changes.shelfIconBackgroundMode.newValue==='theme'?'theme':'original';
-  if(changes.redownFailureDot){
-    const next=changes.redownFailureDot.newValue?.pending===true;
-    if(next!==toolbarFailureDotPending){
-      toolbarFailureDotPending=next;
-      ++toolbarFailureDotRevision;
-      if(!next){void toolbarFeedback('clear');return;}
-    }
-  }
-  if(changes.shelfColorScheme||changes.shelfIconBackgroundMode||changes.redownFailureDot)
+  if(changes.shelfColorScheme||changes.shelfIconBackgroundMode)
     void paintToolbarBrand();
 });
 importScripts("cloudflare-auth.js");
@@ -3266,8 +3210,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message?.type === "cfPrepareBucket") return sendResponse({ ok:true, profile:await preparedProfile(message.accountId,message.bucketName,message.accountName) });
       if (message?.type === "cfTransferObjects") {
         const result=await transferExplorerObjects(message);
-        if(result.errors?.length||result.partialMove)void toolbarFeedback("failure");
-        else if(result.completed>0)void toolbarFeedback("success");
+        if(!result.errors?.length&&!result.partialMove&&result.completed>0)void toolbarFeedback("success");
         return sendResponse({ok:true,...result});
       }
       if (message?.type === "cfDeleteObjects") return sendResponse({ ok:true, ...(await deleteExplorerObjects(message)) });
@@ -3353,7 +3296,6 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
       throw Object.assign(new Error("This REDOWN background does not support request "+String(message?.type||"(missing type)").replace(/[^A-Za-z0-9_-]/g,"").slice(0,80)+". Reload the extension in chrome://extensions, then reload Explorer."),{code:"UNSUPPORTED_REQUEST"});
     } catch (error) {
-      if(message?.type==="cfTransferObjects")void toolbarFeedback("failure");
       sendResponse({ ok:false, error:error?.message || String(error),diagnosticError:{code:error?.code,status:error?.status,stage:error?.stage,component:"background"} });
     }
   })();
