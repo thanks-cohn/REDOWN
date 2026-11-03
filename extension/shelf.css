@@ -653,7 +653,7 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 :root[data-shelf-theme="ocean"] .provider-save-success{color:#a7efde}
 :root[data-shelf-theme="neon"] .provider-save-success{font:400 30px/1.25 "Jersey 10 Charted",monospace;letter-spacing:.02em;color:#39ed79;text-shadow:2px 2px 0 #ffeb34}
 :root[data-shelf-theme="neon"] .provider-save-success.money-flash{color:#8fff00;text-shadow:2px 2px 0 #00a641,-1px -1px 0 #eaffb4}
-:root[data-shelf-theme="neon"] .provider-save-count{font:400 52px/1.05 "Jersey 10 Charted",monospace;color:#b3ffe0;text-shadow:2px 2px 0 #385f71}
+:root[data-shelf-theme="neon"] .provider-save-count{font:800 clamp(24px,8vw,36px)/1.1 "DM Sans",system-ui,sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:#b3ffe0;text-shadow:0 1px 2px #385f71}
 .provider-save-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 /* Keep the existing options target alongside its action as the readout grows. */
