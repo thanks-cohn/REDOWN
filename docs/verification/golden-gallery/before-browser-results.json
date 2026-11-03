@@ -1,0 +1,20 @@
+{
+  "scope": "Local HTTP mock in ordinary Chromium, not installed extension/provider proof",
+  "browser": "Chrome/154.0.8037.57",
+  "initialPreviewJobs": 10,
+  "geometryUnchanged": true,
+  "portraitAspectRatio": 2,
+  "reducedMotion": true,
+  "themes": [
+    "porcelain",
+    "midnight",
+    "ocean",
+    "neon"
+  ],
+  "bounded": {
+    "requests": 30,
+    "images": 17,
+    "rows": 120
+  },
+  "cleanup": true
+}

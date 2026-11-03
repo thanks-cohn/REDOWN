@@ -4,7 +4,11 @@ import vm from 'node:vm';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 import {worker,config} from './helpers/background-worker.mjs';
 const read=p=>readFileSync(p,'utf8'),plain=x=>JSON.parse(JSON.stringify(x));
 const before=JSON.parse(read('docs/verification/onedrive/before.json'));
@@ -16,7 +20,7 @@ test('unmodified protected modules retain checkpoint hashes; authorized Shelf ch
  // Keep all untouched V3, Cloudflare and provider modules locked to their original hashes.
  const authorized=new Set(['extension/dropbox-api.js','extension/history-navigation.js',
    'extension/options.html','extension/options.js','extension/shelf-dropbox.js',
-   'extension/shelf-google-drive.js','extension/shelf-history.js',
+   'extension/shelf-google-drive.js','extension/history-gallery-policy.js','extension/shelf-history.js',
    'extension/shelf.css','extension/shelf.html','extension/shelf-celestial.js','extension/shelf.js']);
  for(const [p,h] of Object.entries(before.hashes)){
   if(p==='extension/manifest.json'){

@@ -1,7 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 const html=readFileSync('extension/shelf.html','utf8'),script=readFileSync('extension/shelf.js','utf8');
 const settle=()=>new Promise(r=>setTimeout(r,20));
 async function shelf(data={},response={ok:true,accounts:[]}){
@@ -20,7 +24,7 @@ test('Shelf defaults to Shelf and preserves explicitly selected native Popup acr
 });
 test('provider order, pending integrations, verified account state and actual history remain honest',async()=>{
  const s=await shelf({cloudflareAuth:{accessToken:'fixture'},transferHistory:[{ok:false,profileName:'Failed fixture',at:'2026-10-29T00:00:00Z'}]});
- assert.deepEqual([...s.doc.querySelectorAll('h3')].map(x=>x.textContent),['Google Drive','Dropbox','Microsoft OneDrive','Cloudflare R2']);assert.equal(s.doc.getElementById('cf-state').textContent,'Connected');s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));await s.dom.window.RedownShelfHistory.open();assert.match(s.doc.getElementById('history-timeline').textContent,/Failed fixture/);assert.equal(s.doc.querySelectorAll('.state').length,4);s.dom.window.close();
+ assert.deepEqual([...s.doc.querySelectorAll('h3')].map(x=>x.textContent),['Google Drive','Dropbox','Microsoft OneDrive','Cloudflare R2']);assert.equal(s.doc.getElementById('cf-state').textContent,'Connected');s.dom.window.eval(readFileSync('extension/history-gallery-policy.js','utf8'));s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));await s.dom.window.RedownShelfHistory.open();assert.match(s.doc.getElementById('history-timeline').textContent,/Failed fixture/);assert.equal(s.doc.querySelectorAll('.state').length,4);s.dom.window.close();
  const bad=await shelf({cloudflareAuth:{accessToken:'fixture'}},{ok:false});assert.equal(bad.doc.getElementById('cf-state').textContent,'Check sign-in');bad.dom.window.close();
 });
 test('History opens Today by default and preserves clickable source and hosting-page URLs',async()=>{
@@ -32,7 +36,7 @@ test('History opens Today by default and preserves clickable source and hosting-
  ]};
  const s=await shelf(data);
  try{
-   s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));
+   s.dom.window.eval(readFileSync('extension/history-gallery-policy.js','utf8'));s.dom.window.eval(readFileSync('extension/shelf-history.js','utf8'));
    const ui=s.dom.window.RedownShelfHistory;
    await ui.open();
    const days=[...s.doc.querySelectorAll('details.history-day')];

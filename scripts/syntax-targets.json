@@ -51,6 +51,7 @@
   "scripts/lab-local-smoke.mjs",
   "extension/shelf.js",
   "extension/shelf-history.js",
+  "extension/history-gallery-policy.js",
   "extension/destination-config.js",
   "extension/shelf-celestial.js",
   "scripts/shelf-celestial-preview.mjs",

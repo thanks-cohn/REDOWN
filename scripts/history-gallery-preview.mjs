@@ -1,0 +1,96 @@
+import {createServer} from 'node:http';
+import {readFile,writeFile,mkdtemp,rm,mkdir} from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {join,extname} from 'node:path';
+import assert from 'node:assert/strict';
+// Local mock only: never installs the extension or connects a provider.
+const base=process.cwd(),out=join(base,'docs/verification/golden-gallery');
+await mkdir(out,{recursive:true});
+const scripts=await Promise.all(['history-image-source.js','history-image-placeholder.js','history-quick-glance.js','history-gallery-policy.js','shelf-history.js'].map(p=>readFile('extension/'+p,'utf8')));
+const html=await readFile('extension/shelf.html','utf8');
+// A tiny synthetic 80×160 two-color PNG verifies retained aspect ratio.
+const portrait=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAFAAAACgCAIAAAAU4XzjAAAA0klEQVR4nO3PQQ2AQBDAwFWFHiTxxtt5QQZJd5IK6Mz1nlXN7wfAwMDAwMDAawKuB1wPuB5wPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcD7gecD3gesD1gOsB1wOuB1wPuB5wPeB6wPWA6wHXA64HXA+43pz7WRVwPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcD7gecD3gesD1gOsB1wOuB1wPuB5wPeB6wPWA6wHXA64HXA+4HnA94HrA9YDrAdcDrgdcbx34A6bG7wtxdq1ZAAAAAElFTkSuQmCC','base64');
+const setup=`
+ document.getElementById('clouds-view').hidden=true;document.getElementById('history-view').hidden=false;
+ const at=new Date().toISOString();const records=Array.from({length:41},(_,i)=>({id:String(i),at,ok:i===1||i===2?false:true,verified:i!==1&&i!==2,status:i===1||i===2?'failed':'completed',error:i===1||i===2?'Provider declined the save · exact diagnostic preserved':undefined,pageUrl:'https://example.com/collection',filename:'image'+i+'.png',sourceUrl:location.origin+'/source.png?id='+i,providerKind:'cloudflare',destination:{accountId:'a',bucketName:'private',key:i+'.png'}}));
+ records.push({...records[0],id:'old',at:'2024-05-14T12:00:00Z'});globalThis.membership=false;globalThis.calls=[];globalThis.changes=[];globalThis.RedownHistoryNavigation={openable:r=>r.ok===true&&r.verified===true,open:()=>{}};
+ globalThis.chrome={storage:{local:{get:async()=>({transferHistory:records,quickGlancePremiumEnabled:membership})},onChanged:{addListener:f=>changes.push(f)}}};
+ globalThis.RedownHistoryArchive={create:()=>({importLegacy:async()=>{},today:async()=>records.slice(0,41),page:async(o)=>({items:o?records.slice(41):records.slice(0,40),total:records.length})})};
+ let release;const gate=new Promise(r=>release=r);globalThis.releaseImages=release;
+ globalThis.RedownCloudflareApi={request:async(path,options)=>{const id=path.split('/').pop().split('.')[0];calls.push({cloud:id});await gate;return fetch('/cloud.png?id='+id,{signal:options.signal});}};
+`;
+const fixture=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'').replace('</body>',`<script>${setup}\n${scripts.join('\n')}\nRedownShelfHistory.open();</script></body>`);
+const server=createServer(async(req,res)=>{try{
+ const u=new URL(req.url,'http://localhost'),p=u.pathname;
+ if(p==='/cloud.png'||p==='/source.png'){
+  const fail=p==='/cloud.png'?['1','2'].includes(u.searchParams.get('id')):u.searchParams.get('id')==='2';
+  res.statusCode=fail?404:200;res.setHeader('Content-Type',fail?'text/plain':'image/png');res.end(fail?'unavailable':portrait);return;
+ }
+ if(p.includes('..'))throw Error('path');res.setHeader('Content-Type',p==='/'?'text/html':extname(p)==='.css'?'text/css':'application/octet-stream');res.end(p==='/'?fixture:await readFile(join(base,'extension',p)));
+}catch{res.statusCode=404;res.end();}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));
+const profile=await mkdtemp(join(tmpdir(),'redown-quick-glance-'));
+const browser=spawn('chromium',['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});let ws;
+try{
+ let port;for(let i=0;i<100;i++){try{port=Number((await readFile(join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);break;}catch{await new Promise(r=>setTimeout(r,100));}}
+ const version=await(await fetch('http://127.0.0.1:'+port+'/json/version')).json();
+ ws=new WebSocket(version.webSocketDebuggerUrl);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});let id=0;const pending=new Map();
+ ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}};
+ const call=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const key=++id,timer=setTimeout(()=>reject(Error('CDP timeout')),10000);pending.set(key,{resolve,reject,timer});ws.send(JSON.stringify({id:key,method,params,...(sessionId?{sessionId}:{})}));});
+ const {targetId}=await call('Target.createTarget',{url:'about:blank'}),{sessionId}=await call('Target.attachToTarget',{targetId,flatten:true});
+ const evaluate=async expression=>{const r=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},sessionId);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ const wait=async expression=>{for(let i=0;i<100;i++){if(await evaluate(expression))return;await new Promise(r=>setTimeout(r,50));}console.log(await evaluate('JSON.stringify({calls,states:[...document.querySelectorAll(".history-image-slot")].slice(0,12).map(n=>n.dataset)})'));throw Error('Timeout: '+expression);};
+ await call('Emulation.setDeviceMetricsOverride',{width:360,height:850,deviceScaleFactor:1,mobile:false},sessionId);
+ await call('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/#history'},sessionId);
+ await wait('document.querySelectorAll(".history-transfer").length===41');
+ await evaluate('releaseImages()');
+ await wait('document.querySelectorAll(".history-image-slot[data-state=ready]").length>=2');
+ const results=[];
+ const capture=async name=>{await new Promise(r=>setTimeout(r,220));await writeFile(join(out,name+'.png'),Buffer.from((await call('Page.captureScreenshot',{format:'png'},sessionId)).data,'base64'));};
+ for(const theme of ['porcelain','midnight','ocean','neon']){
+  await evaluate(`document.documentElement.dataset.shelfTheme='${theme}';scrollTo(0,0)`);
+  await wait('document.querySelector(".history-image-slot").dataset.state==="ready"');
+  await capture(theme+'-free-today');
+  await evaluate(`document.querySelector('.history-gallery-failure').scrollIntoView({block:'start'})`);
+  await capture(theme+'-failure');
+  await evaluate(`document.querySelector('.history-gallery-failure .history-gallery-more').open=true`);
+  await capture(theme+'-failure-more');
+  const details=await evaluate(`(()=>{const f=document.querySelector('.history-gallery-failure');const r=f.querySelector('.history-gallery-diagnostics').getBoundingClientRect();return {height:r.height,top:r.top,imageBottom:f.querySelector('.history-image-slot').getBoundingClientRect().bottom};})()`);
+  assert.ok(details.height>0);assert.ok(details.top>=details.imageBottom);
+  await evaluate(`document.querySelector('.history-gallery-failure .history-gallery-more').open=false;document.querySelectorAll('.history-transfer')[2].scrollIntoView({block:'start'})`);
+  await capture(theme+'-failure-unavailable');
+  await evaluate(`document.querySelectorAll('.history-transfer')[9].scrollIntoView({block:'start'})`);
+  await capture(theme+'-free-boundary');
+  assert.equal(await evaluate('document.querySelectorAll(".history-gallery-entry").length'),10);
+  assert.equal(await evaluate('document.querySelectorAll(".history-image-slot .history-image-origin").length'),0);
+  assert.equal(await evaluate('document.querySelectorAll(".history-transfer")[10].classList.contains("history-gallery-entry")'),false);
+  await evaluate(`document.querySelector('#history-next').click()`);
+  await wait('document.querySelector("#history-page-label").textContent==="2 / 2"');
+  await evaluate(`for(const g of document.querySelectorAll('[data-group]'))if(!g.open)g.querySelector('summary').click();scrollTo(0,0)`);
+  await capture(theme+'-free-older');
+  await evaluate(`membership=true;changes[0]({quickGlancePremiumEnabled:{newValue:true}},'local')`);
+  await wait('document.querySelectorAll(".history-gallery-entry").length===1');
+  await wait('document.querySelector(".history-image-slot").dataset.state==="ready"');
+  await capture(theme+'-premium-older');
+  assert.equal(await evaluate('document.querySelector("#history-page-label").textContent'),'2 / 2');
+  await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]},sessionId);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.history-image-placeholder i')).animationName`),'none');
+  await call('Emulation.setEmulatedMedia',{features:[]},sessionId);
+  await call('Emulation.setDeviceMetricsOverride',{width:280,height:850,deviceScaleFactor:1,mobile:false},sessionId);
+  await evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
+  const narrow=await evaluate(`({pageOverflow:document.documentElement.scrollWidth>innerWidth,galleryOverflow:[...document.querySelectorAll('.history-gallery-entry *')].some(n=>{const r=n.getBoundingClientRect();return r.width>0&&(r.right>innerWidth||r.left<0);})})`);
+  assert.equal(narrow.galleryOverflow,false);
+  await evaluate(`document.querySelector('.history-gallery-more>summary').focus()`);
+  assert.equal(await evaluate(`document.activeElement.textContent`),'More');
+  await capture(theme+'-narrow-focus');
+  await call('Emulation.setDeviceMetricsOverride',{width:360,height:850,deviceScaleFactor:1,mobile:false},sessionId);
+  results.push({theme,details,narrow,overflow:await evaluate('document.documentElement.scrollWidth>innerWidth')});
+  await evaluate(`membership=false;changes[0]({quickGlancePremiumEnabled:{newValue:false}},'local');document.querySelector('#history-prev').click()`);
+  await wait('document.querySelector("#history-page-label").textContent==="1 / 2"');
+  await evaluate('RedownShelfHistory.open()');
+  await wait('document.querySelectorAll(".history-gallery-entry").length===10');
+ }
+ await writeFile(join(out,'browser-results.json'),JSON.stringify({scope:'Ordinary Chromium HTTP mock, not installed extension or live provider verification',browser:version.Browser,width:360,results},null,2));
+ console.log(JSON.stringify(results));
+}finally{ws?.close();browser.kill();server.close();await new Promise(r=>setTimeout(r,100));await rm(profile,{recursive:true,force:true,maxRetries:5});}

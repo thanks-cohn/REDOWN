@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 import {indexedDB,IDBKeyRange} from 'fake-indexeddb';
 import vm from 'node:vm';
 const read=p=>readFileSync('extension/'+p,'utf8');
@@ -16,24 +20,24 @@ function view(){
  for(const p of ['history-image-source.js','history-image-placeholder.js','history-quick-glance.js'])w.eval(read(p));
  return {dom,w,d:w.document};
 }
-test('Today reads every local record across archive pages, keeps older pages and gate defaults off',async()=>{
- const h=view(),all=Array.from({length:235},(_,i)=>record(i));
+test('Today reads every local record across archive pages, keeps older pages and defaults to the Free sampler',async()=>{
+ const h=view();h.w.RedownHistoryImageSource.shared=()=>({resolve:async()=>null});const all=Array.from({length:235},(_,i)=>record(i));
  const old=Array.from({length:61},(_,i)=>({...record(235+i),at:'2025-01-01T12:00:00Z'}));
  const context=vm.createContext({indexedDB,IDBKeyRange});vm.runInContext(read('history-archive.js'),context);
  const archive=context.RedownHistoryArchive.create();await archive.importLegacy([...all,...old]);
  assert.equal((await archive.today()).length,235);
  const reads=[];h.w.RedownHistoryArchive={create:()=>({...archive,page:async(o,n)=>{reads.push([o,n]);return archive.page(o,n);}})};
  h.w.chrome={storage:{local:{get:async()=>({transferHistory:[]})},onChanged:{addListener(){}}}};
- h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();
+ h.w.eval(read('history-gallery-policy.js'));h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();
  assert.equal(h.d.querySelectorAll('.history-transfer').length,235);
  assert.equal(h.d.querySelector('.history-day').open,true);
  assert.equal(h.d.querySelector('.history-year').open,true);
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);
+ assert.equal(h.d.querySelectorAll('.history-image-slot').length,h.w.RedownHistoryGalleryPolicy.FREE_GALLERY_ENTRY_LIMIT);
  assert.equal(h.d.querySelector('#history-page-label').textContent,'1 / 3');
  h.d.querySelector('#history-next').click();await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 3');
  assert.equal(h.d.querySelectorAll('.history-transfer').length,40);assert.equal(reads.at(-1)[0],235);
  await h.w.RedownShelfHistory.open();assert.equal(h.d.querySelectorAll('.history-transfer').length,235);
- h.dom.window.close();
+ h.w.dispatchEvent(new h.w.Event('pagehide'));h.dom.window.close();
 });
 function pipeline({count=100,resolve,placeholder,decode}={}){
  const h=view(),observers=[],calls=[],revoked=[];let active=0,maxActive=0;
@@ -117,11 +121,11 @@ test('Premium gate enables Today previews once; revocation preserves records',as
  h.w.RedownHistoryArchive={create:()=>({importLegacy:async()=>{},today:async()=>all,page:async()=>({items:all.slice(0,40),total:70})})};
  let enabled=true;
  h.w.chrome={storage:{local:{get:async()=>({transferHistory:[],quickGlancePremiumEnabled:enabled})},onChanged:{addListener:f=>listeners.push(f)}}};
- h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();await tick();
+ h.w.eval(read('history-gallery-policy.js'));h.w.eval(read('shelf-history.js'));await h.w.RedownShelfHistory.open();await tick();
  assert.equal(h.d.querySelectorAll('.history-transfer').length,70);assert.equal(h.d.querySelectorAll('.history-image-slot').length,70);assert.equal(calls.length,10);
  h.d.documentElement.dataset.shelfTheme='neon';await tick();assert.equal(calls.length,10);
  enabled=false;listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');await tick();
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
+ assert.equal(h.d.querySelectorAll('.history-image-slot').length,h.w.RedownHistoryGalleryPolicy.FREE_GALLERY_ENTRY_LIMIT);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
  enabled=true;listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
  await waitFor(()=>h.d.querySelectorAll('.history-image-slot').length===70);
  const beforeReconnect=calls.length;
@@ -129,7 +133,7 @@ test('Premium gate enables Today previews once; revocation preserves records',as
  await waitFor(()=>calls.length>beforeReconnect);
  assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
 
- h.dom.window.close();
+ h.w.dispatchEvent(new h.w.Event('pagehide'));h.dom.window.close();
 });
 test('Google preview reuses noninteractive drive.file auth and checks account; thumbnail URL gets no token',async()=>{
  const calls=[],tokens=[];
@@ -174,7 +178,7 @@ test('late decode from an evicted slot cannot cancel or fail its replacement req
  decodes[4].resolve();await tick();
  assert.equal(h.observers[0].nodes[0].dataset.state,'ready');
  assert.equal(h.observers[0].nodes[0].querySelector('img'),decodes[4].image);
- assert.equal(h.observers[0].nodes[0].querySelector('.history-image-origin').dataset.origin,'cloud');
+ assert.equal(h.observers[0].nodes[0].parentElement.querySelector('.history-image-origin').dataset.origin,'cloud');
  h.session.dispose();decodes.forEach(d=>d.resolve());await tick();h.dom.window.close();
 });
 
@@ -199,7 +203,7 @@ test('source dots appear independently of successful and failed transfer status'
  h.d.querySelector('#history-view').hidden=false;
  h.w.RedownHistoryImageSource.shared=()=>({resolve:async()=>({image:'blob:preview',origin:'source'})});
  h.w.chrome={storage:{local:{get:async()=>({transferHistory:[saved,failed],quickGlancePremiumEnabled:true})},onChanged:{addListener(){}}}};
- h.w.eval(read('shelf-history.js'));
+ h.w.eval(read('history-gallery-policy.js'));h.w.eval(read('shelf-history.js'));
  await h.w.RedownShelfHistory.open();await tick();
  const rows=[...h.d.querySelectorAll('.history-transfer')];
  assert.equal(rows.length,2);
@@ -211,7 +215,7 @@ test('source dots appear independently of successful and failed transfer status'
   assert.equal(origin.dataset.origin,'source');
   assert.equal(origin.getAttribute('aria-label'),'Preview from original source');
  }
- h.dom.window.close();
+ h.w.dispatchEvent(new h.w.Event('pagehide'));h.dom.window.close();
 });
 
 test('enabling Premium on an older page keeps the page and open date, loading only its previews',async()=>{
@@ -226,7 +230,7 @@ test('enabling Premium on an older page keeps the page and open date, loading on
    calls.push(row.id);
    return {image:'blob:older-preview',origin:'cloud'};
   }});
-  h.w.eval(read('shelf-history.js'));
+  h.w.eval(read('history-gallery-policy.js'));h.w.eval(read('shelf-history.js'));
   await h.w.RedownShelfHistory.open();
   h.d.querySelector('#history-next').click();
   await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 2');
@@ -234,7 +238,7 @@ test('enabling Premium on an older page keeps the page and open date, loading on
    if(!group.open&&group.querySelector('.history-transfer'))group.querySelector('summary').click();
   }
   await tick();
-  assert.equal(calls.length,0);
+  calls.length=0;
   enabled=true;
   listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
   await waitFor(()=>h.d.querySelector('.history-image-origin'));
@@ -252,4 +256,35 @@ test('enabling Premium on an older page keeps the page and open date, loading on
   assert.equal(h.d.querySelector('.history-image-slot'),null);
 
  }finally{h.dom.window.close();}
+});
+
+test('definitive failure reads source only, never provider, account state or public cloud URL',async()=>{
+ const urls=[];const {source}=resolver({
+  cloudflare:{request:()=>assert.fail('failed save has no cloud preview')},
+  chrome:{storage:{local:{get:()=>assert.fail('no provider account inspection for failure')}}},
+  fetch:async(url,options)=>{urls.push(url);assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');assert.equal(options.referrerPolicy,'no-referrer');return image();}
+ });
+ const failed={...record(),ok:false,destination:{...record().destination,publicUrl:'https://cloud.invalid/photo.png'}};
+ const before=JSON.stringify(failed),result=await source.resolve(failed,new AbortController().signal);
+ assert.equal(result.origin,'source');assert.deepEqual(urls,[failed.sourceUrl]);assert.equal(JSON.stringify(failed),before);
+});
+test('decoded origin attaches outside image and is removed on disposal',async()=>{
+ const h=view();h.d.querySelector('#history-view').hidden=false;
+ const body=h.d.createElement('div'),caption=h.d.createElement('div');h.d.querySelector('#history-view').append(body);body.append(caption);
+ const session=h.w.RedownHistoryQuickGlance.create({root:h.d.querySelector('#history-view'),source:{resolve:async()=>({image:'blob:source',origin:'source'})},decodeImage:async()=>'',IntersectionObserver:class{observe(){}disconnect(){}},revoke:()=>{}});
+ session.attach(body,record(),{originContainer:caption});session.start();await tick();
+ assert.equal(body.querySelector('.history-image-slot .history-image-origin'),null);
+ assert.equal(caption.querySelector('.history-image-origin').dataset.origin,'source');
+ session.dispose();assert.equal(caption.childElementCount,0);h.dom.window.close();
+});
+
+test('archive Today and page structured clones receive one shared quota, not duplicate ranks',async()=>{
+ const h=view(),today=Array.from({length:8},(_,i)=>record(i));
+ h.w.RedownHistoryImageSource.shared=()=>({resolve:async()=>null});
+ h.w.RedownHistoryArchive={create:()=>({importLegacy:async()=>{},today:async()=>structuredClone(today),page:async()=>({items:structuredClone(today),total:8})})};
+ h.w.chrome={storage:{local:{get:async()=>({})},onChanged:{addListener(){}}}};
+ h.w.eval(read('history-gallery-policy.js'));h.w.eval(read('shelf-history.js'));
+ await h.w.RedownShelfHistory.open();await tick();
+ assert.equal(h.d.querySelectorAll('.history-gallery-entry').length,8);
+ h.w.dispatchEvent(new h.w.Event('pagehide'));h.dom.window.close();
 });

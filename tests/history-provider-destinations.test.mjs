@@ -1,14 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {JSDOM} from 'jsdom';
+import {JSDOM as BaseJSDOM} from 'jsdom';
+import {afterEach} from 'node:test';
+const testDOMs=[];
+class JSDOM extends BaseJSDOM {constructor(...args){super(...args);testDOMs.push(this);}}
+afterEach(()=>{for(const dom of testDOMs.splice(0)){if(dom.window.document){dom.window.dispatchEvent(new dom.window.Event('pagehide'));dom.window.close();}}});
 
 const [html,history,nav]=await Promise.all([
  readFile('extension/shelf.html','utf8'),
  readFile('extension/shelf-history.js','utf8'),
  readFile('extension/history-navigation.js','utf8')
 ]);
-const day=new Date().toISOString();
+const awaitPolicy=await readFile('extension/history-gallery-policy.js','utf8');
+const day='2025-01-01T12:00:00Z'; // Classic archive rows retain the established URL/footer contract.
 const base={ok:true,verified:true,status:'completed',at:day,sourceUrl:'https://example.invalid/source.jpg'};
 function fixture(records){
  const dom=new JSDOM(html,{url:'https://extension.invalid/shelf.html#history',runScripts:'outside-only'});
@@ -21,7 +26,7 @@ function fixture(records){
    local:{get:async keys=>keys==='transferHistory'?{transferHistory:records}:{}},
    onChanged:{addListener:()=>{}}
  }};
- w.eval(history);
+ w.eval(awaitPolicy);w.eval(history);
  return {dom,w};
 }
 test('history footer displays provider plus actual saved path, no duplicate bucket or source URL',async()=>{
