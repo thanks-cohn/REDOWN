@@ -1,0 +1,4908 @@
+{
+  "head": "1f85185f87c52b13e01c7c9069464668c2ad47d0",
+  "method": "literal source references; dynamic wiring manually traced in chapters; excludes vendor and files over 800 KB",
+  "files": [
+    {
+      "path": "extension/background.js",
+      "sha256": "df5d8b63164e02dc429b4423714573b4e5096951b81df55c81f4c4b4334d5c5a",
+      "lines": 3230,
+      "imports": [
+        {
+          "line": 1,
+          "text": "importScripts(\"entry-bootstrap.js\");"
+        },
+        {
+          "line": 908,
+          "text": "importScripts(\"history-archive.js\");"
+        },
+        {
+          "line": 909,
+          "text": "importScripts(\"brand-icon.js\");"
+        },
+        {
+          "line": 910,
+          "text": "importScripts(\"transfer-counter.js\");"
+        },
+        {
+          "line": 924,
+          "text": "importScripts(\"cloudflare-auth.js\");"
+        },
+        {
+          "line": 925,
+          "text": "importScripts(\"cloudflare-api.js\");"
+        },
+        {
+          "line": 926,
+          "text": "importScripts(\"nested-locations.js\");"
+        },
+        {
+          "line": 927,
+          "text": "importScripts(\"destination-config.js\");"
+        },
+        {
+          "line": 928,
+          "text": "importScripts(\"right-click-v3.js\");"
+        },
+        {
+          "line": 929,
+          "text": "importScripts(\"google-drive-menu.js\");"
+        },
+        {
+          "line": 930,
+          "text": "importScripts(\"google-drive-provider.js\");"
+        },
+        {
+          "line": 932,
+          "text": "importScripts(\"dropbox-auth.js\");"
+        },
+        {
+          "line": 933,
+          "text": "importScripts(\"dropbox-api.js\");"
+        },
+        {
+          "line": 934,
+          "text": "importScripts(\"dropbox-menu.js\");"
+        },
+        {
+          "line": 935,
+          "text": "importScripts(\"dropbox-provider.js\");"
+        },
+        {
+          "line": 938,
+          "text": "importScripts(\"onedrive-menu.js\");"
+        },
+        {
+          "line": 939,
+          "text": "importScripts(\"onedrive-oauth-diagnostic.js\");"
+        },
+        {
+          "line": 940,
+          "text": "importScripts(\"onedrive-auth.js\");"
+        },
+        {
+          "line": 941,
+          "text": "importScripts(\"onedrive-api.js\");"
+        },
+        {
+          "line": 942,
+          "text": "importScripts(\"onedrive-provider.js\");"
+        },
+        {
+          "line": 945,
+          "text": "importScripts(\"right-click-current.js\");"
+        },
+        {
+          "line": 946,
+          "text": "importScripts(\"rfis-index.js\");"
+        },
+        {
+          "line": 947,
+          "text": "importScripts(\"runtime-diagnostics.js\");"
+        },
+        {
+          "line": 948,
+          "text": "importScripts(\"explorer-diagnostics.js\");"
+        },
+        {
+          "line": 949,
+          "text": "importScripts(\"explorer-diagnostics-bridge.js\");"
+        },
+        {
+          "line": 951,
+          "text": "importScripts(\"search-session.js\");"
+        }
+      ],
+      "nativeMenuReferences": [
+        {
+          "line": 2089,
+          "text": "function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item)){"
+        },
+        {
+          "line": 2442,
+          "text": "if(method==='remove')chrome.contextMenus.remove(item.id,done);"
+        },
+        {
+          "line": 2443,
+          "text": "else if(method==='update'){const {id,...properties}=item;chrome.contextMenus.update(id,properties,done);}"
+        },
+        {
+          "line": 2444,
+          "text": "else chrome.contextMenus.create(item,done);"
+        },
+        {
+          "line": 2513,
+          "text": "chrome.contextMenus.remove(id,()=>{clearTimeout(timer);const error=chrome.runtime.lastError;error&&!/cannot find|not found|missing/i.test(error.message)?reject(Error('Menu removal failed')):resolve();});"
+        },
+        {
+          "line": 2522,
+          "text": "if(!chrome.runtime?.id){chrome.contextMenus.create(item);continue;}"
+        },
+        {
+          "line": 2563,
+          "text": "const create=arguments[1]|| (item=>chrome.contextMenus.create(item));"
+        },
+        {
+          "line": 2868,
+          "text": "chrome.contextMenus.onClicked.addListener(async (info, tab) => {"
+        }
+      ],
+      "storageReferences": [
+        {
+          "line": 785,
+          "text": "const { profiles = [] } = await chrome.storage.local.get(\"profiles\");"
+        },
+        {
+          "line": 800,
+          "text": "await chrome.storage.local.set({profiles});"
+        },
+        {
+          "line": 883,
+          "text": "const { notificationsEnabled } = await chrome.storage.local.get(\"notificationsEnabled\");"
+        },
+        {
+          "line": 912,
+          "text": "const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);"
+        },
+        {
+          "line": 913,
+          "text": "void chrome.storage.local.get(['shelfColorScheme','shelfIconBackgroundMode']).then(data=>{"
+        },
+        {
+          "line": 918,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 954,
+          "text": "chrome.storage.local.get(\"debugModeEnabled\").then(value=>runtimeDiagnostics.setEnabled(value.debugModeEnabled)).catch(()=>{});"
+        },
+        {
+          "line": 955,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 964,
+          "text": "const { cloudflareAuth } = await chrome.storage.local.get(\"cloudflareAuth\");"
+        },
+        {
+          "line": 974,
+          "text": "await chrome.storage.local.remove(\"cloudflareAuth\");"
+        },
+        {
+          "line": 1059,
+          "text": "const {rightClickV3=RedownRightClickV3.empty()}=await chrome.storage.local.get('rightClickV3');"
+        },
+        {
+          "line": 1060,
+          "text": "await chrome.storage.local.set({rightClickV3:{...rightClickV3,revision:rightClickV3.revision+1,defaultBucket:{profileId:profile.id,accountId,bucketName:'redown'}}});"
+        },
+        {
+          "line": 1104,
+          "text": "const storedSecret = (await chrome.storage.session.get(secretKey))[secretKey];"
+        },
+        {
+          "line": 1106,
+          "text": "await chrome.storage.session.set({[secretKey]:secret});"
+        },
+        {
+          "line": 1469,
+          "text": "const { rfisPreviewEnabled=false }=await chrome.storage.local.get(\"rfisPreviewEnabled\");"
+        },
+        {
+          "line": 1961,
+          "text": "const { transferHistory = [] } = await chrome.storage.local.get(\"transferHistory\");"
+        },
+        {
+          "line": 1977,
+          "text": "await chrome.storage.local.set({ transferHistory: history });"
+        },
+        {
+          "line": 2101,
+          "text": "const {profiles=[]}=await chrome.storage.local.get(\"profiles\");"
+        },
+        {
+          "line": 2108,
+          "text": "await chrome.storage.local.set({profiles});return {ok:true,profiles};"
+        },
+        {
+          "line": 2119,
+          "text": "const stored=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);"
+        },
+        {
+          "line": 2147,
+          "text": "await chrome.storage.local.set({rightClickEngine:'v3'});"
+        },
+        {
+          "line": 2164,
+          "text": "if(store){const {profiles=[],rightClickHistoryPolicy='daily'}=await chrome.storage.local.get(['profiles','rightClickHistoryPolicy']);await store.commitPatch(patch,{profiles,policy:rightClickHistoryPolicy});}"
+        },
+        {
+          "line": 2165,
+          "text": "await chrome.storage.local.set(patch);"
+        },
+        {
+          "line": 2171,
+          "text": "const {profiles=[]}=await chrome.storage.local.get('profiles');"
+        },
+        {
+          "line": 2174,
+          "text": "const source=await chrome.storage.local.get(['rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles','rightClickHistoryPolicy']);"
+        },
+        {
+          "line": 2177,
+          "text": "}else await store.commitPatch({}, {policy:(await chrome.storage.local.get('rightClickHistoryPolicy')).rightClickHistoryPolicy||'daily'});"
+        },
+        {
+          "line": 2178,
+          "text": "const mirror=await chrome.storage.local.get(Object.keys(state));"
+        },
+        {
+          "line": 2180,
+          "text": "if(Object.keys(changed).length)await chrome.storage.local.set(changed);"
+        },
+        {
+          "line": 2188,
+          "text": "const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Migration','profiles']);"
+        },
+        {
+          "line": 2191,
+          "text": "await chrome.storage.local.set({rightClickEngine:'v3',rightClickV3:migrated.config,"
+        },
+        {
+          "line": 2195,
+          "text": "}else if(s.rightClickEngine!=='v3')await chrome.storage.local.set({rightClickEngine:'v3'});"
+        },
+        {
+          "line": 2203,
+          "text": "if(globalActivationRunning)return {ok:true,activation:(await chrome.storage.local.get('rightClickGlobalActivation')).rightClickGlobalActivation};"
+        },
+        {
+          "line": 2206,
+          "text": "const stored=await chrome.storage.local.get(['cloudflareAuth','rightClickGlobalActivation']);"
+        },
+        {
+          "line": 2212,
+          "text": "await chrome.storage.local.set({rightClickGlobalActivation:job});"
+        },
+        {
+          "line": 2214,
+          "text": "try{connected=await listCloudflareAccounts();}catch(error){job.state='failed';job.error='Account discovery failed. Reconnect Cloudflare or retry.';await chrome.storage.local.set({rightClickGlobalActivation:job});throw error;}"
+        },
+        {
+          "line": 2226,
+          "text": "await chrome.storage.local.set({rightClickGlobalActivation:job});"
+        },
+        {
+          "line": 2238,
+          "text": "const {cloudflareAuth:auth}=await chrome.storage.local.get('cloudflareAuth');"
+        },
+        {
+          "line": 2243,
+          "text": "const latest=await chrome.storage.local.get('cloudflareAuth');"
+        },
+        {
+          "line": 2246,
+          "text": "const s=await chrome.storage.local.get(['profiles','rightClickActivatedBuckets','rightClickV3LevelScopes']);"
+        },
+        {
+          "line": 2262,
+          "text": "await chrome.storage.local.set({rightClickGlobalActivation:job});"
+        },
+        {
+          "line": 2268,
+          "text": "const s=await chrome.storage.local.get(['rightClickMenuStatus','rightClickActivatedBuckets','profiles']);"
+        },
+        {
+          "line": 2269,
+          "text": "const menu=await chrome.storage.local.get(['rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickV3Inventory']);"
+        },
+        {
+          "line": 2279,
+          "text": "job.at=Date.now();await chrome.storage.local.set({rightClickGlobalActivation:job});"
+        },
+        {
+          "line": 2284,
+          "text": "const {rightClickGlobalActivation:job}=await chrome.storage.local.get('rightClickGlobalActivation');"
+        },
+        {
+          "line": 2286,
+          "text": "if(job.phase==='discovering'){job.state='failed';job.error='Bucket discovery was interrupted. Retry Failed Buckets to discover all accounts.';await chrome.storage.local.set({rightClickGlobalActivation:job});return;}"
+        },
+        {
+          "line": 2291,
+          "text": "const s=await chrome.storage.local.get(['rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);"
+        },
+        {
+          "line": 2295,
+          "text": "const s=await chrome.storage.local.get(['right-click.json','rightClickV3Inventory','rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','profiles']);"
+        },
+        {
+          "line": 2298,
+          "text": "if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&(RedownRightClickV3.fresh(cached.inventory,key)||RedownRightClickV3.rememberedNodes({...(s.rightClickV3||RedownRightClickV3.empty()),levelScopes:s.rightClickV3LevelScopes},s.profiles||[],cached.inventory).length))await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});"
+        },
+        {
+          "line": 2307,
+          "text": "const s=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','rightClickV3Inventory','rightClickMenuStatus','profiles']);"
+        },
+        {
+          "line": 2311,
+          "text": "await chrome.storage.local.set({'right-click.json':{schemaVersion:1,configurationRevision:config.revision,"
+        },
+        {
+          "line": 2321,
+          "text": "const state=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickV3Presentation','profiles']);"
+        },
+        {
+          "line": 2329,
+          "text": "const s=await chrome.storage.local.get(keys),options=RedownRightClickV3.presentation(s.rightClickV3Presentation);"
+        },
+        {
+          "line": 2334,
+          "text": "if(!s.rightClickV3Inventory&&cached?.schemaVersion===1&&cached.inventory?.version===2){s.rightClickV3Inventory=cached.inventory;await chrome.storage.local.set({rightClickV3Inventory:cached.inventory});}"
+        },
+        {
+          "line": 2337,
+          "text": "const latest=await chrome.storage.local.get(keys);"
+        },
+        {
+          "line": 2351,
+          "text": "const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','profiles','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickMenuStatus']);"
+        },
+        {
+          "line": 2353,
+          "text": "migrationRecoveryCount:(await chrome.storage.local.get('rightClickV3Migration')).rightClickV3Migration?.recovery?.length||0,"
+        },
+        {
+          "line": 2359,
+          "text": "const s=await chrome.storage.local.get(['rightClickEngine','rightClickV3','rightClickMode','rightClickV3Presentation','rightClickV3Inventory','rightClickV3LevelScopes','rightClickActivatedBuckets']);"
+        },
+        {
+          "line": 2366,
+          "text": "const s=await chrome.storage.local.get(['rightClickEngine','rightClickMode','rightClickV3','rightClickV3Presentation','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Inventory','profiles']);"
+        },
+        {
+          "line": 2368,
+          "text": "const google=(await chrome.storage.local.get('googleDriveState')).googleDriveState;"
+        },
+        {
+          "line": 2370,
+          "text": "const dropbox=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];"
+        },
+        {
+          "line": 2372,
+          "text": "const onedrive=(await chrome.storage.local.get('onedrive:state'))['onedrive:state'];"
+        },
+        {
+          "line": 2384,
+          "text": "const s=await chrome.storage.local.get('rightClickMenuStatus');"
+        },
+        {
+          "line": 2402,
+          "text": "const saved=await chrome.storage.local.get('rightClickNativeIds');"
+        },
+        {
+          "line": 2405,
+          "text": "const previous=(await chrome.storage.local.get('rightClickMenuStatus')).rightClickMenuStatus;"
+        },
+        {
+          "line": 2407,
+          "text": "await chrome.storage.local.set({rightClickMenuStatus:{state:'applying',at:Date.now(),desiredGeneration,appliedGeneration:previous?.appliedGeneration||null,attemptId}});"
+        },
+        {
+          "line": 2417,
+          "text": "await chrome.storage.local.set({rightClickMenuStatus:{...receipt,applicationKey,desiredGeneration:current?applicationKey:await menuApplicationKey(),appliedGeneration:applicationKey,lastAcknowledgedAt:new Date().toISOString(),attemptId,state:!current?'superseded':'registered'}});"
+        },
+        {
+          "line": 2429,
+          "text": "const failed=(await chrome.storage.local.get('rightClickMenuStatus').catch(()=>({}))).rightClickMenuStatus;"
+        },
+        {
+          "line": 2430,
+          "text": "await chrome.storage.local.set({rightClickMenuStatus:{...failed,state:'failed',at:Date.now(),error:'Chrome menu registration failed. Open Settings and retry Apply.'}}).catch(()=>{});"
+        },
+        {
+          "line": 2467,
+          "text": "const state=(await chrome.storage.local.get('googleDriveState')).googleDriveState;"
+        },
+        {
+          "line": 2472,
+          "text": "const state=(await chrome.storage.local.get('dropbox:state'))['dropbox:state'];"
+        },
+        {
+          "line": 2477,
+          "text": "const state=(await chrome.storage.local.get('onedrive:state'))['onedrive:state'];"
+        },
+        {
+          "line": 2481,
+          "text": "if(combined.error)await chrome.storage.local.set({'onedrive:menuError':{code:combined.error}});"
+        },
+        {
+          "line": 2482,
+          "text": "else {description.splice(0,description.length,...combined.entries);await chrome.storage.local.remove('onedrive:menuError');}"
+        },
+        {
+          "line": 2535,
+          "text": "await chrome.storage.local.set({rightClickNativeIds:nativeMenuIds});"
+        },
+        {
+          "line": 2548,
+          "text": "const menuSettings=await chrome.storage.local.get([\"rightClickMode\",\"rightClickEngine\",\"rightClickV3\",\"rightClickV3Presentation\",\"rightClickV3Inventory\",\"rightClickV3LevelScopes\",\"rightClickActivatedBuckets\"]);"
+        },
+        {
+          "line": 2551,
+          "text": "if(storedMode!==\"simple\" && storedMode!==\"nested\")await chrome.storage.local.set({rightClickMode:mode});"
+        },
+        {
+          "line": 2585,
+          "text": "const data=await chrome.storage.local.get(HITOMI_QUEUE_KEY);"
+        },
+        {
+          "line": 2593,
+          "text": "await chrome.storage.local.set({[HITOMI_QUEUE_KEY]:jobs});"
+        },
+        {
+          "line": 2624,
+          "text": "const settings=await chrome.storage.local.get('rightClickMode');"
+        },
+        {
+          "line": 2634,
+          "text": "await chrome.storage.local.set({[HITOMI_QUEUE_KEY]:jobs.slice(-250)});"
+        },
+        {
+          "line": 2744,
+          "text": "void chrome.storage.local.get(['rightClickEngine','rightClickV3Presentation']).then(s=>{"
+        },
+        {
+          "line": 2749,
+          "text": "chrome.storage.onChanged.addListener((changes, area) => {"
+        },
+        {
+          "line": 2755,
+          "text": "void chrome.storage.local.get(['rightClickV3Inventory']).then(s=>{"
+        },
+        {
+          "line": 2757,
+          "text": "if(!inventory)return chrome.storage.local.set({'right-click.json':null,rightClickV3Inventory:null});"
+        },
+        {
+          "line": 2759,
+          "text": "return chrome.storage.local.set({rightClickV3Inventory:retained,'right-click.json':null});"
+        },
+        {
+          "line": 2773,
+          "text": "const {shelfColorScheme}=await chrome.storage.local.get(\"shelfColorScheme\").catch(()=>({}));"
+        },
+        {
+          "line": 2842,
+          "text": "await chrome.storage.local.set({redownShelfImpact:{...event,at:Date.now(),kind:results.some(frame=>frame.result?.arrived)?\"arrival\":\"reduced-motion-dispatch\"}}).catch(()=>{});"
+        },
+        {
+          "line": 2864,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 2892,
+          "text": "await chrome.storage.session.set({['rightClickChoice:'+id]:{info,tab,at:Date.now()}});"
+        },
+        {
+          "line": 2982,
+          "text": "const enabled=(await boundedEntry(chrome.storage.local.get('debugModeEnabled'),1000)).debugModeEnabled;"
+        },
+        {
+          "line": 2993,
+          "text": "const intent=(await chrome.storage.session.get(key))[key];"
+        },
+        {
+          "line": 2996,
+          "text": "const stored=await chrome.storage.local.get(['rightClickV3','rightClickV3LevelScopes','rightClickActivatedBuckets','rightClickV3Presentation','rightClickV3Inventory']);"
+        },
+        {
+          "line": 3010,
+          "text": "await chrome.storage.session.remove(key);"
+        },
+        {
+          "line": 3016,
+          "text": "const {debugModeEnabled}=await chrome.storage.local.get(\"debugModeEnabled\");"
+        },
+        {
+          "line": 3020,
+          "text": "const {cloudflareAuth:auth}=await chrome.storage.local.get(\"cloudflareAuth\");"
+        },
+        {
+          "line": 3028,
+          "text": "const stored=await chrome.storage.local.get(\"debugModeEnabled\");"
+        },
+        {
+          "line": 3110,
+          "text": "const { rfisPreviewEnabled=false }=await chrome.storage.local.get(\"rfisPreviewEnabled\");"
+        },
+        {
+          "line": 3215,
+          "text": "const { transferHistory = [] } = await chrome.storage.local.get(\"transferHistory\");"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 918,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 955,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 2614,
+          "text": "chrome.alarms.onAlarm.addListener(alarm=>{"
+        },
+        {
+          "line": 2617,
+          "text": "chrome.runtime.onStartup.addListener(()=>retryPendingHitomi().catch(()=>{}));"
+        },
+        {
+          "line": 2734,
+          "text": "chrome.runtime.onInstalled.addListener(requestMenuRebuild);"
+        },
+        {
+          "line": 2735,
+          "text": "chrome.runtime.onStartup.addListener(requestMenuRebuild);"
+        },
+        {
+          "line": 2741,
+          "text": "chrome.alarms.onAlarm.addListener(alarm=>{"
+        },
+        {
+          "line": 2749,
+          "text": "chrome.storage.onChanged.addListener((changes, area) => {"
+        },
+        {
+          "line": 2864,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 2868,
+          "text": "chrome.contextMenus.onClicked.addListener(async (info, tab) => {"
+        },
+        {
+          "line": 2961,
+          "text": "chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 57,
+          "text": "function privateHost(hostname) {"
+        },
+        {
+          "line": 66,
+          "text": "function cleanName(value) {"
+        },
+        {
+          "line": 72,
+          "text": "function cleanPrefix(value) {"
+        },
+        {
+          "line": 77,
+          "text": "async function explorerWire(request,env,authorized) {"
+        },
+        {
+          "line": 83,
+          "text": "async function fingerprint(kind,value){"
+        },
+        {
+          "line": 90,
+          "text": "function payload(){return {protocol:1,operationId:context.operationId,events,truncated};}"
+        },
+        {
+          "line": 93,
+          "text": "function explorerWorkerError(message,code,status,stage){const error=new Error(message);error.code=code;error.status=status;error.stage=stage;error.component=\"worker\";return error;}"
+        },
+        {
+          "line": 94,
+          "text": "function exactObjectKey(value) {"
+        },
+        {
+          "line": 98,
+          "text": "function exactFolder(value) {"
+        },
+        {
+          "line": 105,
+          "text": "function checksumHex(object) {"
+        },
+        {
+          "line": 109,
+          "text": "async function verifiedObjectPut(storage,key,body,options,expectedSize,expectedMd5=\"\") {"
+        },
+        {
+          "line": 116,
+          "text": "async function copyVerifiedObject(storage,entry,sourceWorkerUrl,sourceToken,conflict,diagnostic) {"
+        },
+        {
+          "line": 149,
+          "text": "async function uniqueKey(storage, requested, firstIndex = 2, compact = false) {"
+        },
+        {
+          "line": 163,
+          "text": "async function putNewDownload(storage, key, value, metadata) {"
+        },
+        {
+          "line": 168,
+          "text": "function extensionForContentType(contentType) {"
+        },
+        {
+          "line": 190,
+          "text": "function filenameWithInferredExtension(filename, contentType) {"
+        },
+        {
+          "line": 196,
+          "text": "function safePublicBase(value, requestUrl) {"
+        },
+        {
+          "line": 209,
+          "text": "async function checkedFetch(raw, hops = 5) {"
+        },
+        {
+          "line": 228,
+          "text": "function bytesHex(bytes) { return Array.from(bytes, x => x.toString(16).padStart(2, \"0\")).join(\"\"); }"
+        },
+        {
+          "line": 229,
+          "text": "async function readSignature(key, expires) {"
+        },
+        {
+          "line": 233,
+          "text": "async function signedReadUrl(requestUrl, key, ttl = 900) {"
+        },
+        {
+          "line": 238,
+          "text": "async function validSignedRead(url, key) {"
+        },
+        {
+          "line": 248,
+          "text": "async function objectBytes(storage, key, offset, length) {"
+        },
+        {
+          "line": 253,
+          "text": "function safeArchiveName(name) {"
+        },
+        {
+          "line": 262,
+          "text": "async function archiveEntries(storage, key) {"
+        },
+        {
+          "line": 293,
+          "text": "async function archiveEntryBytes(storage, key, requested) {"
+        },
+        {
+          "line": 740,
+          "text": "function bytesToBase64Url(bytes) {"
+        },
+        {
+          "line": 745,
+          "text": "function randomString(bytes = 32) {"
+        },
+        {
+          "line": 749,
+          "text": "async function sha256Base64Url(value) {"
+        },
+        {
+          "line": 753,
+          "text": "function selectedUrl(info) {"
+        },
+        {
+          "line": 758,
+          "text": "function categoryForContext(info, sourceUrl, profile) {"
+        },
+        {
+          "line": 768,
+          "text": "function basenameFromUrl(raw) {"
+        },
+        {
+          "line": 775,
+          "text": "function joinPath(...parts) {"
+        },
+        {
+          "line": 780,
+          "text": "function safeSlug(value, max = 45) {"
+        },
+        {
+          "line": 784,
+          "text": "async function getProfiles() {"
+        },
+        {
+          "line": 788,
+          "text": "async function setProfiles(profiles,menuProfileId=null) {"
+        },
+        {
+          "line": 807,
+          "text": "async function paintToolbarBrand(){"
+        },
+        {
+          "line": 815,
+          "text": "function createToolbarFeedback(api, loadPixels = async size => {"
+        },
+        {
+          "line": 871,
+          "text": "async function recordTransfer(entry) {"
+        },
+        {
+          "line": 881,
+          "text": "async function notify(title, message) {"
+        },
+        {
+          "line": 894,
+          "text": "function cloudflareErrorMessage(body, fallback) {"
+        },
+        {
+          "line": 897,
+          "text": "async function cfFetch(path, options = {}) {"
+        },
+        {
+          "line": 900,
+          "text": "async function cfJson(path, options = {}) {"
+        },
+        {
+          "line": 961,
+          "text": "async function connectCloudflare(options = {}) { return RedownCloudflareAuth.connect(options); }"
+        },
+        {
+          "line": 962,
+          "text": "async function disconnectCloudflare() {"
+        },
+        {
+          "line": 977,
+          "text": "async function listCloudflareAccounts() {"
+        },
+        {
+          "line": 992,
+          "text": "async function listBuckets(accountId) {"
+        },
+        {
+          "line": 1013,
+          "text": "async function createBucket(accountId, name, locationHint = \"\") {"
+        },
+        {
+          "line": 1026,
+          "text": "async function setupRedownQuickDestination(accountId,menuLabel='Cloudflare'){"
+        },
+        {
+          "line": 1067,
+          "text": "async function ensureWorkersSubdomain(accountId) {"
+        },
+        {
+          "line": 1086,
+          "text": "function isVerifiedWorkerHealth(body){"
+        },
+        {
+          "line": 1090,
+          "text": "async function provisionCloudflareProfile(options) {"
+        },
+        {
+          "line": 1093,
+          "text": "async function deployCloudflareProfile({ accountId, accountName, bucketName, profileName, folders, explorerOnly = false, menuActivation = false, privateActivation = false }) {"
+        },
+        {
+          "line": 1266,
+          "text": "function normalizeWebOrigin(value) {"
+        },
+        {
+          "line": 1283,
+          "text": "async function configureBucketAssetCors(accountId, bucketName, website) {"
+        },
+        {
+          "line": 1341,
+          "text": "async function configureAssetDomain(accountId, bucketName, website) {"
+        },
+        {
+          "line": 1372,
+          "text": "async function finish(state,message){"
+        },
+        {
+          "line": 1392,
+          "text": "async function bucketPublicAddresses(accountId,bucketName){"
+        },
+        {
+          "line": 1414,
+          "text": "async function enableBucketPublicAccess(message,sender){"
+        },
+        {
+          "line": 1443,
+          "text": "function publicAssetUrl(profile, key) {"
+        },
+        {
+          "line": 1448,
+          "text": "async function listObjectsPage(accountId, bucketName, prefix = \"\", cursor = \"\", delimiter = \"\") {"
+        },
+        {
+          "line": 1479,
+          "text": "async function listObjects(accountId, bucketName, prefix = \"\", cursor = \"\") {"
+        },
+        {
+          "line": 1482,
+          "text": "async function listAllObjects(accountId, bucketName, prefix = \"\") {"
+        },
+        {
+          "line": 1493,
+          "text": "function explorerSearchScore(query, key) {"
+        },
+        {
+          "line": 1519,
+          "text": "async function searchExplorerObjects(targets, query, limit = 200) {"
+        },
+        {
+          "line": 1563,
+          "text": "async function listFolderPrefixes(accountId, bucketName, limit = 5000) {"
+        },
+        {
+          "line": 1585,
+          "text": "async function listFolderChildren(accountId, bucketName, parentPrefix = \"\", limit = 250) {"
+        },
+        {
+          "line": 1613,
+          "text": "function cleanExplorerPrefix(value) {"
+        },
+        {
+          "line": 1619,
+          "text": "function cleanExplorerKey(value){"
+        },
+        {
+          "line": 1623,
+          "text": "function cleanExplorerName(value) {"
+        },
+        {
+          "line": 1629,
+          "text": "async function workerAcceptsProfile(profile,explorerTrace) {"
+        },
+        {
+          "line": 1652,
+          "text": "async function preparedProfile(accountId, bucketName, accountName = \"\", forceRepair = false, explorerTrace = null, noProvision = false, privateActivation = false) {"
+        },
+        {
+          "line": 1669,
+          "text": "async function callBucketWorker(profile, body, allowRepair = true) {"
+        },
+        {
+          "line": 1670,
+          "text": "async function run(active){"
+        },
+        {
+          "line": 1710,
+          "text": "async function expandExplorerEntries(accountId, bucketName, entries) {"
+        },
+        {
+          "line": 1729,
+          "text": "async function probeExplorerSource(input) {"
+        },
+        {
+          "line": 1787,
+          "text": "async function assertExplorerTransferSettings(profile, trace, role=\"destination\") {"
+        },
+        {
+          "line": 1797,
+          "text": "async function explorerDirectoryExists(destination, prefix) {"
+        },
+        {
+          "line": 1803,
+          "text": "async function transferExplorerObjects(message) {"
+        },
+        {
+          "line": 1896,
+          "text": "async function deleteExplorerObjects(message) {"
+        },
+        {
+          "line": 1907,
+          "text": "async function renameExplorerEntry(message) {"
+        },
+        {
+          "line": 1916,
+          "text": "async function createExplorerFolder(message) {"
+        },
+        {
+          "line": 1928,
+          "text": "function objectKeyFromLocation(profile, location) {"
+        },
+        {
+          "line": 1940,
+          "text": "async function renameCloudflareTransfer(profile, location, newFilename, exactKey = \"\") {"
+        },
+        {
+          "line": 1960,
+          "text": "async function renameTransferHistoryItem(id, newFilename) {"
+        },
+        {
+          "line": 1980,
+          "text": "async function ensureGitHubWorkflow(profile) {"
+        },
+        {
+          "line": 2008,
+          "text": "async function ingestCloudflareAtPrefix(profile, sourceUrl, prefix, filename, receipt = null, noProvision = false) {"
+        },
+        {
+          "line": 2049,
+          "text": "async function ingestCloudflare(profile, sourceUrl, category, filename, receipt = null) {"
+        },
+        {
+          "line": 2053,
+          "text": "async function ingestGitHub(profile, sourceUrl, category, filename) {"
+        },
+        {
+          "line": 2076,
+          "text": "async function ingest(profile, sourceUrl, category, filename, receipt = null) {"
+        },
+        {
+          "line": 2085,
+          "text": "function sanitizeMenuId(value) {"
+        },
+        {
+          "line": 2089,
+          "text": "function addNestedLocations(profile,create=item=>chrome.contextMenus.create(item)){"
+        },
+        {
+          "line": 2097,
+          "text": "function saveStoragePreferences(message,sender){"
+        },
+        {
+          "line": 2113,
+          "text": "function v3MenuTransaction(message,sender){"
+        },
+        {
+          "line": 2157,
+          "text": "function withCurrentMenu(work){"
+        },
+        {
+          "line": 2160,
+          "text": "function currentMenuStore(){return currentMenuDatabase??=globalThis.RedownRightClickCurrent?.create();}"
+        },
+        {
+          "line": 2161,
+          "text": "async function commitV3Current(patch){"
+        },
+        {
+          "line": 2168,
+          "text": "async function restoreDurableV3(){"
+        },
+        {
+          "line": 2185,
+          "text": "function ensureV3Only(){"
+        },
+        {
+          "line": 2201,
+          "text": "async function activateAllBuckets(message,sender){"
+        },
+        {
+          "line": 2234,
+          "text": "async function runGlobalActivation(job){"
+        },
+        {
+          "line": 2282,
+          "text": "async function resumeGlobalActivation(){"
+        },
+        {
+          "line": 2290,
+          "text": "async function v3PresentationSnapshot(){"
+        },
+        {
+          "line": 2294,
+          "text": "async function restoreV3MenuSnapshot(){"
+        },
+        {
+          "line": 2302,
+          "text": "function persistV3MenuSnapshot(){"
+        },
+        {
+          "line": 2306,
+          "text": "async function writeV3MenuSnapshot(){"
+        },
+        {
+          "line": 2319,
+          "text": "async function refreshV3Inventory(force=false){"
+        },
+        {
+          "line": 2348,
+          "text": "async function rightClickV3Snapshot(sender){"
+        },
+        {
+          "line": 2356,
+          "text": "async function resolveActiveRightClick(id,profiles){"
+        },
+        {
+          "line": 2365,
+          "text": "async function menuApplicationKey(){"
+        },
+        {
+          "line": 2378,
+          "text": "function rebuildMenus(){"
+        },
+        {
+          "line": 2391,
+          "text": "async function reconcileMenus() {"
+        },
+        {
+          "line": 2437,
+          "text": "function acknowledgeMenu(method,item){"
+        },
+        {
+          "line": 2448,
+          "text": "async function ensureMenuAccess(){"
+        },
+        {
+          "line": 2460,
+          "text": "async function buildMenus() {"
+        },
+        {
+          "line": 2562,
+          "text": "function addMenuControls(mode){"
+        },
+        {
+          "line": 2584,
+          "text": "async function readHitomiQueue(){"
+        },
+        {
+          "line": 2588,
+          "text": "async function markHitomiQueue(id,patch){"
+        },
+        {
+          "line": 2595,
+          "text": "async function retryPendingHitomi(){"
+        },
+        {
+          "line": 2620,
+          "text": "function hitomiDestination(menuId, profiles, mode='simple') {"
+        },
+        {
+          "line": 2623,
+          "text": "async function initiateHitomiCapture(info, tab, profiles,existingJobId=null) {"
+        },
+        {
+          "line": 2668,
+          "text": "async function handleHitomiCaptureMessage(message,sender) {"
+        },
+        {
+          "line": 2731,
+          "text": "function requestMenuRebuild(){"
+        },
+        {
+          "line": 2767,
+          "text": "async function launchSaveDroplet(info,tab){"
+        },
+        {
+          "line": 2848,
+          "text": "async function openRedownHome(tab){"
+        },
+        {
+          "line": 2905,
+          "text": "async function saveResolvedRightClick(info,tab,resolved,profiles){"
+        }
+      ]
+    },
+    {
+      "path": "extension/beta/account-picker.js",
+      "sha256": "6666992bf1b1c0828951c4c2b29d0bdfee6d8bbaf29f58c4d033cd6d7aea472b",
+      "lines": 123,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 13,
+          "text": "function close(refocus=false){"
+        },
+        {
+          "line": 21,
+          "text": "function sync(){"
+        },
+        {
+          "line": 36,
+          "text": "function focusItem(index){"
+        },
+        {
+          "line": 43,
+          "text": "function choose(index){"
+        },
+        {
+          "line": 54,
+          "text": "function show(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/beta/explorer.html",
+      "sha256": "2fcc9b0b01e70a6a201df0b5b3acbd1141108c0ed6024daececfd95af565b4ba",
+      "lines": 286,
+      "imports": [
+        {
+          "line": 273,
+          "text": "<script src=\"../public-addresses.js\"></script>"
+        },
+        {
+          "line": 274,
+          "text": "<script src=\"../cloudflare-api.js\">"
+        },
+        {
+          "line": 276,
+          "text": "<script src=\"../history-navigation.js\"></script><script src=\"sidebar-settings.js\"></script>"
+        },
+        {
+          "line": 277,
+          "text": "<script src=\"../brand-icon.js\"></script><script src=\"../explorer-theme.js\"></script>"
+        },
+        {
+          "line": 278,
+          "text": "<script src=\"../explorer-destination-menu.js\"></script>"
+        },
+        {
+          "line": 279,
+          "text": "<script src=\"../right-click-v3.js\"></script>"
+        },
+        {
+          "line": 280,
+          "text": "<script src=\"right-click-v3-ui.js\"></script>"
+        },
+        {
+          "line": 281,
+          "text": "<script src=\"quick-links.js\"></script>"
+        },
+        {
+          "line": 282,
+          "text": "<script src=\"account-picker.js\"></script>"
+        },
+        {
+          "line": 283,
+          "text": "<script type=\"module\" src=\"explorer.mjs\">"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/beta/lab.html",
+      "sha256": "baf68cd2c242b2f9ec6d1373e867c1da8aaa5285a1106e518eee140adc518ac0",
+      "lines": 6,
+      "imports": [
+        {
+          "line": 6,
+          "text": "<script src=\"../cloudflare-api.js\"></script><script type=\"module\" src=\"lab.mjs\"></script></html>"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/beta/quick-links.js",
+      "sha256": "779e252782521e31a67d83bb30be6aac9c4599707ead809110ac6934ddce82f8",
+      "lines": 250,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 221,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 235,
+          "text": "const data=await chrome.storage.session.get(storageKey);"
+        },
+        {
+          "line": 236,
+          "text": "await chrome.storage.session.remove(storageKey);"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 221,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 13,
+          "text": "async function request(type,fields={}){"
+        },
+        {
+          "line": 20,
+          "text": "function buttons(){"
+        },
+        {
+          "line": 27,
+          "text": "function selectTab(which,focus=false){"
+        },
+        {
+          "line": 46,
+          "text": "async function loadAccounts(preferred=''){"
+        },
+        {
+          "line": 65,
+          "text": "async function loadBuckets(preferred=''){"
+        },
+        {
+          "line": 92,
+          "text": "function renderAddresses(snapshot,source,key){"
+        },
+        {
+          "line": 129,
+          "text": "async function loadUrls(key=selectedObject){"
+        },
+        {
+          "line": 224,
+          "text": "async function honorSavedObjectLookup(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/beta/right-click-v3-ui.js",
+      "sha256": "9880cbbb4fcbaf590a586c65c2e74efcf8d5f2258195b43e02adee6640fabddc",
+      "lines": 255,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 228,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.profiles||changes.rightClickActivatedBuckets||(['ready','partial','failed'].includes(changes.rightClickGlobalActivation?.newValue?.state)&&changes.rightClickGlobalActivation?.newValue?.state!==changes.rightClickGlobalActivation?.oldValue?.state))queueActivatedDestinationsRefresh();if(changes.rightClickV3LevelScopes&&!scopeSaving){acknowledgedScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 228,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes.profiles||changes.rightClickActivatedBuckets||(['ready','partial','failed'].includes(changes.rightClickGlobalActivation?.newValue?.state)&&changes.rightClickGlobalActivation?.newValue?.state!==changes.rightClickGlobalActivation?.oldValue?.state))queueActivatedDestinationsRefresh();if(changes.rightClickV3LevelScopes&&!scopeSaving){acknowledgedScopes=changes.rightClickV3LevelScopes.newValue||RedownRightClickV"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 11,
+          "text": "function button(text,label,fn){const b=el('button',text);b.type='button';b.setAttribute('aria-label',label);b.onclick=e=>{e.stopPropagation();const owner=b.closest('[role=treeitem]');if(owner)select(owner.dataset.key);fn();};return b;}"
+        },
+        {
+          "line": 13,
+          "text": "function paintApply(){"
+        },
+        {
+          "line": 19,
+          "text": "function dirty(){applyEpoch++;applyPending=true;applyError='';paintApply();}"
+        },
+        {
+          "line": 20,
+          "text": "function applyFailed(message){applyPending=true;applyError=message;paintApply();}"
+        },
+        {
+          "line": 27,
+          "text": "function paintScopes(){"
+        },
+        {
+          "line": 41,
+          "text": "async function saveScopes(buckets){"
+        },
+        {
+          "line": 57,
+          "text": "function menuFeedback(menuStatus){"
+        },
+        {
+          "line": 66,
+          "text": "function paintPresentation(){"
+        },
+        {
+          "line": 79,
+          "text": "async function savePresentation(next){"
+        },
+        {
+          "line": 107,
+          "text": "function note(){$('engine').textContent=migrationRecoveryCount?migrationRecoveryCount+' saved destinations need review. Export destination recovery in Shelf Settings.':'';}"
+        },
+        {
+          "line": 108,
+          "text": "function validate(next){RedownRightClickV3.validate(next,profiles.map(p=>({...p,type:'cloudflare-r2',workerUrl:true,token:true})));}"
+        },
+        {
+          "line": 109,
+          "text": "function change(fn){try{const next=structuredClone(config);fn(next);validate(next);undo=structuredClone(config.destinations);config=next;dirty();pending=true;sessionStorage.setItem('redown-v3-recovery',JSON.stringify(config));draw();void flush();}catch(e){status(e.message);}}"
+        },
+        {
+          "line": 110,
+          "text": "async function flush(){if(saving||blocked||!pending)return;saving=true;pending=false;const snapshot=structuredClone(config.destinations);status('Saving\u2026 Updating Chrome\u2026');try{"
+        },
+        {
+          "line": 114,
+          "text": "function focusSelected(){const row=[...$('outline').querySelectorAll('[role=treeitem]')].find(n=>n.dataset.key===selected);row?.focus();}"
+        },
+        {
+          "line": 115,
+          "text": "function select(key){selected=key;for(const row of $('outline').querySelectorAll('[role=treeitem]')){row.tabIndex=row.dataset.key===key?0:-1;row.setAttribute('aria-selected',String(row.dataset.key===key));}}"
+        },
+        {
+          "line": 116,
+          "text": "function rename(d){typeahead='';select(d.id);editing=d.id;draw();const input=$('outline').querySelector('input[data-edit]');input?.focus();input?.select();}"
+        },
+        {
+          "line": 117,
+          "text": "function remove(d){const count=config.destinations.length-RedownRightClickV3.remove(config,d.id).destinations.length;if(count>1&&!confirm('Remove '+d.label+' and '+(count-1)+' child destinations from the menu? Cloud folders are kept.'))return;change(next=>{next.destinations=RedownRightClickV3.remove(next,d.id).destinations;});$('undo').focus();}"
+        },
+        {
+          "line": 118,
+          "text": "function move(d,step){const siblings=config.destinations.filter(x=>x.parentId===d.parentId&&x.profileId===d.profileId),other=siblings[siblings.indexOf(d)+step];if(!other)return;change(next=>{const a=next.destinations.findIndex(x=>x.id===d.id),b=next.destinations.findIndex(x=>x.id===other.id);[next.destinations[a],next.destinations[b]]=[next.destinations[b],next.destinations[a]];});focusSelected();}"
+        },
+        {
+          "line": 119,
+          "text": "function add(p,d=null,path=''){typeahead='';if(editing){editing=null;draw();}addAnchor=d?.id||'bucket:'+p.id;select(addAnchor);$('add').hidden=false;$('profile').value=p.id;$('parent').value=d?.id||'';$('prefix').value=path|| (d?.prefix?d.prefix+'/':'');$('label').value='';$('folders').replaceChildren();const anchor=[...$('outline').querySelectorAll('[role=treeitem]')].find(n=>n.dataset.key===(d?.id||'bucket:'+p.id));anchor?.append($('add'));$('prefix').focus();}"
+        },
+        {
+          "line": 120,
+          "text": "async function browse(p,prefix='',cursor){const key=p.id+':'+prefix;try{status('Loading folders\u2026');const r=await request('cfDestinationFolders',{accountId:p.accountId,bucketName:p.bucketName,prefix,cursor});const values=(r.folders||[]).map(f=>(typeof f==='string'?f:f.prefix)?.replace(/\\/$/, '')).filter(Boolean);folders.set(key,{values:cursor?[...(folders.get(key)?.values||[]),...values]:values,cursor:r.cursor});draw();status('Folders loaded.');}catch(e){status(e.message);}}"
+        },
+        {
+          "line": 121,
+          "text": "function draw(){"
+        },
+        {
+          "line": 133,
+          "text": "function row(key,label,path,container,children,actions,d=null){"
+        },
+        {
+          "line": 155,
+          "text": "function destinations(parentId,container){for(const d of config.destinations.filter(x=>x.profileId===p.id&&x.parentId===parentId)){if(query&&!matches(d)&&!config.destinations.some(x=>x.prefix.startsWith(d.prefix+'/')&&matches(x)))continue;const del=button('Delete','Delete '+d.label+' and its menu descendants',()=>remove(d));del.className='v3-delete';const group=row(d.id,d.label,p.bucketName+'/'+d.prefix,container,config.destinations.some(x=>x.parentId===d.id),[button('+','Add child destination t"
+        },
+        {
+          "line": 157,
+          "text": "function cloud(prefix,container){const data=folders.get(p.id+':'+prefix);if(!data)return;for(const path of data.values){if(path===prefix)continue;if(query&&!path.toLowerCase().includes(query))continue;const key='folder:'+p.id+':'+path;const cg=row(key,path.split('/').at(-1),p.bucketName+'/'+path,container,true,[button('+','Use '+path+' as destination',()=>add(p,null,path)),button('\u21bb','Load subfolders of '+path,()=>browse(p,path))]);if(cg)cloud(path,cg);}if(data.cursor)container.append(button('Lo"
+        },
+        {
+          "line": 168,
+          "text": "async function load(){if(saving||presentationSaving||scopeSaving||applying){status('Wait for the current save before reloading.');return;}try{const r=await request('rightClickV3Snapshot');config=r.config;const recovery=sessionStorage.getItem('redown-v3-recovery');if(recovery){status('Recovered changes available in this window.');const draft=JSON.parse(recovery);if(confirm('Restore retained destination edits? They will be checked against the saved revision.')){config=draft;pending=true;blocked=tr"
+        },
+        {
+          "line": 172,
+          "text": "async function refreshActivatedDestinations(){"
+        },
+        {
+          "line": 210,
+          "text": "function queueActivatedDestinationsRefresh(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/beta/sidebar-settings.js",
+      "sha256": "743161819bc6e142004c6f8f2c71b6197a152cce423e4e0611588cf88b598669",
+      "lines": 64,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 31,
+          "text": "if(!chrome.sidePanel?.open||!chrome.storage.session?.set){void fallback();return;}"
+        },
+        {
+          "line": 39,
+          "text": "return chrome.storage.session.set({shelfOpenIntent:{view,windowId:win.id,issuedAt:Date.now(),token}});"
+        },
+        {
+          "line": 45,
+          "text": "const data=await chrome.storage.session.get('shelfOpenIntent');"
+        },
+        {
+          "line": 46,
+          "text": "if(data?.shelfOpenIntent?.token===token)await chrome.storage.session.remove('shelfOpenIntent');"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 20,
+          "text": "async function openPage(path){"
+        },
+        {
+          "line": 29,
+          "text": "function openShelf(view){"
+        }
+      ]
+    },
+    {
+      "path": "extension/boot.js",
+      "sha256": "58a65995d6b031ede4148e644c78b6178e682cb71572f797cf14ef18ed0559c4",
+      "lines": 74,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 16,
+          "text": "let s;try{s=await timed(chrome.storage.local.get(keys));}catch{return {schemaVersion:1,bootId:workerEpoch,workerEpoch,extensionVersion:chrome.runtime.getManifest().version,startedAt,observedAt:new Date().toISOString(),overall:'blocked',components:{worker:{state:adapters?'ready':'degraded'},toolbar:{state:'unknown'},shelf:{state:'unknown'},nativeMenu:{state:'unknown',desiredGeneration:null,appliedGeneration:null,lastAcknowledgedAt:null},cloudflare:{state:'unknown'},defaultDestination:{state:'unkn"
+        },
+        {
+          "line": 40,
+          "text": "const s=await timed(chrome.storage.local.get('entryPointEvidence'));"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 15,
+          "text": "async function status(){"
+        },
+        {
+          "line": 38,
+          "text": "async function history(input={}){"
+        },
+        {
+          "line": 43,
+          "text": "async function audit(){"
+        },
+        {
+          "line": 51,
+          "text": "function repair(input={}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/brand-icon.js",
+      "sha256": "b77e38b8311a786076898ef4b55ef0f30dc25c7c215ad628c9bd2842ba02c1cd",
+      "lines": 62,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 14,
+          "text": "function colors(theme,mode='theme'){"
+        },
+        {
+          "line": 18,
+          "text": "function svg(theme='porcelain',mode='theme'){"
+        },
+        {
+          "line": 31,
+          "text": "function paint(scope,theme,mode='theme'){"
+        },
+        {
+          "line": 41,
+          "text": "function imageData(theme='porcelain',mode='theme',sizes=[16,32,48]){"
+        }
+      ]
+    },
+    {
+      "path": "extension/cloudflare-api.js",
+      "sha256": "b5e210b3fd97a4972bea583f801229dace6068730289bb2379f98280895a3e64",
+      "lines": 185,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 12,
+          "text": "let {cloudflareAuth: current} = await chrome.storage.local.get(\"cloudflareAuth\");"
+        },
+        {
+          "line": 18,
+          "text": "await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true}});"
+        },
+        {
+          "line": 28,
+          "text": "await chrome.storage.local.set({cloudflareAuth:{...current,reconnectRequired:true}});"
+        },
+        {
+          "line": 35,
+          "text": "await chrome.storage.local.set({cloudflareAuth:current});"
+        },
+        {
+          "line": 53,
+          "text": "const {cloudflareAuth:current}=await chrome.storage.local.get(\"cloudflareAuth\");"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 167,
+          "text": "chrome.downloads.onChanged.addListener(listener);"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "async function boundedFetch(url, options = {}) {"
+        },
+        {
+          "line": 10,
+          "text": "async function auth(rejectedToken, expectedSession) {"
+        },
+        {
+          "line": 39,
+          "text": "async function authenticationRejected(response){"
+        },
+        {
+          "line": 46,
+          "text": "async function request(path, options = {}) {"
+        },
+        {
+          "line": 99,
+          "text": "function objectPath({accountId,bucketName},key) {"
+        },
+        {
+          "line": 106,
+          "text": "async function publicObjectUrl(source,key) {"
+        },
+        {
+          "line": 116,
+          "text": "async function readableResponse(source,key,signal) {"
+        },
+        {
+          "line": 126,
+          "text": "async function preview(source,key,type,signal) {"
+        },
+        {
+          "line": 143,
+          "text": "async function download(source,key,filename,onState) {"
+        }
+      ]
+    },
+    {
+      "path": "extension/cloudflare-auth.js",
+      "sha256": "3b75d87d43b902f7822dfde93bd337019a71a440cf6779718694260826c96912",
+      "lines": 271,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 35,
+          "text": "await navigator.locks.request(\"redown-cloudflare-token\",()=>chrome.storage.local.set({ cloudflareAuth: {...auth,reconnectRequired:false} }));"
+        },
+        {
+          "line": 47,
+          "text": "const stored = await chrome.storage.session.get(CF_LOGIN_SESSION);"
+        },
+        {
+          "line": 59,
+          "text": "const stored = await chrome.storage.session.get(CF_LOGIN_SESSION);"
+        },
+        {
+          "line": 63,
+          "text": "await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { id, phase, error } });"
+        },
+        {
+          "line": 70,
+          "text": "const stored = await chrome.storage.session.get(CF_LOGIN_SESSION);"
+        },
+        {
+          "line": 81,
+          "text": "const stored = await chrome.storage.session.get(CF_LOGIN_SESSION);"
+        },
+        {
+          "line": 113,
+          "text": "await chrome.storage.session.set({ [CF_LOGIN_SESSION]: attempt });"
+        },
+        {
+          "line": 126,
+          "text": "const current = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];"
+        },
+        {
+          "line": 128,
+          "text": "await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { ...attempt, phase: \"authorizing\" } });"
+        },
+        {
+          "line": 163,
+          "text": "const current = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];"
+        },
+        {
+          "line": 169,
+          "text": "await chrome.storage.session.set({ [CF_LOGIN_SESSION]: { ...current, phase: \"verifying\" } });"
+        },
+        {
+          "line": 221,
+          "text": "const current = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];"
+        },
+        {
+          "line": 253,
+          "text": "const attempt = (await chrome.storage.session.get(CF_LOGIN_SESSION))[CF_LOGIN_SESSION];"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 259,
+          "text": "chrome.alarms.onAlarm.addListener(alarm => {"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 9,
+          "text": "function bytesToBase64Url(bytes) {"
+        },
+        {
+          "line": 14,
+          "text": "function randomString(bytes = 32) {"
+        },
+        {
+          "line": 18,
+          "text": "async function sha256Base64Url(value) {"
+        },
+        {
+          "line": 22,
+          "text": "function cloudflareErrorMessage(body, fallback) {"
+        },
+        {
+          "line": 25,
+          "text": "async function storeCloudflareToken(token, previous = {}) {"
+        },
+        {
+          "line": 46,
+          "text": "async function cloudflareLoginStatus() {"
+        },
+        {
+          "line": 55,
+          "text": "async function finishCloudflareLogin(id, phase, error = \"\") {"
+        },
+        {
+          "line": 58,
+          "text": "async function finishCloudflareLoginLocked(id, phase, error = \"\") {"
+        },
+        {
+          "line": 69,
+          "text": "async function expireCloudflareLogin() {"
+        },
+        {
+          "line": 76,
+          "text": "async function startCloudflareLogin(options = {}) {"
+        },
+        {
+          "line": 79,
+          "text": "async function startCloudflareLoginUnlocked({ openExplorerAfterLogin = false } = {}) {"
+        },
+        {
+          "line": 138,
+          "text": "async function connectCloudflare(options = {}) {"
+        },
+        {
+          "line": 144,
+          "text": "async function cloudflareLoginJson(url, options = {}) {"
+        },
+        {
+          "line": 158,
+          "text": "async function completeCloudflareLogin(details) {"
+        },
+        {
+          "line": 240,
+          "text": "function registerListeners() {"
+        }
+      ]
+    },
+    {
+      "path": "extension/destination-config.js",
+      "sha256": "20edf0063d59481dac271e96d20effe08363bf09e73be18ec02cb9eb2f3fde9e",
+      "lines": 25,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "function prefix(value){if(typeof value!=='string'||value.length>1024||/[\\\\\\x00-\\x1f]/.test(value)||value.split('/').some(p=>p==='.'||p==='..'))throw Error('Choose a valid folder path.');return value;}"
+        },
+        {
+          "line": 5,
+          "text": "function resolve(menuId,profiles,mode){"
+        }
+      ]
+    },
+    {
+      "path": "extension/dropbox-api.js",
+      "sha256": "fc25eb16b8b1de5689d8ca0320b80512d1b2d60636c5d5bb2e3b821e392bd2dc",
+      "lines": 132,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function sourceURL(value){"
+        },
+        {
+          "line": 14,
+          "text": "function filename(value){"
+        },
+        {
+          "line": 22,
+          "text": "function sourceSnapshot(info){"
+        },
+        {
+          "line": 26,
+          "text": "function create({auth,fetch=globalThis.fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=Date.now}={}){"
+        },
+        {
+          "line": 27,
+          "text": "async function call(path,body,identity,signal,{binary=false,arg,retry=false}={}){"
+        },
+        {
+          "line": 48,
+          "text": "async function proof(receipt,job,signal){"
+        },
+        {
+          "line": 57,
+          "text": "async function upload(job,checkpoint,signal){"
+        },
+        {
+          "line": 98,
+          "text": "async function append(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/dropbox-auth.js",
+      "sha256": "b223a10a0bcd1f00e3617eb9c38a60ff1dcfd74a759ab64dbeea76699951317a",
+      "lines": 76,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "const get=async key=>(await chrome.storage.local.get(key))[key];"
+        },
+        {
+          "line": 10,
+          "text": "const state=s=>chrome.storage.local.set({'dropbox:state':s});"
+        },
+        {
+          "line": 11,
+          "text": "async function secure(){await chrome.storage.local.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});await chrome.storage.session.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});}"
+        },
+        {
+          "line": 40,
+          "text": "const attempt={nonce,verifier,at:now()};await chrome.storage.session.set({'dropbox:oauth':attempt});"
+        },
+        {
+          "line": 44,
+          "text": "const saved=(await chrome.storage.session.get('dropbox:oauth'))['dropbox:oauth'];"
+        },
+        {
+          "line": 45,
+          "text": "await chrome.storage.session.remove('dropbox:oauth'); // consume before token exchange; no replay"
+        },
+        {
+          "line": 52,
+          "text": "await chrome.storage.local.set({'dropbox:auth':auth});access={value:t.access_token,until:now()+t.expires_in*1000,accountId:auth.accountId};"
+        },
+        {
+          "line": 55,
+          "text": "finally{await chrome.storage.session.remove('dropbox:oauth');}"
+        },
+        {
+          "line": 72,
+          "text": "async function disconnect(){epoch++;const old=access;access=null;await chrome.storage.local.remove('dropbox:auth');await chrome.storage.session.remove('dropbox:oauth');await state({phase:'disconnected'});if(old)await request('https://api.dropboxapi.com/2/auth/token/revoke',{method:'POST',headers:{Authorization:'Bearer '+old.value}}).catch(()=>{});}"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 7,
+          "text": "function create({chrome=globalThis.chrome,fetch=globalThis.fetch,crypto=globalThis.crypto,now=Date.now}={}){"
+        },
+        {
+          "line": 11,
+          "text": "async function secure(){await chrome.storage.local.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});await chrome.storage.session.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});}"
+        },
+        {
+          "line": 14,
+          "text": "function redirect(){const url=chrome.identity.getRedirectURL('dropbox');if(chrome.runtime.id!==ID||url!==`https://${ID}.chromiumapp.org/dropbox`)throw fail('Install REDOWN under its registered extension ID to connect Dropbox.');return url;}"
+        },
+        {
+          "line": 15,
+          "text": "async function request(url,options){try{return await fetch(url,{...options,redirect:'error',credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(25000)});}catch{throw fail('Dropbox could not be reached. Try again.','failed');}}"
+        },
+        {
+          "line": 16,
+          "text": "async function token(params){"
+        },
+        {
+          "line": 23,
+          "text": "async function rpcWith(t,path,body,namespace){"
+        },
+        {
+          "line": 27,
+          "text": "async function verify(t,expected){"
+        },
+        {
+          "line": 35,
+          "text": "async function connect(){"
+        },
+        {
+          "line": 59,
+          "text": "async function ready(expected,force=false){"
+        },
+        {
+          "line": 71,
+          "text": "async function invalidate(){access=null;await state({phase:'reconnect',error:'Reconnect Dropbox.'});}"
+        },
+        {
+          "line": 72,
+          "text": "async function disconnect(){epoch++;const old=access;access=null;await chrome.storage.local.remove('dropbox:auth');await chrome.storage.session.remove('dropbox:oauth');await state({phase:'disconnected'});if(old)await request('https://api.dropboxapi.com/2/auth/token/revoke',{method:'POST',headers:{Authorization:'Bearer '+old.value}}).catch(()=>{});}"
+        }
+      ]
+    },
+    {
+      "path": "extension/dropbox-menu.js",
+      "sha256": "082dddde3bbfbc6d01f41ffe6a8340a2c33c847279ebc1639f622eeb3268b9ab",
+      "lines": 15,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function fragment(s={},root){"
+        }
+      ]
+    },
+    {
+      "path": "extension/dropbox-provider.js",
+      "sha256": "46d65662520d8f63bedbe62d036f52da496de09ea14a677a1b0d06447859a97e",
+      "lines": 114,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 8,
+          "text": "const get=async key=>(await chrome.storage.local.get(key))[key];"
+        },
+        {
+          "line": 10,
+          "text": "async function save(job){await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}"
+        },
+        {
+          "line": 44,
+          "text": "const all=await jobs();if(all.filter(j=>!terminal.has(j.status)||!j.reported).length>=LIMIT){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox queue is full (8 saves). Wait, then click again.'}});return null;}"
+        },
+        {
+          "line": 45,
+          "text": "const job={id:crypto.randomUUID(),provider:'dropbox',source,...identity,status,offset:0,phase:'source',at:Date.now()};all.push(job);await chrome.storage.local.set({[KEY]:all,'dropbox:transfer':{id:job.id,status,bytes:0}});return job;"
+        },
+        {
+          "line": 63,
+          "text": "if(pendingAuth.size){await chrome.storage.local.set({'dropbox:transfer':{status:'blocked',error:'Dropbox login is already in progress. Finish login, then click this file again.'}});return;}"
+        },
+        {
+          "line": 99,
+          "text": "else if(['connecting','connected'].includes((await get('dropbox:state'))?.phase))await chrome.storage.local.set({'dropbox:state':{phase:'reconnect',error:'Reconnect Dropbox to verify your account.'}});"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 106,
+          "text": "chrome.alarms.onAlarm.addListener(a=>{if(a.name==='dropbox:resume')void pump().catch(()=>{});});"
+        },
+        {
+          "line": 107,
+          "text": "chrome.runtime.onStartup.addListener(()=>{void wake().catch(()=>{});});"
+        },
+        {
+          "line": 108,
+          "text": "chrome.runtime.onInstalled.addListener(()=>{void wake().catch(()=>{});});"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function create({chrome=globalThis.chrome,auth=RedownDropboxAuth.create(),api,record=async()=>{}}={}){"
+        },
+        {
+          "line": 10,
+          "text": "async function save(job){await serial(async()=>{const all=await jobs(),at=all.findIndex(j=>j.id===job.id);if(at<0)all.push(job);else all[at]=job;const pending=all.filter(j=>!terminal.has(j.status)||!j.reported),done=all.filter(j=>terminal.has(j.status)&&j.reported).slice(-24);await chrome.storage.local.set({[KEY]:[...done,...pending],'dropbox:transfer':{id:job.id,status:job.status,verified:job.verified===true,bytes:job.offset||0,total:job.total??null,error:job.error||''}});});}"
+        },
+        {
+          "line": 11,
+          "text": "async function receipt(job){"
+        },
+        {
+          "line": 21,
+          "text": "async function pump(){"
+        },
+        {
+          "line": 42,
+          "text": "async function enqueue(source,identity,status='queued'){"
+        },
+        {
+          "line": 48,
+          "text": "async function dispatch(info){"
+        },
+        {
+          "line": 73,
+          "text": "async function wake(){"
+        },
+        {
+          "line": 78,
+          "text": "async function message(m,sender){"
+        },
+        {
+          "line": 105,
+          "text": "function install(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/entry-bootstrap.js",
+      "sha256": "2ee2c52e4e99828559d2eefbd4cc15533ab0152a33f4f6f7767d1974c0b71601",
+      "lines": 152,
+      "imports": [
+        {
+          "line": 1,
+          "text": "importScripts(\"toolbar-appearance.js\");"
+        },
+        {
+          "line": 151,
+          "text": "importScripts(\"boot.js\");"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 12,
+          "text": "const data=await boundedEntry(chrome.storage.local.get(['entryPointEvidence','rightClickV3']),1000);"
+        },
+        {
+          "line": 14,
+          "text": "await boundedEntry(chrome.storage.local.set({entryPointEvidence:[...(Array.isArray(data.entryPointEvidence)?data.entryPointEvidence:[]).slice(-63),event]}),1000);"
+        },
+        {
+          "line": 28,
+          "text": "try{const data=await boundedEntry(chrome.storage.local.get('toolbarOpenMode'),500);mode=data.toolbarOpenMode==='popup'?'popup':'shelf';}"
+        },
+        {
+          "line": 142,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 137,
+          "text": "chrome.action.onClicked.addListener(tab=>{void openToolbarInterface(tab);});"
+        },
+        {
+          "line": 140,
+          "text": "chrome.runtime.onInstalled.addListener(details=>{entryEvidence('worker','lifecycle','installed',details?.reason==='update'?'WORKER_UPDATE':'WORKER_INSTALL',false);void applyToolbarOpenMode(true).catch(console.error);});"
+        },
+        {
+          "line": 141,
+          "text": "chrome.runtime.onStartup.addListener(()=>{entryEvidence('worker','lifecycle','startup','BROWSER_START',false);void applyToolbarOpenMode(true).catch(console.error);});"
+        },
+        {
+          "line": 142,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function entryEvidence(component,operation,stage,code,recovery,attemptId,details={}){"
+        },
+        {
+          "line": 19,
+          "text": "function applyToolbarOpenMode(clearTabs=false){"
+        },
+        {
+          "line": 44,
+          "text": "function boundedEntry(operation,ms=150){"
+        },
+        {
+          "line": 48,
+          "text": "async function verifyShelf(windowId){"
+        },
+        {
+          "line": 62,
+          "text": "function launchIndication(windowId,code,attemptId){"
+        },
+        {
+          "line": 66,
+          "text": "async function recoverAttached(tab,attemptId,generation){"
+        },
+        {
+          "line": 107,
+          "text": "function openToolbarInterface(tab){"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-destination-menu.js",
+      "sha256": "e15612fb1b5841992f2b9902236a5508aa00e47594aa90a72cf2b9ac8f2ccb4d",
+      "lines": 125,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 3,
+          "text": "function create({document,loadPage,onChoose,onError,onDismiss=()=>{},viewport=()=>({width:innerWidth,height:innerHeight})}) {"
+        },
+        {
+          "line": 5,
+          "text": "function cachedPage(target){"
+        },
+        {
+          "line": 22,
+          "text": "function keyboard(menu,depth,event){"
+        },
+        {
+          "line": 40,
+          "text": "function position(panel,owner){"
+        },
+        {
+          "line": 46,
+          "text": "function branch(menu,label,load,depth=0,enabled=true){"
+        },
+        {
+          "line": 49,
+          "text": "async function open(focus=false){"
+        },
+        {
+          "line": 76,
+          "text": "function render(menu,entries,depth,panel){"
+        },
+        {
+          "line": 96,
+          "text": "function attach(root,{operation,accounts,buckets,source,items}){"
+        },
+        {
+          "line": 104,
+          "text": "function children(destination,cursor=''){"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-diagnostics-bridge.js",
+      "sha256": "ffe1f37ab83f88b0a3bf799d1651d7a675a8a0043ece7d2035a5472705775c6c",
+      "lines": 97,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "const ready=chrome.storage.local.get(['debugModeEnabled',key]).then(async stored=>{collector.setEnabled(stored.debugModeEnabled);if(stored.debugModeEnabled&&stored[key])try{collector.ingest(stored[key],{restart:true});}catch{}"
+        },
+        {
+          "line": 11,
+          "text": "if(!stored.debugModeEnabled&&context==='background')void chrome.storage.local.remove(key).catch(()=>{});"
+        },
+        {
+          "line": 13,
+          "text": "function persist(){if(context!=='background'||!collector.enabled||pendingSave)return;const generation=epoch;pendingSave=setTimeout(()=>{pendingSave=null;if(!collector.enabled||generation!==epoch)return;void chrome.storage.local.set({[key]:collector.exportBundle()}).then(()=>{if(!collector.enabled||generation!==epoch)return chrome.storage.local.remove(key);}).catch(()=>{});},250);}"
+        },
+        {
+          "line": 14,
+          "text": "chrome.storage.onChanged?.addListener((changes,area)=>{if(area==='local'&&changes.debugModeEnabled){epoch++;lastClearAt=Date.now();collector.setEnabled(changes.debugModeEnabled.newValue);if(context==='options'&&changes.debugModeEnabled.newValue)identityReady=chrome.runtime.sendMessage({type:\"explorerDiagnosticsV1\",operation:\"sessionContext\"}).then(result=>{if(result.ok)collector.useIdentityContext(result.context);}).catch(()=>{});if(!changes.debugModeEnabled.newValue){clearTimeout(pendingSave);p"
+        },
+        {
+          "line": 84,
+          "text": "if(operation==='clear'){epoch++;lastClearAt=Date.now();collector.setEnabled(false);collector.setEnabled(true);void chrome.storage.local.remove(key).catch(()=>{});return {explorerDiagnosticVersion:core.VERSION,state:'available',data:{cleared:true}};}"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function install({context,chrome,document}){"
+        },
+        {
+          "line": 13,
+          "text": "function persist(){if(context!=='background'||!collector.enabled||pendingSave)return;const generation=epoch;pendingSave=setTimeout(()=>{pendingSave=null;if(!collector.enabled||generation!==epoch)return;void chrome.storage.local.set({[key]:collector.exportBundle()}).then(()=>{if(!collector.enabled||generation!==epoch)return chrome.storage.local.remove(key);}).catch(()=>{});},250);}"
+        },
+        {
+          "line": 15,
+          "text": "function begin(operation,options){try{return collector.begin(operation,options);}catch{return null;}}"
+        },
+        {
+          "line": 16,
+          "text": "function event(id,stage,outcome,details={}){try{collector.record(id,{stage,component:context,outcome,...details});persist();}catch{}}"
+        },
+        {
+          "line": 17,
+          "text": "function summary(id,value){"
+        },
+        {
+          "line": 27,
+          "text": "async function beginMessage(message){"
+        },
+        {
+          "line": 32,
+          "text": "async function accept(message,sender){"
+        },
+        {
+          "line": 40,
+          "text": "function workerEvents(trace,payload){"
+        },
+        {
+          "line": 46,
+          "text": "function complete(message,value){try{if(!message.explorerTrace?.operationId)return null;summary(message.explorerTrace.operationId,value);return collector.getOperationTrace(message.explorerTrace.operationId);}catch{return null;}}"
+        },
+        {
+          "line": 47,
+          "text": "async function reply(handle,result){"
+        },
+        {
+          "line": 54,
+          "text": "function fail(handle,error){"
+        },
+        {
+          "line": 60,
+          "text": "function wrap(operation,original){return function(...args){"
+        },
+        {
+          "line": 67,
+          "text": "function direct(operation,original){return function(source,key,...rest){"
+        },
+        {
+          "line": 81,
+          "text": "async function wire(trace,profile){try{if(!collector.enabled||!trace?.operationId)return null;return {...trace,protocol:1,scope:collector.identityScope,seed:await collector.keySeed(),expectedOrigin:profile?.workerUrl?await collector.fingerprint(\"origin\",new URL(profile.workerUrl).origin):undefined,expectedBinding:profile?await collector.fingerprint(\"bucket\",JSON.stringify([profile.accountId,profile.bucketName])):trace.sourceBinding};}catch{return null;}}"
+        },
+        {
+          "line": 82,
+          "text": "function query(operation,input={}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-diagnostics-ui.js",
+      "sha256": "14482bcec6c690689d4e4e913068b2a35137dfb4855d7435b4cdad8bba46c809",
+      "lines": 37,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "function install({document,send,observer=()=>root.redownExplorerBridge,copy=value=>navigator.clipboard.writeText(value),download=value=>{"
+        },
+        {
+          "line": 11,
+          "text": "async function query(operation,input={}){"
+        },
+        {
+          "line": 15,
+          "text": "async function flush(){const bridge=observer();if(!bridge)return;await bridge.ready;await bridge.captureState?.();const bundle=bridge.collector.exportBundle();if(bundle.operations.length)await query('ingest',{bundle});}"
+        },
+        {
+          "line": 16,
+          "text": "function show(value){$('explorer-diagnostics-output').textContent=JSON.stringify(value,null,2);}"
+        },
+        {
+          "line": 17,
+          "text": "async function list(failures=false){const token=++version;await flush();const result=await query('exportDiagnosticBundle');if(token!==version||!visible())return;"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-diagnostics.js",
+      "sha256": "e7ee43dc9a94d39023cca4e63791667541f448e136900c02595bc7bb93eeb9e7",
+      "lines": 167,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 37,
+          "text": "function classify({status,httpStatus,code,name}={}){"
+        },
+        {
+          "line": 44,
+          "text": "function failure(code,stage,component,status){"
+        },
+        {
+          "line": 48,
+          "text": "function safeEvent(event,sequence,now){"
+        },
+        {
+          "line": 73,
+          "text": "function create({now=()=>Date.now(),id=()=>crypto.randomUUID(),cryptoApi=root.crypto,context='background',extensionVersion='unknown'}={}){"
+        },
+        {
+          "line": 75,
+          "text": "function prune(){const cutoff=now()-LIMITS.retentionMs;records=records.filter(op=>op.startedAt>=cutoff).slice(-LIMITS.operations);while(records.length&&JSON.stringify(records).length>LIMITS.bytes-4096)records.shift();}"
+        },
+        {
+          "line": 76,
+          "text": "function begin(operation,{operationId,parentId,origin='runtime'}={}){"
+        },
+        {
+          "line": 82,
+          "text": "function record(operationId,event){"
+        },
+        {
+          "line": 87,
+          "text": "function finish(operationId,state='unknown',error){"
+        },
+        {
+          "line": 93,
+          "text": "async function keySeed(){if(!seed)seed=Array.from(cryptoApi.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');return seed;}"
+        },
+        {
+          "line": 94,
+          "text": "async function fingerprint(kind,value,secret){"
+        },
+        {
+          "line": 100,
+          "text": "async function identity(operationId,source,key,{role='source',stage='source.identity',encoding='path',requestId,expectedKey}={}){"
+        },
+        {
+          "line": 106,
+          "text": "function exportBundle(){prune();return {explorerDiagnosticVersion:VERSION,scope:'redacted-explorer',runId,exportedAt:now(),limits:LIMITS,operations:JSON.parse(JSON.stringify(records)),limitations:['Fingerprints comparable only within their recorded scope','No credentials, private names, URLs or contents','Binding declaration is not platform binding introspection','Collection is bounded and may be truncated','Observed completion is not automatically byte verification']};}"
+        },
+        {
+          "line": 107,
+          "text": "function ingest(bundle,{restart=false}={}){"
+        },
+        {
+          "line": 123,
+          "text": "function tree(operationId){"
+        },
+        {
+          "line": 128,
+          "text": "function diagnose(operationId){"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-status.js",
+      "sha256": "59aaee3294cb2c34b38f00bb9f8af731067c8c5e16b254a9d6e937878b0ee348",
+      "lines": 22,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function paint(element,state){"
+        },
+        {
+          "line": 11,
+          "text": "function create({render=()=>{}}={}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/explorer-theme.js",
+      "sha256": "0c5b9ad736b8e8aa5a050682ea0feca7a1ccb1ef9d796d81433a9fcca46eb745",
+      "lines": 203,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 166,
+          "text": "const data=await chrome.storage.local.get(keys);"
+        },
+        {
+          "line": 182,
+          "text": "void chrome.storage.local.set({[key]:value}).catch(()=>{"
+        },
+        {
+          "line": 191,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 191,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 26,
+          "text": "function clearEntrance(){"
+        },
+        {
+          "line": 41,
+          "text": "function interruptEntrance(){"
+        },
+        {
+          "line": 46,
+          "text": "function canEnter(){"
+        },
+        {
+          "line": 53,
+          "text": "function arrivalOutlines(){"
+        },
+        {
+          "line": 69,
+          "text": "function flood(){"
+        },
+        {
+          "line": 87,
+          "text": "function finishInitialPaint(){"
+        },
+        {
+          "line": 118,
+          "text": "function paintPalette(selected){"
+        },
+        {
+          "line": 140,
+          "text": "function paint(){"
+        },
+        {
+          "line": 163,
+          "text": "async function refresh(){"
+        },
+        {
+          "line": 179,
+          "text": "function save(key,value){"
+        }
+      ]
+    },
+    {
+      "path": "extension/google-drive-auth.js",
+      "sha256": "9990415b8da2a17092e3afe16d86a0654baa7fcd3a6ec6981b988fe6d268a5cb",
+      "lines": 90,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 64,
+          "text": "await chrome.storage.local.set({[KEY]:user});"
+        },
+        {
+          "line": 74,
+          "text": "const stored=await chrome.storage.local.get(KEY);"
+        },
+        {
+          "line": 83,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 83,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 15,
+          "text": "function paint(next,message){"
+        },
+        {
+          "line": 25,
+          "text": "async function getToken(interactive=false){"
+        },
+        {
+          "line": 33,
+          "text": "async function about(token){"
+        },
+        {
+          "line": 42,
+          "text": "async function verify(interactive){"
+        },
+        {
+          "line": 52,
+          "text": "async function login(){"
+        },
+        {
+          "line": 69,
+          "text": "async function restore(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/google-drive-menu.js",
+      "sha256": "d16dabcbb8800a416d86fabb3cdbb2cfbb5596c3071c85b282ac4c0813b3b231",
+      "lines": 40,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function fragment(state={},root){"
+        },
+        {
+          "line": 16,
+          "text": "function compose(original,provider,root,sibling){"
+        }
+      ]
+    },
+    {
+      "path": "extension/google-drive-provider.js",
+      "sha256": "cdeb5c2ae78880bed5383b12f06d862d6e35184593992b343bcb494f68cb0d84",
+      "lines": 50,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "const state=await chrome.storage.local.get(['googleDriveTransfer','googleDriveState']);"
+        },
+        {
+          "line": 12,
+          "text": "await chrome.storage.session.set({['googleDriveJob:'+id]:{action,sourceUrl:info.srcUrl||info.linkUrl||'',at:Date.now()}});"
+        },
+        {
+          "line": 26,
+          "text": "const s=await chrome.storage.local.get(['googleDriveState','googleDriveTransfer']);"
+        },
+        {
+          "line": 27,
+          "text": "if(s.googleDriveState?.phase==='connecting')await chrome.storage.local.set({googleDriveState:{phase:'reconnect'}});"
+        },
+        {
+          "line": 29,
+          "text": "await chrome.storage.local.set({googleDriveTransfer:{status:'uncertain'}});"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function open(action,info={}){"
+        },
+        {
+          "line": 17,
+          "text": "async function dispatch(info){"
+        },
+        {
+          "line": 22,
+          "text": "function install(recorder){"
+        },
+        {
+          "line": 24,
+          "text": "async function recoverClosedPage(){"
+        },
+        {
+          "line": 37,
+          "text": "async function message(message,sender){"
+        }
+      ]
+    },
+    {
+      "path": "extension/google-drive-transfer.html",
+      "sha256": "22d63fdddfdbfdef929873ae412de176d875d552202fdd478a27942e27ef5e1f",
+      "lines": 1,
+      "imports": [
+        {
+          "line": 1,
+          "text": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>REDOWN \u00b7 Google Drive</title><link rel=\"stylesheet\" href=\"google-drive-controls.css\"></head><body class=\"drive-transfer\"><h1><img src=\"assets/google-drive.png\" width=\"32\" height=\"32\" alt=\"\"> Google Drive</h1><p>Save supported web files to your Google Drive without saving a permanent copy to your computer.</p><p>Keep this tab open during transfer. Public HTTPS files"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/history-archive.js",
+      "sha256": "de6d0acdbe2588fc1ddc08d9621b7b661263ed73250566add2e20f664bd3185b",
+      "lines": 84,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 8,
+          "text": "function create(database=globalThis.indexedDB){"
+        },
+        {
+          "line": 18,
+          "text": "const store=db.createObjectStore(STORE,{keyPath:'id'});"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 8,
+          "text": "function create(database=globalThis.indexedDB){"
+        },
+        {
+          "line": 32,
+          "text": "async function write(entries){"
+        },
+        {
+          "line": 44,
+          "text": "async function page(offset=0,limit=50){"
+        },
+        {
+          "line": 68,
+          "text": "function migrateLegacy(entries){"
+        }
+      ]
+    },
+    {
+      "path": "extension/history-navigation.js",
+      "sha256": "ad4a0deb68b5431a21949a2e44290ab3ae19a67837fe689f3b07494124d93e9e",
+      "lines": 191,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 50,
+          "text": "const preference=chrome.storage.local.get('historyGoToMode').then(async s=>{"
+        },
+        {
+          "line": 52,
+          "text": "if(s.historyGoToMode==='side')await chrome.storage.local.set({historyGoToMode:'split'});"
+        },
+        {
+          "line": 54,
+          "text": "chrome.storage.onChanged.addListener((c,a)=>{if(a==='local'&&c.historyGoToMode)mode=normalized(c.historyGoToMode.newValue);});"
+        },
+        {
+          "line": 66,
+          "text": "const cleanup=()=>{clearTimeout(timer);chrome.storage.onChanged.removeListener?.(listener);};"
+        },
+        {
+          "line": 67,
+          "text": "chrome.storage.onChanged.addListener(listener);"
+        },
+        {
+          "line": 73,
+          "text": "try{await chrome.storage.session.set({[key]:{token,tabId,issuedAt:Date.now()}});return await response;}"
+        },
+        {
+          "line": 74,
+          "text": "catch{return null;}finally{await chrome.storage.session.remove([key,reply]);}"
+        },
+        {
+          "line": 136,
+          "text": "void completed.then(result=>{if(ticket!==openingEpoch)return;if(result.state==='failed')report(result.error||'Could not locate saved file.');else if(result.state==='completed')report('');}).catch(e=>{if(ticket===openingEpoch)report(e.message);}).finally(()=>chrome.storage.session.remove([key,'historyResult:'+token,'historyAccepted:'+token]));"
+        },
+        {
+          "line": 137,
+          "text": "await chrome.storage.session.set({[key]:intent});"
+        },
+        {
+          "line": 149,
+          "text": "}catch(error){await chrome.storage.session.remove(key);throw error;}"
+        },
+        {
+          "line": 180,
+          "text": "await chrome.storage.session.set({['historyReply:'+intent.token]:{ready:ready(),tabId:ownTab.id}});"
+        },
+        {
+          "line": 185,
+          "text": "chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));"
+        },
+        {
+          "line": 190,
+          "text": "if(select){void preference.then(()=>{select.value=mode;});select.onchange=async()=>{try{await chrome.storage.local.set({historyGoToMode:normalized(select.value)});}catch(e){report('Could not save navigation preference: '+e.message);}};}"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 54,
+          "text": "chrome.storage.onChanged.addListener((c,a)=>{if(a==='local'&&c.historyGoToMode)mode=normalized(c.historyGoToMode.newValue);});"
+        },
+        {
+          "line": 67,
+          "text": "chrome.storage.onChanged.addListener(listener);"
+        },
+        {
+          "line": 185,
+          "text": "chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "function locator(record){"
+        },
+        {
+          "line": 19,
+          "text": "function cloudTarget(record){"
+        },
+        {
+          "line": 47,
+          "text": "function valid(intent){return intent?.locator&&locator({ok:true,verified:true,destination:intent.locator})&&typeof intent.token==='string'&&Number.isFinite(intent.issuedAt)&&Date.now()-intent.issuedAt<lifetime&&intent.issuedAt<=Date.now()+1000;}"
+        },
+        {
+          "line": 55,
+          "text": "function report(message,fallback){"
+        },
+        {
+          "line": 62,
+          "text": "function waitFor(key,timeout){"
+        },
+        {
+          "line": 70,
+          "text": "async function probe(tabId){"
+        },
+        {
+          "line": 79,
+          "text": "async function verifyPair(explorer,webpage,windowId){"
+        },
+        {
+          "line": 87,
+          "text": "async function chooseInstance(openMode,win,ticket){"
+        },
+        {
+          "line": 126,
+          "text": "function tab(target,ticket=openingEpoch,openMode='tab'){"
+        },
+        {
+          "line": 156,
+          "text": "function open(record){"
+        },
+        {
+          "line": 173,
+          "text": "async function receive(navigate,ready){"
+        }
+      ]
+    },
+    {
+      "path": "extension/hitomi-capture.js",
+      "sha256": "4231ffde298f2e97b35647c9a54f4546717ec77c35a9ef770e0e54f89f2e3dc1",
+      "lines": 32,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/manifest.json",
+      "sha256": "f175ab8510d74530b51e7abccca8d6d8db0b7c48c473cd57e287c46bd85e6257",
+      "lines": 61,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/menu-reorder.js",
+      "sha256": "8871bcc1b6781fbe2f4e5649d501553325942d8c5b9e53319fd8a4d046d71ace",
+      "lines": 86,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function attach(element,{items,item,save,label='destination',changed=()=>{}}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/nested-locations.js",
+      "sha256": "344c8002a55e01ee0f7f3c1686a7e7a7df4b2da02b77696c90b3bb74207f5a6c",
+      "lines": 58,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 3,
+          "text": "function name(value) {"
+        },
+        {
+          "line": 8,
+          "text": "function path(parent,child) { return [String(parent || '').replace(/^\\/+|\\/+$/g,''),name(child)].filter(Boolean).join('/'); }"
+        },
+        {
+          "line": 9,
+          "text": "function destinations(model) {"
+        },
+        {
+          "line": 12,
+          "text": "function walk(nodes,root,parent,ids) {"
+        },
+        {
+          "line": 28,
+          "text": "function nestedEntries(profile,parentId) {"
+        },
+        {
+          "line": 38,
+          "text": "function menuEntries(profiles,mode,parentId) {"
+        },
+        {
+          "line": 51,
+          "text": "function menuMode(value,profiles=[]){"
+        }
+      ]
+    },
+    {
+      "path": "extension/odometer.js",
+      "sha256": "fa89d0954795ccc3b21166832ce71abf591b2d0299d4038b1f2fa8c4a28ce842",
+      "lines": 36,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "function plan(from,to){"
+        },
+        {
+          "line": 18,
+          "text": "function create({paint,settled,click=()=>{},reduced=()=>false,setTimer=setTimeout,clearTimer=clearTimeout}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/onedrive-api.js",
+      "sha256": "3f22663ab51981a06e16089b15e0864714d2d8d602d5eeb5cbce506dba5ad660",
+      "lines": 333,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 18,
+          "text": "function publicHostname(host){"
+        },
+        {
+          "line": 27,
+          "text": "function sourceURL(value){"
+        },
+        {
+          "line": 42,
+          "text": "function fileName(value){"
+        },
+        {
+          "line": 80,
+          "text": "function dispositionName(header){"
+        },
+        {
+          "line": 91,
+          "text": "function magicExtension(bytes){"
+        },
+        {
+          "line": 119,
+          "text": "function uploadFileName(original,headers,firstBytes){"
+        },
+        {
+          "line": 135,
+          "text": "function sourceSnapshot(info){"
+        },
+        {
+          "line": 160,
+          "text": "function knownUploadHost(host){"
+        },
+        {
+          "line": 165,
+          "text": "function validUploadURL(value){"
+        },
+        {
+          "line": 178,
+          "text": "function create({chrome=globalThis.chrome,fetch=globalThis.fetch}={}){"
+        },
+        {
+          "line": 179,
+          "text": "async function request(url,options,timeout=60000){"
+        },
+        {
+          "line": 191,
+          "text": "async function graph(token,path,options={}){"
+        },
+        {
+          "line": 200,
+          "text": "async function upload(source,identity,onProgress=async()=>{},signal){"
+        }
+      ]
+    },
+    {
+      "path": "extension/onedrive-auth.js",
+      "sha256": "9292c47e4537ce5d90727d0fa30af78d9d563f3bd86453d377fdebc1ff98532d",
+      "lines": 171,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 18,
+          "text": "const get=async key=>(await chrome.storage.local.get(key))[key];"
+        },
+        {
+          "line": 19,
+          "text": "const setState=s=>chrome.storage.local.set({'onedrive:state':s});"
+        },
+        {
+          "line": 22,
+          "text": "await chrome.storage.local.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});"
+        },
+        {
+          "line": 23,
+          "text": "await chrome.storage.session.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'});"
+        },
+        {
+          "line": 84,
+          "text": "await chrome.storage.session.set({'onedrive:oauth':{nonce,verifier,started}});"
+        },
+        {
+          "line": 92,
+          "text": "const saved=(await chrome.storage.session.get('onedrive:oauth'))['onedrive:oauth'];"
+        },
+        {
+          "line": 93,
+          "text": "await chrome.storage.session.remove('onedrive:oauth'); // Consume once, before code redemption."
+        },
+        {
+          "line": 112,
+          "text": "await chrome.storage.local.set({'onedrive:auth':auth});"
+        },
+        {
+          "line": 120,
+          "text": "}finally{await chrome.storage.session.remove('onedrive:oauth').catch(()=>{});}"
+        },
+        {
+          "line": 140,
+          "text": "await chrome.storage.local.set({'onedrive:auth':{...auth,...identity,refreshToken:token.refresh_token||auth.refreshToken}});"
+        },
+        {
+          "line": 164,
+          "text": "await chrome.storage.local.remove(['onedrive:auth','onedrive:transfer','onedrive:trustedUploadOrigins']);"
+        },
+        {
+          "line": 165,
+          "text": "await chrome.storage.session.remove('onedrive:oauth').catch(()=>{});"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 16,
+          "text": "function create({chrome=globalThis.chrome,fetch=globalThis.fetch,crypto=globalThis.crypto,now=Date.now}={}){"
+        },
+        {
+          "line": 21,
+          "text": "async function secure(){"
+        },
+        {
+          "line": 25,
+          "text": "function redirect(){"
+        },
+        {
+          "line": 31,
+          "text": "async function request(url,options={}){"
+        },
+        {
+          "line": 35,
+          "text": "function aadsts(payload){"
+        },
+        {
+          "line": 39,
+          "text": "async function exchange(params){"
+        },
+        {
+          "line": 52,
+          "text": "async function graph(token,path){"
+        },
+        {
+          "line": 57,
+          "text": "async function verify(token,expected){"
+        },
+        {
+          "line": 71,
+          "text": "async function connect(){"
+        },
+        {
+          "line": 124,
+          "text": "async function ready(expected=null,force=false){"
+        },
+        {
+          "line": 162,
+          "text": "async function disconnect(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/onedrive-menu.js",
+      "sha256": "7ef5ea7c806512a52f1e460abd45d5e0a06becec97d76fb17c61ac075ab6a8ae",
+      "lines": 38,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 7,
+          "text": "function fragment(state={},root){"
+        },
+        {
+          "line": 17,
+          "text": "function compose(original,provider,root){"
+        }
+      ]
+    },
+    {
+      "path": "extension/onedrive-oauth-diagnostic.js",
+      "sha256": "e45b1f81dd22e96d6293b22fd594d1a250ea1de5cbff8f1a8c3f8e20a028224f",
+      "lines": 99,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 16,
+          "text": "function aadsts(value){"
+        },
+        {
+          "line": 22,
+          "text": "function create({chrome=globalThis.chrome,fetch=globalThis.fetch,crypto=globalThis.crypto,now=Date.now}={}){"
+        },
+        {
+          "line": 26,
+          "text": "async function request(url,options){"
+        },
+        {
+          "line": 29,
+          "text": "async function run(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/onedrive-provider.js",
+      "sha256": "c97ed858fabe54aeefd0cb8524284912ff9bfba52c0d1cf62f6eddecf5f25d06",
+      "lines": 127,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "const get=async key=>(await chrome.storage.local.get(key))[key];"
+        },
+        {
+          "line": 10,
+          "text": "const setTransfer=s=>chrome.storage.local.set({'onedrive:transfer':s});"
+        },
+        {
+          "line": 103,
+          "text": "await chrome.storage.local.set({'onedrive:state':{phase:'disconnected'}});"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 121,
+          "text": "chrome.runtime.onStartup.addListener(()=>void recover().catch(()=>{}));"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function create({chrome=globalThis.chrome,auth=RedownOneDriveAuth.create(),"
+        },
+        {
+          "line": 16,
+          "text": "async function saveRecord(job){"
+        },
+        {
+          "line": 27,
+          "text": "async function begin(source,identity){"
+        },
+        {
+          "line": 60,
+          "text": "async function dispatch(info){"
+        },
+        {
+          "line": 77,
+          "text": "async function message(m,sender){"
+        },
+        {
+          "line": 114,
+          "text": "function install(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/options.html",
+      "sha256": "4b21d2429821b3130ff5fc23de06b23d2e00e5d28f6ce24f8a23b86769b14639",
+      "lines": 743,
+      "imports": [
+        {
+          "line": 729,
+          "text": "<script src=\"settings-mascot.js\"></script>"
+        },
+        {
+          "line": 730,
+          "text": "<script type=\"module\" src=\"model-viewer.min.js\"></script>"
+        },
+        {
+          "line": 731,
+          "text": "<script src=\"cloudflare-auth.js\"></script>"
+        },
+        {
+          "line": 732,
+          "text": "<script src=\"cloudflare-api.js\"></script>"
+        },
+        {
+          "line": 733,
+          "text": "<script src=\"explorer-destination-menu.js\"></script>"
+        },
+        {
+          "line": 734,
+          "text": "<script src=\"storage-signals.js\"></script>"
+        },
+        {
+          "line": 735,
+          "text": "<script src=\"public-addresses.js\"></script>"
+        },
+        {
+          "line": 736,
+          "text": "<script src=\"explorer-status.js\"></script>"
+        },
+        {
+          "line": 737,
+          "text": "<script src=\"explorer-diagnostics.js\"></script>"
+        },
+        {
+          "line": 738,
+          "text": "<script src=\"explorer-diagnostics-bridge.js\"></script>"
+        },
+        {
+          "line": 739,
+          "text": "<script src=\"history-navigation.js\"></script><script src=\"options.js\"></script>"
+        },
+        {
+          "line": 740,
+          "text": "<script src=\"toolbar-preferences.js\"></script>"
+        },
+        {
+          "line": 741,
+          "text": "<script src=\"explorer-diagnostics-ui.js\"></script>"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/options.js",
+      "sha256": "0588b8a93f45ca91bb39d8a8dfd5f0b4618727224a84add55296f7ca077a231d",
+      "lines": 3755,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 1409,
+          "text": "profiles = (await chrome.storage.local.get(\"profiles\")).profiles || [];"
+        },
+        {
+          "line": 1477,
+          "text": "chrome.storage.local.set({ explorerLastLocation: location });"
+        },
+        {
+          "line": 1745,
+          "text": "const stored = (await chrome.storage.local.get(\"explorerLastLocation\"))"
+        },
+        {
+          "line": 2253,
+          "text": "try { await chrome.storage.session.set({ explorerClipboard:clipboard }); }"
+        },
+        {
+          "line": 2342,
+          "text": "await chrome.storage.session.remove(\"explorerClipboard\");"
+        },
+        {
+          "line": 3105,
+          "text": "chrome.storage.local.get(\"downloadsSeenAt\")"
+        },
+        {
+          "line": 3199,
+          "text": "await chrome.storage.local.set({downloadsSeenAt:new Date(newestSuccessAt).toISOString()});"
+        },
+        {
+          "line": 3202,
+          "text": "await chrome.storage.local.set({downloadsSeenAt:new Date(newest).toISOString()});"
+        },
+        {
+          "line": 3220,
+          "text": "const stored=await chrome.storage.local.get(\"cloudflareAuth\");"
+        },
+        {
+          "line": 3412,
+          "text": "const stored=await chrome.storage.local.get(\"profiles\");"
+        },
+        {
+          "line": 3508,
+          "text": "chrome.storage.local.get(\"rfisPreviewEnabled\").then(({rfisPreviewEnabled=false})=>{"
+        },
+        {
+          "line": 3515,
+          "text": "await chrome.storage.local.set({rfisPreviewEnabled:enabled});"
+        },
+        {
+          "line": 3549,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 3657,
+          "text": "await chrome.storage.local.set({notificationsEnabled:event.target.checked});"
+        },
+        {
+          "line": 3661,
+          "text": "await chrome.storage.local.set({betaModeEnabled});"
+        },
+        {
+          "line": 3666,
+          "text": "await chrome.storage.local.set({debugModeEnabled});"
+        },
+        {
+          "line": 3705,
+          "text": "const stored=await chrome.storage.local.get([\"profiles\",\"cloudflareAuth\",\"rightClickMode\",\"debugModeEnabled\",\"betaModeEnabled\",\"notificationsEnabled\"]);"
+        },
+        {
+          "line": 3716,
+          "text": "explorerClipboard=(await chrome.storage.session.get(\"explorerClipboard\")).explorerClipboard||null;"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 3549,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 23,
+          "text": "function uid(){return crypto.randomUUID();}"
+        },
+        {
+          "line": 24,
+          "text": "function safeUiMessage(message){"
+        },
+        {
+          "line": 30,
+          "text": "function setStatus(id,msg,kind=\"\"){"
+        },
+        {
+          "line": 36,
+          "text": "async function send(message){"
+        },
+        {
+          "line": 48,
+          "text": "async function saveProfiles(){"
+        },
+        {
+          "line": 54,
+          "text": "function displayName(p){return p.name||p.bucketName||p.repository||\"Destination\";}"
+        },
+        {
+          "line": 56,
+          "text": "function scheduleSave(){"
+        },
+        {
+          "line": 60,
+          "text": "async function ensureProfileMenuPrefixes(profile, prefixes) {"
+        },
+        {
+          "line": 75,
+          "text": "function assetCorsControl(profile){"
+        },
+        {
+          "line": 143,
+          "text": "function renderProfiles(){"
+        },
+        {
+          "line": 165,
+          "text": "function field(labelText,value,onInput,type=\"text\",placeholder=\"\"){"
+        },
+        {
+          "line": 172,
+          "text": "function selectField(labelText,items,value,onInput){"
+        },
+        {
+          "line": 181,
+          "text": "function formatBytes(value){"
+        },
+        {
+          "line": 190,
+          "text": "function publicObjectUrl(profile,key){"
+        },
+        {
+          "line": 194,
+          "text": "function r2Profiles(){return profiles.filter(p=>p.type===\"cloudflare-r2\");}"
+        },
+        {
+          "line": 195,
+          "text": "function uploadTarget() {"
+        },
+        {
+          "line": 208,
+          "text": "function uploadProfile() {"
+        },
+        {
+          "line": 213,
+          "text": "async function ensureUploadProfile() {"
+        },
+        {
+          "line": 222,
+          "text": "function ensureUploadLocationOption(prefix) {"
+        },
+        {
+          "line": 234,
+          "text": "function uploadLocationMatchScore(query, value) {"
+        },
+        {
+          "line": 252,
+          "text": "function chooseBestUploadLocation(query) {"
+        },
+        {
+          "line": 271,
+          "text": "function uploadBuilderChildren(parentSegments){"
+        },
+        {
+          "line": 286,
+          "text": "async function fetchUploadBuilderChildren(parentSegments=[]){"
+        },
+        {
+          "line": 313,
+          "text": "function syncUploadBuilderPrefix(){"
+        },
+        {
+          "line": 320,
+          "text": "async function materializeUploadBuilderPrefix(){"
+        },
+        {
+          "line": 338,
+          "text": "function renderUploadLocationBuilder(){"
+        },
+        {
+          "line": 452,
+          "text": "async function loadUploadLocations({ preserve = true } = {}) {"
+        },
+        {
+          "line": 514,
+          "text": "function renderWorkspaceProfiles(){"
+        },
+        {
+          "line": 554,
+          "text": "function categoryFromPrefix(prefix){"
+        },
+        {
+          "line": 563,
+          "text": "async function inspectLocalUploadObject(target,key){"
+        },
+        {
+          "line": 575,
+          "text": "async function uploadLocalFiles(fileList){"
+        },
+        {
+          "line": 700,
+          "text": "function objectContentType(obj,key){"
+        },
+        {
+          "line": 715,
+          "text": "function isTextPreview(type,key){"
+        },
+        {
+          "line": 721,
+          "text": "function appendDetails(root,obj,key,url,type){"
+        },
+        {
+          "line": 745,
+          "text": "async function showWorkspacePreview(obj,row,urlOverride=\"\",sourceOverride=null){"
+        },
+        {
+          "line": 863,
+          "text": "function setWorkspacePreviewProgress(message,bad=false){"
+        },
+        {
+          "line": 869,
+          "text": "function enableWorkspaceImageZoom(stage){"
+        },
+        {
+          "line": 903,
+          "text": "function workspaceLightboxLayer(){"
+        },
+        {
+          "line": 906,
+          "text": "function workspaceLightboxOpen(){"
+        },
+        {
+          "line": 909,
+          "text": "function syncWorkspaceLightboxButtons(){"
+        },
+        {
+          "line": 921,
+          "text": "function setWorkspacePreviewExpanded(expanded){"
+        },
+        {
+          "line": 930,
+          "text": "function mountWorkspaceLightboxMedia(){"
+        },
+        {
+          "line": 940,
+          "text": "function setWorkspacePreviewLightbox(enabled){"
+        },
+        {
+          "line": 1066,
+          "text": "function normalizePrefix(value) {"
+        },
+        {
+          "line": 1074,
+          "text": "function accountName(id) {"
+        },
+        {
+          "line": 1077,
+          "text": "function explorerSource() {"
+        },
+        {
+          "line": 1084,
+          "text": "function iconSvg(kind) {"
+        },
+        {
+          "line": 1106,
+          "text": "function fileKind(key, type = \"\") {"
+        },
+        {
+          "line": 1148,
+          "text": "function itemType(key, obj = {}) {"
+        },
+        {
+          "line": 1171,
+          "text": "function itemDate(obj) {"
+        },
+        {
+          "line": 1176,
+          "text": "function buildDirectoryItems(objects, prefix) {"
+        },
+        {
+          "line": 1217,
+          "text": "function sortedVisibleItems() {"
+        },
+        {
+          "line": 1236,
+          "text": "function explorerSearchTargets() {"
+        },
+        {
+          "line": 1255,
+          "text": "async function runExplorerSearch(query) {"
+        },
+        {
+          "line": 1329,
+          "text": "function scheduleExplorerSearch() {"
+        },
+        {
+          "line": 1335,
+          "text": "async function goToSearchResult(item) {"
+        },
+        {
+          "line": 1349,
+          "text": "function setExplorerBusy(busy,message=\"\"){"
+        },
+        {
+          "line": 1356,
+          "text": "function setExplorerStatus(message,state=\"running\",ticket=null){"
+        },
+        {
+          "line": 1363,
+          "text": "function setOperation(type,message,state=\"running\",completed=0,total=0){"
+        },
+        {
+          "line": 1368,
+          "text": "function renderOperation(){"
+        },
+        {
+          "line": 1385,
+          "text": "function finishOperation(message,error=false,ticket=null,state=null){"
+        },
+        {
+          "line": 1399,
+          "text": "function isTransientBucketAccessError(error) {"
+        },
+        {
+          "line": 1403,
+          "text": "function friendlyError(error, action = \"complete that action\") {"
+        },
+        {
+          "line": 1408,
+          "text": "async function refreshProfiles() {"
+        },
+        {
+          "line": 1412,
+          "text": "async function ensurePrepared(target = workspaceTarget,statusTicket=null) {"
+        },
+        {
+          "line": 1467,
+          "text": "function rememberLocation() {"
+        },
+        {
+          "line": 1480,
+          "text": "async function goLocation(accountId, bucketName, prefix = \"\", remember = true) {"
+        },
+        {
+          "line": 1550,
+          "text": "function updateNavButtons() {"
+        },
+        {
+          "line": 1556,
+          "text": "function renderExplorerChrome() {"
+        },
+        {
+          "line": 1628,
+          "text": "function renderSources() {"
+        },
+        {
+          "line": 1677,
+          "text": "function showBucketRows(accountId = \"\") {"
+        },
+        {
+          "line": 1719,
+          "text": "async function loadExplorerInventory() {"
+        },
+        {
+          "line": 1765,
+          "text": "async function browseWorkspace({ append = false,statusTicket=null } = {}) {"
+        },
+        {
+          "line": 1854,
+          "text": "function renderFileItems() {"
+        },
+        {
+          "line": 1974,
+          "text": "function createFileRow(item, index) {"
+        },
+        {
+          "line": 2061,
+          "text": "function previewableExplorerItems() {"
+        },
+        {
+          "line": 2066,
+          "text": "async function previewExplorerItem(item) {"
+        },
+        {
+          "line": 2087,
+          "text": "async function selectSingleExplorerItem(item, { focus = false, scroll = true } = {}) {"
+        },
+        {
+          "line": 2101,
+          "text": "async function navigateExplorerSelection(delta) {"
+        },
+        {
+          "line": 2110,
+          "text": "async function navigatePreview(delta) {"
+        },
+        {
+          "line": 2120,
+          "text": "function selectExplorerItem(item, index, event = {}) {"
+        },
+        {
+          "line": 2140,
+          "text": "function rootRow(id) {"
+        },
+        {
+          "line": 2145,
+          "text": "async function openExplorerItem(item) {"
+        },
+        {
+          "line": 2180,
+          "text": "async function openArchive(item) {"
+        },
+        {
+          "line": 2190,
+          "text": "function renderArchiveFolder(prefix = \"\") {"
+        },
+        {
+          "line": 2207,
+          "text": "async function previewArchiveEntry(item) {"
+        },
+        {
+          "line": 2213,
+          "text": "async function extractArchiveSelection(items = selectedExplorerItems(), destinationPrefix = workspacePrefix) {"
+        },
+        {
+          "line": 2223,
+          "text": "function selectedExplorerItems() {"
+        },
+        {
+          "line": 2226,
+          "text": "function clipboardEntries(items = selectedExplorerItems()) {"
+        },
+        {
+          "line": 2236,
+          "text": "async function setExplorerClipboard("
+        },
+        {
+          "line": 2261,
+          "text": "async function pasteExplorer("
+        },
+        {
+          "line": 2360,
+          "text": "async function moveSelectionTo(destination) {"
+        },
+        {
+          "line": 2373,
+          "text": "async function deleteSelection() {"
+        },
+        {
+          "line": 2404,
+          "text": "function beginExplorerRename(item) {"
+        },
+        {
+          "line": 2460,
+          "text": "function beginNewFolder() {"
+        },
+        {
+          "line": 2500,
+          "text": "async function explorerDownload(item) {"
+        },
+        {
+          "line": 2525,
+          "text": "async function showProperties(item) {"
+        },
+        {
+          "line": 2550,
+          "text": "function renderProperties(entries) {"
+        },
+        {
+          "line": 2569,
+          "text": "function urlPopover(){"
+        },
+        {
+          "line": 2589,
+          "text": "async function copyItemUrl(item,{source,point,returnFocus,anchor}={}){"
+        },
+        {
+          "line": 2593,
+          "text": "async function explorerUploadFiles(files, prefix = workspacePrefix) {"
+        },
+        {
+          "line": 2602,
+          "text": "function handleLocalDrop(event, prefix) {"
+        },
+        {
+          "line": 2606,
+          "text": "async function dropOnBucket(event, accountId, bucketName) {"
+        },
+        {
+          "line": 2615,
+          "text": "function menuButton(label, action, enabled = true, description = label) {"
+        },
+        {
+          "line": 2630,
+          "text": "function urlMenuButton(item,source,point){"
+        },
+        {
+          "line": 2640,
+          "text": "function destinationMenus(){"
+        },
+        {
+          "line": 2656,
+          "text": "function showExplorerMenu(x, y, item) {"
+        },
+        {
+          "line": 2796,
+          "text": "function hideExplorerMenu() {"
+        },
+        {
+          "line": 2800,
+          "text": "function wireWorkspace() {"
+        },
+        {
+          "line": 2960,
+          "text": "async function navigateHistory(delta) {"
+        },
+        {
+          "line": 2969,
+          "text": "function transferKey(profile, location){"
+        },
+        {
+          "line": 2979,
+          "text": "function transferDisplayParts(item){"
+        },
+        {
+          "line": 3015,
+          "text": "function compactFilename(filename){"
+        },
+        {
+          "line": 3024,
+          "text": "function formatTransferDate(value){"
+        },
+        {
+          "line": 3036,
+          "text": "async function openTransferLocation(item,parts){"
+        },
+        {
+          "line": 3064,
+          "text": "async function beginRename(item,parts,nameEl,cell){"
+        },
+        {
+          "line": 3102,
+          "text": "async function renderHistory({markSeen=true}={}){"
+        },
+        {
+          "line": 3208,
+          "text": "function invalidateCloudflareView(){"
+        },
+        {
+          "line": 3212,
+          "text": "function refreshCloudflare(){"
+        },
+        {
+          "line": 3218,
+          "text": "async function refreshCloudflareState(){"
+        },
+        {
+          "line": 3264,
+          "text": "async function refreshBuckets(){"
+        },
+        {
+          "line": 3373,
+          "text": "async function addBucketPreset(bucketName,{forceRepair=false}={}){"
+        },
+        {
+          "line": 3430,
+          "text": "async function loginRequest(operation) {"
+        },
+        {
+          "line": 3441,
+          "text": "async function waitForCloudflareLogin(attemptId) {"
+        },
+        {
+          "line": 3573,
+          "text": "async function refreshDownloadsOnAccess(){"
+        },
+        {
+          "line": 3581,
+          "text": "function isSetupDestination(profile){"
+        },
+        {
+          "line": 3584,
+          "text": "function applyOnboarding(){"
+        },
+        {
+          "line": 3594,
+          "text": "function checkR2OnReturn(){"
+        },
+        {
+          "line": 3600,
+          "text": "function wireSettingsDisclosure(){"
+        },
+        {
+          "line": 3620,
+          "text": "function closeR2Ask(){"
+        },
+        {
+          "line": 3643,
+          "text": "function applyDebugMode(){"
+        },
+        {
+          "line": 3651,
+          "text": "function applyBetaMode(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/popup-recovery.js",
+      "sha256": "23792be4efe6c76efec27dca10c65ac5522acabec56c8df1f0b4010bc6566124",
+      "lines": 40,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 4,
+          "text": "const recordRetryFailure=()=>{void chrome.storage.local.set({toolbarRecoveryStatus:{at:Date.now(),code:'SHELF_RETRY_REJECTED'}}).catch(()=>{});};"
+        },
+        {
+          "line": 13,
+          "text": "chrome.storage.local.get('toolbarOpenMode').then(data=>chrome.action.setPopup({tabId,popup:data.toolbarOpenMode==='popup'?'popup.html':''})).then(()=>{"
+        },
+        {
+          "line": 27,
+          "text": "const data=await chrome.storage.local.get(['entryPointEvidence','rightClickMenuStatus','toolbarRecoveryStatus']);"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/popup.html",
+      "sha256": "d24e820a07ccdb3931bd994796764cd79f2725c05679969ca08ff456210b6fff",
+      "lines": 28,
+      "imports": [
+        {
+          "line": 27,
+          "text": "</main><script src=\"toolbar-appearance.js\"></script><script src=\"popup-recovery.js\"></script><script src=\"odometer.js\"></script><script src=\"shelf-save-feedback.js\"></script><script src=\"popup.js\"></script></body>"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/popup.js",
+      "sha256": "cf3bd1445591d3ec7f0c7f5484b0cd7ee247be814a7f2146f7a93716b9025132",
+      "lines": 167,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 18,
+          "text": "const stored=await chrome.storage.local.get('cloudflareAuth');"
+        },
+        {
+          "line": 52,
+          "text": "if(!chrome.sidePanel?.open||!chrome.storage.session?.set){"
+        },
+        {
+          "line": 61,
+          "text": "return chrome.storage.session.set({shelfOpenIntent:{"
+        },
+        {
+          "line": 67,
+          "text": "void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});"
+        },
+        {
+          "line": 95,
+          "text": "preferenceQueue=preferenceQueue.catch(()=>{}).then(()=>chrome.storage.local.set({popupOdometer:value})).catch(()=>{"
+        },
+        {
+          "line": 141,
+          "text": "const {popupOdometer:prefs}=await chrome.storage.local.get('popupOdometer');"
+        },
+        {
+          "line": 154,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 161,
+          "text": "if(chrome.storage.session?.get)chrome.storage.session.get('cloudflareLogin').then(stored=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 154,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 3,
+          "text": "function setStatus(text){$('status').textContent=text||'';}"
+        },
+        {
+          "line": 4,
+          "text": "function paintConnection(state,label){"
+        },
+        {
+          "line": 8,
+          "text": "async function request(message){"
+        },
+        {
+          "line": 13,
+          "text": "async function checkConnection(){"
+        },
+        {
+          "line": 27,
+          "text": "async function followLogin(){"
+        },
+        {
+          "line": 71,
+          "text": "function paintCount(total){"
+        },
+        {
+          "line": 93,
+          "text": "function savePreferences(){"
+        },
+        {
+          "line": 99,
+          "text": "function paintSound(){"
+        },
+        {
+          "line": 102,
+          "text": "async function prepareAudio(){"
+        },
+        {
+          "line": 109,
+          "text": "function playClick(){"
+        },
+        {
+          "line": 122,
+          "text": "function renderCount(total){"
+        },
+        {
+          "line": 139,
+          "text": "async function loadPreferences(){"
+        },
+        {
+          "line": 149,
+          "text": "async function refreshCount(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/provider-opening.js",
+      "sha256": "f41c55befb544e92d954656f6c1394a88682d060e04aaaeb42d7ae25867ffb6d",
+      "lines": 83,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 32,
+          "text": "const stored=await chrome.storage.local.get('providerOpeningModes');"
+        },
+        {
+          "line": 52,
+          "text": "const saved=await chrome.storage.local.get('providerOpeningModes');"
+        },
+        {
+          "line": 65,
+          "text": "const saved=await chrome.storage.local.get('providerOpeningModes');"
+        },
+        {
+          "line": 66,
+          "text": "await chrome.storage.local.set({"
+        },
+        {
+          "line": 76,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 76,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": []
+    },
+    {
+      "path": "extension/public-addresses.js",
+      "sha256": "b2c6897408f1ead7c4e33a77e5329a2c7eac921174cf34c1fc97978eba240a69",
+      "lines": 184,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "async function refreshVisible(document,source){"
+        },
+        {
+          "line": 16,
+          "text": "function addresses(snapshot,source,key){"
+        },
+        {
+          "line": 28,
+          "text": "function disclosure({document,source,key,load,copy=text=>navigator.clipboard.writeText(text),open=url=>window.open(url,'_blank','noopener')}){"
+        },
+        {
+          "line": 31,
+          "text": "async function refresh(sharedSnapshot){"
+        },
+        {
+          "line": 62,
+          "text": "function classify(item){"
+        },
+        {
+          "line": 67,
+          "text": "function popover({document,load,enable,copy=text=>navigator.clipboard.writeText(text),onState=()=>{},onEvent=()=>{}}){"
+        },
+        {
+          "line": 70,
+          "text": "function close({restoreFocus=false}={}){"
+        },
+        {
+          "line": 76,
+          "text": "function place(){"
+        },
+        {
+          "line": 85,
+          "text": "async function show({source,key,name,point={x:24,y:24},returnFocus,anchor,isCurrent=()=>true}){"
+        }
+      ]
+    },
+    {
+      "path": "extension/rfis-index.js",
+      "sha256": "9f5a18349521a398ea2f0e85b1a1978830fc8aa5caf06e93f1806502e14d8f1f",
+      "lines": 100,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "const request=indexedDB.open(DB_NAME,DB_VERSION);"
+        },
+        {
+          "line": 13,
+          "text": "const store=database.createObjectStore(\"files\",{keyPath:\"locator\"});"
+        },
+        {
+          "line": 17,
+          "text": "const store=database.createObjectStore(\"events\",{keyPath:\"event_id\"});"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 7,
+          "text": "function db() {"
+        },
+        {
+          "line": 26,
+          "text": "function txDone(tx) {"
+        },
+        {
+          "line": 33,
+          "text": "function asPromise(request) {"
+        },
+        {
+          "line": 41,
+          "text": "function digest(value){return value===undefined||value===null?null:String(value);}"
+        },
+        {
+          "line": 42,
+          "text": "function metadata(object) {"
+        },
+        {
+          "line": 49,
+          "text": "async function observe(accountId,bucketName,objects) {"
+        },
+        {
+          "line": 85,
+          "text": "async function all(storeName) {"
+        },
+        {
+          "line": 92,
+          "text": "async function exportJSON() {"
+        }
+      ]
+    },
+    {
+      "path": "extension/right-click-backup-settings.js",
+      "sha256": "f5df5b74f272bca8632a769c2bd6249ff8c71858e570dcd2178df8c62dd403df",
+      "lines": 39,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 9,
+          "text": "void chrome.storage.local.get(['rightClickExternalBackup','rightClickHistoryPolicy']).then(s=>{policy.value=s.rightClickHistoryPolicy||'daily';status.textContent=s.rightClickExternalBackup?.verifiedAt?'External backup last verified '+new Date(s.rightClickExternalBackup.verifiedAt).toLocaleString()+'. Keep that file and its passphrase.':'External backup not configured. Local records alone cannot survive deletion of extension data.';});"
+        },
+        {
+          "line": 10,
+          "text": "policy.onchange=()=>{void chrome.storage.local.set({rightClickHistoryPolicy:policy.value}).catch(()=>{status.textContent='History preference could not be saved.';});};"
+        },
+        {
+          "line": 20,
+          "text": "const verifiedAt=Date.now();await chrome.storage.local.set({rightClickExternalBackup:{version:1,verifiedAt,method:'user-selected-file-readback'}});"
+        },
+        {
+          "line": 32,
+          "text": "const {profiles=[]}=await chrome.storage.local.get('profiles');if(profiles.length)throw Error('Restore in a fresh extension profile before reconnecting providers. Existing cloud authorization cannot be reused by a backup.');"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/right-click-backup.js",
+      "sha256": "085158a8ca3328d3b2f27ceee4b63f31d5cb794ea92791ee92eced2ab52013db",
+      "lines": 69,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 9,
+          "text": "function validate(bundle){"
+        },
+        {
+          "line": 47,
+          "text": "async function key(passphrase,salt){"
+        },
+        {
+          "line": 52,
+          "text": "async function encode(bundle,passphrase){"
+        },
+        {
+          "line": 58,
+          "text": "async function decode(text,passphrase){"
+        }
+      ]
+    },
+    {
+      "path": "extension/right-click-chooser.html",
+      "sha256": "18f6d0e0627b0c81571d7a33c64a7d065026bdceadc748863884418f1a5cda3d",
+      "lines": 1,
+      "imports": [
+        {
+          "line": 1,
+          "text": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>REDOWN \u2014 Choose destination</title><link rel=\"stylesheet\" href=\"right-click-chooser.css\"></head><body><main><h1>Save to your cloud</h1><label for=\"search\">Find a destination</label><input id=\"search\" type=\"search\" autofocus><p id=\"status\" role=\"status\" aria-live=\"polite\">Loading authorized destinations\u2026</p><ul id=\"destinations\"></ul></main><script src=\"right-click-"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/right-click-chooser.js",
+      "sha256": "6996603ac3cf37f2cc144d941d8a25d6606fadf555dc3c9d4d23b19082576bb0",
+      "lines": 16,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function draw(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/right-click-current.js",
+      "sha256": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "lines": 124,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 23,
+          "text": "function create(database=globalThis.indexedDB,{clock=()=>Date.now(),fault=()=>{}}={}){"
+        },
+        {
+          "line": 28,
+          "text": "r.onupgradeneeded=()=>{for(const name of ['state','records','journal','pointers','backups'])r.result.createObjectStore(name,{keyPath:'id'});};"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 15,
+          "text": "function namespace(d,endpoint=''){"
+        },
+        {
+          "line": 18,
+          "text": "function period(date,policy){"
+        },
+        {
+          "line": 23,
+          "text": "function create(database=globalThis.indexedDB,{clock=()=>Date.now(),fault=()=>{}}={}){"
+        },
+        {
+          "line": 32,
+          "text": "async function readState(profiles=null){"
+        },
+        {
+          "line": 47,
+          "text": "async function commitPatch(raw,{profiles=[],policy='daily'}={}){"
+        },
+        {
+          "line": 98,
+          "text": "async function dump(){"
+        },
+        {
+          "line": 103,
+          "text": "async function generations(){"
+        },
+        {
+          "line": 106,
+          "text": "async function acknowledge(expected=[]){"
+        },
+        {
+          "line": 110,
+          "text": "async function restore(bundle){"
+        }
+      ]
+    },
+    {
+      "path": "extension/right-click-engine-settings.js",
+      "sha256": "eeed4e5516bbce76f2023bc1b524280cc16e1ed1120e08339dc8a5658c18f882",
+      "lines": 19,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 5,
+          "text": "const load=async()=>{const s=await chrome.storage.local.get('rightClickV3Migration');const count=s.rightClickV3Migration?.recovery?.length||0;status.textContent=count?count+' saved destinations need review. Export recovery to preserve their original paths and labels.':'';};"
+        },
+        {
+          "line": 9,
+          "text": "const s=await chrome.storage.local.get(['rightClickV3Migration','rightClickV3Recovery']);"
+        }
+      ],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/right-click-legacy.js",
+      "sha256": "f348d5917b257f32a8655319b397f0d9e79688cded29663928f3ab692bf6e582",
+      "lines": 30,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 8,
+          "text": "function entries(profiles,mode,root){"
+        },
+        {
+          "line": 19,
+          "text": "function resolve(id,profiles,mode){"
+        }
+      ]
+    },
+    {
+      "path": "extension/right-click-v3.js",
+      "sha256": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "lines": 301,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 7,
+          "text": "function validate(config,profiles){"
+        },
+        {
+          "line": 27,
+          "text": "function eligible(d,config,profiles){"
+        },
+        {
+          "line": 34,
+          "text": "function narrowEntries(config,profiles,root='redown'){"
+        },
+        {
+          "line": 45,
+          "text": "function walk(n,parent,bucket=false){"
+        },
+        {
+          "line": 57,
+          "text": "function narrowResolve(id,config,profiles){"
+        },
+        {
+          "line": 62,
+          "text": "function remove(config,id){"
+        },
+        {
+          "line": 70,
+          "text": "function presentation(value){"
+        },
+        {
+          "line": 73,
+          "text": "function validatePresentation(value){"
+        },
+        {
+          "line": 79,
+          "text": "function validateScopes(value,profiles){"
+        },
+        {
+          "line": 88,
+          "text": "function roots(config,profiles){"
+        },
+        {
+          "line": 93,
+          "text": "function inventoryKey(config,profiles,settings){"
+        },
+        {
+          "line": 96,
+          "text": "function fresh(inventory,key,now=Date.now()){return inventory?.key===key&&Number.isFinite(inventory.at)&&now>=inventory.at&&now-inventory.at<limits.ttl;}"
+        },
+        {
+          "line": 98,
+          "text": "function childPrefixes(page,prefix){"
+        },
+        {
+          "line": 113,
+          "text": "function rememberedNodes(config,profiles,inventory){"
+        },
+        {
+          "line": 121,
+          "text": "async function discover(config,profiles,settings,listPage,clock=()=>Date.now(),previous=null,refresh=false){"
+        },
+        {
+          "line": 168,
+          "text": "function levelProjection(config,profiles,settings,inventory,root,now,budget=limits.entries){"
+        },
+        {
+          "line": 192,
+          "text": "function simpleTargets(config,profiles){"
+        },
+        {
+          "line": 215,
+          "text": "function simpleProjection(config,profiles,root,budget=limits.entries){"
+        },
+        {
+          "line": 228,
+          "text": "function project(config,profiles,settings,inventory,root='redown',now=Date.now(),budget=limits.entries){"
+        },
+        {
+          "line": 250,
+          "text": "function entries(config,profiles,root='redown',settings,inventory){return project(config,profiles,settings,inventory,root).entries;}"
+        },
+        {
+          "line": 251,
+          "text": "function resolve(id,config,profiles,settings,inventory,now=Date.now(),budget=limits.entries,existingPlan=null){"
+        },
+        {
+          "line": 272,
+          "text": "function migrate(stored,profiles){"
+        }
+      ]
+    },
+    {
+      "path": "extension/runtime-diagnostics.js",
+      "sha256": "25f10ac7cef201cefb899f88a8ff1ef18db31839bca1c33e42372330b0cd4141",
+      "lines": 44,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function create({context='background',build='unknown',now=()=>Date.now(),monotonic=()=>performance.now(),id=()=>crypto.randomUUID()}={}) {"
+        },
+        {
+          "line": 12,
+          "text": "function record({operation='message',outcome='unknown',code='UNKNOWN',durationMs=0,status,requestId,parentId,attempt=1}={}) {"
+        },
+        {
+          "line": 24,
+          "text": "function query(operation,input={}) {"
+        }
+      ]
+    },
+    {
+      "path": "extension/search-session.js",
+      "sha256": "875f1687a6c708ee73a41b2f6e3ecf7b24711418256c25df2af4b43ac8408dce",
+      "lines": 56,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 3,
+          "text": "function create({listPage,score,now=()=>Date.now(),id=()=>crypto.randomUUID()}) {"
+        },
+        {
+          "line": 5,
+          "text": "function get(sessionId){"
+        },
+        {
+          "line": 11,
+          "text": "function start(targets,query){"
+        },
+        {
+          "line": 18,
+          "text": "async function step(sessionId){"
+        }
+      ]
+    },
+    {
+      "path": "extension/service-worker.js",
+      "sha256": "4739483a9355cc492ff9bae44473e5376af1003ba16c749b3d97d4720f9ead4c",
+      "lines": 45,
+      "imports": [
+        {
+          "line": 7,
+          "text": "importScripts('background.js');"
+        },
+        {
+          "line": 18,
+          "text": "importScripts('entry-bootstrap.js');"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 34,
+          "text": "const enabled = (await boundedEntry(chrome.storage.local.get('debugModeEnabled'), 1000)).debugModeEnabled;"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 31,
+          "text": "chrome.runtime.onMessage.addListener((message, sender, respond) => {"
+        }
+      ],
+      "symbols": []
+    },
+    {
+      "path": "extension/settings-mascot.js",
+      "sha256": "ff0a7ed5a804737a185c5aaa96e589172688a0c553430ac21b603968ccf09b85",
+      "lines": 18,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/shelf-celestial.js",
+      "sha256": "f569f1aafb213f29e535676d065f62cc8d23062d0d63f661dfac1200c949a7fe",
+      "lines": 178,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function flightModel({sx,sy,x,hitY,height,width}){"
+        },
+        {
+          "line": 7,
+          "text": "function flight(from,apex,to,band,softGravity){"
+        },
+        {
+          "line": 12,
+          "text": "function add(y,v,g,duration){"
+        },
+        {
+          "line": 40,
+          "text": "function horizontal(t){"
+        },
+        {
+          "line": 46,
+          "text": "function at(t){"
+        },
+        {
+          "line": 73,
+          "text": "function refresh(){"
+        },
+        {
+          "line": 86,
+          "text": "function cancel(){generation++;running?.abort();}"
+        },
+        {
+          "line": 87,
+          "text": "async function select(palette,source,lunar){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-destinations.js",
+      "sha256": "2b132b3cef71419026fb10169148d20b3611cfd9b64e2e1ca67e5fd4b61de93d",
+      "lines": 98,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 26,
+          "text": "try{await chrome.storage.local.set({"
+        },
+        {
+          "line": 37,
+          "text": "chrome.storage.local.get([displayKey,arrowKey]).then(saved=>{"
+        },
+        {
+          "line": 40,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 40,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 13,
+          "text": "function paint(){"
+        },
+        {
+          "line": 21,
+          "text": "async function save(patch){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-dropbox.js",
+      "sha256": "16fd98f40aec1822800c6f74c23fc813cf27ab8ea8fade688b3d3785d0291bb8",
+      "lines": 19,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 16,
+          "text": "chrome.storage.local.get(['dropbox:state','dropbox:transfer']).then(s=>{state=s['dropbox:state']||{};transfer=s['dropbox:transfer']||{};paint();});"
+        },
+        {
+          "line": 17,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes['dropbox:state'])state=changes['dropbox:state'].newValue||{};if(changes['dropbox:transfer'])transfer=changes['dropbox:transfer'].newValue||{};paint();});"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 17,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;if(changes['dropbox:state'])state=changes['dropbox:state'].newValue||{};if(changes['dropbox:transfer'])transfer=changes['dropbox:transfer'].newValue||{};paint();});"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function paint(){"
+        },
+        {
+          "line": 12,
+          "text": "async function send(type){return chrome.runtime.sendMessage({type});}"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-google-drive.js",
+      "sha256": "2001ee4766ce9bd06e841c1f70c8a14f54e7dd25ab7d0f3c1a517be30f8626e0",
+      "lines": 9,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 7,
+          "text": "chrome.storage.local.get('googleDriveState').then(s=>paint(s.googleDriveState));"
+        },
+        {
+          "line": 8,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.googleDriveState)paint(changes.googleDriveState.newValue);});"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 8,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.googleDriveState)paint(changes.googleDriveState.newValue);});"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 5,
+          "text": "function paint(s={}){state=s;const connected=s.phase==='connected',busy=s.phase==='connecting';button.disabled=busy;label.textContent=busy?'Connecting to Google Drive\u2026':connected?'GO TO':s.phase==='reconnect'?'LOGIN':'LOGIN';button.setAttribute('aria-label',connected?'Go to Google Drive':busy?'Connecting to Google Drive':'Log in to Google Drive');button.closest('.destination-tile')?.setAttribute('data-connected',String(connected));status.textContent=connected?'REDOWN folder ready. Browser-mediat"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-history.js",
+      "sha256": "5553e7bb2f3f08d102e22325fcc6ade16907e122a5c0575bc30f86d4c6ffe0f2",
+      "lines": 328,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 261,
+          "text": "const stored=await chrome.storage.local.get('transferHistory');"
+        },
+        {
+          "line": 323,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 323,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 16,
+          "text": "function group(records){"
+        },
+        {
+          "line": 32,
+          "text": "function describe(record){"
+        },
+        {
+          "line": 55,
+          "text": "function organize(records,now=new Date()){"
+        },
+        {
+          "line": 107,
+          "text": "function section(kind,title,key,parent,items,makeChildren){"
+        },
+        {
+          "line": 129,
+          "text": "function safeWebUrl(raw){"
+        },
+        {
+          "line": 135,
+          "text": "function addProvenance(parent,record,info){"
+        },
+        {
+          "line": 169,
+          "text": "function dayRows(container,day){"
+        },
+        {
+          "line": 206,
+          "text": "function drawDays(parent,days,parentKey){"
+        },
+        {
+          "line": 212,
+          "text": "function drawWeek(parent,weekKey,week,yearKey){"
+        },
+        {
+          "line": 216,
+          "text": "function render(){"
+        },
+        {
+          "line": 255,
+          "text": "async function refresh(){"
+        },
+        {
+          "line": 289,
+          "text": "function expandToday(){"
+        },
+        {
+          "line": 300,
+          "text": "async function open(){"
+        },
+        {
+          "line": 309,
+          "text": "async function pageTo(next){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-odometer.js",
+      "sha256": "297250fcd0ec4319c476225c9a5df89ab8facedd746a10192a2e5d64a1420b4d",
+      "lines": 112,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 15,
+          "text": "saveQueue=saveQueue.catch(()=>{}).then(()=>chrome.storage.local.set({shelfOdometer:{version:1,lastSeenTotal:value}}));"
+        },
+        {
+          "line": 77,
+          "text": "const {transferCounter}=await chrome.storage.local.get('transferCounter');"
+        },
+        {
+          "line": 83,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 106,
+          "text": "const {shelfOdometer}=await chrome.storage.local.get('shelfOdometer');"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 83,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": []
+    },
+    {
+      "path": "extension/shelf-onedrive.js",
+      "sha256": "ba8c1a232a78de543b560d1b23f53e53834cfce7717ecff84aa6c73ad9b899c0",
+      "lines": 56,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 41,
+          "text": "chrome.storage.local.get(['onedrive:state','onedrive:transfer']).then(s=>{"
+        },
+        {
+          "line": 44,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 44,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 8,
+          "text": "function paint(){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-save-feedback.js",
+      "sha256": "8c03e5402dd0e36fb129976b9d558d52cf32561c221e502dfd042c1beef96db6",
+      "lines": 107,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 85,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 96,
+          "text": "void chrome.storage.local.get(['providerSaveReceipts','redownShelfImpact','dropbox:state']).then(data=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 85,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 11,
+          "text": "function impact(value){"
+        },
+        {
+          "line": 20,
+          "text": "function cleanup(provider){"
+        },
+        {
+          "line": 24,
+          "text": "function celebrate(receipt){"
+        },
+        {
+          "line": 54,
+          "text": "function fit(){"
+        },
+        {
+          "line": 67,
+          "text": "function paint(state){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf-theme.js",
+      "sha256": "61ce3551b1d6328d89972eece68ff8ca04cb83b2f8bac1d2452944afc9119eff",
+      "lines": 149,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 23,
+          "text": "iconBackgroundWriteQueue=iconBackgroundWriteQueue.catch(()=>{}).then(()=>chrome.storage.local.set({[iconBackgroundKey]:chosen})).catch(()=>{"
+        },
+        {
+          "line": 30,
+          "text": "void chrome.storage.local.get(iconBackgroundKey).then(data=>{"
+        },
+        {
+          "line": 95,
+          "text": "await chrome.storage.local.set({shelfColorScheme:requested,shelfLastDarkTheme:lastDark});"
+        },
+        {
+          "line": 114,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        },
+        {
+          "line": 139,
+          "text": "void chrome.storage.local.get(['shelfColorScheme','shelfLastDarkTheme'])"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 114,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 10,
+          "text": "function paintIconBackgroundMode(value){"
+        }
+      ]
+    },
+    {
+      "path": "extension/shelf.html",
+      "sha256": "4a1d95b08c3828e45ff1b85b858508be7d7275b5c3ba8e946dbda5edc18d258d",
+      "lines": 107,
+      "imports": [
+        {
+          "line": 107,
+          "text": "<fieldset><legend>History navigation</legend><label for=\"history-go-to-mode\">History GO TO opens in:</label><select id=\"history-go-to-mode\"><option value=\"tab\">Open in Tab (Default)</option><option value=\"split\">Open in Split View (Left)</option></select></fieldset><p class=\"settings-note\">Shelf is the default. The Popup\u2019s Settings button opens this same panel.</p><a class=\"text-link\" href=\"#clouds\">\u2190 Back to your cloud</a></section></main><p id=\"status\" role=\"status\" aria-live=\"polite\"></p></di"
+        }
+      ],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": []
+    },
+    {
+      "path": "extension/shelf.js",
+      "sha256": "354aec686874e681d7722d2ad79e187eecf32447281b2a216e3482557ecb9aef",
+      "lines": 112,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 38,
+          "text": "const current=await chrome.storage.session.get('shelfOpenIntent');"
+        },
+        {
+          "line": 39,
+          "text": "if(current?.shelfOpenIntent?.token===intent.token)void chrome.storage.session.remove('shelfOpenIntent').catch(()=>{});"
+        },
+        {
+          "line": 41,
+          "text": "void chrome.storage.session?.get('shelfOpenIntent')"
+        },
+        {
+          "line": 61,
+          "text": "const {toolbarOpenMode} = await chrome.storage.local.get('toolbarOpenMode');"
+        },
+        {
+          "line": 67,
+          "text": "await chrome.storage.local.set({toolbarOpenMode:input.value});"
+        },
+        {
+          "line": 75,
+          "text": "const {cloudflareAuth} = await chrome.storage.local.get('cloudflareAuth');"
+        },
+        {
+          "line": 93,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 93,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{"
+        }
+      ],
+      "symbols": [
+        {
+          "line": 4,
+          "text": "function updateConnectionSummary(){"
+        },
+        {
+          "line": 15,
+          "text": "function route() {"
+        },
+        {
+          "line": 27,
+          "text": "async function useShelfOpenIntent(intent){"
+        },
+        {
+          "line": 60,
+          "text": "async function refreshPreference() {"
+        },
+        {
+          "line": 73,
+          "text": "async function refreshConnection() {"
+        }
+      ]
+    },
+    {
+      "path": "extension/storage-signals.js",
+      "sha256": "2254f2d8eb25d54e5324c1e9d2388e6e8b9ae7f6a72aa4452b210da754c8637d",
+      "lines": 108,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 11,
+          "text": "function paint(el,state,message){"
+        },
+        {
+          "line": 30,
+          "text": "function wireBucketExpansion({document,window}){"
+        },
+        {
+          "line": 35,
+          "text": "function fit(){"
+        },
+        {
+          "line": 45,
+          "text": "function enter(){delete viewport.dataset.dismissed;fit();}"
+        },
+        {
+          "line": 46,
+          "text": "function dismiss(){"
+        },
+        {
+          "line": 61,
+          "text": "function mountTraining({document,schedule=setTimeout,cancel=clearTimeout}){"
+        },
+        {
+          "line": 75,
+          "text": "function stop(){generation++;for(const timer of timers)cancel(timer);timers.clear();}"
+        },
+        {
+          "line": 76,
+          "text": "function later(delay,fn){const token=generation;const timer=schedule(()=>{timers.delete(timer);if(token===generation)fn();},delay);timers.add(timer);}"
+        },
+        {
+          "line": 77,
+          "text": "function show(next,text,signals){"
+        },
+        {
+          "line": 82,
+          "text": "function start(){"
+        },
+        {
+          "line": 89,
+          "text": "function advance(index){"
+        },
+        {
+          "line": 100,
+          "text": "function exit({focus=true}={}){stop();stage='closed';panel.dataset.stage=stage;panel.hidden=true;startButton.setAttribute('aria-expanded','false');if(focus)startButton.focus();}"
+        }
+      ]
+    },
+    {
+      "path": "extension/toolbar-appearance.js",
+      "sha256": "1ba0687a058cbae7f2c4cdc1e62c8375d3a62f149706500965ebc3a2315adc2a",
+      "lines": 38,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 6,
+          "text": "function clean({tabId,allTabs=false}={}){"
+        },
+        {
+          "line": 26,
+          "text": "function feedbackTitle(value){"
+        }
+      ]
+    },
+    {
+      "path": "extension/toolbar-preferences.js",
+      "sha256": "b6f3edda2a15c5864b0eb8b1b3a30f0c2418b1c741d105c7720623c375fcbf68",
+      "lines": 11,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [
+        {
+          "line": 4,
+          "text": "const load=()=>chrome.storage.local.get('toolbarOpenMode').then(data=>{select.value=data.toolbarOpenMode==='popup'?'popup':'shelf';});"
+        },
+        {
+          "line": 7,
+          "text": "try{await chrome.storage.local.set({toolbarOpenMode:select.value});if(status)status.textContent='Opening preference saved.';}"
+        },
+        {
+          "line": 10,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.toolbarOpenMode)void load().catch(()=>{});});"
+        }
+      ],
+      "lifecycle": [
+        {
+          "line": 10,
+          "text": "chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.toolbarOpenMode)void load().catch(()=>{});});"
+        }
+      ],
+      "symbols": []
+    },
+    {
+      "path": "extension/transfer-counter.js",
+      "sha256": "16dae4807181512abaadd7a160191f46f3a57817786183ba29e38b55f2f5f488",
+      "lines": 62,
+      "imports": [],
+      "nativeMenuReferences": [],
+      "storageReferences": [],
+      "lifecycle": [],
+      "symbols": [
+        {
+          "line": 3,
+          "text": "function create(storage, locks, archive) {"
+        },
+        {
+          "line": 11,
+          "text": "async function state(){"
+        },
+        {
+          "line": 18,
+          "text": "function increment(counter,amount){return {...counter,total:String(BigInt(counter.total)+BigInt(amount))};}"
+        }
+      ]
+    }
+  ]
+}

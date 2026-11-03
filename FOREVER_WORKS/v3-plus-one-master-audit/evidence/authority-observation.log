@@ -1,0 +1,57 @@
+{
+  "scope": "actual restoreDurableV3 in controlled whole-background helper; synthetic local-only default patch matching current direct writer shape; no provisioning performed",
+  "before": {
+    "version": 1,
+    "revision": 3,
+    "destinations": [
+      {
+        "id": "one",
+        "profileId": "p",
+        "accountId": "a",
+        "bucketName": "bucket",
+        "prefix": "saved",
+        "parentId": null,
+        "label": "My files",
+        "enabled": true
+      }
+    ]
+  },
+  "afterMirrorOnlyWrite": {
+    "version": 1,
+    "revision": 4,
+    "destinations": [
+      {
+        "id": "one",
+        "profileId": "p",
+        "accountId": "a",
+        "bucketName": "bucket",
+        "prefix": "saved",
+        "parentId": null,
+        "label": "My files",
+        "enabled": true
+      }
+    ],
+    "defaultBucket": {
+      "profileId": "p",
+      "accountId": "a",
+      "bucketName": "redown"
+    }
+  },
+  "afterRestore": {
+    "version": 1,
+    "revision": 3,
+    "destinations": [
+      {
+        "id": "one",
+        "profileId": "p",
+        "accountId": "a",
+        "bucketName": "bucket",
+        "prefix": "saved",
+        "parentId": null,
+        "label": "My files",
+        "enabled": true
+      }
+    ]
+  },
+  "mirrorOnlyDefaultSurvives": false
+}

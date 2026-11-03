@@ -1,0 +1,50 @@
+{
+  "head": "1f85185f87c52b13e01c7c9069464668c2ad47d0",
+  "node": "v24.19.0",
+  "platform": "linux",
+  "fullSuite": {
+    "tests": 1001,
+    "pass": 904,
+    "fail": 97,
+    "skipped": 0,
+    "cancelled": 0,
+    "note": "npm test and post-install reliability agree on 904 passing /97 failing events; reliability marks incomplete because a baseline named test is absent"
+  },
+  "focused": {
+    "tests": 125,
+    "pass": 109,
+    "fail": 16,
+    "skipped": 0
+  },
+  "reliability": {
+    "state": "failed",
+    "stages": [
+      {
+        "id": "syntax",
+        "state": "passed"
+      },
+      {
+        "id": "architecture",
+        "state": "failed"
+      },
+      {
+        "id": "api-registry",
+        "state": "passed"
+      },
+      {
+        "id": "issue-inventory",
+        "state": "passed"
+      }
+    ],
+    "baselineKnownFailures": 6,
+    "baselineUnregisteredFailures": 91,
+    "unseenBaselineTests": [
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      }
+    ]
+  },
+  "installedChrome": "NOT RUN",
+  "liveProvider": "NOT RUN"
+}

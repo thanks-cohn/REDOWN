@@ -1,0 +1,52 @@
+
+> remote-asset-ingest@0.1.0 diagnostics
+> node agent/diagnostics/cli.mjs getStartGuide
+
+{
+  "diagnosticApiVersion": "1.2.0",
+  "state": "available",
+  "scope": "offline/read-only; repository knowledge and imported observations",
+  "data": {
+    "steps": [
+      {
+        "purpose": "Discover APIs",
+        "operation": "diagnostics.describe",
+        "input": {}
+      },
+      {
+        "purpose": "Check routing/ownership",
+        "operation": "diagnostics.validateRegistry",
+        "input": {}
+      },
+      {
+        "purpose": "Locate subsystem",
+        "operation": "diagnostics.getProjectMap",
+        "input": {}
+      },
+      {
+        "purpose": "Review current issues",
+        "operation": "diagnostics.listIssues",
+        "input": {}
+      },
+      {
+        "purpose": "Check local evidence",
+        "operation": "diagnostics.getVerificationStatus",
+        "input": {}
+      },
+      {
+        "purpose": "Inspect release blockers",
+        "operation": "diagnostics.getReleaseReadiness",
+        "input": {}
+      },
+      {
+        "purpose": "Choose a smoke test",
+        "operation": "diagnostics.getTestPlan",
+        "input": {
+          "preset": "all"
+        }
+      }
+    ],
+    "runtimeEvidence": "Import the matching reviewed bundle explicitly; discovery does not connect to a live extension",
+    "forever": "No accepted purpose model or certification is claimed"
+  }
+}

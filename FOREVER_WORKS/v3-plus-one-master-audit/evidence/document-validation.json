@@ -1,0 +1,9 @@
+{
+  "linkErrors": [],
+  "jsonFilesParsed": 11,
+  "chapters": 13,
+  "stagedFiles": 48,
+  "stagedOutsideAudit": [],
+  "rawLogWhitespace": "Unmodified Node assertion output contains whitespace-only lines; retained as evidence. Markdown/scripts/JSON pass whitespace check separately.",
+  "scope": "link/JSON/staging safety only; no runtime certification"
+}

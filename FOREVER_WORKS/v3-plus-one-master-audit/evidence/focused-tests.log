@@ -1,0 +1,327 @@
+✔ BOOT reads are versioned, sanitized, non-mutating and never call cloud (70.801221ms)
+✔ missing ID cache plus surviving rows never resets; lost callback retries same row safely (73.415612ms)
+✔ interrupted generation is diagnosed after wake, then local reconciliation acknowledges it (17.132575ms)
+✔ repair is single flight, capped, and healthy repair does no configuration writes (15.289265ms)
+✔ 20 worker activations preserve root, exact destinations, history and single listeners (150.743373ms)
+✔ BOOT message gate requires exact settings sender, extension ID and Debug Mode (6.90815ms)
+✔ history remains bounded, chronological, epoch-scoped and rejects unbounded input (22.751793ms)
+✔ startup package validates classic imports and catches missing imported script and parse failure (4.629783ms)
+✔ explicit menu repair recovers an externally missing child despite a matching cached plan (8.110959ms)
+✔ initial toolbar popup-configuration rejection is degraded and targeted repair acknowledges recovery (7.622123ms)
+✔ whole MV3 background with real imports registers handlers and installs root on worker activation (41.468846ms)
+✔ toolbar invokes Shelf synchronously within the gesture without storage/menu prerequisites (9.875832ms)
+✔ definite Shelf rejection, synchronous throw and missing API use only native attached popup (33.315325ms)
+✔ explicit Popup preference is preserved even when Shelf configuration fails (7.352548ms)
+✔ failed native child or root creation restores root/management without erasing settings (41.887326ms)
+✔ failed removal retains functional local access; Chrome-wide denial is reported honestly (11.562079ms)
+✔ partial inventory, invalid cache and malformed configuration cannot prevent local menu access (36.348576ms)
+✔ worker restart and concurrent startup/install/storage/alarm events share the registration lane (33.364047ms)
+✔ recovery management entry uses the existing local Explorer click route (11.752795ms)
+✔ missing native acknowledgement times out without deleting the root and a later Apply succeeds (36.594426ms)
+✔ failed folder discovery leaves root and valid configured destinations accessible (10.328693ms)
+✔ a failed rebuild after successful registration preserves a recoverable root instead of clearing everything (11.241717ms)
+✔ rapid clicks share one failure attempt and Chrome handles subsequent native popup clicks (9.14964ms)
+✔ unchanged menu plan performs no destructive registration and discovery (11.212442ms)
+✔ unrelated background import failure leaves independently registered toolbar usable (2.516976ms)
+✔ storage failure cannot gate toolbar or base menu access (8.002456ms)
+✔ Shelf document readiness is window-scoped and successful readiness avoids recovery (11.876721ms)
+✔ accepted Shelf with unconfirmed readiness never opens a second surface (1512.35352ms)
+✔ worker restart reconciles persisted IDs without native destruction or folder discovery (16.564722ms)
+✔ an unrelated Shelf window never wins the readiness first-response race (1.927951ms)
+✔ ordered destination changes recreate siblings while retaining root management (12.990956ms)
+✔ fresh empty storage and no OAuth opens Shelf without destination prerequisites (17.839276ms)
+✔ missing native openPopup leaves a next-click attached recovery route without changing preference (10.943074ms)
+✔ slow accepted Shelf cannot trigger a timeout popup or late duplicate (55.017609ms)
+✔ late rejected expired attempt cannot override a newer successful Shelf (52.490262ms)
+✔ blocked popup registration produces native error evidence, no alternate windows (7.681603ms)
+✔ worker restart preserves armed tab recovery, while preference changes clear stale overrides (30.720247ms)
+✔ automatic toolbar launcher contains no detached surface API and disables Chrome-managed parallel opening (6.131686ms)
+✔ tab switch during failure abandons stale recovery instead of opening in another tab (5.482058ms)
+✔ latest different-window click supersedes pending attempt without a stale popup (5.71614ms)
+✔ keyboard reorder persists sibling order, preserves drafts/branch and ignores boundaries (72.946975ms)
+✔ failed persistence restores original array and DOM order (28.773994ms)
+✔ pointer drop reorders at visible insertion marker and cancellation leaves order unchanged (15.837419ms)
+✔ V3 migration preserves saved section and additional destination order in the native Simple menu (49.019776ms)
+✔ drag continues outside grip and gaps are valid insertion targets (11.276175ms)
+✔ Escape cancels lifted drag without saving or leaving compact cards behind (17.440462ms)
+✔ saved moves retain focus so repeated arrow keys move the same branch (9.426924ms)
+✔ T22 T23 encrypted independent bundle survives new database, validates schema and restores no authorization (122.160231ms)
+✔ T23 corrupted ciphertext, wrong passphrase, unsupported schema and plaintext credentials fail before import (132.216063ms)
+✔ user-selected-file adapter marks verified only after writer close and authenticated read-back (469.222371ms)
+✔ T11 T17 T18 T19 CURRENT merges partial scans, scopes journal deltas and preserves graph across restart (15.856286ms)
+✔ T16 transaction rejection rolls back graph journal pointer and configuration together (4.345468ms)
+✔ T20 rollover on actual use keeps immutable dated BACKUP distinct from live WORKING; Off keeps journal (10.044223ms)
+✔ T07 equal bucket and folder labels in separate accounts retain independent generations (3.188137ms)
+✔ T16 stale native acknowledgment cannot mark a newer CURRENT applied; concurrent tabs roll over once (6.279939ms)
+✔ T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer (71.947853ms)
+✔ T24 authenticated chooser preserves original object, consumes intent once and rejects stale routes (10.675622ms)
+✔ V3 domain projects parent-first exact IDs and resolves branch Save here only (12.31523ms)
+✔ V3 disabled ancestors, removed subtrees, empty stores and revoked readiness cannot resurrect (1.054647ms)
+✔ V3 rejects collisions, orphans, cycles, cross-account targets, invalid paths and excessive UTF-8 (0.965062ms)
+✖ V3 save/register/resolve persists across restart and refuses Legacy selection (13.628957ms)
+✔ actual background stale and unauthorized commits reject; concurrent saves serialize (3.040315ms)
+✔ actual Chrome create/remove failures distinguish saved settings from registration (6.438507ms)
+✔ tree selection, keyboard rename cancellation, autosave deletion and undo never write provider data (279.081655ms)
+✔ contextual addition auto persists, search finds destination and registration retry uses acknowledged revision (182.564708ms)
+✖ actual click listener waits for V3 read-back before recording completion and never falls back (1.450563ms)
+✔ active HTML/CSS/JS and packaging contain no retired setup mounts/imports/hooks (6.337986ms)
+✖ Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles (1.07702ms)
+✔ actual V3 ingest preserves the existing transport and URL contract with an exact non-provisioning target (6.83926ms)
+✔ package closure includes V3 and recovery Settings, excludes retired Legacy runtime and excludes all retired setup code (215.554848ms)
+✔ setup snapshot is sender-gated and exposes no credential or legacy menu state (2.843949ms)
+✔ storage preferences retain every literal DOM dependency after old setup removal (128.746993ms)
+✔ real shared tabs, engine events and reload can only return to the single V3 setup (158.643655ms)
+✔ Settings exposes V3 setup and recovery, with no engine selector or Legacy warning (19.479889ms)
+✔ rapid edits serialize snapshots and advance only acknowledged revisions (111.797721ms)
+✔ stale revision never automatically retries or drops retained edit (130.272789ms)
+✔ tree Home End arrows and selection use roving focus independently of inclusion (75.689572ms)
+✔ inline add controls retain click focus and own keys without selecting the tree (120.946386ms)
+✔ contextual plus selects its owner and Escape restores that row without saving (69.940012ms)
+✔ folder redraw preserves inline draft focus and anchor, checkbox redraw preserves its control (130.841724ms)
+✔ tree shortcuts require actual tree focus and ignore composition and modified keys (66.886017ms)
+✔ Simple defaults to ordered direct shortcuts; Narrow preserves duplicate identities and Save here (2.51196ms)
+✔ Level depth 1–10 is counted from authorized root; true names, siblings and exact routing (17.808976ms)
+✔ Level uses opted-in bucket roots and never reads unrelated profiles (1.813749ms)
+✔ Level paginates files-only pages, deduplicates and sorts exact cloud names without writes (1.272324ms)
+✔ Level rejects broken pagination, provider failures and unsupported paths as incomplete (1.426286ms)
+✔ Level bounds folder count, pages, elapsed budget and menu entries with visible partial status (415.105266ms)
+✔ Level memory survives serialization, expiry and view changes while current authority gates routes (2.751249ms)
+✖ presentation transitions serialize independently, retain Level depth 5 and persist across background restart (3.425273ms)
+✖ actual Level background inventory registration and click resolver retain exact authorized targets across restart (2.965381ms)
+✔ late Level discovery cannot apply after roots change; concurrent refreshes share one inventory (52.494503ms)
+✔ header progressive controls preserve the tree and form focus, validate depth and remember hidden choices (212.984438ms)
+✔ rapid presentation changes retain native radio focus and serialize the latest desired mode (83.878273ms)
+✔ a timed-out read halts traversal instead of accumulating unresolved remote requests (1.876253ms)
+✔ periodic maintenance uses V3 regardless of stale engine settings and leaves non-Level alone; credential changes clear inventory before rebuilding (128.313543ms)
+✔ natural Narrow synthesizes real ancestors, retains exact configured-only targets and stable order (1.892097ms)
+✔ Narrow handles explicit skipped ancestors, independent disabled prefixes and distinct accounts (1.013795ms)
+✖ Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions (3.420236ms)
+✔ Level depth boundary 1, 2, 3, 5 and 10 uses bucket zero, eleven-level chains and no custom labels (4.925651ms)
+✔ bounded Level projection reserves later buckets before broad descendants and counts failed attempts (329.977703ms)
+✔ real UI, dispatcher and transaction preserve mode acknowledgements and reconcile a lost reply (179.751905ms)
+✔ literal Unknown request never silently downgrades the desired Nested choice (111.743146ms)
+✖ Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt (1.574278ms)
+✖ Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement (0.862077ms)
+✖ failed registration retains persisted edits, Retry Apply repairs without rewriting destinations (0.822958ms)
+✖ partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics (1.271413ms)
+✖ bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus (0.874335ms)
+✔ apply endpoint rejects stale snapshots and foreign senders, receipt changes for each projection input (7.349127ms)
+✖ durable snapshot restores fresh inventory without a provider rescan and stores no secrets (1.478494ms)
+✔ incremental discovery resumes a failed child without relisting its completed root (1.547267ms)
+✔ adding a participating bucket reuses the unchanged bucket and revoked buckets never project (1.270161ms)
+✔ perimeter animation has a reduced-motion override and visible keyboard focus (2.147551ms)
+✔ restored broad inventory retains every known path while checking a newly participating bucket (178.87153ms)
+✖ T01–T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default (2.558369ms)
+✔ T06 T08 T09 T10 Narrow only configured endpoints in distinct buckets and no false Home (2.719602ms)
+✖ T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart (10.492927ms)
+✔ T24 native capacity preserves Home and full projection resolves omitted authorized routes (1067.080472ms)
+✔ historical Legacy reference: Simple menu places default and extra destinations immediately under REDOWN, never inside a preset submenu (2.967124ms)
+✔ historical Legacy reference: Legacy bucket-label preference cannot override modern path-derived labels or explicit names (1.017781ms)
+✔ historical Legacy reference: Menu Label is default for existing profiles without a saved preference (0.808727ms)
+✔ historical Legacy reference: explicit Simple label wins over the lowest-directory fallback (0.656618ms)
+✔ historical Legacy reference: blank and whitespace Simple labels retain automatic naming under every fallback setting (2.962808ms)
+✔ manifest uses guarded classic entry, normal worker has exactly one toolbar and menu writer (36.254475ms)
+✖ fresh worker with failing heavy core still registers the original toolbar opener (1.920119ms)
+✖ late core import failure does not register a second toolbar listener (2.480091ms)
+ℹ tests 125
+ℹ suites 0
+ℹ pass 109
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9453.525524
+
+✖ failing tests:
+
+test at tests/right-click-v3.test.mjs:39:1
+✖ V3 save/register/resolve persists across restart and refuses Legacy selection (13.628957ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:40:159)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/right-click-v3.test.mjs:81:1
+✖ actual click listener waits for V3 read-back before recording completion and never falls back (1.450563ms)
+  ReferenceError: crypto is not defined
+      at evalmachine.<anonymous>:14:19
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:85:34)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:96:1
+✖ Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles (1.07702ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:98:144)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:243:1
+✖ presentation transitions serialize independently, retain Level depth 5 and persist across background restart (3.425273ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:246:131)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/right-click-v3.test.mjs:253:1
+✖ actual Level background inventory registration and click resolver retain exact authorized targets across restart (2.965381ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async evalmachine.<anonymous>:232:5
+      at async Object.refreshV3Inventory (evalmachine.<anonymous>:235:14)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:255:2)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:317:1
+✖ Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions (3.420236ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async evalmachine.<anonymous>:232:5
+      at async Object.refreshV3Inventory (evalmachine.<anonymous>:235:14)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:322:82)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:378:1
+✖ Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt (1.574278ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async applyHarness (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:369:2)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:379:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:388:1
+✖ Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement (0.862077ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async applyHarness (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:369:2)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:389:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:399:1
+✖ failed registration retains persisted edits, Retry Apply repairs without rewriting destinations (0.822958ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async applyHarness (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:369:2)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:400:21)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:407:1
+✖ partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics (1.271413ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async applyHarness (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:369:2)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:408:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:415:1
+✖ bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus (0.874335ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async applyHarness (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:369:2)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:416:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:435:1
+✖ durable snapshot restores fresh inventory without a provider rescan and stores no secrets (1.478494ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async evalmachine.<anonymous>:232:5
+      at async Object.refreshV3Inventory (evalmachine.<anonymous>:235:14)
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:437:59)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:469:1
+✖ T01–T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default (2.558369ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:484:86)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/right-click-v3.test.mjs:496:1
+✖ T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart (10.492927ms)
+  ReferenceError: performance is not defined
+      at evalmachine.<anonymous>:285:49
+      at async evalmachine.<anonymous>:272:39
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/right-click-v3.test.mjs:502:48)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/worker-bootstrap-first-install.test.mjs:23:1
+✖ fresh worker with failing heavy core still registers the original toolbar opener (1.920119ms)
+  evalmachine.<anonymous>:1
+  menuRebuildQueue
+  ^
+  
+  ReferenceError: menuRebuildQueue is not defined
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at Object.ready (file:///workspace/REDOWN/tests/helpers/background-worker.mjs:35:33)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/worker-bootstrap-first-install.test.mjs:25:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+
+test at tests/worker-bootstrap-first-install.test.mjs:52:1
+✖ late core import failure does not register a second toolbar listener (2.480091ms)
+  evalmachine.<anonymous>:1
+  menuRebuildQueue
+  ^
+  
+  ReferenceError: menuRebuildQueue is not defined
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at Object.ready (file:///workspace/REDOWN/tests/helpers/background-worker.mjs:35:33)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/worker-bootstrap-first-install.test.mjs:54:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)

@@ -1,0 +1,34 @@
+[
+  {
+    "failingImport": "background.js",
+    "core": "failed",
+    "toolbarListeners": 1,
+    "menuListeners": 0,
+    "messageListeners": 1,
+    "worker": {
+      "state": "failed"
+    },
+    "overall": "blocked",
+    "evidence": [
+      "WORKER_LOAD",
+      "CORE_IMPORT_FAILED",
+      "TOOLBAR_CONFIGURED"
+    ]
+  },
+  {
+    "failingImport": "cloudflare-api.js",
+    "core": "failed",
+    "toolbarListeners": 1,
+    "menuListeners": 0,
+    "messageListeners": 1,
+    "worker": {
+      "state": "failed"
+    },
+    "overall": "blocked",
+    "evidence": [
+      "WORKER_LOAD",
+      "CORE_IMPORT_FAILED",
+      "TOOLBAR_CONFIGURED"
+    ]
+  }
+]

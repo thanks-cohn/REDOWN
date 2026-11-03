@@ -1,0 +1,198 @@
+{
+  "head": "1f85185f87c52b13e01c7c9069464668c2ad47d0",
+  "authority": "reviewed documentary observations, not Forever normative entities",
+  "nodes": [
+    {
+      "id": "bootstrap",
+      "path": "extension/service-worker.js",
+      "sha256": "4739483a9355cc492ff9bae44473e5376af1003ba16c749b3d97d4720f9ead4c",
+      "callers": "Chrome evaluation",
+      "callees": "original entry bootstrap/core import",
+      "state": "RedownWorkerCoreStatus",
+      "sideEffects": "importScripts;fallback message listener",
+      "evidence": "bootstrap-observation.json"
+    },
+    {
+      "id": "toolbar",
+      "path": "extension/entry-bootstrap.js",
+      "sha256": "2ee2c52e4e99828559d2eefbd4cc15533ab0152a33f4f6f7767d1974c0b71601",
+      "callers": "action gesture/lifecycle",
+      "callees": "sidePanel/openPopup/BOOT",
+      "state": "toolbarOpenMode;entryPointEvidence",
+      "sideEffects": "Chrome native opener; bounded local evidence",
+      "evidence": "focused-tests.log"
+    },
+    {
+      "id": "picker",
+      "path": "extension/beta/right-click-v3-ui.js",
+      "sha256": "9880cbbb4fcbaf590a586c65c2e74efcf8d5f2258195b43e02adee6640fabddc",
+      "callers": "snapshot/tree events",
+      "callees": "cfDestinationFolders;saveRightClickV3;Apply",
+      "state": "folders Map;expanded Set;sessionStorage recovery;draft",
+      "sideEffects": "DOM+messages",
+      "evidence": "observations.json"
+    },
+    {
+      "id": "config",
+      "path": "extension/background.js",
+      "sha256": "df5d8b63164e02dc429b4423714573b4e5096951b81df55c81f4c4b4334d5c5a",
+      "callers": "save/scope/presentation/Apply messages",
+      "callees": "commitV3Current;rebuildMenus",
+      "state": "destinationSaveQueue;expected revisions",
+      "sideEffects": "IDB then local writes;native reconciliation",
+      "evidence": "focused-tests.log"
+    },
+    {
+      "id": "current",
+      "path": "extension/right-click-current.js",
+      "sha256": "4bbbcb5ed307a63f454ecce9ca3d400a61b348fc9148c71e23b5a1f34aaba7b2",
+      "callers": "commit/read/ack/dump",
+      "callees": "IDB transactions",
+      "state": "state;records;journal;pointers;backups",
+      "sideEffects": "local transactional graph",
+      "evidence": "authority-observation.json"
+    },
+    {
+      "id": "domain",
+      "path": "extension/right-click-v3.js",
+      "sha256": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+      "callers": "project/resolve/discover",
+      "callees": "prepared;eligible;trie;listing callback",
+      "state": "input-only config/profiles/inventory",
+      "sideEffects": "injected discovery reads/timers;pure projection",
+      "evidence": "observations.json"
+    },
+    {
+      "id": "listing",
+      "path": "extension/background.js",
+      "sha256": "df5d8b63164e02dc429b4423714573b4e5096951b81df55c81f4c4b4334d5c5a",
+      "callers": "browse/discovery",
+      "callees": "listObjectsPage;cfFetch",
+      "state": "cloudflareAuth;optional RFIS",
+      "sideEffects": "Cloudflare GET+possible auth refresh",
+      "evidence": "source-only"
+    },
+    {
+      "id": "registrar",
+      "path": "extension/background.js",
+      "sha256": "df5d8b63164e02dc429b4423714573b4e5096951b81df55c81f4c4b4334d5c5a",
+      "callers": "lifecycle/storage/Apply/BOOT",
+      "callees": "buildMenus;acknowledgeMenu",
+      "state": "nativeMenuPlan/Ids;rightClickMenuStatus",
+      "sideEffects": "Chrome update/create/remove;receipts",
+      "evidence": "focused-tests.log"
+    },
+    {
+      "id": "drive",
+      "path": "extension/google-drive-provider.js",
+      "sha256": "cdeb5c2ae78880bed5383b12f06d862d6e35184593992b343bcb494f68cb0d84",
+      "callers": "owned native IDs/messages",
+      "callees": "Google job page/own transfer",
+      "state": "googleDriveState/Transfer;session job",
+      "sideEffects": "own provider actions;shared History",
+      "evidence": "full-tests.log"
+    },
+    {
+      "id": "dropbox",
+      "path": "extension/dropbox-provider.js",
+      "sha256": "46d65662520d8f63bedbe62d036f52da496de09ea14a677a1b0d06447859a97e",
+      "callers": "owned native IDs/messages",
+      "callees": "own auth/API queue",
+      "state": "dropbox:state/auth/jobs/transfer",
+      "sideEffects": "own upload;shared History",
+      "evidence": "full-tests.log"
+    },
+    {
+      "id": "onedrive",
+      "path": "extension/onedrive-provider.js",
+      "sha256": "c97ed858fabe54aeefd0cb8524284912ff9bfba52c0d1cf62f6eddecf5f25d06",
+      "callers": "owned native IDs/messages",
+      "callees": "own auth/API queue",
+      "state": "onedrive state/jobs/transfer",
+      "sideEffects": "own upload;shared History",
+      "evidence": "full-tests.log"
+    },
+    {
+      "id": "save",
+      "path": "extension/background.js",
+      "sha256": "df5d8b63164e02dc429b4423714573b4e5096951b81df55c81f4c4b4334d5c5a",
+      "callers": "resolved V3 leaf",
+      "callees": "ingestCloudflareAtPrefix;HEAD;recordTransfer",
+      "state": "profiles;receipt;History",
+      "sideEffects": "provider writes/readback;feedback",
+      "evidence": "source-only"
+    }
+  ],
+  "edges": [
+    {
+      "from": "bootstrap",
+      "to": "toolbar",
+      "meaning": "recovery prerequisite"
+    },
+    {
+      "from": "bootstrap",
+      "to": "config",
+      "meaning": "core evaluation"
+    },
+    {
+      "from": "picker",
+      "to": "config",
+      "meaning": "expected-revision edits"
+    },
+    {
+      "from": "picker",
+      "to": "listing",
+      "meaning": "explicit Browse/current lazy child"
+    },
+    {
+      "from": "config",
+      "to": "current",
+      "meaning": "commit then mirror"
+    },
+    {
+      "from": "current",
+      "to": "config",
+      "meaning": "restore can replace mirror-only patches"
+    },
+    {
+      "from": "config",
+      "to": "domain",
+      "meaning": "projection inputs"
+    },
+    {
+      "from": "domain",
+      "to": "listing",
+      "meaning": "injected bounded scan"
+    },
+    {
+      "from": "config",
+      "to": "registrar",
+      "meaning": "combined plan"
+    },
+    {
+      "from": "drive",
+      "to": "registrar",
+      "meaning": "contribution via Drive composer"
+    },
+    {
+      "from": "dropbox",
+      "to": "registrar",
+      "meaning": "composer hosted on Drive requires predecessor"
+    },
+    {
+      "from": "onedrive",
+      "to": "registrar",
+      "meaning": "composer requires Dropbox predecessor"
+    },
+    {
+      "from": "domain",
+      "to": "save",
+      "meaning": "exact current leaf tuple"
+    },
+    {
+      "from": "save",
+      "to": "current",
+      "meaning": "not atomic with directory/native/History"
+    }
+  ]
+}

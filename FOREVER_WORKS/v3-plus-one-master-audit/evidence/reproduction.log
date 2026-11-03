@@ -1,0 +1,45 @@
+{
+  "cases": 15,
+  "depth": {
+    "known5": 6,
+    "known3": 6,
+    "known5again": 6
+  },
+  "browse": [
+    {
+      "label": "first-open",
+      "folderRequests": 0,
+      "rows": [
+        "account:a",
+        "bucket:p"
+      ]
+    },
+    {
+      "label": "bucket-collapse-expand",
+      "folderRequests": 0,
+      "rows": [
+        "account:a",
+        "bucket:p"
+      ]
+    },
+    {
+      "label": "after-Browse",
+      "folderRequests": 1,
+      "rows": [
+        "account:a",
+        "bucket:p",
+        "folder:p:Art"
+      ]
+    },
+    {
+      "label": "folder-arrow",
+      "folderRequests": 2,
+      "rows": [
+        "account:a",
+        "bucket:p",
+        "folder:p:Art",
+        "folder:p:Art/Child"
+      ]
+    }
+  ]
+}

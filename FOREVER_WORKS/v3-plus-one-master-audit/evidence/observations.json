@@ -1,0 +1,4294 @@
+{
+  "sourceSHA256": "e5867f4d7fb06a20654f5f38a80c7927c1a6e4f23b3d2d908b34d509ebd13975",
+  "cases": [
+    {
+      "name": "01-common-last",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "w",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Weddings",
+            "label": "w",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "p",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "p",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "w",
+          true
+        ],
+        [
+          "p",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:w",
+              "title": "w",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:p",
+              "title": "p",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  w [SAVE] v3:w\n  p [SAVE] v3:p\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:w",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Weddings"
+              ]
+            },
+            {
+              "id": "v3:p",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:w",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "w",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:p",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "p",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        w [SAVE] v3:w\n        p [SAVE] v3:p\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:w",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Weddings"
+              ]
+            },
+            {
+              "id": "v3:p",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "02-diverge-two",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "j",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Clients/John",
+            "label": "j",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "f",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Personal/Family",
+            "label": "f",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "j",
+          true
+        ],
+        [
+          "f",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:j",
+              "title": "j",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:f",
+              "title": "f",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  j [SAVE] v3:j\n  f [SAVE] v3:f\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:j",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Clients/John"
+              ]
+            },
+            {
+              "id": "v3:f",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Personal/Family"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FClients%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Clients",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:j",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FClients%22%5D",
+              "title": "j",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPersonal%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Personal",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:f",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPersonal%22%5D",
+              "title": "f",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        Clients [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FClients%22%5D\n          j [SAVE] v3:j\n        Personal [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPersonal%22%5D\n          f [SAVE] v3:f\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FClients%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:j",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Clients/John"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPersonal%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:f",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Personal/Family"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "03-parent-selected",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "a",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "a",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "b",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "Photography",
+            "parentId": "a",
+            "enabled": true
+          },
+          {
+            "id": "c",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "Portraits",
+            "parentId": "b",
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "a",
+          true
+        ],
+        [
+          "b",
+          true
+        ],
+        [
+          "c",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:a",
+              "title": "a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:b",
+              "title": "Photography",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "title": "Portraits",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  a [SAVE] v3:a\n  Photography [SAVE] v3:b\n  Portraits [SAVE] v3:c\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:a",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:b",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:a",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "a",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:a:send",
+              "parentId": "v3:a",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:b",
+              "parentId": "v3:a",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:b:send",
+              "parentId": "v3:b",
+              "title": "Save here",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "parentId": "v3:b",
+              "title": "Portraits",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    a [NAV ONLY] v3:a\n      Save here [SAVE HERE] v3:a:send\n      Photography [NAV ONLY] v3:b\n        Save here [SAVE HERE] v3:b:send\n        Portraits [SAVE] v3:c\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:a",
+              "target": null
+            },
+            {
+              "id": "v3:a:send",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:b",
+              "target": null
+            },
+            {
+              "id": "v3:b:send",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "04-two-aliases",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "c",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "Client Photography",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "m",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "My Portraits",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "c",
+          true
+        ],
+        [
+          "m",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "title": "Client Photography",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "title": "My Portraits",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Client Photography [SAVE] v3:c\n  My Portraits [SAVE] v3:m\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Portraits",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "title": "Client Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "title": "My Portraits",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        Portraits [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D\n          Client Photography [SAVE] v3:c\n          My Portraits [SAVE] v3:m\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "05-identical-label",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "c",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "Photos",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "m",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "Photos",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "c",
+          true
+        ],
+        [
+          "m",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "title": "Photos",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "title": "Photos · 2",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Photos [SAVE] v3:c\n  Photos · 2 [SAVE] v3:m\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Portraits",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "title": "Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "title": "Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        Portraits [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D\n          Photos [SAVE] v3:c\n          Photos [SAVE] v3:m\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%2FPortraits%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "06-alias-children",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "c",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "Client Photography",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "m",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "My Photos",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "kid",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography/Portraits",
+            "label": "Portraits",
+            "parentId": "c",
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "c",
+          true
+        ],
+        [
+          "m",
+          true
+        ],
+        [
+          "kid",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "title": "Client Photography",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "title": "My Photos",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:kid",
+              "title": "Portraits",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Client Photography [SAVE] v3:c\n  My Photos [SAVE] v3:m\n  Portraits [SAVE] v3:kid\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:kid",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:c",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Client Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "My Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:kid",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Portraits",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        Client Photography [SAVE] v3:c\n        My Photos [SAVE] v3:m\n        Portraits [SAVE] v3:kid\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:c",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:m",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:kid",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography/Portraits"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "07-alternate-branch-attempt",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "first",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Work",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "second",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Personal",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "one",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "Work photos",
+            "parentId": "first",
+            "enabled": true
+          },
+          {
+            "id": "two",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "Personal photos",
+            "parentId": "second",
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "first",
+          true
+        ],
+        [
+          "second",
+          true
+        ],
+        [
+          "one",
+          true
+        ],
+        [
+          "two",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:first",
+              "title": "Work",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:second",
+              "title": "Personal",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:one",
+              "title": "Work photos",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "title": "Personal photos",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Work [SAVE] v3:first\n  Personal [SAVE] v3:second\n  Work photos [SAVE] v3:one\n  Personal photos [SAVE] v3:two\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:first",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:second",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:one",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:first",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Work",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:second",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Personal",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "Photography",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:one",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Work photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "title": "Personal photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      Work [SAVE] v3:first\n      Personal [SAVE] v3:second\n      Photography [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D\n        Work photos [SAVE] v3:one\n        Personal photos [SAVE] v3:two\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:first",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:second",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%2FPhotography%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:one",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Photography"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "08-same-label-scopes",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "one",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Photos",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "two",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Other",
+            "label": "Photos",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "q",
+            "profileId": "q",
+            "accountId": "b",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Photos",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "one",
+          true
+        ],
+        [
+          "two",
+          true
+        ],
+        [
+          "q",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:one",
+              "title": "Photos · a",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "title": "Photos · a · 2",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:q",
+              "title": "Photos · b",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Photos · a [SAVE] v3:one\n  Photos · a · 2 [SAVE] v3:two\n  Photos · b [SAVE] v3:q\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:one",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Other"
+              ]
+            },
+            {
+              "id": "v3:q",
+              "target": [
+                "cloudflare-r2",
+                "q",
+                "b",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket · a · p",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:one",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22q%22%2C%22b%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket · b · q",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:q",
+              "parentId": "v3:path:%5B%22q%22%2C%22b%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Photos",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket · a · p [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Photos [SAVE] v3:one\n    Photos [SAVE] v3:two\n  bucket · b · q [NAV ONLY] v3:path:%5B%22q%22%2C%22b%22%2C%22bucket%22%2C%22%22%5D\n    Photos [SAVE] v3:q\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:one",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:two",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Other"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22q%22%2C%22b%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:q",
+              "target": [
+                "cloudflare-r2",
+                "q",
+                "b",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "09-prefix-case-unicode",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "x",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "x",
+            "label": "x",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "xx",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "x-extra",
+            "label": "xx",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "up",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "X",
+            "label": "up",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "u",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "写真/é",
+            "label": "u",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "u2",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "写真/é",
+            "label": "u2",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "x",
+          true
+        ],
+        [
+          "xx",
+          true
+        ],
+        [
+          "up",
+          true
+        ],
+        [
+          "u",
+          true
+        ],
+        [
+          "u2",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:x",
+              "title": "x",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:xx",
+              "title": "xx",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:up",
+              "title": "up",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:u",
+              "title": "u",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:u2",
+              "title": "u2",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  x [SAVE] v3:x\n  xx [SAVE] v3:xx\n  up [SAVE] v3:up\n  u [SAVE] v3:u\n  u2 [SAVE] v3:u2\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:x",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "x"
+              ]
+            },
+            {
+              "id": "v3:xx",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "x-extra"
+              ]
+            },
+            {
+              "id": "v3:up",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "X"
+              ]
+            },
+            {
+              "id": "v3:u",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "写真/é"
+              ]
+            },
+            {
+              "id": "v3:u2",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "写真/é"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:x",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "x",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:xx",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "xx",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:up",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "up",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%E5%86%99%E7%9C%9F%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "写真",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:u",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%E5%86%99%E7%9C%9F%22%5D",
+              "title": "u",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:u2",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%E5%86%99%E7%9C%9F%22%5D",
+              "title": "u2",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    x [SAVE] v3:x\n    xx [SAVE] v3:xx\n    up [SAVE] v3:up\n    写真 [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%E5%86%99%E7%9C%9F%22%5D\n      u [SAVE] v3:u\n      u2 [SAVE] v3:u2\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:x",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "x"
+              ]
+            },
+            {
+              "id": "v3:xx",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "x-extra"
+              ]
+            },
+            {
+              "id": "v3:up",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "X"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%E5%86%99%E7%9C%9F%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:u",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "写真/é"
+              ]
+            },
+            {
+              "id": "v3:u2",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "写真/é"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "10-disabled",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "parent",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Art",
+            "parentId": null,
+            "enabled": false
+          },
+          {
+            "id": "child",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Photography",
+            "label": "Photography",
+            "parentId": "parent",
+            "enabled": true
+          },
+          {
+            "id": "independent",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art/Independent",
+            "label": "independent",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "parent",
+          false
+        ],
+        [
+          "child",
+          true
+        ],
+        [
+          "independent",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:independent",
+              "title": "independent",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  independent [SAVE] v3:independent\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:independent",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Independent"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Art",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:independent",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "title": "independent",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Art [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D\n      independent [SAVE] v3:independent\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22Art%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:independent",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art/Independent"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "10-invalid-path",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "bad",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "x/../z",
+            "label": "bad",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "bad",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "error": "Use an exact folder path without empty or dot segments (maximum 900 UTF-8 bytes)."
+        },
+        "nested": {
+          "error": "Use an exact folder path without empty or dot segments (maximum 900 UTF-8 bytes)."
+        }
+      }
+    },
+    {
+      "name": "10-duplicate-id",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "dup",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "x",
+            "label": "dup",
+            "parentId": null,
+            "enabled": true
+          },
+          {
+            "id": "dup",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "y",
+            "label": "dup",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "dup",
+          true
+        ],
+        [
+          "dup",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "error": "Invalid or duplicate destination ID."
+        },
+        "nested": {
+          "error": "Invalid or duplicate destination ID."
+        }
+      }
+    },
+    {
+      "name": "10-revoked",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "one",
+            "profileId": "p",
+            "accountId": "missing",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Art",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "one",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "error": "Activate this account and bucket in Explorer before saving."
+        },
+        "nested": {
+          "error": "Activate this account and bucket in Explorer before saving."
+        }
+      }
+    },
+    {
+      "name": "11-shared-modes",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "shared",
+            "profileId": "p",
+            "accountId": "a",
+            "bucketName": "bucket",
+            "prefix": "Art",
+            "label": "Shared alias",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "shared",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:shared",
+              "title": "Shared alias",
+              "parentId": "v3:provider:cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  Shared alias [SAVE] v3:shared\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:shared",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "bucket",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:shared",
+              "parentId": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "title": "Shared alias",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  bucket [NAV ONLY] v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D\n    Shared alias [SAVE] v3:shared\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:shared",
+              "target": [
+                "cloudflare-r2",
+                "p",
+                "a",
+                "bucket",
+                "Art"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    },
+    {
+      "name": "12-root-alias",
+      "config": {
+        "version": 1,
+        "revision": 0,
+        "destinations": [
+          {
+            "id": "root",
+            "profileId": "home",
+            "accountId": "a",
+            "bucketName": "redown",
+            "prefix": "",
+            "label": "Independently named root",
+            "parentId": null,
+            "enabled": true
+          }
+        ]
+      },
+      "checkmarks": [
+        [
+          "root",
+          true
+        ]
+      ],
+      "projections": {
+        "simple": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [SAVE] v3:provider:cloudflare",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        },
+        "nested": {
+          "entries": [
+            {
+              "id": "v3:provider:cloudflare",
+              "parentId": "redown",
+              "title": "Cloudflare",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:path:%5B%22home%22%2C%22a%22%2C%22redown%22%2C%22%22%5D",
+              "parentId": "v3:provider:cloudflare",
+              "title": "redown",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:root",
+              "parentId": "v3:path:%5B%22home%22%2C%22a%22%2C%22redown%22%2C%22%22%5D",
+              "title": "Independently named root",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "parentId": "v3:provider:cloudflare",
+              "type": "separator",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "parentId": "v3:provider:cloudflare",
+              "title": "Home",
+              "contexts": [
+                "link",
+                "image",
+                "video",
+                "audio",
+                "page"
+              ]
+            }
+          ],
+          "tree": "Cloudflare [NAV ONLY] v3:provider:cloudflare\n  redown [NAV ONLY] v3:path:%5B%22home%22%2C%22a%22%2C%22redown%22%2C%22%22%5D\n    Independently named root [SAVE] v3:root\n  ──────── [SEPARATOR] v3:provider:cloudflare:separator\n  Home [SAVE] v3:provider:cloudflare:default",
+          "routes": [
+            {
+              "id": "v3:provider:cloudflare",
+              "target": null
+            },
+            {
+              "id": "v3:path:%5B%22home%22%2C%22a%22%2C%22redown%22%2C%22%22%5D",
+              "target": null
+            },
+            {
+              "id": "v3:root",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            },
+            {
+              "id": "v3:provider:cloudflare:separator",
+              "target": null
+            },
+            {
+              "id": "v3:provider:cloudflare:default",
+              "target": [
+                "cloudflare-r2",
+                "home",
+                "a",
+                "redown",
+                ""
+              ]
+            }
+          ],
+          "staleRoute": null
+        }
+      }
+    }
+  ],
+  "depth": {
+    "known5": 6,
+    "known3": 6,
+    "known5again": 6,
+    "calls": [
+      {
+        "a": "a",
+        "b": "bucket",
+        "prefix": "",
+        "cursor": ""
+      },
+      {
+        "a": "a",
+        "b": "bucket",
+        "prefix": "L/",
+        "cursor": ""
+      },
+      {
+        "a": "a",
+        "b": "bucket",
+        "prefix": "L/L/",
+        "cursor": ""
+      },
+      {
+        "a": "a",
+        "b": "bucket",
+        "prefix": "L/L/L/",
+        "cursor": ""
+      },
+      {
+        "a": "a",
+        "b": "bucket",
+        "prefix": "L/L/L/L/",
+        "cursor": ""
+      }
+    ],
+    "inventory": {
+      "version": 2,
+      "key": "[2,0,5,[[\"s\",\"p\",\"a\",\"bucket\",\"\",\"https://fixture.invalid\"]]]",
+      "at": 300,
+      "depth": 5,
+      "nodes": [
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "",
+          "parent": null,
+          "level": 0,
+          "listed": true,
+          "observedAt": 100
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "L",
+          "parent": "",
+          "level": 1,
+          "listed": true,
+          "observedAt": 100
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "L/L",
+          "parent": "L",
+          "level": 2,
+          "listed": true,
+          "observedAt": 100
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "L/L/L",
+          "parent": "L/L",
+          "level": 3,
+          "listed": true,
+          "observedAt": 100
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "L/L/L/L",
+          "parent": "L/L/L",
+          "level": 4,
+          "listed": true,
+          "observedAt": 100
+        },
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "L/L/L/L/L",
+          "parent": "L/L/L/L",
+          "level": 5,
+          "listed": false
+        }
+      ],
+      "pages": 0,
+      "observations": [
+        {
+          "profileId": "p",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "checked": true,
+          "knownFolders": 5,
+          "observedAt": 100,
+          "complete": true
+        }
+      ],
+      "frontier": [],
+      "unknownRemaining": false,
+      "complete": true,
+      "warnings": []
+    },
+    "projection": {
+      "entries": [
+        {
+          "id": "v3:provider:cloudflare",
+          "parentId": "redown",
+          "title": "Cloudflare",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+          "parentId": "v3:provider:cloudflare",
+          "title": "bucket",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D:send",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%22%5D",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22%22%5D",
+          "title": "L",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%22%5D:send",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%22%5D",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%22%5D",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%22%5D",
+          "title": "L",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%22%5D:send",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%22%5D",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%22%5D",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%22%5D",
+          "title": "L",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%22%5D:send",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%22%5D",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%2FL%22%5D",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%22%5D",
+          "title": "L",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%2FL%22%5D:send",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%2FL%22%5D",
+          "title": "Save here",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        },
+        {
+          "id": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%2FL%2FL%22%5D",
+          "parentId": "v3:cloud:%5B%22p%22%2C%22a%22%2C%22bucket%22%2C%22L%2FL%2FL%2FL%22%5D",
+          "title": "L",
+          "contexts": [
+            "link",
+            "image",
+            "video",
+            "audio",
+            "page"
+          ]
+        }
+      ],
+      "summary": {
+        "depth": 5,
+        "knownFolders": 5,
+        "rootsChecked": 1,
+        "rootsTotal": 1,
+        "ageMs": 0
+      },
+      "warnings": [],
+      "complete": true
+    }
+  },
+  "browse": [
+    {
+      "label": "first-open",
+      "requests": [
+        {
+          "type": "rightClickV3Snapshot"
+        }
+      ],
+      "rows": [
+        "account:a",
+        "bucket:p"
+      ]
+    },
+    {
+      "label": "bucket-collapse-expand",
+      "requests": [
+        {
+          "type": "rightClickV3Snapshot"
+        }
+      ],
+      "rows": [
+        "account:a",
+        "bucket:p"
+      ]
+    },
+    {
+      "label": "after-Browse",
+      "requests": [
+        {
+          "type": "rightClickV3Snapshot"
+        },
+        {
+          "type": "cfDestinationFolders",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": ""
+        }
+      ],
+      "rows": [
+        "account:a",
+        "bucket:p",
+        "folder:p:Art"
+      ]
+    },
+    {
+      "label": "folder-arrow",
+      "requests": [
+        {
+          "type": "rightClickV3Snapshot"
+        },
+        {
+          "type": "cfDestinationFolders",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": ""
+        },
+        {
+          "type": "cfDestinationFolders",
+          "accountId": "a",
+          "bucketName": "bucket",
+          "prefix": "Art"
+        }
+      ],
+      "rows": [
+        "account:a",
+        "bucket:p",
+        "folder:p:Art",
+        "folder:p:Art/Child"
+      ]
+    }
+  ]
+}
