@@ -932,7 +932,7 @@ async function cfJson(path, options = {}) {
 importScripts("history-archive.js");
 importScripts("brand-icon.js");
 importScripts("transfer-counter.js");
-importScripts("save-droplet-gate.js");
+importScripts("click-feedback.js");
 importScripts("daily-save-badge.js");
 const transferArchive=RedownHistoryArchive.create();
 const transferCounter=RedownTransferCounter.create(chrome.storage.local,navigator.locks,transferArchive);
@@ -2821,39 +2821,23 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }else if(changes.rightClickMode||changes.rightClickEngine||changes.rightClickV3||changes.rightClickV3Presentation||changes.rightClickV3LevelScopes||changes.rightClickActivatedBuckets)void rebuildMenus().then(()=>changes.rightClickV3Presentation||changes.rightClickV3LevelScopes?refreshV3Inventory():undefined).catch(()=>{});
 });
 /* Cosmetic only. A context-menu gesture grants activeTab for a one-off effect.
-   No persistent page injection, tracking, or new host permissions. Chrome does
-   not let page DOM paint across its sidebar chrome: the orb ends at the page's
-   right edge and a separate Shelf impact pulse completes the illusion. */
+   A passive content listener records the local click origin only. Chrome does
+   not let page DOM paint across its sidebar chrome: the light ends at the page's
+   right edge, then hands off to an already visible REDOWN surface. */
 async function launchSaveDroplet(info,tab){
   if(!Number.isInteger(tab?.id))return;
   const sources={
+    frameId:info.frameId||0,
     src:String(info.srcUrl||"").slice(0,2048),
     link:String(info.linkUrl||"").slice(0,2048)
   };
-  // Prevent the visual save orb/ball when the selected cloud is logged out.
-  // The button remains free to start its usual provider login; visual feedback
-  // here is an authenticated ATTEMPT, never a substitute for verified SUCCESS.
-  const session=await chrome.storage.local.get([
-    'shelfColorScheme','cloudflareAuth','googleDriveState','dropbox:state','dropbox:auth','onedrive:state','onedrive:auth'
-  ]).catch(()=>({}));
-  if(!RedownSaveDropletGate.permitted(info.menuItemId,session))return;
-  if(RedownSaveDropletGate.providerFor(info.menuItemId)==='cloudflare'){
-    // An old cached token is NOT proof of a presently authenticated account.
-    // Use the exact Cloudflare account check that the Shelf's "Connected"
-    // status already uses, before any on-page animation or impact signal.
-    // This is only a visual gate; it must not mutate the save workflow.
-    try {
-      const accounts=await listCloudflareAccounts();
-      if(!Array.isArray(accounts))return;
-      const latest=(await chrome.storage.local.get('cloudflareAuth')).cloudflareAuth;
-      if(!latest?.sessionId||latest.sessionId!==session.cloudflareAuth?.sessionId||
-         !RedownSaveDropletGate.permitted(info.menuItemId,{cloudflareAuth:latest}))
-        return;
-    } catch { return; } // Offline, expired, denied: no misleading ball.
-  }
-  const {shelfColorScheme}=session;
-  const event={id:crypto.randomUUID(),at:Date.now()};
-  const results=await chrome.scripting.executeScript({
+  const {shelfColorScheme}=RedownClickFeedback.preferences();
+  const event={type:'redownClickArrival',id:crypto.randomUUID(),at:Date.now(),
+    provider:RedownClickFeedback.providerFor(info.menuItemId),
+    windowId:tab.windowId,tabId:tab.id};
+  const run=RedownClickFeedback.begin(tab.id);
+  let results,current;
+  try{results=await chrome.scripting.executeScript({
     target:{tabId:tab.id},
     world:"ISOLATED",
     args:[sources,shelfColorScheme],
@@ -2867,9 +2851,14 @@ async function launchSaveDroplet(info,tab){
         };
         const theme=colors[palette]||colors.porcelain;
         let startX=Math.round(innerWidth*.56),startY=Math.round(innerHeight*.42);
-        // Context-menu APIs omit cursor coordinates. Prefer the matching image
-        // or link's visible center, never pretend to know an exact mouse point.
-        if(clicked.src||clicked.link){
+        // Use the local contextmenu origin when installed. Existing tabs and
+        // embedded-frame clicks fall back to the matching visible source center.
+        const origin=globalThis.RedownClickOrigin;
+        delete globalThis.RedownClickOrigin;
+        if(clicked.frameId===0&&origin&&Date.now()-origin.at>=0&&Date.now()-origin.at<60000&&Number.isFinite(origin.x)&&Number.isFinite(origin.y)){
+          startX=Math.max(12,Math.min(innerWidth-12,origin.x));
+          startY=Math.max(12,Math.min(innerHeight-12,origin.y));
+        }else if(clicked.src||clicked.link){
           const candidates=document.querySelectorAll('img[src],video[src],a[href]');
           const count=Math.min(candidates.length,800);
           for(let i=0;i<count;i++){
@@ -2896,31 +2885,28 @@ async function launchSaveDroplet(info,tab){
           'will-change:transform,opacity;';
         document.documentElement.appendChild(orb);
         const motion=orb.animate([
-          {offset:0,opacity:0,transform:'translate3d(0,0,0) scale(.4)'},
-          {offset:.12,opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+          {offset:0,opacity:1,transform:'translate3d(0,0,0) scale(.7)'},
           {offset:.55,opacity:1,transform:'translate3d('+(dx*.52)+'px,'+(dy*.43-76)+'px,0) scale(1.15)'},
           {offset:.88,opacity:1,transform:'translate3d('+(dx*.97)+'px,'+(dy*.96)+'px,0) scale(.8)'},
           {offset:.94,opacity:.9,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(1.7,.4)'},
           {offset:1,opacity:0,transform:'translate3d('+dx+'px,'+dy+'px,0) scale(.05)'}
         ],{duration:860,easing:'cubic-bezier(.25,.65,.35,1)',fill:'forwards'});
+        const cancel=()=>{motion.cancel();orb.remove();};
+        window.addEventListener('pagehide',cancel,{once:true});
         return motion.finished.then(()=>{
+          window.removeEventListener('pagehide',cancel);
           orb.remove();
-          const impact=document.createElement('span');
-          impact.setAttribute('aria-hidden','true');
-          impact.style.cssText='position:fixed;pointer-events:none;z-index:2147483647;left:'+(endX-15)+
-            'px;top:'+(endY-15)+'px;width:30px;height:30px;border-radius:50%;border:2px solid '+theme[0]+';';
-          document.documentElement.appendChild(impact);
-          const ring=impact.animate([
-            {opacity:.9,transform:'scale(.45)'},{opacity:0,transform:'scale(2.6)'}
-          ],{duration:420,easing:'ease-out',fill:'forwards'});
-          void ring.finished.finally(()=>impact.remove());
           return {arrived:true};
-        }).catch(()=>orb.remove());
+        }).catch(()=>{orb.remove();window.removeEventListener('pagehide',cancel);return {cancelled:true};});
       }
     }
-  }).catch(()=>[]); // Restricted pages deliberately skip the effect.
-  if(results?.some(frame=>frame.result?.arrived||frame.result?.reduced))
-    await chrome.storage.local.set({redownShelfImpact:{...event,at:Date.now(),kind:results.some(frame=>frame.result?.arrived)?"arrival":"reduced-motion-dispatch"}}).catch(()=>{});
+  });}catch{results=[];}finally{current=RedownClickFeedback.end(run);}
+  // Chrome-protected pages cannot host injected DOM.
+  // Live handoff only: no persisted arrivals, hydration replay or upload callback.
+  // A restricted page can still acknowledge on an already visible REDOWN surface.
+  if(current&&!results?.some(frame=>frame.result?.cancelled))
+    await chrome.runtime.sendMessage({...event,at:Date.now(),
+      destination:RedownClickFeedback.preferences().click2CloudPulseDestination==='provider-card'?'provider-card':'shelf'}).catch(()=>{});
 }
 
 // Go Home is a navigation action, not a saved-object URL lookup.
@@ -2947,16 +2933,15 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  // Acknowledge the selection before destination resolution, OAuth or network I/O.
+  if(RedownClickFeedback.providerFor(info.menuItemId))void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
   if(globalThis.RedownOneDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:onedrive')void launchSaveDroplet(info,tab).catch(()=>{});
     await onedriveProvider.dispatch(info);return;
   }
   if(globalThis.RedownDropboxMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:dropbox')void launchSaveDroplet(info,tab).catch(()=>{});
     await dropboxProvider.dispatch(info,tab);return;
   }
   if(globalThis.RedownGoogleDriveMenu?.owns(info.menuItemId)){
-    if(info.menuItemId==='provider:google-drive')void launchSaveDroplet(info,tab).catch(()=>{});
     await RedownGoogleDriveProvider.dispatch(info);return;
   }
   const attemptId=crypto.randomUUID();
@@ -2984,7 +2969,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   return saveResolvedRightClick(info,tab,resolved,profiles);
 });
 async function saveResolvedRightClick(info,tab,resolved,profiles){
-  void Promise.resolve(launchSaveDroplet(info,tab)).catch(()=>{});
   // Hitomi gallery Download is an anchor and can expose a javascript: or
   // same-page link. Do not mistake it for a remote downloadable asset.
   // Hitomi's Download control can be a link to a same-site HTML document.
@@ -3084,6 +3068,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         if(claims.has(key))throw Error('This save request was already used.');
         claims.add(key);
         await chrome.storage.session.remove(key);
+        void Promise.resolve(launchSaveDroplet({...intent.info,menuItemId:message.destinationId},intent.tab)).catch(()=>{});
         await saveResolvedRightClick({...intent.info,menuItemId:message.destinationId},intent.tab,target,profiles);
         return sendResponse({ok:true});
       }

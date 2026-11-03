@@ -6,7 +6,6 @@ import vm from 'node:vm';
 
 const counterSource=await readFile(new URL('../extension/transfer-counter.js',import.meta.url),'utf8');
 const badgeSource=await readFile(new URL('../extension/daily-save-badge.js',import.meta.url),'utf8');
-const gateSource=await readFile(new URL('../extension/save-droplet-gate.js',import.meta.url),'utf8');
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function fixture(start=new Date(2026,10,2,15,0)){
   let current=start;
@@ -36,7 +35,6 @@ function fixture(start=new Date(2026,10,2,15,0)){
   const context=vm.createContext({crypto:webcrypto,console});
   vm.runInContext(counterSource,context);
   vm.runInContext(badgeSource,context);
-  vm.runInContext(gateSource,context);
   const counter=context.RedownTransferCounter.create(storage,null,null,()=>current);
   const badge=context.RedownDailySaveBadge.create({chrome,readDaily:()=>counter.readDaily(),now:()=>current});
   badge.install();
@@ -115,34 +113,4 @@ test('Daily badge retains count across worker restart and has bounded display fo
  assert.equal(f.last(),'1');
  assert.equal(f.state.redownDailyVerified.total,before.total);
  assert.equal(restart.preview({version:1,day:before.day,total:'1000'}),'999+');
-});
-
-test('No orbs without verified provider login state; expired Cloudflare token is rejected',()=>{
- const ctx=vm.createContext({});
- vm.runInContext(gateSource,ctx);
- const permitted=ctx.RedownSaveDropletGate.permitted;
- const now=Date.now();
- const cloudflare={cloudflareAuth:{accessToken:'token',expiresAt:now+60000,reconnectRequired:false}};
- assert.equal(permitted('v3:folder',{},now),false);
- assert.equal(permitted('v3:folder',{cloudflareAuth:{...cloudflare.cloudflareAuth,expiresAt:now-1}},now),false);
- assert.equal(permitted('v3:folder',{cloudflareAuth:{...cloudflare.cloudflareAuth,reconnectRequired:true}},now),false);
- assert.equal(permitted('v3:folder',cloudflare,now),true);
- assert.equal(permitted('provider:google-drive',{googleDriveState:{phase:'connecting'}},now),false);
- assert.equal(permitted('provider:google-drive',{googleDriveState:{phase:'connected',accountId:'g'}},now),true);
- assert.equal(permitted('provider:dropbox',{'dropbox:state':{phase:'connected',rootReady:false,accountId:'dbid:a',connectionId:'c'}},now),false);
- assert.equal(permitted('provider:dropbox',{'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'}},now),false,'stale connected state without refresh grant must not animate');
- assert.equal(permitted('provider:dropbox',{
-  'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'},
-  'dropbox:auth':{accountId:'dbid:a',connectionId:'c',refreshToken:'refresh-grant'}
- },now),true);
- assert.equal(permitted('provider:dropbox',{
-  'dropbox:state':{phase:'connected',rootReady:true,accountId:'dbid:a',connectionId:'c'},
-  'dropbox:auth':{accountId:'dbid:someone-else',connectionId:'c',refreshToken:'refresh-grant'}
- },now),false,'account mismatch must not animate');
- assert.equal(permitted('provider:onedrive',{'onedrive:state':{phase:'disconnected'}},now),false);
- assert.equal(permitted('provider:onedrive',{'onedrive:state':{phase:'connected',rootReady:true,accountId:'a',driveId:'drive'}},now),false,'missing original grant must not animate');
- assert.equal(permitted('provider:onedrive',{
-  'onedrive:state':{phase:'connected',rootReady:true,accountId:'a',driveId:'drive',connectionId:'conn'},
-  'onedrive:auth':{accountId:'a',driveId:'drive',connectionId:'conn',refreshToken:'refresh-grant'}
- },now),true);
 });

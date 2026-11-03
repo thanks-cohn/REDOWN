@@ -95,5 +95,10 @@
   "extension/onedrive-api.js",
   "extension/onedrive-auth.js",
   "extension/onedrive-provider.js",
-  "extension/shelf-onedrive.js"
+  "extension/shelf-onedrive.js",
+  "extension/click-feedback.js",
+  "extension/click-origin.js",
+  "extension/shelf-click-feedback.js",
+  "extension/shelf-save-feedback.js",
+  "scripts/click-feedback-preview.mjs"
 ]

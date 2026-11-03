@@ -33,6 +33,9 @@ def build():
         assert (SOURCE / name).is_file(), f'Missing release file: {name}'
         assert not (SOURCE / name).is_symlink(), f'Symlink: {name}'
     refs = [manifest['background']['service_worker'], manifest['options_page']]
+    for content in manifest.get('content_scripts', []):
+        refs.extend(content.get('js', []))
+        refs.extend(content.get('css', []))
     if manifest['action'].get('default_popup'):
         refs.append(manifest['action']['default_popup'])
     if manifest.get('side_panel', {}).get('default_path'):
