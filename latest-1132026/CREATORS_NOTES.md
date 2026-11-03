@@ -69,3 +69,20 @@ A good consumer product can be a sophisticated engine behind the scenes while fe
 **Creator's litmus test:** If someone has never heard of bucket depth, Narrow, destination labels or Chrome menu registration, could they understand each choice simply by trying the picture? And could they leave the tour without anything in their actual cloud changing? If yes, the experience is pointing in the intended direction.
 
 **Status:** Proposed creator direction only. A saved Markdown note does not establish that any UI, provisioning, or native-menu feature is implemented.
+
+## Addendum — The Dashboard should also be a place where REDOWN truly works
+
+**Additional owner direction, November 3, 2026 (proposal):**
+
+The teaching picture revealed another opportunity. Why should REDOWN's right-click usefulness stop at the browser webpage boundary? When someone is looking at a **real image within REDOWN's own Dashboard or Explorer**, right-clicking should let them send the original image to **another connected cloud**. Cloudflare, Google Drive, Dropbox, OneDrive and future supported destinations should be available subject to actual authorization.
+
+This turns the Dashboard into two complementary things: **a place to use REDOWN** and **a place to experiment with its interaction design**. We can first polish the menus here, observe whether Simple, Narrow and Depth are intuitive, and then bring the supported menu *structure and action semantics* to Chrome's native context menu. That is not a promise that Chrome will reproduce every in-app visual flourish.
+
+Never lose the earlier distinction. The **Quick Tour picture is a harmless illustration**; a right-click on it shows a fake menu that touches nothing. A **real Explorer image** is a real item: choosing an authorized cloud starts a real, verifiable copy/save of the original bytes. Its original source is preserved, privacy is respected, and success is shown only when the destination actually confirms the result.
+
+The creator's broader intuition is that **REDOWN should function like a small coherent file-management environment**, not a collection of unrelated setup pages. The same concepts should feel natural wherever the user encounters them: learn on the picture, work on real images, and rely on the Chrome menu when browsing the web.
+
+The proposed workflow is: **try a design inside REDOWN, validate real behavior, then translate what Chrome supports.** The existing V3 engine remains the single production authority; the Dashboard does not become a second, conflicting save engine.
+
+**Status:** Creator's proposed product direction, not verified implementation.
+
