@@ -48,7 +48,7 @@ test('failure pulses exactly twice, finishes steady in lower-left, and does not 
   await h.feedback('failure');
   assert.equal(h.frames.length,5,'four pulse frames and one stable restoration');
   assert.deepEqual(h.delays,[150,170,150]);
-  const bright=pixel(h.frames[0],32,7,25),rest=pixel(h.frames[1],32,7,25);
+  const bright=pixel(h.frames[0],32,12,25),rest=pixel(h.frames[1],32,12,25);
   assert.ok(bright[0]>rest[0],'first pulse is brighter red');
   assert.ok(bright[0]>bright[1]&&bright[0]>bright[2]);
   assert.ok(pixel(h.frames.at(-1),32,7,25)[0]>100,'red indicator persists');
