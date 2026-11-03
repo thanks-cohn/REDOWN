@@ -1,6 +1,0 @@
-# REDOWN V3+1 isolated lab Worker. NEVER use the root wrangler.toml for this Worker.
-# Lab-only deployment target; no customer traffic, no production R2 bindings.
-name = "click2cloud-v3p1-r2-lab"
-main = "src/index.js"
-compatibility_date = "2026-11-03"
-workers_dev = false
