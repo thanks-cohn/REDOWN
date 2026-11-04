@@ -189,3 +189,25 @@ A **100% pass rate is meaningful only against a transparently declared, complete
 **Never rush a product release because a logical suite looks green.** Complete native Chrome, real provider, BOOT, migration and performance gates remain distinct and non-negotiable.
 
 **Owner's final vision:** A beautifully logical, powerful, reusable engineering pipeline. Start with BOOT + RIGHT-CLICK + UNIVERSAL FILE API. Grow it into a standard that future agents and future projects can inherit.
+
+## 11. Clarification: the pipeline must be **iteratively self-correcting**
+
+The owner specifically means **a closed, evidence-driven repair loop**, not just “run many simulations,” collect logs, and ask a human to investigate everything manually.
+
+**Expected development behavior:** once an authorized agent can run the corpus, it should autonomously repeat a bounded cycle against **the actual source-owned system**:
+
+1. **Run and classify** all relevant deterministic goldens, generated tests and required boundaries. Establish the real failing assertion, first observed fault, correlated downstream failures, *independent concurrent failures*, and missing diagnostics.
+2. **Reproduce and minimize** every new materially distinct failure to an exact code revision, input state, operation/transition sequence, fault-injection setting, stable seed and independently recorded expected outcome.
+3. **Trace causality** using Glaciaring, BOOT receipts and Universal File API operation evidence. Identify the owning module/guard/transition rather than applying speculative GUI-level workarounds. Preserve multiple candidate faults rather than hiding independent breakages.
+4. **Form a falsifiable repair hypothesis** with a predicted behavior change, affected neighboring contracts, potential regressions and an explicit reason the change should fix the failure. Record it before touching code.
+5. **Patch only the owning implementation** in a disposable branch/worktree with the smallest effective change. Never “fix” a failure by loosening assertions, fabricating provider receipts, changing owner-approved expected output, deleting test cases, or suppressing mandatory diagnostics.
+6. **Iterate verification:** rerun the minimized failing case, related state-tree neighbors, affected BOOT↔RIGHT-CLICK↔FILE API handoffs, the full accepted golden regression suite, the generated fault campaigns and the same-profile performance/security gates. If not green, preserve the new evidence and refine the hypothesis; do not claim convergence.
+7. **Promote knowledge:** add each genuine new bug to the durable corpus with the original failure receipt, minimal reproducer, correction commit, independent fixed result, neighboring regressions and relevant signatures. Future agents must discover and learn from this record automatically, without rewriting history.
+8. **Stop safely:** enforce explicit iteration/time/compute/test-operation budgets and no-progress limits; report `BLOCKED` or `UNKNOWN` with the failed boundary and necessary owner decision. A coding agent may prepare a validated PR, **not unilaterally merge, deploy, spend cloud resources, escalate permissions or self-modify production**.
+
+**Independent convergence certificate:** record before/after coverage by requirements, states, transitions, source branches and proof class; fixed versus newly introduced failures; unverified external gates; last reproducible seed; repaired source hashes; unchanged golden-oracle hashes; diagnostic observation gaps; and benchmark deltas. Zero known local failures does not establish exhaustiveness or live release readiness.
+
+**Prioritize productive iteration over vanity metrics.** The ideal result is fewer human clicks, more precisely reproduced root causes, reversible incremental fixes and permanent learning across REDOWN, Click2Cloud and future systems. A new agent should be able to ask: *“What remains broken, why did prior repairs fail, what invariant do we expect, and which one new source change can I prove works?”*
+
+**Separate AI-proposed repair from user-authorized change:** automated local test/fix/test loops can operate on development sources and clearly permissioned local fixture data. Production deployment, real provider mutations, credential changes, OAuth/billing decisions and source-of-truth requirement changes remain behind explicit approval and separate evidence gates.
+
