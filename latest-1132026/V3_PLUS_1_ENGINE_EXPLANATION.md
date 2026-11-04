@@ -3,7 +3,9 @@
 **Date:** 2026-11-03  
 **Document type:** Owner-directed explanatory design, **NOT** source/browser/live-cloud implementation evidence.  
 **Scope:** V3+1 onboarding and teaching surface layered around the existing V3 production right-click engine.  
-**See also:** [NEED TO DO](NEED_TO_DO.md) · [Creator Notes](CREATORS_NOTES.md)
+**See also:** [NEED TO DO](NEED_TO_DO.md) · [Creator Notes](CREATORS_NOTES.md) · [long-term V3+1 engine transplant and standalone Click2Cloud roadmap](CLICK2CLOUD_TRANSPLANT_THEN_STANDALONE_DEVELOPER_RELEASE_ROADMAP.md)
+
+**Terminology boundary:** This historical document describes the *Quick Tour's faux teaching surface over current V3*, not the separate real Click2Cloud V3+1 engine being developed for eventual tested replacement. The linked roadmap governs the later engine transplant and post-transplant standalone release; it does not make fictional Quick Tour clicks perform real saves.
 
 ## 1. Definition
 
