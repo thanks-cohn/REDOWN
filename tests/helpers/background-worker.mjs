@@ -32,7 +32,13 @@ export function worker(local=config(),failure={}){
  const context=vm.createContext({indexedDB:failure.database||new IDBFactory(),chrome,console:{warn:(...x)=>warnings.push(x),error:(...x)=>warnings.push(x)},navigator:{locks:{request:async(n,f)=>f()}},crypto:webcrypto,TextEncoder,TextDecoder,URL,URLSearchParams,setTimeout:(fn,ms,...args)=>setTimeout(fn,ms===5000?25:ms===2500?30:ms,...args),clearTimeout,setInterval,clearInterval,structuredClone,atob,btoa,performance});
  context.importScripts=(...paths)=>paths.forEach(p=>{if(failure.import===p)throw Error('injected import error');return vm.runInContext(readFileSync('extension/'+p,'utf8'),context,{filename:p});});
  let evaluationError;try{vm.runInContext(failure.backgroundSource||source,context,{filename:'background.js'});}catch(error){if(!failure.import)throw error;evaluationError=error;}
- const ready=async()=>{await vm.runInContext('menuRebuildQueue',context).catch(()=>{});await new Promise(r=>setImmediate(r));};
+ const ready=async()=>{
+  // A guarded service-worker fallback intentionally has no background menu queue.
+  // The harness must not confuse its absence with a broken emergency toolbar.
+  const queue=vm.runInContext('typeof menuRebuildQueue === "undefined" ? null : menuRebuildQueue',context);
+  if(queue && typeof queue.then==='function')await queue.catch(()=>{});
+  await new Promise(r=>setImmediate(r));
+ };
  const click=async tab=>{
    tab={id:1,...tab,active:true};const index=openTabs.findIndex(t=>t.windowId===tab.windowId);
    if(index>=0)openTabs[index]=tab;else openTabs.push(tab);
