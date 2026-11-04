@@ -25,7 +25,7 @@ This page is the **directive and program index**. The shipped BOOT API contract 
 
 ## The Golden 500: automatable, inspectable, repeatable
 
-The Python coordinator `scripts/boot_golden.py` generates exactly **500 reproducible case IDs** (`BOOT-001` … `BOOT-500`), each a unique intersection of **20 lifecycle states × 25 fault profiles**. The Node executor `scripts/boot-golden-matrix.mjs` loads the real current `extension/background.js` and guarded `service-worker.js` into the existing VM harness, injects Chrome API and import faults, exercises a toolbar gesture, and writes one receipt per case.
+The Python coordinator `scripts/boot_golden.py` generates exactly **500 reproducible case IDs** (`BOOT-001` … `BOOT-500`), each a unique intersection of **20 lifecycle states × 25 fault profiles**. The Node executor `scripts/boot-golden-matrix.mjs` loads the real current `extension/background.js` and guarded `service-worker.js` into the existing VM harness, injects Chrome API and import faults, exercises a toolbar gesture, and writes one receipt per case. The runtime receipt also distinguishes the 500-case BOOT gate from the cross-subsystem right-click transfer-receipt gate; one must not conceal failure in the other.
 
 Twenty lifecycle families: existing profile, empty storage, missing native-ID cache, disconnected account, popup preference, interrupted/old menu generation, missing/disabled destinations, Nested, Depth, multiple destinations, Worker not prepared, long History, account change, reinstall-like empty storage, cold worker wake, missing child, missing root, and lost cache after restart.
 
@@ -37,19 +37,19 @@ Run from a clean local REDOWN checkout with installed dependencies:
 
 ```bash
 npm ci
-python scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome
+python scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome --chrome-cycles 5
 ```
 
 On Windows PowerShell:
 
 ```powershell
 npm ci
-py -3 scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome --chrome-bin "C:\Program Files\Google\Chrome\Application\chrome.exe"
+py -3 scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome --chrome-cycles 5 --chrome-bin "C:\Program Files\Google\Chrome\Application\chrome.exe"
 ```
 
 The coordinator runs source syntax/import checks, the historical native-menu reproduction, BOOT schema conformance, existing focused regression tests, then every generated case twice; it reruns failures separately without hiding earlier failures. It writes `work/boot-golden/cases.json`, per-round and triage JSONL, logs, `report.json`, and `report.md`. Retain the case manifest SHA-256 and failing IDs across agent iterations.
 
-`--installed-chrome` additionally runs the existing **isolated** real Chrome smoke in a temporary profile (never the owner's normal Chrome data). It tests installation/worker/context basics but **does NOT automate the actual toolbar-icon gesture, visual Shelf render, or Chrome's pre-reload Errors view**. Therefore its PASS does NOT close the observed incident. If administrator policy blocks unpacked extensions, record BLOCKED, never work around policy.
+`--installed-chrome` additionally repeats the existing **isolated** real Chrome smoke in a new temporary profile for each cycle (three by default, configurable with \`--chrome-cycles\`) (never the owner's normal Chrome data). It tests installation/worker/context basics but **does NOT automate the actual toolbar-icon gesture, visual Shelf render, or Chrome's pre-reload Errors view**. Therefore its PASS does NOT close the observed incident. If administrator policy blocks unpacked extensions, record BLOCKED, never work around policy.
 
 The Python script is a **test/retest controller, not a self-modifying patch agent**. It writes evidence; Codex or a human reviews a failure, changes the smallest permitted boundary, reruns the exact failing IDs and the full 500, then verifies on Chrome. Do not create an automatic fix that modifies production files blindly from a stack trace.
 
