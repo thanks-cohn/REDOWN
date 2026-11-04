@@ -118,11 +118,13 @@ def main() -> int:
                         help="Also run existing isolated real-Chrome smoke; never use your personal profile")
     parser.add_argument("--chrome-bin", default="",
                         help="Chrome/Chromium binary path; defaults to CHROME_BIN or system runner default")
+    parser.add_argument("--chrome-cycles", type=int, default=3,
+                        help="Fresh isolated installed Chrome smoke cycles when enabled (1 to 20)")
     parser.add_argument("--skip-focused", action="store_true",
                         help="Skip focused historical regressions (cannot satisfy release gate)")
     args = parser.parse_args()
-    if not 1 <= args.rounds <= 10 or not 0 <= args.rerun_failures <= 3:
-        parser.error("rounds must be 1..10 and rerun-failures 0..3")
+    if not 1 <= args.rounds <= 10 or not 0 <= args.rerun_failures <= 3 or not 1 <= args.chrome_cycles <= 20:
+        parser.error("rounds must be 1..10, rerun-failures 0..3 and chrome-cycles 1..20")
     out_dir = safe_path(args.output)
     if out_dir == ROOT:
         parser.error("--output cannot be repository root")
@@ -204,24 +206,33 @@ def main() -> int:
         print(f"Triage {iteration}: {len(now_failed)}/{len(records)} still failing")
 
     if args.installed_chrome:
-        installed = out_dir / "installed-chrome.json"
         env = os.environ.copy()
         if args.chrome_bin:
             env["CHROME_BIN"] = args.chrome_bin
-        command = ["node", "scripts/installed-chrome.mjs", "extension", str(installed)]
-        probe = run(command, out_dir / "installed-chrome.log", timeout=180, env=env)
-        try:
-            data = json.loads(installed.read_text(encoding="utf-8"))
-            # Only the existing smoke's own declared evidence, not toolbar-click proof.
-            report["installedChrome"] = {
-                "status": data.get("state", "BLOCKED").upper(),
-                "assertions": data.get("assertions", []),
-                "code": data.get("code", ""),
-                "limitation": "Smoke is NOT an actual first toolbar gesture or Shelf render acceptance",
-                "execution": probe
-            }
-        except (FileNotFoundError, json.JSONDecodeError):
-            report["installedChrome"] = {"status": "BLOCKED", "execution": probe}
+        cycles = []
+        for cycle in range(1, args.chrome_cycles + 1):
+            installed = out_dir / f"installed-chrome-{cycle:02d}.json"
+            command = ["node", "scripts/installed-chrome.mjs", "extension", str(installed)]
+            probe = run(command, out_dir / f"installed-chrome-{cycle:02d}.log",
+                        timeout=180, env=env)
+            try:
+                data = json.loads(installed.read_text(encoding="utf-8"))
+                state = str(data.get("state", "blocked")).upper()
+                cycles.append({
+                    "cycle": cycle, "status": state,
+                    "assertions": data.get("assertions", []),
+                    "code": data.get("code", ""), "execution": probe
+                })
+            except (FileNotFoundError, json.JSONDecodeError):
+                cycles.append({"cycle": cycle, "status": "BLOCKED", "execution": probe})
+            print(f"Installed Chrome isolated cycle {cycle}: {cycles[-1]['status']}")
+        status = ("PASSED" if all(x["status"] == "PASSED" for x in cycles)
+                  else "FAILED" if any(x["status"] == "FAILED" for x in cycles)
+                  else "BLOCKED")
+        report["installedChrome"] = {
+            "status": status, "cycles": cycles,
+            "limitation": "Installed smoke is NOT a real first toolbar gesture or rendered Shelf acceptance"
+        }
 
     summary = collections.Counter(
         reason for record in last_records.values()
