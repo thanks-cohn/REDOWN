@@ -138,7 +138,7 @@ The user should be able to choose a motion mode per mascot, per named action or 
 5. **Farewell.** She makes eye contact and **waves goodbye**, using normal articulated joint motion enriched (when enabled) by subtle AMEOBO-style chrome settling effects.
 6. **End gracefully.** The demonstration closes cleanly; no stuck GPU resources, perpetual simulation, surprise overlays, or interruptions to REDOWN file workflows.
 
-*Editorial correction to preserve intent:* the deformation description above means **jiggles**; the demo deliberately demonstrates shape morphing, then a rigged human wave. This is a conceptual animation sequence, not a claim that a single image or shader can already execute it.
+The demo deliberately demonstrates fluid shape morphing followed by a recognizable, articulated humanoid wave. This is a conceptual sequence, not a claim that a single image or shader can already execute it.
 
 ### What the demo must prove
 
