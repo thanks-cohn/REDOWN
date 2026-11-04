@@ -1,4 +1,6 @@
 # REDOWN → Click2Cloud V3+1 → Standalone Click2Cloud
+
+**Shared test-system guiding principle:** [Universal Agentic Test Corpus & Pipeline](../IMPORTANT/UNIVERSAL_AGENTIC_TEST_CORPUS_AND_PIPELINE.md) — reuse one logical scenario generator/runner across BOOT, RIGHT-CLICK and UNIVERSAL FILE API, with real owners, independent oracles, permanent regression evidence and future-project adapters. This strengthens—not replaces—the transplant, Chrome/provider and release gates.
 ## Transplant-first, then branch the proven REDOWN experience for a developer-accessible release
 
 **Owner direction:** November 3, 2026  
