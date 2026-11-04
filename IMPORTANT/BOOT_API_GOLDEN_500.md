@@ -37,6 +37,7 @@ Run from a clean local REDOWN checkout with installed dependencies:
 
 ```bash
 npm ci
+python -m pip install jsonschema==4.26.0
 python scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome --chrome-cycles 5
 ```
 
@@ -44,6 +45,7 @@ On Windows PowerShell:
 
 ```powershell
 npm ci
+py -3 -m pip install jsonschema==4.26.0
 py -3 scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome --chrome-cycles 5 --chrome-bin "C:\Program Files\Google\Chrome\Application\chrome.exe"
 ```
 
