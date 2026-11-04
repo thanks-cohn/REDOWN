@@ -185,3 +185,54 @@ Distinguish two export capabilities, and verify them separately:
 > **Upload the character you imagine. REDOWN turns it into a chrome 3D mascot. The Mascot API gives it motion and a social life. Motion Studio lets you invent its moves. Export lets you take your creation into games and other worlds.**
 
 The feature should feel effortless to creators, while the engineering contract remains composable, testable, portable, and honest about the considerable image-to-3D/rigging challenge.
+
+## 12. Physical slapstick, pick-up interactions, and recurring comedy callbacks
+
+**Additional owner direction:** Mascots should feel like little physical performers with a sense of comedic history, not untouchable floating UI badges. They can **trip, stumble, fall, be picked up, carried, gently put down, recover, react to another mascot and later call back to a previous mishap**.
+
+The desired comic ambition is **absurd, sharply timed, cutaway-like animated-sitcom humor** (the owner referenced *Family Guy* as a level of comic energy), expressed through *original* character writing, movement, timing and situational jokes—not copying any show's characters, dialogue or specific gags.
+
+### Core user and mascot interactions
+
+| Action / event | Physical behavior | Comedy beat or follow-up |
+|---|---|---|
+| `stumble` or `trip` | Contact foot/edge, lose balance, flail briefly, recover or tumble; fluid characters squash and wobble instead of using humanoid legs | Incongruously dignified recovery, offended stare at harmless object |
+| `fall` | Safe bounded ragdoll/pose blend with impact timing and recoverable grounded state | Comically long pause, looking at camera, tiny theatrical reaction |
+| `pickUp` | User can click/drag or choose Pick Up; another mascot can use compatible grasp/attachment anchors | Mascot dangles, stiffens, waves or reacts to being carried |
+| `carry` / `putDown` / `dropSafely` | Attached mascot tracks holder without teleporting or clipping; releases to safe ground/contact pose | Extra careful landing followed by overconfident tiny bow |
+| `helpUp` | Second mascot approaches and offers assistance with synced contact; may succeed or fail amusingly | Helper also stumbles, then both pretend nothing happened |
+| `recover` | From trip/fall/carried state, smoothly reconstitute idle/walk/fly | Delayed side-eye or mock indignation |
+| `callbackGag` | Context-sensitive recurrence references a previously observed interaction via bounded scene memory | Later, mascot approaches the same obstacle wearing absurd protective gear, or solemnly avoids the harmless tile |
+
+**Two meanings of “callback” should both be supported:**
+
+1. **Comedy callback:** a recurring joke that remembers an earlier physical mishap and pays it off much later with a surprising, coherent reaction. Use bounded per-session event history and cooldowns rather than repeating the same gag on every click.
+2. **Programmatic callback:** a safe event interface for action authors, such as `onTrip`, `onFall`, `onPickedUp`, `onReleased`, `onRecovered`, and `onGagBeat`. These are proposed semantic event names, **not implemented APIs**. Return observable action/rig IDs, state, outcome and timing, not user secrets.
+
+### Standardized motion state and rig compatibility
+
+- Reuse the existing generic actor/action vocabulary across **AMEOBO/AMEBOE (owner pronunciation: MEBO)** and future uploaded mascots. Preserve source naming until a separate naming decision is applied throughout the codebase.
+- Maintain explicit states such as `idle`, `moving`, `stumbling`, `falling`, `grounded`, `carried`, `recovering`, plus cancellable gesture overlays and safe interruptions. Transitions are deterministic and validated.
+- Interactions use compatible skeletal/rig/soft-body anchors, contact constraints, stage boundaries and ownership arbitration. Some blob characters can be lifted by a chrome droplet/core rather than imaginary limbs; humanoids may use actual hands, joints and ragdoll blending.
+- Contact, release and collision cannot trap a mascot inside an active button, hide an essential toolbar/Shelf element, steal input focus or interrupt file saves; user can dismiss, reset, move or disable any animation.
+- A mascot may react to *visible authorized UI state*, but comedy memory should be strictly bounded, local by default, privacy-conscious and unrelated to collecting browsing provenance.
+- Comedy timing is part of the animation contract: **setup → mishap → reaction/awkward pause → delayed callback → return to normal**. Support randomized but seeded and reproducible performances, not continuous disruptive noise.
+
+### Original sample running gag
+
+1. MEBO glides confidently toward a menu item, bumps an invisible edge, and collapses into a glittering chrome puddle.
+2. A second mascot pulls MEBO up. MEBO rigidly straightens, behaves as if everything was intentional, and points at the user's intended destination.
+3. Minutes later, MEBO returns with an enormous miniature traffic cone, places it carefully beside the offending edge, salutes it ceremoniously—and then trips over the cone.
+
+This is an **original illustrative gag**, not a shipping asset or a copied television bit. Deliver such moments sparingly so their surprise and personality survive repeated use.
+
+### Acceptance and accessibility
+
+- A test harness can invoke `trip → fall → pickUp → carry → putDown → recover` through the actual Mascot API and observe every state and event without opening the animation UI.
+- Two different compatible rigs can interact without invalid attachment, lost actors, ghost collisions or duplicated animation ownership.
+- A deterministic seed reproduces a comedy callback later in the same permitted session. The same gag is suppressed by cooldown/variety rules when inappropriate.
+- Reduced-motion, pause, disable and keyboard input provide graceful alternatives; no forced sound, frightening injury, excessive flashing or occlusion of productive UI.
+- On 4 GB-class hardware, a low-cost keyframe/rig fallback can perform the same *comic intent* without full ragdoll physics or expensive fluid simulation. Profile timing and responsiveness rather than assuming parity.
+- The behavior API and its fixtures can eventually join the Universal Agentic Test Corpus as a fourth **mascot-interaction** domain through an adapter, sharing scenario generation, state-transition checks, reproducible failures and regression records. Mascot behavior must **never** become a prerequisite for BOOT, RIGHT-CLICK or UNIVERSAL FILE API correctness.
+- These are future **REDOWN Mascot API** requirements. As already planned, the first standalone Click2Cloud release excludes the public SKIN and Mask/MASCOT extensibility APIs, even if REDOWN retains some built-in decorative character animations.
+
