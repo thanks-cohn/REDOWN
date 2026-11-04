@@ -49,6 +49,12 @@ try{
  const snapshot=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"snapshot"})');
  if(!snapshot.ok||snapshot.result.data.components.authorization!=='disconnected')throw Error('PASSIVE_SNAPSHOT_FAILED');
  record.assertions.push({id:'passive-disconnected-not-green',passed:true});
+ const boot=await evaluate('chrome.runtime.sendMessage({type:"bootV1",operation:"audit"})');
+ if(!boot?.ok||boot.result?.components?.worker?.state!=='ready')throw Error('BOOT_REAL_WORKER_AUDIT_FAILED');
+ record.boot={worker:boot.result.components.worker.state,
+   toolbar:boot.result.components.toolbar?.state||'unknown',
+   nativeMenu:boot.result.components.nativeMenu?.state||'unknown'};
+ record.assertions.push({id:'real-worker-boot-audit-not-toolbar-gesture',passed:true});
  const bundle=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"exportSupport"})');
  if(!bundle.ok||bundle.result.data.schemaVersion!=='1.0.0')throw Error('SUPPORT_EXPORT_FAILED');
  record.assertions.push({id:'sanitized-export',passed:true});
