@@ -107,6 +107,79 @@ Treat portability as a core aspiration:
 - A supported 3D asset and skeletal clip export opens and animates in an external application, with limitations clearly listed.
 - Tests distinguish scripted mock preview from real 3D generation, valid skeleton, GPU/browser behavior and externally verified export.
 
+## 8. Dual-mode motion: ordinary characters AND AMEOBO fluid chrome
+
+**Additional owner direction, November 3, 2026:** Transfer AMEOBO's expressive chrome deformation technology into the general Mascot API. A user-created character should not be restricted to its ordinary skeleton. The owner wants a choice between moving **normally**, or moving **the AMEOBO way**: playful jiggling, fluid distortions, elastic squash/stretch, chrome ripples, gleaming reflections, shape-shifting and physically appealing reactions.
+
+### Three interoperable animation modes
+
+1. **NORMAL / RIGGED:** Conventional skeletal, joint-driven poses, actions, motion clips, and interaction anchors. Default for conventional humanoid movements and engine portability.
+2. **AMEOBO / FLUID CHROME:** Non-rigid, elastic and procedural motion layered on the character (jiggle, squash/stretch, wobble, melt/reform, waves, soft-body-inspired deformations and transformative morphs). Behaviors are bounded by visual and interaction constraints. They may be implemented using blend shapes, morph targets, bones, shaders, geometry deformation, simulation, or hybrids after benchmarks—not by assuming one technology fits every character.
+3. **HYBRID:** Animate with normal joints while adding expressive chrome jiggling/distortion on top; for example, a character waves goodbye and the arm smoothly settles in a metallic ripple. Each layer has independent authoring controls, intensity, timing, quality level and disable/fallback handling.
+
+The user should be able to choose a motion mode per mascot, per named action or on a timeline; do **not** force AMEOBO's blob skeleton into humanoid characters. Retain a recognizable silhouette when intended and allow full transformations only by explicit design. Provide real preview and easy undo in Motion Studio.
+
+### Proposed effect and interchange abstraction
+
+- Define a versioned `DeformationTrack` / `EffectTrack` separate from the base skeleton and semantic action. Describe targets (mesh/region), intensity, timing, shape/constraints, quality hints, and deterministic seed where applicable.
+- Provide optional `morph(fromShape, toShape)`, `jiggle(region, amount)`, `ripple(region, amplitude)`, `squashStretch(region, amount)`, and `settle()` semantic verbs; these are **illustrative API concepts**, not existing calls.
+- A canonical motion/behavior source must be independent of render implementation. A runtime adapter can use high-quality simulation; a fallback adapter can choose predefined blend shapes, baked animations, lightweight vertex displacement or even a purely skeletal rendition.
+- Treat material/shader compatibility separately from motion compatibility. The REDOWN chrome aesthetic should degrade into a standard metallic PBR material or an explicitly documented engine-specific shader where the original renderer is unavailable.
+- The combination of skeletal movement, procedural motion and transforms must be governed by stable priorities, layer weights and contact anchoring so a character can shake or stretch **without breaking handshakes, grabs, gaze, hitboxes or accessibility settings**.
+
+## 9. First flagship demonstration — AMEOBO's grand transformation
+
+**Owner-directed demo sequence** (storyboard/acceptance target; not implemented):
+
+1. **A beautiful chrome entrance.** AMEOBO emerges as fluid, luminous, reflective metallic chrome. The surface feels alive rather than like a stiff primitive.
+2. **The cool arrow.** AMEOBO stretches, sculpts and resolves into an elegant, unmistakable **arrow** to guide attention; it can point at an intended UI element with precise, controllable direction.
+3. **Expressive fluidity.** The arrow ripples, jiggles, twists, or playfully changes form without losing the intended visual rhythm. Each effect should feel polished instead of arbitrary.
+4. **The reveal.** Toward the end, AMEOBO transforms with a graceful, coherent morph into a **beautiful adult woman rendered in chrome**, with a stable humanoid rig and recognizable facial/hand shape.
+5. **Farewell.** She makes eye contact and **waves goodbye**, using normal articulated joint motion enriched (when enabled) by subtle AMEOBO-style chrome settling effects.
+6. **End gracefully.** The demonstration closes cleanly; no stuck GPU resources, perpetual simulation, surprise overlays, or interruptions to REDOWN file workflows.
+
+*Editorial correction to preserve intent:* the deformation description above means **jiggles**; the demo deliberately demonstrates shape morphing, then a rigged human wave. This is a conceptual animation sequence, not a claim that a single image or shader can already execute it.
+
+### What the demo must prove
+
+- An AMEOBO-style non-humanoid/deformable shape can become an ordinary humanoid character **within one cohesive experience**.
+- The arrow can point meaningfully, not merely resemble an arrow in a static screenshot.
+- The transformed humanoid can be animated through the shared rig/action contract, rather than needing a new bespoke animation runtime.
+- Chrome material fidelity, expressive distortion, and action semantics remain separable.
+- The demo has low-resource and reduced-motion alternatives instead of only a luxurious hardware showcase.
+
+## 10. Portability as a first-class API property, not just export of the mesh
+
+**Owner's target:** the Mascot API itself should be **exportable and compatible with any game development system** to the greatest practical degree. REDOWN should be the place where users make characters, motions and behaviors they can genuinely reuse elsewhere.
+
+Distinguish two export capabilities, and verify them separately:
+
+- **Portable baseline asset:** standard mesh, PBR-like chrome material, skeleton, keyframed animations, and supported morph targets in `glTF/GLB`. Bake procedural motion into standard clips, blend shapes or supported animated geometry when feasible, so even a game engine with no REDOWN runtime can play an approximation.
+- **Behavior-preserving integration:** a documented, versioned **Mascot Runtime / Adapter SDK** and machine-readable action/deformation schema that compatible game engine plugins can interpret, preserving jiggle, interactions, procedural rules and quality scaling. Ship concrete adapters only after actual engine tests.
+- **No vendor lock-in by default:** creator-owned motion definitions should be human-readable, versioned, migratable and independently reusable; don't silently require a REDOWN server to run a legitimately exported offline asset.
+- **Compatibility matrix:** target and independently verify common workflows (e.g., Blender, Godot, Unity, Unreal) as engineering milestones, logging which layers import: mesh, bone rig, keyframes, morphs, shader, live behaviors, interaction physics.
+- **Honest boundary:** no file format or SDK can automatically guarantee identical dynamic shaders, real-time simulation and procedural code in *every* engine. Declare what is **portable**, **baked with visual approximation**, **adapter-dependent**, and **unsupported**.
+- **Round-trip tests:** reimport a project-exported character and a user-built action; check joints, motion timing, scale, hand contacts, appearance and fallback quality. Use actual game engine rendering, not solely JSON validation.
+
+## 11. Performance ladder — elegant on 4 GB RAM, spectacular on powerful hardware
+
+**Owner's aspiration:** AMEOBO's chrome distortions and morphing should already look **beautiful on a computer with 4 GB of system RAM**, and become dramatically richer when more memory and capable graphics hardware are available. This is a **design target**, not measured performance or a guaranteed hardware minimum. System RAM, VRAM, GPU capability, CPU, browser memory limits, device thermals, and concurrent tabs all matter.
+
+- **Baseline / light:** low-poly or efficiently compressed geometry, simple PBR chrome environment reflections, limited active bones/blend shapes, cheaper jiggle approximations, low particle count, lower simulation update rate, conservative textures and memory budget. Preserve pleasing silhouette, timing and intentional movement.
+- **Balanced:** additional dynamic reflections, smoother deformation, more secondary motion, finer animation interpolation, more expressive material transitions and improved collision fidelity when profiled.
+- **Cinematic / high:** richer fluid/soft-body-like effects, finely resolved morphs, detailed chrome reflections, higher temporal smoothness, simulated interactions and optional extra effects when actual headroom supports them.
+- **Quality auto-selection:** probe capabilities conservatively, monitor performance and memory pressure, allow manual override, pause/suspend offscreen mascots and favor responsive REDOWN controls over spectacle. Never mistake advertised RAM for available GPU memory.
+- **Accessibility:** full motion disable, reduced-motion mode, no flashing/flicker, and a still or gentle arrow-and-wave representation when device budgets or user preferences demand it.
+- **Acceptance must measure, not assert:** test 4 GB-class systems and representative stronger systems in supported browsers, with defined load times, smoothness, responsiveness, peak memory and no transfer interference. Keep the animation quality ladder deterministic and independently testable.
+
+## Additive acceptance demonstrations for the new vision
+
+- A user-imported humanoid mascot can perform a familiar skeletal wave in NORMAL mode, an elastic chrome jiggle in AMEOBO mode, and a mixed wave-with-jiggle in HYBRID mode—all without manually rewriting its rig.
+- The scripted AMEOBO **chrome → cool pointing arrow → chrome adult woman → goodbye wave** flagship demo plays end-to-end and returns controls cleanly.
+- The same author-defined wave exported as a standard clip works in an external game engine. A fluid effect is either baked faithfully enough for a documented approximation or reproduced through a verified adapter, with no claim of native universal procedural compatibility.
+- A 4 GB RAM-class test device presents a satisfying version of the demo without excessive memory use or blocking core REDOWN operations, while higher-capability hardware demonstrably enables more detailed effects. Performance claims must cite actual benchmark hardware and recordings.
+- Switching from advanced to baseline quality or reduced-motion in the middle of an action must be safe and visually coherent.
+
 ## Owner's guiding principle
 
 > **Upload the character you imagine. REDOWN turns it into a chrome 3D mascot. The Mascot API gives it motion and a social life. Motion Studio lets you invent its moves. Export lets you take your creation into games and other worlds.**
