@@ -47,8 +47,7 @@ assert len(FAMILIES) == 20 and len(FAULTS) == 25
 
 FOCUSED_TESTS = (
     "tests/boot.test.mjs", "tests/worker-bootstrap-first-install.test.mjs",
-    "tests/entry-point-reliability.test.mjs", "tests/right-click-dispatch.test.mjs",
-    "tests/right-click-current.test.mjs",
+    "tests/entry-point-reliability.test.mjs", "tests/right-click-current.test.mjs",
 )
 
 def manifest() -> dict:
@@ -154,6 +153,10 @@ def main() -> int:
              ["node", "--test", *FOCUSED_TESTS], timeout=600)
     else:
         report["checks"]["focused-historical-regressions"] = {"status": "NOT_RUN"}
+    # Transfer receipt parity is a separate cross-subsystem release gate, not
+    # evidence about worker registration or the Shelf opener.
+    gate("cross-subsystem-right-click-dispatch",
+         ["node", "--test", "tests/right-click-dispatch.test.mjs"], timeout=300)
 
     failures_ever: set[str] = set()
     last_records: dict[str, dict] = {}
@@ -227,11 +230,18 @@ def main() -> int:
     report["failureKinds"] = dict(sorted(summary.items()))
     report["neverPassedCaseCount"] = sum(
         1 for x in last_records.values() if x.get("status") != "PASS")
+    boot_check_names = ("syntax", "historical-menu-reproduction",
+                        "boot-schema", "focused-historical-regressions")
+    boot_checks_ok = all(report["checks"][name].get("status") == "PASS"
+                         for name in boot_check_names)
     checks_ok = all(x.get("status") == "PASS" for x in report["checks"].values())
     corpus_ok = len(last_records) == 500 and not failures_ever
     chrome_ok = report["installedChrome"].get("status") == "PASSED"
     report["gate"] = {
-        "simulatedBoot": "PASS" if corpus_ok and checks_ok else "FAIL_OR_BLOCKED",
+        "golden500Vm": "PASS" if corpus_ok else "FAIL_OR_BLOCKED",
+        "historicalBootChecks": "PASS" if boot_checks_ok else "FAIL_OR_BLOCKED",
+        "crossSubsystemRightClick": report["checks"]["cross-subsystem-right-click-dispatch"]["status"],
+        "simulatedBoot": "PASS" if corpus_ok and boot_checks_ok else "FAIL_OR_BLOCKED",
         "installedChromeSmoke": "PASS" if chrome_ok else "BLOCKED_OR_NOT_RUN",
         "firstToolbarGestureAndShelfRender": "NOT_VERIFIED",
         "ownerOriginalIncidentRootCause": "OPEN",
