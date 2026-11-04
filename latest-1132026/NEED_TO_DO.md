@@ -3,7 +3,9 @@
 **Project:** REDOWN / Click2Cloud — V3+1 right-click onboarding and Quick Tour  
 **Status:** OPEN — owner-directed product specification, not shipped functionality  
 **Scope:** Documentation and future implementation requirements only; this note does not authorize touching real cloud data or changing the current engine.  
-**Companions:** [V3+1 engine explanation](V3_PLUS_1_ENGINE_EXPLANATION.md) · [Creator Notes](CREATORS_NOTES.md)
+**Companions:** [V3+1 engine explanation](V3_PLUS_1_ENGINE_EXPLANATION.md) · [Creator Notes](CREATORS_NOTES.md) · [Click2Cloud transplant → standalone developer release roadmap](CLICK2CLOUD_TRANSPLANT_THEN_STANDALONE_DEVELOPER_RELEASE_ROADMAP.md)
+
+**Separate long-term milestone (OPEN):** Harden V3+1 through the 1,000-case programmatic Scenario Laboratory and Glaciaring, transplant the verified engine into REDOWN behind a reversible feature flag, **then** branch the proven REDOWN product into standalone Click2Cloud. Preserve REDOWN's look and most verified functional experiences, exclude SKIN and Mask/MASCOT APIs, and provide secure programmer-facing Click2Cloud APIs. This is a roadmap, not evidence of shipping or authorization to merge/deploy.
 
 ## P0 — First-run R2 setup: useful before sophisticated
 
