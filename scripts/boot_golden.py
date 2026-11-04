@@ -243,7 +243,7 @@ def main() -> int:
     top = ", ".join(f"{name}: {count}" for name, count in summary.most_common(12)) or "none"
     markdown = (
         "# REDOWN BOOT Golden 500 — execution report\n\n"
-        f"Started: {started}  \nCorpus SHA-256: \`{digest}\`  \n"
+        f"Started: {started}  \nCorpus SHA-256: `{digest}`  \n"
         f"Distinct executed case identities: {len(last_records)}/500  \n"
         f"Failed in any round: {len(failures_ever)}  \n"
         f"Failure categories: {top}  \n"
