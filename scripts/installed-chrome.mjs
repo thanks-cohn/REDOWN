@@ -38,14 +38,23 @@ try{
  let loaded=false;for(let i=0;i<50;i++){loaded=await evaluate('typeof chrome?.runtime?.getManifest === "function" && !!document.getElementById("debug-mode-enabled")');if(loaded)break;await pause(100);}
  if(!loaded){const info=await call('Target.getTargets');record.targetTypes=info.targetInfos.map(t=>({type:t.type,extension:t.url.startsWith('chrome-extension://')}));record.pageTitle=await evaluate('document.title');throw Error('EXTENSION_NOT_LOADED_OR_AUTOMATION_UNSUPPORTED');}
  record.assertions.push({id:'real-options-context',passed:true});
- const targets=await call('Target.getTargets');if(!targets.targetInfos.some(t=>t.type==='service_worker'&&t.url===`chrome-extension://${extensionId}/background.js`))throw Error('BACKGROUND_SERVICE_WORKER_MISSING');
+ const targets=await call('Target.getTargets');if(!targets.targetInfos.some(t=>t.type==='service_worker'&&t.url===`chrome-extension://${extensionId}/${manifest.background.service_worker}`))throw Error('BACKGROUND_SERVICE_WORKER_MISSING');
  record.assertions.push({id:'real-service-worker',passed:true});
+ const shelfResource = await evaluate('fetch(chrome.runtime.getURL("shelf.html")).then(r=>r.ok).catch(()=>false)');
+ if(!shelfResource)throw Error('SHELF_RESOURCE_MISSING');
+ record.assertions.push({id:'shelf-html-resource-fetchable-not-render-proof',passed:true});
  const disabled=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"snapshot"})');
  if(disabled.code!=='DIAGNOSTICS_DISABLED')throw Error('DEBUG_GATE_FAILED');record.assertions.push({id:'debug-disabled',passed:true});
  await evaluate('chrome.storage.local.set({debugModeEnabled:true})');await pause(100);
  const snapshot=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"snapshot"})');
  if(!snapshot.ok||snapshot.result.data.components.authorization!=='disconnected')throw Error('PASSIVE_SNAPSHOT_FAILED');
  record.assertions.push({id:'passive-disconnected-not-green',passed:true});
+ const boot=await evaluate('chrome.runtime.sendMessage({type:"bootV1",operation:"audit"})');
+ if(!boot?.ok||boot.result?.components?.worker?.state!=='ready')throw Error('BOOT_REAL_WORKER_AUDIT_FAILED');
+ record.boot={worker:boot.result.components.worker.state,
+   toolbar:boot.result.components.toolbar?.state||'unknown',
+   nativeMenu:boot.result.components.nativeMenu?.state||'unknown'};
+ record.assertions.push({id:'real-worker-boot-audit-not-toolbar-gesture',passed:true});
  const bundle=await evaluate('chrome.runtime.sendMessage({type:"runtimeDiagnosticsV1",operation:"exportSupport"})');
  if(!bundle.ok||bundle.result.data.schemaVersion!=='1.0.0')throw Error('SUPPORT_EXPORT_FAILED');
  record.assertions.push({id:'sanitized-export',passed:true});

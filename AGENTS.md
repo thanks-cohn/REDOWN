@@ -1,5 +1,14 @@
 # ReDown agent onboarding
 
+## P0: BOOT reliability is the first axis of the entire project
+
+**Mandatory before changing right-click menus, the MV3 service worker, toolbar, Shelf, popup, startup storage, manifest, or preparing a release:** read [IMPORTANT/BOOT_API_GOLDEN_500.md](IMPORTANT/BOOT_API_GOLDEN_500.md) and [IMPORTANT/BOOT_FAILURE_LEDGER.md](IMPORTANT/BOOT_FAILURE_LEDGER.md). The existing [BOOT API](docs/boot/API.md) and [implementation ledger](docs/boot/IMPLEMENTATION.md) remain authoritative for implemented semantics.
+
+The owner experienced a first-install Chrome toolbar dead click fixed by manual Reload; **the actual registration/worker-evaluation/gesture/panel root cause is still unknown**. Source/harness repairs to the old menu `removeAll` path and guarded `service-worker.js` entrypoint are not proof that original incident is solved. Record pre-Reload Chrome errors and worker registration in an isolated installed Chrome profile. Never pass a mock as an installed proof.
+
+Run `python scripts/boot_golden.py --rounds 2 --rerun-failures 2 --installed-chrome` on an allowed test computer with Node/npm dependencies installed. This creates **500 uniquely identified synthetic lifecycle × fault scenarios** and repeats them, runs historical BOOT regressions, and writes `work/boot-golden/report.json`. The isolated Chrome smoke is only partial installed proof; actual first toolbar click + rendered Shelf and fallback still need explicit browser acceptance. Never launch/merge despite FAIL, BLOCKED or NOT_VERIFIED release gates; never delete a profile or stored data to hide the failure. Repair the specific cause, add regression coverage, rerun the failing IDs and all 500, and preserve before/after receipts.
+
+
 Current-state Forever Works ingestion: read `FOREVER_WORKS/README.md` and `FOREVER_WORKS/CURRENT_STATE.md`, then query the canonical `forever/manifest.json` through `node FOREVER_WORKS/tools/query.mjs describe`. This separate preservation corpus records existing behavior and bugs; future proposals are not implementation proof. Its fresh checkpoint run found 365 passing tests and 10 failures (seven recorded plus three additional baseline failures), with installed/live behavior unknown. Original catalogs, histories and vendored evidence below remain unchanged; older result counts are historical. No inferred intent or replacement policy is accepted merely by ingestion.
 
 Canonical repository: **[thanks-cohn/REDOWN](https://github.com/thanks-cohn/REDOWN)** (public, verified 21 October 2026). The local checkout directory retains its previous name. Use the new remote URL; preserve historical repository references and frozen evidence. Public repository visibility does not change the project license or authorize npm/store publishing.

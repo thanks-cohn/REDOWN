@@ -1,0 +1,56 @@
+name: BOOT Golden 500 (simulated regressions — not release certification)
+
+on:
+  pull_request:
+    paths:
+      - 'extension/**'
+      - 'scripts/boot*'
+      - 'scripts/installed-chrome.mjs'
+      - 'tests/boot*'
+      - 'tests/worker-bootstrap-first-install.test.mjs'
+      - 'tests/helpers/background-worker.mjs'
+      - 'IMPORTANT/BOOT*'
+      - 'AGENTS.md'
+      - '.github/workflows/boot-golden-500.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  boot-golden:
+    name: ${{ matrix.os }} / simulated 500
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # historical pinned baseline must remain available
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --no-audit --no-fund
+      - run: python -m pip install jsonschema==4.26.0
+      - name: BOOT Golden 500 and historical regressions
+        run: python scripts/boot_golden.py --rounds 1 --rerun-failures 1
+      - name: Preserve bounded diagnostic receipts even if tests fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot-golden-${{ matrix.os }}
+          path: |
+            work/boot-golden/report.json
+            work/boot-golden/report.md
+            work/boot-golden/cases.json
+            work/boot-golden/round-*.jsonl
+            work/boot-golden/triage-*.jsonl
+            work/boot-golden/checks/*.log
+          if-no-files-found: warn
