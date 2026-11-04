@@ -35,7 +35,13 @@ export function worker(local=config(),failure={}){
  const ready=async()=>{
   // A guarded service-worker fallback intentionally has no background menu queue.
   // The harness must not confuse its absence with a broken emergency toolbar.
-  const queue=vm.runInContext('typeof menuRebuildQueue === "undefined" ? null : menuRebuildQueue',context);
+  let queue=null;
+  try { queue=vm.runInContext('menuRebuildQueue',context); }
+  catch(error) {
+    // A late import error can leave a lexical declaration in its temporal
+    // dead zone, where even "typeof menuRebuildQueue" throws ReferenceError.
+    if(error?.name!=='ReferenceError' || !String(error.message).includes('menuRebuildQueue'))throw error;
+  }
   if(queue && typeof queue.then==='function')await queue.catch(()=>{});
   await new Promise(r=>setImmediate(r));
  };
