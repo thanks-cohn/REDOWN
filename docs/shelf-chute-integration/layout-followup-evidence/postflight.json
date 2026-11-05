@@ -1,0 +1,646 @@
+{
+  "classification": "controlled HTTP fixture; chrome messaging/provider mocked; no installed extension, native or live-site proof",
+  "details": [
+    {
+      "height": 480,
+      "host": 431,
+      "dock": 140,
+      "workspace": 170,
+      "navTop": 8,
+      "overflowX": false,
+      "overflowY": false
+    },
+    {
+      "height": 700,
+      "host": 651,
+      "dock": 213,
+      "workspace": 318,
+      "navTop": 8,
+      "overflowX": false,
+      "overflowY": false
+    },
+    {
+      "height": 1000,
+      "host": 951,
+      "dock": 312,
+      "workspace": 519,
+      "navTop": 8,
+      "overflowX": false,
+      "overflowY": false
+    },
+    {
+      "width": 320,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 320,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 320,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        },
+        {
+          "top": 246,
+          "bottom": 278.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 320,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 260,
+          "bottom": 288.890625
+        },
+        {
+          "top": 260,
+          "bottom": 288.890625
+        },
+        {
+          "top": 260,
+          "bottom": 288.890625
+        },
+        {
+          "top": 260,
+          "bottom": 288.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 360,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 360,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 360,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 360,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 390,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 390,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 390,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 390,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 540,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 540,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 540,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 540,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 700,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 700,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 700,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 700,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 900,
+      "theme": "porcelain",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 900,
+      "theme": "midnight",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 900,
+      "theme": "ocean",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        },
+        {
+          "top": 254,
+          "bottom": 286.828125
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    },
+    {
+      "width": 900,
+      "theme": "neon",
+      "overflow": false,
+      "nav": [
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        },
+        {
+          "top": 268,
+          "bottom": 296.890625
+        }
+      ],
+      "tagline": "Possibilities · Options · Fun",
+      "subtitle": false
+    }
+  ],
+  "imageEnlargement": {
+    "before": 125,
+    "after": 142.203125
+  },
+  "selection": {
+    "before": 830050,
+    "after": 830050
+  },
+  "portrait": {
+    "width": 142.203125,
+    "height": 284.40625,
+    "naturalWidth": 40,
+    "naturalHeight": 80
+  }
+}

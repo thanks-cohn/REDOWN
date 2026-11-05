@@ -1,7 +1,7 @@
 /* Adapted from Chute 3f9033b explorer-view.css; copyright 2026 Chute contributors.
  * Modified cloud bindings/theme tokens; covered by CHUTE-LICENSE.txt. */
 /* Component-local presentation; no theme can grant file capabilities. */
-#explorer-view { position: relative; height: calc(100dvh - 180px); min-height: 360px; padding: 0; overflow: hidden; display: flex; flex-direction: column; font-size: 12px; }
+#explorer-view { position: relative; height: auto; min-height: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; font-size: 12px; }
 #explorer-view[hidden], #explorer-view [hidden] { display: none !important; }
 #explorer-view button, #explorer-view input, #explorer-view select { color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; min-width: 26px; }
 #explorer-view button { cursor: pointer; }
@@ -12,7 +12,7 @@
 #explorer-view .mini-connect input { width: 180px; }
 #explorer-view .mini-crumbs { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; color: var(--muted); }
 #explorer-view .mini-filter input { flex: 1; min-width: 0; }
-#explorer-view .mini-workspace { display: grid; grid-template-columns: minmax(90px, 28%) minmax(0, 1fr); flex: 1; min-height: 0; }
+#explorer-view .mini-workspace { display: grid; flex: 1; min-height: 0; }
 #explorer-view .mini-rail, #explorer-view .mini-list { overflow: auto; scrollbar-gutter: stable; min-height: 0; padding: 6px; }
 #explorer-view .mini-rail { border-right: 1px solid var(--line); }
 #explorer-view .mini-branch { display: flex; align-items: center; white-space: nowrap; }
@@ -26,12 +26,10 @@
 #explorer-view .mini-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #explorer-view small, #explorer-view .mini-status { color: var(--muted); font-size: 10px; }
 #explorer-view .mini-status { padding: 6px 9px; min-height: 26px; border-top: 1px solid var(--line); }
-#explorer-view .mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); align-content: start; }
 #explorer-view .mini-grid .mini-row { display: flex; flex-direction: column; min-width: 0; }
-#explorer-view .mini-grid .mini-icon, #explorer-view .mini-grid img { width: 64px; height: 64px; }
 #explorer-view .mini-grid .mini-name { width: 100%; text-align: center; }
-/* Preview participates in list/grid flow beneath the selected row. */
-#explorer-view .mini-preview { position:relative; grid-column:1 / -1; height:280px; min-height:130px; max-height:60vh; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:8px; margin:8px 0; }
+/* Preview is a permanent sibling of the two-pane workspace. */
+#explorer-view .mini-preview { position:relative; height:33%; min-height:0; max-height:55%; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:0; margin:0; }
 #explorer-view .mini-preview header { display: flex; align-items: center; gap: 8px; padding: 5px 10px; }
 #explorer-view .mini-preview strong { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #explorer-view .mini-resize { height: 7px; flex-shrink: 0; cursor: ns-resize; touch-action: none; }
@@ -44,8 +42,6 @@
 #explorer-view .mini-context { position: absolute; z-index: 20; max-width: 240px; max-height: 70%; overflow: auto; padding: 5px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 8px 26px #0009; border-radius: 9px; }
 #explorer-view .mini-context button { display: block; width: 100%; text-align: left; border: 0; padding: 8px; }
 #explorer-view .mini-context button:hover:enabled { background: var(--subtle); }
-#explorer-view .mini-grid { grid-auto-rows: auto; }
-#explorer-view .mini-grid .mini-row { height: 112px; }
 #explorer-view .mini-grid .mini-icon { flex-shrink: 0; }
 #explorer-view .mini-grid .mini-name { min-height: 16px; }
 #explorer-view .mini-grid small { min-height: 12px; }
@@ -53,7 +49,7 @@
 /* True bounded two-pane Explorer, with draggable/keyboard-accessible gutter.
    Both sides scroll independently and long folder names remain reachable. */
 #explorer-view .mini-workspace {
-  grid-template-columns:minmax(0,var(--mini-folder-width,36%)) 8px minmax(0,1fr);
+  grid-template-columns:minmax(0,var(--mini-folder-width,50%)) 8px minmax(0,1fr);
   min-width:0; overflow:hidden;
 }
 #explorer-view .mini-rail,
@@ -99,9 +95,6 @@
 #explorer-view .mini-content{min-width:0;min-height:0;display:flex;}
 #explorer-view .mini-list{width:100%;overflow-anchor:none;}
 #explorer-view .mini-row{height:48px;box-sizing:border-box;}
-#explorer-view .mini-grid{grid-template-columns:repeat(auto-fill,minmax(min(110px,100%),1fr));}
-#explorer-view .mini-grid .mini-row{height:112px;}
-#explorer-view .mini-preview{height:280px;}
 #explorer-view .mini-preview-body audio{max-width:100%;}
 #explorer-view .mini-drag-status{margin:0;font-size:10px;color:var(--muted);padding:0 9px;overflow-wrap:anywhere;}
 #explorer-view .mini-drag-status:empty{display:none;}
@@ -126,3 +119,28 @@ body:has(#explorer-view:not([hidden])) .shell{max-width:1000px;}
 #explorer-view .mini-branch{width:max-content;min-width:100%;}
 #explorer-view .mini-branch .mini-node{min-width:0;flex:1;}
 #explorer-view .mini-branch button{flex-shrink:0;}
+
+/* Owner override: bounded FILES workspace and permanent bottom preview dock. */
+body:has(#explorer-view:not([hidden])) {height:100dvh;min-height:0;overflow:hidden;}
+body:has(#explorer-view:not([hidden])) .shell {height:100%;padding:8px;display:flex;flex-direction:column;min-width:0;}
+body:has(#explorer-view:not([hidden])) .shell > header,
+body:has(#explorer-view:not([hidden])) .shelf-counter {display:none;}
+body:has(#explorer-view:not([hidden])) .shell > main {flex:1;min-height:0;display:flex;flex-direction:column;}
+body:has(#explorer-view:not([hidden])) nav[aria-label="Shelf"] {margin:0;flex-shrink:0;}
+body:has(#explorer-view:not([hidden])) #status {margin:0;flex-shrink:0;}
+#explorer-view {height:auto;min-height:0;flex:1;margin:0;}
+#explorer-view .mini-workspace {--mini-folder-width:50%;}
+#explorer-view .mini-list {position:relative;overflow-x:hidden;}
+#explorer-view .mini-rows {position:absolute;left:6px;right:6px;}
+#explorer-view .mini-grid {display:block;}
+#explorer-view .mini-grid .mini-row {height:var(--mini-media-height);margin-bottom:8px;position:relative;justify-content:center;}
+#explorer-view .mini-grid .mini-icon {width:100%;height:100%;min-height:0;}
+#explorer-view .mini-grid .mini-icon img {width:100%;height:100%;object-fit:contain;}
+#explorer-view .mini-grid .mini-image .mini-name {position:absolute;bottom:0;background:var(--surface);padding:4px;opacity:0;pointer-events:none;}
+#explorer-view .mini-grid .mini-image:hover .mini-name,
+#explorer-view .mini-grid .mini-image:focus-visible .mini-name {opacity:1;}
+#explorer-view .mini-grid .mini-image small {display:none;}
+#explorer-view .mini-preview {height:33%;flex:0 0 auto;min-height:0;max-height:55%;margin:0;border-radius:0;}
+#explorer-view .mini-preview header {min-height:28px;flex-shrink:0;}
+
+#explorer-view .mini-grid .mini-row:not(.mini-image) .mini-icon {width:32px;height:32px;}

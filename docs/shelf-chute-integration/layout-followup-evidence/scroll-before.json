@@ -1,0 +1,65 @@
+[
+  {
+    "fraction": 0,
+    "total": 480356,
+    "after": 480356,
+    "expected": 0,
+    "actual": 0,
+    "previewInList": true,
+    "last": "27"
+  },
+  {
+    "fraction": 0.25,
+    "total": 480356,
+    "after": 480356,
+    "expected": 119913.5,
+    "actual": 119914,
+    "previewInList": false,
+    "last": "2513"
+  },
+  {
+    "fraction": 0.49,
+    "total": 480356,
+    "after": 480356,
+    "expected": 235030.46,
+    "actual": 235030,
+    "previewInList": false,
+    "last": "4911"
+  },
+  {
+    "fraction": 0.5,
+    "total": 480356,
+    "after": 480356,
+    "expected": 239827,
+    "actual": 239827,
+    "previewInList": false,
+    "last": "5011"
+  },
+  {
+    "fraction": 0.51,
+    "total": 480356,
+    "after": 480356,
+    "expected": 244623.54,
+    "actual": 244624,
+    "previewInList": false,
+    "last": "5111"
+  },
+  {
+    "fraction": 0.75,
+    "total": 480356,
+    "after": 480356,
+    "expected": 359740.5,
+    "actual": 359741,
+    "previewInList": false,
+    "last": "7509"
+  },
+  {
+    "fraction": 1,
+    "total": 480356,
+    "after": 480356,
+    "expected": 479654,
+    "actual": 479654,
+    "previewInList": false,
+    "last": "10001"
+  }
+]

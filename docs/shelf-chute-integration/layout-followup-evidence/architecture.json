@@ -1,0 +1,409 @@
+{
+  "explorerDiagnosticVersion": "1.0.0",
+  "state": "partial",
+  "data": {
+    "findings": [
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "function showExplorerMenu("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "goLocation"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjects"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "browseWorkspace"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjectsPage"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "const goPage=async"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjectsPage"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "runExplorerSearch"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type===\"cfSearchStart\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "browseWorkspace"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjectsPage"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "selectExplorerItem"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "showWorkspacePreview"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "setWorkspacePreviewLightbox"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerDownload"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerUploadFiles"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "pasteExplorer"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfTransferObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "transferExplorerObjects"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function assertExplorerTransferSettings("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function explorerDirectoryExists("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "pasteExplorer"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfTransferObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "transferExplorerObjects"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function assertExplorerTransferSettings("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function explorerDirectoryExists("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "beginExplorerRename"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfRenameEntry\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "renameExplorerEntry"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "deleteSelection"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfDeleteObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "deleteExplorerObjects"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "beginNewFolder"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfCreateFolder\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "createExplorerFolder"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "showProperties"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjectProperties\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjectsPage"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "assetCorsControl"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfPublicAddresses\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "bucketPublicAddresses"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "function urlPopover("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function enableBucketPublicAccess("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "setExplorerClipboard"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "function urlPopover("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "goLocation"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfObjects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listObjectsPage"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "loadExplorerInventory"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfBuckets\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "listBuckets"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "async function loginRequest("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/cloudflare-auth.js",
+        "symbol": "async function connectCloudflare("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "ensurePrepared"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfPrepareBucket\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "preparedProfile"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "async function assertExplorerTransferSettings("
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "openArchive"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "message?.type === \"cfArchiveEntries\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/background.js",
+        "symbol": "callBucketWorker"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"explorer\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"workspace-objects\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"workspace-preview\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"explorer-menu\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"explorer-properties\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"explorer-operation\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.html",
+        "symbol": "id=\"explorer-status\""
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "workspaceTarget"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "workspacePrefix"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerSelected"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerClipboard"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerNextCursor"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "workspacePreviewRequestId"
+      },
+      {
+        "code": "MISSING_ANCHOR",
+        "path": "extension/options.js",
+        "symbol": "presetLocationCache"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerDestinationMenus"
+      },
+      {
+        "code": "SOURCE_CHANGED",
+        "path": "extension/options.js",
+        "symbol": "explorerOperation"
+      }
+    ],
+    "authority": "source navigation, not runtime proof"
+  }
+}

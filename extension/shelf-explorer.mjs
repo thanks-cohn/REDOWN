@@ -4,28 +4,29 @@
 import {createFileApi} from './beta/file-api.mjs';
 import {createR2Adapter,previewType} from './beta/r2-adapter.mjs';
 import {createWindowPreview,renderPreview} from './beta/window-preview.mjs';
-import {createExplorerModel,identity,windowRange} from './shelf-explorer-model.mjs';
+import {createExplorerModel,identity,offsetRange} from './shelf-explorer-model.mjs';
+import {resolveHistoryTarget} from './beta/history-target.mjs';
 import {createDragBridge} from './chute-drag.mjs';
 
 export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage=chrome.storage.local,document=host.ownerDocument}={}){
   host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav><button data-action="grid" aria-label="Toggle grid" aria-pressed="false">▦</button></div>
   <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select></div>
-  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns" aria-orientation="vertical" aria-valuemin="15" aria-valuemax="75" aria-valuenow="36"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
+  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns" aria-orientation="vertical" aria-valuemin="15" aria-valuemax="75" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
   <div class="mini-actions" hidden><button data-action="download" disabled>Download</button><button data-action="rename" disabled>Rename</button><button data-action="delete" disabled>Delete</button><button data-action="copy" disabled>Copy</button><button data-action="move" disabled>Move</button><button data-action="paste" disabled>Paste here</button><button data-action="folder">New folder</button></div>
   <p class="mini-status" role="status" aria-live="polite"></p><p class="mini-drag-status" role="status" aria-live="polite"></p>
-  <div class="mini-preview-parking" hidden><section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal"></div><header><strong></strong><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section></div><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
+  <section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
   const $=selector=>host.querySelector(selector),button=action=>$(`[data-action="${action}"]`),say=message=>{$('.mini-status').textContent=message;};
   const list=$('.mini-list'),rows=$('.mini-rows'),tree=$('.mini-tree');let visible=[],selectedEntry=null,sideAbort=null,sideUrl='',sideEpoch=0,discovery=0,rootAbort=null,initialized=false,activeView=false,focusIndex=0,saved={},saveTimer,treeRestores=0,clipboard=null; 
-  const expansions=new Set(),nodes=new Map();let sortedKey='',sortedEntries=null,grid=false,folderWidth=36,anchor=null,dragging=false,rememberedScroll=0,rememberedRailScroll=0;
+  const expansions=new Set(),nodes=new Map();let sortedKey='',sortedEntries=null,grid=true,folderWidth=50,anchor=null,dragging=false,rememberedScroll=0,rememberedRailScroll=0;
   const model=createExplorerModel({api,onChange:paint});
   const bridge=createDragBridge({api,onState:({message})=>{$('.mini-drag-status').textContent=message;}});
   const request=(...args)=>model.request(...args).then(data=>({data}));
   function safe(fn){return (...args)=>{void Promise.resolve().then(()=>fn(...args)).catch(error=>say(error.message||'Could not complete this action.'));};}
-  function closeSide(){sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';$('.mini-preview').hidden=true;$('.mini-preview-parking').append($('.mini-preview'));}
+  function closeSide(){sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';$('.mini-preview').hidden=true;}
   const preview=createWindowPreview({document,dialog:$('.mini-window-preview'),request,previewType,getContext:()=>model.state.source,getItems:()=>model.state.entries,pauseSide:closeSide,onSelection:entry=>select(entry),onDownload:entry=>download(entry)});
   async function side(entry){
     closeSide();if(!previewType(entry.key)||!activeView)return;
-    const ticket=sideEpoch,abort=new AbortController();sideAbort=abort;$('.mini-preview').hidden=false;positionPreview();$('.mini-preview strong').textContent=entry.displayName||entry.key;$('.mini-preview-body').textContent='Loading preview…';
+    const ticket=sideEpoch,abort=new AbortController();sideAbort=abort;$('.mini-preview').hidden=false;$('.mini-preview strong').textContent=entry.displayName||entry.key;$('.mini-preview-body').textContent='Loading preview…';
     let pending='';
     try{
       const {data}=await request('preview',{source:{...model.state.source},entry},{signal:abort.signal,previewMaxBytes:8*1048576,textPreviewMaxBytes:128*1024});pending=data.url;
@@ -38,25 +39,20 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     finally{if(pending)URL.revokeObjectURL(pending);}
   }
   // Adapted from Chutey setFolderWidth, positionPreview and ex-resize.
-  function positionPreview(){
-    const panel=$('.mini-preview');if(panel.hidden||!selectedEntry)return;
-    $('.mini-preview-parking').append(panel);
-    const cards=[...rows.querySelectorAll('.mini-row')],card=cards.find(n=>n.dataset.key===selectedEntry.key);if(!card)return;
-    let after=card;if(grid)for(const node of cards.slice(cards.indexOf(card)+1)){if(Math.abs(node.offsetTop-card.offsetTop)>2)break;after=node;}
-    after.after(panel);
-  }
-  function setFolderWidth(value){folderWidth=Math.max(15,Math.min(75,Math.round(Number(value)||36)));$('.mini-workspace').style.setProperty('--mini-folder-width',folderWidth+'%');$('.mini-column-resize').setAttribute('aria-valuenow',folderWidth);}
+  function setFolderWidth(value){folderWidth=Math.max(15,Math.min(75,Math.round(Number(value)||50)));$('.mini-workspace').style.setProperty('--mini-folder-width',folderWidth+'%');$('.mini-column-resize').setAttribute('aria-valuenow',folderWidth);}
   const grip=$('.mini-column-resize');
   grip.onpointerdown=e=>{if(e.button!==0)return;grip.setPointerCapture(e.pointerId);e.preventDefault();};
   grip.onpointermove=e=>{if(grip.hasPointerCapture(e.pointerId)){const b=$('.mini-workspace').getBoundingClientRect();setFolderWidth((e.clientX-b.left)/b.width*100);renderRows();}};
   grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=()=>persist();
   grip.onkeydown=e=>{const delta=e.key==='ArrowLeft'?-5:e.key==='ArrowRight'?5:0;if(delta||['Home','End'].includes(e.key)){e.preventDefault();setFolderWidth(e.key==='Home'?15:e.key==='End'?75:folderWidth+delta);renderRows();persist();}};
   const resize=$('.mini-resize');
-  function resizePreview(height){$('.mini-preview').style.height=Math.max(host.clientHeight*.3,Math.min(host.clientHeight*.7,height))+'px';}
+  function resizePreview(height){const value=Math.max(Math.min(96,host.clientHeight*.25),Math.min(host.clientHeight*.55,height));$('.mini-preview').style.height=value+'px';resize.setAttribute('aria-valuenow',Math.round(value/host.clientHeight*100));}
   resize.onpointerdown=e=>{if(e.button===0){resize.setPointerCapture(e.pointerId);e.preventDefault();}};
   resize.onpointermove=e=>{if(resize.hasPointerCapture(e.pointerId))resizePreview($('.mini-preview').getBoundingClientRect().bottom-e.clientY);};
   resize.onkeydown=e=>{if(['ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();resizePreview($('.mini-preview').offsetHeight+(e.key==='ArrowUp'?16:-16));}};
-  const resizeObserver=globalThis.ResizeObserver?new ResizeObserver(()=>renderRows()):null;resizeObserver?.observe(list);
+  let renderFrame=null,lastRender='';
+  const scheduleRows=()=>{if(renderFrame!==null)return;const win=document.defaultView;renderFrame=(win.requestAnimationFrame||((fn)=>setTimeout(fn,16)))(()=>{renderFrame=null;renderRows();});};
+  const resizeObserver=globalThis.ResizeObserver?new ResizeObserver(scheduleRows):null;resizeObserver?.observe(list);
   function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{
     const source=model.state.source;
     void storage.set({shelfExplorerV1:{source:source?{accountId:source.accountId,bucketName:source.bucketName,prefix:source.prefix||''}:null,expanded:[...expansions].slice(-64),scroll:list.scrollTop,folderWidth,grid}}).catch(()=>{});
@@ -73,33 +69,45 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     button('paste').disabled=!clipboard||!model.state.source;
     button('folder').disabled=!model.state.source||model.state.phase!=='ready';
   }
+  let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0;const aspects=new Map();
   function renderRows(){
-    if(dragging)return;
+    if(dragging||host.hidden||!activeView)return;
     const query=$('.mini-filter input').value.toLocaleLowerCase(),sort=$('.mini-filter select').value;
     const focused=rows.contains(document.activeElement)?document.activeElement.dataset.index:null;
     if(sortedEntries!==model.state.entries||sortedKey!==query+'|'+sort){
       sortedEntries=model.state.entries;sortedKey=query+'|'+sort;
       visible=model.state.entries.filter(e=>(e.displayName||e.key).toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?String(b.uploaded||'').localeCompare(String(a.uploaded||'')):sort==='type'?String(a.key.split('.').pop()).localeCompare(String(b.key.split('.').pop())):0)||(a.displayName||a.key).localeCompare(b.displayName||b.key));
     }
-    const panel=$('.mini-preview'),panelHeight=panel.offsetHeight;$('.mini-preview-parking').append(panel);thumbObserver?.disconnect();thumbQueue.length=0;
-    const columns=grid?Math.max(1,Math.floor((list.clientWidth-12+4)/114)):1,unit=grid?116:48;
-    const previewIndex=selectedEntry?visible.findIndex(e=>e.key===selectedEntry.key):-1,previewRow=Math.floor(previewIndex/columns);
-    const extra=panel.hidden?0:(panelHeight||parseFloat(panel.style.height)||280)+16+(grid?4:0);
-    const scroll=list.scrollTop-(previewRow>=0&&list.scrollTop>(previewRow+1)*unit?extra:0);
-    const range=windowRange(Math.ceil(visible.length/columns),Math.max(0,scroll),list.clientHeight||384,unit);
-    const start=range.start*columns,end=Math.min(visible.length,range.end*columns);
-    $('.mini-spacer').style.height=(range.top+(previewIndex>=0&&previewIndex<start?extra:0))+'px';
-    $('.mini-tail').style.height=(Math.max(0,range.total-range.end*unit)+(previewIndex>=end?extra:0))+'px';
-    rows.classList.toggle('mini-grid',grid);rows.replaceChildren();
+    // A permanent logical canvas never shrinks while the visible slice changes.
+    const width=Math.max(32,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
+    if(layoutEntries!==visible||layoutKey!==key){
+      const same=layoutEntries===visible,old=offsetRange(offsets,list.scrollTop,0),fraction=(list.scrollTop-offsets[old.first])/(offsets[old.first+1]-offsets[old.first]||1);
+      const next=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');next.push(next.at(-1)+(grid?(image?width*(aspects.get(entry.key)||1)+16:80)+8:48));}
+      offsets=next;layoutEntries=visible;layoutKey=key;
+      // Anchor the current item using current geometry, never a saved wheel offset.
+      $('.mini-spacer').style.height=offsets.at(-1)+'px';
+      if(same&&visible.length)list.scrollTop=offsets[old.first]+fraction*(offsets[old.first+1]-offsets[old.first]);
+    }
+    const range=offsetRange(offsets,list.scrollTop,list.clientHeight||384);
+    const start=range.start,end=range.end;
+    const signature=[start,end,key,grid,sortedKey,visible.length,model.state.selected.size,focusIndex].join('|');
+    if(lastRender===signature&&rows._entries===model.state.entries)return;
+    lastRender=signature;rows._entries=model.state.entries;
+    $('.mini-spacer').style.height=range.total+'px';
+    $('.mini-tail').style.height='0px';
+    rows.style.top=(range.top+6)+'px';
+    rows.classList.toggle('mini-grid',grid);
+    thumbObserver?.disconnect();thumbQueue.length=0;
+    const fragment=document.createDocumentFragment();
     for(let index=start;index<end;index++){
-      const entry=visible[index],row=document.createElement('div');row.className='mini-row';row.role='option';row.tabIndex=index===focusIndex?0:-1;row.dataset.index=index;row.dataset.key=entry.key;row.setAttribute('aria-selected',String(model.state.selected.has(entry.key)));row.setAttribute('aria-posinset',index+1);row.setAttribute('aria-setsize',visible.length);
+      const entry=visible[index],row=document.createElement('div');row.className='mini-row';if(grid)row.style.setProperty('--mini-media-height',(offsets[index+1]-offsets[index]-8)+'px');row.role='option';row.tabIndex=index===focusIndex?0:-1;row.dataset.index=index;row.dataset.key=entry.key;row.setAttribute('aria-selected',String(model.state.selected.has(entry.key)));row.setAttribute('aria-label',entry.displayName||entry.key);row.title=entry.displayName||entry.key;row.classList.toggle('mini-image',!!previewType(entry.key)?.startsWith('image/'));row.setAttribute('aria-posinset',index+1);row.setAttribute('aria-setsize',visible.length);
       const icon=document.createElement('span');icon.className='mini-icon';icon.textContent=entry.folder?'▰':previewType(entry.key)?.startsWith('image/')?'▧':'▤';icon.setAttribute('aria-hidden','true');
       const name=document.createElement('span');name.className='mini-name';name.textContent=entry.displayName||entry.key;name.title=name.textContent;
       const size=document.createElement('small');size.textContent=entry.folder?'Folder':Number.isFinite(Number(entry.size))?`${(Number(entry.size)/1024).toLocaleString(undefined,{maximumFractionDigits:1})} KB`:'File';
       row.append(icon,name,size);row.onclick=event=>{focusIndex=index;select(entry,event);};
       row.ondblclick=safe(()=>entry.folder?navigate({...model.state.source,prefix:entry.key}):preview.open(entry));
       row.onkeydown=event=>{
-        if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:index+(event.key==='ArrowDown'?1:-1)*(grid?Math.max(1,Math.floor((list.clientWidth-8)/114)):1)));const columns=grid?Math.max(1,Math.floor((list.clientWidth-8)/114)):1;list.scrollTop=Math.max(0,Math.floor(focusIndex/columns)*(grid?116:48)-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
+        if(['ArrowDown','ArrowUp','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:event.key.startsWith('Page')?offsetRange(offsets,offsets[index]+(event.key==='PageDown'?1:-1)*list.clientHeight,0).first:index+(event.key==='ArrowDown'?1:-1)));list.scrollTop=Math.max(0,offsets[focusIndex]-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
         if(event.key===' '){event.preventDefault();select(entry,event);}
         if(event.key==='Enter'){event.preventDefault();safe(()=>entry.folder?navigate({...model.state.source,prefix:entry.key}):preview.open(entry))();}
         if(event.key==='Delete'){event.preventDefault();button('delete').click();}
@@ -111,18 +119,17 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
         if(model.state.selected.size!==1){event.preventDefault();say('Drag one file at a time. Use Download for other destinations.');return;}
         dragging=bridge.start(event,{...model.state.source},{...entry,mime:entry.httpMetadata?.contentType||previewType(entry.key)||'application/octet-stream'});
       };}
-      rows.append(row);
-      if(!entry.folder&&previewType(entry.key)?.startsWith('image/')&&Number(entry.size)<=256*1024){
-        const url=thumbs.get(entry.key);if(url)paintThumb(row,url);else if(!thumbFailed.has(entry.key))thumbObserver?.observe(row);
-      }
+      fragment.append(row);
     }
-    positionPreview();
-    if(focused!==null)rows.querySelector(`[data-index="${focused}"]`)?.focus({preventScroll:true});
+
+    rows.replaceChildren(fragment);
+    for(const row of rows.children){const entry=visible[Number(row.dataset.index)];if(thumbs.has(entry.key))paintThumb(row,thumbs.get(entry.key));else if(!entry.folder&&previewType(entry.key)?.startsWith('image/')&&Number(entry.size)<=256*1024&&!thumbFailed.has(entry.key))thumbObserver?.observe(row);}
+    if(focused!==null)(rows.querySelector(`[data-index="${focused}"]`)||list).focus({preventScroll:true});
   }
   // Chutey lazy queue: three requests, small original images only until the
   // provider exposes a thumbnail capability. At most 16 × 256 KiB URLs.
   const thumbs=new Map(),thumbFailed=new Set(),thumbQueue=[],thumbPending=new Set();let thumbActive=0,thumbEpoch=0;const thumbAbort=new Set();
-  function paintThumb(row,url){const img=document.createElement('img');img.alt='';img.src=url;row.querySelector('.mini-icon')?.replaceChildren(img);}
+  function paintThumb(row,url){const epoch=thumbEpoch,img=document.createElement('img');img.alt='';img.onload=()=>{if(epoch!==thumbEpoch||!row.isConnected)return;const ratio=img.naturalHeight/img.naturalWidth;if(Number.isFinite(ratio)&&ratio>0&&aspects.get(row.dataset.key)!==ratio){aspects.set(row.dataset.key,ratio);aspectRevision++;scheduleRows();}};img.src=url;row.querySelector('.mini-icon')?.replaceChildren(img);}
   async function pumpThumb(){
     if(thumbActive>=3||!thumbQueue.length)return;const node=thumbQueue.shift(),entry=model.state.entries.find(e=>e.key===node.dataset.key);
     const token=thumbEpoch+':'+entry?.key;if(!entry||!node.isConnected||thumbPending.has(token)){void pumpThumb();return;}
@@ -135,7 +142,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     finally{thumbActive--;thumbAbort.delete(abort);thumbPending.delete(token);void pumpThumb();}
   }
   const thumbObserver=globalThis.IntersectionObserver?new IntersectionObserver(entries=>{for(const item of entries)if(item.isIntersecting){thumbObserver.unobserve(item.target);thumbQueue.push(item.target);void pumpThumb();}},{root:list}):null;
-  function clearThumbs(){thumbEpoch++;thumbObserver?.disconnect();thumbQueue.length=0;for(const abort of thumbAbort)abort.abort();for(const url of thumbs.values())URL.revokeObjectURL(url);thumbs.clear();thumbFailed.clear();}
+  function clearThumbs(){aspects.clear();aspectRevision++;thumbEpoch++;thumbObserver?.disconnect();thumbQueue.length=0;for(const abort of thumbAbort)abort.abort();for(const url of thumbs.values())URL.revokeObjectURL(url);thumbs.clear();thumbFailed.clear();}
   function paint(){
     const s=model.state;renderRows();paintActions();button('more').hidden=!s.cursor;button('more').disabled=s.phase==='loading';button('back').disabled=s.index<=0;button('forward').disabled=s.index>=s.history.length-1;button('up').disabled=!s.source?.prefix;
     list.setAttribute('aria-busy',String(s.phase==='loading'));
@@ -165,6 +172,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
       catch{children.replaceChildren();const retry=document.createElement('button');retry.textContent='Unavailable · Retry';retry.onclick=safe(()=>{loaded=false;return toggle(true);});children.append(retry);}
       finally{pending=false;item.removeAttribute('aria-busy');}
     };
+    nodes.get(id).toggle=toggle;
     expand.onclick=safe(()=>toggle());
     item.onclick=safe(()=>source?navigate(source):toggle());
     item.onkeydown=event=>{
@@ -224,8 +232,8 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   button('folder').onclick=safe(async()=>{const source={...model.state.source},name=await ask('New folder name');if(name)await mutate('mkdir',{name},source);});
   for(const operation of ['copy','move'])button(operation).onclick=safe(()=>{clipboard={operation,source:{...model.state.source},entries:[{...one()}]};paintActions();say('Choose a destination folder, then Paste here. Conflicts keep both files.');});
   button('paste').onclick=safe(async()=>{if(!clipboard)throw Error('Copy or Move a file first.');const destination={...model.state.source},pending=clipboard;clipboard=null;paintActions();await model.request(pending.operation,{...pending,destination,conflict:'keep'});model.invalidate();if(model.state.source&&identity(model.state.source)===identity(destination))await navigate(destination,{fresh:true,record:false});saved={source:model.state.source};await discover();say('Transfer confirmed by the File API.');});
-  list.addEventListener('scroll',()=>{if(host.hidden||!activeView)return;rememberedScroll=list.scrollTop;renderRows();persist();},{passive:true});$('.mini-filter input').oninput=()=>{closeSide();selectedEntry=null;model.state.selected.clear();focusIndex=0;list.scrollTop=0;renderRows();paintActions();};$('.mini-filter select').onchange=()=>{list.scrollTop=0;renderRows();};
-  list.onkeydown=event=>{if(event.target===list&&(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10')){event.preventDefault();showMenu(null,list.getBoundingClientRect(),list);return;}if(event.target===list&&['Enter','ArrowDown'].includes(event.key)){event.preventDefault();focusIndex=0;list.scrollTop=0;renderRows();rows.firstElementChild?.focus();}};
+  list.addEventListener('scroll',()=>{if(host.hidden||!activeView)return;rememberedScroll=list.scrollTop;scheduleRows();persist();},{passive:true});$('.mini-filter input').oninput=()=>{closeSide();selectedEntry=null;model.state.selected.clear();focusIndex=0;list.scrollTop=0;renderRows();paintActions();};$('.mini-filter select').onchange=()=>{list.scrollTop=0;renderRows();};
+  list.onkeydown=event=>{if(event.target===list&&(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10')){event.preventDefault();showMenu(null,list.getBoundingClientRect(),list);return;}if(event.target===list&&visible.length&&['Enter','ArrowDown','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();focusIndex=event.key==='End'?visible.length-1:event.key==='Home'?0:offsetRange(offsets,list.scrollTop+(event.key==='PageDown'?list.clientHeight:event.key==='PageUp'?-list.clientHeight:0),0).first;list.scrollTop=offsets[focusIndex];renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus({preventScroll:true});}};
   const contextMenu=document.createElement('div');contextMenu.className='mini-context';contextMenu.role='menu';contextMenu.hidden=true;host.append(contextMenu);
   function showMenu(entry,point,returnFocus){
     if(entry&&!model.state.selected.has(entry.key))select(entry);contextMenu.replaceChildren();contextMenu.hidden=false;
@@ -249,11 +257,45 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   host.addEventListener('contextmenu',event=>{const row=event.target.closest('.mini-row');if(row){event.preventDefault();showMenu(visible[Number(row.dataset.index)],{x:event.clientX,y:event.clientY},row);}else if(list.contains(event.target)){event.preventDefault();showMenu(null,{x:event.clientX,y:event.clientY},list);}});
   host.addEventListener('keydown',event=>{if(event.key==='Escape'){contextMenu.hidden=true;closeSide();renderRows();}if(!event.target.closest('input,select,textarea')&&(event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='a'){event.preventDefault();for(const entry of visible)model.state.selected.add(entry.key);renderRows();paintActions();}});
   host.addEventListener('dragover',event=>{if(event.dataTransfer?.types?.includes('application/x-redown-chute-v1'))event.dataTransfer.dropEffect='none';});
-  async function setActive(value){activeView=value;if(!value){dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.cancel();return;}
-    if(initialized){list.scrollTop=rememberedScroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
-    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(saved.folderWidth);grid=!!saved.grid;button('grid').setAttribute('aria-pressed',String(grid));for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
+  async function setActive(value){activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.cancel();return;}
+    setFolderWidth(50);
+    if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
+    initialization=(async()=>{
+    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;button('grid').setAttribute('aria-pressed',String(grid));for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
     await discover();
+    })();await initialization;
   }
+  let historyEpoch=0,historyAbort=null,removeHistoryReceiver=null,initialization=null;
+  async function revealHistory(target){
+    const ticket=++historyEpoch;historyAbort?.abort();
+    const abort=new AbortController();historyAbort=abort;
+    const timer=setTimeout(()=>abort.abort(Error('Saved-file navigation timed out. Try GO TO again.')),90000);
+    const check=()=>{abort.signal.throwIfAborted();if(ticket!==historyEpoch)throw Error('Navigation superseded.');};
+    try{
+      await setActive(true);check();if(initialization)await initialization;check();
+      const {accounts=[]}=await model.request('accounts',{}, {signal:abort.signal});check();
+      if(!accounts.some(a=>a.id===target.accountId))throw Error('The recorded cloud account is unavailable. Reconnect in REMOTES.');
+      const {buckets=[]}=await model.request('buckets',{accountId:target.accountId},{signal:abort.signal});check();
+      if(!buckets.some(b=>b.name===target.bucketName))throw Error('The recorded bucket is unavailable.');
+      const source={accountId:target.accountId,bucketName:target.bucketName,prefix:target.prefix};
+      await navigate(source);check();
+      if(model.state.phase!=='ready'||identity(model.state.source)!==identity(source))throw Error('Could not load the recorded folder.');
+      const item=await resolveHistoryTarget(api,target,{signal:abort.signal});check();
+      if(identity(model.state.source)!==identity(source))throw Error('Location changed. Use GO TO again.');
+      if(!model.state.entries.some(e=>e.key===item.key))model.state.entries=[...model.state.entries,item];
+      $('.mini-filter input').value='';sortedEntries=null;renderRows();
+      focusIndex=visible.findIndex(e=>e.key===item.key);model.state.selected.clear();model.state.selected.add(item.key);
+      lastRender='';list.scrollTop=offsets[focusIndex];renderRows();
+      const row=[...rows.children].find(n=>n.dataset.key===item.key);row?.focus({preventScroll:true});
+      say('Exact saved file verified and selected.');
+      // Expand only the authorized account/bucket/prefix path, not every cloud.
+      const account=nodes.get(JSON.stringify(['r2',target.accountId]));
+      await account?.toggle(true);check();
+      await nodes.get(identity({...source,prefix:''}))?.toggle(true);check();
+      let prefix='';for(const part of target.prefix.split('/').filter(Boolean)){prefix+=part+'/';await nodes.get(identity({...source,prefix}))?.toggle(true);check();}
+    }finally{clearTimeout(timer);if(ticket===historyEpoch)historyAbort=null;}
+  }
+  if(globalThis.RedownHistoryNavigation?.receiveShelf)void globalThis.RedownHistoryNavigation.receiveShelf(revealHistory).then(remove=>removeHistoryReceiver=remove).catch(()=>say('History navigation is unavailable. Try Dashboard in Settings.'));
   const changed=(changes,area)=>{
     if(area==='session'&&changes.redownChuteReceipt){const receipt=changes.redownChuteReceipt.newValue;if(receipt?.id===bridge.getHandle()?.id){$('.mini-drag-status').textContent=receipt.state==='drop_dispatched'?'File dispatched. Check the destination: acceptance and upload completion are unverified.':'File handoff failed. Try dragging again or use Download and the destination file picker.';}}
     if(area==='local'&&changes.cloudflareAuth){clipboard=null;saved={};expansions.clear();void discover();}
@@ -261,6 +303,6 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   chrome.storage.onChanged.addListener(changed);
   const view=()=>{void setActive(!host.hidden).catch(()=>say('File Explorer unavailable. Refresh or reconnect in Remotes.'));};
   globalThis.addEventListener('redown:shelf-route',view);globalThis.addEventListener('pagehide',()=>{closeSide();void bridge.dispose();});view();
-  return {model,bridge,setActive,discover,dispose(){clearTimeout(saveTimer);document.removeEventListener('pointerdown',closeContext);document.removeEventListener('click',rememberBeforeRoute,true);chrome.storage.onChanged.removeListener?.(changed);globalThis.removeEventListener('redown:shelf-route',view);resizeObserver?.disconnect();clearThumbs();closeSide();preview.close();model.reset();void bridge.dispose();}};
+  return {model,bridge,setActive,discover,dispose(){historyAbort?.abort();removeHistoryReceiver?.();clearTimeout(saveTimer);document.removeEventListener('pointerdown',closeContext);document.removeEventListener('click',rememberBeforeRoute,true);chrome.storage.onChanged.removeListener?.(changed);globalThis.removeEventListener('redown:shelf-route',view);resizeObserver?.disconnect();clearThumbs();closeSide();preview.close();model.reset();void bridge.dispose();}};
 }
 if(globalThis.document?.getElementById('explorer-view'))mountExplorer({host:document.getElementById('explorer-view')});
