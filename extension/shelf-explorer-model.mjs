@@ -51,3 +51,11 @@ export function createExplorerModel({api,onChange=()=>{},now=Date.now}={}){
     reset(){epoch++;cacheEpoch++;abort?.abort();cache.clear();inflight.clear();state.source=null;state.entries=[];state.selected.clear();state.cursor='';state.phase='idle';state.error='';state.history=[];state.index=-1;onChange(state);}
   };
 }
+
+// Prefix sums keep variable-aspect media and compact file rows in one scrollport.
+export function offsetRange(offsets,scrollTop,height,overscan=6){
+  const length=offsets.length-1;
+  const find=value=>{let lo=0,hi=length;while(lo<hi){const mid=(lo+hi+1)>>1;if(offsets[mid]<=value)lo=mid;else hi=mid-1;}return Math.min(Math.max(0,length-1),lo);};
+  const first=find(Math.max(0,scrollTop)),start=Math.max(0,first-overscan),end=Math.min(length,find(scrollTop+height)+overscan+1);
+  return {start,end,first,top:offsets[start],total:offsets[length]};
+}

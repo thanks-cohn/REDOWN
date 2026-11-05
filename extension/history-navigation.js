@@ -124,7 +124,7 @@
     savedDropboxTarget(record)||verifiedOneDriveWithoutLink(record));
   function valid(intent){return intent?.locator&&locator({ok:true,verified:true,destination:intent.locator})&&typeof intent.token==='string'&&Number.isFinite(intent.issuedAt)&&Date.now()-intent.issuedAt<lifetime&&intent.issuedAt<=Date.now()+1000;}
   let mode='tab',openingEpoch=0;
-  const normalized=value=>value==='side'||value==='split'?'split':'tab';
+  const normalized=value=>value==='shelf'?'shelf':value==='side'||value==='split'?'split':'tab';
   const preference=chrome.storage.local.get('historyGoToMode').then(async s=>{
     mode=normalized(s.historyGoToMode);
     if(s.historyGoToMode==='side')await chrome.storage.local.set({historyGoToMode:'split'});
@@ -231,6 +231,47 @@
     const operation=tabLane.catch(()=>{}).then(()=>globalThis.navigator?.locks?.request? navigator.locks.request('redown-history-tab',run):run());
     tabLane=operation;return operation;
   }
+  const isShelf=()=>location.pathname.endsWith('/shelf.html');
+  let shelfReceiver=null,shelfRecipientId=null;
+  async function sendShelf(target,ticket,opening){
+    await opening;
+    const win=await chrome.windows.getCurrent();
+    if(ticket!==openingEpoch)return;
+    const token=crypto.randomUUID(),key='historyShelf:'+token;
+    const completed=waitFor('historyResult:'+token,95000);
+    void completed.then(result=>{if(ticket===openingEpoch)report(result.state==='completed'?'':result.error||'Could not locate saved file.');})
+      .catch(error=>{if(ticket===openingEpoch)report(error.message);})
+      .finally(()=>chrome.storage.session.remove([key,'historyAccepted:'+token,'historyResult:'+token]));
+    const intent={token,issuedAt:Date.now(),windowId:win.id,locator:target,...(isShelf()&&shelfRecipientId?{recipientId:shelfRecipientId}:{})};
+    await chrome.storage.session.set({[key]:intent});
+    if(isShelf()&&shelfReceiver)void shelfReceiver(intent);
+  }
+  async function receiveShelf(navigate){
+    const win=await chrome.windows.getCurrent();
+    const used=new Set();shelfRecipientId=crypto.randomUUID();
+    shelfReceiver=async intent=>{
+      if(!valid(intent)||intent.windowId!==win.id||intent.recipientId&&intent.recipientId!==shelfRecipientId||used.has(intent.token))return;
+      used.add(intent.token);while(used.size>64)used.delete(used.values().next().value);
+      const key='historyShelf:'+intent.token;
+      await chrome.storage.session.remove(key);
+      await chrome.storage.session.set({['historyAccepted:'+intent.token]:{state:'accepted'}});
+      let timer;
+      try{
+        location.hash='#explorer';
+        window.dispatchEvent(new Event('hashchange'));
+        await Promise.race([navigate(intent.locator),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Saved-file navigation timed out. Try GO TO again.')),90000);})]);
+        await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'completed'}});
+      }catch(error){await chrome.storage.session.set({['historyResult:'+intent.token]:{state:'failed',error:error.message}});}
+      finally{clearTimeout(timer);}
+    };
+    const listener=(changes,area)=>{if(area==='session')for(const [key,value] of Object.entries(changes))if(key.startsWith('historyShelf:'))void shelfReceiver(value.newValue);};
+    chrome.storage.onChanged.addListener(listener);
+    const pending=await chrome.storage.session.get(null);
+    for(const [key,intent] of Object.entries(pending))if(key.startsWith('historyShelf:')){
+      if(valid(intent))void shelfReceiver(intent);else await chrome.storage.session.remove(key);
+    }
+    return ()=>{chrome.storage.onChanged.removeListener?.(listener);shelfReceiver=null;};
+  }
   function open(record){
     const external=cloudTarget(record)||savedDropboxTarget(record);
     if(external){
@@ -245,6 +286,13 @@
       if(verifiedOneDriveWithoutLink(record))
         report('OneDrive verified this file but returned no direct file link. Open your OneDrive account and locate '+(record.filename||record.destination?.itemId||'the saved file')+'.');
       return;
+    }
+    // Open under the original click gesture; cloud/preferences never delay BOOT.
+    let shelfOpening=Promise.resolve();
+    if(mode==='shelf'&&!isShelf()){
+      try{if(!chrome.sidePanel?.open)throw Error('Shelf is unavailable in this browser. Choose Go to Dashboard in Settings.');shelfOpening=chrome.sidePanel.open({windowId:chrome.windows.WINDOW_ID_CURRENT});}
+      catch(error){shelfOpening=Promise.reject(error);}
+      void shelfOpening.catch(()=>{});
     }
     const ticket=++openingEpoch;
     report(''); // A new GO TO owns the status; do not carry a prior attempt's diagnostic.
@@ -269,7 +317,7 @@
       catch(e){if(ticket===openingEpoch)report('Could not open Explorer: '+e.message);}
     };
     void Promise.all([preference,resolved]).then(([,dest])=>{
-      if(ticket===openingEpoch)return tab(dest,ticket,mode);
+      if(ticket===openingEpoch)return mode==='shelf'?sendShelf(dest,ticket,shelfOpening):tab(dest,ticket,mode);
     }).catch(e=>{
       if(ticket===openingEpoch)report('Could not open Explorer: '+e.message,mode==='split'?fallback:undefined);
     });
@@ -289,7 +337,7 @@
     chrome.storage.onChanged.addListener((c,a)=>void handle(c,a).catch(()=>{}));
     return {tab:ownTab,windowId:win.id};
   }
-  globalThis.RedownHistoryNavigation={locator,cloudTarget,legacyR2,legacyAssetKey,savedDropboxTarget,openable,valid,open,preference,receive};
+  globalThis.RedownHistoryNavigation={locator,cloudTarget,legacyR2,legacyAssetKey,savedDropboxTarget,openable,valid,open,preference,receive,receiveShelf};
   const select=document.getElementById('history-go-to-mode');
   if(select){void preference.then(()=>{select.value=mode;});select.onchange=async()=>{try{await chrome.storage.local.set({historyGoToMode:normalized(select.value)});}catch(e){report('Could not save navigation preference: '+e.message);}};}
 })();

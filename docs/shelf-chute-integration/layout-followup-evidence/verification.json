@@ -1,0 +1,129 @@
+{
+  "scope": "Local source / jsdom / controlled Chromium HTTP fixtures. Mocked Chrome messaging and providers. No installed extension, Windows or live provider acceptance.",
+  "reviewedPr54Head": "25a57384dba253282a5310dacbd32033cfcd6f2e",
+  "completedPr54Head": "0277ccb7c57b76cce5ffb6f4305715177def85ae",
+  "commands": [
+    {
+      "command": "node --test tests/shelf-mini-explorer.test.mjs tests/history-go-to.test.mjs",
+      "scope": "original #54 baseline",
+      "passed": 52,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/shelf-aesthetics.test.mjs",
+      "scope": "#54 subtitle regression correction",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "command": "node --test tests/history-go-to.test.mjs tests/shelf-mini-explorer.test.mjs tests/shelf-aesthetics.test.mjs",
+      "scope": "final focused acceptance",
+      "passed": 67,
+      "failed": 0
+    },
+    {
+      "command": "npm run reliability:check",
+      "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+      "state": "failed",
+      "sourceHash": "62ff143f81e36b3e08ec7f585a2a555d25b2d8cf49f45b957dd6db49cdcc4844",
+      "sourceCommit": "0277ccb7c57b76cce5ffb6f4305715177def85ae",
+      "trackedDirty": true,
+      "finishedAt": "2026-11-05T06:11:38.453Z",
+      "stages": [
+        {
+          "id": "syntax",
+          "state": "passed",
+          "exitCode": 0
+        },
+        {
+          "id": "architecture",
+          "state": "failed",
+          "exitCode": 0
+        },
+        {
+          "id": "api-registry",
+          "state": "passed",
+          "exitCode": 0
+        },
+        {
+          "id": "issue-inventory",
+          "state": "passed",
+          "exitCode": 0
+        }
+      ],
+      "regression": {
+        "state": "failed",
+        "newFailures": 105,
+        "knownFailures": 6,
+        "unseenBaselineTests": 1,
+        "passed": 974,
+        "skipped": 0,
+        "incomplete": true,
+        "baselineResolved": 0
+      }
+    },
+    {
+      "command": "node scripts/shelf-mini-explorer-browser.mjs",
+      "state": "passed",
+      "browser": "154.0.8037.57",
+      "os": "linux",
+      "widths": [
+        320,
+        360,
+        390,
+        540,
+        700,
+        900
+      ],
+      "memoryClassSimulations": 2,
+      "scrollMatrixCells": 192,
+      "listingSizes": [
+        1,
+        10,
+        100,
+        1000,
+        10000
+      ],
+      "endToEndScrollFolderSize": 10001,
+      "physicalTrackpad": "not tested",
+      "counterOrHistorySuccessFromDrag": false
+    },
+    {
+      "command": "git diff --check",
+      "state": "passed"
+    }
+  ],
+  "architectureComparison": "Byte-identical baseline and candidate inspection results; same 80 pre-existing findings.",
+  "installedChrome": {
+    "state": "blocked",
+    "os": "Linux; Windows 11 unavailable",
+    "policy": "ExtensionInstallBlocklist=[\"*\"]",
+    "bypassAttempted": false
+  },
+  "liveProviders": "Not tested; no credentialed provider mutation performed.",
+  "licensing": "Existing non-commercial Chute notices retained; no additional copied reference source, native enrollment, packaging or publication.",
+  "screenshots": [
+    "layout-320-grid-midnight.png",
+    "layout-320-grid-neon.png",
+    "layout-320-grid-ocean.png",
+    "layout-320-grid-porcelain.png",
+    "layout-320-list-midnight.png",
+    "layout-320-list-neon.png",
+    "layout-320-list-ocean.png",
+    "layout-320-list-porcelain.png",
+    "layout-360-grid-porcelain.png",
+    "layout-390-grid-porcelain.png",
+    "layout-540-grid-porcelain.png",
+    "layout-700-grid-porcelain.png",
+    "layout-900-grid-midnight.png",
+    "layout-900-grid-neon.png",
+    "layout-900-grid-ocean.png",
+    "layout-900-grid-porcelain.png",
+    "parity-320-grid.png",
+    "parity-900-grid.png",
+    "remotes-320-midnight.png",
+    "remotes-320-neon.png",
+    "remotes-320-ocean.png",
+    "remotes-320-porcelain.png"
+  ]
+}

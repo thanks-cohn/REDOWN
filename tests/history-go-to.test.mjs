@@ -209,8 +209,10 @@ test('pinned and grouped original tab uses matching existing Explorer without al
 test('rapid Split View requests choose latest file and do not create duplicate pairs',async()=>{
  const h=await splitHarness();h.nav.open(good);h.nav.open({...good,destination:{...good.destination,key:'photos/latest.webp'}});await settle();assert.deepEqual(h.received,['photos/latest.webp']);assert.equal(h.calls.filter(c=>c[0]==='tab').length,1);h.dom.window.close();
 });
-test('GO TO production code has no Shelf redirect or side-panel navigation path',()=>{
- assert.doesNotMatch(script,/sidePanel|location\.href|historySideNavigation|relaySide/);
+test('GO TO preserves opaque Dashboard routing and explicitly scopes Shelf navigation',()=>{
+ assert.doesNotMatch(script,/location\.href|historySideNavigation|relaySide/);
+ assert.match(script,/mode==='shelf'&&!isShelf\(\)/);
+ assert.match(script,/intent.windowId!==win.id/);
  assert.doesNotMatch(read('extension/beta/explorer.mjs'),/historySideNavigation|historySideAcknowledged/);
 });
 
@@ -391,4 +393,41 @@ test('GO TO recovers old Cloudflare Worker asset URL only from exact configured 
  assert.equal(h.nav.legacyAssetKey('https://r2-worker.example.invalid/assets/photos/%2Fescape.webp',profile),null);
  assert.equal(h.nav.legacyAssetKey('https://other.invalid/assets/photos/kept%20copy.webp',profile),null);
  h.dom.window.close();
+});
+
+test('Shelf GO TO consumes once in its own window, acknowledges and reports exact locator without opening tabs',async()=>{
+ const h=view({historyGoToMode:'shelf'});await h.nav.preference;const received=[];
+ await h.nav.receiveShelf(async target=>{received.push(target);});
+ h.nav.open(good);await settle();
+ assert.equal(h.calls.length,0);assert.equal(h.w.location.hash,'#explorer');
+ assert.equal(received.length,1);assert.equal(received[0].key,good.destination.key);
+ assert.equal(Object.keys(h.session).length,0,'one-use request and receipts cleaned on completion');
+ const intent={token:'window-test',issuedAt:Date.now(),windowId:8,locator:h.nav.locator(good)};
+ await h.w.chrome.storage.session.set({'historyShelf:window-test':intent});await settle();assert.equal(received.length,1);
+ intent.windowId=7;await h.w.chrome.storage.session.set({'historyShelf:other-recipient':{...intent,token:'other-recipient',recipientId:'other-shelf'}});await settle();assert.equal(received.length,1,'another Shelf context cannot consume this recipient intent');
+ await h.w.chrome.storage.session.set({'historyShelf:window-test':intent});await settle();assert.equal(received.length,2);
+ await h.w.chrome.storage.session.set({'historyShelf:window-test':intent});await settle();assert.equal(received.length,2,'replay rejected');
+ await h.w.chrome.storage.session.set({'historyShelf:expired':{...intent,token:'expired',issuedAt:0}});await settle();assert.equal(received.length,2);
+ h.dom.window.close();
+});
+
+test('Shelf receiver reports verification failure without selecting a substitute or opening a tab',async()=>{
+ const h=view({historyGoToMode:'shelf'});await h.nav.preference;
+ await h.nav.receiveShelf(async()=>{throw Error('Exact saved object missing');});h.nav.open(good);await settle();
+ assert.match(h.w.document.getElementById('history-navigation-status').textContent,/Exact saved object missing/);
+ assert.equal(h.calls.length,0);assert.equal(Object.keys(h.session).length,0);h.dom.window.close();
+});
+
+test('outside Shelf, GO TO invokes the existing Chrome panel API in the click gesture before async file work',async()=>{
+ const h=view({historyGoToMode:'shelf'});await h.nav.preference;
+ h.dom.reconfigure({url:'https://extension.invalid/options.html'});
+ // Simulate the authorized recipient in the requested window.
+ const set=h.w.chrome.storage.session.set;
+ h.w.chrome.storage.session.set=async patch=>{
+  await set(patch);
+  const request=Object.entries(patch).find(([key])=>key.startsWith('historyShelf:'));
+  if(request){const intent=request[1];assert.equal(intent.windowId,7);assert.ok(!JSON.stringify(intent).includes('source.invalid'));await set({['historyResult:'+intent.token]:{state:'completed'}});}
+ };
+ h.nav.open(good);assert.equal(h.calls[0][0],'panel','panel opening precedes the first await');
+ await settle();assert.equal(h.calls.length,1);assert.equal(Object.keys(h.session).length,0);h.dom.window.close();
 });

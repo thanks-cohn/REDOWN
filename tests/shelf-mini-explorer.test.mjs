@@ -62,6 +62,9 @@ test('NAV: REMOTES is the default even though FILES is first; Settings opt into 
   assert.equal(run.w.location.hash,'#settings','A deliberate deep link overrides the default');
   assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'SETTINGS');
  }finally{run.dom.window.close();}
+ run=await boot({shelfStartViewMode:'untrusted',shelfLastViewV1:'explorer'});
+ try{assert.equal(run.w.location.hash,'');assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'REMOTES');}
+ finally{run.dom.window.close();}
  run=await boot({shelfStartViewMode:'last',shelfLastViewV1:'untrusted'});
  try{assert.equal(run.w.location.hash,'');assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'REMOTES');}
  finally{run.dom.window.close();}
@@ -218,4 +221,36 @@ test('Natural drag: cancellation during cloud read cannot fulfill a replaced res
  const bridge=createDragBridge({api,stage,send:async()=>({ok:true})}),data=new Map();
  bridge.start({preventDefault(){},dataTransfer:{setData:(k,v)=>data.set(k,v)}},a,{key:'one.bin',size:1});await settle();
  await bridge.cancel();release();await settle();assert.equal(await stage.update(data.get(DRAG_TYPE),()=>true),null);assert.equal(bridge.getHandle(),null);await stage.close();
+});
+
+test('Shelf History integration authorizes exact account/bucket/key and selects paged saved item without downloading',async()=>{
+ const dom=new JSDOM('<section id="mini"></section>',{url:'https://fixture.invalid'}),d=dom.window.document;
+ const originals={chrome:globalThis.chrome,add:globalThis.addEventListener,remove:globalThis.removeEventListener,nav:globalThis.RedownHistoryNavigation};let reveal;
+ globalThis.chrome={storage:{onChanged:{addListener(){},removeListener(){}}}};globalThis.addEventListener=()=>{};globalThis.removeEventListener=()=>{};
+ globalThis.RedownHistoryNavigation={receiveShelf:async fn=>{reveal=fn;return ()=>{};}};
+ const calls=[];let missing=false;
+ const api=createFileApi({accounts:async()=>({accounts:[{id:a.accountId}]}),buckets:async()=>({buckets:[{name:a.bucketName}]}),list:async()=>({entries:[{key:'same-name.png',folder:false}],cursor:'more'}),stat:async input=>{calls.push(input);return {object:missing?null:{key:input.key,size:1}};}});
+ let instance;
+ try{
+  instance=mountExplorer({host:d.getElementById('mini'),api,storage:{get:async()=>({shelfExplorerV1:{folderWidth:36}}),set:async()=>{}}});await instance.setActive(true);await settle();
+  const target={...a,provider:'cloudflare-r2',key:'nested/same-name.png',prefix:'nested/',filename:'same-name.png'};
+  await reveal(target);
+  assert.equal(d.querySelector('.mini-column-resize').getAttribute('aria-valuenow'),'50');
+  assert.deepEqual([...instance.model.state.selected],['nested/same-name.png']);
+  assert.equal(d.querySelector('.mini-row[aria-selected=true]').dataset.key,'nested/same-name.png');
+  assert.equal(calls[0].source.accountId,a.accountId);assert.equal(calls[0].source.bucketName,a.bucketName);
+  missing=true;await assert.rejects(reveal(target),/no longer/);assert.equal(instance.model.state.selected.size,0);
+ }finally{instance?.dispose();dom.window.close();globalThis.chrome=originals.chrome;globalThis.addEventListener=originals.add;globalThis.removeEventListener=originals.remove;globalThis.RedownHistoryNavigation=originals.nav;}
+});
+
+test('variable-aspect offset windows reach the final image at every folder size without losing logical height',async()=>{
+ const {offsetRange}=await import('../extension/shelf-explorer-model.mjs');
+ for(const count of [1,10,100,1000,10000]){
+  const offsets=[0];for(let i=0;i<count;i++)offsets.push(offsets.at(-1)+[48,120,320,80][i%4]);
+  for(const fraction of [0,.25,.49,.5,.51,.75,1]){
+   const scroll=(offsets.at(-1)-Math.min(350,offsets.at(-1)))*fraction,range=offsetRange(offsets,scroll,350);
+   assert.equal(range.total,offsets.at(-1));assert.ok(range.top<=scroll);assert.ok(offsets[range.end]>=Math.min(range.total,scroll+350));
+   if(fraction===1)assert.equal(range.end,count);
+  }
+ }
 });

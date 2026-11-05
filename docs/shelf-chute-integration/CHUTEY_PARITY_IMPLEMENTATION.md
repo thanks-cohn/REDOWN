@@ -1,3 +1,5 @@
+> Latest owner override and verification: [FILES layout / History follow-up](FILES_LAYOUT_HISTORY_FOLLOWUP.md). The 36% split, auto-fit grid and inline preview below are historical.
+
 # Chutey layout and natural cloud drag — P0 implementation
 
 Owner request: `latest-1132026/IMPORTANT/P0_CODEX_CHUTEY_EXACT_LAYOUT_REDOWN_CLOUD_API_NATURAL_DRAG.md`.
