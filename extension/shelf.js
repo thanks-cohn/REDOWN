@@ -275,6 +275,14 @@ dragLimit?.addEventListener('change',()=>{void saveDragLimit(dragLimit.value);})
 $('reset-drag-limit')?.addEventListener('click',()=>{void saveDragLimit(50);});
 if(dragLimit)void refreshDragLimit().catch(()=>{});
 
+
+const previewAxis=$('preview-navigation-axis');
+void chrome.storage.local.get('previewNavigationAxisV1').then(data=>{if(previewAxis)previewAxis.value=data.previewNavigationAxisV1==='vertical'?'vertical':'horizontal';}).catch(()=>{});
+previewAxis?.addEventListener('change',async()=>{
+ try{await chrome.storage.local.set({previewNavigationAxisV1:previewAxis.value==='vertical'?'vertical':'horizontal'});status('Preview navigation keys saved.');}
+ catch{status('Could not save Preview navigation keys.');}
+});
+
 // Registered only after the local navigation and controls initialize.
 chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
   if(sender.id===chrome.runtime.id&&message.type==='redownShelfReady'){
@@ -282,11 +290,4 @@ chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
     chrome.windows.getCurrent().then(win=>{if(win.id===message.windowId)respond({ready:true});}).catch(()=>{});
     return true;
   }
-});
-
-const previewAxis=$('preview-navigation-axis');
-void chrome.storage.local.get('previewNavigationAxisV1').then(data=>{if(previewAxis)previewAxis.value=data.previewNavigationAxisV1==='vertical'?'vertical':'horizontal';}).catch(()=>{});
-previewAxis?.addEventListener('change',async()=>{
- try{await chrome.storage.local.set({previewNavigationAxisV1:previewAxis.value==='vertical'?'vertical':'horizontal'});status('Preview navigation keys saved.');}
- catch{status('Could not save Preview navigation keys.');}
 });
