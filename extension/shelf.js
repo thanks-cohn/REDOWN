@@ -12,6 +12,31 @@ function updateConnectionSummary(){
         : 'Connect Cloudflare to make R2 your cloud home.';
 }
 document.addEventListener('redown:provider-connection',updateConnectionSummary);
+let filesEntrance='normal',entranceAnimations=[];
+const entranceReady=chrome.storage.local.get('shelfFilesEntranceV1').then(data=>{
+  filesEntrance=data.shelfFilesEntranceV1==='slide-up'?'slide-up':'normal';
+  const control=$('files-entrance');if(control)control.value=filesEntrance;
+}).catch(()=>{});
+function settleEntrance(){for(const animation of entranceAnimations)animation.cancel();entranceAnimations=[];}
+// Only an explicit FILES click animates. Startup, History GO TO and hash routes
+// remain synchronous. Measure the real tabs before/after the existing layout.
+$('nav-explorer').addEventListener('click',async event=>{
+  event.preventDefault();await entranceReady;
+  if(!$('explorer-view').hidden)return;
+  settleEntrance();
+  const nav=document.querySelector('nav[aria-label="Shelf"]'),before=nav.getBoundingClientRect();
+  location.hash='#explorer';route();
+  if(filesEntrance!=='slide-up'||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||!nav.animate)return;
+  const after=nav.getBoundingClientRect(),explorer=$('explorer-view');
+  const distance=Math.max(0,window.innerHeight-explorer.getBoundingClientRect().top);
+  const timing={duration:240,easing:'cubic-bezier(.2,.7,.2,1)'};
+  entranceAnimations=[nav.animate([{transform:`translateY(${before.top-after.top}px)`},{transform:'translateY(0)'}],timing),explorer.animate([{transform:`translateY(${distance}px)`},{transform:'translateY(0)'}],timing)];
+});
+$('files-entrance')?.addEventListener('change',async event=>{
+  const value=event.target.value==='slide-up'?'slide-up':'normal';
+  try{await chrome.storage.local.set({shelfFilesEntranceV1:value});filesEntrance=value;status('Files entrance saved.');}
+  catch{event.target.value=filesEntrance;status('Could not save Files entrance.');}
+});
 function route() {
   const view=['settings','history','explorer'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
   for (const name of ['clouds','explorer','history','settings']) {
@@ -31,7 +56,8 @@ function route() {
       await chrome.storage.local.remove('redownFailureDot');
   }).catch(()=>{});
 }
-window.addEventListener('hashchange',route); route();
+window.addEventListener('hashchange',()=>{if(location.hash!=='#explorer')settleEntrance();route();}); route();
+window.addEventListener('resize',settleEntrance);
 // REMOTES is the default Shelf opening view regardless of the visual tab order.
 // Opt-in "last" mode restores a validated route only when no explicit hash/deep link
 // was requested. This read never blocks the visible Shelf shell.
@@ -184,6 +210,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
     return;
   }
   if(area!=='local')return;
+  if(changes.shelfFilesEntranceV1){filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
   if(changes.redownFailureDot){
     ++failureLaserRevision;
     paintShelfFailureLaser(changes.redownFailureDot.newValue,true);
