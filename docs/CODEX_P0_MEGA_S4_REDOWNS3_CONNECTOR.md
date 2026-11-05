@@ -30,6 +30,64 @@ Do **not** assume a separate `MEGA_S4_REGION` or `MEGA_S4_BUCKET` value exists. 
 
 The three variables are the **default minimal setup**, not a guarantee that every MEGA account permits automatic region/bucket discovery. This gate is to prove sufficiency, not to demand extra variables for convenience.
 
+## P0-A Cloudflare development credentials — use owner's EXACT variable names
+
+The owner will configure **these five environment variables in the Codex environment themselves**. Do not rename them, ask for them in chat, echo values, commit them, or export them to frontend code:
+
+```text
+CLOUDFLARE_API_TOKEN
+CLOUDFLARE_ACCOUNT_ID
+CLOUDFLARE_ACCESS_KEY_ID
+CLOUDFLARE_SECRET_ACCESS_KEY
+S3_API_ENDPOINT
+```
+
+**Meaning and strict separation:**
+
+- `CLOUDFLARE_API_TOKEN`: Cloudflare management API token; may authorize inspecting relevant Workers/R2 resources, with scope determined by the token. **Not an S3 secret key.**
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account identifier for API resource routing; **not a credential**.
+- `CLOUDFLARE_ACCESS_KEY_ID` and `CLOUDFLARE_SECRET_ACCESS_KEY`: owner-provided **Cloudflare R2 S3 API credentials**. Do not silently substitute them for the MEGA keys.
+- `S3_API_ENDPOINT`: the **Cloudflare R2** S3 endpoint associated with those Cloudflare R2 credentials; not MEGA's endpoint. Validate exact endpoint/account/possible jurisdiction matching, rather than blindly assuming a default R2 endpoint. Cloudflare R2's S3 signing region is `auto` per official docs; this does **not** establish MEGA S4's signing region.
+- The separate `MEGA_S4_ENDPOINT`, `MEGA_S4_ACCESS_KEY_ID`, `MEGA_S4_SECRET_ACCESS_KEY` variables remain the **MEGA three-variable STOP/GO gate** above. They are not renamed or removed by adding Cloudflare access. A MEGA-only customer must never need Cloudflare credentials.
+
+**Before any Cloudflare API calls:** check for variable presence and masked syntax; verify API token's actual permissions via a bounded **read-only** request against the specified account and permitlisted resource(s), and separately verify R2 S3 credentials + endpoint using a read-only operation. Report `CLOUDFLARE_API_TOKEN_MISSING`, `CLOUDFLARE_API_SCOPE_INSUFFICIENT`, `CLOUDFLARE_R2_CREDENTIALS_UNAVAILABLE`, or `CLOUDFLARE_NETWORK_BLOCKED` as needed; do not conflate one identity's failure with the other. Never record keys/token/Authorization/SigV4 signatures in logs. Use least-privilege access and avoid querying unrelated buckets or Workers.
+
+**Cloudflare access is OPTIONAL for the MEGA S4 Explorer MVP.** It becomes relevant when testing **REDOWN TRUE REMOTE's existing Cloudflare Workers as an optional transfer/relay route**. If Cloudflare env values are absent/invalid, continue the MEGA-only adapter after its own strict GO, but mark the **Cloudflare Worker integration experiment** BLOCKED with its precise reason. No secret values should reach a web page, extension content script, untrusted DOM, diagnostics export, repository, commit or issue.
+
+**Authorization boundary:** these variables do not authorize changing live Cloudflare Workers, deploying new Workers, creating buckets, billing changes, turning on public access, or writing objects in unrelated storage. Such actions require an explicit owner-approved disposable test resource and a separate approved test step. Read-only inspection is the default. Any required Worker deployment or live MEGA upload test must be requested and bounded to an authorized sandbox/test destination; do not turn an environment-variable presence check into permission for mutation.
+
+**Useful Cloudflare references:** https://developers.cloudflare.com/r2/get-started/s3/ and https://developers.cloudflare.com/r2/api/tokens/ .
+
+## P0-B Exact REDOWN Explorer UX — MEGA S4 connection popup and cloud tabs
+
+The owner wants a customer-visible workflow, **not Codex-only environment variables as the login UX**.
+
+1. REDOWN Explorer opens independently of any provider or Cloudflare login, and always offers a clearly visible **MEGA S4** provider button/entry.
+2. Clicking **MEGA S4** when not connected opens a polished **modal connection popup**, not a new browser tab or separate setup page, with exactly three required inputs by default: **S3 endpoint URL**, **Access Key ID**, **Secret Access Key** (masked, optional reveal control). Connect, Cancel and understandable error messages. Do not ask for Cloudflare login, OAuth tokens, developer keys, region or bucket unless verified as strictly necessary by the MEGA preflight.
+3. Store credentials through an appropriately trusted per-user secret mechanism; if only a less-protected fallback is feasible, explicitly disclose that limitation and secure it against web/content-script exposure. Environment values in Codex exist for **development tests only**; customers will provide their own S4 credentials in this modal.
+4. On a verified MEGA login, discover permitted buckets and automatically populate the **existing real Universal File Explorer** with MEGA contents. If Cloudflare is disconnected, MEGA becomes the selected Explorer provider and remains fully operational.
+5. If Cloudflare R2 is also connected, create **MEGA S4** and **Cloudflare R2** Explorer tabs next to one another, **similar to the existing Right-click Destinations tabs** (provider tabs for the Explorer, not the menu configuration itself). Selecting a tab switches the active provider's contents without requiring a reconnect or destroying its remembered location/selection/nav state.
+6. With only R2 connected, preserve the current R2 Explorer. With neither connected, keep the Explorer shell and connection buttons visible. Disconnection, expired keys, network failure or Worker outage in one provider must not block the other.
+7. Maintain independent provider/account/bucket identities and capability/error status. Do not show MEGA folders inside Cloudflare's tab or reuse Cloudflare account IDs as MEGA identities. No fake list rows or mock-only connected state.
+8. Support disconnect/reconnect/change keys through the MEGA connection UI. If multiple valid S4 connections are feasible, architect stable connection IDs without requiring multi-account UI in the MVP.
+
+**Live GUI acceptance:** fresh REDOWN install, no Cloudflare login → click MEGA → enter endpoint/access/secret → browse actual test bucket/file, preview/download/upload via Universal File API. Then connect R2 separately; both tabs appear and switch without cross-provider state leaks.
+
+## P0-C TRUE REMOTE to MEGA S4 — work toward a real save route
+
+**Non-negotiable target:** the MEGA S4 adapter is not merely for browsing. It must implement a **TRUE REMOTE destination** through REDOWN's common file-transfer interface, using the same adapter/verified-write backend as Explorer operations. Right-click/drag/copy/file transfers should not create a second MEGA writer or require an intermediate OS-disk download. Saving to MEGA must never require logging into Cloudflare.
+
+**Research and deliver the best authorized route realistically available:**
+
+- **Priority 1, real MVP:** actual file bytes from an authorized web source or existing REDOWN-supported source → transport in a bounded stream through browser/native/authorized Worker as necessary → SigV4-authenticated S3 PUT/multipart into the selected MEGA bucket/key → independently HEAD/GET-readback verify size and content/streamed hash → only then History/GO TO/success receipt. The destination receives bytes, filename/path and protocol-required metadata, not source/page/link browsing provenance.
+- **Priority 2, direct Worker route if feasible:** inspect REDOWN's actual provisioned TRUE REMOTE `WORKER_SOURCE` in `extension/background.js` and the existing Worker credentials/transfer path. Determine whether that Worker can be an **authenticated, authorized transport into the customer's connected MEGA S4 bucket** via MEGA's S3 API. Verify Cloudflare Worker network restrictions, SigV4 support, secrets management, streaming/multipart/memory limitations, and consent/security model. If technically viable and authorized for a disposable test Worker/bucket, implement and verify a Worker→MEGA transfer. **Never hardcode customer MEGA secrets into publicly served Worker source, plaintext configs or frontend; use a trusted short-lived signing/credential flow or secure server-side binding, with owner permission for any deployment.**
+- **Fallback:** if direct Worker→MEGA cannot be safely tested now, deliver a working no-OS-disk streaming alternative via a trusted browser/native path where available; implement a clearly defined transport capability interface (`worker-direct` / `browser-stream` / `native-stream` / `unavailable`) for later Worker attachment without changing MEGA's Universal File API adapter. Mark untested routes `NOT_VERIFIED` or `BLOCKED`, never `SUPPORTED`.
+- Do not let a 32 MB demo, buffering workaround, expired worker token, network denial or unavailable region masquerade as “unlimited TRUE REMOTE.” Record real caps and shortcomings. Keep verified-save gating and UNCERTAIN write replay protections.
+- A customer who has *never connected Cloudflare* must still be able to use the MEGA Explorer and any proven browser/native TRUE REMOTE path. A Cloudflare-hosted Worker may be an optional accelerator, not a universal prerequisite.
+- The first acceptance remains MEGA listing, mkdir/upload/readback/delete in a disposable test prefix with real credentials; cross-provider and Worker-direct tests happen only after their own access/authorization gate.
+
+**Capability report is required:** For each Universal File API operation (accounts/buckets/list/listRaw/stat/readStream/upload/download/mkdir/copy/move/rename/delete/preview/remoteIngest/transferHistory and any other existing operation), report `SUPPORTED`, `PARTIAL`, `UNSUPPORTED` or `NOT_VERIFIED`, the specific MEGA S4 limitation if any, fallback semantics and live evidence class. Include TRUE REMOTE routing and future Worker-ready foundation separately.
+
 ## 0. Non-negotiable product direction and task boundary
 
 REDOWN is the intended customer release. Click2Cloud exists to establish a clean baseline/behavioral reference and later a deeply programmatic menu lab. It is **NOT** replacing REDOWN as the shipped product, and this initial task must **not** wholesale transplant Click2Cloud V3+1 or rewrite REDOWN's current native right-click engine.
@@ -100,9 +158,9 @@ Run existing BOOT/entry tests after adapter integration, including worker wake/s
 
 1. Inspect current REDOWN branch and available local trust/credential transport; identify the least invasive provider-router seam and test/runtime constraints.
 2. Build the generic S3-compatible adapter and `mega-s4` explicit capability profile using first-party MEGA S4 API spec; unit test SigV4, endpoint, unsupported headers, pagination, implicit prefix, uncertain writes and wrong-account isolation using synthetic credentials.
-3. Add secure credential configuration/connection flow and MEGA entry in existing Explorer; don't bury the connect control in Settings alone.
+3. Add customer-facing MEGA S4 popup accepting endpoint/access key ID/secret access key, the independent R2/MEGA Explorer tabs, and a secure credential intake; the Codex env values are for development tests only.
 4. Deliver an actual real-file MVP: List → upload → HEAD/GET → byte-verify → refresh Explorer → download, preserving R2 behavior. If live keys are unavailable, finish offline pieces and supply exact local secure test instructions; mark LIVE_PROVIDER blocked.
-5. Add copy/move/delete/rename, multipart, bulk/drag-drop and cross-cloud transfer incrementally as independently verified. Any unsupported operation should report its limitation honestly; avoid UI buttons that silently fail.
+5. Add copy/move/delete/rename, multipart, bulk/drag-drop and cross-cloud transfer incrementally as independently verified. Evaluate actual TRUE REMOTE via the MEGA adapter: first a no-local-disk authorized source→MEGA transfer, then optional direct Worker→MEGA when feasible and separately authorized. Produce capability/shortcoming matrix. Any unsupported operation should report its limitation honestly; avoid UI buttons that silently fail.
 6. Run focused tests, `npm run check`, relevant existing `npm run explorer:smoke -- --preset all`, and BOOT tests from `docs/boot/IMPLEMENTATION.md`; do not reset baselines or weaken assertions. Review `npm run reliability:check`/readiness.
 7. Supply a reproducible installed Windows/Chrome acceptance checklist: clean connected MEGA test account, bucket listing, fresh/empty nested folder, file write/byte readback, restart, tab switch, R2 nonregression and failure/reconnect. No mock-only “worked” declarations.
 8. Commit changes to an explicit development branch. Do NOT merge/deploy to REDOWN production, rotate user's cloud keys or modify Cloudflare resources unless the owner separately authorizes the action. Include exact changed files, SHA, tests, known blockers and follow-up tasks.
