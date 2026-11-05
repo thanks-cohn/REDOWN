@@ -1,0 +1,23 @@
+{
+  "scope": "installed extension acceptance",
+  "state": "blocked",
+  "platform": "linux",
+  "method": "read-only inspection of enforced Chromium administrator extension policy",
+  "policy": {
+    "ExtensionInstallBlocklist": [
+      "*"
+    ],
+    "ExtensionInstallSources": []
+  },
+  "reason": "All extensions are blocked except the managed force-installed extension; no policy changes or bypass flags attempted.",
+  "remaining": [
+    "real Shelf normal/attached/popup/expanded windows",
+    "live provider/OAuth/revoke",
+    "ChatGPT",
+    "Google Lens",
+    "Google Image Search",
+    "Yandex Images",
+    "cross-window trusted drop",
+    "Windows native and physical low-RAM hardware"
+  ]
+}

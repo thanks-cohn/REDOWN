@@ -1,3 +1,5 @@
+> Current follow-up: [Chutey parity and natural drag implementation](CHUTEY_PARITY_IMPLEMENTATION.md). The content below records PR #52; explicit Prepare, narrow drawer and license-drift descriptions are historical and superseded by that report. Live/Windows gates remain open.
+
 # P0 acceptance evidence
 
 **Not release-certified.** Phase A source audit and Phase B controlled File payload
