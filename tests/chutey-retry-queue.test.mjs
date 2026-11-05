@@ -92,3 +92,12 @@ test('Opt-in prepared bytes survive Shelf closure for later validated reuse; exp
   const unknown=await unversioned.prepare(source,entry);assert.equal((await stage.update(unknown.id,v=>({keep:v.keep}))).keep,false,'No strong provider version means no long retention/reuse');await unversioned.dispose();assert.equal((await stage.stats()).count,0);
  }finally{await next.cancel();await stage.purge(true);await stage.close();await h.stage.close();}
 });
+
+test('Outside drop before asynchronous reservation is ready cancels the first gesture and cannot leave staged bytes',async()=>{
+ const h=harness(),stage=h.factory(),states=[],reserve=stage.reserve.bind(stage);stage.reserve=async(...args)=>{await new Promise(r=>setTimeout(r,200));return reserve(...args);};
+ const bridge=createDragBridge({api:createFileApi({readStream:async(_,o)=>{await o.onChunk(new Uint8Array([1,2,3]));return {};}}),stage,send:async()=>({ok:true}),onState:s=>states.push(s)});
+ try{
+  bridge.start({preventDefault(){assert.fail();},dataTransfer:{setData(){}}},source,entry);bridge.end({dataTransfer:{dropEffect:'none'}});
+  await waitFor(()=>states.at(-1)?.state==='cancelled');assert.equal((await stage.stats()).count,0);assert.equal(bridge.getHandle(),null);
+ }finally{await bridge.cancel();await stage.purge(true);await stage.close();await h.stage.close();}
+});

@@ -73,6 +73,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
     start(event,source,entry){
       if(!valid(entry)){event.preventDefault();emit('failed',`Use Download and the destination file picker for files larger than ${maxBytes/1048576} MiB or unknown sizes.`);return false;}
       const clearing=release(true),ticket=generation,id=crypto.randomUUID();let preparing=false,startLayer='storage';
+      handle={id,expires:Date.now()+globalThis.RedownChuteStage.TTL};
       event.dataTransfer.effectAllowed='copy';event.dataTransfer.setData(DRAG_TYPE,id);
       emit('attempted','Dragging file. Keep Explorer open while the destination receives it.');
       void (async()=>{
@@ -97,8 +98,8 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
     },
     end(event){
       if(event.dataTransfer?.dropEffect!=='none'||!handle)return;const pending=handle;
-      const endTimer=setTimeout(()=>{void stage.update(pending.id,v=>!v.claim&&!v.used).then(unclaimed=>{
-        if(unclaimed&&handle?.id===pending.id)return cancel().then(()=>emit('cancelled','No file handoff observed. Use Download and the destination file picker if needed.'));
+      const endTimer=setTimeout(()=>{void stage.update(pending.id,v=>({unclaimed:!v.claim&&!v.used})).then(result=>{
+        if((!result||result.unclaimed)&&handle?.id===pending.id)return cancel().then(()=>emit('cancelled','No file handoff observed. Use Download and the destination file picker if needed.'));
       }).catch(()=>{});},750);endTimer.unref?.();
     },cancel,suspend,dispose:suspend,getHandle:()=>handle?{...handle}:null
   };
