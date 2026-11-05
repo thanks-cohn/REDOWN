@@ -83,7 +83,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     }
     const panel=$('.mini-preview'),panelHeight=panel.offsetHeight;$('.mini-preview-parking').append(panel);thumbObserver?.disconnect();thumbQueue.length=0;
     const columns=grid?Math.max(1,Math.floor((list.clientWidth-12+4)/114)):1,unit=grid?116:48;
-    const previewIndex=selectedEntry?visible.indexOf(selectedEntry):-1,previewRow=Math.floor(previewIndex/columns);
+    const previewIndex=selectedEntry?visible.findIndex(e=>e.key===selectedEntry.key):-1,previewRow=Math.floor(previewIndex/columns);
     const extra=panel.hidden?0:(panelHeight||parseFloat(panel.style.height)||280)+16+(grid?4:0);
     const scroll=list.scrollTop-(previewRow>=0&&list.scrollTop>(previewRow+1)*unit?extra:0);
     const range=windowRange(Math.ceil(visible.length/columns),Math.max(0,scroll),list.clientHeight||384,unit);
@@ -224,7 +224,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   button('folder').onclick=safe(async()=>{const source={...model.state.source},name=await ask('New folder name');if(name)await mutate('mkdir',{name},source);});
   for(const operation of ['copy','move'])button(operation).onclick=safe(()=>{clipboard={operation,source:{...model.state.source},entries:[{...one()}]};paintActions();say('Choose a destination folder, then Paste here. Conflicts keep both files.');});
   button('paste').onclick=safe(async()=>{if(!clipboard)throw Error('Copy or Move a file first.');const destination={...model.state.source},pending=clipboard;clipboard=null;paintActions();await model.request(pending.operation,{...pending,destination,conflict:'keep'});model.invalidate();if(model.state.source&&identity(model.state.source)===identity(destination))await navigate(destination,{fresh:true,record:false});saved={source:model.state.source};await discover();say('Transfer confirmed by the File API.');});
-  list.addEventListener('scroll',()=>{if(host.hidden||!activeView)return;rememberedScroll=list.scrollTop;renderRows();persist();},{passive:true});$('.mini-filter input').oninput=()=>{list.scrollTop=0;renderRows();};$('.mini-filter select').onchange=()=>{list.scrollTop=0;renderRows();};
+  list.addEventListener('scroll',()=>{if(host.hidden||!activeView)return;rememberedScroll=list.scrollTop;renderRows();persist();},{passive:true});$('.mini-filter input').oninput=()=>{closeSide();selectedEntry=null;model.state.selected.clear();focusIndex=0;list.scrollTop=0;renderRows();paintActions();};$('.mini-filter select').onchange=()=>{list.scrollTop=0;renderRows();};
   list.onkeydown=event=>{if(event.target===list&&(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10')){event.preventDefault();showMenu(null,list.getBoundingClientRect(),list);return;}if(event.target===list&&['Enter','ArrowDown'].includes(event.key)){event.preventDefault();focusIndex=0;list.scrollTop=0;renderRows();rows.firstElementChild?.focus();}};
   const contextMenu=document.createElement('div');contextMenu.className='mini-context';contextMenu.role='menu';contextMenu.hidden=true;host.append(contextMenu);
   function showMenu(entry,point,returnFocus){

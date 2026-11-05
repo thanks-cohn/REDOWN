@@ -129,6 +129,7 @@ test('Mini UI: real File API account tree, selection is not download, virtual ro
   d.querySelector('.mini-row').dispatchEvent(new dom.window.MouseEvent('contextmenu',{bubbles:true,cancelable:true,clientX:10,clientY:10}));
   const menu=d.querySelector('.mini-context');assert.equal(menu.hidden,false);menu.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(menu.hidden,true);assert.equal(d.activeElement.isConnected,true);assert.equal(d.activeElement.role,'option');
   await instance.setActive(false);await instance.setActive(true);assert.equal(instance.model.state.selected.size,1);assert.equal(instance.model.state.source.accountId,'account-a');
+  const filter=d.querySelector('.mini-filter input');filter.value='no matching file';filter.dispatchEvent(new dom.window.Event('input'));assert.equal(instance.model.state.selected.size,0);assert.equal(d.querySelector('[data-action=delete]').disabled,true);assert.equal(d.querySelectorAll('.mini-row').length,0);
  }finally{instance?.dispose();dom.window.close();globalThis.chrome=oldChrome;globalThis.addEventListener=oldAdd;globalThis.removeEventListener=oldRemove;}
 });
 

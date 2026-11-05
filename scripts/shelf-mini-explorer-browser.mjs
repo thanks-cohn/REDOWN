@@ -5,6 +5,7 @@ import {resolve,extname} from 'node:path';
 import {pathToFileURL} from 'node:url';
 const playwrightPath=process.env.PLAYWRIGHT_MODULE||'/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
 const {chromium}=await import(pathToFileURL(playwrightPath));
+const quick=process.env.PARITY_QUICK==='1',widths=quick?[360,900]:[320,360,390,540,700,900];
 const root=resolve('extension'),out=resolve('docs/shelf-chute-integration/parity-evidence');await mkdir(out,{recursive:true});
 const html=(await readFile(root+'/shelf.html','utf8')).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
 const server=createServer(async(req,res)=>{
@@ -19,10 +20,10 @@ const server=createServer(async(req,res)=>{
 });await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const base='http://127.0.0.1:'+server.address().port;
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
-const results={classification:'controlled HTTP fixture; chrome messaging/provider mocked; no installed extension, native or live-site proof',browser:browser.version(),os:process.platform,scenarios:[]};
+const results={quick,classification:'controlled HTTP fixture; chrome messaging/provider mocked; no installed extension, native or live-site proof',browser:browser.version(),os:process.platform,scenarios:[]};
 try{
  for(const lowMemory of [false,true]){
-  const context=await browser.newContext({viewport:{width:360,height:1000}}),page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({viewport:{width:360,height:1000}}),page=await context.newPage();const errors=[];page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/shelf.html#explorer');
   await page.evaluate(({lowMemory,base})=>{
    Object.defineProperty(navigator,'deviceMemory',{value:lowMemory?4:8});
@@ -94,7 +95,7 @@ try{
       if(name==='preview')return {preview:'image',size:68};return {};
     }};
   });await reference.addScriptTag({url:base+'/reference.js'});await reference.waitForSelector('.ex-row');
-  for(const width of [320,360,390,540,700,900]){
+  for(const width of widths){
    console.log('Layout fixture',lowMemory?'8 MiB':'32 MiB',width);
    await page.setViewportSize({width,height:1000});
    await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();
@@ -121,7 +122,7 @@ try{
      if(await page.locator('.mini-preview').evaluate(n=>n.offsetHeight)<=before)throw Error('Pointer preview resize');
     }
     await page.locator('.mini-preview').evaluate(n=>{n.style.height='280px';});
-    if(!lowMemory){
+    if(!lowMemory&&!quick){
      await reference.setViewportSize({width:layout.hostWidth,height:layout.hostHeight});
      await reference.locator('#chutey-explorer-view').evaluate((n,height)=>{n.style.height=height+'px';},layout.hostHeight);
      if((await reference.locator('.ex-list').evaluate(n=>n.classList.contains('ex-grid')))!==(mode==='grid'))await reference.locator('[data-action=grid]').click();
@@ -134,7 +135,7 @@ try{
      await pair.screenshot({path:out+`/parity-${width}-${mode}.png`,fullPage:true});await pair.close();
     }
    }
-   if(!lowMemory)await page.screenshot({path:out+`/shelf-${width}.png`,fullPage:true});
+   if(!lowMemory&&!quick)await page.screenshot({path:out+`/shelf-${width}.png`,fullPage:true});
    await page.getByRole('button',{name:'Close preview',exact:true}).click();
   }
   await reference.close();
@@ -145,21 +146,23 @@ try{
   const pointerRatio=Number(await split.getAttribute('aria-valuenow'));if(pointerRatio<=36)throw Error('Pointer splitter');
   await page.waitForFunction(()=>fixture.local.shelfExplorerV1?.folderWidth>36);
   const independent=await page.evaluate(()=>{const left=document.querySelector('.mini-rail'),right=document.querySelector('.mini-list'),before=left.scrollTop;right.scrollTop=900;right.dispatchEvent(new Event('scroll'));return left.scrollTop===before&&right.scrollTop>0;});if(!independent)throw Error('Independent scrolling');
-  if(!lowMemory){for(const theme of ['porcelain','midnight','ocean','neon']){await page.evaluate(theme=>document.documentElement.dataset.shelfTheme=theme,theme);await page.locator('.mini-list').evaluate(n=>{n.scrollTop=0;});await page.locator('.mini-row').nth(1).click();await page.screenshot({path:out+`/theme-${theme}.png`,fullPage:true});}}
-  await page.locator('.mini-list').evaluate(n=>{n.scrollTop=600;});await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();if(await page.locator('.mini-list').evaluate(n=>n.scrollTop)!==600)throw Error('Scroll lost switching routes');
+  if(!lowMemory&&!quick){for(const theme of ['porcelain','midnight','ocean','neon']){await page.evaluate(theme=>document.documentElement.dataset.shelfTheme=theme,theme);await page.locator('.mini-list').evaluate(n=>{n.scrollTop=0;});await page.locator('.mini-row').nth(1).click();await page.screenshot({path:out+`/theme-${theme}.png`,fullPage:true});}}
+  await page.locator('.mini-list').evaluate(n=>{n.scrollTop=600;});await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();await page.locator('#explorer-view').waitFor({state:'visible'});await page.waitForFunction(()=>document.querySelector('.mini-list').scrollTop===600,{},{timeout:1500}).catch(async()=>{throw Error('Scroll lost switching routes: '+await page.locator('.mini-list').evaluate(n=>n.scrollTop));});
+  console.log('Route scroll retained');
   await page.locator('.mini-list').evaluate(n=>{n.scrollTop=0;});
   // Exercise real component paging, auth/offline errors, and both scrollports.
   await page.evaluate(()=>{fixture.count=3;fixture.pagination=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.getByRole('button',{name:'Load more files',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.startsWith('4 loaded'));
+  await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.startsWith('4 loaded'));console.log('Pagination passed');
   await page.evaluate(()=>{fixture.pagination=false;fixture.authExpired=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.includes('HTTP 401'));
   await page.evaluate(()=>{fixture.authExpired=false;fixture.offline=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.includes('Fixture offline'));
   await page.evaluate(()=>{fixture.offline=false;fixture.count=10000;fixture.extraAccounts=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.startsWith('10,001 loaded'));
+  console.log('Auth/offline recovery passed');
   const leftIndependent=await page.evaluate(()=>{const left=document.querySelector('.mini-rail'),right=document.querySelector('.mini-list');const before=right.scrollTop;left.scrollTop=300;return left.scrollTop>0&&right.scrollTop===before;});if(!leftIndependent)throw Error('Independent left scrolling');
   // Window Preview remains a distinct double-click surface.
   await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-window-preview[open]');await page.getByRole('button',{name:'Close Window Preview',exact:true}).click();
   if(errors.length)throw Error('Browser errors: '+errors.join('; '));
-  results.scenarios.push({lowMemoryClassSimulation:lowMemory,listing:10000,...perf,listingMeasurements,receipt,layouts,pointerRatio,independentScroll:independent,leftIndependentScroll:leftIndependent,pagination:true,authExpired:true,offlineRecovery:true,pointerPreviewResize:true,registrationDelayMs:150,viewportWidths:[320,360,390,540,700,900],status:'PASS'});
+  results.scenarios.push({lowMemoryClassSimulation:lowMemory,listing:10000,...perf,listingMeasurements,receipt,layouts,pointerRatio,independentScroll:independent,leftIndependentScroll:leftIndependent,pagination:true,authExpired:true,offlineRecovery:true,pointerPreviewResize:true,registrationDelayMs:150,viewportWidths:widths,status:'PASS'});
   await context.close();
  }
  await writeFile(out+'/browser.json',JSON.stringify(results,null,2)+'\n');console.log(JSON.stringify(results,null,2));
-}finally{await browser.close();await new Promise(r=>server.close(r));}
+}catch(error){for(const ctx of browser.contexts())for(const p of ctx.pages())console.log('Failure snapshot',await p.evaluate(()=>({status:document.querySelector('.mini-status')?.textContent,more:document.querySelector('[data-action=more]')?.outerHTML,calls:window.fixture?.calls.slice(-12),scroll:document.querySelector('.mini-list')?.scrollTop})).catch(()=>({})));throw error;}finally{await browser.close();await new Promise(r=>server.close(r));}
