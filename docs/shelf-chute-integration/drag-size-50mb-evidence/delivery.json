@@ -1,0 +1,124 @@
+{
+  "quick": false,
+  "classification": "controlled HTTP fixture; chrome messaging/provider mocked; no installed extension, native or live-site proof",
+  "browser": "154.0.8037.57",
+  "os": "linux",
+  "scenarios": [
+    {
+      "lowMemory": false,
+      "results": [
+        {
+          "mb": 50,
+          "size": 50000000,
+          "name": "original.bin",
+          "mime": "application/octet-stream",
+          "hash": "ac133d1cddbbf3141b9272ab8e4bd153fa3142187b11746db5df561fca4e0056",
+          "scriptMs": 260.41700000000003,
+          "elapsedMs": 6334,
+          "storage": {
+            "ok": true,
+            "count": 1,
+            "bytes": 50000000,
+            "maxBytes": 128000000,
+            "maxFiles": 4,
+            "retrySeconds": 30,
+            "keepMinutes": 10
+          },
+          "heap": 106572355,
+          "accepted": true,
+          "verifiedUpload": false
+        },
+        {
+          "mb": 75,
+          "size": 75000000,
+          "name": "original.bin",
+          "mime": "application/octet-stream",
+          "hash": "24af50c8de491e12d5a05c74dfca2c6f0b8ce775924f1c5dfe5d7ebff0a1b53f",
+          "scriptMs": 509.62399999999997,
+          "elapsedMs": 10228,
+          "storage": {
+            "ok": true,
+            "count": 1,
+            "bytes": 75000000,
+            "maxBytes": 128000000,
+            "maxFiles": 4,
+            "retrySeconds": 30,
+            "keepMinutes": 10
+          },
+          "heap": 154636927,
+          "accepted": true,
+          "verifiedUpload": false
+        },
+        {
+          "mb": 8,
+          "size": 8000001,
+          "rejected": true
+        },
+        {
+          "mb": 50,
+          "size": 50000001,
+          "rejected": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "lowMemory": true,
+      "results": [
+        {
+          "mb": 50,
+          "size": 50000000,
+          "name": "original.bin",
+          "mime": "application/octet-stream",
+          "hash": "ac133d1cddbbf3141b9272ab8e4bd153fa3142187b11746db5df561fca4e0056",
+          "scriptMs": 356.63,
+          "elapsedMs": 7799,
+          "storage": {
+            "ok": true,
+            "count": 1,
+            "bytes": 50000000,
+            "maxBytes": 128000000,
+            "maxFiles": 4,
+            "retrySeconds": 30,
+            "keepMinutes": 10
+          },
+          "heap": 105657731,
+          "accepted": true,
+          "verifiedUpload": false
+        },
+        {
+          "mb": 75,
+          "size": 75000000,
+          "name": "original.bin",
+          "mime": "application/octet-stream",
+          "hash": "24af50c8de491e12d5a05c74dfca2c6f0b8ce775924f1c5dfe5d7ebff0a1b53f",
+          "scriptMs": 333.242,
+          "elapsedMs": 8642,
+          "storage": {
+            "ok": true,
+            "count": 1,
+            "bytes": 75000000,
+            "maxBytes": 128000000,
+            "maxFiles": 4,
+            "retrySeconds": 30,
+            "keepMinutes": 10
+          },
+          "heap": 155029039,
+          "accepted": true,
+          "verifiedUpload": false
+        },
+        {
+          "mb": 8,
+          "size": 8000001,
+          "rejected": true
+        },
+        {
+          "mb": 50,
+          "size": 50000001,
+          "rejected": true
+        }
+      ],
+      "status": "PASS"
+    }
+  ]
+}

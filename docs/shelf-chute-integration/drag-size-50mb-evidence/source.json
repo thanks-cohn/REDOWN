@@ -1,0 +1,19 @@
+{
+  "head": "ad4bfbdcf703b724f5994186b94dbf1aeb01466b",
+  "hashes": {
+    "extension/chute-content.js": "576d36c3b58381c7f878c945a8adf91f147132df76b2e1bad7b10f563397d3fe",
+    "extension/chute-drag.mjs": "1ffd3ea78d6efec4f4db9d816922044b57f3c563c53ae5b1c2478f9441b362f1",
+    "extension/chute-stage.js": "524d9b2c1038c9c3eef352a37cc924e1237adcb45b5f66056fd0b394e832c1c5",
+    "extension/chute-worker.js": "42ddc61a589ecc406a0fcd883613279e2aa34a09ee5b97a284b910419abd6f2b",
+    "extension/shelf-explorer.mjs": "f61c8b022a753ea594e07377ada558e154d006b8299c12e364fbb95e57bcdbfe",
+    "extension/shelf.html": "d0c88f95ee82f57df23af2b3c8024d8e413cf031ef05024be1a857b69b909afe",
+    "extension/shelf.js": "6f3b1071fd395b6e30c938c05e6fd1abd0a3944086f7843e5b0f26c482477361",
+    "scripts/drag-size-browser-cases.mjs": "ca93049744f01b8e84c0a7b24d219dda5f13de904b0a5c7530e241307af68894",
+    "scripts/shelf-mini-explorer-browser.mjs": "c0801029a1138d0193b3cc169792f2d8498ff1834c72cfc9fc3d6f98537d902c",
+    "scripts/syntax-targets.json": "9c8627ce42c82996e0fbe8dc7f6c4d7e425a661c7730ff9b42a894b83281318b",
+    "tests/chutey-retry-queue.test.mjs": "90e34a93f792c7459bf577fd740350b983ee5561df95154219c243c605df29d9",
+    "tests/drag-size-settings.test.mjs": "8010570a63552efa6effcce60a50c0f3597ba8914c0cbc510a3b3b037a0b86e2"
+  },
+  "browser": "Chromium 154.0.8037.57 Linux; mocked provider and Chrome messaging; real IndexedDB and File receiving fixture",
+  "installed": "blocked by managed extension installation policy; Windows/live sites unverified"
+}

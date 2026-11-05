@@ -23,7 +23,7 @@
     delivering=true;let state='failed',code='CLAIM_FAILED';
     try{
       const meta=await send({type:'redownChuteV1.claim',id});
-      if(!Number.isSafeInteger(meta.size)||meta.size<0||meta.size>32*1048576)throw Error('File exceeds the browser handoff budget.');
+      if(!Number.isSafeInteger(meta.size)||meta.size<0||!Number.isSafeInteger(meta.maxBytes)||meta.size>meta.maxBytes)throw Error('File exceeds the browser handoff budget.');
       code='CHUNK_FAILED';const chunks=[];let offset=0;
       while(offset<meta.size){
         const part=await send({type:'redownChuteV1.chunk',id,offset});

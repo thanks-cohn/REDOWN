@@ -314,7 +314,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     setFolderWidth(50);
     if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
     initialization=(async()=>{
-    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;paintViewMode();for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
+    try{const preferences=await storage.get(['shelfExplorerV1','shelfDragLimitMBV1']);saved=preferences.shelfExplorerV1||{};try{bridge.setLimitMB(preferences.shelfDragLimitMBV1??50);}catch{bridge.setLimitMB(50);}setFolderWidth(50);grid=saved.grid!==false;paintViewMode();for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
     await discover();
     })();await initialization;
   }
@@ -350,6 +350,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   }
   if(globalThis.RedownHistoryNavigation?.receiveShelf)void globalThis.RedownHistoryNavigation.receiveShelf(revealHistory).then(remove=>removeHistoryReceiver=remove).catch(()=>say('History navigation is unavailable. Try Dashboard in Settings.'));
   const changed=(changes,area)=>{
+    if(area==='local'&&changes.shelfDragLimitMBV1){try{bridge.setLimitMB(changes.shelfDragLimitMBV1.newValue??50);}catch{bridge.setLimitMB(50);}}
     if(area==='session'&&changes.redownChuteClearedV1)void bridge.cancel();
     if(area==='local'&&changes.shelfKeepPreparedV1&&changes.shelfKeepPreparedV1.newValue!==true)void bridge.cancel();
     if(area==='session'&&changes.redownChuteReceipt){const receipt=changes.redownChuteReceipt.newValue;if(receipt?.id===bridge.getHandle()?.id){$('.mini-drag-status').textContent=receipt.state==='drop_dispatched'?'File dispatched. Check the destination: acceptance and upload completion are unverified.':'File handoff failed. Try dragging again or use Download and the destination file picker.';}}
