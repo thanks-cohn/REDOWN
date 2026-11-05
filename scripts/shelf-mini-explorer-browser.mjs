@@ -41,7 +41,7 @@ try{
      for(const fn of listeners){if(fn(m,sender,resolve)===true)return;}
      reject(Error('Unknown fixture message '+m.type));
     });
-   }},storage:{local:{get:async keys=>local,set:async value=>Object.assign(local,value)},session:{get:async()=>({}),set:async value=>{if(value.redownChuteReceipt)fixture.receipts.push({state:value.redownChuteReceipt.state});for(const fn of changed)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'session');}},onChanged:{addListener:fn=>changed.push(fn),removeListener(){}}},tabs:{query:async()=>[{id:2}],sendMessage:async(id,m)=>{for(const fn of listeners)fn(m,{id:'fixture'},()=>{});},create:async()=>{throw Error('Unexpected new window/tab');}},alarms:{create(){},onAlarm:{addListener(){}}}};
+   }},storage:{local:{get:async keys=>local,set:async value=>{Object.assign(local,value);for(const fn of changed)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'local');}},session:{get:async()=>({}),set:async value=>{if(value.redownChuteReceipt)fixture.receipts.push({state:value.redownChuteReceipt.state});for(const fn of changed)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'session');}},onChanged:{addListener:fn=>changed.push(fn),removeListener(){}}},tabs:{query:async()=>[{id:2}],sendMessage:async(id,m)=>{for(const fn of listeners)fn(m,{id:'fixture'},()=>{});},create:async()=>{throw Error('Unexpected new window/tab');}},alarms:{create(){},onAlarm:{addListener(){}}}};
    window.RedownCloudflareApi={request:async path=>{
     if(fixture.authExpired)return Response.json({success:false},{status:401});
     if(fixture.offline)throw Error('Fixture offline');
@@ -51,6 +51,7 @@ try{
      if(fixture.pagination)objects=next?objects.slice(0,2):objects.slice(2);
      return Response.json({result:{objects,delimited:fixture.entries?[]:['Images/'],cursor:next?'fixture-page-2':''}});
     }
+    if(fixture.largeSize)return new Response(new ReadableStream({start(controller){let offset=0;this.pull=()=>{};},pull(controller){const offset=this.offset||0;if(offset>=fixture.largeSize){controller.close();return;}const bytes=new Uint8Array(Math.min(65536,fixture.largeSize-offset));for(let i=0;i<bytes.length;i++)bytes[i]=(offset+i)%251;this.offset=offset+bytes.length;controller.enqueue(bytes);}}));
     fixture.reads++;if(fixture.slow)await new Promise(r=>setTimeout(r,700));const objectKey=decodeURIComponent(path.split('/objects/')[1]||'');return new Response(new Uint8Array(fixture.bytesByKey?.[objectKey]||fixture.expected));
    }};
   },{lowMemory,base});
@@ -59,6 +60,7 @@ try{
   await page.getByRole('treeitem',{name:'Cloudflare R2 · Account A',exact:false}).click();
   await page.getByRole('treeitem',{name:'photos',exact:false}).first().click();
   await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.includes('10,001'));
+  if(process.env.SHELF_LARGE==='1'){const {runLarge}=await import('./drag-size-browser-cases.mjs');results.scenarios.push(await runLarge({page,lowMemory}));await context.close();continue;}
   if(p0){const {runP0}=await import('./shelf-p0-browser-cases.mjs');results.scenarios.push(await runP0({page,context,out,lowMemory}));if(errors.length)throw Error(errors.join('; '));await context.close();continue;}
   const perf=await page.evaluate(()=>{
    const started=performance.now(),list=document.querySelector('.mini-list');

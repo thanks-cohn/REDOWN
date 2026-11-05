@@ -54,9 +54,9 @@ test('OFF retry grace, ON expiry and count/byte ceiling are enforced without tok
   h.setClock(30999);assert.ok(await stage.update(off.id,()=>true));h.setClock(31001);assert.equal(await stage.update(off.id,()=>true),null);
   const on=await stage.put(new Blob(['abc']),{name:'on',mime:'text/plain'});await stage.update(on.id,v=>{v.claim='owner';v.keep=true;return true;});assert.ok(await stage.finish(on.id,'owner','failed'));
   h.setClock(31001+599999);assert.ok(await stage.update(on.id,()=>true));h.setClock(31001+600001);await stage.purge();assert.equal((await stage.stats()).count,0);
-  const full=await stage.reserve(crypto.randomUUID(),{name:'full',mime:'application/octet-stream',size:32*1048576});
+  const full=await stage.reserve(crypto.randomUUID(),{name:'full',mime:'application/octet-stream',size:128000000,policyBytes:128000000});
   await assert.rejects(stage.reserve(crypto.randomUUID(),{name:'overflow',mime:'application/octet-stream',size:1}),/queue is full/);assert.ok(await stage.update(full.id,()=>true));
-  assert.equal((await stage.stats()).maxBytes,32*1048576);
+  assert.equal((await stage.stats()).maxBytes,128000000);
  }finally{await stage.purge(true);await stage.close();}
 });
 test('Reused bytes are unavailable until final stat; changed source and Clear never resurrect a reservation',async()=>{

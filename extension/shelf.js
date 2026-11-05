@@ -43,7 +43,7 @@ $('files-entrance')?.addEventListener('change',async event=>{
 async function refreshPrepared(){
   if(!$('keep-prepared-files'))return;
   const data=await chrome.storage.local.get('shelfKeepPreparedV1');$('keep-prepared-files').checked=data.shelfKeepPreparedV1===true;
-  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.stats'});if(!result?.ok)throw Error();$('prepared-files-usage').textContent=`${result.count||0} prepared / pending · ${((result.bytes||0)/1048576).toFixed(1)} MiB / 32 MiB`;}catch{$('prepared-files-usage').textContent='Prepared-file storage unavailable.';}
+  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.stats'});if(!result?.ok)throw Error();$('prepared-files-usage').textContent=`${result.count||0} prepared / pending · ${((result.bytes||0)/1000000).toFixed(1)} MB / 128 MB`;}catch{$('prepared-files-usage').textContent='Prepared-file storage unavailable.';}
 }
 $('keep-prepared-files')?.addEventListener('change',async event=>{
   const control=event.target;control.disabled=true;
@@ -232,6 +232,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   }
   if(area!=='local')return;
   if(changes.shelfFilesEntranceV1){filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
+  if(changes.shelfDragLimitMBV1)void refreshDragLimit().catch(()=>{});
   if(changes.shelfKeepPreparedV1&&!$('settings-view').hidden)void refreshPrepared().catch(()=>{});
   if(changes.redownFailureDot){
     ++failureLaserRevision;
@@ -257,3 +258,10 @@ chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
     return true;
   }
 });
+
+const dragLimit=$('drag-limit-mb');
+async function refreshDragLimit(){const data=await chrome.storage.local.get('shelfDragLimitMBV1');let n=50;try{n=RedownChuteStage.parseMB(data.shelfDragLimitMBV1??50);}catch{}dragLimit.value=String(n);}
+async function saveDragLimit(value){try{const n=RedownChuteStage.parseMB(value);await chrome.storage.local.set({shelfDragLimitMBV1:n});dragLimit.value=String(n);$('drag-limit-status').textContent='Drag limit saved. Applied to subsequent drags.';}catch(error){$('drag-limit-status').textContent=error.message;}}
+dragLimit?.addEventListener('change',()=>{void saveDragLimit(dragLimit.value);});
+$('reset-drag-limit')?.addEventListener('click',()=>{void saveDragLimit(50);});
+if(dragLimit)void refreshDragLimit().catch(()=>{});

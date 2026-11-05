@@ -38,7 +38,7 @@
           if(v.used||v.claim&&(!claimed||v.claim!==owner(s)))return {denied:true};
           if(!v.armed)return false;
           if(!claimed){v.claim=owner(s);claimed=true;}
-          return v.blob&&v.ready!==false?{name:v.name,mime:v.mime,size:v.blob.size}:{pending:true};
+          return v.blob&&v.ready!==false?{name:v.name,mime:v.mime,size:v.blob.size,maxBytes:Number.isSafeInteger(v.policyBytes)&&v.policyBytes>=0?v.policyBytes:50000000}:{pending:true};
         });
         if(result?.denied)return safe();
         if(result&&!result.pending){void trace('receiver','claimed').catch(()=>{});return {ok:true,...result};}

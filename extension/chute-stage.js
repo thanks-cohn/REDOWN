@@ -1,8 +1,9 @@
 /* REDOWN private Chutey transport; no cloud authority or public URL fallback. */
 (() => {
   'use strict';
-  const TTL=90000,RETRY_TTL=30000,KEEP_TTL=10*60000,MAX_BYTES=32*1024*1024,MAX_FILES=4,CHUNK_BYTES=128*1024;
+  const TTL=90000,RETRY_TTL=30000,KEEP_TTL=10*60000,MAX_BYTES=128000000,MAX_FILES=4,CHUNK_BYTES=128*1024;
   const inactive=v=>v.used||['drop_dispatched','failed','cached'].includes(v.state);
+  const parseMB=value=>{const n=typeof value==='number'?value:typeof value==='string'&&value.trim()?Number(value):NaN;if(!Number.isFinite(n)||n<=0)throw Error('Enter a finite positive number of MB.');return n;};
   function createStage({indexedDB=globalThis.indexedDB,now=Date.now}={}) {
     let opening;
     function db(){return opening??=new Promise((resolve,reject)=>{
@@ -32,9 +33,9 @@
       s.put(record);done(true);
     }
     return {
-      async reserve(id,{name,mime,size,cacheKey='',maxBytes=MAX_BYTES}) {
-        if(!valid(id,name,size))throw Error('File cannot be staged safely.');
-        const record={id,blob:null,name,mime,size,cacheKey,expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing',used:false};
+      async reserve(id,{name,mime,size,cacheKey='',maxBytes=MAX_BYTES,policyBytes=50000000}) {
+        if(!valid(id,name,size)||size>policyBytes)throw Error('File cannot be staged safely.');
+        const record={policyBytes,id,blob:null,name,mime,size,cacheKey,expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing',used:false};
         const ok=await transaction('readwrite',(s,done)=>{const r=s.getAll();r.onsuccess=()=>{
           // A reusable candidate will be moved, never copied, after fresh stat.
           const candidate=r.result.find(v=>v.cacheKey&&v.cacheKey===cacheKey&&inactive(v)&&v.blob&&v.expires>now());
@@ -85,5 +86,5 @@
       async close(){if(opening)(await opening).close();opening=null;}
     };
   }
-  globalThis.RedownChuteStage=Object.freeze({createStage,TTL,RETRY_TTL,KEEP_TTL,MAX_BYTES,MAX_FILES,CHUNK_BYTES});
+  globalThis.RedownChuteStage=Object.freeze({createStage,parseMB,TTL,RETRY_TTL,KEEP_TTL,MAX_BYTES,MAX_FILES,CHUNK_BYTES});
 })();
