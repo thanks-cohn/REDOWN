@@ -74,7 +74,7 @@
       });},
       async retire(id){return this.update(id,v=>{
         if(!v.blob||v.ready===false||v.claim&&!v.used)return false;
-        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.expires=Math.min(v.expires,now()+(v.keep?KEEP_TTL:RETRY_TTL));return true;
+        v.used=true;v.armed=false;v.claim=null;v.state='cached';v.expires=now()+(v.keep?KEEP_TTL:RETRY_TTL);return true;
       });},
       async finish(id,owner,state){return this.update(id,v=>{
         if(v.used||v.claim!==owner||!['drop_dispatched','failed'].includes(state)||state==='drop_dispatched'&&v.offset!==v.size)return false;

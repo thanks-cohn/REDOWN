@@ -84,11 +84,11 @@ export async function runP0({page,out,lowMemory}){
    const widths=[];
    for(const percent of [0,50,75]){
     await pressSplit('Home');for(let i=0;i<percent/5;i++)await page.keyboard.press('ArrowRight');await page.waitForTimeout(80);
-    widths.push(await page.locator('.mini-row img').first().evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,height:r.height};}));
+    const sample=await page.waitForFunction(()=>{const n=document.querySelector('.mini-row[data-key="00000.png"] img'),r=n?.getBoundingClientRect();return r&&r.width>0&&Math.abs(r.height/r.width-2)<.04?{width:r.width,height:r.height,key:n.closest('.mini-row').dataset.key,naturalWidth:n.naturalWidth,naturalHeight:n.naturalHeight}:false;});widths.push(await sample.jsonValue());
    }
-   assert.ok(widths[0].width>widths[1].width&&widths[1].width>widths[2].width);for(const r of widths)assert.ok(Math.abs(r.height/r.width-2)<.04);
+   assert.ok(widths[0].width>widths[1].width&&widths[1].width>widths[2].width);for(const r of widths)assert.ok(Math.abs(r.height/r.width-2)<.04,JSON.stringify({count,widths}));
    const aspects=[];
-   if(count>2){for(const [key,ratio] of [['00001.png',.5],['00002.png',1/12]]){const row=page.locator(`.mini-row[data-key="${key}"]`);await row.scrollIntoViewIfNeeded();await page.waitForFunction(key=>[...document.querySelectorAll('.mini-row')].find(n=>n.dataset.key===key)?.querySelector('img')?.naturalWidth>1,key);await page.waitForTimeout(100);const r=await row.locator('img').evaluate(n=>{const b=n.getBoundingClientRect();return {width:b.width,height:b.height};});assert.ok(Math.abs(r.height/r.width-ratio)<.04,JSON.stringify({key,ratio,...r}));aspects.push({key,ratio,...r});}}
+   if(count>2){for(const [key,ratio] of [['00001.png',.5],['00002.png',1/12]]){const row=page.locator(`.mini-row[data-key="${key}"]`);await row.scrollIntoViewIfNeeded();await page.waitForFunction(key=>[...document.querySelectorAll('.mini-row')].find(n=>n.dataset.key===key)?.querySelector('img')?.naturalWidth>1,key);await page.waitForTimeout(100);const sample=await page.waitForFunction(({key,ratio})=>{const n=[...document.querySelectorAll('.mini-row')].find(n=>n.dataset.key===key)?.querySelector('img'),b=n?.getBoundingClientRect();return b&&b.width>0&&Math.abs(b.height/b.width-ratio)<.04?{width:b.width,height:b.height}:false;},{key,ratio});const r=await sample.jsonValue();assert.ok(Math.abs(r.height/r.width-ratio)<.04,JSON.stringify({key,ratio,...r}));aspects.push({key,ratio,...r});}}
    result.media.push({count,widths,aspects});
    await page.getByRole('button',{name:'Reset columns to 50/50',exact:true}).click();
    if(count===100&&!lowMemory)await page.screenshot({path:out+'/portrait-landscape-media.png'});

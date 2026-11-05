@@ -18,6 +18,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
     }}
   }
   async function cancel(){await release();emit('cancelled','');}
+  async function suspend(){const retain=handle&&await stage.update(handle.id,v=>!!v.blob&&v.ready!==false&&(v.keep===true||!!v.claim&&!v.used));if(retain)await release(true);else await cancel();}
   const valid=entry=>!entry.folder&&Number.isSafeInteger(Number(entry.size))&&Number(entry.size)>=0&&Number(entry.size)<=maxBytes;
   return {
     version:1,capabilities:()=>({browserRelay:true,native:false,multiple:false,maxBytes}),
@@ -98,6 +99,6 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
       const endTimer=setTimeout(()=>{void stage.update(pending.id,v=>!v.claim&&!v.used).then(unclaimed=>{
         if(unclaimed&&handle?.id===pending.id)return cancel().then(()=>emit('cancelled','No file handoff observed. Use Download and the destination file picker if needed.'));
       }).catch(()=>{});},750);endTimer.unref?.();
-    },cancel,dispose:cancel,getHandle:()=>handle?{...handle}:null
+    },cancel,suspend,dispose:suspend,getHandle:()=>handle?{...handle}:null
   };
 }

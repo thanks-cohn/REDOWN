@@ -303,7 +303,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   host.addEventListener('contextmenu',event=>{const row=event.target.closest('.mini-row');if(row){event.preventDefault();showMenu(visible[Number(row.dataset.index)],{x:event.clientX,y:event.clientY},row);}else if(list.contains(event.target)){event.preventDefault();showMenu(null,{x:event.clientX,y:event.clientY},list);}});
   host.addEventListener('keydown',event=>{if(event.key==='Escape'){contextMenu.hidden=true;closeSide();renderRows();}if(!event.target.closest('input,select,textarea')&&(event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='a'){event.preventDefault();for(const entry of visible)model.state.selected.add(entry.key);renderRows();paintActions();}});
   host.addEventListener('dragover',event=>{if(event.dataTransfer?.types?.includes('application/x-redown-chute-v1'))event.dataTransfer.dropEffect='none';});
-  async function setActive(value){if(value===activeView&&initialized){if(initialization)await initialization;return;}activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.cancel();return;}
+  async function setActive(value){if(value===activeView&&initialized){if(initialization)await initialization;return;}activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.suspend();return;}
     setFolderWidth(50);
     if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
     initialization=(async()=>{

@@ -78,3 +78,15 @@ test('Low-memory and storage failures refuse safely and report the owning layer 
   await assert.rejects(bridge.prepare(source,entry));assert.equal(states.at(-1).layer,'storage');assert.equal(states.at(-1).code,'STORAGE_FAILED');assert.ok(!states.at(-1).message.includes('private.invalid'));assert.equal((await stage.stats()).count,0);stage.fulfill=original;
  }finally{await bridge.dispose();await stage.close();await h.stage.close();}
 });
+
+test('Opt-in prepared bytes survive Shelf closure for later validated reuse; explicit cancellation still clears',async()=>{
+ const h=harness(),stage=h.factory(),states=[];let reads=0;
+ const api=createFileApi({stat:async()=>({object:{size:3,etag:'stable'}}),readStream:async(_,o)=>{reads++;await o.onChunk(new Uint8Array([1,2,3]));return {};}});
+ const bridge=createDragBridge({api,stage,getKeep:async()=>true,send:async()=>({ok:true})});
+ const next=createDragBridge({api,stage,getKeep:async()=>true,send:async()=>({ok:true}),onState:s=>states.push(s)});
+ try{
+  await bridge.prepare(source,entry);await bridge.dispose();assert.equal((await stage.stats()).count,1);
+  next.start({preventDefault(){assert.fail();},dataTransfer:{setData(){}}},source,entry);await waitFor(()=>states.at(-1)?.state==='staged');assert.equal(reads,1);assert.equal(states.at(-1).code,'REUSED');
+  await next.cancel();assert.equal((await stage.stats()).count,0);
+ }finally{await next.cancel();await stage.purge(true);await stage.close();await h.stage.close();}
+});
