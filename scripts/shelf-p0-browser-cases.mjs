@@ -103,8 +103,8 @@ export async function runP0({page,out,lowMemory}){
  await page.locator('#nav-explorer').click();await page.waitForTimeout(40);
  const motion=await page.evaluate(()=>({navTop:document.querySelector('nav[aria-label=Shelf]').getBoundingClientRect().top,explorerTop:document.querySelector('#explorer-view').getBoundingClientRect().top,animations:document.querySelector('nav[aria-label=Shelf]').getAnimations().length}));
  if(!lowMemory)await page.screenshot({path:out+'/slide-during.png'});
- await page.waitForTimeout(280);const navEnd=await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getBoundingClientRect().top);
- assert.ok(navStart>navEnd);assert.ok(motion.animations>0);assert.ok(motion.navTop>navEnd);result.entrance={navStart,motion,navEnd};
+ await page.waitForFunction(()=>document.querySelector('nav[aria-label=Shelf]').getAnimations().length===0);const navEnd=await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getBoundingClientRect().top);
+ assert.ok(navStart>navEnd);assert.ok(navEnd<=10);assert.ok(motion.animations>0);assert.ok(motion.navTop>navEnd);result.entrance={navStart,motion,navEnd};
  if(!lowMemory)await page.screenshot({path:out+'/slide-after.png'});
  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();assert.equal(await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getAnimations().length),0);
  await page.emulateMedia({reducedMotion:'no-preference'});
