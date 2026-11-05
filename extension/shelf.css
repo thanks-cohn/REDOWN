@@ -1204,3 +1204,17 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 :root nav[aria-label="Shelf"] a,
 :root[data-shelf-theme] nav[aria-label="Shelf"] a {font-size:10px;letter-spacing:.055em;padding:8px 2px;white-space:nowrap;}
 .shell {min-width:0;}
+
+/* History: stable media bounds and two independent provenance disclosures. */
+.history-entry-head{display:flex;align-items:baseline;gap:16px;min-width:0}
+.history-entry-head strong{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-entry-head time{flex:none;font-variant-numeric:tabular-nums}
+.history-transfer-body>.history-image-slot{display:grid;place-items:center;width:100%;max-width:320px;aspect-ratio:1;margin:14px 0;overflow:hidden}
+.history-entry-more,.history-url-disclosure{margin:0;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+.history-entry-more>summary,.history-url-disclosure>summary{padding:12px 4px;cursor:pointer;font-weight:600}
+.history-entry-more>summary:hover,.history-url-disclosure>summary:hover{background:color-mix(in srgb,currentColor 5%,transparent)}
+.history-entry-url-text{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
+
+.history-entry-more>summary::before{content:'▸';display:inline-block;margin-right:7px;transition:transform .15s}.history-entry-more[open]>summary::before{transform:rotate(90deg)}
+.history-transfer-body>.history-url-disclosure{border:0;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent);background:none;border-radius:0;padding:0}
+.history-transfer-body>.history-url-disclosure>summary{font-size:inherit;color:inherit;text-transform:none;letter-spacing:normal}

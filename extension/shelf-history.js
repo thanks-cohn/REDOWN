@@ -164,8 +164,16 @@
   function addProvenance(parent,record,info){
     // History is an inspectable data record. GO TO handles navigation.
     // Never turn saved/source addresses into competing action hyperlinks.
+    const more=create('details','','history-entry-more');
+    more.append(create('summary','More'));
     const content=create('div','','history-entry-provenance');
-    if(record.ok!==false)content.append(create('small',info.status,'history-entry-outcome'));
+    more.append(content);parent.append(more);
+    if(globalThis.RedownHistoryNavigation?.openable(record)){
+      const go=create('button','GO TO','history-go-to');go.type='button';
+      go.setAttribute('aria-label','Go to saved file '+info.name);
+      go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};content.append(go);
+    }
+    content.append(create('small',info.status,'history-entry-outcome'));
     if(info.detail)content.append(create('small',info.detail,'history-entry-provider'));
 
     // Explicit public URL, or exact verified provider-owned navigation URL
@@ -194,9 +202,9 @@
     add('Media URL',record.srcUrl);
     add('Frame URL',record.frameUrl);
     add('Link URL',record.linkUrl);
-    if(rows.length){
+    {
       const disclosure=create('details','','history-url-disclosure');
-      const summary=create('summary','URLs · '+rows.length,'history-url-summary');
+      const summary=create('summary','URL','history-url-summary');
       summary.setAttribute('aria-label','Show full saved-file and source URLs');
       disclosure.append(summary);
       const values=create('div','','history-url-values');
@@ -207,7 +215,8 @@
         display.title=value;
         line.append(display);values.append(line);
       }
-      disclosure.append(values);content.append(disclosure);
+      if(!rows.length)values.append(create('small','No URLs recorded.'));
+      disclosure.append(values);parent.append(disclosure);
       // Public addresses can be enabled or changed long after the original
       // save. Refresh only when the user opens THIS item's URL drawer.
       // Historical provenance remains immutable and fully visible offline.
@@ -290,7 +299,7 @@
       receipt.append(create('small','The Dropbox website may use a different signed-in account.'));
       content.append(receipt);
     }
-    if(content.childElementCount)parent.append(content);
+
   }
   function dayRows(container,day){
     const list=create('ol','','history-transfers');
@@ -299,35 +308,20 @@
       const row=create('li','','history-transfer');row.dataset.state=info.state;
       const dot=create('span','','history-dot');dot.setAttribute('aria-hidden','true');
       const body=create('div','','history-transfer-body');
-      const error=record.ok===false;
-      const title=error?'Error: '+(text(record.sourceUrl)||'Source unavailable'):info.name;
-      const src=text(record.sourceUrl),parentUrl=text(record.pageUrl);
-      const isLong=title.length>66||src.length>90||parentUrl.length>90||text(record.error).length>125;
       const header=create('div','','history-entry-head');
-      header.append(create('strong',isLong&&title.length>66?title.slice(0,62)+'…':title));
-      const time=create('time',day.date?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'');
-      if(day.date&&Number.isFinite(item.ms))time.dateTime=new Date(item.ms).toISOString();
-      header.append(time);
-      if(globalThis.RedownHistoryNavigation?.openable(record)){
-        const go=create('button','GO TO','history-go-to');go.type='button';
-        go.setAttribute('aria-label','Go to saved file '+info.name);
-        go.onclick=event=>{event.preventDefault();event.stopPropagation();globalThis.RedownHistoryNavigation.open(record);};
-        header.append(go);
-      }
-      if(isLong){
-        const disclosure=create('details','','history-entry-details');
-        const summary=create('summary');
-        summary.append(header);
-        disclosure.append(summary);
-        body.append(disclosure);
-        // Location and expandable full URLs stay immediately beneath the
-        // transfer even when an unusually long filename is collapsed.
-        addProvenance(body,record,info);
-      }else{
-        body.append(header);
-        addProvenance(body,record,info);
-      }
+      const filename=create('strong',info.name);filename.title=info.name;
+      header.append(filename);
+      const valid=Number.isFinite(item.ms)&&Number.isFinite(new Date(item.ms).getTime());
+      const time=create('time',valid?new Date(item.ms).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'Time unavailable');
+      if(valid)time.dateTime=new Date(item.ms).toISOString();
+      header.append(time);body.append(header);
       quickGlance?.attach(body,record);
+      if(!body.querySelector('.history-image-slot')){
+        const slot=create('div','Preview unavailable','history-image-slot');
+        slot.setAttribute('role','img');slot.setAttribute('aria-label','Preview unavailable for '+info.name);
+        body.append(slot);
+      }
+      addProvenance(body,record,info);
       row.append(dot,body);list.append(row);
     }
     container.append(list);

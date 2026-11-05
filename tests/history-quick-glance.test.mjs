@@ -28,7 +28,7 @@ test('Today reads every local record across archive pages, keeps older pages and
  assert.equal(h.d.querySelectorAll('.history-transfer').length,235);
  assert.equal(h.d.querySelector('.history-day').open,true);
  assert.equal(h.d.querySelector('.history-year').open,true);
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);
+ assert.equal(h.d.querySelectorAll('.history-image-slot img').length,0);
  assert.equal(h.d.querySelector('#history-page-label').textContent,'1 / 3');
  h.d.querySelector('#history-next').click();await waitFor(()=>h.d.querySelector('#history-page-label').textContent==='2 / 3');
  assert.equal(h.d.querySelectorAll('.history-transfer').length,40);assert.equal(reads.at(-1)[0],235);
@@ -121,7 +121,7 @@ test('Premium gate enables Today previews once; revocation preserves records',as
  assert.equal(h.d.querySelectorAll('.history-transfer').length,70);assert.equal(h.d.querySelectorAll('.history-image-slot').length,70);assert.equal(calls.length,10);
  h.d.documentElement.dataset.shelfTheme='neon';await tick();assert.equal(calls.length,10);
  enabled=false;listeners[0]({quickGlancePremiumEnabled:{newValue:false}},'local');await tick();
- assert.equal(h.d.querySelectorAll('.history-image-slot').length,0);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
+ assert.equal(h.d.querySelectorAll('.history-image-slot img').length,0);assert.equal(h.d.querySelectorAll('.history-transfer').length,70);
  enabled=true;listeners[0]({quickGlancePremiumEnabled:{newValue:true}},'local');
  await waitFor(()=>h.d.querySelectorAll('.history-image-slot').length===70);
  const beforeReconnect=calls.length;
@@ -249,7 +249,7 @@ test('enabling Premium on an older page keeps the page and open date, loading on
   await h.w.RedownShelfHistory.open();
   assert.equal(h.d.querySelector('#history-page-label').textContent,'2 / 2');
   assert.equal(h.d.querySelector('.history-day').open,true);
-  assert.equal(h.d.querySelector('.history-image-slot'),null);
+  assert.equal(h.d.querySelector('.history-image-slot img'),null);
 
  }finally{h.dom.window.close();}
 });

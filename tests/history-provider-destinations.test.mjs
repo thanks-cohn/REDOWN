@@ -116,7 +116,7 @@ test('History URL drawer preserves full source, page, src, frame and link URLs a
  assert.ok(values.includes(record.frameUrl));
  assert.ok(values.includes(record.linkUrl));
  assert.equal(values.length,new Set(values).size,'URL values should not be needlessly duplicated');
- assert.equal(row.querySelector('.history-entry-details')?.open,false,'long filename may remain folded');
+ assert.equal(row.querySelector('.history-entry-head strong').textContent,record.filename,'full filename retained accessibly above preview');
  assert.ok(row.querySelector('.history-url-disclosure'),'URL disclosure stays separate and available');
  disclosure.open=true;
  assert.equal(disclosure.querySelector('.history-entry-url-text')?.textContent,record.destination.publicUrl);
@@ -178,4 +178,16 @@ test('History never invents a new public link for a missing image or unavailable
  assert.match(drawer.textContent,/Original History URLs are unchanged/);
  assert.equal(drawer.querySelectorAll('.history-live-bucket-urls .history-entry-url-text').length,0);
  h.dom.window.close();
+});
+
+test('P0 History composition keeps exact filename/time, bounded slot, independent collapsed More and URL with GO TO',async()=>{
+ const name='long actual filename '+('x'.repeat(100))+'.png';
+ const h=fixture([{...base,id:'p0',filename:name,providerKind:'cloudflare',destination:{accountId:'owner',bucketName:'bucket',key:'folder/image.png'}}]);
+ try{await h.w.RedownShelfHistory.open();const d=h.w.document,body=d.querySelector('.history-transfer-body'),children=[...body.children];
+ assert.deepEqual(children.map(n=>n.className),['history-entry-head','history-image-slot','history-entry-more','history-url-disclosure']);
+ assert.equal(children[0].querySelector('strong').textContent,name);assert.equal(children[0].querySelector('strong').title,name);assert.ok(children[0].querySelector('time').dateTime);
+ assert.equal(children[2].open,false);assert.equal(children[3].open,false);assert.equal(children[2].querySelector('summary').textContent,'More');assert.equal(children[3].querySelector('summary').textContent,'URL');
+ assert.ok(children[2].querySelector('.history-entry-provider'));assert.equal(children[3].querySelectorAll('a').length,0);
+ children[2].open=true;assert.equal(children[3].open,false);assert.equal(children[1].querySelectorAll('img').length,0);
+ }finally{h.dom.window.close();}
 });
