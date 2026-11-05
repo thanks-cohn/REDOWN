@@ -23,7 +23,7 @@
       entry.controller?.abort();entry.controller=null;
       if(entry.url){revoke(entry.url);entry.url=null;}
       entry.image?.remove();entry.image=null;
-      entry.originDot?.remove();entry.originDot=null;
+      entry.onState({state:'idle',origin:null});
       if(entry.state!=='failed')entry.state='idle';
       entry.slot.dataset.state=entry.state;
     }
@@ -42,7 +42,7 @@
       for(const i of desired){
         if(running>=CONCURRENCY)break;
         const entry=entries[i];if(!entry||entry.state!=='idle'||!expanded(entry.slot))continue;
-        running++;entry.state='loading';entry.slot.dataset.state='loading';
+        running++;entry.state='loading';entry.slot.dataset.state='loading';entry.onState({state:'loading',origin:null});
         const controller=new AbortController();entry.controller=controller;
         const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(20000)]);
         void source.resolve(entry.record,signal,blob=>decodeImage(blob,signal)).then(result=>{
@@ -50,7 +50,7 @@
           if(disposed||entry.controller!==controller||controller.signal.aborted||!desired.has(i)||!visible()){
             if(url)revoke(url);return;
           }
-          if(!url){entry.state='failed';entry.slot.dataset.state='failed';return;}
+          if(!url){entry.state='failed';entry.slot.dataset.state='failed';entry.onState({state:'failed',origin:null});return;}
           const image=document.createElement('img');image.alt='';image.width=256;image.height=256;
           image.src=url;entry.url=url;entry.image=image;
           // decodeImage has already decoded and resized the bytes. Keep the
@@ -58,30 +58,24 @@
           return image.decode().then(()=>{
             if(entry.controller!==controller)return;
             if(disposed||controller.signal.aborted||!desired.has(i)||!visible())return release(entry);
-            const dot=document.createElement('span');
-            dot.className='history-image-origin';
-            dot.dataset.origin=result.origin;
-            dot.title=result.origin==='cloud'?'Preview from your cloud':'Preview from original source';
-            dot.setAttribute('role','img');
-            dot.setAttribute('aria-label',dot.title);
-            entry.originDot=dot;
-            entry.slot.append(image,dot);entry.state='ready';entry.slot.dataset.state='ready';
-          }).catch(()=>{if(entry.controller!==controller)return;release(entry);entry.state='failed';entry.slot.dataset.state='failed';});
+            entry.slot.append(image);entry.state='ready';entry.slot.dataset.state='ready';
+            entry.onState({state:'ready',origin:result.origin});
+          }).catch(()=>{if(entry.controller!==controller)return;release(entry);entry.state='failed';entry.slot.dataset.state='failed';entry.onState({state:'failed',origin:null});});
         }).catch(()=>{
-          if(!controller.signal.aborted){entry.state='failed';entry.slot.dataset.state='failed';}
+          if(entry.controller===controller&&!controller.signal.aborted){entry.state='failed';entry.slot.dataset.state='failed';entry.onState({state:'failed',origin:null});}
         }).finally(()=>{
           if(entry.controller===controller){entry.controller=null;if(entry.state==='loading'){entry.state='idle';entry.slot.dataset.state='idle';}}
           running--;pump();
         });
       }
     }
-    function attach(body,record){
+    function attach(body,record,{onState=()=>{}}={}){
       if(!RedownHistoryImageSource.eligible(record))return;
       const slot=document.createElement('div');slot.className='history-image-slot';
       slot.dataset.state='idle';slot.dataset.visible='false';slot.setAttribute('aria-label','Image preview');
       const loading=placeholder.render(document);loading.classList.add('history-image-placeholder');
       slot.append(loading);body.append(slot);
-      const entry={record,slot,index:entries.length,state:'idle'};entries.push(entry);
+      const entry={record,slot,onState,index:entries.length,state:'idle'};entries.push(entry);return slot;
     }
     let observer,animationObserver;
     const reconcile=()=>{
