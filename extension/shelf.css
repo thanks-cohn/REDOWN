@@ -1215,6 +1215,41 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .history-entry-more>summary:hover,.history-url-disclosure>summary:hover{background:color-mix(in srgb,currentColor 5%,transparent)}
 .history-entry-url-text{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
 
+/* Ornate workspace settings, using each theme's inherited palette. */
+#settings-view{--settings-edge:color-mix(in srgb,currentColor 18%,transparent);padding:24px clamp(8px,3vw,28px) 40px;max-width:1100px;margin:auto}
+#settings-view h1{font-size:clamp(26px,5vw,42px);letter-spacing:-.045em;line-height:1.12;margin:12px 0}
+#settings-view h2{font-size:13px;text-transform:uppercase;letter-spacing:.18em;display:flex;align-items:center;gap:16px;margin:32px 0 20px}
+#settings-view h2:after{content:'✧';flex:1;text-align:right;border-bottom:1px solid var(--settings-edge);line-height:0;color:inherit}
+#settings-view fieldset{position:relative;min-width:0;margin:24px 0;padding:22px 18px 20px;border:1px solid var(--settings-edge);border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,currentColor 5%,transparent),transparent 65%);box-shadow:inset 0 1px 0 color-mix(in srgb,currentColor 8%,transparent),0 8px 24px #00000008}
+#settings-view legend{padding:0 10px;font-weight:650;font-size:14px;letter-spacing:.02em}
+#settings-view p{font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+#settings-view label{line-height:1.5}
+#settings-view button,#settings-view select,#settings-view input:not([type=radio]):not([type=checkbox]){min-height:44px;max-width:100%;border-radius:10px;font:inherit}
+#settings-view input:not([type=radio]):not([type=checkbox]){width:100%;box-sizing:border-box;padding:10px;margin:8px 0 14px}
+#settings-view .mode-option{padding:16px 12px;margin:8px 0;border-radius:12px;gap:12px}
+#settings-view .mode-option small{line-height:1.6}
+.settings-choice-surface{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#settings-view .settings-choice-surface button{flex:1 1 110px;white-space:normal;padding:12px 14px;border:1px solid var(--settings-edge);background:transparent;color:inherit;cursor:pointer}
+#settings-view .settings-choice-surface button[aria-pressed=true]{background:color-mix(in srgb,currentColor 12%,transparent);border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor;font-weight:700}
+#settings-view :focus-visible{outline:2px solid currentColor;outline-offset:4px}
+#settings-view .settings-native-choice{display:none}
+#settings-view .theme-grid{grid-template-columns:repeat(auto-fit,minmax(min(130px,100%),1fr))}
+@media(forced-colors:active){#settings-view fieldset,#settings-view button{border:1px solid CanvasText}}
+@media(prefers-reduced-motion:reduce){#settings-view *{animation:none!important;transition:none!important}}
+#settings-view .settings-collection h2{color:var(--accent);margin-top:30px}
+#settings-view .settings-card-grid{display:grid;gap:18px;align-items:start}
+#settings-view .settings-card-grid fieldset{margin:0;padding-top:20px;background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--surface) 45%,var(--bg)));border-color:var(--card-line);box-shadow:0 8px 28px rgba(var(--shadow-rgb),.06)}
+#settings-view legend{color:var(--accent);font-size:13px}
+#settings-view button{background:var(--surface);color:var(--text);border:1px solid var(--card-line);padding:10px 14px;box-shadow:0 2px 6px rgba(var(--shadow-rgb),.06);transition:background .15s,border-color .15s}
+#settings-view button:hover:not(:disabled){background:var(--surface-hover);border-color:var(--accent)}
+#settings-view input:not([type=radio]):not([type=checkbox]){border:1px solid var(--line);background:var(--bg);color:var(--text)}
+#settings-view .settings-choice-surface button[aria-pressed=true]{color:var(--accent);background:rgba(var(--accent-rgb),.1);border-color:var(--accent)}
+#settings-view input[type=checkbox],#settings-view input[type=radio]{accent-color:var(--accent)}
 .history-entry-more>summary::before{content:'▸';display:inline-block;margin-right:7px;transition:transform .15s}.history-entry-more[open]>summary::before{transform:rotate(90deg)}
 .history-transfer-body>.history-url-disclosure{border:0;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent);background:none;border-radius:0;padding:0}
 .history-transfer-body>.history-url-disclosure>summary{font-size:inherit;color:inherit;text-transform:none;letter-spacing:normal}
+@media(min-width:760px){body:has(#settings-view:not([hidden])) .shell{max-width:1000px}#settings-view .settings-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#settings-view .explorer-theme-row:has(.settings-choice-surface),#settings-view .icon-background-row:has(.settings-choice-surface){display:block}
+#settings-view .explorer-theme-row>span,#settings-view .icon-background-row>span{display:block;width:100%}
+#settings-view .settings-choice-surface{width:100%;min-width:0}
+#settings-view .settings-collection h2{font-family:"DM Sans",system-ui,sans-serif;font-weight:650}
