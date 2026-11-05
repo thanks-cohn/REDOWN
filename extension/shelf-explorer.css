@@ -159,3 +159,5 @@ body:has(#explorer-view:not([hidden])) #status {margin:0;flex-shrink:0;}
 #explorer-view.preview-expanded .mini-preview {position:absolute;inset:0;height:auto!important;max-height:none;z-index:25;}
 #explorer-view.preview-expanded .mini-resize {display:none;}
 #explorer-view [data-action=expand-preview] {display:grid;place-items:center;}
+/* Ultrawide pictures must not inherit the Detailed row's 48px minimum. */
+#explorer-view .mini-grid .mini-image {min-height:0;}

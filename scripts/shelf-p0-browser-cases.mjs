@@ -31,9 +31,15 @@ export async function runP0({page,out,lowMemory}){
  await page.setViewportSize({width:700,height:700});
  // Real pointer travel, frame-coalesced updates, and bounded live DOM.
  const b=await split.boundingBox(),workspace=await page.locator('.mini-workspace').boundingBox();
+ const cdp=await page.context().newCDPSession(page);await cdp.send('Performance.enable');
+ const metricsBefore=(await cdp.send('Performance.getMetrics')).metrics;
+ await page.evaluate(()=>{fixture.rowReplacements=0;fixture.rowObserver=new MutationObserver(records=>fixture.rowReplacements+=records.length);fixture.rowObserver.observe(document.querySelector('.mini-rows'),{childList:true});});
  const started=Date.now();await page.mouse.move(b.x+4,b.y+30);await page.mouse.down();
  for(const x of [workspace.x+4,workspace.x+workspace.width-4,workspace.x+workspace.width/2])await page.mouse.move(x,b.y+30,{steps:40});
  await page.mouse.up();await page.waitForTimeout(80);result.performance.pointer120SamplesMs=Date.now()-started;
+ const metricsAfter=(await cdp.send('Performance.getMetrics')).metrics;
+ for(const name of ['ScriptDuration','LayoutDuration','RecalcStyleDuration','TaskDuration'])result.performance[name+'Ms']=1000*(metricsAfter.find(x=>x.name===name).value-metricsBefore.find(x=>x.name===name).value);
+ result.performance.rowReplacements=await page.evaluate(()=>{fixture.rowObserver.disconnect();return fixture.rowReplacements;});await cdp.detach();
  await split.dblclick();assert.equal(await split.getAttribute('aria-valuenow'),'50');
  // Detailed and Large Images preserve the current selection/path and scroll item.
  const selected=await page.locator('.mini-row[aria-selected=true]').getAttribute('data-key').catch(()=>null);
@@ -81,7 +87,9 @@ export async function runP0({page,out,lowMemory}){
     widths.push(await page.locator('.mini-row img').first().evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,height:r.height};}));
    }
    assert.ok(widths[0].width>widths[1].width&&widths[1].width>widths[2].width);for(const r of widths)assert.ok(Math.abs(r.height/r.width-2)<.04);
-   result.media.push({count,widths});
+   const aspects=[];
+   if(count>2){for(const [key,ratio] of [['00001.png',.5],['00002.png',1/12]]){const row=page.locator(`.mini-row[data-key="${key}"]`);await row.scrollIntoViewIfNeeded();await page.waitForFunction(key=>[...document.querySelectorAll('.mini-row')].find(n=>n.dataset.key===key)?.querySelector('img')?.naturalWidth>1,key);await page.waitForTimeout(100);const r=await row.locator('img').evaluate(n=>{const b=n.getBoundingClientRect();return {width:b.width,height:b.height};});assert.ok(Math.abs(r.height/r.width-ratio)<.04,JSON.stringify({key,ratio,...r}));aspects.push({key,ratio,...r});}}
+   result.media.push({count,widths,aspects});
    await page.getByRole('button',{name:'Reset columns to 50/50',exact:true}).click();
    if(count===100&&!lowMemory)await page.screenshot({path:out+'/portrait-landscape-media.png'});
    await page.locator('[data-action=grid]').click();await list.focus();await page.keyboard.press('End');await page.waitForTimeout(70);
