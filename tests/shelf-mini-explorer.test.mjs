@@ -270,6 +270,8 @@ test('P0 bundled local adapter lists exact originals, serves bytes, delegates cl
  const preview=await api.run('preview',{source:demoSource,entry});assert.equal(preview.state,'completed');assert.equal((await fetch(preview.data.url)).headers.get('content-type'),asset.type);URL.revokeObjectURL(preview.data.url);
  for(const operation of ['upload','delete','rename','move','copy','mkdir'])assert.equal((await api.run(operation,{source:demoSource,entry})).state,'failed');
  }
+ const stage=stageFactory(),bridge=createDragBridge({api,stage,send:async()=>({ok:true})});
+ try{const handle=await bridge.prepare(demoSource,list.data.entries[1]);const blob=await stage.update(handle.id,value=>value.blob);assert.deepEqual(Buffer.from(await blob.arrayBuffer()),await readFile('extension/assets/demo/chutey.png'));}finally{await bridge.cancel();await stage.close();}
  assert.equal(calls.length,0);await api.run('accounts');assert.equal(calls.length,1);
 });
 
