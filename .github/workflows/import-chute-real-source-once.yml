@@ -1,0 +1,77 @@
+name: One-time import of Chute real source into REDOWN
+on:
+  push:
+    paths:
+      - .github/workflows/import-chute-real-source-once.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-actual-files:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+          persist-credentials: true
+      - name: Copy tracked Chute main source into chute-reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet --depth 1 --branch main https://github.com/thanks-cohn/chute.git /tmp/redown-chute-source
+          SOURCE_SHA="$(git -C /tmp/redown-chute-source rev-parse HEAD)"
+          echo "Source Chute main SHA: $SOURCE_SHA"
+
+          # Remove the incorrect gitlink, not just its nested folder.
+          git rm -f chute-reference
+          if [ -f .gitmodules ]; then
+            git config -f .gitmodules --remove-section submodule.chute-reference || true
+            if ! grep -q '^\[submodule ' .gitmodules; then
+              git rm -f .gitmodules
+            else
+              git add .gitmodules
+            fi
+          fi
+
+          mkdir -p chute-reference
+          git -C /tmp/redown-chute-source archive --format=tar HEAD | tar -xf - -C chute-reference
+
+          # Do not copy .git, temporary dependencies, or working-machine files.
+          test -f chute-reference/README.md
+          test -f chute-reference/extension/manifest.json
+          test -f chute-reference/extension/explorer-view.js
+          test -f chute-reference/desktop/chute-desktop.cpp
+          test -f chute-reference/extension/icons/icon128.png
+          test -f chute-reference/LICENSE
+          test ! -e chute-reference/.git
+
+          mkdir -p docs/shelf-chute-integration
+          cat > docs/shelf-chute-integration/CHUTE_REFERENCE.md <<EOF
+          # Chute source snapshot inside REDOWN
+
+          Chute is physically copied into `/chute-reference/` as ordinary Git-tracked files, **not a Git submodule**.
+
+          - Source repository: https://github.com/thanks-cohn/chute
+          - Source branch: `main`
+          - Exact upstream snapshot commit: `$SOURCE_SHA`
+          - Copied with `git archive HEAD` on a fresh upstream checkout.
+          - All upstream tracked files including HTML, CSS, JavaScript, native bridge, tests and binary image assets are included.
+          - The original independent Chute repository remains unchanged.
+          - The copy is for reference and reuse analysis only; REDOWN's Universal File API remains its file engine.
+          - This folder must not be included in REDOWN's browser-extension package or run as a second worker.
+
+          To update: fetch Chute's newest main, replace the tracked source snapshot carefully in one reviewed commit, update the SHA, and test regressions. Never blindly merge different runtimes.
+
+          Next step: Codex should inspect the actual source and implement the Shelf UI/drag interoperability described in `latest-1132026/IMPORTANT/P0_CODEX_EXECUTION_SHELF_UNIVERSAL_FILE_API_CHUTE_DRAG_DROP.md`.
+          EOF
+
+          git add -A chute-reference docs/shelf-chute-integration/CHUTE_REFERENCE.md
+          git diff --cached --check
+          echo "Tracked files in chute-reference: $(git ls-files chute-reference | wc -l)"
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "fix: replace Chute submodule with complete real source snapshot ($SOURCE_SHA)"
+          git push origin HEAD:main
