@@ -43,7 +43,7 @@
           else capacity(s,r.result,record,maxBytes,done);
         };});
         if(!ok)throw Error('Prepared-file queue is full. Clear Prepared Files or wait for a current handoff to finish.');
-        return {id,expires:record.expires,name,mime,size};
+        return {id,expires:record.expires,name,mime,size,policyBytes};
       },
       async reuse(id,{cacheKey,version,keep=false,maxBytes=MAX_BYTES}){return transaction('readwrite',(s,done)=>{
         const r=s.getAll();r.onsuccess=()=>{

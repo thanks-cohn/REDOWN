@@ -20,12 +20,12 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
   }
   async function cancel(){await release();emit('cancelled','');}
   async function suspend(){const retain=handle&&await stage.update(handle.id,v=>!!v.blob&&v.ready!==false&&(v.keep===true||!!v.claim&&!v.used)).catch(()=>null);if(retain)await release(true);else await cancel();}
-  const valid=entry=>!entry.folder&&Number.isSafeInteger(Number(entry.size))&&Number(entry.size)>=0&&Number(entry.size)<=maxBytes&&Number(entry.size)<=globalThis.RedownChuteStage.MAX_BYTES;
+  const valid=(entry,limit=maxBytes)=>!entry.folder&&Number.isSafeInteger(Number(entry.size))&&Number(entry.size)>=0&&Number(entry.size)<=limit&&Number(entry.size)<=globalThis.RedownChuteStage.MAX_BYTES;
   return {
     version:1,setLimitMB(value){const n=globalThis.RedownChuteStage.parseMB(value);maxBytes=Math.min(Number.MAX_SAFE_INTEGER,Math.floor(n*1000000));},capabilities:()=>({browserRelay:true,native:false,multiple:false,maxBytes}),
     async prepare(source,entry,reservation=null){
-      if(!reservation)await cancel();const ticket=generation;
-      if(!valid(entry))throw Error(`Choose one file up to ${maxBytes/1000000} MB. Use Download and the destination file picker for larger files.`);
+      if(!reservation)await cancel();const ticket=generation,policyBytes=reservation?.policyBytes??maxBytes;
+      if(!valid(entry,policyBytes))throw Error(`Choose one file up to ${maxBytes/1000000} MB. Use Download and the destination file picker for larger files.`);
       const abort=new AbortController();controller=abort;
       // One deadline covers both metadata checks and the read, not 60s each.
       const signal=AbortSignal.any([abort.signal,AbortSignal.timeout(60000)]);
@@ -34,7 +34,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
       try{
         const cacheKey=await digest(sourceIdentity(source,entry)),keep=await Promise.resolve().then(getKeep).catch(()=>false);
         signal.throwIfAborted();
-        if(!pending){layer='storage';code='STORAGE_FAILED';pending=await stage.reserve(crypto.randomUUID(),{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes:globalThis.RedownChuteStage.MAX_BYTES,policyBytes:maxBytes});}
+        if(!pending){layer='storage';code='STORAGE_FAILED';pending=await stage.reserve(crypto.randomUUID(),{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes:globalThis.RedownChuteStage.MAX_BYTES,policyBytes});}
         handle={...pending,key:entry.key,source:JSON.stringify([source.accountId,source.bucketName,source.prefix||''])};
         const stat=async()=>{
           layer='source';code='READ_FAILED';const result=await api.run('stat',{source,key:entry.key},{signal});
@@ -51,7 +51,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         if(!reused){
           layer='source';code='READ_FAILED';const result=await api.run('readStream',{source,key:entry.key},{signal,onChunk:chunk=>{
             signal.throwIfAborted();total+=chunk.byteLength;
-            if(total>maxBytes||total>Number(entry.size)){code='SIZE_CHANGED';throw Error('File exceeds the drag budget or changed. Refresh the folder.');}
+            if(total>policyBytes||total>Number(entry.size)){code='SIZE_CHANGED';throw Error('File exceeds the drag budget or changed. Refresh the folder.');}
             chunks.push(chunk);
           }});
           if(result.state!=='completed'){if(/^HTTP_\d{3}$/.test(result.code))code=result.code;throw Error('Could not read this file. Reconnect or Refresh before dragging again.');}
@@ -73,14 +73,14 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
     },
     start(event,source,entry){
       if(!valid(entry)){event.preventDefault();emit('failed',`Use Download and the destination file picker for files larger than ${maxBytes/1000000} MB or unknown sizes. This browser relay also has a 128 MB aggregate buffering budget; use Download and the destination picker above that budget.`);return false;}
-      const clearing=release(true),ticket=generation,id=crypto.randomUUID();let preparing=false,startLayer='storage';
+      const clearing=release(true),ticket=generation,id=crypto.randomUUID();let preparing=false,startLayer='storage';const policyBytes=maxBytes;
       handle={id,expires:Date.now()+globalThis.RedownChuteStage.TTL};
       event.dataTransfer.effectAllowed='copy';event.dataTransfer.setData(DRAG_TYPE,id);
       emit('attempted','Dragging file. Keep Explorer open while the destination receives it.');
       void (async()=>{
         await clearing;if(ticket!==generation)return;
         const cacheKey=await digest(sourceIdentity(source,entry));
-        const pending=await stage.reserve(id,{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes:globalThis.RedownChuteStage.MAX_BYTES,policyBytes:maxBytes});
+        const pending=await stage.reserve(id,{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes:globalThis.RedownChuteStage.MAX_BYTES,policyBytes});
         if(ticket!==generation){await discard(id);return;}
         handle={...pending,key:entry.key,source:JSON.stringify([source.accountId,source.bucketName,source.prefix||''])};
         startLayer='broker';const armed=await send({type:'redownChuteV1.arm',id});

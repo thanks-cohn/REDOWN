@@ -250,6 +250,14 @@ void refreshStartViewMode().catch(()=>{for(const input of startViewModes)input.c
 void refreshPreference().catch(()=>{for(const input of modes)input.disabled=true;status('Opening preference unavailable. Reopen Settings to retry.');});
 void refreshConnection().catch(()=>status('Connection state unavailable. Reopen Shelf to retry.'));
 
+
+const dragLimit=$('drag-limit-mb');
+async function refreshDragLimit(){const data=await chrome.storage.local.get('shelfDragLimitMBV1');let n=50;try{n=RedownChuteStage.parseMB(data.shelfDragLimitMBV1??50);}catch{}dragLimit.value=String(n);}
+async function saveDragLimit(value){try{const n=RedownChuteStage.parseMB(value);await chrome.storage.local.set({shelfDragLimitMBV1:n});dragLimit.value=String(n);$('drag-limit-status').textContent='Drag limit saved. Applied to subsequent drags.';}catch(error){$('drag-limit-status').textContent=error.message;}}
+dragLimit?.addEventListener('change',()=>{void saveDragLimit(dragLimit.value);});
+$('reset-drag-limit')?.addEventListener('click',()=>{void saveDragLimit(50);});
+if(dragLimit)void refreshDragLimit().catch(()=>{});
+
 // Registered only after the local navigation and controls initialize.
 chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
   if(sender.id===chrome.runtime.id&&message.type==='redownShelfReady'){
@@ -258,10 +266,3 @@ chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
     return true;
   }
 });
-
-const dragLimit=$('drag-limit-mb');
-async function refreshDragLimit(){const data=await chrome.storage.local.get('shelfDragLimitMBV1');let n=50;try{n=RedownChuteStage.parseMB(data.shelfDragLimitMBV1??50);}catch{}dragLimit.value=String(n);}
-async function saveDragLimit(value){try{const n=RedownChuteStage.parseMB(value);await chrome.storage.local.set({shelfDragLimitMBV1:n});dragLimit.value=String(n);$('drag-limit-status').textContent='Drag limit saved. Applied to subsequent drags.';}catch(error){$('drag-limit-status').textContent=error.message;}}
-dragLimit?.addEventListener('change',()=>{void saveDragLimit(dragLimit.value);});
-$('reset-drag-limit')?.addEventListener('click',()=>{void saveDragLimit(50);});
-if(dragLimit)void refreshDragLimit().catch(()=>{});
