@@ -51,14 +51,14 @@ jobs:
           test ! -e chute-reference/.git
 
           mkdir -p docs/shelf-chute-integration
-          cat > docs/shelf-chute-integration/CHUTE_REFERENCE.md <<EOF
+          cat > docs/shelf-chute-integration/CHUTE_REFERENCE.md <<'EOF'
           # Chute source snapshot inside REDOWN
 
           Chute is physically copied into `/chute-reference/` as ordinary Git-tracked files, **not a Git submodule**.
 
           - Source repository: https://github.com/thanks-cohn/chute
           - Source branch: `main`
-          - Exact upstream snapshot commit: `$SOURCE_SHA`
+          - Exact upstream snapshot commit: see the import receipt below.
           - Copied with `git archive HEAD` on a fresh upstream checkout.
           - All upstream tracked files including HTML, CSS, JavaScript, native bridge, tests and binary image assets are included.
           - The original independent Chute repository remains unchanged.
@@ -70,8 +70,9 @@ jobs:
           Next step: Codex should inspect the actual source and implement the Shelf UI/drag interoperability described in `latest-1132026/IMPORTANT/P0_CODEX_EXECUTION_SHELF_UNIVERSAL_FILE_API_CHUTE_DRAG_DROP.md`.
           EOF
 
+          printf '\n- Exact upstream SHA: %s\n' "$SOURCE_SHA" >> docs/shelf-chute-integration/CHUTE_REFERENCE.md
           git add -A chute-reference docs/shelf-chute-integration/CHUTE_REFERENCE.md
-          git diff --cached --check
+          git diff --cached --check -- docs/shelf-chute-integration/CHUTE_REFERENCE.md
           echo "Tracked files in chute-reference: $(git ls-files chute-reference | wc -l)"
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "fix: replace Chute submodule with complete real source snapshot ($SOURCE_SHA)"
           git push origin HEAD:main
