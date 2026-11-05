@@ -1,0 +1,38 @@
+Failure snapshot {
+  status: '10,000 loaded · photos',
+  more: '<button data-action="more" hidden="">Load more files</button>',
+  calls: [
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report'
+  ],
+  scroll: 0
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.scrollIntoViewIfNeeded: Element is not attached to the DOM
+Call log:
+[2m  - attempting scroll into view action[22m
+[2m    - waiting for element to be stable[22m
+
+    at runP0 (/workspace/REDOWN/scripts/shelf-p0-browser-cases.mjs:91:145)
+    at async file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:62:92 {
+  log: [
+    '  - attempting scroll into view action',
+    '    - waiting for element to be stable'
+  ],
+  name: 'Error'
+}
+
+Node.js v24.19.0

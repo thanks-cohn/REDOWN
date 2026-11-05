@@ -1,0 +1,50 @@
+{
+  "implementationHead": "862ec243e232cef79a1cdef861bd715da898a56a",
+  "browserHead": "862ec243e232cef79a1cdef861bd715da898a56a",
+  "hashes": {
+    "extension/shelf.html": "9057732ba328e1c356055c39d191664ab76c046a77c1896dee87181419ffa2d0",
+    "extension/shelf.js": "67b158f7f1166202898176e831e745ca58c8539b6195ef43a99306788346219f",
+    "extension/shelf.css": "f50a7c56dedfe4bebf6b03219b9b168741fd771df26a550a3fb7cbb3955afc7a",
+    "extension/shelf-explorer.mjs": "72261098c4d4a1e8fff4fa1bf4fbdc4f41af24977e16d22251602a376fc0fbe7",
+    "extension/shelf-explorer.css": "4d81593b40efd9b2fd258c1da7e73aa42db4d43c8690136fc684a20a45933328",
+    "extension/shelf-explorer-model.mjs": "365a4b17ac6467bd980148f2186abafdc3474cecb94aed1037e07ce274aca448",
+    "extension/chute-drag.mjs": "3d6883242c99466af36d8155d6ca9628b20e1c650205a4e0be32f9e31f7a0ac7",
+    "extension/chute-stage.js": "b2a14baa64e3df24c22b4e94b6d00bd65800762d8fa15ab793985bbd0068bbd0",
+    "extension/chute-worker.js": "b3adad45edcb6274c6cdb7d3daf37432b3a58b3ff2406571a8c4e9677ba21390",
+    "extension/chute-content.js": "4b6417b5589a535b275518e3cc64331b1acceead61032f6e083f40a963396618",
+    "extension/beta/file-api.mjs": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66",
+    "extension/beta/r2-adapter.mjs": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+    "scripts/shelf-mini-explorer-browser.mjs": "9ff1d2b267da7532d5dba78d2451b90df4b63b5614643c80ca8e29ed46e7b34b",
+    "scripts/shelf-p0-browser-cases.mjs": "75dbd70c7d606cadfdadac609be8497da009e9b13c3c22d6c4b6f02d5f319882"
+  },
+  "commits": [
+    "862ec243e232cef79a1cdef861bd715da898a56a fix: report staging failures even when cleanup storage is unavailable",
+    "7756fbfac36d9ef83ee4701920a74c6aea5a4422 test: wait for receiver receipts when asserting prepared-byte reuse",
+    "bbc97cef7616667b7bab78fdaf65288ade52e82f test: await completed Files animation before final geometry checks",
+    "0f034d2efbfcde27efab76ac517e176f84954357 perf: cache image geometry coefficients during splitter travel",
+    "f4db70e288dc7582a970fdfc666cec4b826b60ca fix: cancel first-gesture outside drops before staging finishes",
+    "3205184c2a991a5b9d3e39cd3d12802eaaa5b2e0 test: measure live virtual rows without stale DOM handles",
+    "87cd26ab11f5b656afdc711f5d56cc3e0ac47dad fix: retain reusable bytes only with a strong provider version",
+    "1eb35f2daafb7f435318c87058878a9bd5fba976 fix: retain opted-in prepared files across Shelf lifecycle",
+    "8b6319a66f2ce074b9cb469957307ae904c7d555 fix: preserve live split on duplicate routes and ultrawide media geometry",
+    "819640c2ec369e92422998049aad2d2850cbf222 test: exercise full-range panes gestures retention and browser handoffs",
+    "6c98483f264d442df00f3ca5a8689949915b998c fix: retain bounded Chutey retry bytes with fresh validated claims",
+    "ae3c7610604e85f5de706a757ca305c704166fd8 fix: separate selection from dock Preview and add Expand Restore",
+    "efe4431842e4760336eb7b40cb6909cf2236b6a7 feat: allow full splitter travel and label responsive image views",
+    "39d57f402d0039ea28521c2a53acdfc8a86863e2 feat: add opt-in measured Files slide-up entrance",
+    "98bf13febb2026e27dd09d7901f2165e6eb72fb7 docs: audit Shelf gestures geometry and Chutey staging lifecycle"
+  ],
+  "policy": {
+    "host": "Debian GNU/Linux 13",
+    "browser": "Chromium 154.0.8037.57",
+    "ExtensionInstallBlocklist": [
+      "*"
+    ],
+    "ExtensionInstallSources": [],
+    "installedTest": "blocked; no bypass attempted",
+    "Chrome155Plus": "unavailable",
+    "Windows11": "unavailable"
+  },
+  "reliabilityReceiptHead": "f4db70e288dc7582a970fdfc666cec4b826b60ca",
+  "note": "Reliability was run before the final geometry/cleanup changes; final full Node suite, syntax/package checks and browser matrices are separate receipts."
+}

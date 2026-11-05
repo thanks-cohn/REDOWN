@@ -1,0 +1,35 @@
+Failure snapshot {
+  status: '10,000 loaded · photos',
+  more: '<button data-action="more" hidden="">Load more files</button>',
+  calls: [
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report'
+  ],
+  scroll: 0
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: {"count":10000,"widths":[{"width":637,"height":1274,"key":"00000.png","naturalWidth":40,"naturalHeight":80},{"width":299,"height":598,"key":"00000.png","naturalWidth":40,"naturalHeight":80},{"width":0,"height":0,"key":"00000.png","naturalWidth":40,"naturalHeight":80}]}
+    at runP0 (file:///workspace/REDOWN/scripts/shelf-p0-browser-cases.mjs:89:109)
+    at async file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:62:92 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

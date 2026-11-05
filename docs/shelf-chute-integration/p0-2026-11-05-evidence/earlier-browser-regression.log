@@ -1,0 +1,36 @@
+Layout fixture 32 MiB 320
+Layout fixture 32 MiB 360
+Layout fixture 32 MiB 390
+Failure snapshot {
+  status: '10,001 loaded · photos',
+  more: '<button data-action="more" hidden="">Load more files</button>',
+  calls: [
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'redownChuteV1.report'
+  ],
+  scroll: 0
+}
+Failure snapshot {
+  status: undefined,
+  more: undefined,
+  calls: undefined,
+  scroll: undefined
+}
+file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:155
+   if(await grip.getAttribute('aria-valuenow')!=='55')throw Error('Keyboard splitter');
+                                                            ^
+
+Error: Keyboard splitter
+    at file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:155:61
+
+Node.js v24.19.0

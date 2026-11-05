@@ -1,0 +1,38 @@
+Failure snapshot {
+  status: '100 loaded · photos',
+  more: '<button data-action="more" hidden="">Load more files</button>',
+  calls: [
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'cfAccounts',
+    'cfBuckets',
+    'cfBuckets',
+    'redownChuteV1.report'
+  ],
+  scroll: 0
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(Math.abs(r.height/r.width-ratio)<.04)
+
+    at runP0 (file:///workspace/REDOWN/scripts/shelf-p0-browser-cases.mjs:91:478)
+    at async file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:62:92 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

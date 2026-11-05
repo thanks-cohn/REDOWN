@@ -1,0 +1,27 @@
+{
+  "classification": "Controlled HTTP fixture; edited excerpts of original Playwright capture, no installed/live provider proof",
+  "implementationHead": "862ec243e232cef79a1cdef861bd715da898a56a",
+  "sourceVideo": "page@fab0264380e0782e22de18836c4c60dc.webm",
+  "sourceSha256": "56b70754779de1a7e39fdcf6259a04fdf0f40412666ae4c43ff3e7ec953b132e",
+  "durationSeconds": 43.64,
+  "command": [
+    "ffmpeg",
+    "-y",
+    "-i",
+    "work/p0/pr-browser/video/page@fab0264380e0782e22de18836c4c60dc.webm",
+    "-filter_complex",
+    "[0:v]split=2[a][b];[a]trim=start=0:end=16,setpts=PTS-STARTPTS[c];[b]trim=start=29.640,setpts=PTS-STARTPTS[d];[c][d]concat=n=2:v=1:a=0[v]",
+    "-map",
+    "[v]",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "fast",
+    "-crf",
+    "26",
+    "-movflags",
+    "+faststart",
+    "docs/shelf-chute-integration/p0-2026-11-05-evidence/controlled-browser-excerpts.mp4"
+  ]
+}
