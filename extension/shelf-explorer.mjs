@@ -113,7 +113,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     button('paste').disabled=!clipboard||!model.state.source;
     button('folder').disabled=!model.state.source||model.state.phase!=='ready';
   }
-  let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0;const aspects=new Map();
+  let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0,geometryEntries=null,geometryRevision=-1,slopes=[0],bases=[0];const aspects=new Map();
   function renderRows(){
     if(dragging||host.hidden||!activeView||folderWidth===100)return;
     const query=$('.mini-filter input').value.toLocaleLowerCase(),sort=$('.mini-filter select').value;
@@ -126,7 +126,14 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     const width=Math.max(1,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
     if(layoutEntries!==visible||layoutKey!==key){
       const same=layoutEntries===visible,old=offsetRange(offsets,list.scrollTop,0),fraction=(list.scrollTop-offsets[old.first])/(offsets[old.first+1]-offsets[old.first]||1);
-      const next=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');next.push(next.at(-1)+(grid?(image?width*(aspects.get(entry.key)||1)+16:80)+8:48));}
+      // Width is the only changing term during divider travel. Cache prefix
+      // coefficients until the listing or decoded aspects change; avoid 10,000
+      // type lookups/object allocations for every pointer frame.
+      if(grid&&(geometryEntries!==visible||geometryRevision!==aspectRevision)){
+        slopes=[0];bases=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');slopes.push(slopes.at(-1)+(image?(aspects.get(entry.key)||1):0));bases.push(bases.at(-1)+(image?24:88));}
+        geometryEntries=visible;geometryRevision=aspectRevision;
+      }
+      const next=[0];for(let i=1;i<=visible.length;i++)next.push(grid?width*slopes[i]+bases[i]:48*i);
       offsets=next;layoutEntries=visible;layoutKey=key;
       // Anchor the current item using current geometry, never a saved wheel offset.
       $('.mini-spacer').style.height=offsets.at(-1)+'px';
