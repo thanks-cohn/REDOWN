@@ -1,4 +1,4 @@
-# P0 CODEX EXECUTION — Chutey Layout Parity in REDOWN Cloud File Explorer + Natural Drag
+# P0 CODEX EXECUTION — REDOWN FILES: Chutey Split, Bottom Dock, Stable Scroll, History GO TO and Drag
 
 **Owner directive:** November 4, 2026 (America/Chicago)  
 **Repository:** \`thanks-cohn/REDOWN\`  
@@ -6,6 +6,64 @@
 **Priority:** P0 — usability/drag-first recovery; do **not** interpret this as a broken cloud engine  
 **Execution:** Codex feature branch + PR; preserve working code; **do not merge to main or publish without owner review**  
 **This file:** Execution request, not implementation or verification.
+
+## LATEST OWNER OVERRIDES — FILES, BOTTOM PREVIEW, SCROLL REGRESSION, HISTORY GO TO
+
+**Priority P0. These newer instructions override all conflicting paragraphs below** about Chutey's original 36% initial split, multi-column auto-fit image cards, visible media filenames, preview inserted after a virtualized row, and the Shelf label “File Explorer”. PR #53 already ported a working Chutey-style UI; fix and refine the current code rather than rebuilding the Universal File API. **This is a Codex execution request, not evidence that these changes are implemented.**
+
+### 1. Rename and fit the Shelf navigation
+
+- Change the visible Shelf tab from “File Explorer” to **“FILES”** in uppercase. Keep internal #explorer route, DOM IDs and relevant links functioning.
+- **Uniformly reduce the fonts, letter spacing and padding of all four Shelf nav items** — REMOTES / FILES / HISTORY / SETTINGS — enough that they fit on **one row** in narrow Shelf widths, including Neon. Do not use arbitrarily different sizes across labels. Maintain legibility, accessible focus indicators and text alternatives.
+- The Shelf itself and its top tabs must **never require horizontal side-scrolling** at 320/360/390px. Long folder paths may scroll *inside their own tree container* only. Audit the rest of Shelf typography and header for overflowing controls across themes.
+
+### 2. Two panes, 50/50 first, media enlarges as wall moves left
+
+- Keep the real Chutey two-panel split: left cloud/folder tree, right files/media. **Every fresh FILES opening starts at a 50/50 split**, replacing the old 36% default and preventing stored legacy 36% settings from silently undoing it. Keep adjustments stable while the user remains in the Explorer and navigates folders. Honor future user-configured defaults only if such a setting is explicitly provided.
+- The divider remains draggable and keyboard-resizable. **Move divider left → narrower folder pane → visibly larger images on right**; move right does the opposite, instantly without refresh.
+- Right pane's **media presentation is exactly ONE LARGE IMAGE PER ROW by default**, occupying available content-pane width, with natural aspect ratio (no forced crop/distortion). Dynamic width must follow the splitter; no lingering 64px thumbnails or hardcoded 110px card width.
+- **No always-visible image filename, caption or title under the image.** Reveal the actual filename on pointer hover and keyboard focus via restrained tooltip or overlay; expose the accessible name to assistive technology. Keep non-image files intelligible with icons/names and preserve contextual file actions.
+- Retain lazy loading, bounds on decoding/storage, selection, Chutey-based real-file drag gestures, and REDOWN's existing Universal File API cloud authority.
+
+### 3. Bottom ONE-THIRD preview dock: compress Explorer upward
+
+- Upon selecting media, open a **dedicated container across the bottom of the FILES content**, approximately **one-third of usable Shelf height**. The two-pane Explorer **shifts/compresses UP into the space above this dock**; **the Shelf navigation tabs remain at the VERY TOP, fixed and visible**. In this preview-focused FILES layout, the large branding/odometer/decorative region above tabs should collapse or move out of the way so the tabs are the visible top anchor.
+- The dock is **not an inline preview after a grid row**, not a third side pane, not a full-screen overlay or a second window. It is its own non-scrolling (relative to file rows) lower region; media inside may scroll/zoom as needed. Include close and draggable/keyboard-accessible **horizontal resize grip**. Closing restores the Explorer's height. Bound the dock's min/max height on short screens so both panels remain useful.
+- Preserve intended double-click Window Preview separately. Selecting another media file updates bottom dock contents **without moving the file-list scroll offset**.
+- Implement with a true bounded flex/grid height contract; avoid fixed 360px minimum or \`height:calc(100dvh - 180px)\` when that would force unwanted document overflow.
+
+### 4. P0 reproducible problem: scrolling fights back near halfway
+
+**Owner symptom:** REDOWN FILES frequently flickers and pulls scroll position backward near the halfway point, preventing reaching the bottom. Treat this as a P0 functional regression, not a cosmetic defect.
+
+**High-confidence code suspect but NOT proven root cause:** Current \`extension/shelf-explorer.mjs\` uses a \`scroll\` listener calling \`renderRows()\` each tick; \`renderRows()\` does \`rows.replaceChildren()\`, recomputes virtual \`mini-spacer\`/\`mini-tail\` and the visible range with \`windowRange()\`, and physically moves the preview into/out of virtual rows using \`positionPreview()\`. Height changes and scrollTop clamping could cause a feedback loop. Current CSS adds \`overflow-anchor:none\`, hardcoded row sizes and a min-height; check those too.
+
+**Mandatory work:**
+1. Reproduce in an installed Chrome Shelf and instrument scrollTop, scrollHeight, clientHeight, visible row indexes, thumbnail layout, ResizeObserver and render/reflow counts. Prove the exact cause before declaring it fixed.
+2. Move the preview permanently OUT of the virtualized rows into the bottom dock, so selecting/scrolling cannot reinsert preview DOM or change virtual list height.
+3. Maintain stable logical total scroll height (spacer + displayed rows + tail) across changes; respect actual one-image-per-row dimensions, which can change with pane width. Use measured heights/anchoring when required. Batch DOM updates on animation frames or update only changed visible ranges, preserving focus, selection and user scroll.
+4. Ensure exactly one scroll owner for the right file pane. Never write a stale restored scroll position during an active wheel/trackpad gesture. Keep \`ResizeObserver\` from recursive rerender loops. Allow reaching the last item even with a dock open, massive folders and a resized divider.
+5. **Acceptance:** smoothly scroll to the absolute last item and back without flicker, jump, rubber-banding or half-way wall via wheel, trackpad, scrollbar drag, keyboard/PageDown/End, in grid/media/list modes and previews open/closed. Test 1/10/100/1,000/10,000 entries, 320–900px widths, all themes; compare actual installed Windows 11 behavior with fixtures.
+
+### 5. Settings — History GO TO destination: Dashboard or Shelf FILES
+
+**Owner's request:** Settings → History navigation must let users choose:
+- **Go to Dashboard** — reuse/open REDOWN's full Dashboard Explorer (\`beta/explorer.html\`) and reveal the exact verified saved item in the actual cloud folder.
+- **Go to Shelf FILES** — open/reuse existing REDOWN Shelf, switch to **FILES**, expand/navigate the authorized cloud tree and **scroll to/select/highlight the exact verified saved file** in the file pane, without an unwanted extra tab.
+
+Current implementation has \`historyGoToMode\` choices \`tab\` and \`split\` in \`extension/shelf.html\` and \`history-navigation.js\`. **Do not merely rename these existing choices.** Wire distinct verified navigation destinations. Keep existing safe \`locator()\`, \`legacyR2()\`, verified provider-link routing and file identity validation. Translate legacy preferences deliberately; preserve older Split View workflows safely if supported, without obscuring the two primary new choices.
+
+For Shelf target: if History is already open in the Shelf, switch within that exact Shelf; otherwise request Chrome's existing legitimate Shelf opener under user gesture. Add a one-use expiring, window-scoped intent carrying only validated account/bucket/key locator metadata in session storage, with recipient acknowledgment/result, independent File API auth/verification and cleanup on success/failure/timeout. No secrets or source/page URLs in hashes. Never select a same-named wrong file. For provider locations that REDOWN's Universal File API cannot browse yet, give a truthful error/fallback to the verified provider-owned link where supported. Do not make the toolbar launch wait for cloud discovery or make a second competing opener.
+
+History GO TO **must remain visible and working**. The selected option must persist; both paths must navigate the actual saved location, not just show the Explorer home screen.
+
+### 6. Proof and scope
+
+Required visible acceptance captures: one-line REMOTES/FILES/HISTORY/SETTINGS in every theme; fresh 50/50 split and left-drag enlargement; single full-width captionless image and hover/focus filename; preview dock occupying about one-third height and compressing Explorer upward with tabs visible; fluid end-to-end scroll reaching final row; Settings GO TO choosing Dashboard vs Shelf FILES and resolving an exact verified file; no icon-to-Shelf BOOT regression. Test actual installed Windows Chrome as well as controlled harness. Cite failures and any unverified provider paths accurately.
+
+**Do not rewrite REDOWN Universal File API, Chutey drag technology, working V3 menus, BOOT authority, History archive, save verification or native worker merely to implement presentation changes. These latest owner choices supersede earlier Chutey layout details but preserve the shared two-panel foundation.**
+
+---
 
 ## 0. Owner's exact intent — do not reinterpret
 
