@@ -17,6 +17,8 @@
 <span class="brand-mark" data-redown-icon aria-hidden="true"></span>REDOWN</a>
 <span class="eyebrow">YOUR CLOUD, IN ORDER</span>
 <h1>REDOWN Explorer</h1>
+<div role="tablist" aria-label="Explorer cloud"><button id="provider-r2" role="tab" aria-selected="true">Cloudflare R2</button><button id="provider-mega" role="tab" aria-selected="false">MEGA S4</button></div>
+<div><button id="mega-manage" hidden>Connect / Change MEGA keys</button><button id="mega-disconnect" hidden>Disconnect MEGA</button></div>
 <p class="intro">A little space.<br>Endless possibilities.</p>
 <label id="account-picker-caption" for="accounts" hidden>Cloudflare account</label>
 <div id="account-chooser" class="account-chooser" data-state="disconnected" aria-live="polite">
@@ -270,6 +272,14 @@
 <div class="archive-extract-controls"><label for="archive-prefix">Extract selected files into (empty means bucket root)</label><input id="archive-prefix" autocomplete="off"></div>
 <p id="archive-status" role="status"></p><div class="dialog-actions"><button id="archive-cancel" type="button" hidden>Cancel remaining</button><button id="archive-extract" type="button" class="primary" disabled>Extract selected</button></div>
 </dialog>
+<dialog id="mega-dialog" aria-labelledby="mega-title"><form id="mega-form">
+<h2 id="mega-title">Connect MEGA S4</h2><p>Keys stay in this trusted extension page's memory, not a vault. Reloading or closing this page disconnects MEGA. No Cloudflare account required.</p>
+<label for="mega-endpoint">S3 endpoint URL</label><input id="mega-endpoint" required autocomplete="off" placeholder="https://s3.region.megas4.com">
+<label for="mega-key">Access Key ID</label><input id="mega-key" type="password" required autocomplete="off">
+<label for="mega-secret">Secret Access Key</label><input id="mega-secret" type="password" required autocomplete="off"><button id="mega-reveal" type="button">Show / hide secret</button>
+<p>Signing region: ca-west-1 (verified by the development preflight). Transfers are limited to 32 MiB; no direct Worker route is enabled.</p>
+<p id="mega-error" role="alert"></p><div class="dialog-actions"><button id="mega-cancel" type="button">Cancel</button><button id="mega-submit" type="submit">Connect</button></div>
+</form></dialog>
 <script src="../public-addresses.js"></script>
 <script src="../cloudflare-api.js">
 </script>

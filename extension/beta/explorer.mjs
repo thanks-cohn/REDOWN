@@ -9,10 +9,14 @@ import {installTestItTools} from './test-it-tools.mjs';
 import {installTestIt} from './test-it.mjs';
 import {installTour} from './tour.mjs';
 import {createFileApi,prefix,name} from './file-api.mjs';
+import {createProviderRouter} from './provider-router.mjs';
+import {createS3Adapter} from './s3-adapter.mjs';
 import {createR2Adapter,previewType} from './r2-adapter.mjs';
 import {collectDroppedFiles} from './dropped-files.mjs';
 import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from './archive-browser.mjs';
-const $=id=>document.getElementById(id),api=createFileApi(createR2Adapter());
+const $=id=>document.getElementById(id),r2Api=createFileApi(createR2Adapter()),megaApi=createFileApi(createS3Adapter());
+let activeProvider='r2';
+const api=createProviderRouter({'r2':r2Api,'mega-s4':megaApi});
 let practice=null;
 let current=null,items=[],selected=new Set(),cursor='',epoch=0,busy=false,clipboard=null,anchor=-1,controller=null,history=[],historyIndex=-1,accounts=[],dragState=null;
 const bytes=n=>n==null?'—':n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(1)+' GB';
@@ -40,6 +44,7 @@ async function loadGlobalActivation(){
   globalActivation=s.rightClickGlobalActivation;activatedBuckets=s.rightClickActivatedBuckets?.buckets||[];activationProfiles=s.profiles||[];activationMenuStatus=s.rightClickMenuStatus;paintActivation();
 }
 function paintActivation(){
+  if(activeProvider==='mega-s4'){$('prepare').hidden=true;document.documentElement.dataset.activationPrerequisite='false';return;}
   const action=$('prepare'),label=action.querySelector('.bucket-activation-label');
   const known=accounts.flatMap(a=>(bucketCache.get(a.id)||[]).map(b=>({accountId:a.id,bucketName:b.name})));
   const prepared=d=>activatedBuckets.some(p=>p.accountId===d.accountId&&p.bucketName===d.bucketName&&p.enabled&&activationProfiles.some(q=>q.id===p.profileId&&q.accountId===p.accountId&&q.bucketName===p.bucketName&&q.workerUrl&&q.token));
@@ -59,6 +64,7 @@ function paintActivation(){
 
 function resetActivation(){activationEpoch++;clearActivationGlow();activationState='idle';activationSource=null;activationReason='';paintActivation();}
 async function checkActivation(source){
+  if(activeProvider==='mega-s4')return true;
   if(!source||!sameBucket(current,source)){resetActivation();return null;}
   const ticket=++activationEpoch;
   activationSource={accountId:source.accountId,bucketName:source.bucketName};
@@ -118,15 +124,16 @@ function accountVisual(next,headline='',detail=''){
   syncAccountPicker();
 }
 $('account-standby-action').addEventListener('click',()=>{
+  if(activeProvider==='mega-s4'){$('mega-dialog').showModal();return;}
   const state=$('account-chooser').dataset.state;
   if(state==='unauthorized'||state==='disconnected')$('connect').click();
   else void loadAccounts(lastLocation).catch(failure);
 });
 const bucketCache=new Map();
-const sameBucket=(a,b)=>a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
+const sameBucket=(a,b)=>(a?.provider||'r2')===(b?.provider||'r2')&&a?.accountId===b?.accountId&&a?.bucketName===b?.bucketName;
 function connectionState(state,message){listingState=state;$('dropzone').dataset.state=state;$('refresh').classList.toggle('attention',['failed','unauthorized','disconnected'].includes(state));$('refresh').title=['failed','unauthorized','disconnected'].includes(state)?'Refresh connection and discover buckets':'Refresh files';if(message)status(message);}
-function failure(error){const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');if(state==='unauthorized'||state==='disconnected')accountVisual(state);render();}
-async function rememberLocation(target){lastLocation={...target};try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
+function failure(error){if(activeProvider==='mega-s4'){connectionState('failed',error.message+' Reconnect MEGA or Refresh.');render();return;}const message=error.message||'Request failed.';const state=/authoriz|permission|expired|renew|401|403|authentication/i.test(message)?'unauthorized':/\bconnect cloudflare first|session changed|connection changed/i.test(message)?'disconnected':'failed';connectionState(state,message+' Use Refresh to check the connection, or Connect Cloudflare to renew authorization.');if(state==='unauthorized'||state==='disconnected')accountVisual(state);render();}
+async function rememberLocation(target){lastLocation={...target};if(activeProvider==='mega-s4')return;try{await chrome.storage.local?.set({betaExplorerLocation:lastLocation});}catch{status('Folder loaded, but its location could not be saved.');}}
 const context=()=>current?{...current}:null;
 const chosen=()=>items.filter(item=>selected.has(item.key));
 let lastUrlSelectionFingerprint='';
@@ -172,6 +179,7 @@ function controls(){
   $('cancel').hidden=!busy;
   document.querySelectorAll('#buckets button').forEach(b=>b.disabled=busy);
   syncAccountPicker();
+  providerControls();
 }
 function visible(){const query=$('filter').value.toLocaleLowerCase(),sort=$('sort').value;return items.filter(e=>e.displayName.toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?(Date.parse(b.uploaded||b.last_modified)||0)-(Date.parse(a.uploaded||a.last_modified)||0):0)||(sort==='name-desc'?-1:1)*a.displayName.localeCompare(b.displayName,undefined,{numeric:true}));}
 function render(){
@@ -219,7 +227,7 @@ async function request(operation,input,options={}) {
 }
 async function listing(add=false){
   if(!current)return;const ticket=++epoch,target=context();
-  connectionState('loading','Loading R2 files…');render();
+  connectionState('loading',activeProvider==='mega-s4'?'Loading MEGA S4 files…':'Loading R2 files…');render();
   let result;try{result=await request('list',{source:target,cursor:add?cursor:''},{signal:controller?.signal});}catch(error){if(ticket!==epoch)return;throw error;}if(ticket!==epoch)return;
   connectionState('ready');
   items=add?[...new Map([...items,...result.data.entries].map(e=>[e.key,e])).values()]:result.data.entries;cursor=result.data.cursor;
@@ -232,7 +240,7 @@ async function navigate(target,record=true,restore=false,origin=null){
   if(!sameBucket(previous,next))resetActivation();
   if(record){history=history.slice(0,historyIndex+1);history.push(context());historyIndex=history.length-1;}
   $('accounts').value=next.accountId;syncAccountPicker();paintBuckets(next.accountId);render();
-  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status('Folder refreshed from Cloudflare R2.');if(!sameBucket(previous,next)||activationState==='idle'||activationState==='unknown')void checkActivation(next);guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);void checkActivation(next);}
+  try{const pending=listing(),ticket=epoch;const result=await pending;if(ticket!==epoch||!result)return;if(restore&&result?.folderExists===false&&sameBucket(current,next)){await navigate({...next,prefix:''},record);status('Saved folder no longer exists. Opened the bucket root.');return;}if(sameBucket(current,next)&&current.prefix===next.prefix){await rememberLocation(next);if(ticket!==epoch||!sameBucket(current,next)||current.prefix!==next.prefix)return;status(activeProvider==='mega-s4'?'Folder refreshed from MEGA S4.':'Folder refreshed from Cloudflare R2.');if(!sameBucket(previous,next)||activationState==='idle'||activationState==='unknown')void checkActivation(next);guideAction(next.prefix?'folder-open':'bucket-open',{previous,current:context(),origin,completed:true,testItCorrelation});}}catch(e){failure(e);void checkActivation(next);}
 }
 async function run(task,{refresh=true,checkWorker=refresh}={}) {
   if(busy)return;busy=true;controller=new AbortController();controls();
@@ -473,7 +481,7 @@ document.addEventListener('keydown',event=>{
 function paintBuckets(accountId){
   const buckets=bucketCache.get(accountId)||[];
   $('buckets').replaceChildren(...buckets.map(bucket=>{
-    const target={accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};
+    const target={...(activeProvider==='mega-s4'?{provider:'mega-s4',connectionId:accountId}:{}),accountId,accountName:accounts.find(a=>a.id===accountId)?.name||'',bucketName:bucket.name,prefix:''};
     const b=button(bucket.name,()=>navigate(target));
     const icon=document.createElement('span');
     icon.className='sidebar-bucket-icon';icon.setAttribute('aria-hidden','true');
@@ -499,6 +507,7 @@ async function loadBuckets(){
   }catch(e){if(ticket===discoveryEpoch)failure(e);}
 }
 async function loadAccounts(preferred=current||lastLocation){
+  if(activeProvider==='mega-s4'){await loadMega();return;}
   // Never call Cloudflare accounts while signed out: keep only LOGIN visible.
   if(!cloudflareSignedIn){
     accountVisual('disconnected');
@@ -563,7 +572,7 @@ $('disconnect').onclick=async()=>{
 document.addEventListener('redown:destinations-ready',event=>{
   if(current&&sameBucket(current,event.detail))void checkActivation(context());
 });
-chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;activationChanged(changes,area);if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth)return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;sideLightbox.close();windowPreview.close();epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
+chrome.storage.onChanged.addListener((changes,area)=>{if(area!=='local')return;activationChanged(changes,area);if(changes.betaExplorerArchivePreview){archivePreviewMode=changes.betaExplorerArchivePreview.newValue==='classic'?'classic':'reader';closePreview();syncSideSelection();}if(changes.betaExplorerInlineFolderButtons){explorerQuickFolderButtons=changes.betaExplorerInlineFolderButtons.newValue===true;if(!explorerQuickFolderButtons)cancelInlineFolder();render();}if(changes.betaExplorerDeletePreferences){const saved=changes.betaExplorerDeletePreferences.newValue;deletePreferences={confirmBeforeDeleting:saved?.confirmBeforeDeleting!==false,showDeleteOnDashboard:saved?.showDeleteOnDashboard!==false};paintDeletePreferences();}if(!changes.cloudflareAuth||activeProvider==='mega-s4')return;const before=changes.cloudflareAuth.oldValue,after=changes.cloudflareAuth.newValue;paintLogout(after);if(before?.sessionId===after?.sessionId&&before?.accessToken&&after?.accessToken&&before?.reconnectRequired===after?.reconnectRequired)return;sideLightbox.close();windowPreview.close();epoch++;for(const id of ['dialog','preview-dialog','preferences-dialog','destination-dialog','archive-dialog','remote-dialog'])if($(id).open)$(id).close('cancel');controller?.abort();resetActivation();current=null;items=[];selected.clear();clipboard=null;$('buckets').replaceChildren();render();discoveryEpoch++;if(after?.accessToken)void loadAccounts(lastLocation).catch(failure);else {accountVisual('disconnected');connectionState('disconnected','Cloudflare session changed. Connect to continue.');render();}});
 window.addEventListener('beforeunload',event=>{if(busy){event.preventDefault();event.returnValue='';}});
 
 async function loadProfiles(){
@@ -1053,6 +1062,7 @@ render();const explorerInitialization=(async()=>{try{const preferences=await chr
 }catch{}
 // Once the saved session is known, only authenticated sessions discover
 // accounts; no old intermediate tile is ever shown for signed-out sessions.
+if(activeProvider==='mega-s4')return;
 if(cloudflareSignedIn)await loadAccounts(lastLocation);
 else{
   accountVisual('disconnected');
@@ -1121,3 +1131,57 @@ void (async()=>{
     await chrome.storage.session.remove(key);
   }
 })().catch(error=>status('Could not restore saved-file navigation: '+error.message));
+
+// Each provider retains its own navigation, selection and clipboard. No R2
+// account, location, history or preparation route is reused as a MEGA identity.
+const providerStates=new Map();let megaController=null;
+function providerControls(){
+ const mega=activeProvider==='mega-s4';
+ $('sidebar-destinations').hidden=mega;if($('v3-setup'))$('v3-setup').hidden=mega;
+ if(mega&&$('account-chooser').dataset.state!=='ready'){$('account-standby-action').textContent='CONNECT MEGA';$('account-standby-action').setAttribute('aria-label','Connect MEGA S4');}
+ for(const id of ['copy','cut','duplicate','copy-to','move-to','rename','archive','get-url','create-bucket','paste'])if(mega)$(id).disabled=true;
+ if(mega){$('accounts').setAttribute('aria-label','MEGA S4 account');$('account-picker-caption').textContent='MEGA S4 account';if(!current)$('empty').textContent='Connect MEGA S4 to browse your buckets.';}else{$('accounts').setAttribute('aria-label','Cloudflare account');$('account-picker-caption').textContent='Cloudflare account';}
+ if(mega&&chosen().some(e=>e.folder))$('delete').disabled=true;
+ $('provider-r2').setAttribute('aria-selected',String(!mega));$('provider-mega').setAttribute('aria-selected',String(mega));
+ $('mega-manage').hidden=!mega;$('mega-disconnect').hidden=!mega;
+ $('connect').hidden=mega;$('disconnect').hidden=mega;
+}
+async function loadMega(){
+ const result=await megaApi.run('accounts');accounts=result.data?.accounts||[];
+ $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name;return o;}));
+ bucketCache.clear();
+ if(!accounts.length){current=null;items=[];selected.clear();$('buckets').replaceChildren();accountVisual('disconnected');connectionState('disconnected','Connect MEGA S4 to browse. No Cloudflare login required.');render();return;}
+ const accountId=accounts[0].id;const buckets=await megaApi.run('buckets',{accountId});if(buckets.state!=='completed')throw Error(buckets.error);
+ bucketCache.set(accountId,buckets.data.buckets);$('accounts').value=accountId;accountVisual('ready');paintBuckets(accountId);
+ const bucket=lastLocation?.accountId===accountId?lastLocation.bucketName:buckets.data.buckets[0]?.name;
+ if(bucket)await navigate({provider:'mega-s4',connectionId:accountId,accountId,bucketName:bucket,prefix:lastLocation?.accountId===accountId?lastLocation.prefix:''});
+}
+async function switchProvider(next){
+ await explorerInitialization;
+ if(next===activeProvider)return;
+ if(practice?.session?.active){status('Stop the current practice session before switching provider.');return;}
+ if(busy||listingState==='loading'){status('Wait for the current operation to finish before switching provider.');return;}
+ closePreview();windowPreview.close();sideLightbox.close();epoch++;discoveryEpoch++;
+ providerStates.set(activeProvider,{current,items,selected,cursor,clipboard,history,historyIndex,accounts,lastLocation,listingState,buckets:new Map(bucketCache),filter:$('filter').value});
+ activeProvider=next;api.select(next);
+ const state=providerStates.get(next);
+ current=state?.current||null;items=state?.items||[];selected=state?.selected||new Set();cursor=state?.cursor||'';clipboard=state?.clipboard||null;history=state?.history||[];historyIndex=state?.historyIndex??-1;accounts=state?.accounts||[];lastLocation=state?.lastLocation||null;listingState=state?.listingState||'disconnected';bucketCache.clear();for(const [k,v]of state?.buckets||[])bucketCache.set(k,v);
+ $('filter').value=state?.filter||'';
+ $('accounts').replaceChildren(...accounts.map(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.name||a.id;return o;}));$('accounts').value=current?.accountId||accounts[0]?.id||'';
+ accountVisual(accounts.length?'ready':'disconnected');paintBuckets($('accounts').value);render();providerControls();
+ if(!state){if(next==='mega-s4')await loadMega();else await loadAccounts();}
+ status(next==='mega-s4'?'MEGA S4 · credentials stay in this trusted page memory until disconnect or reload. 32 MiB transfer limit.':'Cloudflare R2');
+}
+$('provider-r2').onclick=()=>switchProvider('r2').catch(failure);
+$('provider-mega').onclick=async()=>{await switchProvider('mega-s4');if(activeProvider==='mega-s4'&&!accounts.length)$('mega-dialog').showModal();};
+$('mega-manage').onclick=()=>$('mega-dialog').showModal();
+$('mega-disconnect').onclick=async()=>{if(busy)return;await megaApi.run('disconnect');lastLocation=null;await loadMega();};
+$('mega-cancel').onclick=()=>{$('mega-key').value='';$('mega-secret').value='';$('mega-dialog').close();};
+$('mega-reveal').onclick=()=>{$('mega-secret').type=$('mega-secret').type==='password'?'text':'password';};
+$('mega-form').onsubmit=async event=>{
+ event.preventDefault();$('mega-submit').disabled=true;$('mega-error').textContent='';
+ const input={endpoint:$('mega-endpoint').value.trim(),accessKeyId:$('mega-key').value,secretAccessKey:$('mega-secret').value};$('mega-key').value='';$('mega-secret').value='';
+ try{megaController=new AbortController();const result=await megaApi.run('connect',input,{signal:megaController.signal});if(result.state!=='completed')throw Error(result.error);lastLocation=null;current=null;clipboard=null;history=[];historyIndex=-1;$('mega-dialog').close();await loadMega();}
+ catch(e){$('mega-error').textContent=e.message;}finally{input.accessKeyId='';input.secretAccessKey='';megaController=null;$('mega-submit').disabled=false;}
+};
+$('mega-dialog').addEventListener('close',()=>{megaController?.abort();$('mega-key').value='';$('mega-secret').value='';$('mega-secret').type='password';});

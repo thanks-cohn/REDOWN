@@ -12,6 +12,8 @@ import {createHash,randomUUID} from 'node:crypto';
 import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 import {createFileApi,location,prefix,name} from '../extension/beta/file-api.mjs';
+import {createProviderRouter} from '../extension/beta/provider-router.mjs';
+import {createS3Adapter} from '../extension/beta/s3-adapter.mjs';
 import {createR2Adapter,previewType} from '../extension/beta/r2-adapter.mjs';
 import {collectDroppedFiles} from '../extension/beta/dropped-files.mjs';
 import {normalizeArchiveEntries,archiveFolder,archiveParent,archiveCrumbs,archiveAdjacent} from '../extension/beta/archive-browser.mjs';
@@ -94,6 +96,8 @@ async function uiFixture({archivePreference=null,deletePreferences=null,inlineFo
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded]),.window-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
   Object.assign(w,{previewDirection,watchPreviewAxis});
+  w.createProviderRouter=createProviderRouter;
+  w.createS3Adapter=()=>{const adapter=createS3Adapter({parseXML:t=>new w.DOMParser().parseFromString(t,'application/xml'),fetch:async req=>new Response(new URL(req.url).pathname==='/'?'<ListAllMyBucketsResult><Buckets><Bucket><Name>test</Name></Bucket></Buckets></ListAllMyBucketsResult>':'<ListBucketResult><Contents><Key>mega.txt</Key><Size>3</Size></Contents><IsTruncated>false</IsTruncated></ListBucketResult>')});return Object.fromEntries(Object.entries(adapter).map(([method,value])=>[method,typeof value==='function'?(input,options={})=>{if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}return value(input,options);}:value]));};
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);
@@ -1102,5 +1106,20 @@ test('Side Preview Lightbox is labeled, independently loaded, and returns to the
  const side=d.querySelector('#side-preview img'),button=d.querySelector('#preview-lightbox');assert.equal(button.textContent,'Lightbox');assert.equal(button.disabled,false);button.click();await f.settle(()=>d.querySelector('#immersive-preview-dialog img'));
  const overlay=d.querySelector('#immersive-preview-dialog');assert.ok(overlay.open);assert.ok(overlay.classList.contains('window-lightbox'));assert.notEqual(overlay.querySelector('img').src,side.src);
  overlay.dispatchEvent(new f.w.Event('cancel',{cancelable:true}));assert.ok(!overlay.open);assert.equal(d.querySelector('#side-preview img'),side);assert.equal(d.querySelector('#side-preview').hidden,false);assert.equal(d.activeElement,button);
+ }finally{f.dom.window.close();}
+});
+
+
+test('MEGA popup and independent tabs retain R2 navigation and clear credential inputs',async()=>{
+ const f=await uiFixture(),{d,w,settle}=f;
+ try{
+  const oldBucket=d.querySelector('#heading').textContent;
+  d.querySelector('#provider-mega').click();await settle(()=>d.querySelector('#mega-dialog').open);
+  d.querySelector('#mega-endpoint').value='https://s3.ca-vancouver-1.megas4.com';d.querySelector('#mega-key').value='synthetic-key';d.querySelector('#mega-secret').value='synthetic-secret';
+  d.querySelector('#mega-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await settle(()=>Boolean(d.querySelector('[data-key="mega.txt"]')));
+  assert.equal(d.querySelector('#mega-key').value,'');assert.equal(d.querySelector('#mega-secret').value,'');d.querySelector('[data-key="mega.txt"]').click();assert.equal(d.querySelector('#copy').disabled,true);assert.equal(d.querySelector('#rename').disabled,true);assert.equal(d.querySelector('#prepare').hidden,true);
+  d.querySelector('#provider-r2').click();await settle(()=>d.querySelector('#provider-r2').getAttribute('aria-selected')==='true');assert.equal(d.querySelector('#heading').textContent,oldBucket);assert.ok(d.querySelector('[data-key="root.txt"]'));assert.ok(!d.querySelector('[data-key="mega.txt"]'));
+  d.querySelector('#provider-mega').click();await settle(()=>Boolean(d.querySelector('[data-key="mega.txt"]')));assert.ok(!d.querySelector('[data-key="root.txt"]'));
  }finally{f.dom.window.close();}
 });

@@ -106,7 +106,7 @@ function activationView(h,signedIn=true){
  const dom=new JSDOM(read('extension/beta/explorer.html'),{url:'https://extension.test/beta/explorer.html'}),d=dom.window.document,statuses=[];
  const chrome={storage:{local:h.chrome.storage.local,onChanged:{addListener(){}}},runtime:{sendMessage:message=>send(h,message)}};
  const code=explorer.slice(explorer.indexOf('let globalActivation='),explorer.indexOf('function resetActivation()'))+explorer.slice(explorer.indexOf("$('prepare').onclick=async()=>{"),explorer.indexOf('\n\nconst preferenceFields='));
- const create=new Function('document','chrome','accounts','bucketCache','cloudflareSignedIn','$','clearActivationGlow','loadProfiles','showActivationGlow','status','CustomEvent',code+';return {loadGlobalActivation,paintActivation};');
+ const create=new Function('document','chrome','accounts','bucketCache','cloudflareSignedIn','$','clearActivationGlow','loadProfiles','showActivationGlow','status','CustomEvent',"const activeProvider='r2';\n"+code+';return {loadGlobalActivation,paintActivation};');
  const view=create(d,chrome,[{id:'a'},{id:'b'}],new Map([['a',[{name:'alpha'}]],['b',[{name:'beta'}]]]),signedIn,id=>d.getElementById(id),()=>{},async()=>{},()=>{},s=>statuses.push(s),dom.window.CustomEvent);
  return {dom,d,button:d.getElementById('prepare'),view,statuses};
 }
