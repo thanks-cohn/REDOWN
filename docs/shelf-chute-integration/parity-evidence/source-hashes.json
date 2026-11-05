@@ -1,0 +1,24 @@
+{
+  "baselineCommit": "add8748235921fe5418ec913ba01a5cd5103a259",
+  "scope": "content hashes, no runtime/live acceptance implication",
+  "files": {
+    "extension/shelf-explorer.mjs": "84fd1f3ae0fedaef232e3072b192949e2140094f49d72fa4c1312b31d4422358",
+    "extension/shelf-explorer.css": "a7bb6ebdfef9f5514c4dac74d6ce9b90bd7af73af74802f330947e1babc2bf90",
+    "extension/shelf-explorer-model.mjs": "ecbd5adb7faad7ecce0999e3d9fce47c3bcb029983aab0cd132d6984e3cd3ec2",
+    "extension/chute-drag.mjs": "eb7c149e178c331a37f71ad3a8c66dd996636a7e1de16988f899ff362e255b0d",
+    "extension/chute-stage.js": "4384d22ca08a77f12a7aa7608e64728979147895cacef5a422debef4433cfb30",
+    "extension/chute-worker.js": "84d0028670a35cdf67e4500391dfff7810f9e412640a947b5332e5f4ea9f5d8f",
+    "extension/chute-content.js": "4289d2f117a32b395dc59a7f5919efe6778f517f75ca39c73d36c28491d9ac00",
+    "extension/manifest.json": "6a4ea8181fd9a3db9d20ca2cdf81e4827c1f44785af0fa73842c6ca026a0a7ad",
+    "extension/beta/file-api.mjs": "0efa16667c92e527eba88324c4b153bdcdcd84cfc2fd861262257d54a05cce66",
+    "extension/beta/r2-adapter.mjs": "1d29907ae5696cd3b8557c1f4c78cbe6e7f7ede95c44fb6a305ddc753482c057",
+    "scripts/shelf-mini-explorer-browser.mjs": "9d5e31ed6d0eb1087fc7b174e6ba2e27fbf42609c52af46bb5faf5ca4e6c1aed",
+    "tests/shelf-mini-explorer.test.mjs": "420ccb59b3f4f8416eb022c0350a01cc93a499736a1031c3bc781acc8e9dc478",
+    "chute-reference/extension/explorer-view.js": "7c40046457acd5c0874bf300447a30456c3157f9b76edd0faaee8fab7a8d8852",
+    "chute-reference/extension/explorer-view.css": "2a37eaaeef3fbc19b2986c27ad5c90f1636a5d49af5c58433d63f59198bc47d0",
+    "chute-reference/LICENSE": "6f568d7041ba7ffd40e989262548e28c7e33f920eca9a6f64030fae2c9cee2e2",
+    "extension/CHUTE-LICENSE.txt": "6f568d7041ba7ffd40e989262548e28c7e33f920eca9a6f64030fae2c9cee2e2",
+    "LICENSE": "90ceb54a77c948da9664b871f3351bbcf3e0795e3249e865399df4d0c6c86c9f",
+    "extension/LICENSE": "90ceb54a77c948da9664b871f3351bbcf3e0795e3249e865399df4d0c6c86c9f"
+  }
+}

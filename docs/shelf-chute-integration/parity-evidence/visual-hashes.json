@@ -1,0 +1,27 @@
+{
+  "scope": "controlled fixture capture hashes; synthetic data only",
+  "files": {
+    "parity-320-grid.png": "5fdf12147539eda947ed54c3289b27cdb90deb42b33276ac185f3e3168f6a024",
+    "parity-320-list.png": "4b81285d29c9e58631a29748e3d7a7e5d1a778b8613de71fa816f73b4b1487e5",
+    "parity-360-grid.png": "aa3d8dd3cc74f2828e2bb5953175953ccbcb97cc8948d88b7adc6bc38d26aafc",
+    "parity-360-list.png": "b591d51a07339872eace8be5da1d23faf23376fd5b6780e9d6e1f9ea797f5e73",
+    "parity-390-grid.png": "a95e1c055d08e1b13a856b6d1793eaf64fe7538c3d6020f289f539487657696e",
+    "parity-390-list.png": "6e320dcd1e118a8bc10e52b2ed023adfebf33bc96c352044371e2c803f4e59fb",
+    "parity-540-grid.png": "6b267c871cccf2b915c76b765d257d650cb2a2a3df4e3a800b61ff12b40e5944",
+    "parity-540-list.png": "1670fca037feb1460d954eb5b69cbedcbb3f7fa69eb76384c09a19cf4e7fa5e7",
+    "parity-700-grid.png": "023ad70270882d0a54e662e469e40da47ef92c4d38ebaad6e0af8b21d5318c17",
+    "parity-700-list.png": "4f60e89709786cca6841591aa3340f3efc53dfef4acd43d44331922f2164355f",
+    "parity-900-grid.png": "af50dab75247abc75bd77598683208b169f980c0e488ad7e736d7daea7454230",
+    "parity-900-list.png": "0c3ef662748211e6d0f10f81af21a44825fc2766ba794ab453afbe498427c9db",
+    "shelf-320.png": "504a452c6dce3dca7c29499474a97452f1780436e0ad3e7f99141610a4893872",
+    "shelf-360.png": "78df36212c5b6e06926f711a8ac8507964853205048ec8f8935bb1cc2a509dbb",
+    "shelf-390.png": "49f6137d73380933a96fe3f853db1b6c9fb7bacfee7bc78dbfe80674e88b7376",
+    "shelf-540.png": "086912d18969bb8d91264c217d6db94d0dec25d46c6e39a01266e089edc72afb",
+    "shelf-700.png": "1ea665d028c6c83188092080216436e7cc46767bcd215779f05660bb8cbdaf9e",
+    "shelf-900.png": "707cd8c4edc6c9e6b766e3e8f663fcd6386f7abacb70b9d5f6f19384b49160ec",
+    "theme-midnight.png": "a4cab143accc55d73143facaaa02c491a1bc2a81bfc736118bc8ebd5decaa944",
+    "theme-neon.png": "f41224344b78273cf710361bfe3ba1ba913883dcd6b42deaa996da072c1da9a3",
+    "theme-ocean.png": "3dfcc757b7e2e7232d6088e1c1cb94f12b81e029a7f3692c3f9c8c7e07b0e9d8",
+    "theme-porcelain.png": "2f36f2e827fe25c0266bce5508a004b84502e6851fef2271cc3ca6bc5e740895"
+  }
+}
