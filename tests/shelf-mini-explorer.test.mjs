@@ -93,7 +93,7 @@ test('DND expiry and replacement: one bounded private Blob, removed across store
 });
 
 function workerHarness(database=new IDBFactory()){
- let listener;const context=vm.createContext({indexedDB:database,crypto,Blob,Uint8Array,console,chrome:{runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,onMessage:{addListener:fn=>listener=fn}},tabs:{query:async()=>[],sendMessage:async()=>{}},alarms:{create(){},onAlarm:{addListener(){}}}}});
+ let listener;const context=vm.createContext({indexedDB:database,crypto,Blob,Uint8Array,console,setTimeout,URL,chrome:{runtime:{id:'test',getURL:p=>'chrome-extension://test/'+p,onMessage:{addListener:fn=>listener=fn}},tabs:{query:async()=>[],sendMessage:async()=>{}},alarms:{create(){},onAlarm:{addListener(){}}}}});
  vm.runInContext(readFileSync('extension/chute-stage.js','utf8'),context);vm.runInContext(readFileSync('extension/chute-worker.js','utf8'),context);
  return {stage:context.RedownChuteStage.createStage(),call:(type,id,sender,more={})=>new Promise(resolve=>listener({type:'redownChuteV1.'+type,id,...more},sender,resolve))};
 }
@@ -107,6 +107,7 @@ test('DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered c
  assert.equal((await restarted.call('claim',file.id,target)).name,'actual.txt');
  assert.equal((await h.call('claim',file.id,{...target,tab:{id:4}})).ok,false);
  assert.equal((await h.call('chunk',file.id,{...target,frameId:1},{offset:0})).ok,false);
+ assert.equal((await h.call('chunk',file.id,{...target,url:'https://other.invalid'},{offset:0})).ok,false);
  const chunk=await h.call('chunk',file.id,target,{offset:0});assert.equal(Buffer.from(chunk.bytes).toString(),'actual file');
  assert.equal((await h.call('chunk',file.id,target,{offset:0})).ok,false);
  await h.call('finish',file.id,target,{state:'drop_dispatched'});assert.equal(await h.stage.update(file.id,()=>true),null);
@@ -149,4 +150,29 @@ test('Site heuristics identify Lens/Search/Yandex Images without claiming Drive/
  for(const [url,expected] of [['https://lens.google.com/',true],['https://www.google.com/imghp',true],['https://www.google.co.uk/search?q=image',true],['https://yandex.com/images/',true],['https://drive.google.com/drive/',false],['https://gemini.google.com/app',false],['https://google.com.evil.invalid/',false],['https://mail.yandex.com/',false]]){
   const dom=new JSDOM('',{url,runScripts:'outside-only'});dom.window.eval(source);assert.equal(!!dom.window.RedownChuteImageTargets,expected,url);dom.window.close();
  }
+});
+
+test('Natural drag: first gesture synchronously carries only a reference, slow bytes arrive after drop without preparation',async()=>{
+ const database=new IDBFactory(),worker=workerHarness(database),stage=stageFactory(database);let release,reads=0;
+ const api=createFileApi({readStream:async(_,o)=>{reads++;await new Promise(r=>release=r);await o.onChunk(new Uint8Array([9,0,255]));return {};}});
+ const bridge=createDragBridge({api,stage,send:m=>worker.call('arm',m.id,{id:'test',url:'chrome-extension://test/shelf.html'})});
+ const transfer=new Map();let prevented=false;
+ assert.equal(reads,0);
+ assert.equal(bridge.start({preventDefault(){prevented=true;},dataTransfer:{setData:(k,v)=>transfer.set(k,v)}},a,{key:'private/image.png',displayName:'image.png',size:3,mime:'image/png'}),true);
+ assert.equal(prevented,false);assert.equal(transfer.size,1);assert.match(transfer.get(DRAG_TYPE),/^[a-f0-9-]{36}$/);
+ await settle();assert.equal(reads,1);
+ const receiver={id:'test',url:'https://upload.invalid',tab:{id:9},frameId:0};let resolved=false;
+ const claim=worker.call('claim',transfer.get(DRAG_TYPE),receiver).then(r=>{resolved=true;return r;});await settle();assert.equal(resolved,false);
+ release();const meta=await claim;assert.equal(meta.name,'image.png');assert.equal(meta.mime,'image/png');assert.equal(meta.size,3);
+ assert.equal((await worker.call('claim',transfer.get(DRAG_TYPE),{...receiver,frameId:1})).ok,false);
+ const chunk=await worker.call('chunk',transfer.get(DRAG_TYPE),receiver,{offset:0});assert.deepEqual([...chunk.bytes],[9,0,255]);
+ await worker.call('finish',transfer.get(DRAG_TYPE),receiver,{state:'drop_dispatched'});
+ await bridge.dispose();await stage.close();await worker.stage.close();
+});
+
+test('Natural drag: cancellation during cloud read cannot fulfill a replaced reservation',async()=>{
+ let release;const stage=stageFactory(),api=createFileApi({readStream:async(_,o)=>{await new Promise(r=>release=r);await o.onChunk(new Uint8Array([1]));return {};}});
+ const bridge=createDragBridge({api,stage,send:async()=>({ok:true})}),data=new Map();
+ bridge.start({preventDefault(){},dataTransfer:{setData:(k,v)=>data.set(k,v)}},a,{key:'one.bin',size:1});await settle();
+ await bridge.cancel();release();await settle();assert.equal(await stage.update(data.get(DRAG_TYPE),()=>true),null);assert.equal(bridge.getHandle(),null);await stage.close();
 });

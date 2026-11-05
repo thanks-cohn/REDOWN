@@ -4,8 +4,8 @@
   const {createStage,CHUNK_BYTES}=RedownChuteStage,stage=createStage();
   const shelf=sender=>sender?.id===chrome.runtime.id&&sender.url?.split(/[?#]/)[0]===chrome.runtime.getURL('shelf.html');
   const receiver=sender=>sender?.id===chrome.runtime.id&&Number.isInteger(sender.tab?.id)&&/^https?:\/\//.test(sender.url||'');
-  const owner=sender=>`${sender.tab.id}:${sender.frameId??0}`;
-  const safe=()=>({ok:false,error:'Drag expired or unavailable. Prepare the file again in File Explorer.'});
+  const owner=sender=>`${sender.tab.id}:${sender.frameId??0}:${new URL(sender.url).origin}`;
+  const safe=()=>({ok:false,error:'Drag expired or unavailable. Drag the file again in File Explorer.'});
   async function handle(m,s){
     if(m.type==='redownChuteV1.arm'){
       if(!shelf(s))return safe();
@@ -19,17 +19,25 @@
     }
     if(m.type==='redownChuteV1.claim'){
       if(!receiver(s))return safe();
-      const result=await stage.update(m.id,v=>{
-        if(!v.armed||v.claim)return false;
-        v.claim=owner(s);v.state='drop_dispatched';
-        return {name:v.name,mime:v.mime,size:v.blob.size};
-      });
-      return result?{ok:true,...result}:safe();
+      // Reserve receiver ownership atomically before waiting for cloud bytes.
+      // State is in IndexedDB; a suspended/recreated worker never reassigns it.
+      let claimed=false;
+      for(let attempt=0;attempt<600;attempt++){
+        const result=await stage.update(m.id,v=>{
+          if(!v.armed||v.claim&&(!claimed||v.claim!==owner(s)))return false;
+          if(!claimed){v.claim=owner(s);claimed=true;}
+          return v.blob?{name:v.name,mime:v.mime,size:v.blob.size}:{pending:true};
+        });
+        if(result&&!result.pending)return {ok:true,...result};
+        if(!result&&(claimed||attempt>=20))return safe();
+        await new Promise(resolve=>setTimeout(resolve,100));
+      }
+      return safe();
     }
     if(m.type==='redownChuteV1.chunk'){
       if(!receiver(s)||!Number.isSafeInteger(m.offset)||m.offset<0)return safe();
       const blob=await stage.update(m.id,v=>{
-        if(v.claim!==owner(s)||v.offset!==m.offset||m.offset>=v.blob.size&&v.blob.size!==0)return false;
+        if(!v.blob||v.claim!==owner(s)||v.offset!==m.offset||m.offset>=v.blob.size&&v.blob.size!==0)return false;
         const part=v.blob.slice(m.offset,m.offset+CHUNK_BYTES);v.offset+=part.size;return part;
       });
       return blob?{ok:true,bytes:Array.from(new Uint8Array(await blob.arrayBuffer()))}:safe();

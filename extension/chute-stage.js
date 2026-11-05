@@ -22,6 +22,18 @@
       const r=s.openCursor();r.onsuccess=()=>{const c=r.result;if(!c)return;if(all||c.value.expires<=now())c.delete();c.continue();};
     });}
     return {
+      async reserve(id,{name,mime,size}) {
+        if(!/^[a-f0-9-]{36}$/.test(id)||!Number.isSafeInteger(size)||size<0||size>MAX_BYTES||!name||/[\\/\0\r\n]/.test(name))throw Error('File cannot be staged safely.');
+        const record={id,blob:null,name,mime,size,expires:now()+TTL,armed:false,claim:null,offset:0,state:'preparing'};
+        await transaction('readwrite',s=>{s.clear();s.put(record);});
+        return {id,expires:record.expires,name,mime,size};
+      },
+      async fulfill(id,blob){return transaction('readwrite',(s,done)=>{
+        const r=s.get(id);r.onsuccess=()=>{const v=r.result;
+          if(!v||v.expires<=now()||v.blob||blob.size!==v.size||blob.size>MAX_BYTES){done(false);return;}
+          v.blob=blob;v.state=v.armed?'drag_started':'prepared';s.put(v);done(true);
+        };
+      });},
       async put(blob,{name,mime}) {
         if(!Number.isSafeInteger(blob.size)||blob.size>MAX_BYTES||!name||/[\\/\0\r\n]/.test(name))throw Error('File cannot be staged safely.');
         const record={id:crypto.randomUUID(),blob,name,mime,expires:now()+TTL,armed:false,claim:null,offset:0,state:'prepared'};
