@@ -57,3 +57,41 @@
 
 **Status:** Open proposal; this is not evidence of implementation or live cross-cloud verification.
 
+## FUTURE / P2 — RIFT MODE: cinematic dual-cloud and app-connected workspace
+
+**Owner vision (November 4, 2026):** A dramatic top-right Shelf switch turns REDOWN into a multi-surface workspace. The existing Shelf/cloud, a second independently selectable cloud Explorer, and the current webpage are simultaneously useful; drag/drop feels like ordinary desktop drag/drop. Later, Premium users can also connect compatible *local applications or other app surfaces* to REDOWN through a public, permissioned **Shelf API**, so the split workspace can show more than clouds. This is a planned feature, **not implemented or verified**. Keep boot reliability, functional Explorer, universal file API, and real drag/drop as prerequisites.
+
+### Essential experience: a spectacular but functional transformation
+
+- [ ] Locate a distinctive on/off switch in the **top-right of the REDOWN Shelf**. Shelf continues to **open in REMOTES by default** unless the user changes their startup preference in Settings; this special mode does not silently change that default.
+- [ ] Activate a polished, original, anime-scale **Rift** sequence: the switch charges, a luminous seam appears, the geometry makes room for a second workspace, and a second Explorer locks into place with a satisfying final beat. Produce a premium, cinematic, YouTube-worthy WOW effect without copying protected anime characters or imagery.
+- [ ] The working layout must retain **Cloud A + Cloud B + webpage**, not just a convincing animation. Cloud B uses the same universal file API, adapter contracts, authentication, verified transfers, standard Explorer semantics, and Chute/Chutey drag/drop as Cloud A, with independently remembered cloud and folder state.
+- [ ] Users can move/copy files by ordinary drag gestures between A and B, and drag files to or from real eligible upload/download targets on the webpage. Never promise a third-party website accepts all file drops: verify supported targets and provide clear failure/fallback behavior.
+- [ ] On switch-off, reverse the transformation with care, restore the prior layout if still available, and preserve tab content, selections, folders, in-flight transfers, and History. Never delete or relocate a file merely because a pane closes.
+- [ ] Respect keyboard access, reduced motion, optional/mutable audio, low-spec RAM/GPU limits, cancellation, fast repeated toggles, user focus, and accessible fallback. Visuals must never interfere with file operations.
+
+### Shelf API: other applications, including local desktop apps (Premium)
+
+- [ ] Build an **open, versioned, documented Shelf Integration API**: third-party applications can register an integration and supply a renderable Shelf-compatible UI surface or a supported Explorer/file-provider adapter. Premium users can choose a compatible integration as a second-pane workspace. Example categories: local file browser, creator tools, productivity apps, media library, and other user-authorized local resources.
+- [ ] **User experience:** Premium users see a clear **Connect an App / Add to Shelf** choice, discover connected apps, explicitly authorize the requested integration and local resources, select an app for the left/secondary pane when supported, swap it without losing the webpage, and disconnect/revoke access whenever desired. Make the integration genuinely customizable rather than a hard-coded roster.
+- [ ] A single shared **native companion / Universal Worker** may expose local filesystem and application adapters over an authenticated, tightly scoped IPC/native messaging channel. Reuse one installation and a stable modular API for REDOWN/Chute/Chutey and future desktop clients. Do not create another helper popup, require users to operate a debug executable, or equate local access with unrestricted system control.
+- [ ] **Integration is capability-based, not arbitrary embedding.** Local desktop executable windows cannot automatically be displayed *inside* a Chrome extension side panel or split tab; compatible apps must supply an approved web-rendered surface, protocol adapter, or native-companion-backed view. An app lacking a compatible renderer/adapter should receive a graceful open-in-app/other-surface fallback instead of a false promise that literally anything can be embedded.
+- [ ] Third-party web UIs must respect origin isolation, CSP, sandbox constraints, authentication, and frame-embedding restrictions. Never bypass frame protections or hand out cloud OAuth credentials. Define message schema, handshake, capability negotiation, origin/instance validation, event subscriptions, file object handles, drag/drop payload/stream contracts, timeouts, and version compatibility.
+- [ ] Explicit per-integration/per-folder user permission, revocation, least privilege, bounded resources and auditability. Keep source URLs and browsing provenance private from destination cloud providers. File bytes go only to the authorized destination; confirmation only after provider/application acknowledgment. Guard against untrusted app code, malicious file paths, traversal, and data exfiltration.
+- [ ] Premium gating applies to **multi-app Shelf integrations and enhanced workspace convenience**, not to the ability to access one's own basic files/clouds. Define exact entitlements and offline/grace behavior before implementation. An external developer API can be documented openly even if particular user-facing premium integration capabilities are subscription-gated.
+
+### Chrome 155+ feasibility and layout constraints
+
+- [ ] Verify Chrome 155+ native **Tabs Split View** API (chrome.tabs.createSplit, tabs.create with splitWithTabId, and tabs.unsplit). It pairs **two actual tabs** under browser-controlled layouts; it does **not** guarantee an independently controlled left-side Chrome Shelf or support embedding native program windows.
+- [ ] First prototype: retain existing REDOWN side-panel Shelf for the first cloud, split the main area into the webpage tab and an extension-controlled Explorer/App Surface tab for the second destination. Validate actual visual widths and what the user means by left panel. Chrome/user controls side-panel side placement; support user preference where possible, but do not claim REDOWN can force browser-owned UI.
+- [ ] Feature-detect API availability, handle unsplittable/pinned/grouped/already-split tabs without destructive rearrangement, and preserve preexisting splits. Gracefully degrade on unsupported browsers, incompatible sites/apps, or insufficient width.
+- [ ] Keep third-party app adapters modular and isolated from boot, native right-click V3, cloud auth, and regular Shelf REMOTES/Settings/History behavior. Introduce no unsupported Chrome API claims.
+
+### Future acceptance / release gate
+
+- [ ] Record a full installed-Chrome 155+ demonstration with two independently navigable real clouds and a live webpage; prove normal-to-Rift and Rift-to-normal with a memorable, polished entrance and exit.
+- [ ] Verify actual file delivery across Cloud A ↔ Cloud B, both clouds → supported webpage upload targets, and supported webpage/local file → cloud paths. Test large files, conflicts, cancellations, auth loss, service worker restart, repeated toggles, and destination verification. Never let a visual success imply an unconfirmed transfer.
+- [ ] Build a reference Premium Shelf API integration showing a real local directory via the shared native companion and a separate supported third-party web-rendered app surface. Test connection, limited permissions, revoke, missing helper, app crash, disallowed iframe, malicious payloads, and fallback.
+- [ ] Validate reduced-motion UX, memory/CPU budgets, focus/accessibility, and browser/tab restoration. Make marketing claims only after each representative route is proven end to end.
+
+**Research starting points:** Chrome Tabs Split View documentation (https://developer.chrome.com/blog/split-view-api-extensions), Tabs API (https://developer.chrome.com/docs/extensions/reference/api/tabs), and Side Panel API (https://developer.chrome.com/docs/extensions/reference/api/sidePanel). Those APIs establish browser features, **not** a finished implementation in REDOWN.
