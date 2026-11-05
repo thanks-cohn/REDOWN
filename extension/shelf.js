@@ -32,10 +32,13 @@ function route() {
   }).catch(()=>{});
 }
 window.addEventListener('hashchange',route); route();
-// Restore only a known Shelf route, never a stored URL. Hash/open intent wins.
-if(!location.hash)void chrome.storage.local.get('shelfLastViewV1').then(data=>{
-  if(!location.hash&&['clouds','explorer','history','settings'].includes(data.shelfLastViewV1)){
-    location.hash='#'+data.shelfLastViewV1;route();
+// REMOTES is the default Shelf opening view regardless of the visual tab order.
+// Opt-in "last" mode restores a validated route only when no explicit hash/deep link
+// was requested. This read never blocks the visible Shelf shell.
+if(!location.hash)void chrome.storage.local.get(['shelfStartViewMode','shelfLastViewV1']).then(data=>{
+  if(!location.hash&&data.shelfStartViewMode==='last'&&
+     ['clouds','explorer','history','settings'].includes(data.shelfLastViewV1)){
+    location.hash='#'+data.shelfLastViewV1;
   }
 }).catch(()=>{});
 // One-time History/Settings navigation, scoped to the requesting browser window.
@@ -84,6 +87,22 @@ for (const input of modes) input.addEventListener('change',async()=>{
     status('Preference saved. Future toolbar clicks open the '+(input.value==='popup'?'Popup.':'Shelf.'));
   } catch { status('Could not save your opening preference. Please try again.'); }
   finally { await refreshPreference().catch(()=>{}); for (const item of modes) item.disabled=false; }
+});
+// Starting view is separate from the extension icon's Shelf-vs-Popup preference.
+// Changing it applies on the next Shelf opening; it never ejects the active view.
+const startViewModes=[...document.querySelectorAll('input[name="shelf-start-view-mode"]')];
+async function refreshStartViewMode(){
+  const {shelfStartViewMode}=await chrome.storage.local.get('shelfStartViewMode');
+  const selected=shelfStartViewMode==='last'?'last':'remotes';
+  for(const input of startViewModes)input.checked=input.value===selected;
+}
+for(const input of startViewModes)input.addEventListener('change',async()=>{
+  for(const item of startViewModes)item.disabled=true;
+  try{
+    await chrome.storage.local.set({shelfStartViewMode:input.value==='last'?'last':'remotes'});
+    status(input.value==='last'?'Next time, the Shelf will resume where you left off.':'Next time, the Shelf will open REMOTES.');
+  }catch{status('Could not save your Shelf starting view. Please try again.');}
+  finally{await refreshStartViewMode().catch(()=>{});for(const item of startViewModes)item.disabled=false;}
 });
 // Temporary local control. History owns the feature gate used by a future entitlement.
 const membershipModes=[...document.querySelectorAll('input[name="shelf-membership"]')];
@@ -173,9 +192,11 @@ chrome.storage.onChanged.addListener((changes,area)=>{
     ++membershipRevision;
     paintMembership(changes.quickGlancePremiumEnabled.newValue);
   }
+  if(changes.shelfStartViewMode)void refreshStartViewMode().catch(()=>{});
   if(changes.toolbarOpenMode)void refreshPreference().catch(()=>status('Opening preference unavailable.'));
   if(changes.cloudflareAuth)void refreshConnection().catch(()=>status('Connection state unavailable.'));
 });
+void refreshStartViewMode().catch(()=>{for(const input of startViewModes)input.checked=input.value==='remotes';});
 void refreshPreference().catch(()=>{for(const input of modes)input.disabled=true;status('Opening preference unavailable. Reopen Settings to retry.');});
 void refreshConnection().catch(()=>status('Connection state unavailable. Reopen Shelf to retry.'));
 

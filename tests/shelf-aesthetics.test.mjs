@@ -40,7 +40,7 @@ test('Shelf hero and connected promise use Click2Cloud / Direct2Cloud branding',
   assert.doesNotMatch(shelfJS,/Direct-2-Cloud/);
 });
 
-test('professional default has straight Click2Cloud heading, no slant, and no compass arrow',async()=>{
+test('professional default has straight Click2Cloud heading, no subtitle, no slant, and no compass arrow',async()=>{
   const h=fixture();
   await settle();
   assert.equal(h.d.documentElement.dataset.destinationDisplay,'straight');
@@ -49,7 +49,8 @@ test('professional default has straight Click2Cloud heading, no slant, and no co
   assert.equal(h.arrow.checked,false);
   assert.equal(h.arrowRow.hidden,true);
   assert.equal(h.d.querySelector('.destinations-straight-title').textContent,'Click2Cloud, Anywhere.');
-  assert.equal(h.d.querySelector('.destinations-subtitle').textContent,'Your Passions. Right Here.');
+  assert.equal(h.d.querySelector('.destinations-subtitle'),null);
+  assert.ok(!h.d.querySelector('.destinations-heading-copy').textContent.includes('Your Passions. Right Here.'));
   assert.equal(h.d.querySelectorAll('.destinations-grid .destination-tile').length,3);
   assert.ok(h.d.querySelector('#beta-aesthetics > summary'));
   assert.equal(h.d.querySelector('#beta-aesthetics > summary').textContent.trim(),'Beta Aesthetics');

@@ -14,8 +14,25 @@
 ### 1. Rename and fit the Shelf navigation
 
 - Change the visible Shelf tab from “File Explorer” to **“FILES”** in uppercase. Keep internal #explorer route, DOM IDs and relevant links functioning.
-- **Uniformly reduce the fonts, letter spacing and padding of all four Shelf nav items** — REMOTES / FILES / HISTORY / SETTINGS — enough that they fit on **one row** in narrow Shelf widths, including Neon. Do not use arbitrarily different sizes across labels. Maintain legibility, accessible focus indicators and text alternatives.
+- **Exact left-to-right Shelf tab order: FILES → REMOTES → HISTORY → SETTINGS.** FILES is the far-left navigation item and REMOTES is second. Internal routes stay #explorer and #clouds; preserve existing route persistence and explicit selections. Do not confuse first tab position with changing the saved/default view.
+- **Uniformly reduce the fonts, letter spacing and padding of all four Shelf nav items** — FILES / REMOTES / HISTORY / SETTINGS — enough that they fit on **one row** in narrow Shelf widths, including Neon. Do not use arbitrarily different sizes across labels. Maintain legibility, accessible focus indicators and text alternatives.
 - The Shelf itself and its top tabs must **never require horizontal side-scrolling** at 320/360/390px. Long folder paths may scroll *inside their own tree container* only. Audit the rest of Shelf typography and header for overflowing controls across themes.
+
+### 1B. Shelf opens in REMOTES by default, with optional last-view resume
+
+**Owner clarification: navigation position is NOT startup destination.** FILES sits visually first and REMOTES second, but **every fresh Shelf opens REMOTES unless the user explicitly opts into last-view restoration.**
+
+In Settings, add a persistent **When the Shelf opens** choice:
+- **Always open REMOTES** (default, including existing installations without a stored preference). No automatic restore of a prior FILES/HISTORY/SETTINGS selection.
+- **Resume where I left off** (opt-in). Restore the most recently selected valid Shelf tab: FILES, REMOTES, HISTORY or SETTINGS.
+
+Store the selected startup policy separately from the last tab. Preserve legitimate explicit deep links and one-time, verified GO TO intents; neither an old last-view value nor the position of FILES in the tab bar may override an intentional navigation request. Do not delay BOOT or the first visible paint to fetch preferences; load a functioning REMOTES shell immediately. Switching the Setting must not move the currently viewed tab until next Shelf opening. Test default, opt-in, unknown/invalid stored values, refreshes and independent browser windows.
+
+### 1C. REMOTES copy edits (new owner wording)
+
+- Replace the existing `YOUR FILES · YOUR CLOUDS · YOUR CONTROL` promise immediately below the Shelf tabs with **`Possibilities · Options · Fun`**, maintaining exact title case and prominent bold middle-dot separators. Keep the tagline in the **REMOTES** view only.
+- Under the ordinary **`Click2Cloud, Anywhere.`** heading, **remove `Your Passions. Right Here.` entirely**; it should have no subtitle at all and no leftover empty paragraph/gap. Preserve the heading and its optional Beta slanted display behavior.
+- Keep these strings out of unrelated Settings, FILES, History, and API copy. Verify responsive width and readability in all REDOWN themes.
 
 ### 2. Two panes, 50/50 first, media enlarges as wall moves left
 
@@ -59,7 +76,7 @@ History GO TO **must remain visible and working**. The selected option must pers
 
 ### 6. Proof and scope
 
-Required visible acceptance captures: one-line REMOTES/FILES/HISTORY/SETTINGS in every theme; fresh 50/50 split and left-drag enlargement; single full-width captionless image and hover/focus filename; preview dock occupying about one-third height and compressing Explorer upward with tabs visible; fluid end-to-end scroll reaching final row; Settings GO TO choosing Dashboard vs Shelf FILES and resolving an exact verified file; no icon-to-Shelf BOOT regression. Test actual installed Windows Chrome as well as controlled harness. Cite failures and any unverified provider paths accurately.
+Required visible acceptance captures: one-line FILES/REMOTES/HISTORY/SETTINGS in every theme; REMOTES default with opt-in last-view restoration; Possibilities · Options · Fun text and no Click2Cloud subtitle; fresh 50/50 split and left-drag enlargement; single full-width captionless image and hover/focus filename; preview dock occupying about one-third height and compressing Explorer upward with tabs visible; fluid end-to-end scroll reaching final row; Settings GO TO choosing Dashboard vs Shelf FILES and resolving an exact verified file; no icon-to-Shelf BOOT regression. Test actual installed Windows Chrome as well as controlled harness. Cite failures and any unverified provider paths accurately.
 
 **Do not rewrite REDOWN Universal File API, Chutey drag technology, working V3 menus, BOOT authority, History archive, save verification or native worker merely to implement presentation changes. These latest owner choices supersede earlier Chutey layout details but preserve the shared two-panel foundation.**
 
