@@ -1,0 +1,31 @@
+Failure snapshot {
+  status: '10,001 loaded · photos',
+  more: '<button data-action="more" hidden="">Load more files</button>',
+  calls: [
+    'redownChuteV1.claim',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'redownChuteV1.chunk',
+    'redownChuteV1.finish',
+    'redownChuteV1.report',
+    'redownChuteV1.claim',
+    'redownChuteV1.arm',
+    'redownChuteV1.report',
+    'redownChuteV1.report',
+    'redownChuteV1.chunk',
+    'redownChuteV1.finish'
+  ],
+  scroll: 0
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 15000ms exceeded.
+    at runP0 (/workspace/REDOWN/scripts/shelf-p0-browser-cases.mjs:64:92)
+    at async file:///workspace/REDOWN/scripts/shelf-mini-explorer-browser.mjs:62:92 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

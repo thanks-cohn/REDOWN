@@ -1,0 +1,37 @@
+✔ Explicit retry reuses version-checked original bytes with fresh capability; mutation and revoked auth cannot reuse (5139.298259ms)
+✔ Bounded lease queue preserves active transfers; expired/inactive records reclaim space, Clear and logout revoke claims (73.278316ms)
+✔ OFF retry grace, ON expiry and count/byte ceiling are enforced without token rearming (4.626104ms)
+✔ Reused bytes are unavailable until final stat; changed source and Clear never resurrect a reservation (104.666005ms)
+✔ Low-memory and storage failures refuse safely and report the owning layer without provider details (25.837767ms)
+✔ Opt-in prepared bytes survive Shelf closure for later validated reuse; explicit cancellation still clears (26.440201ms)
+✔ Outside drop before asynchronous reservation is ready cancels the first gesture and cannot leave staged bytes (755.437284ms)
+✔ Files entrance defaults/legacy stay Normal; opt-in only animates explicit click and cancels on navigation (489.127437ms)
+✔ Files preference persists without navigating; reduced motion and deep links skip entrance (156.980626ms)
+✔ NAV-01/02: File Explorer is a first-class route and switching never opens a window (249.795339ms)
+✔ NAV: REMOTES is the default even though FILES is first; Settings opt into last view and explicit hashes win (337.891223ms)
+✔ API-01/B: actual R2 adapter listing and authorised readStream feed real staged bytes (40.558329ms)
+✔ STATE-01: rapid account navigation discards late response even when transport ignores abort (20.877106ms)
+✔ RAIL: bounded rail reads cannot queue foreground navigation behind slow buckets (41.824219ms)
+✔ RAIL cache: expiry, explicit refresh and auth reset cannot reuse stale rail inflight data (1.205421ms)
+✔ PERF: 1/10/100/1000/10000 entries keep a bounded render window and account identities distinct (0.381927ms)
+✔ DND-05: cancelled preparation, size changes, huge/unknown file sizes never leave staging (22.46389ms)
+✔ DND expiry: parallel Shelf leases survive store reopen within the bounded queue (4.721092ms)
+✔ DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered chunks, restart and bounded retry retention (12.738508ms)
+✔ Mini UI: real File API account tree, selection is not download, virtual rows and navigation survive tab switch (234.925793ms)
+✔ DND identity: same-sized object replacement between read and stat rejects staging (4.54488ms)
+✔ DND negative: synthetic page drops and unrelated native drags are never intercepted (11.559602ms)
+✔ Site heuristics identify Lens/Search/Yandex Images without claiming Drive/Gemini support (58.65475ms)
+✔ Natural drag: first gesture synchronously carries only a reference, slow bytes arrive after drop without preparation (125.654554ms)
+✔ Natural drag: cancellation during cloud read cannot fulfill a replaced reservation (42.586764ms)
+✔ Shelf History integration authorizes exact account/bucket/key and selects paged saved item without downloading (83.558124ms)
+✔ variable-aspect offset windows reach the final image at every folder size without losing logical height (1.685486ms)
+✔ Preview gestures: select/Space/arrows read nothing; double-click and Enter use one dock, browse images and cancel stale reads (442.006922ms)
+✔ Full-range splitter retains virtual anchor at collapse, expands using fresh width, resets and toggles mode without changing path/selection (367.213037ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10658.789233

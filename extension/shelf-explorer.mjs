@@ -9,12 +9,12 @@ import {resolveHistoryTarget} from './beta/history-target.mjs';
 import {createDragBridge} from './chute-drag.mjs';
 
 export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage=chrome.storage.local,document=host.ownerDocument}={}){
-  host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav><button data-action="grid" aria-label="Toggle grid" aria-pressed="false">▦</button></div>
-  <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select></div>
-  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns" aria-orientation="vertical" aria-valuemin="15" aria-valuemax="75" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
+  host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav></div>
+  <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select><button data-action="grid" aria-label="Large Images" aria-pressed="true" title="Switch between Detailed and Large Images">Large Images</button><button data-action="reset-split" aria-label="Reset columns to 50/50" title="Reset columns to 50/50">½</button></div>
+  <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns; double-click to reset to 50/50" title="Drag or use arrow keys; Home/End collapse; double-click for 50/50" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
   <div class="mini-actions" hidden><button data-action="download" disabled>Download</button><button data-action="rename" disabled>Rename</button><button data-action="delete" disabled>Delete</button><button data-action="copy" disabled>Copy</button><button data-action="move" disabled>Move</button><button data-action="paste" disabled>Paste here</button><button data-action="folder">New folder</button></div>
   <p class="mini-status" role="status" aria-live="polite"></p><p class="mini-drag-status" role="status" aria-live="polite"></p>
-  <section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
+  <section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="window-preview" aria-label="Open in Window" title="Open in Window"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 2h7v7M18 2 9 11M8 3H3v14h14v-5"/></svg></button><button data-action="expand-preview" aria-label="Expand preview" title="Expand preview"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12 2h6v6z M2 12v6h6z" fill="currentColor"/></svg></button><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
   const $=selector=>host.querySelector(selector),button=action=>$(`[data-action="${action}"]`),say=message=>{$('.mini-status').textContent=message;};
   const list=$('.mini-list'),rows=$('.mini-rows'),tree=$('.mini-tree');let visible=[],selectedEntry=null,sideAbort=null,sideUrl='',sideEpoch=0,discovery=0,rootAbort=null,initialized=false,activeView=false,focusIndex=0,saved={},saveTimer,treeRestores=0,clipboard=null; 
   const expansions=new Set(),nodes=new Map();let sortedKey='',sortedEntries=null,grid=true,folderWidth=50,anchor=null,dragging=false,rememberedScroll=0,rememberedRailScroll=0;
@@ -22,10 +22,11 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   const bridge=createDragBridge({api,onState:({message})=>{$('.mini-drag-status').textContent=message;}});
   const request=(...args)=>model.request(...args).then(data=>({data}));
   function safe(fn){return (...args)=>{void Promise.resolve().then(()=>fn(...args)).catch(error=>say(error.message||'Could not complete this action.'));};}
-  function closeSide(){sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';$('.mini-preview').hidden=true;}
+  let expanded=false,restoreHeight=0,sideEntry=null,previewAnimation=null;
+  function closeSide(replacing=false){if(!replacing){if(expanded)toggleExpand();sideEntry=null;}sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';$('.mini-preview').hidden=true;if(!replacing&&$('.mini-preview').contains(document.activeElement))(folderWidth===100?$('.mini-column-resize'):list).focus({preventScroll:true});}
   const preview=createWindowPreview({document,dialog:$('.mini-window-preview'),request,previewType,getContext:()=>model.state.source,getItems:()=>model.state.entries,pauseSide:closeSide,onSelection:entry=>select(entry),onDownload:entry=>download(entry)});
   async function side(entry){
-    closeSide();if(!previewType(entry.key)||!activeView)return;
+    closeSide(true);if(!previewType(entry.key)||!activeView)return;sideEntry=entry;
     const ticket=sideEpoch,abort=new AbortController();sideAbort=abort;$('.mini-preview').hidden=false;$('.mini-preview strong').textContent=entry.displayName||entry.key;$('.mini-preview-body').textContent='Loading preview…';
     let pending='';
     try{
@@ -39,17 +40,44 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     finally{if(pending)URL.revokeObjectURL(pending);}
   }
   // Adapted from Chutey setFolderWidth, positionPreview and ex-resize.
-  function setFolderWidth(value){folderWidth=Math.max(15,Math.min(75,Math.round(Number(value)||50)));$('.mini-workspace').style.setProperty('--mini-folder-width',folderWidth+'%');$('.mini-column-resize').setAttribute('aria-valuenow',folderWidth);}
+  function setFolderWidth(value){
+    const number=Number(value);folderWidth=Number.isFinite(number)?Math.max(0,Math.min(100,number)):50;
+    const workspace=$('.mini-workspace');
+    workspace.style.gridTemplateColumns=`minmax(0,${folderWidth}fr) 8px minmax(0,${100-folderWidth}fr)`;
+    workspace.dataset.collapsed=folderWidth===0?'folders':folderWidth===100?'files':'';
+    $('.mini-rail').inert=folderWidth===0;$('.mini-content').inert=folderWidth===100;
+    $('.mini-column-resize').setAttribute('aria-valuenow',String(Math.round(folderWidth)));
+    $('.mini-column-resize').setAttribute('aria-valuetext',folderWidth===0?'Folders collapsed; files full width':folderWidth===100?'Files collapsed; folders full width':`${Math.round(folderWidth)} percent folders`);
+  }
   const grip=$('.mini-column-resize');
-  grip.onpointerdown=e=>{if(e.button!==0)return;grip.setPointerCapture(e.pointerId);e.preventDefault();};
-  grip.onpointermove=e=>{if(grip.hasPointerCapture(e.pointerId)){const b=$('.mini-workspace').getBoundingClientRect();setFolderWidth((e.clientX-b.left)/b.width*100);renderRows();}};
-  grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=()=>persist();
-  grip.onkeydown=e=>{const delta=e.key==='ArrowLeft'?-5:e.key==='ArrowRight'?5:0;if(delta||['Home','End'].includes(e.key)){e.preventDefault();setFolderWidth(e.key==='Home'?15:e.key==='End'?75:folderWidth+delta);renderRows();persist();}};
+  grip.onpointerdown=e=>{if(e.button!==0||dragging)return;grip.setPointerCapture(e.pointerId);e.preventDefault();};
+  grip.onpointermove=e=>{if(grip.hasPointerCapture(e.pointerId)){const b=$('.mini-workspace').getBoundingClientRect();if(b.width>8){setFolderWidth((e.clientX-b.left-4)/(b.width-8)*100);scheduleRows();}}};
+  const releaseGrip=e=>{if(e?.pointerId!==undefined&&grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId);persist();};
+  grip.onpointerup=grip.onpointercancel=grip.onlostpointercapture=releaseGrip;
+  function resetSplit(){setFolderWidth(50);scheduleRows();persist();}
+  grip.ondblclick=resetSplit;button('reset-split').onclick=resetSplit;
+  grip.onkeydown=e=>{const delta=e.key==='ArrowLeft'?-5:e.key==='ArrowRight'?5:0;if(delta||['Home','End'].includes(e.key)){e.preventDefault();setFolderWidth(e.key==='Home'?0:e.key==='End'?100:folderWidth+delta);scheduleRows();persist();}};
+  function toggleExpand(){
+    const panel=$('.mini-preview');if(panel.hidden)return;
+    previewAnimation?.cancel();const before=panel.getBoundingClientRect(),body=$('.mini-preview-body'),scroll=[body.scrollLeft,body.scrollTop];
+    if(!expanded)restoreHeight=before.height;
+    expanded=!expanded;host.classList.toggle('preview-expanded',expanded);
+    for(const child of host.children)if(!child.matches('.mini-preview,dialog,.mini-context'))child.inert=expanded;
+    if(!expanded)panel.style.height=restoreHeight+'px';
+    const control=button('expand-preview'),label=expanded?'Restore preview':'Expand preview';control.setAttribute('aria-label',label);control.title=label;control.setAttribute('aria-pressed',String(expanded));
+    control.querySelector('path').setAttribute('d',expanded?'M11 9h7V2z M9 11H2v7z':'M12 2h6v6z M2 12v6h6z');
+    const after=panel.getBoundingClientRect();
+    if(panel.animate&&!document.defaultView.matchMedia?.('(prefers-reduced-motion: reduce)').matches)previewAnimation=panel.animate([{height:before.height+'px',transform:`translateY(${before.top-after.top}px)`},{height:after.height+'px',transform:'translateY(0)'}],{duration:160,easing:'ease-out'});
+    body.scrollLeft=scroll[0];body.scrollTop=scroll[1];scheduleRows();
+  }
+  button('expand-preview').onclick=toggleExpand;
+  button('window-preview').onclick=safe(()=>sideEntry&&preview.open(sideEntry));
   const resize=$('.mini-resize');
-  function resizePreview(height){const value=Math.max(Math.min(96,host.clientHeight*.25),Math.min(host.clientHeight*.55,height));$('.mini-preview').style.height=value+'px';resize.setAttribute('aria-valuenow',Math.round(value/host.clientHeight*100));}
-  resize.onpointerdown=e=>{if(e.button===0){resize.setPointerCapture(e.pointerId);e.preventDefault();}};
+  function resizePreview(height){if(expanded)return;const value=Math.max(Math.min(96,host.clientHeight*.25),Math.min(host.clientHeight*.55,height));$('.mini-preview').style.height=value+'px';resize.setAttribute('aria-valuenow',Math.round(value/host.clientHeight*100));}
+  resize.onpointerdown=e=>{if(e.button===0&&!expanded){resize.setPointerCapture(e.pointerId);e.preventDefault();}};
   resize.onpointermove=e=>{if(resize.hasPointerCapture(e.pointerId))resizePreview($('.mini-preview').getBoundingClientRect().bottom-e.clientY);};
   resize.onkeydown=e=>{if(['ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();resizePreview($('.mini-preview').offsetHeight+(e.key==='ArrowUp'?16:-16));}};
+  resize.onpointerup=resize.onpointercancel=e=>{if(resize.hasPointerCapture(e.pointerId))resize.releasePointerCapture(e.pointerId);};
   let renderFrame=null,lastRender='';
   const scheduleRows=()=>{if(renderFrame!==null)return;const win=document.defaultView;renderFrame=(win.requestAnimationFrame||((fn)=>setTimeout(fn,16)))(()=>{renderFrame=null;renderRows();});};
   const resizeObserver=globalThis.ResizeObserver?new ResizeObserver(scheduleRows):null;resizeObserver?.observe(list);
@@ -61,17 +89,33 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     if(!event.ctrlKey&&!event.metaKey)model.state.selected.clear();
     if(event.shiftKey&&anchor){const a=visible.findIndex(e=>e.key===anchor),b=visible.indexOf(entry);for(const e of visible.slice(Math.max(0,Math.min(a,b)),Math.max(a,b)+1))model.state.selected.add(e.key);}
     else {if((event.ctrlKey||event.metaKey)&&model.state.selected.has(entry.key))model.state.selected.delete(entry.key);else model.state.selected.add(entry.key);anchor=entry.key;}
-    selectedEntry=entry;for(const row of rows.querySelectorAll('.mini-row'))row.setAttribute('aria-selected',String(model.state.selected.has(row.dataset.key)));paintActions();if(!entry.folder)void side(entry);else closeSide();
+    selectedEntry=entry;for(const row of rows.querySelectorAll('.mini-row'))row.setAttribute('aria-selected',String(model.state.selected.has(row.dataset.key)));paintActions();
   }
+  function openEntry(entry){
+    if(entry.folder)return navigate({...model.state.source,prefix:entry.key});
+    select(entry);return side(entry);
+  }
+  function browseImage(index,event){
+    if($('.mini-preview').hidden||!sideEntry||!previewType(sideEntry.key)?.startsWith('image/'))return false;
+    const delta=event.key==='ArrowDown'?1:-1;let next=index+delta;
+    while(next>=0&&next<visible.length&&(visible[next].folder||!previewType(visible[next].key)?.startsWith('image/')))next+=delta;
+    if(next<0||next>=visible.length)return true;
+    focusIndex=next;select(visible[next]);void side(visible[next]);
+    if(!expanded){list.scrollTop=Math.max(0,offsets[next]-list.clientHeight/2);renderRows();rows.querySelector(`[data-index="${next}"]`)?.focus({preventScroll:true});}
+    return true;
+  }
+  $('.mini-preview').addEventListener('keydown',event=>{
+    if(['ArrowUp','ArrowDown'].includes(event.key)&&event.target!==resize&&!event.target.matches('input,textarea,select')){event.preventDefault();browseImage(visible.findIndex(e=>e.key===sideEntry?.key),event);}
+  });
   function paintActions(){const entries=model.state.entries.filter(e=>model.state.selected.has(e.key)),one=entries.length===1;
     for(const action of ['download'])button(action).disabled=!one||entries[0].folder;
     for(const action of ['rename','delete','copy','move'])button(action).disabled=!one;
     button('paste').disabled=!clipboard||!model.state.source;
     button('folder').disabled=!model.state.source||model.state.phase!=='ready';
   }
-  let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0;const aspects=new Map();
+  let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0,geometryEntries=null,geometryRevision=-1,slopes=[0],bases=[0];const aspects=new Map();
   function renderRows(){
-    if(dragging||host.hidden||!activeView)return;
+    if(dragging||host.hidden||!activeView||folderWidth===100)return;
     const query=$('.mini-filter input').value.toLocaleLowerCase(),sort=$('.mini-filter select').value;
     const focused=rows.contains(document.activeElement)?document.activeElement.dataset.index:null;
     if(sortedEntries!==model.state.entries||sortedKey!==query+'|'+sort){
@@ -79,10 +123,17 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
       visible=model.state.entries.filter(e=>(e.displayName||e.key).toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?String(b.uploaded||'').localeCompare(String(a.uploaded||'')):sort==='type'?String(a.key.split('.').pop()).localeCompare(String(b.key.split('.').pop())):0)||(a.displayName||a.key).localeCompare(b.displayName||b.key));
     }
     // A permanent logical canvas never shrinks while the visible slice changes.
-    const width=Math.max(32,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
+    const width=Math.max(1,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
     if(layoutEntries!==visible||layoutKey!==key){
       const same=layoutEntries===visible,old=offsetRange(offsets,list.scrollTop,0),fraction=(list.scrollTop-offsets[old.first])/(offsets[old.first+1]-offsets[old.first]||1);
-      const next=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');next.push(next.at(-1)+(grid?(image?width*(aspects.get(entry.key)||1)+16:80)+8:48));}
+      // Width is the only changing term during divider travel. Cache prefix
+      // coefficients until the listing or decoded aspects change; avoid 10,000
+      // type lookups/object allocations for every pointer frame.
+      if(grid&&(geometryEntries!==visible||geometryRevision!==aspectRevision)){
+        slopes=[0];bases=[0];for(const entry of visible){const image=!entry.folder&&previewType(entry.key)?.startsWith('image/');slopes.push(slopes.at(-1)+(image?(aspects.get(entry.key)||1):0));bases.push(bases.at(-1)+(image?24:88));}
+        geometryEntries=visible;geometryRevision=aspectRevision;
+      }
+      const next=[0];for(let i=1;i<=visible.length;i++)next.push(grid?width*slopes[i]+bases[i]:48*i);
       offsets=next;layoutEntries=visible;layoutKey=key;
       // Anchor the current item using current geometry, never a saved wheel offset.
       $('.mini-spacer').style.height=offsets.at(-1)+'px';
@@ -105,11 +156,11 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
       const name=document.createElement('span');name.className='mini-name';name.textContent=entry.displayName||entry.key;name.title=name.textContent;
       const size=document.createElement('small');size.textContent=entry.folder?'Folder':Number.isFinite(Number(entry.size))?`${(Number(entry.size)/1024).toLocaleString(undefined,{maximumFractionDigits:1})} KB`:'File';
       row.append(icon,name,size);row.onclick=event=>{focusIndex=index;select(entry,event);};
-      row.ondblclick=safe(()=>entry.folder?navigate({...model.state.source,prefix:entry.key}):preview.open(entry));
+      row.ondblclick=safe(()=>openEntry(entry));
       row.onkeydown=event=>{
-        if(['ArrowDown','ArrowUp','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:event.key.startsWith('Page')?offsetRange(offsets,offsets[index]+(event.key==='PageDown'?1:-1)*list.clientHeight,0).first:index+(event.key==='ArrowDown'?1:-1)));list.scrollTop=Math.max(0,offsets[focusIndex]-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
+        if(['ArrowDown','ArrowUp','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();if(['ArrowDown','ArrowUp'].includes(event.key)&&browseImage(index,event))return;focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:event.key.startsWith('Page')?offsetRange(offsets,offsets[index]+(event.key==='PageDown'?1:-1)*list.clientHeight,0).first:index+(event.key==='ArrowDown'?1:-1)));list.scrollTop=Math.max(0,offsets[focusIndex]-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
         if(event.key===' '){event.preventDefault();select(entry,event);}
-        if(event.key==='Enter'){event.preventDefault();safe(()=>entry.folder?navigate({...model.state.source,prefix:entry.key}):preview.open(entry))();}
+        if(event.key==='Enter'){event.preventDefault();safe(()=>openEntry(entry))();}
         if(event.key==='Delete'){event.preventDefault();button('delete').click();}
         if(event.key==='F2'){event.preventDefault();button('rename').click();}
         if(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10'){event.preventDefault();showMenu(entry,row.getBoundingClientRect(),row);}
@@ -220,7 +271,8 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     saved={source:model.state.source};await discover();say('Operation confirmed by the File API. Folder listings refreshed.');
   }
   button('roots').onclick=safe(()=>{saved={};return discover();});
-  button('grid').onclick=()=>{grid=!grid;button('grid').setAttribute('aria-pressed',String(grid));list.scrollTop=0;renderRows();persist();};
+  function paintViewMode(){button('grid').setAttribute('aria-pressed',String(grid));button('grid').setAttribute('aria-label',grid?'Large Images; switch to Detailed':'Detailed; switch to Large Images');button('grid').textContent=grid?'Large Images':'Detailed';}
+  button('grid').onclick=()=>{grid=!grid;paintViewMode();renderRows();persist();};
   button('back').onclick=safe(async()=>{closeSide();preview.close();clearThumbs();await bridge.cancel();selectedEntry=null;await model.travel(-1);persist();});
   button('forward').onclick=safe(async()=>{closeSide();preview.close();clearThumbs();await bridge.cancel();selectedEntry=null;await model.travel(1);persist();});
   button('up').onclick=safe(()=>navigate({...model.state.source,prefix:model.state.source.prefix.replace(/[^/]+\/$/,'')}));
@@ -240,6 +292,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     returnFocus=rows.querySelector(`[data-index="${visible.indexOf(entry)}"]`)||list;
     contextMenu.style.left=Math.max(4,Math.min(point.x??point.left,document.documentElement.clientWidth-180))+'px';
     contextMenu.style.top=Math.max(4,Math.min(point.y??point.top,(globalThis.innerHeight||600)-270))+'px';
+    if(entry&&!entry.folder){for(const [label,run] of [['Preview',()=>side(entry)],['Open in Window',()=>preview.open(entry)]]){const item=document.createElement('button');item.type='button';item.role='menuitem';item.textContent=label;item.disabled=!previewType(entry.key);item.onclick=safe(()=>{contextMenu.hidden=true;return run();});contextMenu.append(item);}}
     for(const action of ['download','rename','delete','copy','move','paste','folder']){
       const original=button(action),item=document.createElement('button');item.type='button';item.role='menuitem';item.textContent=original.textContent;item.disabled=original.disabled;
       item.onclick=()=>{contextMenu.hidden=true;original.click();returnFocus?.focus({preventScroll:true});};contextMenu.append(item);
@@ -257,11 +310,11 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   host.addEventListener('contextmenu',event=>{const row=event.target.closest('.mini-row');if(row){event.preventDefault();showMenu(visible[Number(row.dataset.index)],{x:event.clientX,y:event.clientY},row);}else if(list.contains(event.target)){event.preventDefault();showMenu(null,{x:event.clientX,y:event.clientY},list);}});
   host.addEventListener('keydown',event=>{if(event.key==='Escape'){contextMenu.hidden=true;closeSide();renderRows();}if(!event.target.closest('input,select,textarea')&&(event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='a'){event.preventDefault();for(const entry of visible)model.state.selected.add(entry.key);renderRows();paintActions();}});
   host.addEventListener('dragover',event=>{if(event.dataTransfer?.types?.includes('application/x-redown-chute-v1'))event.dataTransfer.dropEffect='none';});
-  async function setActive(value){activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.cancel();return;}
+  async function setActive(value){if(value===activeView&&initialized){if(initialization)await initialization;return;}activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.suspend();return;}
     setFolderWidth(50);
     if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
     initialization=(async()=>{
-    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;button('grid').setAttribute('aria-pressed',String(grid));for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
+    try{saved=(await storage.get('shelfExplorerV1')).shelfExplorerV1||{};setFolderWidth(50);grid=saved.grid!==false;paintViewMode();for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
     await discover();
     })();await initialization;
   }
@@ -297,6 +350,8 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   }
   if(globalThis.RedownHistoryNavigation?.receiveShelf)void globalThis.RedownHistoryNavigation.receiveShelf(revealHistory).then(remove=>removeHistoryReceiver=remove).catch(()=>say('History navigation is unavailable. Try Dashboard in Settings.'));
   const changed=(changes,area)=>{
+    if(area==='session'&&changes.redownChuteClearedV1)void bridge.cancel();
+    if(area==='local'&&changes.shelfKeepPreparedV1&&changes.shelfKeepPreparedV1.newValue!==true)void bridge.cancel();
     if(area==='session'&&changes.redownChuteReceipt){const receipt=changes.redownChuteReceipt.newValue;if(receipt?.id===bridge.getHandle()?.id){$('.mini-drag-status').textContent=receipt.state==='drop_dispatched'?'File dispatched. Check the destination: acceptance and upload completion are unverified.':'File handoff failed. Try dragging again or use Download and the destination file picker.';}}
     if(area==='local'&&changes.cloudflareAuth){clipboard=null;saved={};expansions.clear();void discover();}
   };

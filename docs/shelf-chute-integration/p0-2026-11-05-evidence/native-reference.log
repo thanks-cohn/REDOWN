@@ -1,0 +1,46 @@
+127.0.0.1 - - [05/Nov/2026 08:01:13] "GET /api/calendar?month=2026-13 HTTP/1.1" 400 -
+.127.0.0.1 - - [05/Nov/2026 08:01:13] "GET /api/calendar?month=2026-11 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:13] "GET /api/calendar?month=2026-11 HTTP/1.1" 200 -
+......127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 206 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 416 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/content HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:14] "POST /api/explorer/v1/command HTTP/1.1" 403 -
+.........................ss..127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/receive HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/receive HTTP/1.1" 400 -
+.127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/receive HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/receive HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/command HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/command HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:15] "POST /api/explorer/v1/command HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:16] "POST /api/explorer/v1/command HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:16] "POST /api/explorer/v1/command HTTP/1.1" 200 -
+....sssssss127.0.0.1 - - [05/Nov/2026 08:01:16] "GET /api/browse?scope=live&page=0&limit=40 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:16] "GET /api/browse?scope=history&page=1&limit=40 HTTP/1.1" 200 -
+.127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=history&limit=501 HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=live&page=-1 HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=unknown HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=history&date=2026-33-99 HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=live&date=2020-02-29 HTTP/1.1" 400 -
+.127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=history&page=0&limit=40 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=history&page=1&limit=40 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 08:01:17] "GET /api/browse?scope=history&page=2&limit=40 HTTP/1.1" 200 -
+..........127.0.0.1 - - [05/Nov/2026 08:01:19] "POST /api/reveal/2cba0f079d0e4273969cfe2916432101 HTTP/1.1" 200 -
+.127.0.0.1 - - [05/Nov/2026 08:01:20] "POST /api/reveal/b6872662727440daae37839d3414c30b HTTP/1.1" 200 -
+.127.0.0.1 - - [05/Nov/2026 08:01:20] "POST /api/reveal/a104be95a4824c4aabd859572f126979 HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 08:01:20] "POST /api/reveal/not-an-id HTTP/1.1" 400 -
+127.0.0.1 - - [05/Nov/2026 08:01:20] "POST /api/reveal/ffffffffffffffffffffffffffffffff HTTP/1.1" 404 -
+..............
+----------------------------------------------------------------------
+Ran 76 tests in 7.989s
+
+OK (skipped=9)
