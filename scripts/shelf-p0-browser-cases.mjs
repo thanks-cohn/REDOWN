@@ -56,12 +56,12 @@ export async function runP0({page,out,lowMemory}){
  await list.focus();await page.keyboard.press('Home');await page.waitForTimeout(100);
  await page.evaluate(()=>{
   fixture.slow=true;const input=document.createElement('input');input.type='file';input.id='fixture-upload';input.accept='.png';document.body.append(input);Object.assign(input.style,{position:'fixed',top:'10px',right:'10px',width:'150px',zIndex:'9999'});
-  input.addEventListener('change',async()=>{const f=input.files[0];fixture.received={name:f.name,type:f.type,bytes:Array.from(new Uint8Array(await f.arrayBuffer()))};});
+  input.addEventListener('change',async()=>{const f=input.files[0];fixture.received={name:f.name,type:f.type,bytes:Array.from(new Uint8Array(await f.arrayBuffer()))};fixture.receivedCount=(fixture.receivedCount||0)+1;});
  });
  await page.locator('.mini-row').nth(1).dragTo(page.locator('#fixture-upload'));await page.waitForFunction(()=>fixture.received);const input=await page.evaluate(()=>fixture.received);
  assert.equal(input.name,'file-00000.png');assert.equal(input.type,'image/png');assert.deepEqual(input.bytes,await page.evaluate(()=>Array.from(fixture.expected)));result.receivers.push({target:'controlled input',accepted:true,verifiedUpload:false,...input});
- await page.waitForTimeout(150);const reads=await page.evaluate(()=>fixture.reads);
- await page.locator('.mini-row').nth(1).dragTo(page.locator('#fixture-upload'));await page.waitForFunction(()=>document.querySelector('.mini-drag-status').textContent.includes('reused'));
+ await page.waitForFunction(()=>fixture.receipts.length>=1);const reads=await page.evaluate(()=>fixture.reads);
+ await page.locator('.mini-row').nth(1).dragTo(page.locator('#fixture-upload'));await page.waitForFunction(()=>fixture.receivedCount===2&&fixture.reports.some(r=>r.state==='staged'&&r.code==='REUSED'));await page.waitForFunction(()=>fixture.receipts.length>=2);
  assert.equal(await page.evaluate(()=>fixture.reads),reads);result.receivers.push({target:'explicit retry',cloudReadReused:true,verifiedUpload:false});
  await page.evaluate(()=>{
   document.getElementById('fixture-upload').remove();const target=document.createElement('div');target.id='custom-drop';target.textContent='Controlled drop target';Object.assign(target.style,{position:'fixed',top:'10px',right:'10px',padding:'15px',zIndex:'9999',background:'white'});document.body.append(target);

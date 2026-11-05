@@ -30,9 +30,9 @@ try{
    Object.defineProperty(navigator,'deviceMemory',{value:lowMemory?4:8});
    const local={},listeners=[],changed=[];
    const emitter={addListener(fn){listeners.push(fn);}};
-   window.fixture={reads:0,calls:[],events:[],local,expected:Array.from(Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMioAAAAASUVORK5CYII='),c=>c.charCodeAt(0))),count:10000,base};
+   window.fixture={reports:[],receipts:[],reads:0,calls:[],events:[],local,expected:Array.from(Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMioAAAAASUVORK5CYII='),c=>c.charCodeAt(0))),count:10000,base};
    window.chrome={runtime:{id:'fixture',getURL:p=>base+'/'+p,onMessage:emitter,sendMessage:async m=>{
-    fixture.calls.push(m.type);
+    fixture.calls.push(m.type);if(m.type==='redownChuteV1.report')fixture.reports.push({state:m.state,code:m.code,layer:m.layer});
     if(m.type==='redownChuteV1.arm')await new Promise(r=>setTimeout(r,150));
     if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account A'},{id:'b',name:'Account B'},...Array.from({length:fixture.extraAccounts?80:0},(_,i)=>({id:'extra-'+i,name:'Fixture account '+i}))]};
     if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'photos'}]};
@@ -41,7 +41,7 @@ try{
      for(const fn of listeners){if(fn(m,sender,resolve)===true)return;}
      reject(Error('Unknown fixture message '+m.type));
     });
-   }},storage:{local:{get:async keys=>local,set:async value=>Object.assign(local,value)},session:{get:async()=>({}),set:async value=>{for(const fn of changed)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'session');}},onChanged:{addListener:fn=>changed.push(fn),removeListener(){}}},tabs:{query:async()=>[{id:2}],sendMessage:async(id,m)=>{for(const fn of listeners)fn(m,{id:'fixture'},()=>{});},create:async()=>{throw Error('Unexpected new window/tab');}},alarms:{create(){},onAlarm:{addListener(){}}}};
+   }},storage:{local:{get:async keys=>local,set:async value=>Object.assign(local,value)},session:{get:async()=>({}),set:async value=>{if(value.redownChuteReceipt)fixture.receipts.push({state:value.redownChuteReceipt.state});for(const fn of changed)fn(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,{newValue:v}])),'session');}},onChanged:{addListener:fn=>changed.push(fn),removeListener(){}}},tabs:{query:async()=>[{id:2}],sendMessage:async(id,m)=>{for(const fn of listeners)fn(m,{id:'fixture'},()=>{});},create:async()=>{throw Error('Unexpected new window/tab');}},alarms:{create(){},onAlarm:{addListener(){}}}};
    window.RedownCloudflareApi={request:async path=>{
     if(fixture.authExpired)return Response.json({success:false},{status:401});
     if(fixture.offline)throw Error('Fixture offline');
