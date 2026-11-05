@@ -41,7 +41,7 @@ The full-suite failure names **exactly match clean main: zero new failures and z
 
 The fixture verifies real selection without preview reads, explicit double-click open, fully expanded traversal in both axes, first/last boundary, Restore retaining last selection, automatic sample hiding/restoration through account verification/logout, and three measured reverse Elevator round trips. Each round records start/intermediate/final nav rectangles and the descending real panel. No cloned navigation is used.
 
-History/guest FILES/Settings: 320, 390, 540, 700 and 900px × Porcelain/Midnight/Ocean/Neon. Connected FILES and expanded Preview: 320, 390, 540 and 900px × all four themes. Two additional overview captures give 94 PNGs. Representative images below are committed; the complete image matrix is delivered separately in the chat evidence archive.
+History/guest FILES/Settings: 320, 390, 540, 700 and 900px × Porcelain/Midnight/Ocean/Neon. Connected FILES and expanded Preview: 320, 390, 540 and 900px × all four themes. Two additional overview captures give 94 PNGs. Representative images below are committed; the [complete 94-image matrix archive](p0-next-run-evidence/screenshots.zip) is included alongside the receipts.
 
 - [Settings, 320px Porcelain](p0-next-run-evidence/settings-320-porcelain.png)
 - [Settings, 900px Midnight](p0-next-run-evidence/settings-900-midnight.png)
@@ -60,3 +60,7 @@ Visual review found and corrected a wide Settings label/choice overlap, default 
 - Bundled Chutey bytes pass the actual staging bridge test. Arbitrary third-party website/native Windows drag acceptance remains unverified. Download completion is not inferred from initiation.
 - Windows, store distribution, real BOOT/menu registration and live TRUE REMOTE acceptance remain untested in this environment. Their local suites were rerun in the full test/smoke commands, retaining recorded failures.
 - Full-suite/reliability/smoke gates remain red due to the explicit pre-existing failures above. This change is locally implemented and browser-fixture verified; it is not release certification or a production deployment.
+
+## Delivery
+
+[PR #58](https://github.com/thanks-cohn/REDOWN/pull/58) preserves the focused implementation review record. Implementation and receipts were pushed to `main` at `9934431ba0bed061e7cbed4fadef2ad4b4320eef` under the owner’s subsequent explicit instruction. This final evidence-only follow-up adds the full screenshot archive. No production Worker deployment was performed. Remote CI was still running at delivery; local gates above remain authoritative only for their stated scope.
