@@ -1,0 +1,7 @@
+{
+  "state": "blocked",
+  "reason": "Managed Chromium policy ExtensionInstallBlocklist [*]; only administrator-forced extension allowed. Policy was inspected; no bypass attempted.",
+  "policyPath": "/etc/chromium/policies/managed/extensions.json",
+  "liveCloud": "not tested",
+  "windows": "not tested"
+}

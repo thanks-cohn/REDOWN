@@ -1,0 +1,455 @@
+{
+  "classification": "Chromium actual UI / mocked Chrome and cloud account transport; no installed extension or live provider proof",
+  "browser": "154.0.8037.57",
+  "errors": [],
+  "geometry": [
+    {
+      "view": "explorer",
+      "width": 320,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 320,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 320,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 320,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 320,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 320,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 320,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 320,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 320,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 320,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 320,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 320,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 390,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 390,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 390,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 390,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 390,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 390,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 390,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 390,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 390,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 390,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 390,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 390,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 540,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 540,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 540,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 540,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 540,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 540,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 540,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 540,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 540,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 540,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 540,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 540,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 700,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 700,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 700,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 700,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 700,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 700,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 700,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 700,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 700,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 700,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 700,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 700,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 900,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 900,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 900,
+      "theme": "porcelain",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 900,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 900,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 900,
+      "theme": "midnight",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 900,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 900,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 900,
+      "theme": "ocean",
+      "overflow": false
+    },
+    {
+      "view": "explorer",
+      "width": 900,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "history",
+      "width": 900,
+      "theme": "neon",
+      "overflow": false
+    },
+    {
+      "view": "settings",
+      "width": 900,
+      "theme": "neon",
+      "overflow": false
+    }
+  ],
+  "gestures": {
+    "offlineBundledSamples": true,
+    "expandedBothAxes": true,
+    "restoreSelection": true,
+    "reverseIntermediate": true,
+    "connectedHidesDemo": true,
+    "logoutRestoresDemo": true
+  },
+  "elevator": [
+    {
+      "start": {
+        "x": 8,
+        "y": 8,
+        "width": 524,
+        "height": 33.5
+      },
+      "middle": {
+        "x": 8,
+        "y": 214.71533203125,
+        "width": 524,
+        "height": 33.5
+      },
+      "end": {
+        "x": 22,
+        "y": 254.328125,
+        "width": 496,
+        "height": 33.5
+      },
+      "panel": {
+        "x": 8,
+        "y": 804.6461791992188,
+        "width": 524,
+        "height": 850.5000610351562
+      }
+    },
+    {
+      "start": {
+        "x": 8,
+        "y": 8,
+        "width": 524,
+        "height": 33.5
+      },
+      "middle": {
+        "x": 8,
+        "y": 226.96839904785156,
+        "width": 524,
+        "height": 33.49998474121094
+      },
+      "end": {
+        "x": 22,
+        "y": 254.328125,
+        "width": 496,
+        "height": 33.5
+      },
+      "panel": {
+        "x": 8,
+        "y": 804.6461791992188,
+        "width": 524,
+        "height": 850.5000610351562
+      }
+    },
+    {
+      "start": {
+        "x": 8,
+        "y": 8,
+        "width": 524,
+        "height": 33.5
+      },
+      "middle": {
+        "x": 8,
+        "y": 226.96961975097656,
+        "width": 524,
+        "height": 33.49998474121094
+      },
+      "end": {
+        "x": 22,
+        "y": 254.328125,
+        "width": 496,
+        "height": 33.5
+      },
+      "panel": {
+        "x": 8,
+        "y": 834.7176513671875,
+        "width": 524,
+        "height": 850.5
+      }
+    }
+  ]
+}

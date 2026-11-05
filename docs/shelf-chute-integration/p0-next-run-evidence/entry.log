@@ -1,0 +1,42 @@
+✔ whole MV3 background with real imports registers handlers and installs root on worker activation (70.550201ms)
+✔ toolbar invokes Shelf synchronously within the gesture without storage/menu prerequisites (25.010776ms)
+✔ definite Shelf rejection, synchronous throw and missing API use only native attached popup (46.926714ms)
+✔ explicit Popup preference is preserved even when Shelf configuration fails (14.508622ms)
+✔ failed native child or root creation restores root/management without erasing settings (59.175636ms)
+✔ failed removal retains functional local access; Chrome-wide denial is reported honestly (12.426484ms)
+✔ partial inventory, invalid cache and malformed configuration cannot prevent local menu access (26.643917ms)
+✔ worker restart and concurrent startup/install/storage/alarm events share the registration lane (25.56383ms)
+✔ recovery management entry uses the existing local Explorer click route (10.815427ms)
+✔ missing native acknowledgement times out without deleting the root and a later Apply succeeds (35.390527ms)
+✔ failed folder discovery leaves root and valid configured destinations accessible (12.723642ms)
+✔ a failed rebuild after successful registration preserves a recoverable root instead of clearing everything (15.763713ms)
+✔ rapid clicks share one failure attempt and Chrome handles subsequent native popup clicks (7.730969ms)
+✔ unchanged menu plan performs no destructive registration and discovery (8.277543ms)
+✔ unrelated background import failure leaves independently registered toolbar usable (3.29176ms)
+✔ storage failure cannot gate toolbar or base menu access (4.643086ms)
+✔ Shelf document readiness is window-scoped and successful readiness avoids recovery (14.165214ms)
+✔ accepted Shelf with unconfirmed readiness never opens a second surface (1511.494494ms)
+✔ worker restart reconciles persisted IDs without native destruction or folder discovery (16.840511ms)
+✔ an unrelated Shelf window never wins the readiness first-response race (2.087556ms)
+✔ ordered destination changes recreate siblings while retaining root management (12.012922ms)
+✔ fresh empty storage and no OAuth opens Shelf without destination prerequisites (9.033276ms)
+✔ missing native openPopup leaves a next-click attached recovery route without changing preference (10.858631ms)
+✔ slow accepted Shelf cannot trigger a timeout popup or late duplicate (53.446535ms)
+✔ late rejected expired attempt cannot override a newer successful Shelf (54.334373ms)
+✔ blocked popup registration produces native error evidence, no alternate windows (13.084857ms)
+✔ worker restart preserves armed tab recovery, while preference changes clear stale overrides (15.276069ms)
+✔ automatic toolbar launcher contains no detached surface API and disables Chrome-managed parallel opening (7.726663ms)
+✔ tab switch during failure abandons stale recovery instead of opening in another tab (14.349483ms)
+✔ latest different-window click supersedes pending attempt without a stale popup (14.04255ms)
+✔ Files entrance defaults/legacy stay Normal; opt-in only animates explicit click and cancels on navigation (505.023669ms)
+✔ Files preference persists without navigating; reduced motion and deep links skip entrance (150.331164ms)
+✔ P0 reverse animates real Explorer and original navigation before committing destination; rapid reentry cancels (107.825194ms)
+✔ P0 Settings choice surfaces preserve native IDs, values, change contracts and stored preferences (108.589786ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3476.129746

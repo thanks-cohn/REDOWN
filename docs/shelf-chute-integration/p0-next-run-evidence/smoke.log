@@ -1,0 +1,1362 @@
+
+> remote-asset-ingest@0.1.0 explorer:smoke
+> node scripts/explorer-smoke.mjs --preset all
+
+{"smokeVersion":"1.0.0","preset":"all","scope":"local code with simulated providers; no live cloud writes or certification","files":["tests/explorer-diagnostics.test.mjs","tests/explorer-diagnostic-fixtures.test.mjs","tests/explorer-diagnostics-ui.test.mjs","tests/explorer-probes.test.mjs","tests/explorer-worker.test.mjs","tests/explorer-copy.test.mjs","tests/download-collisions.test.mjs","tests/explorer-menu-actions.test.mjs","tests/explorer-destination-menu.test.mjs","tests/destination-search-regression.test.mjs","tests/lightbox.test.mjs","tests/cloudflare-files.test.mjs","tests/popup-folders.test.mjs","tests/popup-destinations.test.mjs","tests/beta-popup.test.mjs","tests/transfer-counter.test.mjs","tests/odometer.test.mjs","tests/cloudflare-login.test.mjs","tests/cloudflare-session.test.mjs","tests/cloudflare-reconnect.test.mjs","tests/runtime-reliability.test.mjs","tests/get-url.test.mjs","tests/explorer-status.test.mjs","tests/public-addresses.test.mjs"]}
+✔ compact launcher replaces destination form without exposing experimental GitHub controls (178.683464ms)
+✔ private WEBP preview reads nested keys without a Worker or background messaging (103.330737ms)
+✔ downloads use a header, keep credentials out of URLs and sanitize filenames (1.715195ms)
+✔ concurrent expired requests refresh rotating credentials once (2.751246ms)
+✔ 401 refresh retries a private read and denied reads report failure (3.711883ms)
+✔ oversized preview stops without allocating an object URL (2.026243ms)
+✔ preview failure replaces spinner and download rejection ends progress (7.411038ms)
+✔ download reports delayed Chrome interruption and removes its listener (7.084646ms)
+✔ download exposes interruption occurring before onChanged registration (1.170253ms)
+✔ download completion is reported and an interruption racing the initial lookup cannot become success (4.19422ms)
+✔ 403 management read falls back to explicitly enabled public R2 domain for unusual keys (52.4861ms)
+✔ 403 does not fall back for private R2 buckets (6.705534ms)
+✔ unusual-key download uses enabled public URL only following a denied authenticated probe (1.239678ms)
+✖ click creates a visible window before network navigation; repeated clicks focus it (86.473805ms)
+✖ successful callback exchanges PKCE and verifies access before saving token (0.92949ms)
+✖ callback resumes after service worker restart from session state (0.704572ms)
+✖ Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth (0.795359ms)
+✖ Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab (1.071105ms)
+✖ Shelf cancelled or failed login never opens Explorer (0.825143ms)
+✖ Shelf login remains connected when Chrome cannot open Explorer tab (0.739324ms)
+✖ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (1.017012ms)
+✖ state mismatch fails without token exchange and allows a fresh retry (0.8494ms)
+✖ denied consent and missing authorization code fail cleanly (1.377736ms)
+✖ closed popup releases attempt and stale window is replaced on next click (0.742699ms)
+✖ expired attempt clears secrets, closes popup, and permits retry (0.691713ms)
+✖ failed API verification never stores an access token (1.02166ms)
+✖ duplicate navigation events exchange a code only once (2.218472ms)
+✖ verification network stall aborts and releases the attempt (1.103763ms)
+✖ popup creation errors are returned instead of leaving an in-flight lock (0.820066ms)
+✔ settings opens and completes Cloudflare login with no background worker or messaging (42.00709ms)
+✖ settings and worker observing the same callback exchange the code once across contexts (1.159527ms)
+✔ two settings contexts share one visible sign-in window (2.683243ms)
+✖ Worker deployments cannot overlap and a failed deployment releases the lock (1.129582ms)
+✔ authorization URL requests only the registered resource scopes, preserving PKCE (6.812841ms)
+✖ runtime adapter gates actual background messages by settings sender and Debug Mode without network (1.361873ms)
+✖ destination folder pages preserve parent prefix, immediate children and continuation (1.072045ms)
+✖ verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests (178.861656ms)
+✖ slow bucket loading does not block locations, Explorer, or connection refresh (86.136247ms)
+✔ an invalidated connection reply cannot replace a newer account view (90.620837ms)
+✔ Cloudflare 403 authentication error refreshes once and retries the read (36.261999ms)
+✔ permission-denied 403 does not renew credentials or repeat the request (1.834484ms)
+✔ expired credentials shared by settings and worker rotate once under the shared lock (1.963309ms)
+✔ invalid refresh grant preserves connection and requests reconnect without disconnect (1.839402ms)
+✔ transient renewal failure retains credentials and can recover on the next refresh (2.846269ms)
+✔ login token storage shares the refresh lock and clears reconnect state (1.172727ms)
+✔ explicit nested folder is sent intact and receipt uses actual target bucket and key (3.122666ms)
+✔ history uses explicit bucket/key rather than mistaking public assets route for storage folder (3.26511ms)
+✔ search previews retain result set and use each result account/bucket and exact key (1.988766ms)
+✔ history location opens exact folder and preview without scroll or focus jump (1.832542ms)
+✔ download collision preserves originals and returns numbered key and URL (33.816354ms)
+✔ concurrent collision never overwrites or reports a successful download (1.643236ms)
+✔ remote download uses numbered key within requested folder (1.594984ms)
+✔ first collision starts at one and a different folder keeps the original name (6.574036ms)
+✔ Worker copy requests have a deadline; uncertain outcomes are never replayed (31.886556ms)
+✔ failed conflict-resolution copy stays failed instead of reporting zero copied (21.864385ms)
+✔ copy summary includes successful first-pass and conflict-resolution files (1.183833ms)
+✔ missing per-file copy receipts cannot become a successful zero-file copy (1.472318ms)
+✔ forbidden Worker operations report HTTP status without automatic reprovision or replay (1.589625ms)
+✔ v5 preparation refuses unavailable connections instead of redeploying on network failure (1.84463ms)
+✔ conflict retry retains earlier failures rather than presenting partial move as success (1.277015ms)
+✔ incomplete or cyclic folder listings fail before mutation; exact repeated separators are preserved (1.336765ms)
+✔ Paste uses an explicit operation clipboard even when the global clipboard changes (0.950492ms)
+✔ empty clipboard and missing destination produce actionable feedback and no transfer (1.940013ms)
+✔ rejected transfer transport clears working status, preserves clipboard and never replays (0.859274ms)
+✔ directory conflict retry preserves its directory identity and destination root (0.683079ms)
+✔ Move to and Copy to expose buckets then arbitrary folder levels, retaining exact prefixes (99.910444ms)
+✔ current bucket remains available for sibling destinations and same-folder choice is disabled (13.383957ms)
+✔ folder pages append via More folders and closed menus ignore late replies (14.816545ms)
+✔ keyboard arrows navigate menus and Escape returns to parent without changing Explorer (18.245883ms)
+✔ failed lazy folder reads offer retry and never execute a transfer (17.60649ms)
+✔ Copy here is available immediately while child-folder listing is still pending (15.662049ms)
+✔ reopening the same destination reuses a bounded short-lived folder page cache (13.465509ms)
+✔ safe diagnostic fixture: missing-source (12.478152ms)
+✔ safe diagnostic fixture: wrong-key (21.166914ms)
+✔ safe diagnostic fixture: wrong-binding (2.352515ms)
+✔ safe diagnostic fixture: expired-authorization (1.243023ms)
+✔ safe diagnostic fixture: worker-version (1.440711ms)
+✔ safe diagnostic fixture: unsupported-endpoint (2.325414ms)
+✔ safe diagnostic fixture: network-interruption (0.952425ms)
+✔ safe diagnostic fixture: source-read (1.218546ms)
+✔ safe diagnostic fixture: destination-write (1.379198ms)
+✔ safe diagnostic fixture: ambiguous-timeout (0.952095ms)
+✔ safe diagnostic fixture: conflict (0.821978ms)
+✔ safe diagnostic fixture: verification-failed (0.839055ms)
+✔ safe diagnostic fixture: interrupted-move (0.770021ms)
+✔ safe diagnostic fixture: stale-ui (0.871273ms)
+✔ safe diagnostic fixture: cross-account (1.205086ms)
+✔ safe diagnostic fixture: concurrent-source-change (1.684468ms)
+✔ safe diagnostic fixture: nested-key (0.827136ms)
+✔ operation tree retains concurrent descendants and malformed/duplicate IDs cannot overwrite imported traces (1.496354ms)
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (89.972609ms)
+✔ actual reported404 case remains open and separates reports, repository and deployed evidence (3.836581ms)
+✔ Debug inspector selects traces, copies ID, previews redacted bundle before download and clears safely (198.594008ms)
+✔ bridge shares local fingerprint context and keeps concurrent message IDs and parent chains separate (6.985155ms)
+✔ legacy Worker404 is marked as reported evidence rather than invented structured source telemetry (1.790558ms)
+✔ read-only probe button is Debug-only, sends captured file context once and presents redacted checks (94.470276ms)
+✔ message transport failures finish their trace without recording private error text (1.55263ms)
+✔ identity HMAC preserves exact keys, compares only equal scopes and exports no names or secrets (13.177666ms)
+✔ 404 is an observation; deterministic diagnosis compares API successes without inventing a root cause (4.532039ms)
+✔ same-scope key disagreement is confirmed while unrelated scopes cannot establish mismatch (2.379125ms)
+✔ bounded collector rejects malformed and oversized imports atomically, preserving prior observations (2.089348ms)
+✔ retention, event caps, disabled collection and restart interruption are explicit (2.230321ms)
+✔ portable agent API preserves evidence IDs and has no execution or network capabilities (1.116572ms)
+✔ menu actions surface synchronous and asynchronous errors (47.532402ms)
+✔ Copy confirms internal clipboard contents without copying file bytes or moving originals (0.967348ms)
+✔ Properties message reads exact control-plane metadata without preparing a Worker (16.019669ms)
+✔ operation feedback renders untrusted filenames/error text literally (16.905824ms)
+✔ clipboard publication is transactional and returns the exact captured selection (1.1875ms)
+✔ Move to never pastes a previous clipboard when the requested selection is rejected (0.70358ms)
+✔ background Paste retains its opened-menu destination and clipboard after navigation (7.834655ms)
+✔ right-click on Explorer home does not require a selected bucket (4.673101ms)
+✔ send records rejected transport through the existing diagnostic bridge and rethrows once (1.3077ms)
+✔ explicit probe compares provider, API, direct and destination-Worker paths without writes or private export (31.92249ms)
+✔ probe flags incorrect provider bindings and routing configuration; proxy 404 never means automatic missing-object repair (3.796481ms)
+✔ legacy Worker lacks proxy capability explicitly; no speculative transfer or deployment occurs (2.887992ms)
+✔ probe requires Debug, exact bounded file input and configured workers.dev endpoints (1.481122ms)
+✔ probe stops scheduling reads after clear or disable and rejects concurrent invocations (6.36497ms)
+✔ diagnosis does not confuse different files or descendants with identity drift; explicit same-item mismatch is detected (2.098261ms)
+✔ expired diagnoses are unavailable; unknown smoke and connectors cannot imply implemented support (1.666481ms)
+✔ provisioning includes explicit public Worker fetch compatibility without weakening verified transfers (1.08812ms)
+✔ a multi-file 404 cannot borrow an unrelated preview success to imply path divergence (5.49552ms)
+✔ new deployment reads provider routing settings before reporting ready or creating prefix objects (3.068283ms)
+✔ one semantic mapping colors pending, completed, error, mixed and cancelled without trusting message wording (57.479373ms)
+✔ older operation callbacks, stale detail messages and old expiry timers cannot overwrite new feedback (7.591379ms)
+✔ download acceptance stays neutral; only native completion turns green and user cancellation stays neutral (8.154388ms)
+✔ late completion of a previous download leaves a new active download neutral (6.621397ms)
+✔ partial Copy and Delete receipts use amber rather than success or an entirely failed operation (9.000082ms)
+✔ rendered colors have sufficient text contrast for the provided dark and light surface palettes (0.569017ms)
+✔ late folder listing cannot repaint the newer folder or its status (10.954537ms)
+✔ same-bucket transfers stream objects and preserve metadata (58.169072ms)
+✔ cross-bucket transfers stay Worker-to-Worker and keep-both resolves conflicts (7.064496ms)
+✔ folder markers, properties, and batched deletes are real R2 operations (3.720656ms)
+✔ private Explorer reads require auth while explicitly enabled public assets still work (2.597123ms)
+✔ short-lived private preview URLs support ranges for text, PDF, and GLB (8.24216ms)
+✔ ZIP and CBZ archives are listed as virtual folders and selected entries extract safely (6.169626ms)
+✔ archive traversal and malformed archives are rejected (3.261705ms)
+✔ management keeps exact Unicode, punctuation and repeated-slash keys; rename preserves bytes (2.901863ms)
+✔ conditional copies preserve racing destinations and failed verification never reports copied (4.426701ms)
+✔ move deletion rejects changed sources and changed destinations, then confirms exact deletion (2.82734ms)
+✔ large streamed fixture and metadata survive local copy; capabilities reject legacy readiness (438.301318ms)
+✔ archive extraction conflicts preserve existing destination content (3.703121ms)
+✔ background→actual embedded Worker→in-memory R2 copy/move/rename/delete pipeline verifies content (11.249211ms)
+✔ background rejects incomplete/incorrect destination receipts and never deletes original (8.425085ms)
+✔ background folder copy/rename uses exact descendants; explicit conflicts preserve both sides (8.331986ms)
+✔ instrumented cross-Worker copy records exact read/write/verify timeline with no raw keys or seed (16.359681ms)
+✔ wrong source binding fixture produces structured 404 evidence and mismatch without claiming a production cause (37.844667ms)
+✔ read-only source proxy uses HEAD, rejects redirects and never writes/deletes or reads source bytes (5.333457ms)
+✔ directory collision is reported before any child is merged or source is deleted (4.104726ms)
+✔ directory Keep both preserves the entire existing tree and uses one unused sibling for all incoming children (6.646626ms)
+✔ directory Keep both move verifies the new sibling before deleting exact source children (3.903241ms)
+✔ cross-bucket settings drift fails before transfer/deletion with a structured diagnostic code (12.053393ms)
+✔ directory preflight fails closed on incomplete listings and bounds sibling allocation (4.927425ms)
+✔ remote ingest exact-folder capability preserves Unicode, reserved characters and repeated separators (3.126732ms)
+✔ create-only folder marker cannot claim a concurrent existing marker as newly created (2.805717ms)
+✔ one configured URL: whole row copies full exact triple-dot path, stays open and marks Copied (105.833156ms)
+✔ all managed, multiple custom subdomains and Worker assets rows are independent and copy complete addresses (23.419309ms)
+✔ inactive endpoints have no visible URL rows; unsafe share URLs are rejected (11.330603ms)
+✔ empty, failed and wrong-bucket discovery produce useful explanations instead of blank dialogs (66.213505ms)
+✔ clipboard failure has structured error and no false Copied state or raw browser error (9.763142ms)
+✔ rapid switching and closed dialogs discard stale discovery and clipboard completion (21.203411ms)
+✔ keyboard row navigation, focus restoration, outside dismiss and clamped placement fit narrow viewports (20.629795ms)
+✔ production URL adapter records redacted discovery and clipboard child operations without exposing URLs or keys (51.664982ms)
+✔ context menu preserves one Get URL action, performs no eager discovery, and captures source and menu position (11.468001ms)
+✔ production stylesheet makes URL menu a visible fixed overlay above the context menu (595.416714ms)
+✔ anchored submenu opens to the left near the viewport edge and ArrowLeft returns to its parent (16.39116ms)
+✔ actual Get URL parent click keeps context menu visible and opens a copyable child menu (63.32499ms)
+✔ disabled bucket offers explicit confirmation, enables once, refreshes and copies exact URL (16.483539ms)
+✔ public access cancellation makes no write; unknown, mismatched and enabled buckets do not offer mutation (33.51339ms)
+✔ permission failures remain explained with no false success or leaked provider errors (11.923817ms)
+✖ switching files while enabling cannot reopen the old file or overwrite current choices (45.853235ms)
+✔ active custom URL is shown while disabled managed URLs and redundant activation remain hidden (13.983901ms)
+✔ lightbox opens with real ID lookup, moves original media and restores it with listeners and focus (131.16714ms)
+✔ dialog keyboard and buttons navigate; Escape closes and Tab stays inside (51.965825ms)
+✔ next preview replaces overlay media and title; failed next load preserves current media (16.801337ms)
+✔ older asynchronous preview cannot overwrite a newer lightbox selection (15.437573ms)
+✔ pending image leaves current media and title visible, with corner feedback; wheel zoom resets on swap (54.019486ms)
+✔ right-click image menu zooms in/out, fits, and Escape dismisses only the menu (32.977031ms)
+✔ Expand/Collapse never relabels arrows and lightbox exit resets expansion controls (21.714711ms)
+✔ large roll-ups stay bounded, increase exactly and slow down across the last three single steps (1.071324ms)
+✔ completion clicks once after landing; restart cancels obsolete completion and callbacks (1.002461ms)
+✔ reduced motion, unchanged values and counter resets settle without animation or sound (1.016081ms)
+✔ closing during a roll cancels all remaining updates and sound (0.189516ms)
+Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'create')]
+    at reportException (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+    at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) TypeError: Cannot read properties of undefined (reading 'create')
+    at HTMLButtonElement.eval (eval at open (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:11:21), <anonymous>:49:73)
+    at HTMLButtonElement.callTheUserObjectsOperation (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLButtonElementImpl._dispatch (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at fireAnEvent (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/helpers/events.js:18:36)
+    at HTMLButtonElementImpl.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:85:5)
+    at HTMLButtonElement.click (/workspace/REDOWN/node_modules/jsdom/lib/jsdom/living/generated/HTMLElement.js:108:34)
+    at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:234)
+    at async Test.run (node:internal/test_runner/test:1389:7)
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (202.628553ms)
+✔ red connection shows LOGIN in the same odometer and clicking it starts direct sign-in (80.454102ms)
+✔ failed or canceled login stays red and retryable without resetting the total (31.340255ms)
+✔ odometer carries digits, expands beyond six places and retains exact large totals (160.69248ms)
+✔ late count response cannot overwrite a newer storage count (26.393557ms)
+✔ reopening during OAuth resumes background login without opening duplicate windows (14.40753ms)
+✔ count failure never invents a zero count or hides the disconnected LOGIN action (60.439323ms)
+✖ background accepts a discovered unsaved bucket only after read-only existence validation (3.720777ms)
+✔ reopening starts at the last seen count, rolls to the current total and remembers completion (43.200657ms)
+✔ a newer total interrupts an old roll and final persistence never rolls back (49.661252ms)
+✔ reduced motion immediately shows the verified total and the sound preference persists (21.779518ms)
+✔ the final settled number emits one quiet click and mute suppresses subsequent clicks (24.767982ms)
+✔ unavailable audio never prevents reaching or saving the verified total (56.476072ms)
+✖ background ingest honors explicit root/deep prefixes and preserves the legacy category route (6.33721ms)
+✔ legacy Worker cannot silently normalize an exact destination before capability verification (5.056089ms)
+✔ all address combinations stay contextual and encode full literal object paths (106.971996ms)
+✔ disclosure is absent without addresses, collapsed initially, contextual and copy/open errors visible (31.40597ms)
+✔ older asynchronous refresh and cancelled responses cannot replace newer configuration (8.383473ms)
+✔ discovery is read-only; pending, disabled, and cross-bucket configurations remain distinct (1.564718ms)
+✔ attachment requires exact read-back; public connection verification and setup failures are separate (2.905968ms)
+✔ Normal Mode attachment feedback stays visible and does not overwrite background profiles (66.082617ms)
+✔ domain refresh updates every connected disclosure for that bucket, preserves expansion and leaves other media/buckets alone (17.824809ms)
+✔ explicit public enable uses only exact managed-domain PUT and read-back; already-enabled is read-only (1.842336ms)
+✔ public enable accepts only authorized Explorer pages and explicit confirmation; rejects denied or unverified changes (2.994211ms)
+✔ read retry never crosses a newly authorized session (64.071817ms)
+✔ safe reads honor bounded Retry-After; writes are never replayed on 503 (8.206653ms)
+✔ diagnostic exports are bounded, credential-free, disabled by default and rotate (78.643914ms)
+✔ pull search renders early pages, retains partial matches and retries failed targets (2.053684ms)
+✔ cancel suppresses in-flight results and a restarted adapter reports interrupted (2.075107ms)
+✔ search detects repeated cursor and exposes result cap instead of silent truncation (6.196107ms)
+✔ malformed successful listings cannot masquerade as empty buckets (16.700275ms)
+✔ progressive UI retains selection, emits early results and rejects late query responses (9.059662ms)
+✔ local upload does not replay an ambiguous write or write after an unknown preflight (3.979967ms)
+✔ new installations start at zero and retained history migrates exactly once (5.293176ms)
+✔ successful records persist beyond the fifty-entry history limit; failures and dispatches do not count (51.184397ms)
+✔ concurrent completions cannot lose increments or history, including reads interleaved with writes (4.36681ms)
+✔ large counts preserve integer precision and invalid increments are rejected (1.329554ms)
+✔ recording a successful retry retains the previous history cleanup contract (1.763738ms)
+✔ failed persistence does not publish an in-memory increment; retry reads authoritative storage (1.026316ms)
+✔ provider receipt counts require verified attribution, persist deduplication and never hydrate legacy counts (9.094944ms)
+✔ weak Dropbox success cannot count or erase failed attempts and preserves existing lifetime totals (1.361211ms)
+✔ no provider can count a failed or pending upload merely because a valid proof object exists (5.813441ms)
+ℹ tests 224
+ℹ suites 0
+ℹ pass 197
+ℹ fail 27
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12717.257123
+
+✖ failing tests:
+
+test at tests/cloudflare-login.test.mjs:107:1
+✖ click creates a visible window before network navigation; repeated clicks focus it (86.473805ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:108:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:128:1
+✖ successful callback exchanges PKCE and verifies access before saving token (0.92949ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:129:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:150:1
+✖ callback resumes after service worker restart from session state (0.704572ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:151:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:159:1
+✖ Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth (0.795359ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:160:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:177:1
+✖ Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab (1.071105ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:179:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:190:1
+✖ Shelf cancelled or failed login never opens Explorer (0.825143ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:192:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:202:1
+✖ Shelf login remains connected when Chrome cannot open Explorer tab (0.739324ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:203:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:212:1
+✖ unrelated tab, subframe, lookalike host, and wrong callback path are ignored (1.017012ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:213:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:223:1
+✖ state mismatch fails without token exchange and allows a fresh retry (0.8494ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:224:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:232:1
+✖ denied consent and missing authorization code fail cleanly (1.377736ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:234:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:243:1
+✖ closed popup releases attempt and stale window is replaced on next click (0.742699ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:244:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:255:1
+✖ expired attempt clears secrets, closes popup, and permits retry (0.691713ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:256:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:266:1
+✖ failed API verification never stores an access token (1.02166ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:267:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:275:1
+✖ duplicate navigation events exchange a code only once (2.218472ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:276:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:282:1
+✖ verification network stall aborts and releases the attempt (1.103763ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:283:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:294:1
+✖ popup creation errors are returned instead of leaving an in-flight lock (0.820066ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:295:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:321:1
+✖ settings and worker observing the same callback exchange the code once across contexts (1.159527ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:322:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:339:1
+✖ Worker deployments cannot overlap and a failed deployment releases the lock (1.129582ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:340:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:363:1
+✖ runtime adapter gates actual background messages by settings sender and Debug Mode without network (1.361873ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:364:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-login.test.mjs:373:1
+✖ destination folder pages preserve parent prefix, immediate children and continuation (1.072045ms)
+  node:assert:152
+    throw new AssertionError(obj);
+    ^
+  
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'entry-bootstrap.js'
+  - 'cloudflare-api.js'
+  
+      at context.importScripts (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:78:19)
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at harness (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:81:11)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-login.test.mjs:374:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'entry-bootstrap.js',
+    expected: 'cloudflare-api.js',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/cloudflare-reconnect.test.mjs:8:1
+✖ verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests (178.861656ms)
+  evalmachine.<anonymous>:1
+  refreshCloudflare()
+  ^
+  
+  ReferenceError: refreshCloudflare is not defined
+      at evalmachine.<anonymous>:1:1
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-reconnect.test.mjs:25:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests/cloudflare-reconnect.test.mjs:52:1
+✖ slow bucket loading does not block locations, Explorer, or connection refresh (86.136247ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'buckets',
+  -   'locations',
+      'explorer'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/cloudflare-reconnect.test.mjs:65:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'buckets', 'explorer' ],
+    expected: [ 'buckets', 'locations', 'explorer' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/explorer-diagnostic-fixtures.test.mjs:17:1
+✖ current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input (89.972609ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function showExplorerMenu('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'const goPage=async'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'runExplorerSearch'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type==="cfSearchStart"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'browseWorkspace'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'selectExplorerItem'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showWorkspacePreview'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setWorkspacePreviewLightbox'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDownload'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerUploadFiles'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'pasteExplorer'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfTransferObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'transferExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function explorerDirectoryExists('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginExplorerRename'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfRenameEntry"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'renameExplorerEntry'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'deleteSelection'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfDeleteObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'deleteExplorerObjects'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'beginNewFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfCreateFolder"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'createExplorerFolder'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'showProperties'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjectProperties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'assetCorsControl'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPublicAddresses"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'bucketPublicAddresses'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function enableBucketPublicAccess('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'setExplorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'function urlPopover('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'goLocation'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfObjects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listObjectsPage'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'loadExplorerInventory'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfBuckets"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'listBuckets'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'async function loginRequest('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/cloudflare-auth.js',
+  +     symbol: 'async function connectCloudflare('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'ensurePrepared'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfPrepareBucket"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'preparedProfile'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'async function assertExplorerTransferSettings('
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'openArchive'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'message?.type === "cfArchiveEntries"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/background.js',
+  +     symbol: 'callBucketWorker'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-objects"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="workspace-preview"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-menu"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-properties"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-operation"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.html',
+  +     symbol: 'id="explorer-status"'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspaceTarget'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePrefix'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerSelected'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerClipboard'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerNextCursor'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'workspacePreviewRequestId'
+  +   },
+  +   {
+  +     code: 'MISSING_ANCHOR',
+  +     path: 'extension/options.js',
+  +     symbol: 'presetLocationCache'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerDestinationMenus'
+  +   },
+  +   {
+  +     code: 'SOURCE_CHANGED',
+  +     path: 'extension/options.js',
+  +     symbol: 'explorerOperation'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/explorer-diagnostic-fixtures.test.mjs:18:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function showExplorerMenu(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'const goPage=async' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'runExplorerSearch' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type==="cfSearchStart"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'browseWorkspace' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'selectExplorerItem' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showWorkspacePreview' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setWorkspacePreviewLightbox' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDownload' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerUploadFiles' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'pasteExplorer' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfTransferObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'transferExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function explorerDirectoryExists(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginExplorerRename' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfRenameEntry"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'renameExplorerEntry' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'deleteSelection' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfDeleteObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'deleteExplorerObjects' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'beginNewFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfCreateFolder"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'createExplorerFolder' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'showProperties' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjectProperties"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'assetCorsControl' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPublicAddresses"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'bucketPublicAddresses' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function enableBucketPublicAccess(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'setExplorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'function urlPopover(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'goLocation' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfObjects"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listObjectsPage' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'loadExplorerInventory' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfBuckets"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'listBuckets' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'async function loginRequest(' }, { code: 'SOURCE_CHANGED', path: 'extension/cloudflare-auth.js', symbol: 'async function connectCloudflare(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'ensurePrepared' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfPrepareBucket"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'preparedProfile' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'async function assertExplorerTransferSettings(' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'openArchive' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'message?.type === "cfArchiveEntries"' }, { code: 'SOURCE_CHANGED', path: 'extension/background.js', symbol: 'callBucketWorker' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-objects"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="workspace-preview"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-menu"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-properties"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-operation"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.html', symbol: 'id="explorer-status"' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspaceTarget' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePrefix' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerSelected' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerClipboard' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerNextCursor' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'workspacePreviewRequestId' }, { code: 'MISSING_ANCHOR', path: 'extension/options.js', symbol: 'presetLocationCache' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerDestinationMenus' }, { code: 'SOURCE_CHANGED', path: 'extension/options.js', symbol: 'explorerOperation' } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/get-url.test.mjs:89:1
+✖ switching files while enabling cannot reopen the old file or overwrite current choices (45.853235ms)
+  TypeError: Cannot read properties of null (reading 'disabled')
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/get-url.test.mjs:90:492)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/popup-destinations.test.mjs:14:1
+✖ green zero-delivery state reads READY! and Dashboard opens the existing options page (202.628553ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:15:264)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/popup-destinations.test.mjs:36:1
+✖ background accepts a discovered unsaved bucket only after read-only existence validation (3.720777ms)
+  ReferenceError: verifyCloudflareReceipt is not defined
+      at evalmachine.<anonymous>:23:45
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-destinations.test.mjs:39:2)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at tests/popup-folders.test.mjs:5:1
+✖ background ingest honors explicit root/deep prefixes and preserves the legacy category route (6.33721ms)
+  ReferenceError: verifyCloudflareReceipt is not defined
+      at evalmachine.<anonymous>:23:45
+      at async TestContext.<anonymous> (file:///workspace/REDOWN/tests/popup-folders.test.mjs:8:96)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

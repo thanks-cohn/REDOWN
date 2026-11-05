@@ -1,0 +1,776 @@
+
+> remote-asset-ingest@0.1.0 check
+> node scripts/check-syntax.mjs
+
+{
+  "state": "passed",
+  "results": [
+    {
+      "file": "manifest classic worker import closure",
+      "state": "passed",
+      "files": [
+        "background.js",
+        "boot.js",
+        "brand-icon.js",
+        "chute-stage.js",
+        "chute-worker.js",
+        "click-feedback.js",
+        "cloudflare-api.js",
+        "cloudflare-auth.js",
+        "daily-save-badge.js",
+        "destination-config.js",
+        "dropbox-api.js",
+        "dropbox-auth.js",
+        "dropbox-menu.js",
+        "dropbox-provider.js",
+        "entry-bootstrap.js",
+        "explorer-diagnostics-bridge.js",
+        "explorer-diagnostics.js",
+        "google-drive-menu.js",
+        "google-drive-provider.js",
+        "google-drive-stream.js",
+        "history-archive.js",
+        "nested-locations.js",
+        "onedrive-api.js",
+        "onedrive-auth.js",
+        "onedrive-menu.js",
+        "onedrive-oauth-diagnostic.js",
+        "onedrive-provider.js",
+        "rfis-index.js",
+        "right-click-current.js",
+        "right-click-v3.js",
+        "runtime-diagnostics.js",
+        "search-session.js",
+        "service-worker.js",
+        "toolbar-appearance.js",
+        "transfer-counter.js"
+      ]
+    },
+    {
+      "file": "extension/cloudflare-api.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/cloudflare-auth.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/service-worker.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/background.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/nested-locations.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/menu-reorder.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/settings-mascot.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/popup.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-expansion-benchmark.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/storage-signals-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/explorer-operations-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/public-addresses.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/storage-signals.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/options.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "worker/src/index.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/runtime-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/search-session.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-destination-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/runtime/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/installed-chrome.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-bridge.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-diagnostics-ui.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/explorer/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/explorer-status.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/cli.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-check.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-policy.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/reliability-reporter.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/adapters.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/registry.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/agent-gateway-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/check-syntax.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "agent/diagnostics/issues.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/transfer-counter.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/odometer.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/file-api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/r2-adapter.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/explorer.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/configuration.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/dropped-files.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/beta-explorer-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/guided-interaction.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/tour.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/lab.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "tools/lab/bridge.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/lab-local-smoke.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-history.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/destination-config.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-celestial.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/shelf-celestial-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/standard-breadcrumbs.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/url-list.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/remote-dialog.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-v3.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-engine-settings.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/right-click-v3-ui.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-legacy.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-navigation.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/history-target.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/entry-bootstrap.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/popup-recovery.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/toolbar-appearance.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-current.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-backup.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-backup-settings.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/right-click-chooser.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/window-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/beta/test-it.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/boot.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/startup-package.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/boot-fixtures.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/boot-reproduction.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/google-drive-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/google-drive-provider.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/google-drive-api.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/google-drive-transfer.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-google-drive.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/google-drive-visual.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/google-drive-preservation.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/dropbox-auth.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/dropbox-api.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/dropbox-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/dropbox-provider.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-dropbox.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/dropbox-visual.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/dropbox-preservation.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/onedrive-menu.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/onedrive-oauth-diagnostic.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/onedrive-api.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/onedrive-auth.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/onedrive-provider.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-onedrive.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-archive.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-image-source.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-image-placeholder.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/history-quick-glance.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/google-drive-stream.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/history-quick-glance-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/click-feedback.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/click-origin.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-click-feedback.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-save-feedback.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/click-feedback-preview.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-explorer.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/shelf-explorer-model.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/chute-drag.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/chute-stage.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/chute-worker.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/chute-content.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/chute-image-targets.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/shelf-mini-explorer-browser.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/shelf-p0-browser-cases.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "scripts/drag-size-browser-cases.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/local-demo.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/preview-navigation.mjs",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "file": "extension/settings-choices.js",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null
+    }
+  ]
+}

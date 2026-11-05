@@ -46,7 +46,7 @@ try{
  await page.screenshot({path:out+'/connected-files.png'});
  await page.evaluate(()=>{fixture.connected=false;fixture.emit('cloudflareAuth',null);});await page.waitForFunction(()=>document.querySelector('.mini-row')?.getAttribute('aria-label')==='REDOWN.svg');report.gestures.logoutRestoresDemo=true;
  for(const width of [320,390,540,700,900])for(const theme of ['porcelain','midnight','ocean','neon']){
-  await page.setViewportSize({width,height:900});await page.evaluate(theme=>document.documentElement.dataset.shelfTheme=theme,theme);
+  await page.setViewportSize({width,height:900});await page.evaluate(theme=>fixture.emit('shelfColorScheme',theme),theme);
   for(const view of ['explorer','history','settings']){
    await page.evaluate(view=>{location.hash='#'+view;},view);await page.waitForTimeout(100);
    if(view==='history')await page.waitForSelector('.history-transfer');
@@ -56,7 +56,7 @@ try{
   }
  }
  for(const width of [320,390,540,900])for(const theme of ['porcelain','midnight','ocean','neon']){
-  await page.setViewportSize({width,height:900});await page.evaluate(theme=>{document.documentElement.dataset.shelfTheme=theme;location.hash='#explorer';},theme);await page.waitForSelector('.mini-row');
+  await page.setViewportSize({width,height:900});await page.evaluate(theme=>{fixture.emit('shelfColorScheme',theme);location.hash='#explorer';},theme);await page.waitForSelector('.mini-row');
   await page.locator('.mini-row').first().dblclick();await page.waitForSelector('.mini-preview img');await page.locator('[data-action=expand-preview]').click();await page.waitForTimeout(200);
   await page.screenshot({path:out+`/expanded-${width}-${theme}.png`});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
