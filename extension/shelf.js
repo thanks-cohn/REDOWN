@@ -17,12 +17,13 @@ const entranceReady=chrome.storage.local.get('shelfFilesEntranceV1').then(data=>
   filesEntrance=data.shelfFilesEntranceV1==='slide-up'?'slide-up':'normal';
   const control=$('files-entrance');if(control)control.value=filesEntrance;
 }).catch(()=>{});
-function settleEntrance(){for(const animation of entranceAnimations)animation.cancel();entranceAnimations=[];}
+let exitEpoch=0,exitTarget=null;
+function settleEntrance(){exitEpoch++;for(const animation of entranceAnimations)animation.cancel();entranceAnimations=[];if(exitTarget){const target=exitTarget;exitTarget=null;location.hash=target;route();}}
 // Only an explicit FILES click animates. Startup, History GO TO and hash routes
 // remain synchronous. Measure the real tabs before/after the existing layout.
 $('nav-explorer').addEventListener('click',async event=>{
   event.preventDefault();await entranceReady;
-  if(!$('explorer-view').hidden)return;
+  if(!$('explorer-view').hidden){if(exitTarget){const nav=document.querySelector('nav[aria-label="Shelf"]'),panel=$('explorer-view'),n=nav.getBoundingClientRect().top,p=panel.getBoundingClientRect().top;exitTarget=null;settleEntrance();const timing={duration:240,easing:'ease-out'};entranceAnimations=[nav.animate([{transform:`translateY(${n-nav.getBoundingClientRect().top}px)`},{transform:'translateY(0)'}],timing),panel.animate([{transform:`translateY(${p-panel.getBoundingClientRect().top}px)`},{transform:'translateY(0)'}],timing)];}return;}
   settleEntrance();
   const nav=document.querySelector('nav[aria-label="Shelf"]'),before=nav.getBoundingClientRect();
   location.hash='#explorer';route();
@@ -35,9 +36,24 @@ $('nav-explorer').addEventListener('click',async event=>{
   // share the remaining translation. The real navigation is pushed, not cloned.
   entranceAnimations=[nav.animate([{transform:`translateY(${push}px)`,offset:0},{transform:`translateY(${push}px)`,offset:contact},{transform:'translateY(0)',offset:1}],timing),explorer.animate([{transform:`translateY(${distance}px)`},{transform:'translateY(0)'}],timing)];
 });
+
+for(const name of ['clouds','history','settings'])$('nav-'+name).addEventListener('click',event=>{
+  if($('explorer-view').hidden||filesEntrance!=='slide-up'||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const nav=document.querySelector('nav[aria-label="Shelf"]'),explorer=$('explorer-view');if(!nav.animate)return;
+  event.preventDefault();
+  const before=nav.getBoundingClientRect(),visual=explorer.getBoundingClientRect();
+  exitTarget=null;settleEntrance();const ticket=++exitEpoch,target='#'+name;exitTarget=target;
+  // Measure the destination layout synchronously, before the browser paints.
+  explorer.hidden=true;$(name+'-view').hidden=false;const after=nav.getBoundingClientRect();
+  $(name+'-view').hidden=true;explorer.hidden=false;
+  const distance=Math.max(0,innerHeight-visual.top),push=Math.max(0,after.top-before.top);
+  const timing={duration:240,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'};
+  entranceAnimations=[nav.animate([{transform:`translateY(${before.top-nav.getBoundingClientRect().top}px)`},{transform:`translateY(${push}px)`}],timing),explorer.animate([{transform:`translateY(${visual.top-explorer.getBoundingClientRect().top}px)`},{transform:`translateY(${distance}px)`}],timing)];
+  Promise.all(entranceAnimations.map(animation=>animation.finished)).then(()=>{if(ticket!==exitEpoch)return;exitTarget=null;settleEntrance();location.hash=target;route();}).catch(()=>{});
+});
 $('files-entrance')?.addEventListener('change',async event=>{
   const value=event.target.value==='slide-up'?'slide-up':'normal';
-  try{await chrome.storage.local.set({shelfFilesEntranceV1:value});filesEntrance=value;status('Files entrance saved.');}
+  try{await chrome.storage.local.set({shelfFilesEntranceV1:value});filesEntrance=value;if(value==='normal')settleEntrance();status('Files entrance saved.');}
   catch{event.target.value=filesEntrance;status('Could not save Files entrance.');}
 });
 async function refreshPrepared(){
@@ -77,7 +93,7 @@ function route() {
       await chrome.storage.local.remove('redownFailureDot');
   }).catch(()=>{});
 }
-window.addEventListener('hashchange',()=>{if(location.hash!=='#explorer')settleEntrance();route();}); route();
+window.addEventListener('hashchange',()=>{if(location.hash!=='#explorer'){exitTarget=null;settleEntrance();}route();}); route();
 window.addEventListener('resize',settleEntrance);
 // REMOTES is the default Shelf opening view regardless of the visual tab order.
 // Opt-in "last" mode restores a validated route only when no explicit hash/deep link
@@ -231,7 +247,8 @@ chrome.storage.onChanged.addListener((changes,area)=>{
     return;
   }
   if(area!=='local')return;
-  if(changes.shelfFilesEntranceV1){filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
+  if(changes.previewNavigationAxisV1&&$('preview-navigation-axis'))$('preview-navigation-axis').value=changes.previewNavigationAxisV1.newValue==='vertical'?'vertical':'horizontal';
+  if(changes.shelfFilesEntranceV1){if(changes.shelfFilesEntranceV1.newValue!=='slide-up')settleEntrance();filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
   if(changes.shelfDragLimitMBV1)void refreshDragLimit().catch(()=>{});
   if(changes.shelfKeepPreparedV1&&!$('settings-view').hidden)void refreshPrepared().catch(()=>{});
   if(changes.redownFailureDot){
@@ -265,4 +282,11 @@ chrome.runtime.onMessage?.addListener((message,sender,respond)=>{
     chrome.windows.getCurrent().then(win=>{if(win.id===message.windowId)respond({ready:true});}).catch(()=>{});
     return true;
   }
+});
+
+const previewAxis=$('preview-navigation-axis');
+void chrome.storage.local.get('previewNavigationAxisV1').then(data=>{if(previewAxis)previewAxis.value=data.previewNavigationAxisV1==='vertical'?'vertical':'horizontal';}).catch(()=>{});
+previewAxis?.addEventListener('change',async()=>{
+ try{await chrome.storage.local.set({previewNavigationAxisV1:previewAxis.value==='vertical'?'vertical':'horizontal'});status('Preview navigation keys saved.');}
+ catch{status('Could not save Preview navigation keys.');}
 });
