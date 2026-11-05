@@ -43,3 +43,7 @@
     }
   }
 })();
+
+// Optional Chute interoperability cannot prevent the existing Shelf/core boot.
+try { importScripts('chute-stage.js'); importScripts('chute-worker.js'); }
+catch { console.warn('REDOWN browser file handoff unavailable.'); }

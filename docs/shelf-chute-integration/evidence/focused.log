@@ -1,0 +1,21 @@
+✔ NAV-01/02: File Explorer is a first-class route and switching never opens a window (291.459785ms)
+✔ API-01/B: actual R2 adapter listing and authorised readStream feed real staged bytes (44.979334ms)
+✔ STATE-01: rapid account navigation discards late response even when transport ignores abort (21.282583ms)
+✔ RAIL: bounded rail reads cannot queue foreground navigation behind slow buckets (40.889396ms)
+✔ RAIL cache: expiry, explicit refresh and auth reset cannot reuse stale rail inflight data (0.803998ms)
+✔ PERF: 1/10/100/1000/10000 entries keep a bounded render window and account identities distinct (0.346755ms)
+✔ DND-05: cancelled preparation, size changes, huge/unknown file sizes never leave staging (21.258388ms)
+✔ DND expiry and replacement: one bounded private Blob, removed across store reopen (3.369365ms)
+✔ DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered chunks, restart and deletion (8.769624ms)
+✔ Mini UI: real File API account tree, selection is not download, virtual rows and navigation survive tab switch (201.118366ms)
+✔ DND identity: same-sized object replacement between read and stat rejects staging (0.918881ms)
+✔ DND negative: synthetic page drops and unrelated native drags are never intercepted (10.010727ms)
+✔ Site heuristics identify Lens/Search/Yandex Images without claiming Drive/Gemini support (102.599162ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1375.270593

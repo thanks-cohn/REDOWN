@@ -1,0 +1,1506 @@
+{
+  "state": "failed",
+  "startedAt": "2026-11-05T03:35:20.277Z",
+  "finishedAt": "2026-11-05T03:36:55.514Z",
+  "scope": "local repository code and simulated providers; no installed Chrome or live Cloudflare verification",
+  "stages": [
+    {
+      "id": "syntax",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"state\": \"passed\",\n  \"results\": [\n    {\n      \"file\": \"manifest classic worker import closure\",\n      \"state\": \"passed\",\n      \"files\": [\n        \"background.js\",\n        \"boot.js\",\n        \"brand-icon.js\",\n        \"chute-stage.js\",\n        \"chute-worker.js\",\n        \"click-feedback.js\",\n        \"cloudflare-api.js\",\n        \"cloudflare-auth.js\",\n        \"daily-save-badge.js\",\n        \"destination-config.js\",\n        \"dropbox-api.js\",\n        \"dropbox-auth.js\",\n        \"dropbox-menu.js\",\n        \"dropbox-provider.js\",\n        \"entry-bootstrap.js\",\n        \"explorer-diagnostics-bridge.js\",\n        \"explorer-diagnostics.js\",\n        \"google-drive-menu.js\",\n        \"google-drive-provider.js\",\n        \"google-drive-stream.js\",\n        \"history-archive.js\",\n        \"nested-locations.js\",\n        \"onedrive-api.js\",\n        \"onedrive-auth.js\",\n        \"onedrive-menu.js\",\n        \"onedrive-oauth-diagnostic.js\",\n        \"onedrive-provider.js\",\n        \"rfis-index.js\",\n        \"right-click-current.js\",\n        \"right-click-v3.js\",\n        \"runtime-diagnostics.js\",\n        \"search-session.js\",\n        \"service-worker.js\",\n        \"toolbar-appearance.js\",\n        \"transfer-counter.js\"\n      ]\n    },\n    {\n      \"file\": \"extension/cloudflare-api.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/cloudflare-auth.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/service-worker.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/background.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/nested-locations.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/menu-reorder.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/settings-mascot.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/popup.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/storage-expansion-benchmark.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/storage-signals-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/explorer-operations-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/public-addresses.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/storage-signals.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/options.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"worker/src/index.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/runtime-diagnostics.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/search-session.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-destination-menu.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/runtime/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/runtime/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/installed-chrome.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics-bridge.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-diagnostics-ui.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/explorer/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/explorer/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/explorer-status.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/cli.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-check.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-policy.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/reliability-reporter.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/adapters.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/registry.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/agent-gateway-fixtures.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/check-syntax.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"agent/diagnostics/issues.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/transfer-counter.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/odometer.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/file-api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/r2-adapter.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/explorer.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/configuration.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/dropped-files.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/beta-explorer-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/guided-interaction.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/tour.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/lab.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"tools/lab/bridge.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/lab-local-smoke.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-history.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/destination-config.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-celestial.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/shelf-celestial-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/standard-breadcrumbs.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/url-list.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/remote-dialog.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-v3.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-engine-settings.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/right-click-v3-ui.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-legacy.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-navigation.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/history-target.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/entry-bootstrap.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/popup-recovery.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/toolbar-appearance.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-current.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-backup.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-backup-settings.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/right-click-chooser.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/window-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/beta/test-it.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/boot.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/startup-package.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/boot-fixtures.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/boot-reproduction.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/google-drive-menu.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/google-drive-provider.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/google-drive-api.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/google-drive-transfer.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-google-drive.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/google-drive-visual.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/google-drive-preservation.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/dropbox-auth.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/dropbox-api.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/dropbox-menu.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/dropbox-provider.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-dropbox.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/dropbox-visual.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/dropbox-preservation.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/onedrive-menu.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/onedrive-oauth-diagnostic.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/onedrive-api.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/onedrive-auth.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/onedrive-provider.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-onedrive.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-archive.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-image-source.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-image-placeholder.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/history-quick-glance.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/google-drive-stream.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/history-quick-glance-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/click-feedback.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/click-origin.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-click-feedback.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-save-feedback.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"scripts/click-feedback-preview.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-explorer.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/shelf-explorer-model.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/chute-drag.mjs\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/chute-stage.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/chute-worker.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/chute-content.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    },\n    {\n      \"file\": \"extension/chute-image-targets.js\",\n      \"state\": \"passed\",\n      \"exitCode\": 0,\n      \"error\": null\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "architecture",
+      "state": "failed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"explorerDiagnosticVersion\": \"1.0.0\",\n  \"state\": \"partial\",\n  \"data\": {\n    \"findings\": [\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function showExplorerMenu(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"goLocation\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"browseWorkspace\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"const goPage=async\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"runExplorerSearch\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type===\\\"cfSearchStart\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"browseWorkspace\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"selectExplorerItem\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"showWorkspacePreview\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"setWorkspacePreviewLightbox\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerDownload\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerUploadFiles\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"pasteExplorer\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfTransferObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"transferExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function explorerDirectoryExists(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"pasteExplorer\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfTransferObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"transferExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function explorerDirectoryExists(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"beginExplorerRename\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfRenameEntry\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"renameExplorerEntry\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"deleteSelection\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfDeleteObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"deleteExplorerObjects\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"beginNewFolder\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfCreateFolder\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"createExplorerFolder\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"showProperties\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjectProperties\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"assetCorsControl\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfPublicAddresses\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"bucketPublicAddresses\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function urlPopover(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function enableBucketPublicAccess(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"setExplorerClipboard\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"function urlPopover(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"goLocation\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfObjects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listObjectsPage\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"loadExplorerInventory\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfBuckets\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"listBuckets\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"async function loginRequest(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/cloudflare-auth.js\",\n        \"symbol\": \"async function connectCloudflare(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"ensurePrepared\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfPrepareBucket\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"preparedProfile\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"async function assertExplorerTransferSettings(\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"openArchive\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"message?.type === \\\"cfArchiveEntries\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/background.js\",\n        \"symbol\": \"callBucketWorker\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"workspace-objects\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"workspace-preview\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-menu\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-properties\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-operation\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.html\",\n        \"symbol\": \"id=\\\"explorer-status\\\"\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspaceTarget\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspacePrefix\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerSelected\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerClipboard\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerNextCursor\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"workspacePreviewRequestId\"\n      },\n      {\n        \"code\": \"MISSING_ANCHOR\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"presetLocationCache\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerDestinationMenus\"\n      },\n      {\n        \"code\": \"SOURCE_CHANGED\",\n        \"path\": \"extension/options.js\",\n        \"symbol\": \"explorerOperation\"\n      }\n    ],\n    \"authority\": \"source navigation, not runtime proof\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "api-registry",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"diagnosticApiVersion\": \"1.2.0\",\n  \"state\": \"available\",\n  \"scope\": \"offline/read-only; repository knowledge and imported observations\",\n  \"data\": {\n    \"findings\": [],\n    \"qualifiedOverlaps\": [\n      {\n        \"name\": \"describe\",\n        \"operations\": [\n          \"diagnostics.describe\",\n          \"project.describe\",\n          \"debug.describe\",\n          \"semantic.describe\",\n          \"runtime.describe\"\n        ]\n      },\n      {\n        \"name\": \"listOperations\",\n        \"operations\": [\n          \"diagnostics.listOperations\",\n          \"project.listOperations\"\n        ]\n      },\n      {\n        \"name\": \"projectOverview\",\n        \"operations\": [\n          \"project.projectOverview\",\n          \"semantic.projectOverview\"\n        ]\n      },\n      {\n        \"name\": \"explainOperation\",\n        \"operations\": [\n          \"project.explainOperation\",\n          \"explorer.explainOperation\"\n        ]\n      }\n    ],\n    \"operationCount\": 55,\n    \"namespaceCount\": 5,\n    \"scope\": \"Registry coverage/version/ownership against native discovery; not runtime or semantic completeness\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "issue-inventory",
+      "state": "passed",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"diagnosticApiVersion\": \"1.2.0\",\n  \"state\": \"available\",\n  \"scope\": \"offline/read-only; repository knowledge and imported observations\",\n  \"data\": {\n    \"valid\": true,\n    \"findings\": [\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"REPORT-9d785a223e76\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"REPORT-06ffddcefe46\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"CODE-WINDOWS-SYNTAX\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"CODE-UPLOAD-CONCURRENT-CREATE\"\n      },\n      {\n        \"code\": \"STALE_ASSESSMENT\",\n        \"id\": \"BUG-019\"\n      }\n    ],\n    \"coverage\": {\n      \"markdownSections\": 51,\n      \"releaseRequirements\": 21,\n      \"scope\": \"All top-level bugs README sections, recorded release gates, baseline test debt, historical DBG records and the Explorer404 case; not live issue detection\"\n    },\n    \"count\": 85,\n    \"authority\": \"Read-only source projection. Source-implemented is not browser/provider-verified. Original reports and records remain unchanged.\"\n  }\n}\n",
+      "stderr": ""
+    }
+  ],
+  "regression": {
+    "state": "failed",
+    "newFailures": [
+      {
+        "type": "fail",
+        "file": "tests/add-menu-location.test.mjs",
+        "name": "one shared add control targets Simple or Nested and asks which destination when needed",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "M0 inventory covers every literal message branch without inventing handlers",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Beta launcher is separate; original Explorer and context-menu pipeline stay in place",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "same-folder copy keeps both and never destroys the source",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "missing Worker setup blocks a GUI mutation before any write and Refresh never provisions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "side minimize, close, reopen, expand, resize keyboard, selection and saved settings work",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Upload Folder retains themed primary fill despite generic transparent action-button styling",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Activate Buckets styling targets its current actions slot rather than obsolete navigation toolbar",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "regular Explorer hides stale limitations and keeps new bucket setup optional",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "activation effect only glows success after verified readiness; reduced-motion has a static alternative",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/beta-explorer.test.mjs",
+        "name": "Side Preview Lightbox is labeled, independently loaded, and returns to the exact side image",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/brand-and-paginated-history.test.mjs",
+        "name": "History displays only one page at once and exposes older month, numbered-week, day disclosures",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "click creates a visible window before network navigation; repeated clicks focus it",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "successful callback exchanges PKCE and verifies access before saving token",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "callback resumes after service worker restart from session state",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Shelf LOGIN! opens exactly one Explorer Home tab after successful interactive OAuth",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Cloudflare sign-in started outside Shelf never opens an automatic Explorer tab",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Shelf cancelled or failed login never opens Explorer",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Shelf login remains connected when Chrome cannot open Explorer tab",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "unrelated tab, subframe, lookalike host, and wrong callback path are ignored",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "state mismatch fails without token exchange and allows a fresh retry",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "denied consent and missing authorization code fail cleanly",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "closed popup releases attempt and stale window is replaced on next click",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "expired attempt clears secrets, closes popup, and permits retry",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "failed API verification never stores an access token",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "duplicate navigation events exchange a code only once",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "verification network stall aborts and releases the attempt",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "popup creation errors are returned instead of leaving an in-flight lock",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "settings and worker observing the same callback exchange the code once across contexts",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "Worker deployments cannot overlap and a failed deployment releases the lock",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "runtime adapter gates actual background messages by settings sender and Debug Mode without network",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-login.test.mjs",
+        "name": "destination folder pages preserve parent prefix, immediate children and continuation",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "verified reconnect refreshes both editors and Explorer, coalescing concurrent refresh requests",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/cloudflare-reconnect.test.mjs",
+        "name": "slow bucket loading does not block locations, Explorer, or connection refresh",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "queries never modify the canonical corpus or cited historical evidence",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "ENOENT",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "login via native action resumes exactly one pending click; Shelf login alone creates no job",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "shared composer preserves every V3/Google plan and route, Dropbox leaf ordering and invalid fragment rejection",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "actual single native writer reconciles transitions/restart/lost IDs and retains management last",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "actual native dispatcher isolates all Dropbox IDs before V3 resolver or navigation",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "protected bytes unchanged except explicitly authorized shared composer hook",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "stale logged-out native leaf records a blocked attempt, never a successful receipt",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/dropbox.test.mjs",
+        "name": "status refresh invalidates a stale connected menu/card projection with no auth",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-account-and-history-navigation.test.mjs",
+        "name": "History opens year, recent week, month, numbered week, then day; transfers remain hidden until day opens",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-diagnostic-fixtures.test.mjs",
+        "name": "current architecture references resolve and imported CLI operates outside checkout without executing arbitrary input",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "real history is sorted by timestamps with year/month/day hierarchy and faithful outcomes",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "empty, read failure and retry states are honest; missing metadata is not invented or executed",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "large retained histories render in bounded increments and unrelated storage changes do no history work",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-neon-history.test.mjs",
+        "name": "missing or failed sidePanel falls back to one reusable Shelf tab and Destinations opens original manager",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/explorer-parity-audit.test.mjs",
+        "name": "audit: local upload gate routes through 300,000,000 inclusive; larger metadata fails before HTTP",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/get-url.test.mjs",
+        "name": "switching files while enabling cannot reopen the old file or overwrite current choices",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/google-drive.test.mjs",
+        "name": "actual Google click early return never resolves Cloudflare or invokes R2/dashboard even for unknown IDs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/google-drive.test.mjs",
+        "name": "actual shared native writer mode/provider races, restart, stale cache, partial API failure and recovery preserve root/manage and targets",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "rejects"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/google-drive.test.mjs",
+        "name": "provider receipt gate rejects untrusted pages and malformed success; history retains provider and verified file identity",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/google-drive.test.mjs",
+        "name": "repeated saves reuse the owned tab with a fresh job; active transfer is never replaced",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/history-go-home-polish.test.mjs",
+        "name": "Go Home reuses an existing nonsplit Explorer and clears stale GO TO deep links",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/history-go-home-polish.test.mjs",
+        "name": "Go Home does not hijack a split Explorer; opens normal home tab instead",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/issue-inventory.test.mjs",
+        "name": "explicit labels are recorded as partly addressed while the omitted-item report stays open",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/modern-destinations.test.mjs",
+        "name": "tests/modern-destinations.test.mjs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/nested-locations.test.mjs",
+        "name": "tests/nested-locations.test.mjs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "Error",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/onedrive-connected.test.mjs",
+        "name": "right-click saves never invoke Chrome permission APIs on any source hostname",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/onedrive.test.mjs",
+        "name": "unmodified protected modules retain checkpoint hashes; authorized Shelf changes are explicit",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/onedrive.test.mjs",
+        "name": "OneDrive menu shows root save only with a verified connected-state identity",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "debug-only sections start hidden and toggle exists only inside header disclosure",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "successful provisioning refreshes destination editors and inventory before reporting ready",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "normal onboarding progressively reveals tools only for a completed destination; debug bypasses gating",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "TypeError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "settings disclosure dismisses outside and Escape restores focus",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "SyntaxError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/options-debug-display.test.mjs",
+        "name": "persisted mode combinations restore independently, with Beta off when absent",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "SyntaxError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/popup-destinations.test.mjs",
+        "name": "green zero-delivery state reads READY! and Dashboard opens the existing options page",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/popup-destinations.test.mjs",
+        "name": "background accepts a discovered unsaved bucket only after read-only existence validation",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/popup-folders.test.mjs",
+        "name": "background ingest honors explicit root/deep prefixes and preserves the legacy category route",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-dispatch.test.mjs",
+        "name": "T01 T13 T14 T15 actual handler selects five Chrome source contexts and dispatches zero or one transfer",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "V3 save/register/resolve persists across restart and refuses Legacy selection",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "actual click listener waits for V3 read-back before recording completion and never falls back",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "Legacy pre-v1 tree migrates to exact V3 targets without mutating original profiles",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "presentation transitions serialize independently, retain Level depth 5 and persist across background restart",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "actual Level background inventory registration and click resolver retain exact authorized targets across restart",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "Level missing participation never broadens subfolder authority; opt-in transactions revoke stale actions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "Save Changes glows after autosaved edits, applies same revision without rewriting and confirms matching Chrome receipt",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "Save does not claim success before native callbacks, new edits retain pending state after older acknowledgement",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "failed registration retains persisted edits, Retry Apply repairs without rewriting destinations",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "partial Level inventory acknowledges application without claiming complete coverage or dumping diagnostics",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "bucket pop-out preserves failed choices and retries through existing serialized writer; Escape returns focus",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "durable snapshot restores fresh inventory without a provider rescan and stores no secrets",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "T01\u2013T04 T26 T27 provider leaf expands to siblings separator Home last and conserves exact default",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/right-click-v3.test.mjs",
+        "name": "T16 T21 actual background commits IndexedDB before Chrome acknowledgment and rehydrates CURRENT on restart",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf-destinations.test.mjs",
+        "name": "equal minimalist cloud tiles show only an icon and a short action",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "provider order, pending integrations, verified account state and actual history remain honest",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "History opens Today by default and preserves clickable source and hosting-page URLs",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "Explorer selector and its wrapper are gone; Test It remains and Popup has a Settings escape",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "match"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/shelf.test.mjs",
+        "name": "Shelf reassurance appears immediately beneath navigation; Cloud Storage is title-cased",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-cloudflare-branding.test.mjs",
+        "name": "native registered Simple menu contains only Cloudflare and actual click retains verified root receipt",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: removing an ancestor preserves reusable blank descendant rows and does not delete R2 folders",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: selecting existing folder does not populate creation draft",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: new directory is created under the exact parent only after Create",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "reconnect refresh retries Simple lookups without clearing drafts or saved selections",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: valid names including zero and f create at bucket root",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: invalid path segments never send creation requests",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: stalled creation releases button and explains uncertain outcome",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/simple-location-rows.test.mjs",
+        "name": "Simple: refreshing during creation cannot leave a permanent Creating status",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/storage-signals.test.mjs",
+        "name": "guided simulation waits for the correct controls, completes, and settles",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/storage-signals.test.mjs",
+        "name": "reset and exit reject old callbacks even if timer cancellation loses a race",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/storage-signals.test.mjs",
+        "name": "simulation executes without Chrome, fetch, messaging, profiles, or authentication",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/storage-signals.test.mjs",
+        "name": "simulation lives only in diagnostics and cannot start while Debug is hidden",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "=="
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/worker-bootstrap-first-install.test.mjs",
+        "name": "fresh worker with failing heavy core still registers the original toolbar opener",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/worker-bootstrap-first-install.test.mjs",
+        "name": "late core import failure does not register a second toolbar listener",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "ReferenceError",
+          "code": "UNKNOWN",
+          "operator": null
+        }
+      }
+    ],
+    "knownFailures": [
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "offline discovery advertises only implemented operations and distinct versions",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/agent-api.test.mjs",
+        "name": "catalog IDs, evidence labels, source hashes and references are internally consistent",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "real discovery, case, history, filters and validation are deterministic and honest",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "deepStrictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/debug-api.test.mjs",
+        "name": "original case and proposal Markdown bytes are retained from pinned upstream",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/semantic-api.test.mjs",
+        "name": "real vertical contract resolves intent, three upload invariants, handlers, current source and regression",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      },
+      {
+        "type": "fail",
+        "file": "tests/semantic-api.test.mjs",
+        "name": "full finite public coverage inventory resolves strata and all canonical case links",
+        "nesting": 0,
+        "skipped": false,
+        "todo": false,
+        "error": {
+          "name": "AssertionError",
+          "code": "ERR_ASSERTION",
+          "operator": "strictEqual"
+        }
+      }
+    ],
+    "unseenBaselineTests": [
+      {
+        "file": "tests/nested-locations.test.mjs",
+        "name": "Nested drag-handle keyboard move saves sibling order with descendants and paths intact"
+      }
+    ],
+    "passed": 965,
+    "skipped": 0,
+    "incomplete": true,
+    "baselineResolved": [],
+    "execution": {
+      "exitCode": 1,
+      "error": null,
+      "stderr": ""
+    }
+  },
+  "note": "Historical policy differs from captured session main baseline. See regression-comparison.json. Focused tests subsequently include the thirteenth domain-isolation test."
+}

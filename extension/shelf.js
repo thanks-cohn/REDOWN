@@ -13,12 +13,14 @@ function updateConnectionSummary(){
 }
 document.addEventListener('redown:provider-connection',updateConnectionSummary);
 function route() {
-  const view=['settings','history'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
-  for (const name of ['clouds','history','settings']) {
+  const view=['settings','history','explorer'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
+  for (const name of ['clouds','explorer','history','settings']) {
     $(name+'-view').hidden=name!==view;
     if(name===view)$('nav-'+name).setAttribute('aria-current','page');
     else $('nav-'+name).removeAttribute('aria-current');
   }
+  window.dispatchEvent(new Event('redown:shelf-route'));
+  if(location.hash)void chrome.storage.local.set?.({shelfLastViewV1:view})?.catch(()=>{});
   const reviewStart=Date.now();
   if(view==='history')void Promise.resolve(globalThis.RedownShelfHistory?.open()).then(async()=>{
     // Opening the actual History view acknowledges previously signaled failures.
@@ -30,6 +32,12 @@ function route() {
   }).catch(()=>{});
 }
 window.addEventListener('hashchange',route); route();
+// Restore only a known Shelf route, never a stored URL. Hash/open intent wins.
+if(!location.hash)void chrome.storage.local.get('shelfLastViewV1').then(data=>{
+  if(!location.hash&&['clouds','explorer','history','settings'].includes(data.shelfLastViewV1)){
+    location.hash='#'+data.shelfLastViewV1;route();
+  }
+}).catch(()=>{});
 // One-time History/Settings navigation, scoped to the requesting browser window.
 let consumedShelfIntent=null,shelfIntentEpoch=0;
 async function useShelfOpenIntent(intent){
