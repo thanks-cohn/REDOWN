@@ -8,17 +8,18 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
   };
   const digest=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))),n=>n.toString(16).padStart(2,'0')).join('');
   const sourceIdentity=(source,entry)=>JSON.stringify([source.accountId,source.bucketName,entry.key]);
+  async function discard(id){try{await stage.remove(id);}catch{/* Best-effort cleanup must not hide the owning storage failure. */}}
   async function release(retry=false){
     ++generation;controller?.abort();controller=null;clearTimeout(timer);const previous=handle;handle=null;
-    if(previous){if(!retry||!await stage.retire(previous.id)){
+    if(previous){if(!retry||!await stage.retire(previous.id).catch(()=>false)){
       // An already claimed, materialized handoff belongs to its receiver until
       // finish/expiry. A new gesture must not delete it across Shelf instances.
-      const inFlight=retry&&await stage.update(previous.id,v=>!!v.blob&&v.ready!==false&&!!v.claim&&!v.used);
-      if(!inFlight)await stage.remove(previous.id);
+      const inFlight=retry&&await stage.update(previous.id,v=>!!v.blob&&v.ready!==false&&!!v.claim&&!v.used).catch(()=>false);
+      if(!inFlight)await discard(previous.id);
     }}
   }
   async function cancel(){await release();emit('cancelled','');}
-  async function suspend(){const retain=handle&&await stage.update(handle.id,v=>!!v.blob&&v.ready!==false&&(v.keep===true||!!v.claim&&!v.used));if(retain)await release(true);else await cancel();}
+  async function suspend(){const retain=handle&&await stage.update(handle.id,v=>!!v.blob&&v.ready!==false&&(v.keep===true||!!v.claim&&!v.used)).catch(()=>null);if(retain)await release(true);else await cancel();}
   const valid=entry=>!entry.folder&&Number.isSafeInteger(Number(entry.size))&&Number(entry.size)>=0&&Number(entry.size)<=maxBytes;
   return {
     version:1,capabilities:()=>({browserRelay:true,native:false,multiple:false,maxBytes}),
@@ -33,10 +34,10 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
       try{
         const cacheKey=await digest(sourceIdentity(source,entry)),keep=await Promise.resolve().then(getKeep).catch(()=>false);
         signal.throwIfAborted();
-        if(!pending){layer='storage';pending=await stage.reserve(crypto.randomUUID(),{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes});}
+        if(!pending){layer='storage';code='STORAGE_FAILED';pending=await stage.reserve(crypto.randomUUID(),{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes});}
         handle={...pending,key:entry.key,source:JSON.stringify([source.accountId,source.bucketName,source.prefix||''])};
         const stat=async()=>{
-          layer='source';const result=await api.run('stat',{source,key:entry.key},{signal});
+          layer='source';code='READ_FAILED';const result=await api.run('stat',{source,key:entry.key},{signal});
           if(result.state!=='completed'||!result.data?.object){code=/^HTTP_\d{3}$/.test(result.code)?result.code:'READ_FAILED';throw Error('File no longer available. Refresh the folder or reconnect.');}
           return result.data.object;
         };
@@ -45,10 +46,10 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         const version=before&&(before.etag||before.version)?await digest(fingerprint(before)):'';
         const eligibleKeep=keep===true&&!!version;
         if(before&&Number(before.size)!==Number(entry.size)){code='SOURCE_CHANGED';throw Error('File changed. Refresh the folder.');}
-        layer='storage';const reused=await stage.reuse(pending.id,{cacheKey,version,keep:eligibleKeep,maxBytes});
+        layer='storage';code='STORAGE_FAILED';const reused=await stage.reuse(pending.id,{cacheKey,version,keep:eligibleKeep,maxBytes});
         if(reused===null){code='STORAGE_FAILED';throw Error('Prepared-file queue unavailable. Clear Prepared Files or retry.');}
         if(!reused){
-          layer='source';const result=await api.run('readStream',{source,key:entry.key},{signal,onChunk:chunk=>{
+          layer='source';code='READ_FAILED';const result=await api.run('readStream',{source,key:entry.key},{signal,onChunk:chunk=>{
             signal.throwIfAborted();total+=chunk.byteLength;
             if(total>maxBytes||total>Number(entry.size)){code='SIZE_CHANGED';throw Error('File exceeds the drag budget or changed. Refresh the folder.');}
             chunks.push(chunk);
@@ -65,7 +66,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         timer.unref?.();emit('staged',reused?'Prepared bytes reused after checking current cloud access and version.':'File ready for this drop. Check attachment acceptance at the destination.','storage',reused?'REUSED':'NONE');
         return {...handle};
       }catch(error){
-        if(pending)await stage.remove(pending.id);
+        if(pending)await discard(pending.id);
         if(ticket===generation){handle=null;emit(signal.aborted?'cancelled':'failed',signal.aborted?'Drag cancelled or timed out. Drag again.':layer==='storage'?'Private staging unavailable or full. Clear Prepared Files, or use Download and the destination picker.':error.message,layer,signal.aborted?'CANCELLED':code);}
         throw error;
       }finally{chunks.length=0;if(ticket===generation)controller=null;}
@@ -80,13 +81,13 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         await clearing;if(ticket!==generation)return;
         const cacheKey=await digest(sourceIdentity(source,entry));
         const pending=await stage.reserve(id,{name:entry.displayName||entry.key.split('/').pop(),mime:entry.httpMetadata?.contentType||entry.mime||'application/octet-stream',size:Number(entry.size),cacheKey,maxBytes});
-        if(ticket!==generation){await stage.remove(id);return;}
+        if(ticket!==generation){await discard(id);return;}
         handle={...pending,key:entry.key,source:JSON.stringify([source.accountId,source.bucketName,source.prefix||''])};
         startLayer='broker';const armed=await send({type:'redownChuteV1.arm',id});
         if(ticket!==generation)return;
         if(!armed?.ok)throw Error('Browser handoff unavailable. Use Download and the destination file picker.');
         preparing=true;await this.prepare(source,entry,pending);
-      })().catch(async()=>{if(ticket===generation){await stage.remove(id);if(handle?.id===id)handle=null;if(!preparing)emit('failed','File handoff unavailable. Drag again, or use Download and the destination file picker.',startLayer,startLayer==='storage'?'STORAGE_FAILED':'ARM_FAILED');}});
+      })().catch(async()=>{if(ticket===generation){await discard(id);if(handle?.id===id)handle=null;if(!preparing)emit('failed','File handoff unavailable. Drag again, or use Download and the destination file picker.',startLayer,startLayer==='storage'?'STORAGE_FAILED':'ARM_FAILED');}});
       return true;
     },
     begin(event){

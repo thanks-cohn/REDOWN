@@ -109,7 +109,7 @@ export async function runP0({page,out,lowMemory}){
  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();assert.equal(await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getAnimations().length),0);
  await page.emulateMedia({reducedMotion:'no-preference'});
  // Rapid cancel and route-switch recovery.
- await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();await page.locator('#nav-settings').click();await page.waitForTimeout(280);assert.equal(await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getAnimations().length),0);
+ await page.locator('#nav-history').click();await page.locator('#nav-explorer').click();await page.locator('#nav-settings').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>location.hash==='#settings'&&!document.getElementById('settings-view').hidden);await page.waitForTimeout(280);assert.equal(await page.locator('nav[aria-label=Shelf]').evaluate(n=>n.getAnimations().length),0);
  await page.locator('#keep-prepared-files').check();await page.waitForTimeout(30);assert.equal(await page.evaluate(()=>fixture.local.shelfKeepPreparedV1),true);await page.locator('#clear-prepared-files').click();await page.waitForFunction(()=>document.querySelector('#prepared-files-usage').textContent.startsWith('0 prepared'));
  result.status='PASS';return result;
 }

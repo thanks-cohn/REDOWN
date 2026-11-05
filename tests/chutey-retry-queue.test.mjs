@@ -76,6 +76,8 @@ test('Low-memory and storage failures refuse safely and report the owning layer 
   let prevented=false;assert.equal(bridge.start({preventDefault(){prevented=true;}},source,{...entry,size:8*1048576+1}),false);assert.ok(prevented);assert.equal(reads,0);
   const original=stage.fulfill;stage.fulfill=async()=>{throw Error('QuotaExceededError https://private.invalid/source');};
   await assert.rejects(bridge.prepare(source,entry));assert.equal(states.at(-1).layer,'storage');assert.equal(states.at(-1).code,'STORAGE_FAILED');assert.ok(!states.at(-1).message.includes('private.invalid'));assert.equal((await stage.stats()).count,0);stage.fulfill=original;
+  const reserve=stage.reserve,remove=stage.remove;stage.reserve=async()=>{throw Error('IDB unavailable');};stage.remove=async()=>{throw Error('IDB unavailable');};states.length=0;
+  bridge.start({preventDefault(){assert.fail();},dataTransfer:{setData(){}}},source,entry);await waitFor(()=>states.at(-1)?.state==='failed');assert.equal(states.at(-1).code,'STORAGE_FAILED');await bridge.cancel();stage.reserve=reserve;stage.remove=remove;
  }finally{await bridge.dispose();await stage.close();await h.stage.close();}
 });
 
