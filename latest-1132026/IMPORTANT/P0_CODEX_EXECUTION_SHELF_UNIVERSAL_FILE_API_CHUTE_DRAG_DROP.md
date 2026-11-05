@@ -72,6 +72,15 @@ Desktop/expanded composition:
 
 This is a **concept**, not a requirement to literally copy the drawing. Borrow Chute's most understandable elements after inspecting source, then adapt to REDOWN's established themes/brand and Shelf sizes.
 
+### Primary Shelf navigation — first-class File Explorer entry (owner addition, November 4, 2026)
+
+- Add a clearly labeled **File Explorer** entry to the existing REDOWN Shelf primary navigation, **as a peer of Remotes, History, and Settings** (not buried inside Remotes or Settings, a submenu, onboarding, or Beta-only toggle).
+- Clicking **File Explorer** opens the new **Shelf Mini Explorer in the same Shelf content region**. Retain existing Remotes, History, Settings and their working routes/state; do not open a second browser tab, stand-alone popup, native window, or Python/debug application.
+- Use the existing navigation router/tab-selection lifecycle and active-tab styling, theme tokens, keyboard focus and accessibility semantics. Ensure it works in the normal narrow Shelf, expanded Shelf and the existing popout layout, without covering or colliding with those surfaces.
+- A user can always navigate **Remotes ↔ File Explorer ↔ History ↔ Settings**, with navigation preserved through expected reloads, Chrome service-worker restarts and return from previews. Preserve applicable File Explorer selection, path and scroll state when switching tabs without leaking state between providers/accounts.
+- If the Explorer cannot initialize or a cloud is disconnected, the **File Explorer** entry remains visible and leads to an actionable empty/reconnect/error state. It must never silently disappear or strand users away from Shelf navigation.
+- Acceptance: **NAV-01** tests that the entry is visible beside its peer destinations and correctly opens the mini Explorer; **NAV-02** tests switch-away/back, narrow/expanded/popout, restart, keyboard focus and no regression to Remotes/History/Settings.
+
 ### Cloud rail contract
 1. Show authenticated, authorized cloud accounts, with distinct provider + account identity. Missing connection can be discoverable via current login flow; **do not show phantom files**.
 2. S3-compatible accounts (including Cloudflare R2) have individually expandable account -> authorized bucket -> folder/prefix nodes. Do not group all S3 providers beneath Cloudflare; retain separate names, endpoints and account boundaries. Support multiple S3 accounts, buckets and folder trees as allowed by real API.
@@ -171,6 +180,7 @@ A basic folder click cannot leave the UI “busy”; one large video and many im
 **Phase C — Expandable cloud rail and compact Explorer**
 - Multi-S3 account/bucket/prefix tree and supported non-S3 provider nodes, caching, pagination, selection, breadcrumbs, responsive layouts, keyboard/accessibility.
 - Chute-inspired polished interactions but REDOWN theme fidelity and stable previews.
+- Expose the new Mini Explorer via first-class **File Explorer** entry beside Remotes, History and Settings within existing Shelf navigation, with resilient routing and tab state.
 
 **Phase D — End-to-end external drag**
 - ChatGPT, named Google Lens/Image Search surfaces, named Yandex image-search surface. Include cross-tab/window positioning and native helper. Test concrete targets independently.
@@ -186,6 +196,8 @@ A basic folder click cannot leave the UI “busy”; one large video and many im
 | ID | Scenario | Passing evidence |
 |---|---|---|
 | SHELF-01 | Open Shelf without extra window | Single expected Shelf, no Python/debug popups |
+| NAV-01 | File Explorer entry is a peer of Remotes, History and Settings | Visible, accessible tab opens Mini Explorer inside same Shelf |
+| NAV-02 | Switch tabs, resize Shelf/popout, restart service worker | State and focus recover; no routing regressions, overlay or missing entry |
 | API-01 | Same folder via full Explorer and Shelf | Matching canonical provider+connection+item identities |
 | RAIL-01 | Cloudflare R2 account -> bucket -> Images | Expandable authorized tree + correct paginated listing |
 | RAIL-02 | Two distinct S3 accounts and buckets | Separate identities, no incorrect Cloudflare nesting |
