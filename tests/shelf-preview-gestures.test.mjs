@@ -17,12 +17,14 @@ test('Preview gestures: select/Space/arrows read nothing; double-click and Enter
   const row=key=>[...d.querySelectorAll('.mini-row')].find(n=>n.dataset.key===key),key=(node,k)=>node.dispatchEvent(new w.KeyboardEvent('keydown',{key:k,bubbles:true,cancelable:true}));
   row('a.png').click();key(row('a.png'),' ');key(row('a.png'),'ArrowDown');await tick();assert.deepEqual(calls,[]);assert.equal(d.querySelector('.mini-preview').hidden,true);
   row('a.png').dispatchEvent(new w.MouseEvent('dblclick',{bubbles:true}));await tick();assert.deepEqual(calls,['a.png']);assert.equal(d.querySelector('.mini-window-preview').open,false);assert.equal(d.querySelectorAll('.mini-preview').length,1);
-  key(row('a.png'),'ArrowDown');await tick();assert.deepEqual(calls,['a.png','c.png']);assert.equal(pending[0].options.signal.aborted,true);assert.deepEqual([...instance.model.state.selected],['c.png']);
+  key(row('a.png'),'ArrowRight');await tick();assert.deepEqual(calls,['a.png','c.png']);assert.equal(pending[0].options.signal.aborted,true);assert.deepEqual([...instance.model.state.selected],['c.png']);
   pending[1].resolve({url:'data:image/png;base64,new',type:'image/png'});await tick();pending[0].resolve({url:'data:image/png;base64,old',type:'image/png'});await tick();assert.match(d.querySelector('.mini-preview img').src,/new$/);
   const panel=d.querySelector('.mini-preview'),media=panel.querySelector('img');panel.style.height='143px';panel.getBoundingClientRect=()=>({height:143,top:200});
   d.querySelector('[data-action=expand-preview]').click();assert.equal(host.classList.contains('preview-expanded'),true);assert.equal(d.querySelector('[data-action=expand-preview]').getAttribute('aria-label'),'Restore preview');
-  d.querySelector('[data-action=expand-preview]').click();assert.equal(panel.style.height,'143px');assert.equal(panel.querySelector('img'),media);assert.equal(calls.length,2);
-  d.querySelector('[data-action=close-preview]').click();key(row('c.png'),'ArrowDown');await tick();assert.equal(calls.length,2);
+  key(panel,'ArrowRight');await tick();assert.equal(calls.at(-1),'d.png');assert.equal(host.classList.contains('preview-expanded'),true);assert.deepEqual([...instance.model.state.selected],['d.png']);
+  key(panel,'ArrowRight');await tick();assert.equal(calls.length,3);
+  d.querySelector('[data-action=expand-preview]').click();assert.equal(panel.style.height,'143px');assert.equal(calls.length,3);
+  d.querySelector('[data-action=close-preview]').click();key(row('c.png'),'ArrowDown');await tick();assert.equal(calls.length,3);
   key(row('d.png'),'Enter');await tick();assert.equal(calls.at(-1),'d.png');
   await instance.setActive(false);assert.equal(pending.at(-1).options.signal.aborted,true);
  }finally{instance?.dispose();dom.window.close();Object.assign(globalThis,{chrome:old.chrome,addEventListener:old.add,removeEventListener:old.remove});}

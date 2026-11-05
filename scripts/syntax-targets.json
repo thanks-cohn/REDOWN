@@ -116,5 +116,8 @@
   "extension/chute-image-targets.js",
   "scripts/shelf-mini-explorer-browser.mjs",
   "scripts/shelf-p0-browser-cases.mjs",
-  "scripts/drag-size-browser-cases.mjs"
+  "scripts/drag-size-browser-cases.mjs",
+  "extension/local-demo.mjs",
+  "extension/preview-navigation.mjs",
+  "extension/settings-choices.js"
 ]

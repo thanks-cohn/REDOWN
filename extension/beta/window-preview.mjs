@@ -1,3 +1,4 @@
+import {previewDirection,watchPreviewAxis} from '../preview-navigation.mjs';
 // Modal surfaces own every request and URL they create. Side readers never lend resources.
 export function renderPreview(document,{type,url,text,title}){
   const tag=type.startsWith('text/')?'pre':type.startsWith('image/')?'img':type.startsWith('video/')?'video':type.startsWith('audio/')?'audio':'iframe';
@@ -10,6 +11,7 @@ export function renderPreview(document,{type,url,text,title}){
   return node;
 }
 export function createWindowPreview({document,dialog,request,previewType,getContext,getItems,pauseSide,onSelection=()=>{},onEvent=()=>{},onDownload=null,label="Window Preview",urls=URL}){
+  let navigationAxis='horizontal';watchPreviewAxis(value=>navigationAxis=value,document.defaultView?.chrome?.storage||globalThis.chrome?.storage);
   const viewer=document.createElement('div');viewer.className='window-viewer';
   viewer.innerHTML='<div class="preview-header"><h2></h2><div class="preview-controls"><button type="button" data-lightbox>LIGHTBOX</button><button type="button" data-close aria-label="Close Window Preview">✕</button></div></div><div class="window-content" aria-live="polite"></div><p class="window-info"></p><div class="preview-footer"><button data-previous>← Previous</button><button data-next>Next →</button></div>';
   dialog.append(viewer);dialog.removeAttribute('aria-labelledby');dialog.setAttribute('aria-label',label);
@@ -56,6 +58,6 @@ export function createWindowPreview({document,dialog,request,previewType,getCont
   dialog.addEventListener('cancel',event=>{event.preventDefault();exitTop();});
   dialog.addEventListener('close',()=>{if(!dialog.open)finish();});
   dialog.addEventListener('click',event=>{if(event.target===dialog||immersive&&event.target===content)exitTop();});
-  document.addEventListener('keydown',event=>{if(viewer.hidden||!dialog.open||[...document.querySelectorAll('dialog[open]')].at(-1)!==dialog)return;if(event.target.closest?.('.guide-card:not(.test-it-card)'))return;if(event.key!=='Escape'&&event.target.closest?.('.guide-card'))return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();exitTop();}else if(['ArrowLeft','ArrowRight'].includes(event.key)&&!event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.target.closest?.('input,textarea,select,video,audio,[contenteditable], [role=slider], [role=spinbutton]')){event.preventDefault();event.stopImmediatePropagation();adjacent(event.key==='ArrowRight'?1:-1,event.key);}else if(['ArrowUp','ArrowDown'].includes(event.key)&&content.querySelector('pre,iframe')){event.preventDefault();event.stopImmediatePropagation();const node=content.querySelector('pre')||content;node.scrollTop+=(event.key==='ArrowDown'?1:-1)*Math.max(170,node.clientHeight*.75);}else if(!event.target.closest?.('.guide-card'))event.stopImmediatePropagation();},true);
+  document.addEventListener('keydown',event=>{if(viewer.hidden||!dialog.open||[...document.querySelectorAll('dialog[open]')].at(-1)!==dialog)return;if(event.target.closest?.('.guide-card:not(.test-it-card)'))return;if(event.key!=='Escape'&&event.target.closest?.('.guide-card'))return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();exitTop();}else if(previewDirection(event,navigationAxis)!==0&&!event.target.closest?.('input,textarea,select,video,audio,[contenteditable], [role=slider], [role=spinbutton]')){const direction=previewDirection(event,navigationAxis);event.preventDefault();event.stopImmediatePropagation();adjacent(direction,event.key);}else if(['ArrowUp','ArrowDown'].includes(event.key)&&content.querySelector('pre,iframe')){event.preventDefault();event.stopImmediatePropagation();const node=content.querySelector('pre')||content;node.scrollTop+=(event.key==='ArrowDown'?1:-1)*Math.max(170,node.clientHeight*.75);}else if(!event.target.closest?.('.guide-card'))event.stopImmediatePropagation();},true);
   return {open,close,getState:()=>({open:dialog.open,key:item?.key||null,lightbox:immersive})};
 }

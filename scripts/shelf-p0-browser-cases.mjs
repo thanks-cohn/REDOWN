@@ -8,7 +8,7 @@ export async function runP0({page,out,lowMemory}){
  assert.equal(await dock.isVisible(),false);result.gestures.selectionOnly=true;
  await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-preview-body img');
  assert.equal(await page.locator('.mini-window-preview').evaluate(n=>n.open),false);
- await page.keyboard.press('ArrowDown');await page.waitForFunction(()=>document.querySelector('.mini-preview strong').textContent==='file-00001.png');result.gestures.imageBrowsing=true;
+ await page.keyboard.press('ArrowRight');await page.waitForFunction(()=>document.querySelector('.mini-preview strong').textContent==='file-00001.png');result.gestures.imageBrowsing=true;
  await page.locator('.mini-preview').evaluate(n=>n.style.height='157px');
  const before=await dock.evaluate(n=>n.getBoundingClientRect().height);
  await page.getByRole('button',{name:'Expand preview',exact:true}).click();await page.waitForTimeout(190);

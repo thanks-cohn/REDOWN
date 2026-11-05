@@ -1,6 +1,8 @@
+import {previewDirection,watchPreviewAxis} from './preview-navigation.mjs';
 /* Mini Explorer: Chute-derived two-pane layout/row gestures, REDOWN file authority.
  * Chute 3f9033b explorer-view.js/css; copyright (c) 2026 Chute contributors.
  * See CHUTE-LICENSE.txt. Adapted for cloud identities and the existing Shelf. */
+import {withLocalDemo,demoSource,verifiedOtherProvider} from './local-demo.mjs';
 import {createFileApi} from './beta/file-api.mjs';
 import {createR2Adapter,previewType} from './beta/r2-adapter.mjs';
 import {createWindowPreview,renderPreview} from './beta/window-preview.mjs';
@@ -9,12 +11,13 @@ import {resolveHistoryTarget} from './beta/history-target.mjs';
 import {createDragBridge} from './chute-drag.mjs';
 
 export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage=chrome.storage.local,document=host.ownerDocument}={}){
+  api=withLocalDemo(api);
   host.innerHTML=`<div class="mini-toolbar"><button data-action="back" aria-label="Back">‹</button><button data-action="forward" aria-label="Forward">›</button><button data-action="up" aria-label="Parent folder">↑</button><button data-action="roots" aria-label="Cloud roots">⌂</button><button data-action="refresh" aria-label="Refresh">↻</button><nav class="mini-crumbs" aria-label="Folder path"></nav></div>
   <div class="mini-filter"><input type="search" placeholder="Filter loaded files" aria-label="Filter loaded files"><select aria-label="Sort loaded files"><option value="name">Name</option><option value="type">Type</option><option value="date">Date</option><option value="size">Size</option></select><button data-action="grid" aria-label="Large Images" aria-pressed="true" title="Switch between Detailed and Large Images">Large Images</button><button data-action="reset-split" aria-label="Reset columns to 50/50" title="Reset columns to 50/50">½</button></div>
   <div class="mini-workspace"><aside class="mini-rail" aria-label="Your clouds"><div class="mini-tree" role="tree" aria-label="Cloud accounts and folders"></div><a href="#clouds">Connections ↗</a></aside><div class="mini-column-resize" role="separator" tabindex="0" aria-label="Resize folders and files columns; double-click to reset to 50/50" title="Drag or use arrow keys; Home/End collapse; double-click for 50/50" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div><div class="mini-content"><div class="mini-list" role="listbox" aria-label="Files" aria-multiselectable="true" tabindex="0"><div class="mini-spacer"></div><div class="mini-rows"></div><div class="mini-tail"></div><button data-action="more" hidden>Load more files</button></div></div></div>
   <div class="mini-actions" hidden><button data-action="download" disabled>Download</button><button data-action="rename" disabled>Rename</button><button data-action="delete" disabled>Delete</button><button data-action="copy" disabled>Copy</button><button data-action="move" disabled>Move</button><button data-action="paste" disabled>Paste here</button><button data-action="folder">New folder</button></div>
   <p class="mini-status" role="status" aria-live="polite"></p><p class="mini-drag-status" role="status" aria-live="polite"></p>
-  <section class="mini-preview" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="window-preview" aria-label="Open in Window" title="Open in Window"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 2h7v7M18 2 9 11M8 3H3v14h14v-5"/></svg></button><button data-action="expand-preview" aria-label="Expand preview" title="Expand preview"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12 2h6v6z M2 12v6h6z" fill="currentColor"/></svg></button><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
+  <section class="mini-preview" tabindex="0" hidden aria-label="File preview"><div class="mini-resize" role="separator" tabindex="0" aria-label="Resize preview" aria-orientation="horizontal" aria-valuemin="10" aria-valuemax="55" aria-valuenow="33"></div><header><strong></strong><button data-action="previous-preview" aria-label="Previous file">‹</button><button data-action="next-preview" aria-label="Next file">›</button><button data-action="window-preview" aria-label="Open in Window" title="Open in Window"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M11 2h7v7M18 2 9 11M8 3H3v14h14v-5"/></svg></button><button data-action="expand-preview" aria-label="Expand preview" title="Expand preview"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12 2h6v6z M2 12v6h6z" fill="currentColor"/></svg></button><button data-action="close-preview" aria-label="Close preview">×</button></header><div class="mini-preview-body"></div></section><dialog class="mini-window-preview"></dialog><dialog class="mini-prompt"><form method="dialog"><label></label><input required autocomplete="off"><p></p><button value="cancel" formnovalidate>Cancel</button><button value="ok">Confirm</button></form></dialog>`;
   const $=selector=>host.querySelector(selector),button=action=>$(`[data-action="${action}"]`),say=message=>{$('.mini-status').textContent=message;};
   const list=$('.mini-list'),rows=$('.mini-rows'),tree=$('.mini-tree');let visible=[],selectedEntry=null,sideAbort=null,sideUrl='',sideEpoch=0,discovery=0,rootAbort=null,initialized=false,activeView=false,focusIndex=0,saved={},saveTimer,treeRestores=0,clipboard=null; 
   const expansions=new Set(),nodes=new Map();let sortedKey='',sortedEntries=null,grid=true,folderWidth=50,anchor=null,dragging=false,rememberedScroll=0,rememberedRailScroll=0;
@@ -22,11 +25,12 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   const bridge=createDragBridge({api,onState:({message})=>{$('.mini-drag-status').textContent=message;}});
   const request=(...args)=>model.request(...args).then(data=>({data}));
   function safe(fn){return (...args)=>{void Promise.resolve().then(()=>fn(...args)).catch(error=>say(error.message||'Could not complete this action.'));};}
+  let navigationAxis='horizontal';const stopAxis=watchPreviewAxis(value=>navigationAxis=value);
   let expanded=false,restoreHeight=0,sideEntry=null,previewAnimation=null;
-  function closeSide(replacing=false){if(!replacing){if(expanded)toggleExpand();sideEntry=null;}sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';$('.mini-preview').hidden=true;if(!replacing&&$('.mini-preview').contains(document.activeElement))(folderWidth===100?$('.mini-column-resize'):list).focus({preventScroll:true});}
+  function closeSide(replacing=false){if(!replacing){if(expanded)toggleExpand();sideEntry=null;}sideEpoch++;sideAbort?.abort();sideAbort=null;for(const media of $('.mini-preview-body').querySelectorAll('video,audio')){media.pause();media.removeAttribute('src');media.load();}$('.mini-preview-body').replaceChildren();if(sideUrl)URL.revokeObjectURL(sideUrl);sideUrl='';if(!replacing)$('.mini-preview').hidden=true;if(!replacing&&$('.mini-preview').contains(document.activeElement))(folderWidth===100?$('.mini-column-resize'):list).focus({preventScroll:true});}
   const preview=createWindowPreview({document,dialog:$('.mini-window-preview'),request,previewType,getContext:()=>model.state.source,getItems:()=>model.state.entries,pauseSide:closeSide,onSelection:entry=>select(entry),onDownload:entry=>download(entry)});
   async function side(entry){
-    closeSide(true);if(!previewType(entry.key)||!activeView)return;sideEntry=entry;
+    closeSide(true);if(!previewType(entry.key)||!activeView)return;sideEntry=entry;paintPreviewNavigation();
     const ticket=sideEpoch,abort=new AbortController();sideAbort=abort;$('.mini-preview').hidden=false;$('.mini-preview strong').textContent=entry.displayName||entry.key;$('.mini-preview-body').textContent='Loading preview…';
     let pending='';
     try{
@@ -68,7 +72,10 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     control.querySelector('path').setAttribute('d',expanded?'M11 9h7V2z M9 11H2v7z':'M12 2h6v6z M2 12v6h6z');
     const after=panel.getBoundingClientRect();
     if(panel.animate&&!document.defaultView.matchMedia?.('(prefers-reduced-motion: reduce)').matches)previewAnimation=panel.animate([{height:before.height+'px',transform:`translateY(${before.top-after.top}px)`},{height:after.height+'px',transform:'translateY(0)'}],{duration:160,easing:'ease-out'});
-    body.scrollLeft=scroll[0];body.scrollTop=scroll[1];scheduleRows();
+    body.scrollLeft=scroll[0];body.scrollTop=scroll[1];
+    if(expanded)panel.focus({preventScroll:true});
+    else {list.scrollTop=Math.max(0,(offsets[focusIndex]||0)-list.clientHeight/2);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus({preventScroll:true});}
+    scheduleRows();
   }
   button('expand-preview').onclick=toggleExpand;
   button('window-preview').onclick=safe(()=>sideEntry&&preview.open(sideEntry));
@@ -96,22 +103,31 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     select(entry);return side(entry);
   }
   function browseImage(index,event){
-    if($('.mini-preview').hidden||!sideEntry||!previewType(sideEntry.key)?.startsWith('image/'))return false;
-    const delta=event.key==='ArrowDown'?1:-1;let next=index+delta;
-    while(next>=0&&next<visible.length&&(visible[next].folder||!previewType(visible[next].key)?.startsWith('image/')))next+=delta;
+    if($('.mini-preview').hidden||!sideEntry||!previewType(sideEntry.key))return false;
+    const delta=event.direction||previewDirection(event,navigationAxis);if(!delta)return false;let next=index+delta;
+    while(next>=0&&next<visible.length&&(visible[next].folder||!previewType(visible[next].key)))next+=delta;
     if(next<0||next>=visible.length)return true;
     focusIndex=next;select(visible[next]);void side(visible[next]);
     if(!expanded){list.scrollTop=Math.max(0,offsets[next]-list.clientHeight/2);renderRows();rows.querySelector(`[data-index="${next}"]`)?.focus({preventScroll:true});}
     return true;
   }
   $('.mini-preview').addEventListener('keydown',event=>{
-    if(['ArrowUp','ArrowDown'].includes(event.key)&&event.target!==resize&&!event.target.matches('input,textarea,select')){event.preventDefault();browseImage(visible.findIndex(e=>e.key===sideEntry?.key),event);}
+    if(previewDirection(event,navigationAxis)&&browseImage(visible.findIndex(e=>e.key===sideEntry?.key),event)){event.preventDefault();event.stopPropagation();}
   });
-  function paintActions(){const entries=model.state.entries.filter(e=>model.state.selected.has(e.key)),one=entries.length===1;
+  function paintPreviewNavigation(){
+    const index=visible.findIndex(e=>e.key===sideEntry?.key);
+    for(const [action,direction] of [['previous-preview',-1],['next-preview',1]]){
+      let next=index+direction;while(next>=0&&next<visible.length&&(visible[next].folder||!previewType(visible[next].key)))next+=direction;
+      button(action).disabled=index<0||!previewType(sideEntry?.key||'')||next<0||next>=visible.length;
+    }
+  }
+  for(const [action,direction] of [['previous-preview',-1],['next-preview',1]])button(action).onclick=()=>browseImage(visible.findIndex(e=>e.key===sideEntry?.key),{direction});
+  function paintActions(){paintPreviewNavigation();const entries=model.state.entries.filter(e=>model.state.selected.has(e.key)),one=entries.length===1;
     for(const action of ['download'])button(action).disabled=!one||entries[0].folder;
-    for(const action of ['rename','delete','copy','move'])button(action).disabled=!one;
-    button('paste').disabled=!clipboard||!model.state.source;
-    button('folder').disabled=!model.state.source||model.state.phase!=='ready';
+    const local=model.state.source?.accountId===demoSource.accountId;
+    for(const action of ['rename','delete','copy','move'])button(action).disabled=!one||local;
+    button('paste').disabled=local||!clipboard||!model.state.source;
+    button('folder').disabled=local||!model.state.source||model.state.phase!=='ready';
   }
   let offsets=[0],layoutEntries=null,layoutKey='',aspectRevision=0,geometryEntries=null,geometryRevision=-1,slopes=[0],bases=[0];const aspects=new Map();
   function renderRows(){
@@ -120,7 +136,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     const focused=rows.contains(document.activeElement)?document.activeElement.dataset.index:null;
     if(sortedEntries!==model.state.entries||sortedKey!==query+'|'+sort){
       sortedEntries=model.state.entries;sortedKey=query+'|'+sort;
-      visible=model.state.entries.filter(e=>(e.displayName||e.key).toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?String(b.uploaded||'').localeCompare(String(a.uploaded||'')):sort==='type'?String(a.key.split('.').pop()).localeCompare(String(b.key.split('.').pop())):0)||(a.displayName||a.key).localeCompare(b.displayName||b.key));
+      visible=model.state.entries.filter(e=>(e.displayName||e.key).toLocaleLowerCase().includes(query)).sort((a,b)=>Number(b.folder)-Number(a.folder)||(sort==='size'?Number(b.size||0)-Number(a.size||0):sort==='date'?String(b.uploaded||'').localeCompare(String(a.uploaded||'')):sort==='type'?String(a.key.split('.').pop()).localeCompare(String(b.key.split('.').pop())):0)||(model.state.source?.accountId===demoSource.accountId&&sort==='name'?a.key.localeCompare(b.key):(a.displayName||a.key).localeCompare(b.displayName||b.key)));
     }
     // A permanent logical canvas never shrinks while the visible slice changes.
     const width=Math.max(1,list.clientWidth-24),key=[grid,width,aspectRevision,sortedKey].join('|');
@@ -158,7 +174,8 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
       row.append(icon,name,size);row.onclick=event=>{focusIndex=index;select(entry,event);};
       row.ondblclick=safe(()=>openEntry(entry));
       row.onkeydown=event=>{
-        if(['ArrowDown','ArrowUp','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();if(['ArrowDown','ArrowUp'].includes(event.key)&&browseImage(index,event))return;focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:event.key.startsWith('Page')?offsetRange(offsets,offsets[index]+(event.key==='PageDown'?1:-1)*list.clientHeight,0).first:index+(event.key==='ArrowDown'?1:-1)));list.scrollTop=Math.max(0,offsets[focusIndex]-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
+        if(previewDirection(event,navigationAxis)&&browseImage(index,event)){event.preventDefault();return;}
+        if(['ArrowDown','ArrowUp','Home','End','PageDown','PageUp'].includes(event.key)){event.preventDefault();focusIndex=Math.max(0,Math.min(visible.length-1,event.key==='Home'?0:event.key==='End'?visible.length-1:event.key.startsWith('Page')?offsetRange(offsets,offsets[index]+(event.key==='PageDown'?1:-1)*list.clientHeight,0).first:index+(event.key==='ArrowDown'?1:-1)));list.scrollTop=Math.max(0,offsets[focusIndex]-list.clientHeight/2);select(visible[focusIndex],event);renderRows();rows.querySelector(`[data-index="${focusIndex}"]`)?.focus();}
         if(event.key===' '){event.preventDefault();select(entry,event);}
         if(event.key==='Enter'){event.preventDefault();safe(()=>openEntry(entry))();}
         if(event.key==='Delete'){event.preventDefault();button('delete').click();}
@@ -195,7 +212,7 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   const thumbObserver=globalThis.IntersectionObserver?new IntersectionObserver(entries=>{for(const item of entries)if(item.isIntersecting){thumbObserver.unobserve(item.target);thumbQueue.push(item.target);void pumpThumb();}},{root:list}):null;
   function clearThumbs(){aspects.clear();aspectRevision++;thumbEpoch++;thumbObserver?.disconnect();thumbQueue.length=0;for(const abort of thumbAbort)abort.abort();for(const url of thumbs.values())URL.revokeObjectURL(url);thumbs.clear();thumbFailed.clear();}
   function paint(){
-    const s=model.state;renderRows();paintActions();button('more').hidden=!s.cursor;button('more').disabled=s.phase==='loading';button('back').disabled=s.index<=0;button('forward').disabled=s.index>=s.history.length-1;button('up').disabled=!s.source?.prefix;
+    const s=model.state;host.classList.toggle('local-demo',s.source?.accountId===demoSource.accountId);renderRows();paintActions();button('more').hidden=!s.cursor;button('more').disabled=s.phase==='loading';button('back').disabled=s.index<=0;button('forward').disabled=s.index>=s.history.length-1;button('up').disabled=!s.source?.prefix;
     list.setAttribute('aria-busy',String(s.phase==='loading'));
     say(s.phase==='loading'?'Loading folder…':s.phase==='error'?s.error:s.source?`${s.entries.length.toLocaleString()} loaded · ${s.source.bucketName}`:'Choose a cloud account and bucket. Connect in Remotes if needed.');
     $('.mini-crumbs').replaceChildren();if(s.source){
@@ -242,6 +259,19 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     }
     if(data.cursor){const more=document.createElement('button');more.textContent='More folders…';more.onclick=safe(async()=>{more.disabled=true;try{await folders(source,container,data.cursor,true);more.remove();}finally{more.disabled=false;}});container.append(more);}
   }
+  async function showWelcome(ticket){
+    const provider=await verifiedOtherProvider(storage);if(ticket!==discovery)return;
+    if(!provider){await showDemo(ticket);return;}
+    tree.replaceChildren();const note=document.createElement('p');note.textContent=provider+' is connected. Manage this provider in Remotes; connect Cloudflare to browse R2 here.';
+    const manage=document.createElement('a');manage.href='#clouds';manage.className='mini-demo-connect';manage.textContent='Manage '+provider;tree.append(note,manage);say('Connected provider · Cloudflare setup available in Remotes.');
+  }
+  async function showDemo(ticket=discovery){
+    if(ticket!==discovery||rootAbort?.signal.aborted)return;
+    tree.replaceChildren();
+    treeNode('REDOWN Demo / Local Samples',identity(demoSource),parent=>folders(demoSource,parent),demoSource);
+    const connect=document.createElement('a');connect.href='#clouds';connect.textContent='Connect Cloudflare';connect.className='mini-demo-connect';tree.append(connect);
+    if(ticket===discovery)await navigate({...demoSource});
+  }
   async function discover(){
     const ticket=++discovery;rootAbort?.abort();rootAbort=new AbortController();model.reset();closeSide();preview.close();clearThumbs();await bridge.cancel();tree.textContent='Checking connections…';nodes.clear();treeRestores=0;
     try{
@@ -250,13 +280,13 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
         const result=await model.request('buckets',{accountId:account.id});if(ticket!==discovery)return;parent.replaceChildren();
         for(const bucket of result.buckets||[]){const source={accountId:account.id,accountName:account.name||'',bucketName:bucket.name,prefix:''};treeNode(bucket.name,identity(source),parent=>folders(source,parent),source,parent);}
       });
-      if(!accounts.length)tree.textContent='No authorized Cloudflare accounts. Connect in Remotes.';
+      if(!accounts.length){await showWelcome(ticket);return;}
       const restore=saved.source;
       if(restore&&accounts.some(a=>a.id===restore.accountId)){
         const {buckets=[]}=await model.request('buckets',{accountId:restore.accountId});if(ticket!==discovery)return;
         if(buckets.some(b=>b.name===restore.bucketName)){await navigate(restore);list.scrollTop=Number.isFinite(saved.scroll)?Math.max(0,saved.scroll):0;renderRows();}
       }
-    }catch{if(ticket===discovery){tree.textContent='Cloud connection unavailable. Use Refresh or reconnect in Remotes.';say('Could not verify cloud access. Your files were not changed.');}}
+    }catch{if(ticket===discovery){await showWelcome(ticket);say('Cloud access could not be verified. Local samples are offline; reconnect in Remotes.');}}
   }
   function one(){const entries=model.state.entries.filter(e=>model.state.selected.has(e.key));if(entries.length!==1)throw Error('Select one item.');return entries[0];}
   async function download(entry=one()){const result=await model.request('download',{source:{...model.state.source},entry});say(result.downloadState==='complete'?'Chrome confirmed download completion.':'Download started. Completion has not been observed.');}
@@ -310,9 +340,9 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
   host.addEventListener('contextmenu',event=>{const row=event.target.closest('.mini-row');if(row){event.preventDefault();showMenu(visible[Number(row.dataset.index)],{x:event.clientX,y:event.clientY},row);}else if(list.contains(event.target)){event.preventDefault();showMenu(null,{x:event.clientX,y:event.clientY},list);}});
   host.addEventListener('keydown',event=>{if(event.key==='Escape'){contextMenu.hidden=true;closeSide();renderRows();}if(!event.target.closest('input,select,textarea')&&(event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='a'){event.preventDefault();for(const entry of visible)model.state.selected.add(entry.key);renderRows();paintActions();}});
   host.addEventListener('dragover',event=>{if(event.dataTransfer?.types?.includes('application/x-redown-chute-v1'))event.dataTransfer.dropEffect='none';});
-  async function setActive(value){if(value===activeView&&initialized){if(initialization)await initialization;return;}activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;closeSide();preview.close();clearThumbs();await bridge.suspend();return;}
+  async function setActive(value){if(value===activeView&&initialized){if(initialization)await initialization;return;}activeView=value;if(!value){historyAbort?.abort();dragging=false;contextMenu.hidden=true;sideAbort?.abort();for(const media of $('.mini-preview-body').querySelectorAll('video,audio'))media.pause();preview.close();clearThumbs();await bridge.suspend();return;}
     setFolderWidth(50);
-    if(initialized){const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
+    if(initialized){if(sideEntry&&!sideUrl)void side(sideEntry);const scroll=rememberedScroll;renderRows();list.scrollTop=scroll;$('.mini-rail').scrollTop=rememberedRailScroll;renderRows();return;}initialized=true;
     initialization=(async()=>{
     try{const preferences=await storage.get(['shelfExplorerV1','shelfDragLimitMBV1']);saved=preferences.shelfExplorerV1||{};try{bridge.setLimitMB(preferences.shelfDragLimitMBV1??50);}catch{bridge.setLimitMB(50);}setFolderWidth(50);grid=saved.grid!==false;paintViewMode();for(const id of Array.isArray(saved.expanded)?saved.expanded.slice(0,64):[])if(typeof id==='string'&&id.length<2048)expansions.add(id);}catch{}
     await discover();
@@ -354,11 +384,11 @@ export function mountExplorer({host,api=createFileApi(createR2Adapter()),storage
     if(area==='session'&&changes.redownChuteClearedV1)void bridge.cancel();
     if(area==='local'&&changes.shelfKeepPreparedV1&&changes.shelfKeepPreparedV1.newValue!==true)void bridge.cancel();
     if(area==='session'&&changes.redownChuteReceipt){const receipt=changes.redownChuteReceipt.newValue;if(receipt?.id===bridge.getHandle()?.id){$('.mini-drag-status').textContent=receipt.state==='drop_dispatched'?'File dispatched. Check the destination: acceptance and upload completion are unverified.':'File handoff failed. Try dragging again or use Download and the destination file picker.';}}
-    if(area==='local'&&changes.cloudflareAuth){clipboard=null;saved={};expansions.clear();void discover();}
+    if(area==='local'&&(changes.cloudflareAuth||changes['dropbox:auth']||changes['onedrive:auth']||changes.googleDriveState&&JSON.stringify(changes.googleDriveState.oldValue)!==JSON.stringify(changes.googleDriveState.newValue))){clipboard=null;saved={};expansions.clear();void discover();}
   };
   chrome.storage.onChanged.addListener(changed);
   const view=()=>{void setActive(!host.hidden).catch(()=>say('File Explorer unavailable. Refresh or reconnect in Remotes.'));};
   globalThis.addEventListener('redown:shelf-route',view);globalThis.addEventListener('pagehide',()=>{closeSide();void bridge.dispose();});view();
-  return {model,bridge,setActive,discover,dispose(){historyAbort?.abort();removeHistoryReceiver?.();clearTimeout(saveTimer);document.removeEventListener('pointerdown',closeContext);document.removeEventListener('click',rememberBeforeRoute,true);chrome.storage.onChanged.removeListener?.(changed);globalThis.removeEventListener('redown:shelf-route',view);resizeObserver?.disconnect();clearThumbs();closeSide();preview.close();model.reset();void bridge.dispose();}};
+  return {model,bridge,setActive,discover,dispose(){stopAxis();historyAbort?.abort();removeHistoryReceiver?.();clearTimeout(saveTimer);document.removeEventListener('pointerdown',closeContext);document.removeEventListener('click',rememberBeforeRoute,true);chrome.storage.onChanged.removeListener?.(changed);globalThis.removeEventListener('redown:shelf-route',view);resizeObserver?.disconnect();clearThumbs();closeSide();preview.close();model.reset();void bridge.dispose();}};
 }
 if(globalThis.document?.getElementById('explorer-view'))mountExplorer({host:document.getElementById('explorer-view')});

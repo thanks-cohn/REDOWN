@@ -1,3 +1,4 @@
+import {previewDirection,watchPreviewAxis} from '../extension/preview-navigation.mjs';
 import {createWindowPreview,renderPreview} from '../extension/beta/window-preview.mjs';
 import {createBreadcrumbs,orderedBreadcrumbPath} from '../extension/beta/standard-breadcrumbs.mjs';
 import {installRemoteDialog} from '../extension/beta/remote-dialog.mjs';
@@ -88,10 +89,11 @@ async function uiFixture({archivePreference=null,deletePreferences=null,inlineFo
     // jsdom UI and Node fetch run in different realms; bridge cancellation only.
     if(options.signal&&!(options.signal instanceof AbortSignal)){const controller=new AbortController();if(options.signal.aborted)controller.abort();else options.signal.addEventListener('abort',()=>controller.abort(),{once:true});options={...options,signal:controller.signal};}
     return value(input,options);
-  }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,betaExplorerInlineFolderButtons:inlineFolderButtons,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){f.authChanged=fn;}}}};
+  }:value]));const storage={betaExplorerArchivePreview:archivePreference,betaExplorerDeletePreferences:deletePreferences,betaExplorerInlineFolderButtons:inlineFolderButtons,cloudflareAuth:{accessToken:'fixture',sessionId:'fixture'},betaExplorerLocation:saved,betaExplorerPreview:previewPreferences,betaExplorerTour:tourPreferences};f.storage=storage;w.chrome={storage:{local:{get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,storage[k]])),set:async values=>Object.assign(storage,values)},onChanged:{addListener(fn){(f.storageListeners??=[]).push(fn);f.authChanged=(...args)=>{for(const listener of f.storageListeners)listener(...args);};}}}};
   w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
   w.document.querySelector('#dialog-confirm').addEventListener('click',e=>{e.preventDefault();w.document.querySelector('#dialog').close('ok');});
   if(autoLoadImages)new w.MutationObserver(()=>{if(!w.document)return;for(const img of w.document.querySelectorAll('#preview-content img:not([data-fixture-loaded]),.window-content img:not([data-fixture-loaded])')){img.dataset.fixtureLoaded='true';Object.defineProperties(img,{complete:{value:true},naturalWidth:{value:100}});img.dispatchEvent(new w.Event('load'));}}).observe(w.document.body,{childList:true,subtree:true});
+  Object.assign(w,{previewDirection,watchPreviewAxis});
   w.eval(ui.replace(/^import .*;\n/gm,''));
   const settle=async fn=>{for(let i=0;i<600;i++){if(fn())return;await new Promise(r=>setTimeout(r,5));}assert.ok(fn(),'UI did not reach expected state');};
   await settle(()=>w.document.querySelector('#buckets button')||(!autoOpen&&['failed','unauthorized','disconnected','empty-buckets'].includes(w.document.querySelector('#dropzone').dataset.state)));if(autoOpen){await settle(()=>w.document.querySelector('[data-key="root.txt"]'));}else await settle(()=>!w.document.querySelector('#refresh').disabled);

@@ -1,3 +1,5 @@
+import {previewDirection,watchPreviewAxis} from '../preview-navigation.mjs';
+let navigationAxis='horizontal';watchPreviewAxis(value=>navigationAxis=value,chrome.storage);
 import {createWindowPreview,renderPreview} from './window-preview.mjs';
 import {resolveHistoryTarget} from './history-target.mjs';
 import {positionHistoryGoToLanding} from './history-preview-landing.mjs';
@@ -421,6 +423,11 @@ function navigateSelectedArrow(key,{modal=false}={}){
   if(!item)return false;
   const kind=explorerPreviewKind(item),direction=key==='ArrowRight'||key==='ArrowDown'?1:-1;
   const vertical=key==='ArrowUp'||key==='ArrowDown';
+  const active=previewItem?.key===item.key;
+  if(active&&kind==='media'){
+    if(!previewDirection({key},navigationAxis))return false;
+    moveGridItem(direction,{preview:true,skipUnsupported:true});return true;
+  }
   if(vertical){
     if(kind==='document'){
       if(previewItem?.key===item.key)scrollDocumentPreview(direction);
