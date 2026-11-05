@@ -12,6 +12,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'extension'
 FILES = (
+    'CHUTE-LICENSE.txt',
     'beta/dashboard.css', 'beta/standard-breadcrumbs.mjs', 'beta/url-list.mjs', 'beta/remote-dialog.mjs', 'beta/explorer.html', 'beta/explorer.css', 'beta/explorer.mjs', 'beta/file-api.mjs', 'beta/r2-adapter.mjs',
     'shelf.html', 'background.js', 'cloudflare-api.js', 'cloudflare-auth.js', 'runtime-diagnostics.js', 'explorer-diagnostics.js', 'explorer-diagnostics-bridge.js', 'explorer-diagnostics-ui.js', 'search-session.js', 'explorer-destination-menu.js',
     'hitomi-capture.js', 'nested-locations.js', 'assets/GOOGLE_DRIVE_ATTRIBUTION.md',

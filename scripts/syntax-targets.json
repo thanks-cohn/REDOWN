@@ -106,5 +106,13 @@
   "extension/click-origin.js",
   "extension/shelf-click-feedback.js",
   "extension/shelf-save-feedback.js",
-  "scripts/click-feedback-preview.mjs"
+  "scripts/click-feedback-preview.mjs",
+  "extension/shelf-explorer.mjs",
+  "extension/shelf-explorer-model.mjs",
+  "extension/chute-drag.mjs",
+  "extension/chute-stage.js",
+  "extension/chute-worker.js",
+  "extension/chute-content.js",
+  "extension/chute-image-targets.js",
+  "scripts/shelf-mini-explorer-browser.mjs"
 ]

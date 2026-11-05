@@ -16,7 +16,10 @@ test('manifest uses guarded classic entry, normal worker has exactly one toolbar
   assert.equal(h.context.RedownWorkerCoreStatus,'ready');
   assert.equal(h.chrome.action.onClicked.listeners.length,1);
   assert.equal(h.chrome.contextMenus.onClicked.listeners.length,1);
-  assert.equal(h.chrome.runtime.onMessage.listeners.length,1);
+  // The file handoff has an isolated listener; it never registers another
+  // toolbar opener or menu writer. Core messaging remains the first owner.
+  assert.equal(h.chrome.runtime.onMessage.listeners.length,2);
+  assert.equal(h.chrome.runtime.onMessage.listeners[1]({type:'unrelated'},{},()=>{throw Error('Must not consume core messages');}),false);
   assert.equal((await h.context.RedownBoot.status()).components.worker.state,'ready');
 });
 

@@ -1,0 +1,62 @@
+/* Chute 3f9033b two-pane/row structure adapted to REDOWN Shelf tokens.
+ * Copyright (c) 2026 Chute contributors; see CHUTE-LICENSE.txt. */
+nav[aria-label="Shelf"]{gap:clamp(7px,2.6vw,20px);justify-content:space-between}
+nav[aria-label="Shelf"] a{font-size:clamp(9px,2.4vw,10.5px);letter-spacing:.08em}
+#explorer-view{min-width:0;margin-top:20px;font-size:12px}
+#explorer-view button,#explorer-view select,#explorer-view input{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px;min-height:34px;max-width:100%}
+#explorer-view button:disabled{cursor:default;opacity:.5}
+#explorer-view button:hover:not(:disabled){background:var(--surface-hover);border-color:var(--accent)}
+#explorer-view .mini-heading{gap:8px;align-items:center;margin-bottom:12px}
+#explorer-view h1{font-size:23px;line-height:1.2;margin:0}
+#explorer-view .mini-heading a{font-size:11px;color:var(--accent)}
+#explorer-view .eyebrow{font-size:9px;margin:0 0 5px}
+#explorer-view .mini-toolbar{display:flex;gap:4px;flex-wrap:wrap}
+#explorer-view .mini-crumbs{display:flex;align-items:center;gap:4px;overflow:auto;padding:8px 0;min-height:28px}
+#explorer-view .mini-crumbs button{flex:none;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:0;background:transparent;color:var(--accent)}
+#explorer-view .mini-workspace{display:grid;grid-template-columns:minmax(100px,34%) minmax(0,1fr);border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;min-height:350px}
+#explorer-view .mini-rail{border-right:1px solid var(--line);padding:7px;overflow:auto;max-height:490px;min-width:0;background:var(--subtle)}
+#explorer-view .mini-rail a,#explorer-view .mini-rail small{display:block;overflow-wrap:anywhere;margin:7px 0;color:var(--muted);font-size:10px}
+#explorer-view .mini-rail p{color:var(--muted);font-size:10px;font-weight:bold}
+#explorer-view [role="group"]{padding-left:10px}
+#explorer-view .mini-node{display:block;width:100%;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:transparent;border:0;font-size:11px}
+#explorer-view .mini-node[aria-selected="true"]{background:var(--surface);color:var(--accent);box-shadow:inset 2px 0 var(--accent)}
+#explorer-view .mini-content{min-width:0}
+#explorer-view .mini-filter{display:block;padding:8px;color:var(--muted);font-size:10px}
+#explorer-view .mini-filter input{display:block;width:100%;margin-top:4px}
+#explorer-view .mini-sort{display:flex;justify-content:space-between;gap:4px;padding:0 8px 8px}
+#explorer-view .mini-sort select{min-width:0}
+#explorer-view .mini-list{position:relative;height:350px;overflow:auto;overflow-anchor:none;contain:layout paint;scrollbar-gutter:stable;border-top:1px solid var(--line)}
+#explorer-view .mini-rows{position:absolute;left:0;right:0}
+#explorer-view .mini-row{height:48px;display:grid;grid-template-columns:24px minmax(0,1fr);gap:0 6px;padding:5px 8px;border:1px solid transparent;border-radius:6px;cursor:default;align-items:center}
+#explorer-view .mini-row:hover{background:var(--surface-hover)}
+#explorer-view .mini-row[aria-selected="true"]{border-color:var(--accent);background:var(--subtle)}
+#explorer-view .mini-row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+#explorer-view .mini-icon{grid-row:span 2;font-size:22px;color:var(--accent)}
+#explorer-view .mini-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#explorer-view .mini-row small{font-size:10px;color:var(--muted)}
+#explorer-view .mini-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+#explorer-view .mini-status,#explorer-view .mini-drag-status{font-size:11px;overflow-wrap:anywhere;color:var(--muted);min-height:18px}
+#explorer-view .mini-preview{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--surface)}
+#explorer-view .mini-preview header{font-size:11px;overflow-wrap:anywhere}
+#explorer-view .mini-preview-body{height:220px;overflow:auto;padding-top:8px}
+#explorer-view .mini-preview img,#explorer-view .mini-preview video,#explorer-view .mini-preview iframe{width:100%;height:100%;object-fit:contain;border:0}
+#explorer-view pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+#explorer-view dialog{color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:14px;max-width:94vw;max-height:90vh;padding:15px}
+#explorer-view dialog::backdrop{background:#0008}
+#explorer-view .mini-window-preview{width:min(850px,94vw)}
+#explorer-view .window-content{height:60vh;overflow:auto;display:grid;place-items:center}
+#explorer-view .window-content img,#explorer-view .window-content video,#explorer-view .window-content iframe{max-width:100%;width:100%;height:100%;object-fit:contain;border:0}
+#explorer-view .preview-header,#explorer-view .preview-footer{display:flex;gap:8px;justify-content:space-between;align-items:center}
+#explorer-view .preview-header h2{font-size:16px;overflow-wrap:anywhere}
+#explorer-view .mini-prompt label{display:block;margin-bottom:8px}
+#explorer-view .mini-context{position:fixed;z-index:1000;width:175px;padding:6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 6px 24px #0003}
+#explorer-view .mini-context button{display:block;width:100%;text-align:left;border:0;min-height:30px}
+#explorer-view [data-action="rail"]{display:none}
+@media(max-width:390px){
+ #explorer-view .mini-workspace{grid-template-columns:minmax(0,1fr)}
+ #explorer-view [data-action="rail"]{display:block}
+ #explorer-view .mini-rail{display:none;border-right:0;border-bottom:1px solid var(--line);max-height:220px}
+ #explorer-view.mini-rail-open .mini-rail{display:block}
+}
+@media(min-width:700px){body:has(#explorer-view:not([hidden])) .shell{max-width:1000px}#explorer-view .mini-workspace{grid-template-columns:230px minmax(0,1fr)}#explorer-view .mini-list{height:430px}}
+@media(prefers-reduced-motion:reduce){#explorer-view *{scroll-behavior:auto;transition:none}}
