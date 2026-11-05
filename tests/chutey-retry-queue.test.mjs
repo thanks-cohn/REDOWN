@@ -89,6 +89,6 @@ test('Opt-in prepared bytes survive Shelf closure for later validated reuse; exp
   next.start({preventDefault(){assert.fail();},dataTransfer:{setData(){}}},source,entry);await waitFor(()=>states.at(-1)?.state==='staged');assert.equal(reads,1);assert.equal(states.at(-1).code,'REUSED');
   await next.cancel();assert.equal((await stage.stats()).count,0);
   const unversioned=createDragBridge({api:createFileApi({readStream:async(_,o)=>{await o.onChunk(new Uint8Array([1,2,3]));return {};}}),stage,getKeep:async()=>true,send:async()=>({ok:true})});
-  const unknown=await unversioned.prepare(source,entry);assert.equal(await stage.update(unknown.id,v=>v.keep),false,'No strong provider version means no long retention/reuse');await unversioned.dispose();assert.equal((await stage.stats()).count,0);
+  const unknown=await unversioned.prepare(source,entry);assert.equal((await stage.update(unknown.id,v=>({keep:v.keep}))).keep,false,'No strong provider version means no long retention/reuse');await unversioned.dispose();assert.equal((await stage.stats()).count,0);
  }finally{await next.cancel();await stage.purge(true);await stage.close();await h.stage.close();}
 });
