@@ -129,12 +129,12 @@ test('DND-05: cancelled preparation, size changes, huge/unknown file sizes never
  await assert.rejects(changed.prepare(a,{key:'shrunk',size:3}),/size changed/);assert.equal(changed.getHandle(),null);await stage.close();
 });
 
-test('DND expiry and replacement: one bounded private Blob, removed across store reopen',async()=>{
+test('DND expiry: parallel Shelf leases survive store reopen within the bounded queue',async()=>{
  const database=new IDBFactory();let clock=100;
  const first=stageFactory(database,()=>clock);const h=await first.put(new Blob(['one']),{name:'one.txt',mime:'text/plain'});
  await first.close();const second=stageFactory(database,()=>clock);assert.ok(await second.update(h.id,()=>true));
- const replacement=await second.put(new Blob(['two']),{name:'two.txt',mime:'text/plain'});assert.equal(await second.update(h.id,()=>true),null);
- clock+=60001;await second.purge();assert.equal(await second.update(replacement.id,()=>true),null);await second.close();
+ const replacement=await second.put(new Blob(['two']),{name:'two.txt',mime:'text/plain'});assert.equal(await second.update(h.id,()=>true),true,'Another Shelf reservation must not destroy a live handoff');
+ clock+=90001;await second.purge();assert.equal(await second.update(replacement.id,()=>true),null);await second.close();
 });
 
 function workerHarness(database=new IDBFactory()){
@@ -143,7 +143,7 @@ function workerHarness(database=new IDBFactory()){
  return {stage:context.RedownChuteStage.createStage(),call:(type,id,sender,more={})=>new Promise(resolve=>listener({type:'redownChuteV1.'+type,id,...more},sender,resolve))};
 }
 
-test('DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered chunks, restart and deletion',async()=>{
+test('DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered chunks, restart and bounded retry retention',async()=>{
  const database=new IDBFactory(),h=workerHarness(database),shelf={id:'test',url:'chrome-extension://test/shelf.html'},target={id:'test',url:'https://target.invalid',tab:{id:3},frameId:0};
  const file=await h.stage.put(new Blob(['actual file']),{name:'actual.txt',mime:'text/plain'});
  assert.equal((await h.call('arm',file.id,target)).ok,false);
@@ -155,7 +155,10 @@ test('DND security: exact Shelf arm, one-use claim, tab/frame binding, ordered c
  assert.equal((await h.call('chunk',file.id,{...target,url:'https://other.invalid'},{offset:0})).ok,false);
  const chunk=await h.call('chunk',file.id,target,{offset:0});assert.equal(Buffer.from(chunk.bytes).toString(),'actual file');
  assert.equal((await h.call('chunk',file.id,target,{offset:0})).ok,false);
- await h.call('finish',file.id,target,{state:'drop_dispatched'});assert.equal(await h.stage.update(file.id,()=>true),null);
+ await h.call('finish',file.id,target,{state:'drop_dispatched'});assert.equal(await h.stage.update(file.id,v=>v.state),'drop_dispatched');
+ assert.equal((await h.call('arm',file.id,shelf)).ok,false,'Consumed capability never rearms');
+ assert.equal((await h.call('chunk',file.id,target,{offset:0})).ok,false);
+ await h.stage.remove(file.id);
  await h.stage.close();await restarted.stage.close();
 });
 

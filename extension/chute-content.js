@@ -20,16 +20,17 @@
   }
   const send=async m=>{const r=await chrome.runtime.sendMessage(m);if(!r?.ok)throw Error('File handoff unavailable. Drag again in REDOWN.');return r;};
   async function deliver(target,id){
-    delivering=true;let state='failed';
+    delivering=true;let state='failed',code='CLAIM_FAILED';
     try{
       const meta=await send({type:'redownChuteV1.claim',id});
       if(!Number.isSafeInteger(meta.size)||meta.size<0||meta.size>32*1048576)throw Error('File exceeds the browser handoff budget.');
-      const chunks=[];let offset=0;
+      code='CHUNK_FAILED';const chunks=[];let offset=0;
       while(offset<meta.size){
         const part=await send({type:'redownChuteV1.chunk',id,offset});
         if(!Array.isArray(part.bytes)||!part.bytes.length||part.bytes.length>128*1024||offset+part.bytes.length>meta.size)throw Error('Incomplete file handoff.');
         const chunk=Uint8Array.from(part.bytes);chunks.push(chunk);offset+=chunk.length;
       }
+      code='TARGET_REJECTED';if(!target.isConnected)throw Error('Upload target disappeared.');
       const file=new File(chunks,meta.name,{type:meta.mime||'application/octet-stream',lastModified:Date.now()});chunks.length=0;
       const transfer=new DataTransfer();transfer.items.add(file);transfer.effectAllowed='copy';
       const input=target.matches('input[type="file"]')?target:target.closest('label')?.querySelector('input[type="file"]');
@@ -44,7 +45,7 @@
         const options={bubbles:true,cancelable:true,dataTransfer:transfer};
         target.dispatchEvent(new DragEvent('dragenter',options));target.dispatchEvent(new DragEvent('dragover',options));target.dispatchEvent(new DragEvent('drop',options));
       }
-      state='drop_dispatched';
+      state='drop_dispatched';code='NONE';
       notice('REDOWN dispatched the file. Check the destination attachment before continuing. Upload completion is unverified.');
       // Chute overlay cleanup runs after the site's drop handler.
       setTimeout(()=>{
@@ -53,7 +54,7 @@
         }
       },80);
     }catch{notice('REDOWN could not hand off this file. Drag again, or use Download and the destination file picker.');}
-    finally{delivering=false;void chrome.runtime.sendMessage({type:'redownChuteV1.finish',id,state}).catch(()=>{});}
+    finally{delivering=false;void chrome.runtime.sendMessage({type:'redownChuteV1.finish',id,state,code}).catch(()=>{});}
   }
   document.addEventListener('dragover',event=>{
     // Protected dragover hides getData; arm/reservation can still be in flight.

@@ -29,14 +29,34 @@ $('nav-explorer').addEventListener('click',async event=>{
   if(filesEntrance!=='slide-up'||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||!nav.animate)return;
   const after=nav.getBoundingClientRect(),explorer=$('explorer-view');
   const distance=Math.max(0,window.innerHeight-explorer.getBoundingClientRect().top);
+  const push=Math.max(0,before.top-after.top),contact=distance?Math.max(0,Math.min(.99,1-push/distance)):0;
   const timing={duration:240,easing:'cubic-bezier(.2,.7,.2,1)'};
-  entranceAnimations=[nav.animate([{transform:`translateY(${before.top-after.top}px)`},{transform:'translateY(0)'}],timing),explorer.animate([{transform:`translateY(${distance}px)`},{transform:'translateY(0)'}],timing)];
+  // Explorer travels continuously; once its top reaches the old tab row, both
+  // share the remaining translation. The real navigation is pushed, not cloned.
+  entranceAnimations=[nav.animate([{transform:`translateY(${push}px)`,offset:0},{transform:`translateY(${push}px)`,offset:contact},{transform:'translateY(0)',offset:1}],timing),explorer.animate([{transform:`translateY(${distance}px)`},{transform:'translateY(0)'}],timing)];
 });
 $('files-entrance')?.addEventListener('change',async event=>{
   const value=event.target.value==='slide-up'?'slide-up':'normal';
   try{await chrome.storage.local.set({shelfFilesEntranceV1:value});filesEntrance=value;status('Files entrance saved.');}
   catch{event.target.value=filesEntrance;status('Could not save Files entrance.');}
 });
+async function refreshPrepared(){
+  if(!$('keep-prepared-files'))return;
+  const data=await chrome.storage.local.get('shelfKeepPreparedV1');$('keep-prepared-files').checked=data.shelfKeepPreparedV1===true;
+  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.stats'});if(!result?.ok)throw Error();$('prepared-files-usage').textContent=`${result.count||0} prepared / pending · ${((result.bytes||0)/1048576).toFixed(1)} MiB / 32 MiB`;}catch{$('prepared-files-usage').textContent='Prepared-file storage unavailable.';}
+}
+$('keep-prepared-files')?.addEventListener('change',async event=>{
+  const control=event.target;control.disabled=true;
+  try{await chrome.storage.local.set({shelfKeepPreparedV1:control.checked===true});if(!control.checked)await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});await refreshPrepared();}
+  catch{status('Could not update prepared-file storage. Try again.');}
+  finally{control.disabled=false;}
+});
+$('clear-prepared-files')?.addEventListener('click',async()=>{
+  try{const result=await chrome.runtime.sendMessage({type:'redownChuteV1.clear'});if(!result?.ok)throw Error();await refreshPrepared();status('Prepared files cleared. Cloud originals are unchanged.');}
+  catch{status('Could not clear prepared files. Reopen the Shelf and try again.');}
+});
+void refreshPrepared().catch(()=>{});
+window.addEventListener('focus',()=>{if(!$('settings-view').hidden)void refreshPrepared().catch(()=>{});});
 function route() {
   const view=['settings','history','explorer'].includes(location.hash.slice(1))?location.hash.slice(1):'clouds';
   for (const name of ['clouds','explorer','history','settings']) {
@@ -46,6 +66,7 @@ function route() {
   }
   window.dispatchEvent(new Event('redown:shelf-route'));
   if(location.hash)void chrome.storage.local.set?.({shelfLastViewV1:view})?.catch(()=>{});
+  if(view==='settings')void refreshPrepared().catch(()=>{});
   const reviewStart=Date.now();
   if(view==='history')void Promise.resolve(globalThis.RedownShelfHistory?.open()).then(async()=>{
     // Opening the actual History view acknowledges previously signaled failures.
@@ -211,6 +232,7 @@ chrome.storage.onChanged.addListener((changes,area)=>{
   }
   if(area!=='local')return;
   if(changes.shelfFilesEntranceV1){filesEntrance=changes.shelfFilesEntranceV1.newValue==='slide-up'?'slide-up':'normal';if($('files-entrance'))$('files-entrance').value=filesEntrance;}
+  if(changes.shelfKeepPreparedV1&&!$('settings-view').hidden)void refreshPrepared().catch(()=>{});
   if(changes.redownFailureDot){
     ++failureLaserRevision;
     paintShelfFailureLaser(changes.redownFailureDot.newValue,true);
