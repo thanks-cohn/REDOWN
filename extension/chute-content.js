@@ -5,17 +5,13 @@
 (() => {
   'use strict';
   if(window.top!==window)return;
-  const TYPE='application/x-redown-chute-v1';let active=null,delivering=false,timer;
+  const TYPE='application/x-redown-chute-v1';let delivering=false;
   const valid=id=>typeof id==='string'&&/^[a-f0-9-]{36}$/.test(id);
-  function clear(){active=null;clearTimeout(timer);}
-  chrome.runtime.onMessage.addListener((m,s)=>{
-    if(s.id!==chrome.runtime.id||m?.type!=='redownChuteV1.active'||!valid(m.id))return;
-    clear();active=m.id;timer=setTimeout(clear,60000);
-  });
   function idFor(transfer){
     // Never intercept an unrelated text, URL or OS file drag during the relay TTL.
     if(!Array.from(transfer?.types||[]).includes(TYPE))return null;
-    let id;try{id=transfer.getData(TYPE);}catch{}return valid(id)?id:active;
+    let id;try{id=transfer.getData(TYPE);}catch{}// Only the actual drop reference authorizes a claim.
+    return valid(id)?id:null;
   }
   function notice(message){
     const n=document.createElement('div');n.setAttribute('role','status');n.textContent=message;
@@ -57,7 +53,7 @@
         }
       },80);
     }catch{notice('REDOWN could not hand off this file. Drag again, or use Download and the destination file picker.');}
-    finally{clear();delivering=false;void chrome.runtime.sendMessage({type:'redownChuteV1.finish',id,state}).catch(()=>{});}
+    finally{delivering=false;void chrome.runtime.sendMessage({type:'redownChuteV1.finish',id,state}).catch(()=>{});}
   }
   document.addEventListener('dragover',event=>{
     // Protected dragover hides getData; arm/reservation can still be in flight.
@@ -73,6 +69,4 @@
     if(!/(^|\.)chatgpt\.com$/.test(location.hostname))event.stopImmediatePropagation();
     void deliver(event.target,id);
   },true);
-  // Active references never intercept a different ordinary file drag.
-  document.addEventListener('dragstart',event=>{if(event.isTrusted)clear();},true);
 })();

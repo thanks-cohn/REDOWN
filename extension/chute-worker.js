@@ -11,10 +11,6 @@
       if(!shelf(s))return safe();
       const armed=await stage.update(m.id,v=>{if(v.claim)return false;v.armed=true;v.state='drag_started';return true;});
       if(!armed)return safe();
-      // Private token may be hidden during cross-window dragover. Like Chute,
-      // relay only an opaque reference; no names, source addresses or bytes.
-      const tabs=await chrome.tabs.query({});
-      await Promise.allSettled(tabs.map(tab=>chrome.tabs.sendMessage(tab.id,{type:'redownChuteV1.active',id:m.id})));
       return {ok:true};
     }
     if(m.type==='redownChuteV1.claim'){
