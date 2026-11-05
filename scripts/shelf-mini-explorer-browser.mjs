@@ -5,8 +5,9 @@ import {resolve,extname} from 'node:path';
 import {pathToFileURL} from 'node:url';
 const playwrightPath=process.env.PLAYWRIGHT_MODULE||'/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
 const {chromium}=await import(pathToFileURL(playwrightPath));
+const p0=process.env.SHELF_P0==='1';
 const quick=process.env.PARITY_QUICK==='1',widths=quick?[360,900]:[320,360,390,540,700,900];
-const root=resolve('extension'),out=resolve('work/shelf-layout-evidence');await mkdir(out,{recursive:true});
+const root=resolve('extension'),out=resolve(process.env.SHELF_EVIDENCE_DIR||'work/shelf-layout-evidence');await mkdir(out,{recursive:true});
 const html=(await readFile(root+'/shelf.html','utf8')).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
 const server=createServer(async(req,res)=>{
  try{
@@ -23,20 +24,20 @@ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'
 const results={quick,classification:'controlled HTTP fixture; chrome messaging/provider mocked; no installed extension, native or live-site proof',browser:browser.version(),os:process.platform,scenarios:[]};
 try{
  for(const lowMemory of [false,true]){
-  const context=await browser.newContext({viewport:{width:360,height:1000}}),page=await context.newPage();const errors=[];page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({viewport:{width:360,height:1000},...(p0?{recordVideo:{dir:out+'/video',size:{width:900,height:700}}}:{})}),page=await context.newPage();const errors=[];page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/shelf.html#explorer');
   await page.evaluate(({lowMemory,base})=>{
    Object.defineProperty(navigator,'deviceMemory',{value:lowMemory?4:8});
    const local={},listeners=[],changed=[];
    const emitter={addListener(fn){listeners.push(fn);}};
-   window.fixture={calls:[],events:[],local,expected:Array.from(Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMioAAAAASUVORK5CYII='),c=>c.charCodeAt(0))),count:10000,base};
+   window.fixture={reads:0,calls:[],events:[],local,expected:Array.from(Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMioAAAAASUVORK5CYII='),c=>c.charCodeAt(0))),count:10000,base};
    window.chrome={runtime:{id:'fixture',getURL:p=>base+'/'+p,onMessage:emitter,sendMessage:async m=>{
     fixture.calls.push(m.type);
     if(m.type==='redownChuteV1.arm')await new Promise(r=>setTimeout(r,150));
     if(m.type==='cfAccounts')return {ok:true,accounts:[{id:'a',name:'Account A'},{id:'b',name:'Account B'},...Array.from({length:fixture.extraAccounts?80:0},(_,i)=>({id:'extra-'+i,name:'Fixture account '+i}))]};
     if(m.type==='cfBuckets')return {ok:true,buckets:[{name:'photos'}]};
     return new Promise((resolve,reject)=>{
-     const sender={id:'fixture',url:m.type.endsWith('.arm')?base+'/shelf.html':base+'/target.html',tab:{id:2},frameId:0};
+     const sender={id:'fixture',url:/\.(arm|report|stats|clear)$/.test(m.type)?base+'/shelf.html':base+'/target.html',tab:{id:2},frameId:0};
      for(const fn of listeners){if(fn(m,sender,resolve)===true)return;}
      reject(Error('Unknown fixture message '+m.type));
     });
@@ -45,12 +46,12 @@ try{
     if(fixture.authExpired)return Response.json({success:false},{status:401});
     if(fixture.offline)throw Error('Fixture offline');
     if(path.includes('?')){
-     let objects=Array.from({length:fixture.count},(_,i)=>({key:`file-${String(i).padStart(5,'0')}.png`,size:fixture.expected.length,httpMetadata:{contentType:'image/png'}}));
+     let objects=fixture.entries||Array.from({length:fixture.count},(_,i)=>({key:`file-${String(i).padStart(5,'0')}.png`,etag:'fixture-v1',size:fixture.expected.length,httpMetadata:{contentType:'image/png'}}));
      const next=fixture.pagination&&!new URL(path,'https://fixture.invalid').searchParams.has('cursor');
      if(fixture.pagination)objects=next?objects.slice(0,2):objects.slice(2);
-     return Response.json({result:{objects,delimited:['Images/'],cursor:next?'fixture-page-2':''}});
+     return Response.json({result:{objects,delimited:fixture.entries?[]:['Images/'],cursor:next?'fixture-page-2':''}});
     }
-    if(fixture.slow)await new Promise(r=>setTimeout(r,700));return new Response(new Uint8Array(fixture.expected));
+    fixture.reads++;if(fixture.slow)await new Promise(r=>setTimeout(r,700));const objectKey=decodeURIComponent(path.split('/objects/')[1]||'');return new Response(new Uint8Array(fixture.bytesByKey?.[objectKey]||fixture.expected));
    }};
   },{lowMemory,base});
   for(const name of ['shelf.js','chute-stage.js','chute-worker.js','chute-image-targets.js','chute-content.js'])await page.addScriptTag({url:base+'/'+name});
@@ -58,6 +59,7 @@ try{
   await page.getByRole('treeitem',{name:'Cloudflare R2 · Account A',exact:false}).click();
   await page.getByRole('treeitem',{name:'photos',exact:false}).first().click();
   await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.includes('10,001'));
+  if(p0){const {runP0}=await import('./shelf-p0-browser-cases.mjs');results.scenarios.push(await runP0({page,context,out,lowMemory}));if(errors.length)throw Error(errors.join('; '));await context.close();continue;}
   const perf=await page.evaluate(()=>{
    const started=performance.now(),list=document.querySelector('.mini-list');
    for(let i=0;i<100;i++){list.scrollTop=i*1500;list.dispatchEvent(new Event('scroll'));}
@@ -85,7 +87,7 @@ try{
   }
   if(!lowMemory){
   const checks={classification:results.classification,details:[]};
-  await page.locator('.mini-row').nth(1).click();await page.waitForSelector('.mini-preview-body img');
+  await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-preview-body img');
   for(const height of [480,700,1000]){
     await page.setViewportSize({width:360,height});
     const detail=await page.evaluate(()=>{
@@ -156,7 +158,7 @@ try{
    for(const mode of ['list','grid']){
     if((await page.locator('[data-action=grid]').getAttribute('aria-pressed')==='true')!==(mode==='grid'))await page.locator('[data-action=grid]').click();
     await page.locator('.mini-list').evaluate(n=>{n.scrollTop=0;});
-    await page.locator('.mini-row').nth(1).click();await page.waitForSelector('.mini-preview-body img');
+    await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-preview-body img');
     const layout=await page.evaluate(()=>{
       const host=document.getElementById('explorer-view'),list=host.querySelector('.mini-list'),rail=host.querySelector('.mini-rail'),p=host.querySelector('.mini-preview'),selected=host.querySelector('.mini-row[aria-selected=true]');
       const next=p.nextElementSibling,previous=p.previousElementSibling;
@@ -183,7 +185,7 @@ try{
         scrollReceipts.push({width,mode,theme,dock,...receipt});
         await page.locator('.mini-list').evaluate(n=>n.scrollTop=0);
         await page.waitForTimeout(40);
-        if(!dock){await page.locator('.mini-row').nth(1).click();await page.waitForSelector('.mini-preview-body img');}
+        if(!dock){await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-preview-body img');}
       }
       if(!lowMemory)await page.screenshot({path:out+`/layout-${width}-${mode}-${theme}.png`});
     }
@@ -231,8 +233,8 @@ try{
   await page.evaluate(()=>{fixture.offline=false;fixture.count=10000;fixture.extraAccounts=true;});await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.mini-status').textContent.startsWith('10,001 loaded'));
   console.log('Auth/offline recovery passed');
   const leftIndependent=await page.evaluate(()=>{const left=document.querySelector('.mini-rail'),right=document.querySelector('.mini-list');const before=right.scrollTop;left.scrollTop=300;return left.scrollTop>0&&right.scrollTop===before;});if(!leftIndependent)throw Error('Independent left scrolling');
-  // Window Preview remains a distinct double-click surface.
-  await page.locator('.mini-row').nth(1).dblclick();await page.waitForSelector('.mini-window-preview[open]');await page.getByRole('button',{name:'Close Window Preview',exact:true}).click();
+  // Window Preview remains a distinct dedicated action.
+  await page.locator('.mini-row').nth(1).dblclick();await page.getByRole('button',{name:'Open in Window',exact:true}).click();await page.waitForSelector('.mini-window-preview[open]');await page.getByRole('button',{name:'Close Window Preview',exact:true}).click();
   if(errors.length)throw Error('Browser errors: '+errors.join('; '));
   results.scenarios.push({lowMemoryClassSimulation:lowMemory,listing:10000,...perf,listingMeasurements,receipt,layouts,scrollReceipts,pointerRatio,independentScroll:independent,leftIndependentScroll:leftIndependent,pagination:true,authExpired:true,offlineRecovery:true,pointerPreviewResize:true,registrationDelayMs:150,viewportWidths:widths,status:'PASS'});
   await context.close();

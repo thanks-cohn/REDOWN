@@ -114,5 +114,6 @@
   "extension/chute-worker.js",
   "extension/chute-content.js",
   "extension/chute-image-targets.js",
-  "scripts/shelf-mini-explorer-browser.mjs"
+  "scripts/shelf-mini-explorer-browser.mjs",
+  "scripts/shelf-p0-browser-cases.mjs"
 ]
