@@ -10,11 +10,12 @@
 
 1. **THE CURRENT FILES ENTRANCE IS THE DEFAULT.** Do not replace it. Users MAY opt into a simple **Elevator / Slide Up** entrance through Shelf Settings. The current transition/view switching remains the **Normal (Default)** selection.
 2. **Elevator means one upward motion, NOT two elevator doors.** When the user clicks FILES with the optional mode selected, the existing File Explorer **enters from below** and **pushes the existing FILES · REMOTES · HISTORY · SETTINGS row upward** as a single continuous movement. The navigation lands at its existing Files-view top position, with Explorer underneath. No logo morph, squash/spread, decorative doors, Rift Mode, particles, cinematic animation, audio, or unrelated shell redesign.
-3. Add a toggle to the **existing bottom Preview dock**: two opposing diagonal triangles (top-right and bottom-left) indicating Expand; the icon changes to inward/retract orientation once expanded. Click once to expand the preview into the **whole Shelf content area beneath the persistent four tabs**; click again to restore **the exact prior dock size**.
-4. Let the **middle vertical divider** between cloud/folder rail and file pane move **all the way left or all the way right**, enabling either pane to occupy the full available width. Keep an accessible, discoverable way to recover the collapsed pane and return to 50/50.
-5. Make the file-pane view button clearly offer **Detailed** versus **Large Images**. In Large Images mode, the displayed images **grow/shrink continuously as the middle divider moves**, respecting the available file-pane width and each image's aspect ratio. Detailed mode remains readable, useful, and independently selectable. Preserve selection and current file location when switching modes.
-6. Diagnose and fix observed cloud-to-web drag failure resembling **"REDOWN could not download this"**. Retain **Universal File API for cloud reads**, **Chutey for browser/website handoff**, and the existing **private staged-file machinery**. A short-lived, reliable staging/queue and carefully bounded retries are wanted; NOT a new cloud engine or native worker installation.
-7. Add **Keep files prepared for uploading** under Settings, **OFF by default**. Only keep eligible prepared file bytes when the user opts in, subject to quotas/expiry/clear. The original cloud file is never deleted.
+3. **Single-click only SELECTS** a file/image. **Arrow Up/Down only changes selection** when the bottom Preview has not been opened. **Double-click an image explicitly opens it in the existing bottom Preview dock**, NOT in a separate Window Preview. **After it opens**, Up/Down navigates through adjacent eligible images, updating the open bottom Preview. Keep normal folder navigation. No accidental preview read from single-click or arrows before opening.
+4. Add a toggle to the **existing bottom Preview dock**: two opposing diagonal triangles (top-right and bottom-left) indicating Expand; the icon changes to inward/retract orientation once expanded. Click once to expand the preview into the **whole Shelf content area beneath the persistent four tabs**; click again to restore **the exact prior dock size**.
+5. Let the **middle vertical divider** between cloud/folder rail and file pane move **all the way left or all the way right**, enabling either pane to occupy the full available width. Keep an accessible, discoverable way to recover the collapsed pane and return to 50/50.
+6. Make the file-pane view button clearly offer **Detailed** versus **Large Images**. In Large Images mode, the displayed images **grow/shrink continuously as the middle divider moves**, respecting the available file-pane width and each image's aspect ratio. Detailed mode remains readable, useful, and independently selectable. Preserve selection and current file location when switching modes.
+7. Diagnose and fix observed cloud-to-web drag failure resembling **"REDOWN could not download this"**. Retain **Universal File API for cloud reads**, **Chutey for browser/website handoff**, and the existing **private staged-file machinery**. A short-lived, reliable staging/queue and carefully bounded retries are wanted; NOT a new cloud engine or native worker installation.
+8. Add **Keep files prepared for uploading** under Settings, **OFF by default**. Only keep eligible prepared file bytes when the user opts in, subject to quotas/expiry/clear. The original cloud file is never deleted.
 
 **Keep existing rules:** Shelf starts in REMOTES unless the user already opted into the existing last-view setting; keep all four tabs, History/GO TO, provider access, right-click saves, BOOT behavior, premium previews, source-URL privacy, accurate counters, and themes. Do not change owner-approved REMOTES wording **Your Files · Your Way**.
 
@@ -92,17 +93,32 @@ The current grid/list toggle should become an obvious **Detailed / Large Images*
 
 Test photo portrait/landscape/ultrawide, no-image files, very long filenames, 1/100/10,000 rows, rapid splitter movement, and the bottom Preview being open at the same time.
 
-## 5 — Bottom Preview Expand / Retract
+## 5 — Bottom Preview: select, explicit open, arrow browsing, and Expand / Restore
 
-Extend the existing bottom Preview dock with one compact two-triangle toggle button:
-- **Normal state:** two diagonal outward-facing triangles at top-right and bottom-left; accessible name **Expand preview**.
-- **Expanded state:** inverse inward-facing/retract triangles; accessible name **Restore preview**.
+**Latest owner correction: this is an exact Shelf gesture contract, not optional styling.**
 
-First click smoothly **maximizes only the Preview inside FILES**. Keep FILES / REMOTES / HISTORY / SETTINGS visible at the top. The tree/list yield the remaining space without being destroyed; no browser fullscreen, separate tab/window, or replacement preview engine.
+**Before the bottom Preview is opened:**
+- Single-clicking an image/file **SELECTS ONLY**. It updates row highlight, focus and available actions but **does not open, replace or automatically load the bottom Preview**.
+- Arrow Up / Arrow Down through the file list **moves selection ONLY**. It must never create/open the preview panel while the preview is closed. Space also selects only. This applies in Detailed and Large Images modes.
+- A double-click on an **image** opens that image in the **existing bottom Preview dock**. Do **not** call the separate Window Preview for this action. For keyboard accessibility, offer an explicit Enter/Preview action with equivalent behavior; do not overload mere selection or arrow movement.
+- Double-clicking a folder continues to navigate into it, not preview it. Handle image/file types consistently with actual preview capabilities.
 
-Second click smoothly restores the preview to the exact previous dock pixel height (whether initial default or user-resized). Preserve the selected file, displayed media, zoom, scroll, and any active preview state; avoid refetching bytes just because of the toggle. The existing preview close (X), manual resize, and double-click Window Preview remain separate and functional.
+**After a double-click has opened the bottom Preview:**
+- Arrow Up / Arrow Down can browse the neighboring eligible **images** in current sorted/filtered file-list order. Change the highlighted selection and **update the already-open bottom Preview** with the newly chosen image; no repeated double-click required.
+- Do not open another window/dialog and do not reopen/create another Preview dock for each arrow. Reuse the current dock and renderer; cancel stale reads so rapid navigation always shows the most recently chosen image.
+- Skip folders/non-image entries for image browsing where appropriate; keep sensible boundaries, selection/focus visibility, list scroll anchoring, and accessible announcements. If navigation changes the folder or Preview is closed, return to **selection-only** arrow behavior.
+- Preserve the existing full Window Preview as a distinct affordance (e.g. dedicated Open in Window action), NOT the default double-click result.
 
-Handle simultaneous resize, navigation to another tab, empty/failed preview, selected file deletion, keyboard activation, short Shelf height, reduced-motion, and repeated fast toggling. Keep a stable layout without overlays covering the four tabs. A collapsed/restored dock is not a second Explorer view.
+**Expand / Restore toggle:**
+- Add one compact two-triangle toggle to the existing bottom Preview dock.
+- **Normal state:** outward-facing diagonally opposed triangles at top-right and bottom-left; accessible name **Expand preview**.
+- **Expanded state:** inward-facing/retract triangles; accessible name **Restore preview**.
+- First click smoothly maximizes Preview **within the FILES content area only**. FILES / REMOTES / HISTORY / SETTINGS remain visible at the top; tree/list yield space without being destroyed.
+- Second click smoothly restores the exact previous dock pixel height, including a user-adjusted size. Preserve selected image, zoom, scroll and active preview where possible, without unnecessary refetch.
+- Keep original preview close (X), manual resize, double-click folder navigation, and separate dedicated Window Preview available.
+- Handle rapid expand/retract, arrow navigation during preview reads, tab switching, narrow/short Shelf, selected image deleted, and reduced motion. No trapped focus, unintended preview opening, overlaps or stale image flashes.
+
+**Code audit hotspot:** `extension/shelf-explorer.mjs` currently invokes `side(entry)` from `select(entry)`, including arrow navigation, and routes `row.ondblclick` to `preview.open(entry)` (a separate Window Preview). Explicitly remove those **gesture couplings** without breaking selection, drag, folder navigation, ordinary Window Preview or preview file-API permissions. Add event-level tests proving one click and arrow-only movement perform no preview read/open before double-click; then, after image double-click, arrow navigation updates the one bottom Preview.
 
 ## 6 — Diagnose first: real source of drag/drop error
 
@@ -153,10 +169,10 @@ Test slow/auth-expired reads, first-gesture race, source mutation, delayed drop,
 Build small, separate commits, tests, and rollback boundaries for:
 A. Optional Files entrance preference/transition.
 B. Full-range middle splitter plus Detailed/Large Images responsiveness.
-C. Bottom Preview maximize/restore toggle.
+C. Correct single-click/arrow selection vs double-click bottom Preview open and after-open arrow browsing, plus Preview maximize/restore toggle.
 D. Root-cause-driven Chutey transport/queue and Keep-files setting.
 
-Check interaction matrix: normal vs elevator; compact vs wide Shelf; four themes including Neon; 0/25/50/75/100 percent divider; Detailed vs Large Images; Preview closed/normal/maximized; drag initiated during resize or route switch; rapid tab changes; History GO TO; login state changes; keyboard and reduced motion.
+Check interaction matrix: normal vs elevator; compact vs wide Shelf; four themes including Neon; 0/25/50/75/100 percent divider; Detailed vs Large Images; Preview closed/normal/maximized, before-open arrow selection, double-click open, after-open arrow browsing; drag initiated during resize or route switch; rapid tab changes; History GO TO; login state changes; keyboard and reduced motion.
 
 **Do not degrade** REMOTES-first startup, source selection, existing paid/free controls, BOOT recovery, actual provider access, Cloudflare saves, flat other-provider right-click menus, History GO TO, Quick Glance, popup/Side Panel coexistence, preview correctness, or source privacy.
 
@@ -166,12 +182,12 @@ Perform the full existing test suite and focused suites, compare failing test **
 
 1. Source-first map and confirmed/unknown drag failure causes.
 2. Working dedicated feature branch and PR with narrow, independently reviewable commits; **no main merge**.
-3. Implemented optional Normal-vs-Elevator behavior (Normal default), full-range middle slider and responsive Detailed/Large Images modes, and Preview Expand/Restore.
+3. Implemented optional Normal-vs-Elevator behavior (Normal default), full-range middle slider and responsive Detailed/Large Images modes, corrected single-click/double-click/arrow Preview behavior, and Preview Expand/Restore.
 4. Repaired existing handoff lifecycle with bounded retry staging and OFF-by-default Keep Files preference.
 5. Focused tests, full baseline delta, and real browser screenshots/video showing the actual tab push and pane sizing, including extreme splitter positions.
 6. Destination compatibility matrix distinguishing simulated dispatch, accepted attachment, verified upload, and unsupported cases.
 7. Concrete remaining issues, security/privacy constraints, safe rollback, exact commands/results, commit SHA and PR link.
 
-**One-line success condition:** Default REDOWN looks and works as before; users can opt into a small upward FILES push, move the middle splitter fully to either edge while images responsively resize, expand/retract the bottom preview, and drag real cloud files to supported web targets with reliable staging, transparent outcomes, bounded retries, and deliberate retention settings.
+**One-line success condition:** Default REDOWN looks and works as before; users can opt into a small upward FILES push, move the middle splitter fully to either edge while images responsively resize, double-click to open the bottom image preview, browse with Up/Down only after it opens, expand/retract it, and drag real cloud files to supported web targets with reliable staging, transparent outcomes, bounded retries, and deliberate retention settings.
 
 **This specification is the authoritative owner addendum for this next Codex task and supersedes earlier suggestions to make the elevator effect the default.**
