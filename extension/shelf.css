@@ -1198,3 +1198,9 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 }
 .history-image-origin[data-origin="cloud"] { background: #22c55e; }
 .history-image-origin[data-origin="source"] { background: #3b82f6; }
+
+/* Uniform nav geometry wins over theme display typography. */
+:root nav[aria-label="Shelf"] {gap:4px;justify-content:space-between;min-width:0;}
+:root nav[aria-label="Shelf"] a,
+:root[data-shelf-theme] nav[aria-label="Shelf"] a {font-size:10px;letter-spacing:.055em;padding:8px 2px;white-space:nowrap;}
+.shell {min-width:0;}
