@@ -2,7 +2,7 @@
 
 **Owner directive:** November 4, 2026  
 **Destination:** `thanks-cohn/REDOWN`  
-**Reference:** `thanks-cohn/chute`, latest `main` (pin exact source SHA at execution)  
+**Reference:** `thanks-cohn/chute` `main`, pinned at `3f9033b261667a2ad90af4a13c45701ae717ab12` in REDOWN's `chute-reference` Git submodule. Codex must check upstream for newer commits before implementing and update this pin through a reviewed change.  
 **Priority:** P0 strategic product feature  
 **State:** Implementation specification, NOT a claim that feature is built, tested or production-ready.  
 **Execution:** Dedicated feature branch and PR; do not push implementation to `main` without explicit direction.
@@ -43,9 +43,9 @@ C. Produce `docs/shelf-chute-integration/SOURCE_AUDIT.md` with each feature's ac
 
 ## 2. Vendored REFERENCE, not an accidental bundled application
 
-- Bring a reproducible, pinned snapshot of the **relevant complete upstream Chute source** into REDOWN under `reference/chute/`. Prefer a documented Git subtree (or reproducible source checkout workflow if subtree impractical). Include actual UI HTML/CSS/JS, native bridge source, manifests, contracts, scripts and tests needed to understand the complete path.
+- Use the **already-added complete Chute Git submodule** at `chute-reference/` (pinned at `3f9033b261667a2ad90af4a13c45701ae717ab12`). Initialize with `git submodule update --init --recursive chute-reference` before audit; verify actual files exist. Do not create a duplicate subtree or a second reference directory. Include actual UI HTML/CSS/JS, native bridge source, manifests, contracts, scripts and tests needed to understand the complete path.
 - EXCLUDE binary releases, caches, large generated outputs, secrets, credentials, .env, user datasets, and third-party dependencies already installable from lockfiles. Avoid Git submodules that Codex cannot reliably access unless robustly configured.
-- Document upstream SHA, sync command, build exclusions, license attribution/compatibility, and ownership in `reference/chute/README-REDOWN.md`.
+- Document upstream SHA, sync command, build exclusions, license attribution/compatibility, and ownership in `docs/shelf-chute-integration/CHUTE_REFERENCE.md`.
 - **A reference copy is not automatically compiled/packaged or served** by REDOWN. Do not create a second installed Chute service. Where reusing live behavior is necessary, expose a versioned interoperability layer with the existing authorized Chute installation or vendor a small audited reusable module without duplication.
 - Never hardcode localhost behavior without health-check, permission and authenticated origin checks; use least privilege.
 
@@ -160,9 +160,9 @@ A basic folder click cannot leave the UI “busy”; one large video and many im
 
 ## 8. Execution plan for Codex
 
-**Phase A — Reproducible source audit and reference pin**
+**Phase A — Initialize existing Git submodule and reproducible source audit**
 - Pin current REDOWN and Chute SHA, study complete Chute UI/bridge code and REDOWN Universal File API. Publish source map, gap matrix and ownership diagram.
-- Make `reference/chute/` reproducible and excluded from build artifacts; verify licenses.
+- Initialize `chute-reference/` with `git submodule update --init --recursive chute-reference`, verify real source files locally and exclusion from build artifacts; verify licenses.
 
 **Phase B — Minimal clean integration skeleton**
 - Prove a Shelf UI component fetches a listing solely through the Universal File API and shows one connected provider/account/bucket path. Unit-test no competing backend.
@@ -210,7 +210,7 @@ Record for each: test environment, method, expected/actual, proof path, PASS/FAI
 
 ## 10. Deliverables and repo locations
 
-- `reference/chute/` source snapshot with SHA and `README-REDOWN.md`.
+- Initialized `chute-reference/` pinned full-source submodule, plus `docs/shelf-chute-integration/CHUTE_REFERENCE.md`.
 - `docs/shelf-chute-integration/SOURCE_AUDIT.md`.
 - `docs/shelf-chute-integration/ARCHITECTURE_AND_AUTHORITY.md`.
 - `docs/shelf-chute-integration/DESTINATION_COMPATIBILITY.md`.
