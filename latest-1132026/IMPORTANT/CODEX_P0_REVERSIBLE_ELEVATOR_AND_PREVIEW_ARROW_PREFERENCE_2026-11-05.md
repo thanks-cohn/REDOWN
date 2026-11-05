@@ -39,7 +39,19 @@
 - [ ] No new window, tab, extra navigation clone, blocked controls, duplicate event handlers or accidental file transfers.
 - [ ] Validate Standard/Midnight/Porcelain/Neon themes and compact/full Shelf heights.
 
-## 2. CRUCIAL FIX B — Left/Right MUST be default open-Preview directory browsing
+## 2. CRUCIAL FIX B — Fully EXPANDED Preview MUST permit directory traversal, with configurable arrow axis
+
+### The exact owner-reported defect: Preview cannot browse after FULL EXPAND
+
+**Fix the expanded state specifically.** When the user selects a file, opens the bottom Preview, and clicks **Expand Preview** to maximize it within FILES, the **same fully expanded Preview must allow Previous/Next traversal of the current directory**. The user must NOT need to restore the panel, click an obscured file row, double-click again, or open a separate Window/Lightbox to advance.
+
+- **User-selectable keyboard axis in Shelf Settings:** **Left / Right (default)** means Left=Previous, Right=Next; **Up / Down (alternative)** means Up=Previous, Down=Next. Exactly one pair is active per setting, persisted and applied to the fully expanded Preview without reopening it.
+- Once expanded, arrow navigation acts from a **visible/focusable Preview surface**, not from hidden underlying file rows. The selected item and the displayed preview advance together; the panel **remains expanded** throughout.
+- Preserve the real currently sorted/filtered directory's eligible items; no accidental switching folders, buckets, cloud accounts, tabs, or preview modes. Skip ineligible folders/files according to supported preview types; stop at boundaries without wrap or bogus reads. Async responses are cancellable/latest-wins.
+- Upon **Restore**, retain the last traversed file's Preview and its underlying selection, scroll into view safely when list becomes visible, and retain keyboard usability. Expanding again should continue navigation from that item.
+- Existing nonexpanded Preview should respect the same keyboard preference; when Preview is **closed**, Up/Down moves file-list selection as before and should never open the Preview by itself. Inputs, text editing, splitters, document scroll and media controls retain their own keyboard semantics.
+- **SOURCE-VERIFIED ROOT MECHANISM TO INVESTIGATE:** `toggleExpand()` in [shelf-explorer.mjs lines 60–110](https://github.com/thanks-cohn/REDOWN/blob/aab3e3e4cb5e0c67c7cf4f1b079e60552ad13fd1/extension/shelf-explorer.mjs#L60-L110) makes all siblings of the Preview `inert` and `browseImage()` is reached through file-row and Preview key handlers currently hardcoded to Up/Down. [shelf-explorer.css lines 158–160](https://github.com/thanks-cohn/REDOWN/blob/aab3e3e4cb5e0c67c7cf4f1b079e60552ad13fd1/extension/shelf-explorer.css#L158-L160) hides the other content while expanded. **Keep the background inert/hidden**; attach reliable keyboard handling to the expanded Preview rather than removing this safety isolation.
+- Add/verify visible Previous/Next controls on expanded Preview if necessary for pointer and accessible navigation. Their semantics remain previous/next regardless of the chosen keyboard axis.
 
 ### Current verified code
 
@@ -75,13 +87,13 @@ Persist a validated preference in the existing local settings system; missing/un
 
 - [ ] Fresh install or missing/invalid preference → Left/Right selected in Settings.
 - [ ] Preview closed → Left/Right does not summon a Preview; Up/Down selects list rows; Enter/double-click explicitly opens it.
-- [ ] Three previewable images in one sorted directory → Left moves previous and Right moves next; correct file highlighted and same bottom Preview updated.
-- [ ] Switch Settings to Up/Down → Up previous, Down next while preview active; Left/Right no longer advance preview; change applies immediately and persists across Shelf/background restart.
+- [ ] **With Preview FULLY EXPANDED**, three images in one directory → Left/Right by default navigates Previous/Next in the SAME expanded panel. No Restore or fresh double-click required; correct underlying file remains selected.
+- [ ] **With Preview FULLY EXPANDED**, switch Settings to Up/Down → Up previous, Down next; Left/Right no longer advance preview; switch applies immediately and persists across Shelf/background restart.
 - [ ] Switch back → Left/Right returns without data loss or forced preview re-open.
 - [ ] Folders, unsupported files, mixed media, archives/PDF/text, filtered/sorted/paginated files, duplicated names, rapid keystrokes and last-image boundaries yield deterministic navigation.
 - [ ] Window Preview/Lightbox and full Explorer respect the configured pair where applicable, while keeping document scroll and tree/splitter keyboard access.
 - [ ] Keyboard does not fire when editing filename, renaming, in Settings, a menu, tree, input/select, or resizing preview/Explorer splitters.
-- [ ] Preview remains visible during navigation; Expand/Restore, scrolling, responsive layout and failed remote read stay stable.
+- [ ] In both keyboard modes, traversal keeps Preview **fully expanded**; restoring preserves last traversed file and selection; scrolling, responsive layout and failed remote reads stay stable.
 - [ ] Run source-level unit tests and a real installed-Chrome interaction for Shelf and full Explorer. Report separately what is verified/not tested.
 
 ## 3. Source-level implementation map and non-regression boundaries
@@ -90,7 +102,7 @@ Persist a validated preference in the existing local settings system; missing/un
 | --- | --- |
 | `extension/shelf.js` | Reuse current Files entrance pref and animator; add actual **inverse** exit animation in the same navigation lifecycle, deterministic cancellation/epoch and reduced-motion bypass |
 | `extension/shelf.html` | Add **Preview navigation keys: Left/Right (default) or Up/Down** Settings control; keep Normal/Elevator setting as before |
-| `extension/shelf-explorer.mjs` | Read/watch single validated shared preference; update `browseImage` and preview/list key handlers; default horizontal, optional vertical; preserve selection-only when preview closed |
+| `extension/shelf-explorer.mjs` | Fix expanded Preview traversal on the visible focusable panel (not inert file rows). Read/watch single validated preference, default Left/Right vs optional Up/Down; preserve selection-only when preview closed and selected file after Restore |
 | `extension/beta/explorer.mjs` | Consume same preference with document/archive/folder key precedence; continue exact current sorted/filtered directory behavior |
 | `extension/beta/window-preview.mjs` | Honor preference when preview modal is open while preserving previous/next buttons and content scrolling |
 | `extension/shelf.css` / `extension/shelf-explorer.css` | Only scoped, tasteful Settings/animation visual adjustments as required; no duplicate animation framework |
@@ -102,4 +114,4 @@ Persist a validated preference in the existing local settings system; missing/un
 
 Audit source at referenced commit and latest branch first. Implement only these two urgent changes in a focused independently reviewable branch/PR, not a disruptive rewrite; keep the comprehensive existing slide/preview tests. Document the exact key pref and fallback, screen-by-screen keyboard ownership, source changes, and actual test receipts. No production Cloudflare Worker updates or remote object writes. Distinguish tests run from merely planned test criteria. Owner acceptance requires observed **reverse travel** and **Left/Right default preview browsing**, not merely a setting label or a mocked menu preview.
 
-**One-line acceptance:** Elevator ON makes FILES slide **UP when entering and DOWN when leaving** while the same real nav row returns with it; with an open Explorer Preview, **Left/Right** navigates neighboring files by default, and **Up/Down** is the optional user-selected mapping in Settings.
+**One-line acceptance:** Elevator ON makes FILES slide **UP when entering and DOWN when leaving** while the same real nav row returns with it; with the Explorer Preview **fully expanded**, it navigates neighboring files **without restoring**, using **Left/Right by default or Up/Down as selected in Settings**.
