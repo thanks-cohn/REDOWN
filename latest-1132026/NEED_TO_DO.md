@@ -95,3 +95,27 @@
 - [ ] Validate reduced-motion UX, memory/CPU budgets, focus/accessibility, and browser/tab restoration. Make marketing claims only after each representative route is proven end to end.
 
 **Research starting points:** Chrome Tabs Split View documentation (https://developer.chrome.com/blog/split-view-api-extensions), Tabs API (https://developer.chrome.com/docs/extensions/reference/api/tabs), and Side Panel API (https://developer.chrome.com/docs/extensions/reference/api/sidePanel). Those APIs establish browser features, **not** a finished implementation in REDOWN.
+
+## FUTURE UI — Files entrance: elevator doors and REDOWN logo morph
+
+**Owner direction (November 5, 2026):** Clicking the **Files** entry in the REDOWN Shelf should trigger a distinct, memorable **two-elevator-door transition** into the real File Explorer. This is separate from the optional future **Rift Mode** two-cloud / app-connected workspace transformation. **Status: design specification only; not implemented.**
+
+### Initial Files entrance: twin elevator doors
+
+- [ ] On **Files** click, animate **two elevator-like door panels rising from the bottom of the Shelf**. Their movement reaches the horizontal boundary **immediately beneath the persistent top navigation — Files, Remotes, History, Settings**; at that boundary the doors push/sweep upward and cover or replace the old content region as the new **File Explorer** appears.
+- [ ] Keep the top navigation **visible and usable** throughout; the final composition is **Files / Remotes / History / Settings at the top, then the actual navigable File Explorer below**, not a full-screen animation or a duplicate header. Do not obscure the browser webpage or unrelated surfaces.
+- [ ] Choreograph the panels as a coherent elevator-door reveal: clear two-panel silhouette, believable vertical travel, precise contact/alignment beneath the header row, and a confident reveal of the Explorer. Ensure animation geometry respects actual Shelf height/width and never causes layout jumping.
+- [ ] Clicking Files changes the current view only. The Shelf **still opens to REMOTES by default**, unless users override that startup selection in Settings. Do not reset Explorer folders or navigation state and do not stall functional file loading while animation plays.
+
+### Later premium-style flourish: REDOWN logo squash-and-spread
+
+- [ ] Explore an **additional/alternative logo-driven entrance** in which the **REDOWN logo visibly squishes and squashes**, then stretches/spreads into a slim visual divider near the top of the Shelf.
+- [ ] The final spread should leave **a subtle dark-red padding/accent strip between the top/logo region and the immediately adjacent navigation headers**. Keep it restrained and premium: visible enough to read as intentional spacing, not a thick banner or wasted viewport.
+- [ ] The sequence should feel elastic, polished and characterful, and must not deform the actual navigation hit targets, impair legibility, or consume excessive space. Preserve consistent styling across Shelf themes (tune the dark-red treatment for contrast).
+- [ ] Treat the logo motion as a **future visual iteration**, not a prerequisite that blocks the simpler elevator-door Files reveal. Prototype variations before choosing whether to combine the two sequences or offer them as a theme-specific alternative.
+
+### Acceptance and safety
+
+- [ ] Test rapid Files/Remotes/History/Settings switching, narrow Shelf sizes, resizing during motion, keyboard access, focus restoration, re-entry, errors, and existing loaded Explorer content. No overlap, stuck panels, blank page, or accidental file-operation input capture.
+- [ ] Honor `prefers-reduced-motion` with an instantaneous or minimal transition; animations must be interruptible, and real File Explorer interaction must work reliably even if effects are disabled or fail.
+- [ ] Demonstrate with recorded UI states: **before Files click → two panels rising to navigation boundary → Explorer visible under retained navigation**, and separately mock up the future **squash/spread REDOWN logo + subtle dark-red header separation**. Mark verified only after real browser testing.
