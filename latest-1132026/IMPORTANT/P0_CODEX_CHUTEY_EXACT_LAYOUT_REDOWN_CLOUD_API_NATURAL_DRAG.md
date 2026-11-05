@@ -14,7 +14,8 @@
 ### 1. Rename and fit the Shelf navigation
 
 - Change the visible Shelf tab from “File Explorer” to **“FILES”** in uppercase. Keep internal #explorer route, DOM IDs and relevant links functioning.
-- **Uniformly reduce the fonts, letter spacing and padding of all four Shelf nav items** — REMOTES / FILES / HISTORY / SETTINGS — enough that they fit on **one row** in narrow Shelf widths, including Neon. Do not use arbitrarily different sizes across labels. Maintain legibility, accessible focus indicators and text alternatives.
+- **Exact left-to-right Shelf tab order: FILES → REMOTES → HISTORY → SETTINGS.** FILES is the far-left navigation item and REMOTES is second. Internal routes stay #explorer and #clouds; preserve existing route persistence and explicit selections. Do not confuse first tab position with changing the saved/default view.
+- **Uniformly reduce the fonts, letter spacing and padding of all four Shelf nav items** — FILES / REMOTES / HISTORY / SETTINGS — enough that they fit on **one row** in narrow Shelf widths, including Neon. Do not use arbitrarily different sizes across labels. Maintain legibility, accessible focus indicators and text alternatives.
 - The Shelf itself and its top tabs must **never require horizontal side-scrolling** at 320/360/390px. Long folder paths may scroll *inside their own tree container* only. Audit the rest of Shelf typography and header for overflowing controls across themes.
 
 ### 2. Two panes, 50/50 first, media enlarges as wall moves left
