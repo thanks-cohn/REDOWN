@@ -17,12 +17,54 @@ test('NAV-01/02: File Explorer is a first-class route and switching never opens 
  const dom=new JSDOM(readFileSync('extension/shelf.html','utf8'),{url:'https://extension.test/shelf.html#explorer',runScripts:'outside-only'}),w=dom.window;let opened=0;
  w.chrome={storage:{local:{get:async()=>({})},session:{get:async()=>({})},onChanged:{addListener(){}}},runtime:{getURL:p=>'https://extension.test/'+p,sendMessage:async()=>({ok:true,accounts:[]})},tabs:{create:()=>{opened++;}}};
  w.eval(readFileSync('extension/shelf.js','utf8'));
- assert.deepEqual([...w.document.querySelectorAll('nav[aria-label="Shelf"] a')].map(a=>a.hash),['#clouds','#explorer','#history','#settings']);
+ assert.deepEqual([...w.document.querySelectorAll('nav[aria-label="Shelf"] a')].map(a=>a.hash),['#explorer','#clouds','#history','#settings']);
  for(const name of ['explorer','clouds','history','settings','explorer']){
   w.location.hash='#'+name;w.dispatchEvent(new w.Event('hashchange'));await settle();
   assert.equal(w.document.getElementById(name+'-view').hidden,false);assert.equal(w.document.querySelector('[aria-current="page"]').id,'nav-'+name);
  }
  assert.equal(opened,0);dom.window.close();
+});
+
+test('NAV: REMOTES is the default even though FILES is first; Settings opt into last view and explicit hashes win',async()=>{
+ async function boot(stored={},hash=''){
+  const dom=new JSDOM(readFileSync('extension/shelf.html','utf8'),{url:'https://extension.test/shelf.html'+hash,runScripts:'outside-only'}),w=dom.window;
+  const memory={...stored};
+  w.chrome={
+   storage:{local:{
+    get:async keys=>Object.fromEntries((Array.isArray(keys)?keys:[keys]).map(key=>[key,memory[key]])),
+    set:async values=>{Object.assign(memory,values);}
+   },session:{get:async()=>({})},onChanged:{addListener(){}}},
+   runtime:{getURL:p=>'https://extension.test/'+p,sendMessage:async()=>({ok:true,accounts:[]})},
+   tabs:{create:async()=>({})}
+  };
+  w.eval(readFileSync('extension/shelf.js','utf8'));await settle();
+  return {dom,w,memory};
+ }
+ let run=await boot({shelfLastViewV1:'explorer'});
+ try{
+  assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'REMOTES');
+  assert.equal(run.w.location.hash,'');
+  assert.equal(run.w.document.querySelector('input[name="shelf-start-view-mode"]:checked').value,'remotes');
+  assert.equal(run.w.document.querySelector('nav[aria-label="Shelf"] a').textContent,'FILES');
+  const last=run.w.document.querySelector('input[name="shelf-start-view-mode"][value="last"]');
+  last.checked=true;last.dispatchEvent(new run.w.Event('change',{bubbles:true}));await settle();
+  assert.equal(run.memory.shelfStartViewMode,'last');
+  assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'REMOTES','Changing setting must not navigate away immediately');
+ }finally{run.dom.window.close();}
+ run=await boot({shelfStartViewMode:'last',shelfLastViewV1:'history'});
+ try{
+  assert.equal(run.w.location.hash,'#history');
+  assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'HISTORY');
+  assert.equal(run.w.document.querySelector('input[name="shelf-start-view-mode"]:checked').value,'last');
+ }finally{run.dom.window.close();}
+ run=await boot({shelfStartViewMode:'remotes',shelfLastViewV1:'explorer'},'#settings');
+ try{
+  assert.equal(run.w.location.hash,'#settings','A deliberate deep link overrides the default');
+  assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'SETTINGS');
+ }finally{run.dom.window.close();}
+ run=await boot({shelfStartViewMode:'last',shelfLastViewV1:'untrusted'});
+ try{assert.equal(run.w.location.hash,'');assert.equal(run.w.document.querySelector('[aria-current="page"]').textContent,'REMOTES');}
+ finally{run.dom.window.close();}
 });
 
 test('API-01/B: actual R2 adapter listing and authorised readStream feed real staged bytes',async()=>{
