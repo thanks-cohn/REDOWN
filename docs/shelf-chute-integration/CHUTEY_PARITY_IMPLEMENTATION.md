@@ -137,6 +137,16 @@ Local verification on the final implementation:
 | `python3 tests/boot-schema-conformance.py` | 6 valid fixtures, 3 invalid fixtures rejected |
 | `python3 scripts/package_chrome_store.py --audit-only` | 128 runtime files, matching REDOWN licenses, full Chute notice, zero reference files; release blocked |
 
+The final browser run measured 100 synchronous scroll/render updates in 1,226ms
+(normal policy) and 913.8ms (low-memory policy), or 12.26ms and 9.14ms per update.
+Normal-policy navigation measured 139–228ms; the 1,000/10,000-entry cases were
+202/228ms and exceeded the prior 200ms local navigation goal. Low-memory-policy
+navigation measured 96–178ms. These runs overlapped local regression checks;
+the policy classes run on the same Linux machine and are not a RAM comparison.
+Browser PASS labels assert interaction correctness and bounded rendering, not
+that every performance target passed. Physical Windows/media-load acceptance
+and the navigation budget remain open; no timing samples were discarded.
+
 ## Interoperability and remaining acceptance
 
 | Surface / requirement | Outcome and evidence boundary |
