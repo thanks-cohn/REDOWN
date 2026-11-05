@@ -79,3 +79,12 @@ test('all non-Neon themes type each character, retain third hold, hide and repea
 test('Dropbox disconnect or account switch removes an in-flight celebration',()=>{
  const h=fixture();h.receipt('dropbox','one');assert.equal(h.text(),'S');h.emit('dropbox:state',{phase:'reconnect'});assert.equal(h.text(),undefined);h.advance(4000);assert.equal(h.text(),undefined);h.dom.window.close();
 });
+
+test('Neon provider-save numerals use clean tabular DM Sans, not patterned charted type',async()=>{
+  const css=await readFile('extension/shelf.css','utf8');
+  const rule=css.match(/:root\[data-shelf-theme="neon"\] \.provider-save-count\{([^}]*)\}/)?.[1];
+  assert.ok(rule,'Neon counter rule exists');
+  assert.match(rule,/"DM Sans"/);
+  assert.match(rule,/font-variant-numeric:tabular-nums/);
+  assert.doesNotMatch(rule,/Jersey 10 Charted|Bitcount/);
+});
