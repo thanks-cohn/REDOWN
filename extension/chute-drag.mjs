@@ -43,8 +43,9 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         const before=api.capabilities?.includes('stat')?await stat():null;
         const fingerprint=o=>o&&JSON.stringify([o.etag,o.size,o.uploaded||o.last_modified,o.version]);
         const version=before&&(before.etag||before.version)?await digest(fingerprint(before)):'';
+        const eligibleKeep=keep===true&&!!version;
         if(before&&Number(before.size)!==Number(entry.size)){code='SOURCE_CHANGED';throw Error('File changed. Refresh the folder.');}
-        layer='storage';const reused=await stage.reuse(pending.id,{cacheKey,version,keep,maxBytes});
+        layer='storage';const reused=await stage.reuse(pending.id,{cacheKey,version,keep:eligibleKeep,maxBytes});
         if(reused===null){code='STORAGE_FAILED';throw Error('Prepared-file queue unavailable. Clear Prepared Files or retry.');}
         if(!reused){
           layer='source';const result=await api.run('readStream',{source,key:entry.key},{signal,onChunk:chunk=>{
@@ -58,7 +59,7 @@ export function createDragBridge({api,stage=globalThis.RedownChuteStage.createSt
         if(before!==null&&fingerprint(before)!==fingerprint(await stat())){code='SOURCE_CHANGED';throw Error('File changed during preparation. Refresh and drag again.');}
         signal.throwIfAborted();if(ticket!==generation)throw signal.reason||Error('Drag cancelled.');
         layer='storage';code='STORAGE_FAILED';
-        if(!reused&&!await stage.fulfill(pending.id,new Blob(chunks,{type:pending.mime}),{cacheKey,version,keep}))throw Error('Drag expired. Drag the file again.');
+        if(!reused&&!await stage.fulfill(pending.id,new Blob(chunks,{type:pending.mime}),{cacheKey,version,keep:eligibleKeep}))throw Error('Drag expired. Drag the file again.');
         if(reused&&!await stage.activate(pending.id))throw Error('Drag expired. Drag again.');
         timer=setTimeout(()=>{if(handle?.id===pending.id){handle=null;controller?.abort();void stage.purge().catch(()=>{});}},Math.max(0,pending.expires-Date.now()));
         timer.unref?.();emit('staged',reused?'Prepared bytes reused after checking current cloud access and version.':'File ready for this drop. Check attachment acceptance at the destination.','storage',reused?'REUSED':'NONE');
