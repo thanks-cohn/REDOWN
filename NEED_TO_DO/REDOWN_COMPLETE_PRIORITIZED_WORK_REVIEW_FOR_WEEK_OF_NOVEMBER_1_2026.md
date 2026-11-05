@@ -561,3 +561,9 @@ This is a desire for **a thriving skin ecosystem with a maintainable, protected 
 - [ ] **Sequencing:** First deliver and verify the History carousel, default-on/optional click-to-open, **1 current + 7 next + 5 previous** bounded lazy loads, accurate source tracing and Chute feasibility tests for Google Images, Yandex Images and ChatGPT; then measure active discovery use and prospective referral demand before making a commercial approach.
 
 **Cross-reference:** [Dated action list, P4.1–P4.2](11012026.md). This is **a business idea only**, not authorization to sell placements, insert ads, change destination order or modify the running product.
+
+
+### November 5 addition — Cloudflare Add Token on Dashboard
+
+- [ ] **High priority after MEGA S4 Explorer connectivity:** Add **Add Token** directly underneath Cloudflare buckets in the Dashboard. Open an in-dashboard modal for the Cloudflare management token/account ID and optional R2 S3 access key/secret/endpoint. Verify connection and capabilities before use, retain credentials safely across restart, and avoid repetitive OAuth when valid credentials suffice. Preserve existing OAuth as an alternative, and never claim indefinite login if keys expire or scopes are missing.
+- [ ] **Authoritative implementation detail and security/acceptance checklist:** [Cloudflare Add Token dashboard popup and persistent connections](CLOUDFLARE_ADD_TOKEN_DASHBOARD_PERSISTENT_CONNECTION.md). Specification only; not yet implemented.
