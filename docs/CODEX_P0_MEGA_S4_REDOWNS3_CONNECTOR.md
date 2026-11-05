@@ -5,6 +5,31 @@
 **Urgency:** make MEGA S4 a genuinely connected, usable cloud in REDOWN ASAP.  
 **Status:** implementation request, not evidence the connector is working.
 
+## P0 STOP/GO gate — verify the three supplied variables FIRST
+
+**Strict owner instruction, takes precedence over all later implementation steps:** Before writing the MEGA connector, changing any application source, running any cloud writes, creating buckets, deploying Workers or running destructive tests, verify whether **ONLY** these three privately configured values are sufficient to perform the requested MEGA S4 integration:
+
+```text
+MEGA_S4_ENDPOINT
+MEGA_S4_ACCESS_KEY_ID
+MEGA_S4_SECRET_ACCESS_KEY
+```
+
+Do **not** assume a separate `MEGA_S4_REGION` or `MEGA_S4_BUCKET` value exists. **They are optional only if safely discoverable and verified** using the official MEGA S4 documentation, trusted endpoint configuration and read-only API discovery. Never fabricate signing-region data, bucket names or permission scope; never substitute ordinary MEGA Cloud Drive for S4.
+
+**Execute this preflight before implementation:**
+
+1. Inspect the **actual REDOWN Codex execution environment** for the presence of those three variables. Confirm presence and nonempty syntactic form without printing, echoing, writing to artifacts or exposing their values. If any is missing, **STOP** and report the variable name only.
+2. Verify that Codex's network policy permits HTTPS access to the specified MEGA S4 endpoint. If network access is blocked or unavailable, **STOP** and label the outcome `PREFLIGHT_BLOCKED_NETWORK` rather than falsely concluding that additional S3 credentials are needed.
+3. Consult the official MEGA S4 endpoint/signing documentation. Determine whether signing region can be safely resolved from the endpoint/documented defaults. If not, **STOP** and request precisely `MEGA_S4_REGION`, with an explanation of where the owner can obtain it; do not guess and don't silently use `us-east-1`.
+4. Using a bounded, least-privilege **read-only** signed S3 request, prove that the credentials authenticate to the correct MEGA S4 service. If authentication fails, **STOP** with a sanitized reason (`PREFLIGHT_AUTH_FAILED` etc.), not raw server details or secrets.
+5. Attempt read-only authorized bucket discovery (`ListBuckets` where supported). If permitted, enumerate only bucket names for the user-facing private report and use a known authorized bucket to attempt read-only `ListObjectsV2` or `HeadBucket` for confirmation. **Do not mistake AccessDenied to ListBuckets for bad credentials**: if bucket discovery is disallowed, **STOP** and request exactly `MEGA_S4_BUCKET`, then resume only after an approved bucket is supplied. If account is valid but has zero buckets, **STOP** and explain that the owner must create or authorize a test bucket; do not create one on the owner's behalf.
+6. Do not upload, delete, overwrite, rename, prepare Cloudflare/R2 Workers or perform any other mutation during the preflight. No hidden charges or side effects for “checking.”
+7. Produce a concise `GO` or `STOP` summary: credentials present (yes/no), endpoint reachable (yes/no/unknown), signing region verified (yes/no/unknown), authentication verified (yes/no/unknown), test bucket discovered and read-access verified (yes/no/unknown), and whether any *additional* value is required. **Redact the secret and access key ID**. Avoid printing endpoint URLs containing query secrets.
+8. **If ANY step is unverified or blocked, STOP execution of this Codex implementation task. Do not edit runtime code or proceed speculatively.** Tell the owner exactly which information, account permission or environment access is missing, and the smallest possible next action. **Proceed with implementation only after a definitive GO and user-authorized test scope.**
+
+The three variables are the **default minimal setup**, not a guarantee that every MEGA account permits automatic region/bucket discovery. This gate is to prove sufficiency, not to demand extra variables for convenience.
+
 ## 0. Non-negotiable product direction and task boundary
 
 REDOWN is the intended customer release. Click2Cloud exists to establish a clean baseline/behavioral reference and later a deeply programmatic menu lab. It is **NOT** replacing REDOWN as the shipped product, and this initial task must **not** wholesale transplant Click2Cloud V3+1 or rewrite REDOWN's current native right-click engine.
@@ -34,11 +59,11 @@ Implement a generic S3-compatible adapter with an explicit `mega-s4` capability 
 
 ## 2. Credentials: secure configuration, least privilege, no secret leakage
 
-User-provided values needed for a **live integration test** (do not require these for writing code or unit tests):
+Potential values for a **live integration test** (the **P0 STOP/GO gate above is authoritative**; do not demand optional values by default):
 - MEGA S4 account with Object Storage enabled.
-- One user-created, preferably empty **disposable test bucket** (exact name). Avoid deleting or provisioning an arbitrary bucket.
+- One user-created, preferably empty **disposable test bucket** (exact name), only if not discoverable with the three variables and read-only permissions. If unavailable, STOP; avoid deleting or provisioning an arbitrary bucket.
 - **Access Key ID** and **Secret Access Key** generated under MEGA **Object storage → Keys**, ideally a restricted S4 user/key with only the necessary bucket permissions. These are not OAuth tokens.
-- The actual MEGA S4 S3 endpoint URL and signing region from the account's S4 endpoint settings; use HTTPS, AWS Signature Version 4 and proper endpoint addressing. Confirm which endpoint family MEGA currently documents for this account; do not hardcode an unsupported region from a third-party tutorial.
+- The actual MEGA S4 S3 endpoint URL; discover signing region from verified documentation/endpoint when possible, otherwise STOP and request it. Use HTTPS, AWS Signature Version 4 and proper endpoint addressing. Confirm which endpoint family MEGA currently documents for this account; do not hardcode an unsupported region from a third-party tutorial.
 - Owner's consent to writing/overwriting/deleting **only test objects** inside a dedicated test prefix, and whether real credential-backed live testing is available in the execution environment.
 
 **Never ask owner to paste S3 secrets into chat, GitHub, Codex prompts, committed files, CI logs, browser diagnostics or plaintext extension JavaScript.** Implement a trusted credential intake through REDOWN's existing native companion / local worker where feasible, or an explicitly authorized private signing host. Check which trusted runtime already exists; do not invent a public credential proxy. Sensitive signing material must not be exposed to arbitrary web pages, content scripts, or third-party destination URLs. Do not assert that `chrome.storage.local` is a hardware-backed secret vault. Distinguish a local-only trust decision and security trade-offs in the implementation report. Rotate/revoke test keys if exposed.
