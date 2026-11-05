@@ -597,8 +597,8 @@ input:checked~.selection,input:checked~.theme-tick{visibility:visible}
 .overview .destinations-grid .destination-options-menu small{display:block;margin:0;max-width:100%;font:400 11px/1.45 "DM Sans",system-ui,sans-serif;color:var(--muted);overflow-wrap:anywhere}
 .overview .destinations-grid .destination-options-menu [hidden]{display:none!important}
 /* The Shelf promise sits directly under its navigation divider, not inside a card. */
-#clouds-view>.shelf-assurance{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:0;margin:15px 2px 0;padding:0 2px;color:var(--accent);font:780 10px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.135em;text-transform:uppercase}
-#clouds-view>.shelf-assurance span{padding:0 .65em;opacity:.56}
+#clouds-view>.shelf-assurance{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:0;margin:15px 2px 0;padding:0 2px;color:var(--accent);font:780 10px/1.5 "DM Sans",system-ui,sans-serif;letter-spacing:.045em;text-transform:none}
+#clouds-view>.shelf-assurance span{padding:0 .65em;opacity:1;font-weight:900}
 #clouds-view>.shelf-assurance strong{font-weight:780}
 #clouds-view>.shelf-assurance+.overview{padding-top:15px}
 #connection-summary:empty{display:none}
