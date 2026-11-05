@@ -154,3 +154,8 @@ body:has(#explorer-view:not([hidden])) #status {margin:0;flex-shrink:0;}
 #explorer-view .mini-filter [data-action=reset-split] {padding:3px;}
 #explorer-view .mini-row small {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 #explorer-view .mini-content {overflow:hidden;}
+
+#explorer-view.preview-expanded > :not(.mini-preview):not(dialog):not(.mini-context) {visibility:hidden;}
+#explorer-view.preview-expanded .mini-preview {position:absolute;inset:0;height:auto!important;max-height:none;z-index:25;}
+#explorer-view.preview-expanded .mini-resize {display:none;}
+#explorer-view [data-action=expand-preview] {display:grid;place-items:center;}
