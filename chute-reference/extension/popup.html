@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chutey</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="popup-gallery.css">
+  <style>
+    body { width: 390px; max-height: 600px; overflow: auto; }
+    .popup-note { padding: 0 13px 11px; color: #8f9882; font-size: 10px; }
+  </style>
+</head>
+<body class="chutey-gallery-popup">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">↓</div>
+      <div><div class="title">Chutey</div><div class="subtitle">Your Everything</div></div>
+    </div>
+    <div class="actions">
+      <button id="open-shelf" class="primary-button">Open shelf</button>
+    </div>
+  </header>
+
+  <details class="settings-panel">
+    <summary>⚙ Settings</summary>
+    <section class="settings" aria-label="Chute settings">
+      <div class="setting-label">Gallery density</div>
+      <div class="gallery-density-control">
+        <input id="gallery-density" type="range" min="0" max="3" step="1" value="0" aria-label="Gallery grid density, four by four through six by five">
+        <output id="gallery-density-value" for="gallery-density" aria-live="polite">4 × 4</output>
+      </div>
+      <div class="settings-note">Move the dial to rearrange the grid instantly: 4×4, 5×4, 5×5 or 6×5. A page never loads more than 30 items; scrolling and Previous / Next remain available.</div>
+      <div class="setting-label">Shelf image preview</div>
+      <select id="shelf-viewer-size" aria-label="Image preview card size in Shelf">
+        <option value="half">Half-size (default)</option>
+        <option value="full">Full — up to calendar</option>
+      </select>
+      <div class="settings-note">Click an image to preview it here, then browse with ← / →. Open in Shelf is optional. The Shelf preview size remains configurable.</div>
+
+
+      <div class="setting-label">Browser access</div>
+      <select id="access-mode" aria-label="How Chute appears in the browser">
+        <option value="floating">Floating mascot</option>
+        <option value="both">Mascot + right-click</option>
+        <option value="context">Right-click only</option>
+      </select>
+
+      <div class="setting-label">Floating mascot behavior</div>
+      <select id="floating-behavior" aria-label="Whether the floating Chute mascot hides itself">
+        <option value="auto-hide">Auto-hide after 10 seconds</option>
+        <option value="always">Always visible</option>
+      </select>
+      <div class="settings-note">Auto-hide is the default. Chute stays visible for 10 seconds, then tucks into a small tab at the lower-right edge. Move the mouse near that edge to bring it back.</div>
+
+      <div class="setting-label">Drag out as</div>
+      <select id="drag-out-mode" aria-label="What dragging an item out of Chute sends">
+        <option value="file">Actual file / image</option>
+        <option value="source">Source address</option>
+      </select>
+
+      <label>
+        <span>Save full browser image</span>
+        <input id="browser-image-save-full" class="toggle" type="checkbox" checked>
+      </label>
+
+      <label>
+        <span>Save custom-size image copy</span>
+        <input id="browser-image-save-custom" class="toggle" type="checkbox">
+      </label>
+
+      <div class="setting-label">Custom copy max size</div>
+      <div class="dimension-control">
+        <input id="browser-image-width" type="number" min="1" step="1" value="512" aria-label="Custom image maximum width">
+        <span>×</span>
+        <input id="browser-image-height" type="number" min="1" step="1" value="512" aria-label="Custom image maximum height">
+      </div>
+
+      <label>
+        <span>Generated menu thumbnails</span>
+        <input id="show-thumbnails" class="toggle" type="checkbox" checked>
+      </label>
+
+      <div class="settings-note">Browser captures are independent: keep the full original, save a custom-size derivative, or save both. The custom copy preserves aspect ratio inside the width × height box and may upscale or downscale to honor the requested box. If both are off, Chute saves the source link instead.</div>
+      <div class="settings-note">Generated menu thumbnails are separate 48px recognition previews stored in your local Chute data folder. They are on by default and are never used as the dragged file.</div>
+      <div class="settings-note">Actual file / image is the default drag-out mode. Source address is available when you explicitly want Chute's served location instead.</div>
+      <div class="settings-note">The browser sticky and right-click menu feed the same local Chute used by your other installed Chromium browsers.</div>
+      <div class="settings-note"><strong>Privacy:</strong> Chute saves only the files, images, links, selected text, and source page/image addresses you choose to send to it. They go to the Chute companion on your own computer, not to a Chute cloud server.</div>
+
+      <button id="clear-chute" class="secondary-button" type="button">Clear Chute</button>
+      <div class="settings-note">Clear Chute empties this live working basket. Nothing is deleted from dated history; the Shelf keeps the archive available for Recall.</div>
+    </section>
+  </details>
+
+  <!-- History is a SINGLE standalone gallery surface, never part of Settings. -->
+  <section id="chutey-popup-gallery" aria-label="Chutey saved items gallery">
+  <div class="history-nav">
+    <button id="history-prev" class="icon-button" type="button" title="Older day">‹</button>
+    <input id="history-date" type="date" aria-label="Selected history date" hidden>
+    <button id="history-calendar-toggle" class="secondary-button history-calendar-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="history-calendar-popover">
+      <span aria-hidden="true">▦</span><span id="history-calendar-label">Calendar</span>
+    </button>
+    <div id="history-calendar-popover" class="history-calendar-popover" role="dialog" aria-label="Choose a Chute history date" hidden>
+      <div class="history-calendar-heading">
+        <button id="history-calendar-month-prev" class="icon-button" type="button" aria-label="Previous month">‹</button>
+        <strong id="history-calendar-month-label"></strong>
+        <button id="history-calendar-month-next" class="icon-button" type="button" aria-label="Next month">›</button>
+      </div>
+      <div id="history-calendar-grid" class="history-calendar-grid" aria-label="History days colored by saves"></div>
+      <div class="history-calendar-legend" aria-label="Daily save color scale">
+        <span><i class="calendar-maroon"></i>0–9</span>
+        <span><i class="calendar-orange"></i>10–19</span>
+        <span><i class="calendar-light-green"></i>20–49</span>
+        <span><i class="calendar-money"></i>50+</span>
+      </div>
+      <p class="history-calendar-hint">Select any day to browse its preserved history. Clearing Live Chute never changes these totals.</p>
+    </div>
+    <button id="history-latest" class="secondary-button" type="button">Latest</button>
+    <button id="history-next" class="icon-button" type="button" title="Newer day">›</button>
+  </div>
+
+  <div id="status" class="status">Connecting…</div>
+  <main id="files" class="file-list"></main>
+  <nav id="history-pagination" class="history-pagination" aria-label="Browse file pages" hidden>
+    <button id="history-page-prev" class="secondary-button" type="button">‹ Previous</button>
+    <span id="history-page-label" class="page-position" aria-live="polite">Page 1</span>
+    <button id="history-page-next" class="secondary-button" type="button">Next ›</button>
+  </nav>
+  <div id="history-sentinel" class="history-sentinel" aria-hidden="true"></div>
+  <div class="popup-note">Latest is your live working Chute. Dated history stays on disk and remains available in the Shelf or by choosing a date.</div>
+  </section>
+
+  <script src="native-wake-page.js"></script>
+  <script src="bridge-reconnect.js"></script>
+  <script src="shelf.js"></script>
+  <script src="companion-help.js"></script>
+  <script src="workflow-fixes.js"></script>
+  <script src="drag-relay.js"></script>
+  <script src="popup.js"></script>
+  <script src="popup-gallery.js"></script>
+  <script src="popup-auto-hide.js"></script>
+  <script src="calendar.js"></script>
+</body>
+</html>

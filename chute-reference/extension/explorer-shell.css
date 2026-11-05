@@ -1,0 +1,15 @@
+/* Explorer skin tokens: presentation only.
+ * Scoped, separate CSS; these theme tokens are future SKIN API inputs.
+ */
+#chutey-explorer-view {
+  --chutey-explorer-background: #11130f;
+  --chutey-explorer-panel: #1a1e17;
+  --chutey-explorer-border: #30362a;
+  --chutey-explorer-text: #f4f5ee;
+  --chutey-explorer-muted: #9ca58d;
+  --chutey-explorer-accent: #d7ff3f;
+  min-height: 225px;
+  padding: 14px 12px;
+  background: var(--chutey-explorer-background);
+  color: var(--chutey-explorer-text);
+}

@@ -1,0 +1,87 @@
+name: Chutey P0 paired Windows Explorer TEST build
+on:
+  push:
+    branches: [codex/chutey-intuitive-explorer-ux-2026-11-04, codex/chutey-explorer-windows-usable-asap-2026-11-04, codex/chute-persistent-explorer-dnd-redown-2026-11-04]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pair:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: src
+      CHUTE_QUIET: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tiny real Windows filesystem and existing regressions
+        run: |
+          python -m pip install pytest==9.2.0 Pillow==13.0.0
+          python -m pytest -q --junitxml=explorer-pytest.xml
+      - name: Redacted current-run test diagnostics
+        if: always()
+        run: python scripts/summarize-explorer-tests.py explorer-pytest.xml
+      - name: Existing worker and Shelf regressions
+        run: |
+          node scripts/verify-explorer-drag.cjs
+          node scripts/verify-explorer-api.cjs
+          node scripts/verify-worker-boot.cjs
+          node scripts/verify-thumbnail-icons.cjs
+          node scripts/verify-chutey-tabs-and-mascot.cjs
+          python scripts/verify-upgrades-package.py
+      - name: Build existing Windows companion and matching Chrome package
+        run: |
+          powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1
+          python scripts/build-chrome-store.py
+      - name: Installed test EXE startup in isolated CI home
+        timeout-minutes: 2
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:USERPROFILE = Join-Path $env:RUNNER_TEMP 'chutey-pair-home'
+          $env:LOCALAPPDATA = Join-Path $env:RUNNER_TEMP 'chutey-pair-local'
+          New-Item -ItemType Directory -Force $env:USERPROFILE, $env:LOCALAPPDATA | Out-Null
+          try {
+            $setup = Start-Process -FilePath (Resolve-Path dist/windows/Chute-Windows.exe).Path -PassThru
+            if (-not $setup.WaitForExit(15000)) { throw 'Setup parent did not exit within 15 seconds' }
+            if ($setup.ExitCode -ne 0) { throw 'Setup parent returned a failure' }
+            $ready = $false
+            for ($i=0; $i -lt 40; $i++) {
+              try {
+                $health = Invoke-RestMethod 'http://127.0.0.1:17891/health' -TimeoutSec 1
+                if ($health.service -eq 'chute') { $ready = $true; break }
+              } catch {}
+              Start-Sleep -Milliseconds 250
+            }
+            if (-not $ready) { throw 'Packaged companion did not start' }
+            $control = Join-Path $env:LOCALAPPDATA 'Chute/explorer-control.json'
+            if (-not (Test-Path $control)) { throw 'Native Explorer control initialization failed' }
+            $native = Join-Path $env:LOCALAPPDATA 'Programs/Chute/Chute-NativeHost.exe'
+            if (-not (Test-Path $native)) { throw 'Bundled native host missing' }
+            python scripts/verify-packaged-explorer-host.py $native dist/windows/Chute-NativeHost.exe
+            if ($LASTEXITCODE -ne 0) { throw 'Installed helper hash/protocol verification failed' }
+            Write-Output 'PASS: packaged companion health, protected control initialization and bundled native host'
+          } finally {
+            Get-Process Chute -ErrorAction SilentlyContinue | Stop-Process -Force
+          }
+      - name: Stage a single matched review artifact with checksums
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/pair | Out-Null
+          Copy-Item dist/windows/Chute-Windows.exe dist/pair/Chute-Windows-Explorer-TEST.exe
+          Copy-Item dist/chrome-store/chute-chrome-2.6.1.zip dist/pair/
+          Copy-Item docs/explorer/INTUITIVE_INTERACTIONS_TEST.md dist/pair/INSTALL-AND-EVIDENCE.md
+          git rev-parse HEAD | Out-File dist/pair/SOURCE-COMMIT.txt -Encoding ascii
+          $pairPath = (Resolve-Path dist/pair).Path
+          $files = @(Get-ChildItem -Path (Join-Path $pairPath '*') -File | Where-Object { $_.Name -ne 'SHA256SUMS.txt' } | Sort-Object Name)
+          if ($files.Count -lt 4) { throw 'Missing matched files: refusing empty checksum manifest' }
+          $checksums = @($files | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" })
+          foreach ($checksum in $checksums) { Write-Output "::notice title=Matched TEST pair SHA-256::$checksum" }
+          [System.IO.File]::WriteAllLines((Join-Path $pairPath 'SHA256SUMS.txt'), [string[]]$checksums, [System.Text.Encoding]::ASCII)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Chutey-Windows-Chrome-Explorer-TEST-${{ github.sha }}
+          path: dist/pair/

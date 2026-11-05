@@ -1,0 +1,187 @@
+/* Popup-only gallery: no changes to Shelf History or File Explorer styles. */
+body.chutey-gallery-popup { width:390px; max-height:600px; overflow-y:auto; overflow-x:hidden; }
+.chutey-gallery-popup .gallery-density-control { display:flex; justify-content:flex-end; align-items:center; gap:8px; }
+.chutey-gallery-popup #gallery-density { width:116px; min-width:0; accent-color:#d7ff3f; cursor:ew-resize; }
+.chutey-gallery-popup #gallery-density-value { color:#e3f0d6; font-size:11px; min-width:40px; text-align:right; font-variant-numeric:tabular-nums; }
+/* Settings is a compact, opaque popover above the ONE independent gallery.
+   Its content scrolls internally and never contains/reflows History. */
+.chutey-gallery-popup .settings-panel {
+  position:relative;
+  z-index:40;
+  isolation:isolate;
+}
+.chutey-gallery-popup .settings-panel[open] { overflow:visible; }
+.chutey-gallery-popup .settings-panel[open] .settings {
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  z-index:41;
+  max-height:min(280px, 48vh);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-top:12px;
+  background:#151a13;
+  border:1px solid #46533c;
+  border-radius:0 0 12px 12px;
+  box-shadow:0 12px 24px #000c;
+}
+.chutey-gallery-popup #chutey-popup-gallery {
+  position:relative;
+  isolation:isolate;
+  z-index:1;
+  border-top:1px solid #2d3b25;
+}
+
+.chutey-gallery-popup #files {
+  display:grid; grid-template-columns:repeat(var(--chutey-gallery-columns,4),minmax(0,1fr));
+  align-content:start; align-items:start; gap:6px; padding:8px 10px;
+  width:100%; height:386px; min-height:0; max-height:386px;
+  overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile {
+  position:relative; display:block; aspect-ratio:1 / 1; height:auto; width:100%;
+  min-width:0; min-height:0; padding:0; gap:0; overflow:hidden;
+  border:1px solid #3e4c36; border-radius:9px; cursor:pointer; isolation:isolate;
+  contain:layout paint style;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile:focus-visible { outline:2px solid #d7ff3f; outline-offset:-3px; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon {
+  position:absolute; inset:0; width:100%; height:100%; border-radius:inherit;
+  background:radial-gradient(circle at 30% 30%,#364837,#1c2820 62%,#151d18);
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon::before,
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon::after {
+  content:""; position:absolute; pointer-events:none; z-index:0;
+  inset:15%; border:1px solid #acd28b61; border-radius:34%;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon::before {
+  transform:rotate(30deg);
+  background:repeating-conic-gradient(from 15deg,transparent 0deg 25deg,#bada9c19 25deg 28deg);
+  animation:chute-gallery-turn 13s linear infinite;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon::after {
+  inset:27%; border-radius:50%;
+  box-shadow:0 0 0 7px #91af7820,0 0 0 16px #bada9c10;
+  animation:chute-gallery-turn 19s linear infinite reverse;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon.has-thumbnail::before,
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon.has-thumbnail::after { opacity:0; animation:none; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-thumb { z-index:1; width:100%; height:100%; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-fallback {
+  position:relative; z-index:1; width:40%; height:40%; filter:drop-shadow(0 2px 4px #050a07b9);
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-fallback svg { width:100%; height:100%; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-info {
+  position:absolute; left:0; right:0; bottom:0; z-index:2; padding:9px 4px 4px;
+  background:linear-gradient(transparent,#090e0bde 45%,#090e0bf5);
+  pointer-events:none;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-name { color:#f3f9eb; font-size:9px; font-weight:600; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-meta { display:none; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-tools {
+  position:absolute; right:3px; top:3px; z-index:3; display:none;
+  flex-direction:column; align-items:end; gap:2px;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile:hover .file-tools,
+.chutey-gallery-popup #files .chutey-gallery-tile:focus-within .file-tools { display:flex; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-tools button { padding:2px 3px; font-size:9px; min-height:20px; }
+.chutey-gallery-popup #files .chutey-gallery-tile.archived { opacity:1; }
+.chutey-gallery-popup #files .empty { grid-column:1 / -1; }
+.chutey-gallery-popup .history-pagination { margin:3px 10px 4px; padding:5px 6px; position:sticky; bottom:0; z-index:5; }
+.chutey-gallery-popup .popup-note { padding-bottom:6px; }
+@keyframes chute-gallery-turn { to { transform:rotate(390deg); } }
+@media (prefers-reduced-motion:reduce) {
+  .chutey-gallery-popup #files .chutey-gallery-tile .file-icon::before,
+  .chutey-gallery-popup #files .chutey-gallery-tile .file-icon::after { animation:none; }
+}
+
+/* Geometry is bounded: expansion occupies grid cells instead of overlaying neighbors. */
+.chutey-gallery-popup #files { grid-auto-flow:row dense; }
+.chutey-gallery-popup #files .chutey-gallery-tile { box-sizing:border-box; max-width:100%; }
+.chutey-gallery-popup #files .chutey-gallery-tile.chutey-gallery-expanded {
+  grid-column:span 2; grid-row:span 2; z-index:2; aspect-ratio:1/1;
+  border-color:#d7ff3f; box-shadow:inset 0 0 0 1px #d7ff3f55;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon[role=button] { cursor:zoom-in; }
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon[role=button]:focus-visible {
+  outline:2px solid #d7ff3f; outline-offset:-3px;
+}
+.chutey-gallery-popup .chutey-lightbox {
+  position:fixed; inset:0; z-index:200; box-sizing:border-box; width:100%;
+  height:100%; max-height:600px; padding:10px; display:flex; flex-direction:column;
+  gap:8px; background:#101510f7; color:#f3f9eb; isolation:isolate;
+}
+.chutey-gallery-popup .chutey-lightbox[hidden] { display:none !important; }
+.chutey-gallery-popup .chutey-lightbox header,
+.chutey-gallery-popup .chutey-lightbox footer { display:flex; align-items:center; gap:8px; min-width:0; }
+.chutey-gallery-popup .chutey-lightbox header strong { flex:1; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.chutey-gallery-popup .chutey-lightbox button { cursor:pointer; color:#e9f9da; background:#253122; border:1px solid #5b7552; border-radius:9px; min-width:30px; min-height:30px; }
+.chutey-gallery-popup .chutey-lightbox button:disabled { opacity:.3; cursor:default; }
+.chutey-gallery-popup .chutey-lightbox-stage {
+  flex:1; min-height:0; min-width:0; display:grid;
+  grid-template-columns:30px minmax(0,1fr) 30px; gap:4px; place-items:center;
+}
+.chutey-gallery-popup .chutey-lightbox-image {
+  display:block; max-width:100%; max-height:100%; width:auto; height:auto;
+  object-fit:contain; grid-column:2; grid-row:1;
+}
+.chutey-gallery-popup .chutey-lightbox-image[hidden] { display:none; }
+.chutey-gallery-popup .chutey-lightbox-error { grid-column:2; grid-row:1; font-size:12px; text-align:center; }
+.chutey-gallery-popup .chutey-lightbox-prev { grid-column:1; grid-row:1; }
+.chutey-gallery-popup .chutey-lightbox-next { grid-column:3; grid-row:1; }
+.chutey-gallery-popup .chutey-lightbox footer { justify-content:space-between; }
+.chutey-gallery-popup .chutey-lightbox:focus-within { outline:0; }
+@media (prefers-reduced-motion:no-preference) {
+  .chutey-gallery-popup .chutey-lightbox:not([hidden]) { animation:chutey-lightbox-enter .14s ease-out; }
+  @keyframes chutey-lightbox-enter { from { opacity:.4; transform:scale(.98); } to { opacity:1; transform:scale(1); } }
+}
+
+/* Expansion reveals the existing History metadata without changing source records. */
+.chutey-gallery-popup #files .chutey-gallery-tile.chutey-gallery-expanded .file-info { padding:14px 7px 8px; }
+.chutey-gallery-popup #files .chutey-gallery-tile.chutey-gallery-expanded .file-name { font-size:11px; }
+.chutey-gallery-popup #files .chutey-gallery-tile.chutey-gallery-expanded .file-meta {
+  display:block; font-size:9px; line-height:1.35; color:#dfebd6;
+  overflow-wrap:anywhere;
+}
+
+/* The implicit grid tracks are measured from available width: no overlapping,
+   even when a 2x2 tile is expanded or the density dial changes. */
+.chutey-gallery-popup #files {
+  grid-auto-flow:row;
+  grid-auto-rows:var(--chutey-gallery-cell, 82px);
+}
+.chutey-gallery-popup #files .chutey-gallery-tile {
+  aspect-ratio:auto; height:100%; max-height:100%;
+  min-height:0; min-width:0; box-sizing:border-box;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile.chutey-gallery-expanded {
+  aspect-ratio:auto; height:100%; width:100%; max-height:100%;
+}
+
+/* The caption is the card-selection surface; the picture remains previewable. */
+.chutey-gallery-popup #files .chutey-gallery-tile .file-info {
+  pointer-events:auto; cursor:pointer; min-height:24px;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-name {
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+/* Chutey mascot, not a fake thumbnail: actual image bytes cover it only after decode.
+   Web shortcuts retain their explicit LINK type, and all card click handlers remain. */
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon.chutey-mascot-fallback .file-fallback {
+  width:42%; height:42%; max-width:48px; max-height:48px;
+  filter:drop-shadow(0 3px 8px #0008); opacity:.88;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .chutey-tile-mascot {
+  display:block; width:100%; height:100%; object-fit:contain;
+  image-rendering:auto; pointer-events:none; user-select:none;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .chutey-shortcut-kind {
+  position:absolute; left:5px; top:5px; z-index:2;
+  padding:2px 4px; border:1px solid #bde97066; border-radius:4px;
+  color:#e2f8ba; background:#111a12c9; font-size:8px;
+  font-weight:750; letter-spacing:.035em; pointer-events:none;
+}
+.chutey-gallery-popup #files .chutey-gallery-tile .file-icon.has-thumbnail .chutey-shortcut-kind { display:none; }

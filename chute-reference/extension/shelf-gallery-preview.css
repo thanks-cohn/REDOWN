@@ -1,0 +1,42 @@
+/* Shelf picture preview from the popup gallery; anchored after the selected History row. */
+#chutey-history-view .chutey-shelf-viewer {
+  position:relative; left:auto; right:auto; bottom:auto; width:100%; box-sizing:border-box; flex-shrink:0; z-index:12;
+  min-height:140px; display:flex; flex-direction:column; overflow:hidden;
+  background:#171c16f5; border:1px solid #455238; border-radius:8px;
+  margin:8px 0;
+}
+#chutey-history-view .chutey-shelf-viewer[hidden] { display:none!important; }
+#chutey-history-view .chutey-shelf-viewer header {
+  display:flex; align-items:center; gap:7px; padding:7px 9px;
+  background:#222a1d; border-bottom:1px solid #404f33;
+}
+#chutey-history-view .chutey-shelf-viewer header strong {
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; font-size:12px;
+}
+#chutey-history-view .chutey-shelf-viewer header .secondary-button { font-size:11px; padding:4px 7px; }
+#chutey-history-view .chutey-shelf-viewer header .icon-button { flex:none; }
+#chutey-history-view .chutey-shelf-viewer-body {
+  flex:1; min-height:0; padding:8px; overflow:auto; position:relative;
+  display:flex; align-items:center; justify-content:center;
+}
+#chutey-history-view .chutey-shelf-viewer-body img {
+  display:block; width:100%; height:100%; object-fit:contain; pointer-events:none;
+}
+#chutey-history-view .chutey-shelf-viewer-body img[hidden] { display:none!important; }
+#chutey-history-view .chutey-shelf-viewer-message { color:#a6b79c; font-size:12px; text-align:center; }
+#chutey-history-view #files .chutey-gallery-selected {
+  outline:2px solid #d7ff3f; outline-offset:-2px; background:#27381f;
+}
+@media (prefers-reduced-motion:reduce) {
+  #chutey-history-view .chutey-shelf-viewer { backdrop-filter:none; }
+}
+
+/* The viewer spans a grid row; subsequent cards remain in flow. */
+#chutey-history-view #files .chutey-shelf-selectable {
+  min-width:0; box-sizing:border-box; position:relative; cursor:pointer;
+}
+#chutey-history-view #files .chutey-shelf-selectable:focus-visible {
+  outline:2px solid #d7ff3f; outline-offset:-3px;
+}
+#chutey-history-view .chutey-shelf-viewer-body { max-width:100%; }
+#chutey-history-view .chutey-shelf-viewer-body img { max-width:100%; }
